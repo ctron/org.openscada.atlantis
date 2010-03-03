@@ -64,18 +64,18 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             this.attributes = attributes;
         }
 
-        public TypeEntry ( final String name, final int index, final int subIndex, final TypeEntry... attributes )
+        public TypeEntry ( final String name, final int index, final int subIndex, final int options, final TypeEntry... attributes )
         {
             this.name = name;
-            this.index = new int[] { index, subIndex };
+            this.index = new int[] { index, subIndex, options };
             this.type = TYPE.BIT;
             this.attributes = attributes;
         }
 
-        public TypeEntry ( final String name, final TYPE type, final int index, final TypeEntry... attributes )
+        public TypeEntry ( final String name, final TYPE type, final int index, final int options, final TypeEntry... attributes )
         {
             this.name = name;
-            this.index = new int[] { index };
+            this.index = new int[] { index, options };
             this.type = type;
             this.attributes = attributes;
         }
@@ -321,16 +321,16 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             switch ( TYPE.valueOf ( toks[0] ) )
             {
             case BIT:
-                result.add ( new TypeEntry ( varName, Integer.parseInt ( toks[1] ), Integer.parseInt ( toks[2] ), parseAttributes ( properties, varName ) ) );
+                result.add ( new TypeEntry ( varName, Integer.parseInt ( toks[1] ), Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, varName ) ) );
                 break;
             case BYTE:
-                result.add ( new TypeEntry ( varName, TYPE.BYTE, Integer.parseInt ( toks[1] ), parseAttributes ( properties, varName ) ) );
+                result.add ( new TypeEntry ( varName, TYPE.BYTE, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
                 break;
             case FLOAT:
-                result.add ( new TypeEntry ( varName, TYPE.FLOAT, Integer.parseInt ( toks[1] ), parseAttributes ( properties, varName ) ) );
+                result.add ( new TypeEntry ( varName, TYPE.FLOAT, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
                 break;
             case WORD:
-                result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( toks[1] ), parseAttributes ( properties, varName ) ) );
+                result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
                 break;
             case UDT:
                 result.add ( new TypeEntry ( varName, toks[1], Integer.parseInt ( toks[2] ) ) );
@@ -367,16 +367,16 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             switch ( TYPE.valueOf ( toks[1] ) )
             {
             case BIT:
-                result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ), parseAttributes ( properties, toks[0] ) ) );
+                result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ), 0, parseAttributes ( properties, toks[0] ) ) );
                 break;
             case BYTE:
-                result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), parseAttributes ( properties, toks[0] ) ) );
+                result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
                 break;
             case FLOAT:
-                result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), parseAttributes ( properties, toks[0] ) ) );
+                result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
                 break;
             case WORD:
-                result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), parseAttributes ( properties, toks[0] ) ) );
+                result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
                 break;
             case UDT:
                 result.add ( new TypeEntry ( toks[0], toks[2], Integer.parseInt ( toks[3] ) ) );
@@ -413,21 +413,22 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             switch ( TYPE.valueOf ( toks[1] ) )
             {
             case BIT:
-                result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
+                result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ), Integer.parseInt ( toks[4] ) ) );
                 break;
             case FLOAT:
-                result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ) ) );
+                result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
                 break;
             case TRIBIT:
                 result.add ( new TypeEntry ( toks[0], new int[] {//
                 Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ),// read bit
                 Integer.parseInt ( toks[4] ), Integer.parseInt ( toks[5] ),// write true bit
                 Integer.parseInt ( toks[6] ), Integer.parseInt ( toks[7] ),// write false bit
-                Integer.parseInt ( toks[8] ), //
+                Integer.parseInt ( toks[8] ), // invert
+                Integer.parseInt ( toks[9] ), // enableTimestamp
                 } ) );
                 break;
             case BYTE:
-                result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ) ) );
+                result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
                 break;
             default:
                 break;
