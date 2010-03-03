@@ -12,18 +12,18 @@ import OpenSCADA.Core.VariantType;
 
 public class VariantHelper
 {
-    public static Variant fromIce ( VariantBase variantBase )
+    public static Variant fromIce ( final VariantBase variantBase )
     {
         if ( variantBase == null )
         {
             return null;
         }
-        
+
         switch ( variantBase.vt.value () )
         {
         case VariantType._VTboolean:
         {
-            return new Variant ( ( (VariantBoolean)variantBase ).value );
+            return Variant.valueOf ( ( (VariantBoolean)variantBase ).value );
         }
         case VariantType._VTstring:
         {
@@ -52,7 +52,7 @@ public class VariantHelper
         }
     }
 
-    public static VariantBase toIce ( Variant variant )
+    public static VariantBase toIce ( final Variant variant )
     {
         try
         {
@@ -60,7 +60,7 @@ public class VariantHelper
             {
                 return null;
             }
-            
+
             if ( variant.isNull () )
             {
                 return new VariantBase ( VariantType.VTnull );
@@ -86,7 +86,7 @@ public class VariantHelper
                 return new VariantDouble ( VariantType.VTdouble, variant.asDouble () );
             }
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
         }
         return null;
