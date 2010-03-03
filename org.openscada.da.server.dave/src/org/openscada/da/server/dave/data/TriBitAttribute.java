@@ -106,14 +106,21 @@ public class TriBitAttribute implements Attribute
 
     public void handleWrite ( final Variant value )
     {
+        final DaveDevice device = this.device;
+
+        if ( device == null )
+        {
+            throw new IllegalStateException ( "Device is not connected" );
+        }
+
         final boolean flag = value.asBoolean ();
         if ( flag )
         {
-            this.device.writeBit ( this.block, this.offset + this.writeTrueIndex, this.writeTrueSubIndex, true );
+            device.writeBit ( this.block, this.offset + this.writeTrueIndex, this.writeTrueSubIndex, true );
         }
         else
         {
-            this.device.writeBit ( this.block, this.offset + this.writeFalseIndex, this.writeFalseSubIndex, true );
+            device.writeBit ( this.block, this.offset + this.writeFalseIndex, this.writeFalseSubIndex, true );
         }
     }
 

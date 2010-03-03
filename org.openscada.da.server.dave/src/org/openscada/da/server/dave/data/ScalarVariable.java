@@ -1,14 +1,13 @@
 package org.openscada.da.server.dave.data;
 
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
@@ -185,9 +184,9 @@ public abstract class ScalarVariable implements Variable
         return this.offset + localAddress;
     }
 
-    public Set<String> handleAttributes ( final Map<String, Variant> requests )
+    public Map<String, WriteAttributeResult> handleAttributes ( final Map<String, Variant> requests )
     {
-        final Set<String> result = new HashSet<String> ();
+        final Map<String, WriteAttributeResult> result = new HashMap<String, WriteAttributeResult> ();
 
         for ( final Map.Entry<String, Variant> entry : requests.entrySet () )
         {
@@ -195,13 +194,19 @@ public abstract class ScalarVariable implements Variable
             {
                 if ( attr.getName ().equals ( entry.getKey () ) )
                 {
-                    attr.handleWrite ( entry.getValue () );
-                    result.add ( entry.getKey () );
+                    try
+                    {
+                        attr.handleWrite ( entry.getValue () );
+                        result.put ( entry.getKey (), WriteAttributeResult.OK );
+                    }
+                    catch ( final Throwable e )
+                    {
+                        result.put ( entry.getKey (), new WriteAttributeResult ( e ) );
+                    }
                 }
             }
         }
 
         return result;
     }
-
 }

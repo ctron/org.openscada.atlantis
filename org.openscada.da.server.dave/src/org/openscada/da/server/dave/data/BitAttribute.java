@@ -84,7 +84,14 @@ public class BitAttribute implements Attribute
 
     public void handleWrite ( final Variant value )
     {
-        this.device.writeBit ( this.block, this.offset + this.index, this.subIndex, value.asBoolean () );
+        final DaveDevice device = this.device;
+
+        if ( device == null )
+        {
+            throw new IllegalStateException ( "Device is not connected" );
+        }
+
+        device.writeBit ( this.block, this.offset + this.index, this.subIndex, value.asBoolean () );
     }
 
     public String getName ()

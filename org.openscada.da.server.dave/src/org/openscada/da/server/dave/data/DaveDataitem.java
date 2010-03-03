@@ -2,12 +2,10 @@ package org.openscada.da.server.dave.data;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
 import org.openscada.core.server.common.session.UserSession;
-import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
@@ -35,7 +33,7 @@ public class DaveDataitem extends DataItemInputOutputChained
         }
 
         // gather the list of open requests
-        final Map<String, Variant> requests = new HashMap<String, Variant> ();
+        final Map<String, Variant> requests = new HashMap<String, Variant> ( 0 );
 
         for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
@@ -45,14 +43,7 @@ public class DaveDataitem extends DataItemInputOutputChained
             }
         }
 
-        // hand over to the variable instance
-        final Set<String> accepted = this.variable.handleAttributes ( requests );
-
-        // OK for all accepted
-        for ( final String attr : accepted )
-        {
-            writeAttributeResults.put ( attr, WriteAttributeResult.OK );
-        }
+        writeAttributeResults.putAll ( this.variable.handleAttributes ( requests ) );
 
         // default for the rest
         return super.handleUnhandledAttributes ( writeAttributeResults, attributes );

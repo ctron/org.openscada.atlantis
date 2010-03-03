@@ -80,10 +80,17 @@ public class FloatAttribute implements Attribute
 
     public void handleWrite ( final Variant value )
     {
+        final DaveDevice device = this.device;
+
+        if ( device == null )
+        {
+            throw new IllegalStateException ( "Device is not connected" );
+        }
+
         final Double d = value.asDouble ( null );
         if ( d != null )
         {
-            this.device.writeFloat ( this.block, this.offset + this.index, d.floatValue () );
+            device.writeFloat ( this.block, this.offset + this.index, d.floatValue () );
         }
     }
 
