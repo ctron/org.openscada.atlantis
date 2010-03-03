@@ -254,21 +254,21 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
      */
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( this.prefix + ".active", new Variant ( this.active ) );
-        builder.setAttribute ( this.prefix + ".requireAck", new Variant ( this.requireAkn ) );
+        builder.setAttribute ( this.prefix + ".active", Variant.valueOf ( this.active ) );
+        builder.setAttribute ( this.prefix + ".requireAck", Variant.valueOf ( this.requireAkn ) );
 
-        builder.setAttribute ( this.prefix + ".ackRequired", this.akn ? Variant.TRUE : Variant.FALSE );
+        builder.setAttribute ( this.prefix + ".ackRequired", Variant.valueOf ( this.akn ) );
         builder.setAttribute ( this.prefix + ".state", new Variant ( this.state.toString () ) );
 
-        builder.setAttribute ( this.prefix + ".unsafe", this.unsafe ? Variant.TRUE : Variant.FALSE );
+        builder.setAttribute ( this.prefix + ".unsafe", Variant.valueOf ( this.unsafe ) );
 
         if ( isError () )
         {
-            builder.setAttribute ( this.prefix + ".error", this.alarm ? Variant.TRUE : Variant.FALSE );
+            builder.setAttribute ( this.prefix + ".error", Variant.valueOf ( this.alarm ) );
         }
         else
         {
-            builder.setAttribute ( this.prefix + ".alarm", this.alarm ? Variant.TRUE : Variant.FALSE );
+            builder.setAttribute ( this.prefix + ".alarm", Variant.valueOf ( this.alarm ) );
         }
     }
 
