@@ -26,6 +26,8 @@ public class FloatAttribute implements Attribute
 
     private Float lastValue;
 
+    private Variant lastTimestamp;
+
     public FloatAttribute ( final String name, final int index )
     {
         this.name = name;
@@ -58,13 +60,16 @@ public class FloatAttribute implements Attribute
         if ( !Float.valueOf ( f ).equals ( this.lastValue ) )
         {
             this.lastValue = f;
-            attributes.put ( this.name + ".timestamp", new Variant ( System.currentTimeMillis () ) );
+            this.lastTimestamp = new Variant ( System.currentTimeMillis () );
         }
+
+        attributes.put ( this.name + ".timestamp", this.lastTimestamp );
     }
 
     public void handleError ( final Map<String, Variant> attributes )
     {
         this.lastValue = null;
+        this.lastTimestamp = null;
     }
 
     public void handleWrite ( final Variant value )

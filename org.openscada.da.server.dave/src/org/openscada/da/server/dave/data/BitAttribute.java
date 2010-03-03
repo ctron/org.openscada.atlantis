@@ -28,6 +28,8 @@ public class BitAttribute implements Attribute
 
     private Boolean lastValue;
 
+    private Variant lastTimestamp;
+
     public BitAttribute ( final String name, final int index, final int subIndex )
     {
         this.name = name;
@@ -62,13 +64,16 @@ public class BitAttribute implements Attribute
         if ( !Boolean.valueOf ( flag ).equals ( this.lastValue ) )
         {
             this.lastValue = flag;
-            attributes.put ( this.name + ".timestamp", new Variant ( System.currentTimeMillis () ) );
+            this.lastTimestamp = new Variant ( System.currentTimeMillis () );
         }
+
+        attributes.put ( this.name + ".timestamp", this.lastTimestamp );
     }
 
     public void handleError ( final Map<String, Variant> attributes )
     {
         this.lastValue = null;
+        this.lastTimestamp = null;
     }
 
     public void handleWrite ( final Variant value )
