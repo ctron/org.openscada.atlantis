@@ -40,8 +40,26 @@ public class Variant implements Serializable, Comparable<Variant>
     public static final Variant TRUE = new Variant ( true );
 
     public static final Variant FALSE = new Variant ( false );
-    
+
     private static final VariantComparator comparator = new VariantComparator ();
+
+    public static Variant valueOf ( final boolean value )
+    {
+        return value ? TRUE : FALSE;
+    }
+
+    public static Variant valueOf ( final Object value )
+    {
+        if ( value == null )
+        {
+            return NULL;
+        }
+        if ( value instanceof Boolean )
+        {
+            return valueOf ( ( (Boolean)value ).booleanValue () );
+        }
+        return new Variant ( value );
+    }
 
     private Object value;
 
@@ -486,12 +504,12 @@ public class Variant implements Serializable, Comparable<Variant>
      */
     public Boolean asBoolean ( final Boolean defaultValue )
     {
-        if (isNull ()) {
+        if ( isNull () )
+        {
             return defaultValue;
         }
-        return asBoolean ( );
+        return asBoolean ();
     }
-
 
     public boolean isBoolean ()
     {
@@ -801,7 +819,7 @@ public class Variant implements Serializable, Comparable<Variant>
         return this.value;
     }
 
-    public int compareTo ( Variant o )
+    public int compareTo ( final Variant o )
     {
         return comparator.compare ( this, o );
     }
