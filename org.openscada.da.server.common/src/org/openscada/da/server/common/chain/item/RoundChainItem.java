@@ -96,7 +96,7 @@ public class RoundChainItem extends BaseChainItemCommon
         if ( type != RoundType.NONE && doubleValue != null )
         {
             newValue = performRound ( type, doubleValue, value, attributes );
-            attributes.put ( ROUND_ACTIVE, new Variant ( true ) );
+            attributes.put ( ROUND_ACTIVE, Variant.valueOf ( true ) );
             attributes.put ( ORIGINAL_VALUE, originalValue );
             attributes.put ( ROUND_TYPE, new Variant ( type.toString () ) );
         }

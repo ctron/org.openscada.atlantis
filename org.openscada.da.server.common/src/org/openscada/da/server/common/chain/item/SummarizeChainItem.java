@@ -112,7 +112,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
             }
         }
 
-        attributes.put ( this._sumStateName, new Variant ( count > 0 ) );
+        attributes.put ( this._sumStateName, Variant.valueOf ( count > 0 ) );
         attributes.put ( this._sumCountName, new Variant ( count ) );
         attributes.put ( this._sumListName, new Variant ( StringHelper.join ( items, ", " ) ) );
 

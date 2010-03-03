@@ -149,7 +149,7 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
         {
             attributes.put ( ORIGINAL_VALUE, new Variant ( value ) );
             newValue = this.manualValue.getValue ();
-            attributes.put ( MANUAL_ACTIVE, new Variant ( true ) );
+            attributes.put ( MANUAL_ACTIVE, Variant.TRUE );
             attributes.put ( MANUAL_TIMESTAMP, new Variant ( this.manualTimestamp.getTimeInMillis () ) );
 
             // if we have an original timestamp, replace it

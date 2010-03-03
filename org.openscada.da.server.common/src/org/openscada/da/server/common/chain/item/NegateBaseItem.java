@@ -53,7 +53,7 @@ public abstract class NegateBaseItem extends BaseChainItemCommon
             // only process if we are active
             if ( !activeFlag.isNull () )
             {
-                newValue = new Variant ( !value.asBoolean () );
+                newValue = Variant.valueOf ( !value.asBoolean () );
             }
         }
         catch ( final Exception e )

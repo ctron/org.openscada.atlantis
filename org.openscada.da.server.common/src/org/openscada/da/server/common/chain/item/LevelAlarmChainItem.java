@@ -114,7 +114,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         {
             if ( !this.highLevel.getValue ().isNull () && !value.isNull () && this.highActive.getSafeValue ( false ) )
             {
-                attributes.put ( HIGH_ALARM, new Variant ( value.asDouble () >= this.highLevel.getValue ().asDouble () ) );
+                attributes.put ( HIGH_ALARM, Variant.valueOf ( value.asDouble () >= this.highLevel.getValue ().asDouble () ) );
             }
 
         }
@@ -129,7 +129,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         {
             if ( !this.lowLevel.getValue ().isNull () && !value.isNull () && this.lowActive.getSafeValue ( false ) )
             {
-                attributes.put ( LOW_ALARM, new Variant ( value.asDouble () <= this.lowLevel.getValue ().asDouble () ) );
+                attributes.put ( LOW_ALARM, Variant.valueOf ( value.asDouble () <= this.lowLevel.getValue ().asDouble () ) );
             }
         }
         catch ( final Throwable e )
@@ -143,7 +143,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         {
             if ( !this.highHighLevel.getValue ().isNull () && !value.isNull () && this.highHighActive.getSafeValue ( false ) )
             {
-                attributes.put ( HIGHHIGH_ALARM, new Variant ( value.asDouble () >= this.highHighLevel.getValue ().asDouble () ) );
+                attributes.put ( HIGHHIGH_ALARM, Variant.valueOf ( value.asDouble () >= this.highHighLevel.getValue ().asDouble () ) );
             }
 
         }
@@ -158,7 +158,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         {
             if ( !this.lowLowLevel.getValue ().isNull () && !value.isNull () && this.lowLowActive.getSafeValue ( false ) )
             {
-                attributes.put ( LOWLOW_ALARM, new Variant ( value.asDouble () <= this.lowLowLevel.getValue ().asDouble () ) );
+                attributes.put ( LOWLOW_ALARM, Variant.valueOf ( value.asDouble () <= this.lowLowLevel.getValue ().asDouble () ) );
             }
         }
         catch ( final Throwable e )

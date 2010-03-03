@@ -51,7 +51,7 @@ public class ManualErrorOverrideChainItem extends BaseChainItemCommon
         final Variant active = attributes.get ( ManualOverrideChainItem.MANUAL_ACTIVE );
         if ( active != null && active.asBoolean () )
         {
-            checkAndReplace ( attributes, "error", new Variant ( false ) );
+            checkAndReplace ( attributes, "error", Variant.FALSE );
             checkAndReplace ( attributes, "error.count", new Variant ( 0 ) );
             checkAndReplace ( attributes, "error.items", new Variant ( "" ) );
         }
