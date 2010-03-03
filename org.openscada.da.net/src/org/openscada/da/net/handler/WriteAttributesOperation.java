@@ -69,7 +69,7 @@ public class WriteAttributesOperation
         {
             if ( writeAttributeResult.getValue ().isError () )
             {
-                resultValues.put ( writeAttributeResult.getKey (), new StringValue ( writeAttributeResult.getValue ().getError ().getMessage () ) );
+                resultValues.put ( writeAttributeResult.getKey (), new StringValue ( writeAttributeResult.getValue ().toString () ) );
             }
             else
             {
