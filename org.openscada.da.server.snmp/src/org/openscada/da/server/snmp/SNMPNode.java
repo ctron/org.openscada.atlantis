@@ -360,7 +360,7 @@ public class SNMPNode
         try
         {
             // flag on
-            this.itemRewalkState.updateData ( new Variant ( true ), null, null );
+            this.itemRewalkState.updateData ( Variant.TRUE, null, null );
 
             OID rootOid = new OID ();
             if ( value.isString () )
