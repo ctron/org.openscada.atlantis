@@ -391,7 +391,7 @@ public class SNMPNode
         finally
         {
             // flag off
-            this.itemRewalkState.updateData ( new Variant ( false ), null, null );
+            this.itemRewalkState.updateData ( Variant.FALSE, null, null );
         }
     }
 }
