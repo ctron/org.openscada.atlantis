@@ -9,7 +9,7 @@
 <sect2><title>org.openscada.osgi.equinox.console</title>
 <para>
 	The bundle <filename>org.openscada.osgi.equinox.console</filename> provides an implementation of
-	an Equinox console that is accessible using a normal TCP (or Telnet) connection.	
+	an Equinox console that is accessible using a normal <acronym>TCP</acronym> (or Telnet) connection.	
 </para>
 
 	<sect3><title>System properties</title>
@@ -17,12 +17,13 @@
 		The following system properties are available:
 		</para>
 		
-		<table><title>System properties of org.openscada.osgi.equinox.console</title>
-				<tgroup cols="3">
+		<table><title>System properties of <filename>org.openscada.osgi.equinox.console</filename></title>
+				<tgroup cols="4">
 				<thead>
 					<row>
 						<entry>Property</entry>
 						<entry>Type</entry>
+						<entry>Required</entry>
 						<entry>Description</entry>
 					</row>
 				</thead>
@@ -30,6 +31,7 @@
 					<row>
 						<entry>org.openscada.osgi.equinox.console.port</entry>
 						<entry>Integer</entry>
+						<entry>optional</entry>
 						<entry>
 						The port number the console will bind to. It is important
 						that only one console at a time can bind to a port. Different
@@ -42,6 +44,7 @@
 					<row>
 						<entry>org.openscada.osgi.equinox.console.timeout.login</entry>
 						<entry>Integer</entry>
+						<entry>optional</entry>
 						<entry>
 						The timeout in milliseconds during the login phase
 						(before the user is authenticated). If no input is received
@@ -53,6 +56,7 @@
 					<row>
 						<entry>org.openscada.osgi.equinox.console.secret</entry>
 						<entry>String</entry>
+						<entry>optional</entry>
 						<entry>
 						The <quote>secret</quote> (<abbrev>aka</abbrev> <quote>password</quote>)
 						the user has to enter in order to gain access.
@@ -62,11 +66,53 @@
 					<row>
 						<entry>org.openscada.osgi.equinox.console.timeout</entry>
 						<entry>Integer</entry>
+						<entry>optional</entry>
 						<entry>
 						The timeout in milliseconds after the login phase
 						(after the user is authenticated). If no input is received
 						for the specified amount of time the connection is closed by
 						the server.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect3>
+
+</sect2>
+
+<sect2><title>org.openscada.ds.storage.file</title>
+<para>
+	The bundle <filename>org.openscada.ds.storage.file</filename> provides an implementation of
+	the <acronym>DS</acronym> (Data Store) service based on the file system.
+</para>
+
+	<sect3><title>System properties</title>
+		<para>
+		The following system properties are available:
+		</para>
+		
+		<table><title>System properties of <filename>org.openscada.ds.storage.file</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Required</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>org.openscada.ds.storage.file.root</entry>
+						<entry>String</entry>
+						<entry>Required</entry>
+						<entry>
+						The base path to the file system storage where all data will be stored.
+						Read and write access is required. If the directory does not exists
+						it will be created including all parent directories. The path must not
+						point to a file.
 						</entry>
 					</row>
 				</tbody>
