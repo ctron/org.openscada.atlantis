@@ -346,6 +346,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
                     this.hiveEventListener.itemRegistered ( item );
                 }
             }
+            else
+            {
+                logger.warn ( String.format ( "Duplicate error: item %s already registered with hive", item.getInformation ().getName () ) );
+            }
 
             // add new topic to the new item subscription manager
             this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( this.getOperationService (), item, this.hiveEventListener ) );
