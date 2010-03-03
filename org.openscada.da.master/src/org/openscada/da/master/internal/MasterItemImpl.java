@@ -366,6 +366,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
                         }
                         catch ( final Throwable e )
                         {
+                            logger.warn ( "Failed to write value", e );
                             listener.error ( e );
                         }
                     }
@@ -387,6 +388,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
                         }
                         catch ( final Throwable e )
                         {
+                            logger.warn ( "Failed to write attributes", e );
                             listener.error ( e );
                         }
                     }
