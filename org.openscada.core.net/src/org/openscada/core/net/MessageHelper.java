@@ -97,7 +97,7 @@ public class MessageHelper
         }
         else if ( value instanceof BooleanValue )
         {
-            return new Variant ( ( (BooleanValue)value ).getValue () );
+            return Variant.valueOf ( ( (BooleanValue)value ).getValue () );
         }
         else if ( value instanceof DoubleValue )
         {
@@ -113,7 +113,7 @@ public class MessageHelper
         }
         else if ( value instanceof VoidValue )
         {
-            return new Variant ();
+            return Variant.NULL;
         }
 
         return defaultValue;
