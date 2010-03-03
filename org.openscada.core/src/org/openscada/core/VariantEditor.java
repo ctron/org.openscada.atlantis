@@ -24,9 +24,9 @@ import java.beans.PropertyEditorSupport;
 public class VariantEditor extends PropertyEditorSupport
 {
     @Override
-    public void setAsText ( String text ) throws IllegalArgumentException
+    public void setAsText ( final String text ) throws IllegalArgumentException
     {
-        String[] toks = text.split ( "#", 2 );
+        final String[] toks = text.split ( "#", 2 );
         if ( toks.length > 1 )
         {
             if ( toks[0].equalsIgnoreCase ( "INT" ) || toks[0].equalsIgnoreCase ( "INT32" ) || toks[0].equalsIgnoreCase ( "INTEGER" ) )
@@ -35,13 +35,13 @@ public class VariantEditor extends PropertyEditorSupport
             }
             else if ( toks[0].equalsIgnoreCase ( "BOOLEAN" ) || toks[0].equalsIgnoreCase ( "BOOL" ) )
             {
-                setValue ( new Variant ( Boolean.parseBoolean ( toks[1] ) ) );
+                setValue ( Variant.valueOf ( Boolean.parseBoolean ( toks[1] ) ) );
             }
             else if ( toks[0].equalsIgnoreCase ( "DOUBLE" ) || toks[0].equalsIgnoreCase ( "FLOAT" ) )
             {
                 setValue ( new Variant ( Double.parseDouble ( toks[1] ) ) );
             }
-            else if ( toks[0].equalsIgnoreCase ( "LONG" ) || toks[0].equalsIgnoreCase ( "INT64" ))
+            else if ( toks[0].equalsIgnoreCase ( "LONG" ) || toks[0].equalsIgnoreCase ( "INT64" ) )
             {
                 setValue ( new Variant ( Long.parseLong ( toks[1] ) ) );
             }
