@@ -63,6 +63,8 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     private String lastAckUser;
 
+    private Calendar aknTimestamp;
+
     public GenericRemoteMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final int priority, final String id, final EventProcessor eventProcessor )
     {
         super ( poolTracker, priority );
@@ -83,15 +85,19 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     protected void setState ( final ConditionStatus state )
     {
-        setState ( state, Calendar.getInstance () );
+        setState ( state, Calendar.getInstance (), null );
     }
 
-    protected void setState ( final ConditionStatus state, final Calendar timestamp )
+    protected void setState ( final ConditionStatus state, final Calendar timestamp, final Calendar aknTimestamp )
     {
         if ( this.state != state )
         {
             this.state = state;
             this.timestamp = timestamp.getTime ();
+            if ( aknTimestamp != null )
+            {
+                this.aknTimestamp = aknTimestamp;
+            }
             logger.debug ( "State is: {}", state );
 
             final ConditionStatusInformation info = createStatus ();
@@ -117,6 +123,30 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         } );
     }
 
+    protected static Calendar getTimestamp ( final DataItemValue itemValue, final String attributeName )
+    {
+        Calendar timestamp = null;
+        if ( attributeName != null )
+        {
+            final Variant ts = itemValue.getAttributes ().get ( attributeName );
+            if ( ts != null && ts.isNumber () )
+            {
+                timestamp = Calendar.getInstance ();
+                timestamp.setTimeInMillis ( ts.asLong ( 0L ) );
+            }
+        }
+        else
+        {
+            timestamp = itemValue.getTimestamp ();
+        }
+
+        if ( timestamp == null )
+        {
+            timestamp = Calendar.getInstance ();
+        }
+        return timestamp;
+    }
+
     protected abstract DataItemValue handleUpdate ( final DataItemValue itemValue );
 
     @Override
@@ -140,7 +170,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     private ConditionStatusInformation createStatus ()
     {
-        return new ConditionStatusInformation ( this.id, this.state, this.timestamp, null, null, this.lastAckUser );
+        return new ConditionStatusInformation ( this.id, this.state, this.timestamp, null, this.aknTimestamp.getTime (), this.lastAckUser );
     }
 
     private Event createEvent ( final ConditionStatusInformation info, final String eventType )
@@ -154,10 +184,10 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         return builder.build ();
     }
 
-    protected synchronized void publishAckRequestEvent ( final UserInformation user )
+    protected synchronized void publishAckRequestEvent ( final UserInformation user, final Date aknTimestamp )
     {
         final EventBuilder builder = Event.create ();
-        builder.sourceTimestamp ( new Date () );
+        builder.sourceTimestamp ( aknTimestamp );
         builder.entryTimestamp ( new Date () );
         builder.attribute ( Fields.SOURCE, this.id );
         builder.attribute ( Fields.EVENT_TYPE, "ACK-REQ" );

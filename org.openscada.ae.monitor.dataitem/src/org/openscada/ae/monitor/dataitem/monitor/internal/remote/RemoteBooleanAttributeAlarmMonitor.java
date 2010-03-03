@@ -32,6 +32,10 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
 
     private String attributeActive;
 
+    private String attributeTimestamp;
+
+    private String attributeAckTimestamp;
+
     public RemoteBooleanAttributeAlarmMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
     {
         super ( executor, poolTracker, priority, id, eventProcessor );
@@ -44,11 +48,9 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
         final Variant value = builder.getAttributes ().get ( this.attributeValue );
         final Variant ack = builder.getAttributes ().get ( this.attributeAck );
         final Variant active = builder.getAttributes ().get ( this.attributeActive );
-        Calendar timestamp = itemValue.getTimestamp ();
-        if ( timestamp == null )
-        {
-            timestamp = Calendar.getInstance ();
-        }
+
+        final Calendar timestamp = getTimestamp ( itemValue, this.attributeTimestamp );
+        final Calendar aknTimestamp = getTimestamp ( itemValue, this.attributeAckTimestamp );
 
         if ( value == null )
         {
@@ -105,14 +107,14 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
             }
         }
 
-        setState ( state, timestamp );
+        setState ( state, timestamp, aknTimestamp );
 
         return injectState ( builder ).build ();
     }
 
     public void akn ( final UserInformation aknUser, final Date aknTimestamp )
     {
-        publishAckRequestEvent ( aknUser );
+        publishAckRequestEvent ( aknUser, aknTimestamp );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( this.attributeAck, Variant.TRUE );
@@ -144,6 +146,8 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
         this.attributeValue = parameters.get ( "attribute.value.name" );
         this.attributeAck = parameters.get ( "attribute.ack.name" );
         this.attributeActive = parameters.get ( "attribute.active.name" );
+        this.attributeTimestamp = parameters.get ( "attribute.timestamp.name" );
+        this.attributeAckTimestamp = parameters.get ( "attribute.ack.timestamp.name" );
 
         reprocess ();
 

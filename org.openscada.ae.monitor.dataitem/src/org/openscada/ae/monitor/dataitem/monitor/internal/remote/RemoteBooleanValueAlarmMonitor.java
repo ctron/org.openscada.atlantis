@@ -30,6 +30,8 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
 
     private String attributeActive;
 
+    private String attributeAckTimestamp;
+
     public RemoteBooleanValueAlarmMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
     {
         super ( executor, poolTracker, priority, id, eventProcessor );
@@ -50,6 +52,8 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
         {
             timestamp = Calendar.getInstance ();
         }
+
+        final Calendar aknTimestamp = getTimestamp ( itemValue, this.attributeAckTimestamp );
 
         if ( value == null )
         {
@@ -106,14 +110,14 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
             }
         }
 
-        setState ( state, timestamp );
+        setState ( state, timestamp, aknTimestamp );
 
         return injectState ( builder ).build ();
     }
 
     public void akn ( final UserInformation aknUser, final Date aknTimestamp )
     {
-        publishAckRequestEvent ( aknUser );
+        publishAckRequestEvent ( aknUser, aknTimestamp );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( this.attributeAck, Variant.TRUE );
@@ -143,6 +147,7 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
         super.update ( parameters );
         this.attributeAck = parameters.get ( "attribute.ack.name" );
         this.attributeActive = parameters.get ( "attribute.active.name" );
+        this.attributeAckTimestamp = parameters.get ( "attribute.ack.timestamp.name" );
 
         reprocess ();
 
