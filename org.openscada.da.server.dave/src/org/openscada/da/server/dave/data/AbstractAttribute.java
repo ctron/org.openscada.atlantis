@@ -30,6 +30,7 @@ public class AbstractAttribute
 
     public void start ( final DaveDevice device, final DaveRequestBlock block, final int offset )
     {
+        logger.info ( "Starting attribute: {}", this.name );
         this.device = device;
         this.block = block;
         this.offset = offset;

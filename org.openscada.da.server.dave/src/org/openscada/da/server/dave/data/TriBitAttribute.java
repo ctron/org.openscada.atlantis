@@ -5,6 +5,8 @@ import java.util.Map;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.openscada.core.Variant;
 import org.openscada.da.server.dave.DaveDevice;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implement a single bit attribute
@@ -13,6 +15,9 @@ import org.openscada.da.server.dave.DaveDevice;
  */
 public class TriBitAttribute extends AbstractAttribute implements Attribute
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( TriBitAttribute.class );
+
     private final int readIndex;
 
     private final int readSubIndex;
@@ -32,6 +37,8 @@ public class TriBitAttribute extends AbstractAttribute implements Attribute
     private Variant lastTimestamp;
 
     private final boolean enableTimestamp;
+
+    private long stopped;
 
     public TriBitAttribute ( final String name, final int readIndex, final int readSubIndex, final int writeTrueIndex, final int writeTrueSubIndex, final int writeFalseIndex, final int writeFalseSubIndex, final boolean invertRead, final boolean enableTimestamp )
     {
@@ -71,6 +78,13 @@ public class TriBitAttribute extends AbstractAttribute implements Attribute
         }
     }
 
+    @Override
+    public void stop ()
+    {
+        this.stopped = System.currentTimeMillis ();
+        super.stop ();
+    }
+
     public void handleError ( final Map<String, Variant> attributes )
     {
         this.lastValue = null;
@@ -83,6 +97,7 @@ public class TriBitAttribute extends AbstractAttribute implements Attribute
 
         if ( device == null )
         {
+            logger.warn ( "Was stopped: {}", this.stopped );
             throw new IllegalStateException ( "Device is not connected" );
         }
 
