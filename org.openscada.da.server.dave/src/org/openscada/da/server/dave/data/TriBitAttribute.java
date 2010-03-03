@@ -81,7 +81,7 @@ public class TriBitAttribute implements Attribute
             attributes.put ( this.name, flag ? Variant.TRUE : Variant.FALSE );
         }
 
-        if ( this.lastValue != flag )
+        if ( !Boolean.valueOf ( flag ).equals ( this.lastValue ) )
         {
             this.lastValue = flag;
             attributes.put ( this.name + ".timestamp", new Variant ( System.currentTimeMillis () ) );

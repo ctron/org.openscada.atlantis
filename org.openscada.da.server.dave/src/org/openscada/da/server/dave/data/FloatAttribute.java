@@ -54,7 +54,8 @@ public class FloatAttribute implements Attribute
     {
         final float f = data.getFloat ( toAddress ( this.index ) );
         attributes.put ( this.name, new Variant ( f ) );
-        if ( this.lastValue != f )
+
+        if ( !Float.valueOf ( f ).equals ( this.lastValue ) )
         {
             this.lastValue = f;
             attributes.put ( this.name + ".timestamp", new Variant ( System.currentTimeMillis () ) );

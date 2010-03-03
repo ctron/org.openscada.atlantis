@@ -59,7 +59,7 @@ public class BitAttribute implements Attribute
         final boolean flag = ( b & 1 << this.subIndex ) != 0;
         attributes.put ( this.name, Variant.valueOf ( flag ) );
 
-        if ( this.lastValue != flag )
+        if ( !Boolean.valueOf ( flag ).equals ( this.lastValue ) )
         {
             this.lastValue = flag;
             attributes.put ( this.name + ".timestamp", new Variant ( System.currentTimeMillis () ) );
