@@ -287,14 +287,14 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             switch ( attrEntry.getType () )
             {
             case BIT:
-                result.add ( new BitAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getSubIndex () ) );
+                result.add ( new BitAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getSubIndex (), attrEntry.getIndexes ()[2] != 0 ) );
                 break;
             case FLOAT:
-                result.add ( new FloatAttribute ( attrEntry.getName (), attrEntry.getIndex () ) );
+                result.add ( new FloatAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
                 break;
             case TRIBIT:
                 final int[] index = attrEntry.getIndexes ();
-                result.add ( new TriBitAttribute ( attrEntry.getName (), index[0], index[1], index[2], index[3], index[4], index[5], index[6] != 0 ) );
+                result.add ( new TriBitAttribute ( attrEntry.getName (), index[0], index[1], index[2], index[3], index[4], index[5], index[6] != 0, index[7] != 0 ) );
                 break;
             default:
                 break;

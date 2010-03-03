@@ -28,10 +28,13 @@ public class FloatAttribute implements Attribute
 
     private Variant lastTimestamp;
 
-    public FloatAttribute ( final String name, final int index )
+    private final boolean enableTimestamp;
+
+    public FloatAttribute ( final String name, final int index, final boolean enableTimestamp )
     {
         this.name = name;
         this.index = index;
+        this.enableTimestamp = enableTimestamp;
     }
 
     public void start ( final DaveDevice device, final DaveRequestBlock block, final int offset )
@@ -63,7 +66,10 @@ public class FloatAttribute implements Attribute
             this.lastTimestamp = new Variant ( System.currentTimeMillis () );
         }
 
-        attributes.put ( this.name + ".timestamp", this.lastTimestamp );
+        if ( this.enableTimestamp )
+        {
+            attributes.put ( this.name + ".timestamp", this.lastTimestamp );
+        }
     }
 
     public void handleError ( final Map<String, Variant> attributes )

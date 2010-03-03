@@ -40,7 +40,9 @@ public class TriBitAttribute implements Attribute
 
     private Variant lastTimestamp;
 
-    public TriBitAttribute ( final String name, final int readIndex, final int readSubIndex, final int writeTrueIndex, final int writeTrueSubIndex, final int writeFalseIndex, final int writeFalseSubIndex, final boolean invertRead )
+    private final boolean enableTimestamp;
+
+    public TriBitAttribute ( final String name, final int readIndex, final int readSubIndex, final int writeTrueIndex, final int writeTrueSubIndex, final int writeFalseIndex, final int writeFalseSubIndex, final boolean invertRead, final boolean enableTimestamp )
     {
         this.name = name;
         this.readIndex = readIndex;
@@ -50,6 +52,7 @@ public class TriBitAttribute implements Attribute
         this.writeFalseIndex = writeFalseIndex;
         this.writeFalseSubIndex = writeFalseSubIndex;
         this.invertRead = invertRead;
+        this.enableTimestamp = enableTimestamp;
     }
 
     public void start ( final DaveDevice device, final DaveRequestBlock block, final int offset )
@@ -89,7 +92,10 @@ public class TriBitAttribute implements Attribute
             this.lastTimestamp = new Variant ( System.currentTimeMillis () );
         }
 
-        attributes.put ( this.name + ".timestamp", this.lastTimestamp );
+        if ( this.enableTimestamp )
+        {
+            attributes.put ( this.name + ".timestamp", this.lastTimestamp );
+        }
     }
 
     public void handleError ( final Map<String, Variant> attributes )
