@@ -150,7 +150,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
         // convert to attributes
         for ( final Map.Entry<String, Integer> entry : counts.entrySet () )
         {
-            builder.setAttribute ( entry.getKey (), new Variant ( entry.getValue () != 0 ) );
+            builder.setAttribute ( entry.getKey (), Variant.valueOf ( entry.getValue () != 0 ) );
             builder.setAttribute ( entry.getKey () + ".count", new Variant ( entry.getValue () ) );
         }
 
