@@ -16,6 +16,7 @@ import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.ConditionListener;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
@@ -26,7 +27,7 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl
+public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl implements MonitorService
 {
     private final static Logger logger = LoggerFactory.getLogger ( GenericRemoteMonitor.class );
 

@@ -136,9 +136,6 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
         logger.debug ( "Setting up for master item: {}", this.masterId );
 
-        final Map<String, String> parameters = new HashMap<String, String> ();
-        parameters.put ( MasterItem.MASTER_ID, this.masterId );
-
         this.tracker = new SingleObjectPoolServiceTracker ( this.poolTracker, this.masterId, new ServiceListener () {
 
             public void serviceChange ( final Object service, final Dictionary<?, ?> properties )

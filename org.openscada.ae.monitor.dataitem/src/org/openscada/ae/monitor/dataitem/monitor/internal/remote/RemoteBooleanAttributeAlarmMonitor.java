@@ -8,7 +8,6 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -20,7 +19,7 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor implements DataItemMonitor, MonitorService
+public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor implements DataItemMonitor
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( RemoteBooleanAttributeAlarmMonitor.class );
