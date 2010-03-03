@@ -104,6 +104,14 @@ public abstract class AbstractPersistentMonitorService extends AbstractMonitorSe
         }
     }
 
+    protected synchronized void storeData ( final StateInformation state )
+    {
+        if ( this.store != null )
+        {
+            this.store.writeNode ( new DataNode ( getNodeId (), state ) );
+        }
+    }
+
     protected void nodeChanged ( final DataNode node )
     {
         if ( this.disposed )
@@ -117,7 +125,7 @@ public abstract class AbstractPersistentMonitorService extends AbstractMonitorSe
         }
         else
         {
-            final Object o = node.getDataAsObject ( null );
+            final Object o = node.getDataAsObject ( this.context.getBundle (), null );
             if ( o instanceof StateInformation )
             {
                 setPersistentState ( (StateInformation)o );

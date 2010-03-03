@@ -7,6 +7,7 @@ import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.ConditionStatusInformation;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.common.StateInformation.State;
 import org.openscada.core.Variant;
 import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
@@ -23,7 +24,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     {
         defaultState = new StateInformation ();
         defaultState.setActive ( false );
-        defaultState.setOk ( false );
+        defaultState.setState ( State.UNSAFE );
         defaultState.setRequireAck ( true );
         defaultState.setTimestamp ( new Date () );
     }
@@ -33,6 +34,8 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     private StateInformation initialInformation;
 
     private StateInformation information = new StateInformation ();
+
+    private boolean initSent = false;
 
     public AbstractStateMachineMonitorService ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String id )
     {
@@ -46,7 +49,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
      */
     protected synchronized void setPersistentState ( final StateInformation state )
     {
-        logger.debug ( "Setting persistens state: {}", state );
+        logger.debug ( "Setting persistent state: {}", state );
+
+        final boolean doInit = this.initialInformation == null;
 
         if ( state == null )
         {
@@ -57,29 +62,43 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             this.initialInformation = state;
         }
 
-        final StateInformation newInformation = defaultState.apply ( this.initialInformation.apply ( this.information ) );
+        if ( doInit )
+        {
+            final StateInformation newInformation = defaultState.apply ( this.initialInformation ).apply ( this.information );
 
-        this.information = newInformation;
+            this.information = newInformation;
 
-        // re-apply the current state
-        applyState ( this.information );
+            // re-apply the current state
+            applyState ( this.information );
+        }
     }
 
     public void init ()
     {
-        // FIXME: remove when we are done
+        super.init ();
     }
 
     @Override
-    protected void switchToInit ()
+    protected synchronized void switchToInit ()
     {
+        logger.warn ( "Switched back to init: {}", getId () );
+
         // FIXME: implement
+        this.initSent = false;
+        this.initialInformation = null;
+        applyState ( this.information );
     }
 
     protected synchronized void setFailure ( final Variant value, final Date timestamp )
     {
+        if ( this.information.getState () != null && this.information.getState () == State.FAILED )
+        {
+            // no change
+            return;
+        }
+
         final StateInformation newInformation = new StateInformation ( this.information );
-        newInformation.setOk ( false );
+        newInformation.setState ( State.FAILED );
         newInformation.setValue ( value );
         newInformation.setTimestamp ( timestamp );
         newInformation.setLastFailTimestamp ( timestamp );
@@ -88,8 +107,14 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setOk ( final Variant value, final Date timestamp )
     {
+        if ( this.information.getState () != null && this.information.getState () == State.OK )
+        {
+            // no change
+            return;
+        }
+
         final StateInformation newInformation = new StateInformation ( this.information );
-        newInformation.setOk ( true );
+        newInformation.setState ( State.OK );
         newInformation.setValue ( value );
         newInformation.setTimestamp ( timestamp );
         applyState ( newInformation );
@@ -97,8 +122,14 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setUnsafe ()
     {
+        if ( this.information.getState () != null && this.information.getState () == State.UNSAFE )
+        {
+            // no change
+            return;
+        }
+
         final StateInformation newInformation = new StateInformation ( this.information );
-        newInformation.setOk ( true );
+        newInformation.setState ( State.UNSAFE );
         newInformation.setValue ( null );
         newInformation.setTimestamp ( new Date () );
         applyState ( newInformation );
@@ -106,6 +137,11 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     public synchronized void setActive ( final boolean state )
     {
+        if ( this.information.getActive () != null && this.information.getActive () == state )
+        {
+            // no change
+            return;
+        }
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setActive ( state );
         applyState ( newInformation );
@@ -113,6 +149,11 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
     {
+        if ( !ackPending ( this.information ) )
+        {
+            return;
+        }
+
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setLastAckTimestamp ( aknTimestamp );
         newInformation.setLastAckUser ( getUserName ( userInformation ) );
@@ -121,6 +162,12 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     public synchronized void setRequireAkn ( final boolean state )
     {
+        if ( this.information.getRequireAck () != null && this.information.getRequireAck () == state )
+        {
+            // no change
+            return;
+        }
+
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setRequireAck ( state );
         applyState ( newInformation );
@@ -139,23 +186,42 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     {
         final ConditionStatusInformation csi;
 
+        logger.debug ( "Apply new state: {} for {}", new Object[] { information, getId () } );
+
         this.information = information;
+
         if ( this.initialInformation != null )
         {
             // if we are initialized we send out our current status
+            this.initSent = false;
             csi = new ConditionStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser () );
+            storeData ( this.information );
         }
         else
         {
+            logger.debug ( "Skipping apply notification since we are still un-initialized" );
+
             // otherwise send out our dummy status until we got initialized
-            csi = new ConditionStatusInformation ( getId (), ConditionStatus.INIT, new Date (), Variant.NULL, null, null );
+            if ( !this.initSent )
+            {
+                csi = new ConditionStatusInformation ( getId (), ConditionStatus.INIT, new Date (), Variant.NULL, null, null );
+                this.initSent = true;
+            }
+            else
+            {
+                csi = null;
+            }
         }
-        notifyStateChange ( csi );
+
+        if ( csi != null )
+        {
+            notifyStateChange ( csi );
+        }
     }
 
     private static ConditionStatus generateStatus ( final StateInformation information )
     {
-        if ( information.getActive () == null || information.getRequireAck () == null || information.getOk () == null )
+        if ( information.getActive () == null || information.getRequireAck () == null )
         {
             return ConditionStatus.INIT;
         }
@@ -163,19 +229,19 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         {
             return ConditionStatus.INACTIVE;
         }
-        else if ( information.getValue () == null )
+        else if ( information.getValue () == null || information.getState () == State.UNSAFE )
         {
             return ConditionStatus.UNSAFE;
         }
 
         if ( !information.getRequireAck () )
         {
-            return information.getOk () ? ConditionStatus.OK : ConditionStatus.NOT_OK;
+            return information.getState () == State.OK ? ConditionStatus.OK : ConditionStatus.NOT_OK;
         }
         else
         {
             final boolean isAckPending = ackPending ( information );
-            if ( information.getOk () )
+            if ( information.getState () == State.OK )
             {
                 return isAckPending ? ConditionStatus.NOT_AKN : ConditionStatus.OK;
             }

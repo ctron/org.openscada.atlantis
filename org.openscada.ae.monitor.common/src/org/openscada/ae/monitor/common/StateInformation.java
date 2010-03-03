@@ -1,16 +1,26 @@
 package org.openscada.ae.monitor.common;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.openscada.core.Variant;
 
-public class StateInformation
+public class StateInformation implements Serializable
 {
+    private static final long serialVersionUID = 1L;
+
+    public static enum State
+    {
+        OK,
+        FAILED,
+        UNSAFE;
+    }
+
     private Boolean requireAck;
 
     private Boolean active;
 
-    private Boolean ok;
+    private State state;
 
     private Variant value;
 
@@ -30,7 +40,7 @@ public class StateInformation
     {
         this.requireAck = information.requireAck;
         this.active = information.active;
-        this.ok = information.ok;
+        this.state = information.state;
         this.value = information.value;
         if ( information.timestamp != null )
         {
@@ -58,9 +68,9 @@ public class StateInformation
         {
             newInformation.requireAck = information.requireAck;
         }
-        if ( information.ok != null )
+        if ( information.state != null )
         {
-            newInformation.ok = information.ok;
+            newInformation.state = information.state;
         }
         if ( information.value != null )
         {
@@ -116,14 +126,14 @@ public class StateInformation
         this.active = active;
     }
 
-    public Boolean getOk ()
+    public State getState ()
     {
-        return this.ok;
+        return this.state;
     }
 
-    public void setOk ( final Boolean ok )
+    public void setState ( final State state )
     {
-        this.ok = ok;
+        this.state = state;
     }
 
     public Variant getValue ()
@@ -164,5 +174,30 @@ public class StateInformation
     public void setLastAckTimestamp ( final Date lackAckTimestamp )
     {
         this.lastAckTimestamp = lackAckTimestamp;
+    }
+
+    @Override
+    public String toString ()
+    {
+        final StringBuilder sb = new StringBuilder ();
+
+        sb.append ( "State: " );
+        sb.append ( this.state );
+        sb.append ( ", Active: " );
+        sb.append ( this.active );
+        sb.append ( ", requireAck: " );
+        sb.append ( this.requireAck );
+        sb.append ( ", value: " );
+        sb.append ( this.value );
+        sb.append ( ", timestamp: " );
+        sb.append ( this.timestamp );
+        sb.append ( ", lastFailTimestamp: " );
+        sb.append ( this.lastFailTimestamp );
+        sb.append ( ", lastAckTimestamp: " );
+        sb.append ( this.lastAckTimestamp );
+        sb.append ( ", lastAckUser: " );
+        sb.append ( this.lastAckUser );
+
+        return sb.toString ();
     }
 }
