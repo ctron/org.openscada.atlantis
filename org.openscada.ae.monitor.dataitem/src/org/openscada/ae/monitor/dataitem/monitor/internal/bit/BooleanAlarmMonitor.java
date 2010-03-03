@@ -58,7 +58,7 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
     protected void injectAttributes ( final Builder builder )
     {
         super.injectAttributes ( builder );
-        builder.setAttribute ( this.prefix + ".reference", new Variant ( this.reference ) );
+        builder.setAttribute ( this.prefix + ".reference", Variant.valueOf ( this.reference ) );
     }
 
     @Override
