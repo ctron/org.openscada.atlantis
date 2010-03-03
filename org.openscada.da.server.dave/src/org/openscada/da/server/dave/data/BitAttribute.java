@@ -26,6 +26,8 @@ public class BitAttribute implements Attribute
 
     private DaveRequestBlock block;
 
+    private Boolean lastValue;
+
     public BitAttribute ( final String name, final int index, final int subIndex )
     {
         this.name = name;
@@ -56,10 +58,17 @@ public class BitAttribute implements Attribute
         final byte b = data.get ( toAddress ( this.index ) );
         final boolean flag = ( b & 1 << this.subIndex ) != 0;
         attributes.put ( this.name, flag ? Variant.TRUE : Variant.FALSE );
+
+        if ( this.lastValue != flag )
+        {
+            this.lastValue = flag;
+            attributes.put ( this.name + ".timestamp", new Variant ( System.currentTimeMillis () ) );
+        }
     }
 
     public void handleError ( final Map<String, Variant> attributes )
     {
+        this.lastValue = null;
     }
 
     public void handleWrite ( final Variant value )

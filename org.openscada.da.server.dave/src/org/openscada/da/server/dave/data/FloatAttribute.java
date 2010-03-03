@@ -24,6 +24,8 @@ public class FloatAttribute implements Attribute
 
     private DaveRequestBlock block;
 
+    private Float lastValue;
+
     public FloatAttribute ( final String name, final int index )
     {
         this.name = name;
@@ -52,10 +54,16 @@ public class FloatAttribute implements Attribute
     {
         final float f = data.getFloat ( toAddress ( this.index ) );
         attributes.put ( this.name, new Variant ( f ) );
+        if ( this.lastValue != f )
+        {
+            this.lastValue = f;
+            attributes.put ( this.name + ".timestamp", new Variant ( System.currentTimeMillis () ) );
+        }
     }
 
     public void handleError ( final Map<String, Variant> attributes )
     {
+        this.lastValue = null;
     }
 
     public void handleWrite ( final Variant value )

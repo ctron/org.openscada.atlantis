@@ -36,6 +36,8 @@ public class TriBitAttribute implements Attribute
 
     private final boolean invertRead;
 
+    private Boolean lastValue;
+
     public TriBitAttribute ( final String name, final int readIndex, final int readSubIndex, final int writeTrueIndex, final int writeTrueSubIndex, final int writeFalseIndex, final int writeFalseSubIndex, final boolean invertRead )
     {
         this.name = name;
@@ -78,10 +80,17 @@ public class TriBitAttribute implements Attribute
         {
             attributes.put ( this.name, flag ? Variant.TRUE : Variant.FALSE );
         }
+
+        if ( this.lastValue != flag )
+        {
+            this.lastValue = flag;
+            attributes.put ( this.name + ".timestamp", new Variant ( System.currentTimeMillis () ) );
+        }
     }
 
     public void handleError ( final Map<String, Variant> attributes )
     {
+        this.lastValue = null;
     }
 
     public void handleWrite ( final Variant value )
