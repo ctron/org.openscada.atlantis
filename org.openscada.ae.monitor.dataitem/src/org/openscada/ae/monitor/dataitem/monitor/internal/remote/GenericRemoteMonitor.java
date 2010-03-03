@@ -33,7 +33,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     protected static Map<String, Variant> convertAttributes ( final Map<String, String> parameters )
     {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 1 );
 
         for ( final Map.Entry<String, String> entry : parameters.entrySet () )
         {
@@ -57,9 +57,11 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     protected final EventProcessor eventProcessor;
 
-    protected Map<String, Variant> attributes = new HashMap<String, Variant> ();
+    protected Map<String, Variant> attributes = new HashMap<String, Variant> ( 0 );
 
     protected final Executor executor;
+
+    private String lastAckUser;
 
     public GenericRemoteMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final int priority, final String id, final EventProcessor eventProcessor )
     {
@@ -96,18 +98,23 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
             this.eventProcessor.publishEvent ( createEvent ( info, state.toString () ) );
 
-            final ArrayList<ConditionListener> listnersClone = new ArrayList<ConditionListener> ( this.listeners );
-            this.executor.execute ( new Runnable () {
-
-                public void run ()
-                {
-                    for ( final ConditionListener listener : listnersClone )
-                    {
-                        listener.statusChanged ( info );
-                    }
-                }
-            } );
+            notifyListener ( info );
         }
+    }
+
+    private synchronized void notifyListener ( final ConditionStatusInformation info )
+    {
+        final ArrayList<ConditionListener> listnersClone = new ArrayList<ConditionListener> ( this.listeners );
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                for ( final ConditionListener listener : listnersClone )
+                {
+                    listener.statusChanged ( info );
+                }
+            }
+        } );
     }
 
     protected abstract DataItemValue handleUpdate ( final DataItemValue itemValue );
@@ -115,8 +122,6 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
     @Override
     public synchronized DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
-        logger.debug ( "Data update" );
-
         if ( value == null )
         {
             setState ( ConditionStatus.UNSAFE );
@@ -135,7 +140,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     private ConditionStatusInformation createStatus ()
     {
-        return new ConditionStatusInformation ( this.id, this.state, this.timestamp, null, null, null );
+        return new ConditionStatusInformation ( this.id, this.state, this.timestamp, null, null, this.lastAckUser );
     }
 
     private Event createEvent ( final ConditionStatusInformation info, final String eventType )
@@ -149,18 +154,26 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         return builder.build ();
     }
 
-    protected void publishAckRequestEvent ( final UserInformation user )
+    protected synchronized void publishAckRequestEvent ( final UserInformation user )
     {
         final EventBuilder builder = Event.create ();
         builder.sourceTimestamp ( new Date () );
         builder.entryTimestamp ( new Date () );
         builder.attribute ( Fields.SOURCE, this.id );
         builder.attribute ( Fields.EVENT_TYPE, "ACK-REQ" );
-        if ( user != null )
+        if ( user != null && user.getName () != null )
         {
             builder.attribute ( Fields.ACTOR_NAME, user.getName () );
+            this.lastAckUser = user.getName ();
+        }
+        else
+        {
+            this.lastAckUser = null;
         }
         builder.attributes ( this.attributes );
+
+        // fire change of last ack user
+        notifyListener ( createStatus () );
 
         this.eventProcessor.publishEvent ( builder.build () );
     }
