@@ -241,12 +241,21 @@ public class DaveJobManager
         return this.writeQueue.poll ();
     }
 
-    public synchronized void dispose ()
+    public void dispose ()
     {
-        for ( final DaveRequestBlock block : this.blocks.values () )
+        synchronized ( this )
         {
-            block.dispose ();
+            for ( final DaveRequestBlock block : this.blocks.values () )
+            {
+                block.dispose ();
+            }
+
+            if ( this.job != null )
+            {
+                this.job.cancel ( false );
+            }
         }
+
         this.executor.shutdown ();
     }
 

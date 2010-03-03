@@ -5,24 +5,15 @@ import java.util.Map;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.openscada.core.Variant;
 import org.openscada.da.server.dave.DaveDevice;
-import org.openscada.da.server.dave.DaveRequestBlock;
 
 /**
  * Implement a single bit attribute
  * @author Jens Reimann
  *
  */
-public class FloatAttribute implements Attribute
+public class FloatAttribute extends AbstractAttribute implements Attribute
 {
-    private final String name;
-
     private final int index;
-
-    private int offset;
-
-    private DaveDevice device;
-
-    private DaveRequestBlock block;
 
     private Float lastValue;
 
@@ -32,27 +23,9 @@ public class FloatAttribute implements Attribute
 
     public FloatAttribute ( final String name, final int index, final boolean enableTimestamp )
     {
-        this.name = name;
+        super ( name );
         this.index = index;
         this.enableTimestamp = enableTimestamp;
-    }
-
-    public void start ( final DaveDevice device, final DaveRequestBlock block, final int offset )
-    {
-        this.device = device;
-        this.block = block;
-        this.offset = offset;
-    }
-
-    public void stop ()
-    {
-        this.device = null;
-        this.block = null;
-    }
-
-    protected int toAddress ( final int localAddress )
-    {
-        return localAddress + this.offset - this.block.getRequest ().getStart ();
     }
 
     public void handleData ( final IoBuffer data, final Map<String, Variant> attributes )
@@ -92,11 +65,6 @@ public class FloatAttribute implements Attribute
         {
             device.writeFloat ( this.block, this.offset + this.index, d.floatValue () );
         }
-    }
-
-    public String getName ()
-    {
-        return this.name;
     }
 
 }

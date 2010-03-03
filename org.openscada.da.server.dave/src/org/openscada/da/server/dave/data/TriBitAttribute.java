@@ -5,23 +5,14 @@ import java.util.Map;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.openscada.core.Variant;
 import org.openscada.da.server.dave.DaveDevice;
-import org.openscada.da.server.dave.DaveRequestBlock;
 
 /**
  * Implement a single bit attribute
  * @author Jens Reimann
  *
  */
-public class TriBitAttribute implements Attribute
+public class TriBitAttribute extends AbstractAttribute implements Attribute
 {
-    private final String name;
-
-    private int offset;
-
-    private DaveDevice device;
-
-    private DaveRequestBlock block;
-
     private final int readIndex;
 
     private final int readSubIndex;
@@ -44,7 +35,7 @@ public class TriBitAttribute implements Attribute
 
     public TriBitAttribute ( final String name, final int readIndex, final int readSubIndex, final int writeTrueIndex, final int writeTrueSubIndex, final int writeFalseIndex, final int writeFalseSubIndex, final boolean invertRead, final boolean enableTimestamp )
     {
-        this.name = name;
+        super ( name );
         this.readIndex = readIndex;
         this.readSubIndex = readSubIndex;
         this.writeTrueIndex = writeTrueIndex;
@@ -53,24 +44,6 @@ public class TriBitAttribute implements Attribute
         this.writeFalseSubIndex = writeFalseSubIndex;
         this.invertRead = invertRead;
         this.enableTimestamp = enableTimestamp;
-    }
-
-    public void start ( final DaveDevice device, final DaveRequestBlock block, final int offset )
-    {
-        this.device = device;
-        this.block = block;
-        this.offset = offset;
-    }
-
-    public void stop ()
-    {
-        this.device = null;
-        this.block = null;
-    }
-
-    protected int toAddress ( final int localAddress )
-    {
-        return localAddress + this.offset - this.block.getRequest ().getStart ();
     }
 
     public void handleData ( final IoBuffer data, final Map<String, Variant> attributes )
@@ -122,11 +95,6 @@ public class TriBitAttribute implements Attribute
         {
             device.writeBit ( this.block, this.offset + this.writeFalseIndex, this.writeFalseSubIndex, true );
         }
-    }
-
-    public String getName ()
-    {
-        return this.name;
     }
 
 }

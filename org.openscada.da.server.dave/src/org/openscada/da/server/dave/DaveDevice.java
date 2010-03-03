@@ -72,6 +72,8 @@ public class DaveDevice implements SingleSessionIoHandler
 
     private String name;
 
+    private boolean disposed;
+
     private static enum ConnectionState
     {
         CONNECTING,
@@ -131,6 +133,8 @@ public class DaveDevice implements SingleSessionIoHandler
 
     public void dispose ()
     {
+        this.disposed = true;
+
         this.configurator.dispose ();
 
         this.itemFactory.dispose ();
@@ -234,14 +238,17 @@ public class DaveDevice implements SingleSessionIoHandler
 
     private void disconnected ()
     {
-        setSession ( null );
-        this.executor.schedule ( new Runnable () {
+        if ( !this.disposed )
+        {
+            setSession ( null );
+            this.executor.schedule ( new Runnable () {
 
-            public void run ()
-            {
-                connect ();
-            }
-        }, 1000, TimeUnit.MILLISECONDS );
+                public void run ()
+                {
+                    connect ();
+                }
+            }, 1000, TimeUnit.MILLISECONDS );
+        }
     }
 
     private void disconnect ()
