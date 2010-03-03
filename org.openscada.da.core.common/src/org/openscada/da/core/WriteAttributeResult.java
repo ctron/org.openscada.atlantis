@@ -19,6 +19,9 @@
 
 package org.openscada.da.core;
 
+import java.io.PrintWriter;
+import java.io.StringWriter;
+
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
@@ -62,5 +65,24 @@ public class WriteAttributeResult
     public boolean isSuccess ()
     {
         return this.error == null;
+    }
+
+    @Override
+    public String toString ()
+    {
+        if ( this.error == null )
+        {
+            return "OK";
+        }
+        String message = this.error.getMessage ();
+        if ( message == null )
+        {
+            final StringWriter sw = new StringWriter ();
+            final PrintWriter pw = new PrintWriter ( sw );
+            this.error.printStackTrace ( pw );
+            pw.close ();
+            message = sw.toString ();
+        }
+        return message;
     }
 }
