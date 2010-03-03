@@ -74,7 +74,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         this.ignoreTimestampOnlyChange = controller.getModel ().isIgnoreTimestampOnlyChange ();
         this.qualityErrorIfLessThen = controller.getModel ().getQualityErrorIfLessThen ();
 
-        this.updateData ( null, new MapBuilder<String, Variant> ().put ( "opc.connection.error", new Variant ( true ) ).put ( "opc.itemId", new Variant ( opcItemId ) ).getMap (), AttributeMode.SET );
+        this.updateData ( null, new MapBuilder<String, Variant> ().put ( "opc.connection.error", Variant.TRUE ).put ( "opc.itemId", new Variant ( opcItemId ) ).getMap (), AttributeMode.SET );
     }
 
     @Override
@@ -136,7 +136,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
         if ( entry.isFailed () )
         {
-            attributes.put ( "opc.read.error", new Variant ( true ) );
+            attributes.put ( "opc.read.error", Variant.TRUE );
             attributes.put ( "opc.read.error.code", new Variant ( entry.getErrorCode () ) );
             attributes.put ( "opc.read.error.message", new Variant ( String.format ( "0x%08x: %s", entry.getErrorCode (), errorMessage ) ) );
 
@@ -161,9 +161,9 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             final short quality = state.getQuality ();
             attributes.put ( "opc.quality", new Variant ( quality ) );
 
-            attributes.put ( "opc.quality.error", new Variant ( quality < this.qualityErrorIfLessThen ) );
-            attributes.put ( "opc.quality.manual", new Variant ( quality == 216 ) );
-            attributes.put ( "org.openscada.da.manual.active", new Variant ( quality == 216 ) );
+            attributes.put ( "opc.quality.error", Variant.valueOf ( quality < this.qualityErrorIfLessThen ) );
+            attributes.put ( "opc.quality.manual", Variant.valueOf ( quality == 216 ) );
+            attributes.put ( "org.openscada.da.manual.active", Variant.valueOf ( quality == 216 ) );
 
             attributes.put ( "opc.value.type", null );
             try
@@ -179,7 +179,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             if ( value == null )
             {
                 value = new Variant ();
-                attributes.put ( "opc.value.conversion.error", new Variant ( true ) );
+                attributes.put ( "opc.value.conversion.error", Variant.TRUE );
                 attributes.put ( "opc.value.conversion.source", new Variant ( state.getValue ().toString () ) );
             }
             else
@@ -239,7 +239,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     public void itemUnrealized ()
     {
         final Map<String, Variant> attributes = Helper.clearAttributes ();
-        attributes.put ( "opc.connection.error", new Variant ( true ) );
+        attributes.put ( "opc.connection.error", Variant.TRUE );
         this.updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
