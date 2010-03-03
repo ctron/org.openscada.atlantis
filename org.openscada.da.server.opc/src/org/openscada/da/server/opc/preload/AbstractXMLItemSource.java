@@ -134,7 +134,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
     private void handleError ( final Throwable e )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "error", new Variant ( true ) );
+        attributes.put ( "error", Variant.TRUE );
         attributes.put ( "error.message", new Variant ( e.getMessage () ) );
 
         this.stateItem.updateData ( new Variant ( "ERROR" ), attributes, AttributeMode.UPDATE );
