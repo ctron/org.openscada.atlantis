@@ -68,7 +68,7 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
         this._node = node;
         this._oid = oid;
 
-        updateData ( new Variant (), new MapBuilder<String, Variant> ().put ( ATTR_NO_INITIAL_DATA_ERROR, new Variant ( true ) ).getMap (), AttributeMode.SET );
+        updateData ( new Variant (), new MapBuilder<String, Variant> ().put ( ATTR_NO_INITIAL_DATA_ERROR, Variant.TRUE ).getMap (), AttributeMode.SET );
     }
 
     @Override
@@ -174,7 +174,7 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
         try
         {
             final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-            attributes.put ( ATTR_READ_ERROR, new Variant ( false ) );
+            attributes.put ( ATTR_READ_ERROR, Variant.FALSE );
             attributes.put ( ATTR_NO_INITIAL_DATA_ERROR, null );
             updateData ( convertValue ( vb ), attributes, AttributeMode.UPDATE );
             clearError ();
@@ -230,7 +230,7 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        attributes.put ( ATTR_READ_ERROR, new Variant ( text != null ) );
+        attributes.put ( ATTR_READ_ERROR, Variant.valueOf ( text != null ) );
         attributes.put ( "lastReadError.message", new Variant ( text ) );
         attributes.put ( ATTR_NO_INITIAL_DATA_ERROR, null );
 
