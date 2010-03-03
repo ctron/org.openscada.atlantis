@@ -57,7 +57,7 @@ public class BitAttribute implements Attribute
     {
         final byte b = data.get ( toAddress ( this.index ) );
         final boolean flag = ( b & 1 << this.subIndex ) != 0;
-        attributes.put ( this.name, flag ? Variant.TRUE : Variant.FALSE );
+        attributes.put ( this.name, Variant.valueOf ( flag ) );
 
         if ( this.lastValue != flag )
         {
