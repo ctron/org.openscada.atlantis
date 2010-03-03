@@ -25,7 +25,7 @@ public class RemoteAttributeMonitorFactoryImpl extends AbstractMonitorFactory
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new RemoteBooleanAttributeAlarmMonitor ( this.executor, this.poolTracker, eventProcessor, configurationId, 100 );
+        return new RemoteBooleanAttributeAlarmMonitor ( this.context, this.executor, this.poolTracker, eventProcessor, configurationId, 100 );
     }
 
 }

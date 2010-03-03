@@ -24,6 +24,7 @@ import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,7 +66,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     private Calendar aknTimestamp;
 
-    public GenericRemoteMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final int priority, final String id, final EventProcessor eventProcessor )
+    public GenericRemoteMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final int priority, final String id, final EventProcessor eventProcessor )
     {
         super ( poolTracker, priority );
         this.executor = executor;
@@ -211,6 +212,17 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
     protected Builder injectState ( final Builder builder )
     {
         builder.setAttribute ( this.id + ".state", new Variant ( this.state.toString () ) );
+
+        boolean alarm = false;
+        switch ( this.state )
+        {
+        case NOT_OK_AKN:
+        case NOT_OK_NOT_AKN:
+        case NOT_OK:
+            alarm = true;
+        }
+
+        builder.setAttribute ( this.id + ".alarm", Variant.valueOf ( alarm ) );
         return builder;
     }
 

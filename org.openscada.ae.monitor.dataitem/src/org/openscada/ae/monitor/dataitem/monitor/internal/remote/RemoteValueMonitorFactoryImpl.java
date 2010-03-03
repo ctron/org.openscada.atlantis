@@ -25,7 +25,7 @@ public class RemoteValueMonitorFactoryImpl extends AbstractMonitorFactory
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new RemoteBooleanValueAlarmMonitor ( this.executor, this.poolTracker, eventProcessor, configurationId, 100 );
+        return new RemoteBooleanValueAlarmMonitor ( this.context, this.executor, this.poolTracker, eventProcessor, configurationId, 100 );
     }
 
 }

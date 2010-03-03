@@ -9,6 +9,7 @@ import java.util.concurrent.Executor;
 import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
+import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
@@ -16,6 +17,7 @@ import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,9 +34,9 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
 
     private String attributeAckTimestamp;
 
-    public RemoteBooleanValueAlarmMonitor ( final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
+    public RemoteBooleanValueAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
     {
-        super ( executor, poolTracker, priority, id, eventProcessor );
+        super ( context, executor, poolTracker, priority, id, eventProcessor );
     }
 
     protected DataItemValue handleUpdate ( final DataItemValue itemValue )
@@ -145,9 +147,12 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
         logger.debug ( "Apply update: {}", parameters );
 
         super.update ( parameters );
-        this.attributeAck = parameters.get ( "attribute.ack.name" );
-        this.attributeActive = parameters.get ( "attribute.active.name" );
-        this.attributeAckTimestamp = parameters.get ( "attribute.ack.timestamp.name" );
+
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+
+        this.attributeAck = cfg.getString ( "attribute.ack.name" );
+        this.attributeActive = cfg.getString ( "attribute.active.name" );
+        this.attributeAckTimestamp = cfg.getStringNonEmpty ( "attribute.ack.timestamp.name" );
 
         reprocess ();
 
