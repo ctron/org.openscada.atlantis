@@ -46,11 +46,11 @@ public class Helper
             switch ( variant.getType () )
             {
             case JIVariant.VT_BOOL:
-                return new Variant ( variant.getObjectAsBoolean () );
+                return Variant.valueOf ( variant.getObjectAsBoolean () );
             case JIVariant.VT_EMPTY:
-                return new Variant ();
+                return Variant.NULL;
             case JIVariant.VT_NULL:
-                return new Variant ();
+                return Variant.NULL;
             case JIVariant.VT_I1:
                 return new Variant ( ( (Character)variant.getObject () ).charValue () );
             case JIVariant.VT_I2:
@@ -168,7 +168,7 @@ public class Helper
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         if ( entry.getErrorCode () != 0 )
         {
-            attributes.put ( "opc.add.error", new Variant ( true ) );
+            attributes.put ( "opc.add.error", Variant.TRUE );
             attributes.put ( "opc.add.code", new Variant ( entry.getErrorCode () ) );
             attributes.put ( "opc.add.message", new Variant ( String.format ( "0x%08x", entry.getErrorCode () ) ) );
         }
