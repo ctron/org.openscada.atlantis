@@ -113,7 +113,7 @@ public class NotifyConnectionErrorListener implements ConnectionStateListener
             }
             else
             {
-                attrs.put ( "proxy.error", new Variant ( true ) );
+                attrs.put ( "proxy.error", Variant.TRUE );
                 attrs.put ( "proxy.error.message", new Variant ( "Underlying connection in state " + state ) );
             }
             item.updateData ( null, attrs, AttributeMode.UPDATE );
