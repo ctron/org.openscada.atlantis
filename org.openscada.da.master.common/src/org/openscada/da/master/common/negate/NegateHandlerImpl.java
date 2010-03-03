@@ -52,7 +52,7 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
         }
         else
         {
-            return new Variant ( !value.asBoolean () );
+            return Variant.valueOf ( !value.asBoolean () );
         }
     }
 
