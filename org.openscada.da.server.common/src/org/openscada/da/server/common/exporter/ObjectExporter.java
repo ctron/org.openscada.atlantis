@@ -142,15 +142,15 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
     private void initAttribute ( final PropertyDescriptor pd )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "property.writeable", new Variant ( pd.getWriteMethod () != null ) );
-        attributes.put ( "property.readable", new Variant ( pd.getReadMethod () != null ) );
-        attributes.put ( "property.bound", new Variant ( pd.isBound () ) );
-        attributes.put ( "property.expert", new Variant ( pd.isExpert () ) );
-        attributes.put ( "property.constrained", new Variant ( pd.isConstrained () ) );
+        attributes.put ( "property.writeable", Variant.valueOf ( pd.getWriteMethod () != null ) );
+        attributes.put ( "property.readable", Variant.valueOf ( pd.getReadMethod () != null ) );
+        attributes.put ( "property.bound", Variant.valueOf ( pd.isBound () ) );
+        attributes.put ( "property.expert", Variant.valueOf ( pd.isExpert () ) );
+        attributes.put ( "property.constrained", Variant.valueOf ( pd.isConstrained () ) );
         attributes.put ( "property.label", new Variant ( pd.getDisplayName () ) );
         attributes.put ( "property.type", new Variant ( pd.getPropertyType ().getName () ) );
         attributes.put ( "description", new Variant ( pd.getShortDescription () ) );
-        attributes.put ( "exporter.bound", new Variant ( this.bound ) );
+        attributes.put ( "exporter.bound", Variant.valueOf ( this.bound ) );
 
         final Method m = pd.getReadMethod ();
         if ( m != null )
@@ -341,7 +341,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
 
             if ( e != null )
             {
-                attributes.put ( "value.error", new Variant ( true ) );
+                attributes.put ( "value.error", Variant.TRUE );
                 attributes.put ( "value.error.message", new Variant ( e.getMessage () ) );
             }
             else
