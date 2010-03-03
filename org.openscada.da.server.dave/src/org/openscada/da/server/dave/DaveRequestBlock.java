@@ -75,13 +75,13 @@ public class DaveRequestBlock
         public void receivedError ( final long now )
         {
             tickNow ( now );
-            this.stateItem.updateData ( new Variant ( false ), null, null );
+            this.stateItem.updateData ( Variant.FALSE, null, null );
         }
 
         public void receivedUpdate ( final long now )
         {
             tickNow ( now );
-            this.stateItem.updateData ( new Variant ( true ), null, null );
+            this.stateItem.updateData ( Variant.TRUE, null, null );
         }
 
         private void tickNow ( final long now )
