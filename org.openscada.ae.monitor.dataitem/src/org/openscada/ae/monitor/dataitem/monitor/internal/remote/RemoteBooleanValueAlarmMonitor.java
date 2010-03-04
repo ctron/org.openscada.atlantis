@@ -112,7 +112,7 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
             }
         }
 
-        setState ( state, timestamp, aknTimestamp );
+        setState ( state, timestamp.getTime (), aknTimestamp.getTime () );
 
         return injectState ( builder ).build ();
     }

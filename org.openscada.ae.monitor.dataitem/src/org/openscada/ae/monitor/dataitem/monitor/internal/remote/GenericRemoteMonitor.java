@@ -22,9 +22,15 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.da.master.MasterItem;
+import org.openscada.ds.DataListener;
+import org.openscada.ds.DataNode;
+import org.openscada.ds.DataStore;
 import org.openscada.sec.UserInformation;
+import org.openscada.utils.osgi.SingleServiceListener;
+import org.openscada.utils.osgi.SingleServiceTracker;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,14 +70,107 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     private String lastAckUser;
 
-    private Calendar aknTimestamp;
+    private Date aknTimestamp;
+
+    private final SingleServiceTracker tracker;
+
+    private DataStore store;
+
+    private final DataListener listener;
+
+    private final BundleContext context;
+
+    private PersistentState persistentState;
 
     public GenericRemoteMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final int priority, final String id, final EventProcessor eventProcessor )
     {
         super ( poolTracker, priority );
+        this.context = context;
         this.executor = executor;
         this.eventProcessor = eventProcessor;
         this.id = id;
+
+        this.state = ConditionStatus.INIT;
+
+        this.listener = new DataListener () {
+
+            public void nodeChanged ( final DataNode node )
+            {
+                GenericRemoteMonitor.this.nodeChanged ( node );
+            }
+        };
+
+        this.tracker = new SingleServiceTracker ( context, DataStore.class.getName (), new SingleServiceListener () {
+
+            public void serviceChange ( final ServiceReference reference, final Object service )
+            {
+                GenericRemoteMonitor.this.setStore ( (DataStore)service );
+            }
+        } );
+        this.tracker.open ();
+    }
+
+    protected synchronized void nodeChanged ( final DataNode node )
+    {
+        Object o = null;
+
+        if ( node != null )
+        {
+            o = node.getDataAsObject ( this.context.getBundle (), null );
+        }
+
+        if ( o == null )
+        {
+            o = new PersistentState ();
+        }
+
+        logger.info ( "Loaded persistent state: {} current state {}", new Object[] { o, this.state } );
+
+        if ( ! ( o instanceof PersistentState ) )
+        {
+            return;
+        }
+
+        this.persistentState = (PersistentState)o;
+        this.lastAckUser = this.persistentState.getLastAckUser ();
+
+        final ConditionStatus currentState = this.state;
+        this.state = this.persistentState.getState ();
+        final Date currentTimestamp = this.timestamp;
+        this.timestamp = this.persistentState.getTimestamp ();
+        final Date currentAknTimestamp = this.aknTimestamp;
+        this.aknTimestamp = this.persistentState.getAckTimestamp ();
+
+        if ( currentState != ConditionStatus.INIT )
+        {
+            // nothing received from init to here ... so the stored is still valid
+            setState ( currentState, currentTimestamp, currentAknTimestamp );
+        }
+    }
+
+    protected synchronized void setStore ( final DataStore store )
+    {
+        if ( this.store != null )
+        {
+            this.store.detachListener ( getNodeId (), this.listener );
+        }
+        this.store = store;
+        if ( this.store != null )
+        {
+            this.store.attachListener ( getNodeId (), this.listener );
+        }
+    }
+
+    private String getNodeId ()
+    {
+        return getId () + "/remoteMonitor";
+    }
+
+    @Override
+    public synchronized void dispose ()
+    {
+        this.tracker.close ();
+        super.dispose ();
     }
 
     public String getId ()
@@ -81,31 +180,54 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     public void init ()
     {
-        setState ( ConditionStatus.UNSAFE );
     }
 
     protected void setState ( final ConditionStatus state )
     {
-        setState ( state, Calendar.getInstance (), null );
+        setState ( state, new Date (), null );
     }
 
-    protected void setState ( final ConditionStatus state, final Calendar timestamp, final Calendar aknTimestamp )
+    protected synchronized void setState ( final ConditionStatus state, final Date timestamp, final Date aknTimestamp )
     {
         if ( this.state != state )
         {
             this.state = state;
-            this.timestamp = timestamp.getTime ();
+            this.timestamp = timestamp;
             if ( aknTimestamp != null )
             {
                 this.aknTimestamp = aknTimestamp;
             }
             logger.debug ( "State is: {}", state );
 
-            final ConditionStatusInformation info = createStatus ();
+            doStore ();
+            doNotify ();
+        }
+    }
 
-            this.eventProcessor.publishEvent ( createEvent ( info, state.toString () ) );
+    private void doStore ()
+    {
+        final DataStore store = this.store;
+        if ( store != null )
+        {
+            final PersistentState state = new PersistentState ();
+            state.setAckTimestamp ( this.aknTimestamp );
+            state.setLastAckUser ( this.lastAckUser );
+            state.setState ( this.state );
+            state.setTimestamp ( this.timestamp );
 
-            notifyListener ( info );
+            store.writeNode ( new DataNode ( getNodeId (), state ) );
+        }
+    }
+
+    private void doNotify ()
+    {
+        final ConditionStatusInformation info = createStatus ();
+        notifyListener ( info );
+
+        if ( this.persistentState != null )
+        {
+            // only create events when we are initialized
+            this.eventProcessor.publishEvent ( createEvent ( info, this.state.toString () ) );
         }
     }
 
@@ -171,7 +293,20 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     private ConditionStatusInformation createStatus ()
     {
-        return new ConditionStatusInformation ( this.id, this.state, this.timestamp, null, this.aknTimestamp.getTime (), this.lastAckUser );
+        Date timestamp = this.timestamp;
+        if ( timestamp == null )
+        {
+            timestamp = new Date ();
+        }
+
+        if ( this.persistentState == null )
+        {
+            return new ConditionStatusInformation ( this.id, ConditionStatus.INIT, timestamp, null, this.aknTimestamp, this.lastAckUser );
+        }
+        else
+        {
+            return new ConditionStatusInformation ( this.id, this.state, timestamp, null, this.aknTimestamp, this.lastAckUser );
+        }
     }
 
     private Event createEvent ( final ConditionStatusInformation info, final String eventType )
@@ -202,6 +337,9 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
             this.lastAckUser = null;
         }
         builder.attributes ( this.attributes );
+
+        // store the ack info
+        doStore ();
 
         // fire change of last ack user
         notifyListener ( createStatus () );
@@ -248,18 +386,21 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     protected void reprocess ()
     {
-        this.executor.execute ( new Runnable () {
+        if ( !getMasterItems ().isEmpty () )
+        {
+            this.executor.execute ( new Runnable () {
 
-            public void run ()
-            {
-                logger.debug ( "Reprocessing {} master items", getMasterItems ().size () );
-
-                for ( final MasterItem item : getMasterItems () )
+                public void run ()
                 {
-                    item.reprocess ();
+                    logger.debug ( "Reprocessing {} master items", getMasterItems ().size () );
+
+                    for ( final MasterItem item : getMasterItems () )
+                    {
+                        item.reprocess ();
+                    }
                 }
-            }
-        } );
+            } );
+        }
     }
 
 }
