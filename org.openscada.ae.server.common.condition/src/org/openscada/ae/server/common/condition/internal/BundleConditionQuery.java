@@ -135,7 +135,6 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
 
         this.services.clear ();
         this.tracker.close ();
-
     }
 
     public synchronized void statusChanged ( final ConditionStatusInformation status )
