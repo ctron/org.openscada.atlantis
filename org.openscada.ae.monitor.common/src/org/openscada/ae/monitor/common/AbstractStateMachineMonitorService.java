@@ -212,6 +212,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setLastAckTimestamp ( aknTimestamp );
         newInformation.setLastAckUser ( getUserName ( userInformation ) );
+        newInformation.setTimestamp ( aknTimestamp );
 
         publishEvent ( createEvent ( aknTimestamp, userInformation, "AKN", null ) );
         applyAndSendStatus ( newInformation );
