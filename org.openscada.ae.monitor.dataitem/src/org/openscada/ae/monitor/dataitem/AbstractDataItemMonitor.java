@@ -71,7 +71,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     private final ObjectPoolTracker poolTracker;
 
-    protected Map<String, Variant> attributes = new HashMap<String, Variant> ();
+    private Boolean initialUpdate;
 
     public AbstractDataItemMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
@@ -106,19 +106,38 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     {
         disconnect ();
 
+        if ( this.initialUpdate != null && this.initialUpdate == true )
+        {
+            this.initialUpdate = false;
+        }
+        if ( this.initialUpdate == null )
+        {
+            this.initialUpdate = true;
+        }
+
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
         this.masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, "'" + MasterItem.MASTER_ID + "' must be set" );
         this.handlerPriority = cfg.getInteger ( "handlerPriority", getDefaultPriority () );
         this.monitorType = cfg.getString ( "monitorType", this.defaultMonitorType );
 
-        this.attributes = convertAttributes ( properties );
-
-        init ();
-
+        setInformationAttributes ( convertAttributes ( properties ) );
         setActive ( cfg.getBoolean ( "active", true ) );
         setRequireAkn ( cfg.getBoolean ( "requireAck", false ) );
         connect ();
+    }
+
+    protected boolean isInitialUpdate ()
+    {
+        final Boolean initial = this.initialUpdate;
+        if ( initial == null )
+        {
+            return true;
+        }
+        else
+        {
+            return initial;
+        }
     }
 
     protected int getDefaultPriority ()

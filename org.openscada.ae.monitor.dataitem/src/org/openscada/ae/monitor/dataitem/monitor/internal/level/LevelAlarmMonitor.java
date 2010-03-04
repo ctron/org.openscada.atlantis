@@ -75,7 +75,10 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
         if ( this.limit != newLimit )
         {
             this.limit = newLimit;
-            publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Change preset", new Variant ( newLimit ), new Date () ) );
+            if ( !isInitialUpdate () )
+            {
+                publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Change preset", Variant.valueOf ( newLimit ), new Date () ) );
+            }
         }
 
         reprocess ();

@@ -22,7 +22,7 @@ public abstract class AbstractMonitorService implements MonitorService
 
     private final Executor executor;
 
-    private ConditionStatusInformation currentState;
+    protected ConditionStatusInformation currentState;
 
     public AbstractMonitorService ( final String id, final Executor executor )
     {

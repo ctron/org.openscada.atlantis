@@ -1,11 +1,16 @@
 package org.openscada.ae.monitor.common;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.ConditionStatus;
 import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
+import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.StateInformation.State;
 import org.openscada.core.Variant;
@@ -37,10 +42,13 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private boolean initSent = false;
 
+    private Map<String, Variant> informationAttributes;
+
     public AbstractStateMachineMonitorService ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String id )
     {
         super ( id, executor, context );
         this.eventProcessor = eventProcessor;
+        this.informationAttributes = Collections.emptyMap ();
     }
 
     /**
@@ -78,6 +86,18 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         super.init ();
     }
 
+    protected void setInformationAttributes ( final Map<String, Variant> informationAttributes )
+    {
+        if ( informationAttributes == null )
+        {
+            this.informationAttributes = Collections.emptyMap ();
+        }
+        else
+        {
+            this.informationAttributes = new HashMap<String, Variant> ( informationAttributes );
+        }
+    }
+
     @Override
     protected synchronized void switchToInit ()
     {
@@ -102,10 +122,11 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         newInformation.setValue ( value );
         newInformation.setTimestamp ( timestamp );
         newInformation.setLastFailTimestamp ( timestamp );
-        applyState ( newInformation );
+
+        applyAndSendStatus ( newInformation );
     }
 
-    protected synchronized void setOk ( final Variant value, final Date timestamp )
+    protected synchronized void setOk ( final Variant value, Date timestamp )
     {
         if ( this.information.getState () != null && this.information.getState () == State.OK )
         {
@@ -113,11 +134,17 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             return;
         }
 
+        if ( timestamp == null )
+        {
+            timestamp = new Date ();
+        }
+
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setState ( State.OK );
         newInformation.setValue ( value );
         newInformation.setTimestamp ( timestamp );
-        applyState ( newInformation );
+
+        applyAndSendStatus ( newInformation );
     }
 
     protected synchronized void setUnsafe ()
@@ -128,11 +155,14 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             return;
         }
 
+        final Date now = new Date ();
+
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setState ( State.UNSAFE );
         newInformation.setValue ( null );
-        newInformation.setTimestamp ( new Date () );
-        applyState ( newInformation );
+        newInformation.setTimestamp ( now );
+
+        applyAndSendStatus ( newInformation );
     }
 
     public synchronized void setActive ( final boolean state )
@@ -144,7 +174,25 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         }
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setActive ( state );
+
+        publishEvent ( createEvent ( new Date (), null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change active state" ) );
+        applyAndSendStatus ( newInformation );
+    }
+
+    private void applyAndSendStatus ( final StateInformation newInformation )
+    {
+        final ConditionStatusInformation oldConditionState = this.currentState;
         applyState ( newInformation );
+        final ConditionStatusInformation newConditionState = this.currentState;
+        sendStatusWhenChanged ( oldConditionState, newConditionState );
+    }
+
+    private void sendStatusWhenChanged ( final ConditionStatusInformation oldConditionState, final ConditionStatusInformation newConditionState )
+    {
+        if ( oldConditionState.getStatus () != newConditionState.getStatus () )
+        {
+            publishEvent ( createEvent ( newConditionState.getStatusTimestamp (), null, newConditionState.getStatus ().toString (), newConditionState.getValue () ) );
+        }
     }
 
     public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
@@ -157,7 +205,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setLastAckTimestamp ( aknTimestamp );
         newInformation.setLastAckUser ( getUserName ( userInformation ) );
-        applyState ( newInformation );
+
+        publishEvent ( createEvent ( aknTimestamp, userInformation, "AKN", null ) );
+        applyAndSendStatus ( newInformation );
     }
 
     public synchronized void setRequireAkn ( final boolean state )
@@ -170,7 +220,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setRequireAck ( state );
-        applyState ( newInformation );
+
+        publishEvent ( createEvent ( new Date (), null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change require acknowledge state" ) );
+        applyAndSendStatus ( newInformation );
     }
 
     private String getUserName ( final UserInformation userInformation )
@@ -182,6 +234,45 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         return userInformation.getName ();
     }
 
+    private EventBuilder createEvent ( final Date timestamp, final UserInformation userInformation, final String eventType, final Variant value )
+    {
+        final EventBuilder builder = Event.create ();
+
+        final Date now = new Date ();
+        builder.entryTimestamp ( now );
+        if ( timestamp != null )
+        {
+            builder.sourceTimestamp ( timestamp );
+        }
+        else
+        {
+            builder.sourceTimestamp ( now );
+        }
+
+        builder.attributes ( this.informationAttributes );
+
+        builder.attribute ( Fields.SOURCE, getId () );
+
+        if ( userInformation != null && userInformation.getName () != null )
+        {
+            builder.attribute ( Fields.ACTOR_NAME, userInformation.getName () );
+            builder.attribute ( Fields.ACTOR_TYPE, "USER" );
+        }
+        if ( value != null )
+        {
+            builder.attribute ( Fields.VALUE, value );
+        }
+
+        builder.attribute ( Fields.EVENT_TYPE, eventType );
+
+        return builder;
+    }
+
+    protected boolean isActivated ()
+    {
+        return this.initialInformation != null;
+    }
+
     private synchronized void applyState ( final StateInformation information )
     {
         final ConditionStatusInformation csi;
@@ -190,7 +281,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
         this.information = information;
 
-        if ( this.initialInformation != null )
+        if ( isActivated () )
         {
             // if we are initialized we send out our current status
             this.initSent = false;
@@ -216,6 +307,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         if ( csi != null )
         {
             notifyStateChange ( csi );
+        }
+        else
+        {
         }
     }
 
@@ -267,8 +361,11 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void publishEvent ( final EventBuilder builder )
     {
-        injectEventAttributes ( builder );
-        this.eventProcessor.publishEvent ( builder.build () );
+        if ( isActivated () )
+        {
+            injectEventAttributes ( builder );
+            this.eventProcessor.publishEvent ( builder.build () );
+        }
     }
 
     protected void injectEventAttributes ( final EventBuilder builder )
