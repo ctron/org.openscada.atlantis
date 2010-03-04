@@ -687,6 +687,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     @Override
     protected synchronized void onConnectionBound ()
     {
+        super.onConnectionBound ();
+
         for ( final String key : this.eventListeners.keySet () )
         {
             sendSubscribeEventQuery ( key, true );
