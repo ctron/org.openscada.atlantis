@@ -685,6 +685,19 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
+    protected synchronized void onConnectionBound ()
+    {
+        for ( final String key : this.eventListeners.keySet () )
+        {
+            sendSubscribeEventQuery ( key, true );
+        }
+        for ( final String key : this.conditionListeners.keySet () )
+        {
+            sendSubscribeConditions ( key, true );
+        }
+    }
+
+    @Override
     public synchronized void sessionClosed ( final IoSession session ) throws Exception
     {
         // set states to DISCONNECTED
