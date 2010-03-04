@@ -42,12 +42,26 @@ public class ConditionStatusInformation
     public ConditionStatusInformation ( final String id, final ConditionStatus status, final Date statusTimestamp, final Variant value, final Date lastAknTimestamp, final String lastAknUser )
     {
         super ();
+
         this.id = id;
         this.status = status;
         this.statusTimestamp = statusTimestamp;
         this.value = value;
         this.lastAknTimestamp = lastAknTimestamp;
         this.lastAknUser = lastAknUser;
+
+        if ( id == null )
+        {
+            throw new NullPointerException ( "'status' must not be null" );
+        }
+        if ( status == null )
+        {
+            throw new NullPointerException ( "'status' must not be null" );
+        }
+        if ( statusTimestamp == null )
+        {
+            throw new NullPointerException ( "'statusTimestamp' must not be null" );
+        }
     }
 
     public String getId ()
