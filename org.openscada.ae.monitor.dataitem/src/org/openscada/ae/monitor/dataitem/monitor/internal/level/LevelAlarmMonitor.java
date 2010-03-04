@@ -72,7 +72,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             setActive ( false );
         }
 
-        if ( this.limit != newLimit )
+        if ( isDifferent ( this.limit, newLimit ) )
         {
             this.limit = newLimit;
             if ( !isInitialUpdate () )

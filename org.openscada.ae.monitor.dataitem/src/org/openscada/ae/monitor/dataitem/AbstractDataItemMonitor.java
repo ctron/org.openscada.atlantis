@@ -429,4 +429,17 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         }
     }
 
+    protected static boolean isDifferent ( final Object oldLimit, final Object newLimit )
+    {
+        if ( oldLimit == newLimit )
+        {
+            return false;
+        }
+        if ( oldLimit == null )
+        {
+            return true;
+        }
+        return !oldLimit.equals ( newLimit );
+    }
+
 }

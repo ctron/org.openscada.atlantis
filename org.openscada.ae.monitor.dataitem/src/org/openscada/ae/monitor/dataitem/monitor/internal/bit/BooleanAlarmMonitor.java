@@ -45,9 +45,9 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
         super.update ( properties );
 
         final boolean newReference = Boolean.parseBoolean ( properties.get ( "reference" ) );
-        if ( newReference != this.reference )
+        if ( isDifferent ( this.reference, newReference ) )
         {
-            publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Change reference", Variant.valueOf ( newReference ), new Date () ) );
+            publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Change reference value", Variant.valueOf ( newReference ), new Date () ) );
             this.reference = newReference;
         }
 
