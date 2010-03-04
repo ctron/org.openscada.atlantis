@@ -141,9 +141,13 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         final Date currentAknTimestamp = this.aknTimestamp;
         this.aknTimestamp = this.persistentState.getAckTimestamp ();
 
+        // now send the status
+        final ConditionStatusInformation info = createStatus ();
+        notifyListener ( info );
+
         if ( currentState != ConditionStatus.INIT )
         {
-            // nothing received from init to here ... so the stored is still valid
+            // perform the transition to "now"
             setState ( currentState, currentTimestamp, currentAknTimestamp );
         }
     }
