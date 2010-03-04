@@ -27,13 +27,13 @@ public class ConditionMessageHelper
             return null;
         }
 
-        List<ConditionStatusInformation> result = new ArrayList<ConditionStatusInformation> ();
+        final List<ConditionStatusInformation> result = new ArrayList<ConditionStatusInformation> ();
 
-        ListValue value = (ListValue)baseValue;
+        final ListValue value = (ListValue)baseValue;
 
-        for ( Value entryValue : value.getValues () )
+        for ( final Value entryValue : value.getValues () )
         {
-            ConditionStatusInformation entry = fromValueEntry ( entryValue );
+            final ConditionStatusInformation entry = fromValueEntry ( entryValue );
             if ( entry != null )
             {
                 result.add ( entry );
@@ -55,31 +55,31 @@ public class ConditionMessageHelper
             return null;
         }
 
-        MapValue value = (MapValue)entryValue;
+        final MapValue value = (MapValue)entryValue;
         try
         {
 
-            String id = ( ( (StringValue)value.get ( "id" ) ).getValue () );
-            Variant currentValue = ( MessageHelper.valueToVariant ( value.get ( "value" ), null ) );
+            final String id = ( (StringValue)value.get ( "id" ) ).getValue ();
+            final Variant currentValue = MessageHelper.valueToVariant ( value.get ( "value" ), null );
 
             Date lastAknTimestamp = null;
-            LongValue lastAknTimestampValue = (LongValue)value.get ( "lastAknTimestamp" );
+            final LongValue lastAknTimestampValue = (LongValue)value.get ( "lastAknTimestamp" );
             if ( lastAknTimestampValue != null )
             {
-                lastAknTimestamp = new Date ( ( lastAknTimestampValue ).getValue () );
+                lastAknTimestamp = new Date ( lastAknTimestampValue.getValue () );
             }
 
             String lastAknUser = null;
-            StringValue lastAknUserValue = (StringValue)value.get ( "lastAknUser" );
+            final StringValue lastAknUserValue = (StringValue)value.get ( "lastAknUser" );
             if ( lastAknUserValue != null )
             {
                 lastAknUser = lastAknUserValue.getValue ();
             }
 
             Date statusTimestamp = null;
-            statusTimestamp = ( new Date ( ( (LongValue)value.get ( "statusTimestamp" ) ).getValue () ) );
+            statusTimestamp = new Date ( ( (LongValue)value.get ( "statusTimestamp" ) ).getValue () );
             // get status
-            ConditionStatus status = ConditionStatus.valueOf ( ( (StringValue)value.get ( "status" ) ).getValue () );
+            final ConditionStatus status = ConditionStatus.valueOf ( ( (StringValue)value.get ( "status" ) ).getValue () );
             if ( status == null )
             {
                 return null;
@@ -87,11 +87,11 @@ public class ConditionMessageHelper
 
             return new ConditionStatusInformation ( id, status, statusTimestamp, currentValue, lastAknTimestamp, lastAknUser );
         }
-        catch ( ClassCastException e )
+        catch ( final ClassCastException e )
         {
             return null;
         }
-        catch ( NullPointerException e )
+        catch ( final NullPointerException e )
         {
             return null;
         }
@@ -99,11 +99,11 @@ public class ConditionMessageHelper
 
     public static Value toValue ( final ConditionStatusInformation[] added )
     {
-        ListValue result = new ListValue ();
+        final ListValue result = new ListValue ();
 
         if ( added != null )
         {
-            for ( ConditionStatusInformation condition : added )
+            for ( final ConditionStatusInformation condition : added )
             {
                 result.add ( toValue ( condition ) );
             }
@@ -114,17 +114,20 @@ public class ConditionMessageHelper
 
     private static Value toValue ( final ConditionStatusInformation condition )
     {
-        MapValue value = new MapValue ();
+        final MapValue value = new MapValue ();
 
         value.put ( "id", new StringValue ( condition.getId () ) );
         value.put ( "status", new StringValue ( condition.getStatus ().toString () ) );
-        Value currentValue = MessageHelper.variantToValue ( condition.getValue () );
+        final Value currentValue = MessageHelper.variantToValue ( condition.getValue () );
         if ( currentValue != null )
         {
             value.put ( "value", currentValue );
         }
         value.put ( "lastAknUser", new StringValue ( condition.getLastAknUser () ) );
-        value.put ( "statusTimestamp", new LongValue ( condition.getStatusTimestamp ().getTime () ) );
+        if ( condition.getStatusTimestamp () != null )
+        {
+            value.put ( "statusTimestamp", new LongValue ( condition.getStatusTimestamp ().getTime () ) );
+        }
         if ( condition.getLastAknTimestamp () != null )
         {
             value.put ( "lastAknTimestamp", new LongValue ( condition.getLastAknTimestamp ().getTime () ) );
@@ -140,9 +143,9 @@ public class ConditionMessageHelper
             return new VoidValue ();
         }
 
-        ListValue result = new ListValue ();
+        final ListValue result = new ListValue ();
 
-        for ( String entry : removed )
+        for ( final String entry : removed )
         {
             result.add ( new StringValue ( entry ) );
         }
@@ -157,8 +160,8 @@ public class ConditionMessageHelper
             return null;
         }
 
-        Set<String> removed = new HashSet<String> ();
-        for ( Value entryValue : ( (ListValue)value ).getValues () )
+        final Set<String> removed = new HashSet<String> ();
+        for ( final Value entryValue : ( (ListValue)value ).getValues () )
         {
             if ( entryValue instanceof StringValue )
             {
