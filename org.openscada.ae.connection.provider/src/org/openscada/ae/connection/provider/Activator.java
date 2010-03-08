@@ -1,10 +1,13 @@
 package org.openscada.ae.connection.provider;
 
+import org.openscada.ae.connection.provider.internal.ConnectionProvider;
+import org.openscada.core.connection.provider.AbstractConnectionProvider;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator
 {
+    private AbstractConnectionProvider connectionProvider;
 
     /*
      * (non-Javadoc)
@@ -12,6 +15,8 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
+        this.connectionProvider = new ConnectionProvider ( context );
+        this.connectionProvider.start ();
     }
 
     /*
@@ -20,6 +25,7 @@ public class Activator implements BundleActivator
      */
     public void stop ( final BundleContext context ) throws Exception
     {
+        this.connectionProvider.start ();
+        this.connectionProvider = null;
     }
-
 }
