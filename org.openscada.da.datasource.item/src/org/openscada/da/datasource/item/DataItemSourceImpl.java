@@ -35,7 +35,7 @@ import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.openscada.da.client.connection.service.ConnectionService;
+import org.openscada.da.connection.provider.ConnectionService;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.WriteInformation;

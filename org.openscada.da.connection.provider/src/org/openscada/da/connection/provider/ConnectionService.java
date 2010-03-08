@@ -1,4 +1,4 @@
-package org.openscada.da.client.connection.service;
+package org.openscada.da.connection.provider;
 
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;

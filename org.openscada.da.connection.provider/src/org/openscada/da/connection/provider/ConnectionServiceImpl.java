@@ -4,7 +4,6 @@ import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
-import org.openscada.da.client.connection.service.ConnectionService;
 
 public class ConnectionServiceImpl extends AbstractConnectionService implements ConnectionService
 {
