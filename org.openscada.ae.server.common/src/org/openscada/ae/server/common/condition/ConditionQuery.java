@@ -23,13 +23,10 @@ public class ConditionQuery
         this.cachedData = new HashMap<String, ConditionStatusInformation> ();
     }
 
-    public void setListener ( final ConditionQueryListener listener )
+    public synchronized void setListener ( final ConditionQueryListener listener )
     {
-        synchronized ( this )
-        {
-            this.listener = listener;
-            fireListener ( this.cachedData.values ().toArray ( new ConditionStatusInformation[0] ), null );
-        }
+        this.listener = listener;
+        fireListener ( this.cachedData.values ().toArray ( new ConditionStatusInformation[0] ), null );
     }
 
     private synchronized void fireListener ( final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
@@ -40,30 +37,27 @@ public class ConditionQuery
         }
     }
 
-    protected void updateData ( final ConditionStatusInformation[] data, final String[] removed )
+    protected synchronized void updateData ( final ConditionStatusInformation[] data, final String[] removed )
     {
-        synchronized ( this )
+        if ( data != null )
         {
-            if ( data != null )
+            for ( final ConditionStatusInformation info : data )
             {
-                for ( final ConditionStatusInformation info : data )
-                {
-                    this.cachedData.put ( info.getId (), info );
-                }
+                this.cachedData.put ( info.getId (), info );
             }
-            final Set<String> removedItems = new HashSet<String> ();
-            if ( removed != null )
-            {
-                for ( final String entry : removed )
-                {
-                    if ( this.cachedData.remove ( entry ) != null )
-                    {
-                        removedItems.add ( entry );
-                    }
-                }
-            }
-            fireListener ( data, removedItems.toArray ( new String[removedItems.size ()] ) );
         }
+        final Set<String> removedItems = new HashSet<String> ();
+        if ( removed != null )
+        {
+            for ( final String entry : removed )
+            {
+                if ( this.cachedData.remove ( entry ) != null )
+                {
+                    removedItems.add ( entry );
+                }
+            }
+        }
+        fireListener ( data, removedItems.toArray ( new String[removedItems.size ()] ) );
     }
 
     public synchronized void dispose ()
