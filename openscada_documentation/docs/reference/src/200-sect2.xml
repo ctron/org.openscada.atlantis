@@ -131,7 +131,7 @@
 			<para>
 				You will need the following modules and their dependencies:
 				<itemizedlist>
-					<listitem><para>org.openscada.da.client.common</para></listitem>
+					<listitem><para>org.openscada.da.client</para></listitem>
 				</itemizedlist>
 				Additionally you will need one of the following dependencies at runtime:
 				<itemizedlist>

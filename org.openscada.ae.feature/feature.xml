@@ -509,7 +509,7 @@ DAMAGES.
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.openscada.utils.filter"/>
       <import plugin="org.openscada.ca"/>
-      <import plugin="org.openscada.da.client.common"/>
+      <import plugin="org.openscada.da.client"/>
       <import plugin="org.openscada.da.client.connection.service"/>
       <import plugin="org.openscada.da.datasource"/>
       <import plugin="org.openscada.da.master"/>

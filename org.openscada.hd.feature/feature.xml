@@ -20,7 +20,7 @@
    <requires>
       <import plugin="org.openscada.net"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.openscada.da.client.common"/>
+      <import plugin="org.openscada.da.client"/>
       <import plugin="org.openscada.da.master"/>
       <import plugin="org.openscada.da.server.common"/>
       <import feature="org.openscada.aurora" version="0.14.0.qualifier"/>
