@@ -36,25 +36,23 @@
    <requires>
       <import plugin="com.springsource.org.apache.log4j"/>
       <import plugin="org.apache.mina.core"/>
-      <import plugin="org.openscada.utils"/>
-      <import plugin="org.eclipse.osgi"/>
-      <import plugin="org.apache.mina.filter.compression"/>
       <import plugin="org.apache.mina.transport.socket.apr"/>
-      <import plugin="com.springsource.javax.xml.stream"/>
-      <import plugin="com.springsource.org.apache.xmlbeans"/>
-      <import plugin="org.springframework.beans"/>
-      <import plugin="org.springframework.context"/>
-      <import plugin="org.springframework.core"/>
-      <import plugin="com.springsource.jxl"/>
-      <import plugin="com.springsource.org.jdom"/>
-      <import plugin="org.openscada.external.jOpenDocument"/>
-      <import plugin="slf4j.api"/>
+      <import plugin="org.openscada.utils"/>
       <import plugin="com.springsource.org.apache.commons.beanutils"/>
+      <import plugin="org.springframework.beans"/>
+      <import plugin="org.springframework.core"/>
       <import plugin="org.openscada.ca"/>
-      <import plugin="org.openscada.utils.osgi"/>
+      <import plugin="slf4j.api"/>
+      <import plugin="org.eclipse.osgi"/>
       <import feature="org.openscada.external.jinterop" version="2.0.6.qualifier"/>
-      <import plugin="org.openscada.opc.dcom"/>
-      <import plugin="org.openscada.opc.lib"/>
+      <import plugin="org.openscada.core"/>
+      <import plugin="org.openscada.core.client"/>
+      <import plugin="org.openscada.core.server.common"/>
+      <import plugin="org.openscada.da.client.common"/>
+      <import plugin="org.openscada.da.core.common"/>
+      <import plugin="org.openscada.da.server.common"/>
+      <import plugin="org.openscada.ca.servlet.jaxws"/>
+      <import plugin="org.openscada.core.connection.provider"/>
    </requires>
 
    <plugin
