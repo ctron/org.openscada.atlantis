@@ -12,11 +12,11 @@ Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.da.client;version="0.15.0";
   uses:="org.openscada.core.client,
    org.openscada.core,
-   org.openscada.core.subscription,
-   org.openscada.da.core"
+   org.openscada.da.core,
+   org.openscada.core.subscription"
 Bundle-Version: 0.15.0.qualifier
-Bundle-Name: OpenSCADA-DA-Client-Common
+Bundle-Name: OpenSCADA DA Client
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
-Bundle-SymbolicName: org.openscada.da.client.common
+Bundle-SymbolicName: org.openscada.da.client
