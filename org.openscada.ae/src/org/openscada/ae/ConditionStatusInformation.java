@@ -19,14 +19,17 @@
 
 package org.openscada.ae;
 
+import java.io.Serializable;
 import java.util.Date;
 
 import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class ConditionStatusInformation
+public class ConditionStatusInformation implements Serializable
 {
+    private static final long serialVersionUID = 7037926327295003076L;
+
     private final String id;
 
     private final ConditionStatus status;

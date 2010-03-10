@@ -31,6 +31,7 @@ public class MonitorSyncController implements ConditionListener
         }
         this.connection = connection;
         this.id = id;
+        this.connection.setConditionListener ( this.id, this );
     }
 
     public void dataChanged ( final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
@@ -66,22 +67,12 @@ public class MonitorSyncController implements ConditionListener
     {
         this.listeners.add ( listener );
         listener.dataChanged ( this.cachedMonitors.toArray ( new ConditionStatusInformation[] {} ), null );
-        if ( this.listeners.size () == 1 )
-        {
-            this.connection.setConditionListener ( this.id, this );
-        }
     }
 
     public synchronized boolean removeListener ( final ConditionListener listener )
     {
         this.listeners.remove ( listener );
-        if ( this.listeners.size () == 0 )
-        {
-            this.connection.setConditionListener ( this.id, listener );
-            this.cachedMonitors.clear ();
-            return true;
-        }
-        return false;
+        return ( this.listeners.size () == 0 );
     }
 
     public void statusChanged ( final SubscriptionState state )
@@ -97,5 +88,10 @@ public class MonitorSyncController implements ConditionListener
         default:
             break;
         }
+    }
+
+    public void dispose ()
+    {
+        this.connection.setConditionListener ( this.id, null );
     }
 }

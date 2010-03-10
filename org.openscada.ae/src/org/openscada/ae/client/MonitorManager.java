@@ -41,6 +41,12 @@ public class MonitorManager implements ConnectionStateListener
                 this.connected = true;
             }
             break;
+        case CLOSED:
+            for ( MonitorSyncController controller : this.monitorListeners.values () )
+            {
+                controller.dispose ();
+            }
+            this.monitorListeners.clear ();
         default:
             if ( this.connected )
             {
@@ -68,11 +74,7 @@ public class MonitorManager implements ConnectionStateListener
         {
             return;
         }
-        // if no listeners left then remove controller as well
-        if ( monitorSyncController.removeListener ( listener ) )
-        {
-            this.monitorListeners.remove ( id );
-        }
+        monitorSyncController.removeListener ( listener );
     }
 
     public boolean isConnected ()

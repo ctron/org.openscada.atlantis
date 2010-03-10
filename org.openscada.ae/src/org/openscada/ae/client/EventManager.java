@@ -41,6 +41,12 @@ public class EventManager implements ConnectionStateListener
                 this.connected = true;
             }
             break;
+        case CLOSED:
+            for ( EventSyncController controller : this.eventListeners.values () )
+            {
+                controller.dispose ();
+            }
+            this.eventListeners.clear ();
         default:
             if ( this.connected )
             {
@@ -68,11 +74,7 @@ public class EventManager implements ConnectionStateListener
         {
             return;
         }
-        // if no listeners left then remove controller as well
-        if ( eventSyncController.removeListener ( listener ) )
-        {
-            this.eventListeners.remove ( id );
-        }
+        eventSyncController.removeListener ( listener );
     }
 
     public boolean isConnected ()

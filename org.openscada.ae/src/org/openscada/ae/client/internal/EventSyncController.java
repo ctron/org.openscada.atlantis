@@ -30,33 +30,24 @@ public class EventSyncController implements EventListener
         }
         this.connection = connection;
         this.id = id;
+        this.connection.setEventListener ( this.id, this );
     }
 
     public synchronized void addListener ( final EventListener listener )
     {
         this.listeners.add ( listener );
         listener.dataChanged ( this.cachedEvents.toArray ( new Event[] {} ) );
-        if ( this.listeners.size () == 1 )
-        {
-            this.connection.setEventListener ( this.id, this );
-        }
     }
 
     /**
-     * returns true if no listeners left, also automatically unsubsribes itself
+     * returns true if no listeners left
      * @param listener
      * @return
      */
     public synchronized boolean removeListener ( final EventListener listener )
     {
         this.listeners.remove ( listener );
-        if ( this.listeners.size () == 0 )
-        {
-            this.connection.setEventListener ( this.id, null );
-            this.cachedEvents.clear ();
-            return true;
-        }
-        return false;
+        return ( this.listeners.size () == 0 );
     }
 
     public void dataChanged ( final Event[] addedEvents )
@@ -82,5 +73,10 @@ public class EventSyncController implements EventListener
         default:
             break;
         }
+    }
+
+    public void dispose ()
+    {
+        this.connection.setEventListener ( this.id, null );
     }
 }
