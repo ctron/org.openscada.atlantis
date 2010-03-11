@@ -1,7 +1,6 @@
 package org.openscada.ae.client.internal;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -21,7 +20,7 @@ public class MonitorSyncController implements ConditionListener
 
     private final String id;
 
-    private final Set<ConditionStatusInformation> cachedMonitors = Collections.<ConditionStatusInformation> newSetFromMap ( new ConcurrentHashMap<ConditionStatusInformation, Boolean> () );
+    private final Set<ConditionStatusInformation> cachedMonitors = CollectionsBackPort.<ConditionStatusInformation> newSetFromMap ( new ConcurrentHashMap<ConditionStatusInformation, Boolean> () );
 
     public MonitorSyncController ( final Connection connection, final String id )
     {

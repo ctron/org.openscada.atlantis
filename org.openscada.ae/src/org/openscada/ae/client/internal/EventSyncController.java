@@ -1,7 +1,6 @@
 package org.openscada.ae.client.internal;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -20,7 +19,7 @@ public class EventSyncController implements EventListener
 
     private final String id;
 
-    private final Set<Event> cachedEvents = Collections.<Event> newSetFromMap ( new ConcurrentHashMap<Event, Boolean> () );
+    private final Set<Event> cachedEvents = CollectionsBackPort.<Event> newSetFromMap ( new ConcurrentHashMap<Event, Boolean> () );
 
     public EventSyncController ( final Connection connection, final String id )
     {
