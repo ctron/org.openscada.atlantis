@@ -35,7 +35,7 @@ public class EventMatcherImpl implements EventMatcher
 
     public HandleMissing getHandleMissing ()
     {
-        return handleMissing;
+        return this.handleMissing;
     }
 
     public void setHandleMissing ( final HandleMissing handleMissing )
@@ -76,7 +76,7 @@ public class EventMatcherImpl implements EventMatcher
         if ( expression.getOperator () == Operator.AND )
         {
             boolean result = true;
-            for ( Filter subFilter : expression.getFilterSet () )
+            for ( final Filter subFilter : expression.getFilterSet () )
             {
                 result = result && matches ( subFilter, event );
             }
@@ -85,7 +85,7 @@ public class EventMatcherImpl implements EventMatcher
         else if ( expression.getOperator () == Operator.OR )
         {
             boolean result = false;
-            for ( Filter subFilter : expression.getFilterSet () )
+            for ( final Filter subFilter : expression.getFilterSet () )
             {
                 result = result || matches ( subFilter, event );
             }
@@ -93,7 +93,7 @@ public class EventMatcherImpl implements EventMatcher
         else if ( expression.getOperator () == Operator.NOT )
         {
             boolean result = true;
-            for ( Filter subFilter : expression.getFilterSet () )
+            for ( final Filter subFilter : expression.getFilterSet () )
             {
                 result = result && matches ( subFilter, event );
             }
@@ -128,16 +128,16 @@ public class EventMatcherImpl implements EventMatcher
             return hasAttribute;
         }
         // missing attributes are handled according to policy
-        if ( !hasAttribute && handleMissing == HandleMissing.MISSING_EVALUATES_TO_FALSE )
+        if ( !hasAttribute && this.handleMissing == HandleMissing.MISSING_EVALUATES_TO_FALSE )
         {
             return false;
         }
-        else if ( !hasAttribute && handleMissing == HandleMissing.MISSING_EVALUATES_TO_TRUE )
+        else if ( !hasAttribute && this.handleMissing == HandleMissing.MISSING_EVALUATES_TO_TRUE )
         {
             return true;
         }
         // handle all other assertions
-        Object value = getAttribute ( event, assertion.getAttribute () );
+        final Object value = getAttribute ( event, assertion.getAttribute () );
         if ( assertion.getAssertion () == Assertion.EQUALITY )
         {
             return matchEquals ( value, assertion.getValue () );
@@ -169,20 +169,20 @@ public class EventMatcherImpl implements EventMatcher
         return false;
     }
 
-    private boolean matchApproximate ( Object value1, Object value2 )
+    private boolean matchApproximate ( final Object value1, final Object value2 )
     {
         throw new IllegalArgumentException ( "approximate match is not implemented yet" );
     }
 
     @SuppressWarnings ( "unchecked" )
-    private boolean matchSubstring ( Object value1, Object value2 )
+    private boolean matchSubstring ( final Object value1, final Object value2 )
     {
         if ( value2 == null )
         {
             return false;
         }
-        String toCompare = StringHelper.join ( (Collection<String>)value2, ".*", new Apply<String> () {
-            public String apply ( String parameter )
+        final String toCompare = StringHelper.join ( (Collection<String>)value2, ".*", new Apply<String> () {
+            public String apply ( final String parameter )
             {
                 return Pattern.quote ( parameter );
             }
@@ -191,13 +191,13 @@ public class EventMatcherImpl implements EventMatcher
     }
 
     @SuppressWarnings ( "unchecked" )
-    private boolean matchLessThan ( Object value1, Object value2 )
+    private boolean matchLessThan ( final Object value1, final Object value2 )
     {
         if ( value1 == value2 )
         {
             return false;
         }
-        if ( ( value1 == null && value2 != null ) || ( value1 != null && value2 == null ) )
+        if ( value1 == null && value2 != null || value1 != null && value2 == null )
         {
             return false;
         }
@@ -211,13 +211,14 @@ public class EventMatcherImpl implements EventMatcher
         }
     }
 
-    private boolean matchGreaterThan ( Object value1, Object value2 )
+    @SuppressWarnings ( "unchecked" )
+    private boolean matchGreaterThan ( final Object value1, final Object value2 )
     {
         if ( value1 == value2 )
         {
             return false;
         }
-        if ( ( value1 == null && value2 != null ) || ( value1 != null && value2 == null ) )
+        if ( value1 == null && value2 != null || value1 != null && value2 == null )
         {
             return false;
         }
@@ -231,20 +232,20 @@ public class EventMatcherImpl implements EventMatcher
         }
     }
 
-    private boolean matchEquals ( Object value1, Object value2 )
+    private boolean matchEquals ( final Object value1, final Object value2 )
     {
         if ( value1 == value2 )
         {
             return true;
         }
-        if ( ( value1 == null && value2 != null ) || ( value1 != null && value2 == null ) )
+        if ( value1 == null && value2 != null || value1 != null && value2 == null )
         {
             return false;
         }
         return value1.equals ( value2 );
     }
 
-    private Object getAttribute ( final Event event, String attribute )
+    private Object getAttribute ( final Event event, final String attribute )
     {
         if ( "id".equals ( attribute ) )
         {
