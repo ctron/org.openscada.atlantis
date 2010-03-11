@@ -77,7 +77,15 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         }
 
         this.bound = true;
-        this.dataItem.setListener ( this );
+
+        final DataItem item = this.dataItem;
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                item.setListener ( DataItemSubscriptionSource.this );
+            }
+        } );
     }
 
     /**
@@ -91,11 +99,18 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
             return;
         }
 
-        this.dataItem.setListener ( null );
-
         this.cacheValue = null;
         this.cacheAttributes.clear ();
         this.bound = false;
+
+        final DataItem item = this.dataItem;
+        this.executor.execute ( new Runnable () {
+
+            public void run ()
+            {
+                item.setListener ( null );
+            }
+        } );
     }
 
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
@@ -144,38 +159,44 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 
     public synchronized void dataChanged ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
     {
-        // update cache
+        // update attributes
         if ( attributes != null )
         {
             AttributesHelper.mergeAttributes ( this.cacheAttributes, attributes );
         }
+        // update value
         if ( variant != null )
         {
             this.cacheValue = variant;
         }
+
+        final DataItemSubscriptionListener[] listeners = this.listeners.toArray ( new DataItemSubscriptionListener[this.listeners.size ()] );
 
         // send out the events
         this.executor.execute ( new Runnable () {
 
             public void run ()
             {
-                fireDataChange ( item, variant, attributes, cache );
+                fireDataChange ( item, variant, attributes, cache, listeners );
             }
         } );
 
-        this.executor.execute ( new Runnable () {
+        if ( this.hiveEventListener != null )
+        {
+            this.executor.execute ( new Runnable () {
 
-            public void run ()
-            {
-                updateStats ( item, variant, attributes, cache );
-            }
-        } );
+                public void run ()
+                {
+                    updateStats ( item, variant, attributes, cache );
+                }
+            } );
+        }
 
     }
 
-    private synchronized void fireDataChange ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
+    private void fireDataChange ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache, final DataItemSubscriptionListener[] listeners )
     {
-        for ( final DataItemSubscriptionListener listener : this.listeners )
+        for ( final DataItemSubscriptionListener listener : listeners )
         {
             listener.dataChanged ( item, variant, attributes, cache );
         }
@@ -184,16 +205,13 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
     private void updateStats ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
     {
         // send out the hive events
-        if ( this.hiveEventListener != null )
+        if ( variant != null )
         {
-            if ( variant != null )
-            {
-                this.hiveEventListener.valueChanged ( item, variant, cache );
-            }
-            if ( attributes != null )
-            {
-                this.hiveEventListener.attributesChanged ( item, attributes.size () );
-            }
+            this.hiveEventListener.valueChanged ( item, variant, cache );
+        }
+        if ( attributes != null )
+        {
+            this.hiveEventListener.attributesChanged ( item, attributes.size () );
         }
     }
 }
