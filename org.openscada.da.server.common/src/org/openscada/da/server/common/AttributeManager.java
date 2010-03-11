@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,16 +21,15 @@ package org.openscada.da.server.common;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.openscada.core.Variant;
 import org.openscada.core.utils.AttributesHelper;
 
 public class AttributeManager
 {
-    private DataItemBase item = null;
+    private final DataItemBase item;
 
-    private final Map<String, Variant> attributes = new ConcurrentHashMap<String, Variant> ();
+    private final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
     public AttributeManager ( final DataItemBase item )
     {
