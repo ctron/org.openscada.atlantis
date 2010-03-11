@@ -82,9 +82,12 @@ public class EventPoolImpl implements EventListener, EventQuery
         final Set<Event> toNotify = new HashSet<Event> ();
         for ( final Event event : events )
         {
-            if ( this.events.add ( event ) )
+            if ( this.matcher.matches ( event ) )
             {
-                toNotify.add ( event );
+                if ( this.events.add ( event ) )
+                {
+                    toNotify.add ( event );
+                }
             }
         }
         notifyEvent ( toNotify.toArray ( new Event[0] ) );
