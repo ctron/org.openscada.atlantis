@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -31,8 +31,12 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class ConnectionInformation
 {
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionInformation.class );
 
     /*
      * Format:
@@ -132,17 +136,18 @@ public class ConnectionInformation
 
             if ( ci.getInterface () == null )
             {
-                return null;
+                throw new IllegalArgumentException ( "URI has now interface" );
             }
             if ( ci.getDriver () == null )
             {
-                return null;
+                throw new IllegalArgumentException ( "URI has now driver" );
             }
 
             return ci;
         }
         catch ( final Exception e )
         {
+            logger.warn ( "Failed to decode URI", e );
             return null;
         }
     }
@@ -224,6 +229,7 @@ public class ConnectionInformation
         }
         catch ( final UnsupportedEncodingException e )
         {
+            logger.warn ( "Failed to encode URI", e );
             return null;
         }
     }
