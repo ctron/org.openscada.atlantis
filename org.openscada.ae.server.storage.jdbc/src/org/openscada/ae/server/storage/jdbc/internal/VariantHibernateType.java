@@ -31,27 +31,31 @@ public class VariantHibernateType implements CompositeUserType, Serializable
     {
     }
 
-    public Object assemble ( Serializable cached, SessionImplementor session, Object owner ) throws HibernateException
+    public Object assemble ( final Serializable cached, final SessionImplementor session, final Object owner ) throws HibernateException
     {
         return cached;
     }
 
-    public Object deepCopy ( Object value ) throws HibernateException
+    public Object deepCopy ( final Object value ) throws HibernateException
     {
         return new Variant ( (Variant)value );
     }
 
-    public Serializable disassemble ( Object value, SessionImplementor session ) throws HibernateException
+    public Serializable disassemble ( final Object value, final SessionImplementor session ) throws HibernateException
     {
         return (Serializable)value;
     }
 
-    public boolean equals ( Object x, Object y ) throws HibernateException
+    public boolean equals ( final Object x, final Object y ) throws HibernateException
     {
         if ( x == y )
+        {
             return true;
+        }
         if ( x == null || y == null )
+        {
             return false;
+        }
         return x.equals ( y );
     }
 
@@ -65,7 +69,7 @@ public class VariantHibernateType implements CompositeUserType, Serializable
         return PROPERTY_TYPES;
     }
 
-    public Object getPropertyValue ( Object component, int property ) throws HibernateException
+    public Object getPropertyValue ( final Object component, final int property ) throws HibernateException
     {
         try
         {
@@ -83,18 +87,18 @@ public class VariantHibernateType implements CompositeUserType, Serializable
                 break;
             }
         }
-        catch ( NullValueException e )
+        catch ( final NullValueException e )
         {
             return null;
         }
-        catch ( NotConvertableException e )
+        catch ( final NotConvertableException e )
         {
             return null;
         }
         return null;
     }
 
-    public int hashCode ( Object x ) throws HibernateException
+    public int hashCode ( final Object x ) throws HibernateException
     {
         if ( x == null )
         {
@@ -108,12 +112,12 @@ public class VariantHibernateType implements CompositeUserType, Serializable
         return false;
     }
 
-    public Object nullSafeGet ( ResultSet rs, String[] names, SessionImplementor session, Object owner ) throws HibernateException, SQLException
+    public Object nullSafeGet ( final ResultSet rs, final String[] names, final SessionImplementor session, final Object owner ) throws HibernateException, SQLException
     {
-        String type = rs.getString ( names[0] );
-        String str = rs.getString ( names[1] );
-        Long i = rs.getLong ( names[2] );
-        Double d = rs.getDouble ( names[3] );
+        final String type = rs.getString ( names[0] );
+        final String str = rs.getString ( names[1] );
+        final Long i = rs.getLong ( names[2] );
+        final Double d = rs.getDouble ( names[3] );
         if ( type == null )
         {
             return null;
@@ -173,13 +177,13 @@ public class VariantHibernateType implements CompositeUserType, Serializable
         return new Variant ( str );
     }
 
-    public void nullSafeSet ( PreparedStatement st, Object value, int index, SessionImplementor session ) throws HibernateException, SQLException
+    public void nullSafeSet ( final PreparedStatement st, final Object value, final int index, final SessionImplementor session ) throws HibernateException, SQLException
     {
         st.setNull ( index + 0, TYPES[0] );
         st.setNull ( index + 1, TYPES[1] );
         st.setNull ( index + 2, TYPES[2] );
         st.setNull ( index + 3, TYPES[3] );
-        Variant v = (Variant)value;
+        final Variant v = (Variant)value;
         if ( v != null )
         {
             try
@@ -189,28 +193,29 @@ public class VariantHibernateType implements CompositeUserType, Serializable
                 st.setLong ( index + 2, v.asLong () );
                 st.setDouble ( index + 3, v.asDouble () );
             }
-            catch ( NullValueException e )
+            catch ( final NullValueException e )
             {
                 // leave at null
             }
-            catch ( NotConvertableException e )
+            catch ( final NotConvertableException e )
             {
                 // leave at null
             }
         }
     }
 
-    public Object replace ( Object original, Object target, SessionImplementor session, Object owner ) throws HibernateException
+    public Object replace ( final Object original, final Object target, final SessionImplementor session, final Object owner ) throws HibernateException
     {
         return original;
     }
 
+    @SuppressWarnings ( "unchecked" )
     public Class returnedClass ()
     {
         return Variant.class;
     }
 
-    public void setPropertyValue ( Object component, int property, Object value ) throws HibernateException
+    public void setPropertyValue ( final Object component, final int property, final Object value ) throws HibernateException
     {
         throw new UnsupportedOperationException ( "Variant is immutable" );
     }
