@@ -30,6 +30,7 @@ public class JdbcStorageDAOTest extends JdbcStorageBaseTest
         return (JdbcStorageDAO)appContext.getBean ( "jdbcStorageDAO" );
     }
 
+    @SuppressWarnings ( "unchecked" )
     @Test
     public void testStoreEvent () throws Exception
     {
@@ -41,8 +42,8 @@ public class JdbcStorageDAOTest extends JdbcStorageBaseTest
         List result;
         result = getJdbcTemplate ().queryForList ( "SELECT * FROM " + TABLE_EVENTS );
         assertNotNull ( result.get ( 0 ) );
-        Map<String, Object> row = (Map<String, Object>)result.get ( 0 );
-        UUID retrievedId = UUID.fromString ( (String)row.get ( "ID" ) );
+        final Map<String, Object> row = (Map<String, Object>)result.get ( 0 );
+        final UUID retrievedId = UUID.fromString ( (String)row.get ( "ID" ) );
         assertEquals ( makeUUID ( 1 ), retrievedId );
         int numOfAttribRows = getJdbcTemplate ().queryForInt ( "SELECT count(*) FROM " + TABLE_EVENT_ATTRIBS );
         assertEquals ( 0, numOfAttribRows );
@@ -177,10 +178,10 @@ public class JdbcStorageDAOTest extends JdbcStorageBaseTest
         assertEquals ( 2, resultEvents.size () );
     }
 
-    private MutableEvent makeMutableEvent ( long id ) throws Exception
+    private MutableEvent makeMutableEvent ( final long id ) throws Exception
     {
-        Date timestamp = new Date ( System.currentTimeMillis () );
-        MutableEvent event = new MutableEvent ();
+        final Date timestamp = new Date ( System.currentTimeMillis () );
+        final MutableEvent event = new MutableEvent ();
         event.setId ( makeUUID ( id ) );
         event.setSourceTimestamp ( timestamp );
         event.setEntryTimestamp ( timestamp );
