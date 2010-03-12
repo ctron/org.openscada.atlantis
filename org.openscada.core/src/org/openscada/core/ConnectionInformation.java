@@ -34,7 +34,7 @@ import java.util.regex.Pattern;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionInformation
+public class ConnectionInformation implements Cloneable
 {
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionInformation.class );
 
@@ -398,4 +398,18 @@ public class ConnectionInformation
         return true;
     }
 
+    @Override
+    protected Object clone ()
+    {
+        final ConnectionInformation connectionInformation = new ConnectionInformation ();
+
+        connectionInformation.driver = this.driver;
+        connectionInformation.interfaceName = this.interfaceName;
+        connectionInformation.properties = new HashMap<String, String> ( this.properties );
+        connectionInformation.secondaryTarget = this.secondaryTarget;
+        connectionInformation.subtargets = new LinkedList<String> ( this.subtargets );
+        connectionInformation.target = this.target;
+
+        return connectionInformation;
+    }
 }
