@@ -399,7 +399,7 @@ public class ConnectionInformation implements Cloneable
     }
 
     @Override
-    protected Object clone ()
+    public Object clone ()
     {
         final ConnectionInformation connectionInformation = new ConnectionInformation ();
 
