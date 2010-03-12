@@ -16,4 +16,6 @@ public interface ConnectionService
     public static final String CONNECTION_URI = "connection.uri";
 
     public Class<?>[] getSupportedInterfaces ();
+
+    public void dispose ();
 }
