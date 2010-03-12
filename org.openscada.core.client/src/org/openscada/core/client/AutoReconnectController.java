@@ -130,6 +130,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
     public synchronized void connect ()
     {
+        logger.debug ( "Request to connect" );
         if ( this.connect == true )
         {
             return;
@@ -144,6 +145,8 @@ public class AutoReconnectController implements ConnectionStateListener
 
     public synchronized void disconnect ()
     {
+        logger.debug ( "Request to disconnect" );
+
         if ( this.connect == false )
         {
             return;
