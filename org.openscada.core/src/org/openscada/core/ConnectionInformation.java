@@ -152,6 +152,40 @@ public class ConnectionInformation implements Cloneable
         }
     }
 
+    /**
+     * Set the user name
+     * @param user the user name to set, can be <code>null</code> in order to reset
+     * the password
+     */
+    public void setUser ( final String user )
+    {
+        if ( user != null )
+        {
+            this.properties.put ( PROP_USER, user );
+        }
+        else
+        {
+            this.properties.remove ( PROP_USER );
+        }
+    }
+
+    /**
+     * Set the password
+     * @param password the password to set, can be <code>null</code> in order to reset
+     * the password
+     */
+    public void setPassword ( final String password )
+    {
+        if ( password != null )
+        {
+            this.properties.put ( PROP_PASSWORD, password );
+        }
+        else
+        {
+            this.properties.remove ( PROP_PASSWORD );
+        }
+    }
+
     @Override
     public String toString ()
     {

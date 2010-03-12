@@ -3,7 +3,7 @@ Import-Package: org.openscada.utils.lang;version="0.14.0",
  org.openscada.utils.statuscodes;version="0.15.0",
  org.slf4j;version="[1.5.8,1.6.0)"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.core;version="0.15.0",
+Export-Package: org.openscada.core;version="0.15.0";uses:="org.openscada.utils.statuscodes",
  org.openscada.core.subscription;version="0.15.0",
  org.openscada.core.utils;version="0.15.0"
 Bundle-Version: 0.15.0.qualifier
