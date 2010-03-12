@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.DriverFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -53,7 +54,7 @@ public class ConnectionRequestTracker extends ConnectionTracker
 
     public synchronized void request ()
     {
-        if ( this.handle == null && this.request != null )
+        if ( ( this.handle == null ) && ( this.request != null ) )
         {
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( DriverFactory.DRIVER_NAME, this.request.getConnectionInformation ().getDriver () );
@@ -84,5 +85,10 @@ public class ConnectionRequestTracker extends ConnectionTracker
     {
         unrequest ();
         super.close ();
+    }
+
+    public ConnectionInformation getConnectionInformation ()
+    {
+        return this.request.getConnectionInformation ();
     }
 }

@@ -32,4 +32,8 @@ public class ConnectionIdTracker extends ConnectionTracker
         return parameters;
     }
 
+    public String getConnectionId ()
+    {
+        return this.connectionId;
+    }
 }
