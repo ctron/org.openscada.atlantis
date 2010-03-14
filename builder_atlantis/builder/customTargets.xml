@@ -190,6 +190,8 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.dataitem"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.ae.sec"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common.condition"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common.event"/>

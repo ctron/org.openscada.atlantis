@@ -673,4 +673,11 @@ DAMAGES.
          fragment="true"
          unpack="false"/>
 
+   <plugin
+         id="org.openscada.ae.sec"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
