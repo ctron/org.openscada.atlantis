@@ -26,13 +26,17 @@ public class AuthorizationHelper extends org.openscada.sec.osgi.AuthorizationHel
         this.logAll = logAll;
     }
 
-    public void start ()
+    @Override
+    public void open ()
     {
         this.eventProcessor.open ();
+        super.open ();
     }
 
-    public void stop ()
+    @Override
+    public void close ()
     {
+        super.close ();
         this.eventProcessor.close ();
     }
 
@@ -67,6 +71,7 @@ public class AuthorizationHelper extends org.openscada.sec.osgi.AuthorizationHel
         builder.attribute ( "SOURCE_TYPE", objectType );
         builder.attribute ( Fields.VALUE, action );
         builder.attribute ( "CODE", result.getErrorCode () );
+        builder.attribute ( Fields.PRIORITY, 1000 );
 
         return builder.build ();
     }
