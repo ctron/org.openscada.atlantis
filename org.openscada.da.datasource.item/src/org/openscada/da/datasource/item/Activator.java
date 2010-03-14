@@ -24,9 +24,9 @@ import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.openscada.ae.sec.AuthorizationHelper;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
-import org.openscada.sec.osgi.AuthorizationHelper;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -49,7 +49,7 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        this.authorization = new AuthorizationHelper ( context );
+        this.authorization = new AuthorizationHelper ( context, true );
         this.authorization.open ();
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
@@ -84,6 +84,7 @@ public class Activator implements BundleActivator
         this.executor.shutdown ();
 
         this.authorization.close ();
+
     }
 
 }
