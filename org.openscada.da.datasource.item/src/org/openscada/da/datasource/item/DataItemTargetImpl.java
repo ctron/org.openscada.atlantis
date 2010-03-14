@@ -38,6 +38,7 @@ import org.openscada.da.datasource.SingleDataSourceTracker;
 import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
 import org.openscada.da.server.common.DataItemBase;
+import org.openscada.sec.osgi.AuthorizationHelper;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -48,6 +49,8 @@ import org.slf4j.LoggerFactory;
 
 public class DataItemTargetImpl extends DataItemBase implements DataSourceListener
 {
+    private static final String OBJECT_TYPE = "DataItem";
+
     private final static Logger logger = LoggerFactory.getLogger ( DataItemTargetImpl.class );
 
     private DataItemValue currentValue = new DataItemValue ();
@@ -56,9 +59,17 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
     private DataSource dataSource;
 
-    public DataItemTargetImpl ( final ObjectPoolTracker poolTracker, final DataItemInformation information, final String dataSourceId ) throws InvalidSyntaxException
+    private final AuthorizationHelper authorization;
+
+    private final String id;
+
+    public DataItemTargetImpl ( final ObjectPoolTracker poolTracker, final DataItemInformation information, final String dataSourceId, final AuthorizationHelper authorization ) throws InvalidSyntaxException
     {
         super ( information );
+
+        this.id = information.getName ();
+
+        this.authorization = authorization;
 
         this.tracker = new SingleDataSourceTracker ( poolTracker, dataSourceId, new ServiceListener () {
 
@@ -139,6 +150,12 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
     public synchronized NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
     {
+        final NotifyFuture<WriteAttributeResults> future = this.authorization.authorize ( this.id, OBJECT_TYPE, "WRITE_ATTRIBUTES", session.getUserInformation (), makeSetAttributesContext ( attributes ) ).asFuture ();
+        if ( future != null )
+        {
+            return future;
+        }
+
         if ( this.dataSource != null )
         {
             return this.dataSource.startWriteAttributes ( new WriteInformation ( session.getUserInformation () ), attributes );
@@ -149,8 +166,21 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         }
     }
 
+    private Map<String, Object> makeSetAttributesContext ( final Map<String, Variant> attributes )
+    {
+        final Map<String, Object> context = new HashMap<String, Object> ( 1 );
+        context.put ( "attributes", attributes );
+        return context;
+    }
+
     public synchronized NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
     {
+        final NotifyFuture<WriteResult> future = this.authorization.authorize ( this.id, OBJECT_TYPE, "WRITE", session.getUserInformation (), makeWriteValueContext ( value ) ).asFuture ();
+        if ( future != null )
+        {
+            return future;
+        }
+
         if ( this.dataSource != null )
         {
             return this.dataSource.startWriteValue ( new WriteInformation ( session.getUserInformation () ), value );
@@ -159,6 +189,13 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         {
             return new InstantErrorFuture<WriteResult> ( new OperationException ( "Disconnected data source" ) );
         }
+    }
+
+    private Map<String, Object> makeWriteValueContext ( final Variant value )
+    {
+        final Map<String, Object> context = new HashMap<String, Object> ( 1 );
+        context.put ( "value", value );
+        return context;
     }
 
     public synchronized void dispose ()
@@ -193,7 +230,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
             {
                 notifyData ( value.getValue (), diff );
             }
-            
+
         }
     }
 }

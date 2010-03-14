@@ -26,6 +26,7 @@ import java.util.Map;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.sec.osgi.AuthorizationHelper;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
@@ -47,9 +48,12 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
 
     private final ServiceRegistration itemPoolHandle;
 
-    public DataItemTargetFactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
+    private final AuthorizationHelper authorization;
+
+    public DataItemTargetFactoryImpl ( final BundleContext context, final AuthorizationHelper authorization ) throws InvalidSyntaxException
     {
         super ( context );
+        this.authorization = authorization;
         this.itemPool = new ObjectPoolImpl ();
 
         this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class.getName () );
@@ -101,7 +105,7 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
         }
 
         final String datasourceId = parameters.get ( "datasource.id" );
-        final DataItemTargetImpl item = new DataItemTargetImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId );
+        final DataItemTargetImpl item = new DataItemTargetImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId, this.authorization );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "inavare GmbH" );

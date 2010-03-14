@@ -26,6 +26,7 @@ import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.sec.osgi.AuthorizationHelper;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -40,16 +41,21 @@ public class Activator implements BundleActivator
 
     private DataItemSourceFactoryImpl factory2;
 
+    private AuthorizationHelper authorization;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
     public void start ( final BundleContext context ) throws Exception
     {
+        this.authorization = new AuthorizationHelper ( context );
+        this.authorization.open ();
+
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
         {
-            this.factory = new DataItemTargetFactoryImpl ( context );
+            this.factory = new DataItemTargetFactoryImpl ( context, this.authorization );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, DataItemTargetFactoryImpl.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "A dataitem based on a datasource" );
@@ -76,6 +82,8 @@ public class Activator implements BundleActivator
         this.factory2.dispose ();
 
         this.executor.shutdown ();
+
+        this.authorization.close ();
     }
 
 }
