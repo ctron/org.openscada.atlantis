@@ -12,3 +12,4 @@ Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.sec.osgi;version="0.1.0",
  org.openscada.utils.statuscodes;version="0.15.0",
  org.osgi.framework;version="1.3.0"
+Export-Package: org.openscada.ae.sec;version="0.15.0";uses:="org.openscada.sec.osgi,org.openscada.sec,org.osgi.framework"
