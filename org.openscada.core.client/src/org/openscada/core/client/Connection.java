@@ -19,6 +19,8 @@
 
 package org.openscada.core.client;
 
+import java.util.Map;
+
 import org.openscada.core.ConnectionInformation;
 
 public interface Connection
@@ -46,4 +48,11 @@ public interface Connection
     public ConnectionState getState ();
 
     public ConnectionInformation getConnectionInformation ();
+
+    /**
+     * Return the session properties as provided by the server. The session properties are only
+     * valid if the connection is in the state {@link ConnectionState#BOUND}
+     * @return the connection properties
+     */
+    public Map<String, String> getSessionProperties ();
 }

@@ -20,6 +20,10 @@
 package org.openscada.core.client.net;
 
 import java.net.SocketAddress;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
@@ -70,6 +74,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private SocketAddress remoteAddress;
 
+    private volatile Map<String, String> properties;
+
     public ConnectionBase ( final ConnectionInformation connectionInformation )
     {
         super ();
@@ -82,7 +88,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         this.pingService = new PingService ( this.messenger );
     }
 
-    protected synchronized void switchState ( final ConnectionState state, final Throwable error )
+    protected synchronized void switchState ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
     {
         if ( this.connectionState == state )
         {
@@ -99,7 +105,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             handleSwitchConnecting ( state, error );
             break;
         case CONNECTED:
-            handleSwitchConnected ( state, error );
+            handleSwitchConnected ( state, error, properties );
             break;
         case BOUND:
             handleSwitchBound ( state, error );
@@ -154,7 +160,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
-    private void handleSwitchConnected ( final ConnectionState state, final Throwable error )
+    private void handleSwitchConnected ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
     {
         switch ( state )
         {
@@ -166,6 +172,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             onConnectionClosed ();
             break;
         case BOUND:
+            this.properties = properties;
             setState ( ConnectionState.BOUND, error );
             onConnectionBound ();
             break;
@@ -181,6 +188,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         this.session = null;
         this.connectingFuture = null;
+        this.properties = null;
     }
 
     private void requestClose ()
@@ -231,7 +239,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         logger.info ( "Requested disconnect" );
 
-        switchState ( ConnectionState.CLOSING, null );
+        switchState ( ConnectionState.CLOSING, null, null );
     }
 
     public ConnectionInformation getConnectionInformation ()
@@ -347,7 +355,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             // no-op
             break;
         default:
-            switchState ( ConnectionState.CONNECTING, null );
+            switchState ( ConnectionState.CONNECTING, null, null );
             break;
         }
     }
@@ -378,7 +386,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             {
                 // lookup successful ... re-trigger connecting
                 this.remoteAddress = address;
-                switchState ( ConnectionState.CONNECTING, null );
+                switchState ( ConnectionState.CONNECTING, null, null );
             }
             else
             {
@@ -388,7 +396,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
                     e1 = new RuntimeException ( String.format ( "Unable to resolve: %s", address ) );
                 }
                 // lookup failed
-                switchState ( ConnectionState.CLOSED, e1 );
+                switchState ( ConnectionState.CLOSED, e1, null );
             }
         }
 
@@ -436,7 +444,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             disposeConnector ();
             this.connectingFuture = null;
 
-            switchState ( ConnectionState.CLOSED, e );
+            switchState ( ConnectionState.CLOSED, e, null );
         }
     }
 
@@ -508,12 +516,39 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     protected void onConnectionEstablished ()
     {
-        setBound ();
+        setBound ( new Properties () );
     }
 
-    public void setBound ()
+    /**
+     * Set the {@link ConnectionState#BOUND} including the session properties
+     * @param properties
+     */
+    public void setBound ( final Properties properties )
     {
-        switchState ( ConnectionState.BOUND, null );
+        switchState ( ConnectionState.BOUND, null, convertProperties ( properties ) );
+    }
+
+    /**
+     * Convert properties to map
+     * @param properties the properties to convert
+     * @return the converted map
+     */
+    private Map<String, String> convertProperties ( final Properties properties )
+    {
+        if ( properties == null )
+        {
+            return null;
+        }
+
+        final Map<String, String> result = new HashMap<String, String> ( 1 );
+        for ( final Map.Entry<Object, Object> entry : properties.entrySet () )
+        {
+            if ( entry.getKey () != null && entry.getValue () != null )
+            {
+                result.put ( entry.getKey ().toString (), entry.getValue ().toString () );
+            }
+        }
+        return result;
     }
 
     protected void onConnectionBound ()
@@ -544,7 +579,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     public void sessionClosed ( final IoSession session ) throws Exception
     {
         logger.info ( "Session closed: " + session );
-        switchState ( ConnectionState.CLOSED, null );
+        switchState ( ConnectionState.CLOSED, null, null );
     }
 
     public void sessionCreated ( final IoSession session ) throws Exception
@@ -583,7 +618,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
             this.messenger.connected ( new IoSessionSender ( session ) );
 
-            switchState ( ConnectionState.CONNECTED, null );
+            switchState ( ConnectionState.CONNECTED, null, null );
         }
     }
 
@@ -654,6 +689,19 @@ public abstract class ConnectionBase implements Connection, IoHandler
     public void dispose ()
     {
         this.lookupExecutor.shutdown ();
+    }
+
+    public Map<String, String> getSessionProperties ()
+    {
+        final Map<String, String> properties = this.properties;
+        if ( properties != null )
+        {
+            return Collections.unmodifiableMap ( properties );
+        }
+        else
+        {
+            return Collections.emptyMap ();
+        }
     }
 
 }

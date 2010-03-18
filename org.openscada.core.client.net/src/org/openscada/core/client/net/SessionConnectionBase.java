@@ -75,8 +75,9 @@ public abstract class SessionConnectionBase extends ConnectionBase
         }
         else
         {
-            setBound ();
+            final Properties properties = new Properties ();
+            MessageHelper.getProperties ( properties, message.getValues ().get ( "properties" ) );
+            setBound ( properties );
         }
     }
-
 }
