@@ -63,6 +63,8 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private final ClassLoader classLoader;
 
+    private final WriterController writer;
+
     public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final Executor executor )
     {
         super ( poolTracker );
@@ -80,6 +82,8 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         {
             Thread.currentThread ().setContextClassLoader ( currentClassLoader );
         }
+
+        this.writer = new WriterController ( context );
     }
 
     @Override
@@ -163,6 +167,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
             try
             {
                 this.scriptContext.setAttribute ( "data", values, ScriptContext.ENGINE_SCOPE );
+                this.scriptContext.setAttribute ( "writer", this.writer, ScriptContext.ENGINE_SCOPE );
 
                 Thread.currentThread ().setContextClassLoader ( this.classLoader );
 
