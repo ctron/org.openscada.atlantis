@@ -1,4 +1,4 @@
-package org.openscada.da.datasource.memory;
+package org.openscada.da.datasource.ds;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.da.datasource.DataSource;
+import org.openscada.ds.DataNodeTracker;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
@@ -16,10 +17,10 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MemorySourceFactory extends AbstractServiceConfigurationFactory<MemoryDataSource>
+public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<DataStoreDataSource>
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( MemorySourceFactory.class );
+    private final static Logger logger = LoggerFactory.getLogger ( DataStoreSourceFactory.class );
 
     private final Executor executor;
 
@@ -29,10 +30,13 @@ public class MemorySourceFactory extends AbstractServiceConfigurationFactory<Mem
 
     private final ServiceRegistration poolRegistration;
 
-    public MemorySourceFactory ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
+    private final DataNodeTracker dataNodeTracker;
+
+    public DataStoreSourceFactory ( final BundleContext context, final Executor executor, final DataNodeTracker dataNodeTracker ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = executor;
+        this.dataNodeTracker = dataNodeTracker;
 
         this.objectPool = new ObjectPoolImpl ();
         this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class.getName () );
@@ -51,11 +55,11 @@ public class MemorySourceFactory extends AbstractServiceConfigurationFactory<Mem
     }
 
     @Override
-    protected Entry<MemoryDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataStoreDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         logger.debug ( "Creating new memory source: {}", configurationId );
 
-        final MemoryDataSource source = new MemoryDataSource ( this.executor );
+        final DataStoreDataSource source = new DataStoreDataSource ( context, configurationId, this.executor, this.dataNodeTracker );
         source.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
@@ -63,11 +67,11 @@ public class MemorySourceFactory extends AbstractServiceConfigurationFactory<Mem
 
         this.objectPool.addService ( configurationId, source, properties );
 
-        return new Entry<MemoryDataSource> ( configurationId, source );
+        return new Entry<DataStoreDataSource> ( configurationId, source );
     }
 
     @Override
-    protected void disposeService ( final String id, final MemoryDataSource service )
+    protected void disposeService ( final String id, final DataStoreDataSource service )
     {
         logger.info ( "Disposing: {}", id );
 
@@ -77,7 +81,7 @@ public class MemorySourceFactory extends AbstractServiceConfigurationFactory<Mem
     }
 
     @Override
-    protected Entry<MemoryDataSource> updateService ( final String configurationId, final Entry<MemoryDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataStoreDataSource> updateService ( final String configurationId, final Entry<DataStoreDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;
