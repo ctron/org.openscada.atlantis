@@ -20,6 +20,7 @@
 package org.openscada.da.client.ice;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
@@ -171,6 +172,11 @@ public class Connection implements org.openscada.da.client.Connection
     public ConnectionInformation getConnectionInformation ()
     {
         return this.connectionInformation;
+    }
+
+    public Map<String, String> getSessionProperties ()
+    {
+        return Collections.emptyMap ();
     }
 
     /**
