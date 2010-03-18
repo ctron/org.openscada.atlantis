@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,6 +22,7 @@ package org.openscada.da.server.common.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
 
@@ -50,9 +51,9 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
 
     private final Collection<Future<?>> tasks = new ConcurrentLinkedQueue<Future<?>> ();
 
-    public SessionCommon ( final HiveCommon hive, final UserInformation userInformation )
+    public SessionCommon ( final HiveCommon hive, final UserInformation userInformation, final Properties properties )
     {
-        super ( userInformation );
+        super ( userInformation, properties );
 
         this.hive = hive;
     }

@@ -41,11 +41,13 @@ public abstract class ServiceCommon implements Service
      * is required.
      * </p>
      * @param properties the session properties used for authentication
+     * @param sessionResultProperties the session properties that will be returned to the client.
+     * The method may add or remove properties as it likes.
      * @return the user information object or <code>null</code> if it is an
      * anonymous session
      * @throws AuthenticationException if the user was rejected 
      */
-    protected UserInformation authenticate ( final Properties properties ) throws AuthenticationException
+    protected UserInformation authenticate ( final Properties properties, final Properties sessionResultProperties ) throws AuthenticationException
     {
         final String username = properties.getProperty ( ConnectionInformation.PROP_USER );
         if ( username != null )
@@ -67,11 +69,11 @@ public abstract class ServiceCommon implements Service
      * caught by the call to {@link #authenticate(Properties)}.
      * @see #authenticate(Properties)
      */
-    protected UserInformation createUserInformation ( final Properties properties ) throws UnableToCreateSessionException
+    protected UserInformation createUserInformation ( final Properties properties, final Properties sessionResultProperties ) throws UnableToCreateSessionException
     {
         try
         {
-            return authenticate ( properties );
+            return authenticate ( properties, sessionResultProperties );
         }
         catch ( final AuthenticationException e )
         {

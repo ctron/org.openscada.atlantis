@@ -19,15 +19,25 @@
 
 package org.openscada.core.server.common.session;
 
+import java.util.Properties;
+
 import org.openscada.sec.UserInformation;
 
 public abstract class AbstractSessionImpl implements UserSession
 {
     private final UserInformation userInformation;
 
-    public AbstractSessionImpl ( final UserInformation userInformation )
+    private final Properties properties;
+
+    public AbstractSessionImpl ( final UserInformation userInformation, final Properties properties )
     {
         this.userInformation = userInformation;
+        this.properties = properties;
+    }
+
+    public Properties getProperties ()
+    {
+        return new Properties ( this.properties );
     }
 
     public UserInformation getUserInformation ()

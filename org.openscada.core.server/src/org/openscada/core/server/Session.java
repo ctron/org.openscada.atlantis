@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,7 +19,17 @@
 
 package org.openscada.core.server;
 
+import java.util.Properties;
+
 public interface Session
 {
-
+    /**
+     * Get the session properties
+     * <p>
+     * This method must actually return a copy of the session properties or an
+     * unmodifiable instance.
+     * </p>
+     * @return the session properties
+     */
+    public Properties getProperties ();
 }

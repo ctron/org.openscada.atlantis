@@ -51,7 +51,6 @@ import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
-import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
@@ -453,15 +452,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         // get the session properties
         final Properties props = new Properties ();
-        final Value propertiesValue = message.getValues ().get ( "properties" );
-        if ( propertiesValue instanceof MapValue )
-        {
-            final MapValue properties = (MapValue)propertiesValue;
-            for ( final Map.Entry<String, Value> entry : properties.getValues ().entrySet () )
-            {
-                props.put ( entry.getKey (), entry.getValue ().toString () );
-            }
-        }
+        MessageHelper.getProperties ( props, message.getValues ().get ( "properties" ) );
 
         // now check client version
         final String clientVersion = props.getProperty ( "client-version", "" );
@@ -522,7 +513,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.session.setBrowserListener ( this );
 
         // send success
-        this.messenger.sendMessage ( MessageCreator.createACK ( message ) );
+        this.messenger.sendMessage ( MessageHelper.createSessionACK ( message, this.session.getProperties () ) );
     }
 
     @Override

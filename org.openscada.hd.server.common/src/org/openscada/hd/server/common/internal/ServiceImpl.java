@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -30,6 +30,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
+import org.openscada.core.server.common.ServiceCommon;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.Query;
@@ -38,6 +39,7 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
 import org.openscada.hd.server.common.HistoricalItem;
+import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
@@ -47,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.profiler.Profiler;
 
-public class ServiceImpl implements Service, ServiceTrackerCustomizer
+public class ServiceImpl extends ServiceCommon implements Service, ServiceTrackerCustomizer
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ServiceImpl.class );
@@ -96,7 +98,9 @@ public class ServiceImpl implements Service, ServiceTrackerCustomizer
 
     public org.openscada.core.server.Session createSession ( final Properties properties ) throws UnableToCreateSessionException
     {
-        final SessionImpl session = new SessionImpl ( properties.getProperty ( "user", null ) );
+        final Properties sessionResultProperties = new Properties ();
+        final UserInformation user = createUserInformation ( properties, sessionResultProperties );
+        final SessionImpl session = new SessionImpl ( user, sessionResultProperties );
         try
         {
             this.sessionLock.writeLock ().lock ();

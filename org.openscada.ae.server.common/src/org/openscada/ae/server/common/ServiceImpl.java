@@ -259,7 +259,9 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
             throw new UnableToCreateSessionException ( "Service disposed" );
         }
 
-        final SessionImpl session = new SessionImpl ( createUserInformation ( properties ) );
+        final Properties sessionProperties = new Properties ();
+        final UserInformation user = createUserInformation ( properties, sessionProperties );
+        final SessionImpl session = new SessionImpl ( user, sessionProperties );
         this.sessions.add ( session );
 
         // copy data

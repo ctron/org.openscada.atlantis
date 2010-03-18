@@ -37,8 +37,10 @@ import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.sec.AuthenticationException;
+import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.osgi.AuthenticationHelper;
+import org.openscada.sec.osgi.AuthorizationHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -57,11 +59,14 @@ public class HiveImpl extends HiveCommon
 
     private final AuthenticationHelper authenticationManager;
 
+    private final AuthorizationHelper authorizationManager;
+
     public HiveImpl ( final BundleContext context )
     {
         this.context = context;
 
         this.authenticationManager = new AuthenticationHelper ( context );
+        this.authorizationManager = new AuthorizationHelper ( context );
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
@@ -79,6 +84,7 @@ public class HiveImpl extends HiveCommon
     public void start () throws Exception
     {
         this.authenticationManager.open ();
+        this.authorizationManager.open ();
         super.start ();
     }
 
@@ -87,12 +93,47 @@ public class HiveImpl extends HiveCommon
     {
         super.stop ();
         this.authenticationManager.close ();
+        this.authorizationManager.close ();
     }
 
     @Override
-    protected UserInformation authenticate ( final Properties properties ) throws AuthenticationException
+    protected UserInformation authenticate ( final Properties properties, final Properties sessionResultProperties ) throws AuthenticationException
     {
-        return this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
+        final UserInformation result = this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
+
+        authorizeSessionPriviliges ( properties, result, sessionResultProperties );
+
+        return result;
+    }
+
+    private void authorizeSessionPriviliges ( final Properties properties, final UserInformation user, final Properties sessionResultProperties )
+    {
+        for ( final Map.Entry<Object, Object> entry : properties.entrySet () )
+        {
+            if ( entry.getKey () instanceof String && entry.getValue () instanceof String )
+            {
+                final String key = (String)entry.getKey ();
+                final String value = (String)entry.getValue ();
+                if ( key.startsWith ( "session.privilege." ) )
+                {
+                    final String priv = key.substring ( "session.privilege.".length () );
+                    sessionResultProperties.put ( key, authenticateSessionPrivilege ( user, priv, value ) );
+                }
+            }
+        }
+    }
+
+    private Object authenticateSessionPrivilege ( final UserInformation user, final String key, final String value )
+    {
+        final AuthorizationResult result = this.authorizationManager.authorize ( key, "SESSION", value, user, null );
+        if ( result.isGranted () )
+        {
+            return true;
+        }
+        else
+        {
+            return result.getErrorCode ().toString ();
+        }
     }
 
     public synchronized void addItem ( final DataItem item, final Dictionary<?, ?> properties )

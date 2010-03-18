@@ -67,6 +67,7 @@ import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
 import org.openscada.da.server.common.impl.stats.HiveEventListener;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.concurrent.NotifyFuture;
 
@@ -263,13 +264,16 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     public Session createSession ( final Properties props ) throws UnableToCreateSessionException
     {
-        final SessionCommon session = new SessionCommon ( this, createUserInformation ( props ) );
+        final Properties sessionProperties = new Properties ();
+        final UserInformation user = createUserInformation ( props, sessionProperties );
+        final SessionCommon session = new SessionCommon ( this, user, sessionProperties );
 
         synchronized ( this.sessions )
         {
             this.sessions.add ( session );
             fireSessionCreate ( session );
         }
+
         return session;
     }
 

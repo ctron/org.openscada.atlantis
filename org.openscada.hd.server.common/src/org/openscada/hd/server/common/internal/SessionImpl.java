@@ -24,19 +24,20 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.Properties;
 import java.util.Set;
 
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.server.Session;
+import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SessionImpl implements Session, ItemListListener
+public class SessionImpl extends AbstractSessionImpl implements Session, ItemListListener
 {
     private final static Logger logger = LoggerFactory.getLogger ( SessionImpl.class );
-
-    private final String user;
 
     private final HashMap<String, HistoricalItemInformation> itemCache = new HashMap<String, HistoricalItemInformation> ();
 
@@ -44,11 +45,10 @@ public class SessionImpl implements Session, ItemListListener
 
     private ItemListListener itemListListener;
 
-    public SessionImpl ( final String user )
+    public SessionImpl ( final UserInformation user, final Properties properties )
     {
+        super ( user, properties );
         logger.info ( "Created new session" );
-
-        this.user = user;
     }
 
     public void dispose ()
@@ -64,11 +64,6 @@ public class SessionImpl implements Session, ItemListListener
             }
             this.queries.clear ();
         }
-    }
-
-    public String getCurrentUser ()
-    {
-        return this.user;
     }
 
     public void setItemListListener ( final ItemListListener itemListListener )

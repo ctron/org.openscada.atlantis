@@ -172,14 +172,7 @@ public class MessageHelper
     {
         final Message msg = new Message ( CC_CREATE_SESSION );
 
-        final MapValue properties = new MapValue ();
-
-        for ( final Map.Entry<Object, Object> entry : props.entrySet () )
-        {
-            properties.put ( entry.getKey ().toString (), new StringValue ( entry.getValue ().toString () ) );
-        }
-
-        msg.getValues ().put ( "properties", properties );
+        msg.getValues ().put ( "properties", toValue ( props ) );
 
         return msg;
     }
@@ -187,6 +180,46 @@ public class MessageHelper
     public static Message closeSession ()
     {
         return new Message ( CC_CLOSE_SESSION );
+    }
+
+    /**
+     * Convert a map value to properties
+     * <p>
+     * If the value is not a {@link MapValue} or is <code>null</code> the properties will not be modified.
+     * </p>
+     * @param properties the properties to fill
+     * @param value the value to parse
+     */
+    public static void getProperties ( final Properties properties, final Value value )
+    {
+        if ( value instanceof MapValue )
+        {
+            final MapValue mapValue = (MapValue)value;
+            for ( final Map.Entry<String, Value> entry : mapValue.getValues ().entrySet () )
+            {
+                properties.put ( entry.getKey (), entry.getValue ().toString () );
+            }
+        }
+    }
+
+    public static Message createSessionACK ( final Message inputMessage, final Properties sessionProperties )
+    {
+        final Message message = new Message ( Message.CC_ACK, inputMessage.getSequence () );
+        message.getValues ().put ( "properties", toValue ( sessionProperties ) );
+        return message;
+    }
+
+    private static MapValue toValue ( final Properties sessionProperties )
+    {
+        final MapValue value = new MapValue ();
+        if ( sessionProperties != null )
+        {
+            for ( final Map.Entry<Object, Object> entry : sessionProperties.entrySet () )
+            {
+                value.put ( entry.getKey ().toString (), new StringValue ( entry.getValue ().toString () ) );
+            }
+        }
+        return value;
     }
 
 }
