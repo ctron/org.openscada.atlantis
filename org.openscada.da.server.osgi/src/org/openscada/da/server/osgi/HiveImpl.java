@@ -117,23 +117,19 @@ public class HiveImpl extends HiveCommon
                 if ( key.startsWith ( "session.privilege." ) )
                 {
                     final String priv = key.substring ( "session.privilege.".length () );
-                    sessionResultProperties.put ( key, authenticateSessionPrivilege ( user, priv, value ) );
+                    if ( authenticateSessionPrivilege ( user, priv, value ) )
+                    {
+                        sessionResultProperties.put ( key, true );
+                    }
                 }
             }
         }
     }
 
-    private Object authenticateSessionPrivilege ( final UserInformation user, final String key, final String value )
+    private boolean authenticateSessionPrivilege ( final UserInformation user, final String key, final String value )
     {
         final AuthorizationResult result = this.authorizationManager.authorize ( key, "SESSION", value, user, null );
-        if ( result.isGranted () )
-        {
-            return true;
-        }
-        else
-        {
-            return result.getErrorCode ().toString ();
-        }
+        return result.isGranted ();
     }
 
     public synchronized void addItem ( final DataItem item, final Dictionary<?, ?> properties )
