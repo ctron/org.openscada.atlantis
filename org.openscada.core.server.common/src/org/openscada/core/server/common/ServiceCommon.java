@@ -33,7 +33,7 @@ public abstract class ServiceCommon implements Service
     /**
      * Authenticate a user
      * <p>
-     * This method simply implements and <em>any</em> authentication which allows
+     * This method simply implements an <em>any</em> authentication which allows
      * access to session with or without user names. No password is checked.
      * </p>
      * <p>
