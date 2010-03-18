@@ -264,9 +264,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
-    protected synchronized void switchState ( final ConnectionState state, final Throwable error )
+    protected synchronized void switchState ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
     {
-        super.switchState ( state, error );
+        super.switchState ( state, error, properties );
         switch ( state )
         {
         case BOUND:
