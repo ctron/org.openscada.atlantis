@@ -1,7 +1,9 @@
 package org.openscada.ca.client.jaxws;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
@@ -44,6 +46,12 @@ public class ConnectionImpl implements Connection
     public ConnectionImpl ( final ConnectionInformation connectionInformation )
     {
         this.connectionInformation = connectionInformation;
+    }
+
+    @Override
+    public Map<String, String> getSessionProperties ()
+    {
+        return Collections.emptyMap ();
     }
 
     public synchronized void addConnectionStateListener ( final ConnectionStateListener connectionStateListener )
