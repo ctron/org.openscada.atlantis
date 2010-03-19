@@ -48,7 +48,6 @@ public class ConnectionImpl implements Connection
         this.connectionInformation = connectionInformation;
     }
 
-    @Override
     public Map<String, String> getSessionProperties ()
     {
         return Collections.emptyMap ();
