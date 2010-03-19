@@ -4,7 +4,7 @@ import java.net.MalformedURLException;
 
 import org.openscada.ca.ConfigurationInformation;
 import org.openscada.ca.FactoryInformation;
-import org.openscada.ca.servelt.jaxws.RemoteConfigurationAdministrator;
+import org.openscada.ca.servlet.jaxws.RemoteConfigurationAdministrator;
 
 public class Application
 {

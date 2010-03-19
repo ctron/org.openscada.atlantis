@@ -6,7 +6,7 @@ import java.net.URL;
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
 
-import org.openscada.ca.servelt.jaxws.RemoteConfigurationAdministrator;
+import org.openscada.ca.servlet.jaxws.RemoteConfigurationAdministrator;
 
 public class RemoteConfigurationClient
 {
