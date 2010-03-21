@@ -31,15 +31,23 @@ public class LocalHttpExporter implements HttpExporter
 	private class QueryFuture extends AbstractFuture<List<DataPoint>> implements QueryListener {
 		final List<DataPoint> result = new ArrayList<DataPoint>();
 		
+		final String type;
+		
+		public QueryFuture(String type) {
+			this.type = type;
+		}
+
 		public void updateData(int index, Map<String, Value[]> values,
 				ValueInformation[] valueInformation) {
+			int i = 0;
 			for (ValueInformation vi : valueInformation) {
 				DataPoint dp = new DataPoint();
 				dp.setQuality(vi.getQuality());
 				dp.setManual(vi.getManualPercentage());
 				dp.setTimestamp(vi.getStartTimestamp().getTime());
-				dp.setValue(Double.longBitsToDouble(vi.getSourceValues()));
+				dp.setValue(values.get(type)[i].toDouble());
 				result.add(dp);
+				i++;
 			}
 		}
 
@@ -71,7 +79,7 @@ public class LocalHttpExporter implements HttpExporter
 		calTo.setTime(to);
 		
 		QueryParameters parameters = new QueryParameters(calFrom,calTo, number);
-		QueryFuture queryFuture = new QueryFuture();
+		QueryFuture queryFuture = new QueryFuture(type);
 		try {
 			Query q = this.hdService.createQuery(this.session, item, parameters , queryFuture, false);
 			final List<DataPoint> result = queryFuture.get(30, TimeUnit.SECONDS);
