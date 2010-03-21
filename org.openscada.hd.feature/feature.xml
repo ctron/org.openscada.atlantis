@@ -26,6 +26,7 @@
       <import feature="org.openscada.aurora" version="0.14.0.qualifier"/>
       <import feature="org.openscada.external" version="0.15.0.qualifier"/>
       <import feature="org.openscada.core" version="0.15.0.qualifier"/>
+      <import plugin="org.openscada.external.com.google.gson"/>
    </requires>
 
    <plugin
