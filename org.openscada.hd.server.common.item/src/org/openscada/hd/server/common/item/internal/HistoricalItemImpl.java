@@ -10,6 +10,8 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
+import org.openscada.da.datasource.SingleDataSourceTracker;
+import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
 import org.openscada.da.master.MasterItem;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
@@ -28,6 +30,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.profiler.Profiler;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 
 public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 {
@@ -46,7 +49,11 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     private final Set<Query> openQueries = new HashSet<Query> ();
 
-    private SingleServiceTracker masterTracker;
+    // private SingleServiceTracker masterTracker;
+    
+    private final ObjectPoolTracker poolTracker;
+    
+    private SingleDataSourceTracker dataSourceTracker;
 
     private DataSource dataSource;
 
@@ -69,13 +76,15 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 HistoricalItemImpl.this.setStorage ( (StorageHistoricalItem)service );
             }
         } );
-        this.masterTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( DataSource.class.getName (), new MapBuilder<String, String> ().put ( DataSource.DATA_SOURCE_ID, this.dataSourceId ).getMap () ), new SingleServiceListener () {
-
-            public void serviceChange ( final ServiceReference reference, final Object service )
-            {
-                HistoricalItemImpl.this.setMasterItem ( (DataSource)service );
-            }
-        } );
+//        this.masterTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( DataSource.class.getName (), new MapBuilder<String, String> ().put ( DataSource.DATA_SOURCE_ID, this.dataSourceId ).getMap () ), new SingleServiceListener () {
+//
+//            public void serviceChange ( final ServiceReference reference, final Object service )
+//            {
+//                HistoricalItemImpl.this.setMasterItem ( (DataSource)service );
+//            }
+//        } );
+        this.poolTracker = new ObjectPoolTracker(context, DataSource.class.getName ());
+        updateDataSource();
     }
 
     protected synchronized void setMasterItem ( final DataSource service )
@@ -121,13 +130,19 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
     public void start ()
     {
         this.storageTracker.open ();
-        this.masterTracker.open ();
+        //this.masterTracker.open ();
+        this.poolTracker.open();
     }
 
     public void stop ()
     {
         this.storageTracker.close ();
-        this.masterTracker.close ();
+        //this.masterTracker.close ();
+        if (this.dataSourceTracker != null) {
+        	this.dataSourceTracker.close();
+        	this.dataSourceTracker = null;
+        }
+        this.poolTracker.close ();
     }
 
     public HistoricalItemImpl ( final String id, final Map<String, Variant> attributes, final String masterId, final BundleContext context ) throws InvalidSyntaxException
@@ -203,28 +218,42 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
             this.maxBufferSize = Integer.parseInt ( properties.get ( "maxBufferSize" ) );
 
-            if ( this.masterTracker != null )
-            {
-                this.masterTracker.close ();
-                this.masterTracker = null;
-            }
-
-            if ( dataSourceId != null )
-            {
-                this.masterTracker = new SingleServiceTracker ( this.context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, dataSourceId ).getMap () ), new SingleServiceListener () {
-
-                    public void serviceChange ( final ServiceReference reference, final Object service )
-                    {
-                        HistoricalItemImpl.this.setMasterItem ( (MasterItem)service );
-                    }
-                } );
-                this.masterTracker.open ();
-            }
-
+//            if ( this.masterTracker != null )
+//            {
+//                this.masterTracker.close ();
+//                this.masterTracker = null;
+//            }
+//
+//            if ( dataSourceId != null )
+//            {
+//                this.masterTracker = new SingleServiceTracker ( this.context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, dataSourceId ).getMap () ), new SingleServiceListener () {
+//
+//                    public void serviceChange ( final ServiceReference reference, final Object service )
+//                    {
+//                        HistoricalItemImpl.this.setMasterItem ( (MasterItem)service );
+//                    }
+//                } );
+//                this.masterTracker.open ();
+//            }
+            
             this.dataSourceId = dataSourceId;
+            updateDataSource();
 
             logger.info ( "Updating...done" );
         }
     }
 
+	private void updateDataSource() throws InvalidSyntaxException {
+		if (this.dataSourceTracker != null) {
+        	this.dataSourceTracker.close();
+        	this.dataSourceTracker = null;
+        }
+		if (dataSourceId != null) {
+	        this.dataSourceTracker = new SingleDataSourceTracker(this.poolTracker, this.dataSourceId, new ServiceListener() {
+				public void dataSourceChanged(DataSource dataSource) {
+					setMasterItem(dataSource);
+				}
+			});
+		}
+	}
 }
