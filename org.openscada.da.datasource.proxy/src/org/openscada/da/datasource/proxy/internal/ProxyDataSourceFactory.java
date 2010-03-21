@@ -35,7 +35,7 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
     {
         this.objectPool.dispose ();
 
-        this.poolTracker.close ();
+        this.poolTracker.open ();
         super.dispose ();
         this.executor.shutdown ();
 
