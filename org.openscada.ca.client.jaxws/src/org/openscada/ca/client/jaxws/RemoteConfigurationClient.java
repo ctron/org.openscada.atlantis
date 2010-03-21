@@ -10,7 +10,7 @@ import org.openscada.ca.servlet.jaxws.RemoteConfigurationAdministrator;
 
 public class RemoteConfigurationClient
 {
-    private static final QName serviceName = QName.valueOf ( "{http://jaxws.servelt.ca.openscada.org/}ConfigurationAdministratorServiceService" );
+    private static final QName serviceName = QName.valueOf ( "{http://jaxws.servlet.ca.openscada.org/}ConfigurationAdministratorServiceService" );
 
     private final RemoteConfigurationAdministrator port;
 
