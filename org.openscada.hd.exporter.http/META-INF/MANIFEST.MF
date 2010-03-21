@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: HTTP Exporter for HD
 Bundle-SymbolicName: org.openscada.hd.exporter.http
 Bundle-Version: 0.15.0.qualifier
-Bundle-Activator: org.openscada.hd.exporter.http.Activator
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.hd.exporter.http
 Import-Package: com.google.gson;version="1.4.0",
