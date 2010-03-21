@@ -254,6 +254,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 					setMasterItem(dataSource);
 				}
 			});
+	        this.dataSourceTracker.open();
 		}
 	}
 }
