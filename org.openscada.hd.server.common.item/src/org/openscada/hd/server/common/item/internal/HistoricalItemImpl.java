@@ -12,7 +12,6 @@ import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.SingleDataSourceTracker;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
-import org.openscada.da.master.MasterItem;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -23,6 +22,7 @@ import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.osgi.FilterUtil;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -30,18 +30,17 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.profiler.Profiler;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 
 public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( HistoricalItemImpl.class );
 
+    private static final int DEFAULT_MAX_BUFFER_SIZE = 1024;
+
     private final HistoricalItemInformation itemInformation;
 
     private String dataSourceId;
-
-    private final BundleContext context;
 
     private final SingleServiceTracker storageTracker;
 
@@ -49,23 +48,20 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     private final Set<Query> openQueries = new HashSet<Query> ();
 
-    // private SingleServiceTracker masterTracker;
-    
     private final ObjectPoolTracker poolTracker;
-    
+
     private SingleDataSourceTracker dataSourceTracker;
 
     private DataSource dataSource;
 
     private final Queue<DataItemValue> valueBuffer;
 
-    private int maxBufferSize = 1024;
+    private int maxBufferSize = DEFAULT_MAX_BUFFER_SIZE;
 
     public HistoricalItemImpl ( final HistoricalItemInformation itemInformation, final String masterId, final BundleContext context ) throws InvalidSyntaxException
     {
         this.itemInformation = itemInformation;
         this.dataSourceId = masterId;
-        this.context = context;
 
         this.valueBuffer = new LinkedList<DataItemValue> ();
 
@@ -76,15 +72,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 HistoricalItemImpl.this.setStorage ( (StorageHistoricalItem)service );
             }
         } );
-//        this.masterTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( DataSource.class.getName (), new MapBuilder<String, String> ().put ( DataSource.DATA_SOURCE_ID, this.dataSourceId ).getMap () ), new SingleServiceListener () {
-//
-//            public void serviceChange ( final ServiceReference reference, final Object service )
-//            {
-//                HistoricalItemImpl.this.setMasterItem ( (DataSource)service );
-//            }
-//        } );
-        this.poolTracker = new ObjectPoolTracker(context, DataSource.class.getName ());
-        updateDataSource();
+        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
     }
 
     protected synchronized void setMasterItem ( final DataSource service )
@@ -127,20 +115,24 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         }
     }
 
-    public void start ()
+    public void start () throws InvalidSyntaxException
     {
+        logger.info ( "Start HistoricalItem: {}", itemInformation.getId () );
+
         this.storageTracker.open ();
-        //this.masterTracker.open ();
-        this.poolTracker.open();
+        this.poolTracker.open ();
+        updateDataSource ();
     }
 
     public void stop ()
     {
+        logger.info ( "Stop HistoricalItem: {}", itemInformation.getId () );
+
         this.storageTracker.close ();
-        //this.masterTracker.close ();
-        if (this.dataSourceTracker != null) {
-        	this.dataSourceTracker.close();
-        	this.dataSourceTracker = null;
+        if ( this.dataSourceTracker != null )
+        {
+            this.dataSourceTracker.close ();
+            this.dataSourceTracker = null;
         }
         this.poolTracker.close ();
     }
@@ -197,7 +189,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
             }
             else
             {
-                logger.info ( "State change ignored: {} missing storage", this.itemInformation.getId () );
+                logger.debug ( "State change ignored: {} missing storage", this.itemInformation.getId () );
                 final int size = this.valueBuffer.size ();
                 if ( size < this.maxBufferSize )
                 {
@@ -216,45 +208,39 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         {
             logger.info ( "Updating..." );
 
-            this.maxBufferSize = Integer.parseInt ( properties.get ( "maxBufferSize" ) );
-
-//            if ( this.masterTracker != null )
-//            {
-//                this.masterTracker.close ();
-//                this.masterTracker = null;
-//            }
-//
-//            if ( dataSourceId != null )
-//            {
-//                this.masterTracker = new SingleServiceTracker ( this.context, FilterUtil.createAndFilter ( MasterItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, dataSourceId ).getMap () ), new SingleServiceListener () {
-//
-//                    public void serviceChange ( final ServiceReference reference, final Object service )
-//                    {
-//                        HistoricalItemImpl.this.setMasterItem ( (MasterItem)service );
-//                    }
-//                } );
-//                this.masterTracker.open ();
-//            }
-            
+            try
+            {
+                this.maxBufferSize = Integer.parseInt ( properties.get ( "maxBufferSize" ) );
+            }
+            catch ( NumberFormatException e )
+            {
+                this.maxBufferSize = DEFAULT_MAX_BUFFER_SIZE;
+            }
             this.dataSourceId = dataSourceId;
-            updateDataSource();
+            updateDataSource ();
 
-            logger.info ( "Updating...done" );
+            logger.info ( "Updating... done" );
         }
     }
 
-	private void updateDataSource() throws InvalidSyntaxException {
-		if (this.dataSourceTracker != null) {
-        	this.dataSourceTracker.close();
-        	this.dataSourceTracker = null;
+    private void updateDataSource () throws InvalidSyntaxException
+    {
+        logger.debug ( "updateDataSource ()" );
+        if ( this.dataSourceTracker != null )
+        {
+            this.dataSourceTracker.close ();
+            this.dataSourceTracker = null;
         }
-		if (dataSourceId != null) {
-	        this.dataSourceTracker = new SingleDataSourceTracker(this.poolTracker, this.dataSourceId, new ServiceListener() {
-				public void dataSourceChanged(DataSource dataSource) {
-					setMasterItem(dataSource);
-				}
-			});
-	        this.dataSourceTracker.open();
-		}
-	}
+        if ( dataSourceId != null )
+        {
+            logger.debug ( "track datasource " + dataSourceId );
+            this.dataSourceTracker = new SingleDataSourceTracker ( this.poolTracker, this.dataSourceId, new ServiceListener () {
+                public void dataSourceChanged ( DataSource dataSource )
+                {
+                    setMasterItem ( dataSource );
+                }
+            } );
+            this.dataSourceTracker.open ();
+        }
+    }
 }
