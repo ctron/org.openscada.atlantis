@@ -77,17 +77,8 @@
 	</para>
 	
 	<para>
-	Next the basic <trademark>Equinox</trademark> infrastructure is installed:
+	Next the custom artifacts that should be included in the setup need to be installed.
 	</para>
-	
-	<screen>
-	<prompt>$ p2.init "targetDirectory"</prompt>
-	</screen>
-	
-	<note><para>
-	At this point it might be a good idea to edit the <filename>launcher.ini</filename>
-	file and add necessary arguments before continuing with the installation.
-	</para></note>
 </sect3>
 
 <sect3><title>Deploying the <trademark>OpenSCADA</trademark> artifacts</title>
@@ -98,6 +89,43 @@
 	want <quote>it all in</quote> you can install the <acronym>IU</acronym>
 	<filename>org.openscada.deploy.feature.group</filename> 
 	</para>
+	
+	<screen>
+	<prompt>$</prompt> p2.install test "org.openscada.deploy.feature.group"
+	</screen>
+	
+	<para>
+	It might also be that you need some project specific features that you need to install
+	now.
+	</para>
+</sect3>
+
+<sect3><title>Setting runtime parameters</title>
+	<para>
+	In order to set up some <trademark>Java</trademark> system properties you can edit the
+	file <filename>laucher.properties</filename> which contains a <code>key=value</code> scheme
+	of system properties that will be set on startup of the container.
+	</para>
+</sect3>
+
+<sect3><title>Starting the <trademark>Equinox</trademark> container</title>
+	<para>
+	In order to start the container change the current directory to the installation
+	directory issue the following command: 
+	</para>
+	
+	<screen>
+	<prompt>$</prompt> ./launcher 
+	</screen>
+	
+	<para>
+	The <trademark>OSGi</trademark> container will start up and show the <trademark>Equinox</trademark>
+	console. If you want to shut the application down you will need to issue the command <quote>close</quote>:
+	</para>
+	
+	<screen>
+	<prompt>osgi&gt;</prompt> close  
+	</screen>
 </sect3>
 
 </sect2>
