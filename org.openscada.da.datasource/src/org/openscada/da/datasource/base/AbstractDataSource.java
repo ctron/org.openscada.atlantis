@@ -73,7 +73,7 @@ public abstract class AbstractDataSource implements DataSource
 
     protected synchronized void updateData ( DataItemValue value )
     {
-        logger.debug ( "Update data: {} -> {}", new Object[] { value, value.getAttributes () } );
+        logger.debug ( "Update data: {} -> {}", new Object[] { value, value == null ? "" : value.getAttributes () } );
 
         if ( this.value != null )
         {
@@ -86,7 +86,7 @@ public abstract class AbstractDataSource implements DataSource
 
         value = applyAutoTimestamp ( value );
 
-        this.lastValue = value.getValue ();
+        this.lastValue = value == null ? null : value.getValue ();
         this.value = value;
 
         final DataItemValue finalValue = value;
@@ -107,7 +107,7 @@ public abstract class AbstractDataSource implements DataSource
 
     private DataItemValue applyAutoTimestamp ( DataItemValue value )
     {
-        if ( value.getTimestamp () == null )
+        if ( value != null && value.getTimestamp () == null )
         {
             try
             {
