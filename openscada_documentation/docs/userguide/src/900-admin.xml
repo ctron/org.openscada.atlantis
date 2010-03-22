@@ -87,7 +87,7 @@
 	to the previously created P2 installation. Depending on the functionality you want to
 	have in your server the selection of bundles or features might differ. If you just
 	want <quote>it all in</quote> you can install the <acronym>IU</acronym>
-	<filename>org.openscada.deploy.feature.group</filename> 
+	<filename>org.openscada.deploy.feature.group</filename>
 	</para>
 	
 	<screen>
@@ -125,6 +125,65 @@
 	
 	<screen>
 	<prompt>osgi&gt;</prompt> close  
+	</screen>
+</sect3>
+
+<sect3><title>Customizing services</title>
+	<para>
+	After installing the feature <filename>org.openscada.deploy.feature.group</filename> you will
+	have all services and features installed. Bundles that you do not want to be in the container
+	can be uninstalled by issuing the following command:
+	</para>
+	
+	<screen>
+	<prompt>osgi&gt;</prompt> uninstall bundle.id
+	</screen>
+	
+	<para>
+	Although the rest of the bundles will be installed they are not started or active in any way.
+	So they have to be started in order to provide the services you need. Of course at this point
+	the <trademark>OSGi</trademark> dependency management kicks in an automatically activates
+	bundles as you defined. This means that bundles might get started automatically if others depend on
+	it or they might simply get <quote>resolved</quote> which means that they are in use but
+	not activated (provide services). For more information about the <trademark>OSGi</trademark>
+	lifecycle management see the <trademark>OSGi</trademark> documentation itself.  
+	</para>
+	
+	<para>
+	<trademark>Equinox</trademark> will remember which services were started and will restart
+	them the next time the container is started.
+	</para>
+</sect3>
+
+<sect3><title>A quick introduction into the <trademark>Equinox</trademark> <trademark>OSGi</trademark>
+console</title>
+
+	<para>
+	List all installed bundles:
+	</para>
+	<screen>
+	<prompt>osgi&gt;</prompt> ss
+	</screen>
+	
+	<para>
+	List all installed bundles that match or partially match the string <filename>openscada</filename>:
+	</para>
+	<screen>
+	<prompt>osgi&gt;</prompt> ss openscada
+	</screen>
+	
+	<para>
+	Start a bundle named <filename>org.openscada.ca.file</filename>
+	</para>
+	<screen>
+	<prompt>osgi&gt;</prompt> start org.openscada.ca.file
+	</screen>
+	
+	<para>
+	Stop a bundle named <filename>org.openscada.ca.file</filename>
+	</para>
+	<screen>
+	<prompt>osgi&gt;</prompt> stop org.openscada.ca.file
 	</screen>
 </sect3>
 
