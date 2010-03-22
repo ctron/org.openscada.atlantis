@@ -6,10 +6,12 @@ import java.util.concurrent.Executors;
 
 import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceRegistration;
 
 public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<ProxyDataSource>
 {
@@ -19,23 +21,27 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
 
     private final ObjectPoolImpl objectPool;
 
+    private final ServiceRegistration poolRegistration;
+
     public ProxyDataSourceFactory ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = Executors.newSingleThreadExecutor ();
 
         this.objectPool = new ObjectPoolImpl ();
+        this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class.getName () );
 
         this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
-        this.poolTracker.close ();
+        this.poolTracker.open ();
     }
 
     @Override
     public synchronized void dispose ()
     {
+        this.poolRegistration.unregister ();
         this.objectPool.dispose ();
 
-        this.poolTracker.open ();
+        this.poolTracker.close ();
         super.dispose ();
         this.executor.shutdown ();
 
