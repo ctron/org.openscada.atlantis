@@ -136,11 +136,11 @@ public class ConnectionInformation implements Cloneable
 
             if ( ci.getInterface () == null )
             {
-                throw new IllegalArgumentException ( "URI has now interface" );
+                throw new IllegalArgumentException ( "URI has no interface" );
             }
             if ( ci.getDriver () == null )
             {
-                throw new IllegalArgumentException ( "URI has now driver" );
+                throw new IllegalArgumentException ( "URI has no driver" );
             }
 
             return ci;
