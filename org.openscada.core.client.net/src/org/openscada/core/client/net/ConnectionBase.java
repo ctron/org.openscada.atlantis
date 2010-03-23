@@ -512,6 +512,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     protected void onConnectionClosed ()
     {
+        this.properties = null;
     }
 
     protected void onConnectionEstablished ()
