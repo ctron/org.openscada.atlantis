@@ -14,9 +14,12 @@ public abstract class SessionConnectionBase extends ConnectionBase
 
     private static Logger logger = Logger.getLogger ( SessionConnectionBase.class );
 
+    private final ConnectionInformation connectionInformation;
+
     public SessionConnectionBase ( final ConnectionInformation connectionInformation )
     {
         super ( connectionInformation );
+        this.connectionInformation = connectionInformation;
     }
 
     public abstract String getRequiredVersion ();
@@ -30,6 +33,8 @@ public abstract class SessionConnectionBase extends ConnectionBase
     protected void requestSession ()
     {
         final Properties props = new Properties ();
+        props.putAll ( this.connectionInformation.getProperties () );
+
         props.setProperty ( SESSION_CLIENT_VERSION, getRequiredVersion () );
 
         final String username = getConnectionInformation ().getProperties ().get ( ConnectionInformation.PROP_USER );

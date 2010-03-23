@@ -264,7 +264,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     public Session createSession ( final Properties props ) throws UnableToCreateSessionException
     {
-        final Properties sessionProperties = new Properties ();
+        final Map<String, String> sessionProperties = new HashMap<String, String> ();
         final UserInformation user = createUserInformation ( props, sessionProperties );
         final SessionCommon session = new SessionCommon ( this, user, sessionProperties );
 

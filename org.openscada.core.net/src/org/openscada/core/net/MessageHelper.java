@@ -202,19 +202,19 @@ public class MessageHelper
         }
     }
 
-    public static Message createSessionACK ( final Message inputMessage, final Properties sessionProperties )
+    public static Message createSessionACK ( final Message inputMessage, final Map<String, String> sessionProperties )
     {
         final Message message = new Message ( Message.CC_ACK, inputMessage.getSequence () );
         message.getValues ().put ( "properties", toValue ( sessionProperties ) );
         return message;
     }
 
-    private static MapValue toValue ( final Properties sessionProperties )
+    private static MapValue toValue ( final Map<? extends Object, ? extends Object> sessionProperties )
     {
         final MapValue value = new MapValue ();
         if ( sessionProperties != null )
         {
-            for ( final Map.Entry<Object, Object> entry : sessionProperties.entrySet () )
+            for ( final Map.Entry<? extends Object, ? extends Object> entry : sessionProperties.entrySet () )
             {
                 value.put ( entry.getKey ().toString (), new StringValue ( entry.getValue ().toString () ) );
             }

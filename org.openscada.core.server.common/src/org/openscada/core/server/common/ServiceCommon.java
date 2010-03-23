@@ -19,6 +19,7 @@
 
 package org.openscada.core.server.common;
 
+import java.util.Map;
 import java.util.Properties;
 
 import org.openscada.core.ConnectionInformation;
@@ -47,7 +48,7 @@ public abstract class ServiceCommon implements Service
      * anonymous session
      * @throws AuthenticationException if the user was rejected 
      */
-    protected UserInformation authenticate ( final Properties properties, final Properties sessionResultProperties ) throws AuthenticationException
+    protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
     {
         final String username = properties.getProperty ( ConnectionInformation.PROP_USER );
         if ( username != null )
@@ -69,7 +70,7 @@ public abstract class ServiceCommon implements Service
      * caught by the call to {@link #authenticate(Properties)}.
      * @see #authenticate(Properties)
      */
-    protected UserInformation createUserInformation ( final Properties properties, final Properties sessionResultProperties ) throws UnableToCreateSessionException
+    protected UserInformation createUserInformation ( final Properties properties, final Map<String, String> sessionResultProperties ) throws UnableToCreateSessionException
     {
         try
         {

@@ -22,7 +22,6 @@ package org.openscada.da.server.common.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
 
@@ -51,7 +50,7 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
 
     private final Collection<Future<?>> tasks = new ConcurrentLinkedQueue<Future<?>> ();
 
-    public SessionCommon ( final HiveCommon hive, final UserInformation userInformation, final Properties properties )
+    public SessionCommon ( final HiveCommon hive, final UserInformation userInformation, final Map<String, String> properties )
     {
         super ( userInformation, properties );
 

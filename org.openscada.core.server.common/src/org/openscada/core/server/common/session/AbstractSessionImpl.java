@@ -19,7 +19,9 @@
 
 package org.openscada.core.server.common.session;
 
-import java.util.Properties;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openscada.sec.UserInformation;
 
@@ -27,17 +29,17 @@ public abstract class AbstractSessionImpl implements UserSession
 {
     private final UserInformation userInformation;
 
-    private final Properties properties;
+    private final Map<String, String> properties;
 
-    public AbstractSessionImpl ( final UserInformation userInformation, final Properties properties )
+    public AbstractSessionImpl ( final UserInformation userInformation, final Map<String, String> properties )
     {
         this.userInformation = userInformation;
-        this.properties = properties;
+        this.properties = new HashMap<String, String> ( properties );
     }
 
-    public Properties getProperties ()
+    public Map<String, String> getProperties ()
     {
-        return new Properties ( this.properties );
+        return Collections.unmodifiableMap ( this.properties );
     }
 
     public UserInformation getUserInformation ()

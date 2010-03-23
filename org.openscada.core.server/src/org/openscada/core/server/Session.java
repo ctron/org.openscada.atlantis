@@ -19,7 +19,7 @@
 
 package org.openscada.core.server;
 
-import java.util.Properties;
+import java.util.Map;
 
 public interface Session
 {
@@ -31,5 +31,5 @@ public interface Session
      * </p>
      * @return the session properties
      */
-    public Properties getProperties ();
+    public Map<String, String> getProperties ();
 }

@@ -97,7 +97,7 @@ public class HiveImpl extends HiveCommon
     }
 
     @Override
-    protected UserInformation authenticate ( final Properties properties, final Properties sessionResultProperties ) throws AuthenticationException
+    protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
     {
         final UserInformation result = this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
 
@@ -106,7 +106,7 @@ public class HiveImpl extends HiveCommon
         return result;
     }
 
-    private void authorizeSessionPriviliges ( final Properties properties, final UserInformation user, final Properties sessionResultProperties )
+    private void authorizeSessionPriviliges ( final Properties properties, final UserInformation user, final Map<String, String> sessionResultProperties )
     {
         for ( final Map.Entry<Object, Object> entry : properties.entrySet () )
         {
@@ -119,7 +119,7 @@ public class HiveImpl extends HiveCommon
                     final String priv = key.substring ( "session.privilege.".length () );
                     if ( authenticateSessionPrivilege ( user, priv, value ) )
                     {
-                        sessionResultProperties.put ( key, true );
+                        sessionResultProperties.put ( key, "true" );
                     }
                 }
             }
