@@ -28,7 +28,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
@@ -58,6 +57,7 @@ import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 import org.openscada.utils.exec.LongRunningState;
@@ -98,21 +98,15 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     {
         super ( connectionInformantion );
 
-        this.executor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
-
-            public Thread newThread ( final Runnable r )
-            {
-                final Thread t = new Thread ( r, "ConnectionExecutor/" + getConnectionInformation () );
-                t.setDaemon ( true );
-                return t;
-            }
-        } );
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ConnectionExecutor" ) );
         init ();
     }
 
+    /**
+     * Set up message handlers
+     */
     private void init ()
     {
-
         this.messenger.setHandler ( Messages.CC_NOTIFY_DATA, new MessageListener () {
 
             public void messageReceived ( final Message message )
