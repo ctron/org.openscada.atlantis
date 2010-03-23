@@ -122,5 +122,74 @@
 	</sect3>
 
 </sect2>
+
+<sect2><title>org.openscada.sec.provider.script</title>
+	<para>
+	The bundle <filename>org.openscada.sec.provider.script</filename> contains
+	and implementation of a authorization provider which is configured using JavaScript
+	or other Java scripting compatible with JSR-223.
+</para>
+
+	<sect3><title>System properties</title>
+		<para>
+		No system properties are used by the bundle.
+		</para>
+	</sect3>
+	
+	<sect3><title>Exported services</title>
+		<para>
+		The following services are exported by this bundle:
+		</para>
+		
+		<table><title>Exported services of <filename>org.openscada.sec.provider.script</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Supported interfaces</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>org.openscada.sec.AuthorizationService</entry>
+						<entry>
+						A script language based authorization provider that evaluates requests
+						by iterating through its configured entries as configured using the
+						factory <filename>org.openscada.sec.provider.script.factory</filename>.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect3>
+	
+	<sect3><title>Configurable services</title>
+		<para>
+		The following configurable services are provided by this bundle:
+		</para>
+		
+		<table><title>Configurable services of <filename>org.openscada.sec.provider.script</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Factory ID</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>org.openscada.sec.provider.script.factory</entry>
+						<entry>
+						A configuration entry used to configure the authorization provider.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect3>
+	
+</sect2>
 	
 </sect1>
