@@ -52,7 +52,6 @@ import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
-import org.openscada.net.base.data.Value;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.concurrent.ResultHandler;
@@ -166,8 +165,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         // get the session properties
         final Properties props = new Properties ();
-        final Value propertiesValue = message.getValues ().get ( "properties" );
-        MessageHelper.getProperties ( props, propertiesValue );
+        MessageHelper.getProperties ( props, message.getValues ().get ( "properties" ) );
 
         // now check client version
         final String clientVersion = props.getProperty ( "client-version", "" );
