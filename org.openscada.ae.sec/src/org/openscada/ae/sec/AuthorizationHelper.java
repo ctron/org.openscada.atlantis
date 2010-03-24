@@ -43,6 +43,11 @@ public class AuthorizationHelper extends org.openscada.sec.osgi.AuthorizationHel
     @Override
     public AuthorizationResult authorize ( final String objectId, final String objectType, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
     {
+        if ( this.logAll )
+        {
+            this.eventProcessor.publishEvent ( makeEvent ( objectId, objectType, action, userInformation, null ) );
+        }
+
         final AuthorizationResult result = super.authorize ( objectId, objectType, action, userInformation, context, defaultResult );
 
         if ( result != null && !result.isGranted () )
@@ -63,15 +68,25 @@ public class AuthorizationHelper extends org.openscada.sec.osgi.AuthorizationHel
             builder.attribute ( Fields.ACTOR_NAME, userInformation.getName () );
             builder.attribute ( Fields.ACTOR_TYPE, "USER" );
         }
-        builder.attribute ( Fields.EVENT_TYPE, "DENY" );
+
         builder.attribute ( Fields.MONITOR_TYPE, "SEC" );
         builder.attribute ( Fields.ITEM, objectId );
-        builder.attribute ( Fields.MESSAGE, String.format ( "%s: %s", result.getErrorCode (), result.getMessage () ) );
+        if ( result != null )
+        {
+            builder.attribute ( Fields.MESSAGE, String.format ( "%s: %s", result.getErrorCode (), result.getMessage () ) );
+            builder.attribute ( "CODE", result.getErrorCode () );
+            builder.attribute ( Fields.PRIORITY, 1000 );
+            builder.attribute ( Fields.EVENT_TYPE, "DENY" );
+        }
+        else
+        {
+            builder.attribute ( Fields.EVENT_TYPE, "REQ" );
+            builder.attribute ( Fields.MESSAGE, "Requesting authorization" );
+            builder.attribute ( Fields.PRIORITY, 0 );
+        }
         builder.attribute ( Fields.SOURCE, objectId );
         builder.attribute ( "SOURCE_TYPE", objectType );
         builder.attribute ( Fields.VALUE, action );
-        builder.attribute ( "CODE", result.getErrorCode () );
-        builder.attribute ( Fields.PRIORITY, 1000 );
 
         return builder.build ();
     }
