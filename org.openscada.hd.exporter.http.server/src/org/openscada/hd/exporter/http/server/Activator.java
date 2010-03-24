@@ -63,11 +63,14 @@ public class Activator implements BundleActivator
             {
                 Properties props = new Properties ();
                 props.put ( Constants.SERVICE_RANKING, 20 );
-                try {
-					Activator.this.localHdServerServiceRegistration = context.registerService ( HttpExporter.class.getName (), new LocalHttpExporter ((Service) service), props );
-				} catch (Exception e) {
-					e.printStackTrace();
-				}
+                try
+                {
+                    Activator.this.localHdServerServiceRegistration = context.registerService ( HttpExporter.class.getName (), new LocalHttpExporter ( (Service)service ), props );
+                }
+                catch ( Exception e )
+                {
+                    e.printStackTrace ();
+                }
             }
         }
     };
