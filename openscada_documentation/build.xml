@@ -147,8 +147,8 @@
 
 	<target name="render_fopdf" unless="skip.fop">
 		<mkdir dir="${deploy.dir}/pdf"/>
-		<docbook.fopdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf" outputName="reference"/>
-		<docbook.fopdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf" outputName="userguide"/>
+		<docbook.fopdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf.fo" outputName="reference"/>
+		<docbook.fopdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf.fo" outputName="userguide"/>
 	</target>
 	
 	
@@ -204,8 +204,8 @@
 	
 	<target name="render_texpdf" unless="skip.tex">
 		<mkdir dir="${deploy.dir}/pdf"/>
-		<docbook.texpdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf" outputName="reference"/>
-		<docbook.texpdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf" outputName="userguide"/>
+		<docbook.texpdf dir="${basedir}/docs/reference" output="${deploy.dir}/pdf.tex" outputName="reference"/>
+		<docbook.texpdf dir="${basedir}/docs/userguide" output="${deploy.dir}/pdf.tex" outputName="userguide"/>
 	</target>
 	
 	
