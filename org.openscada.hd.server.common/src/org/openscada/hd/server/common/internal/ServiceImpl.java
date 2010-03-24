@@ -98,7 +98,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
 
     public org.openscada.core.server.Session createSession ( final Properties properties ) throws UnableToCreateSessionException
     {
-        final Properties sessionResultProperties = new Properties ();
+        final Map<String, String> sessionResultProperties = new HashMap<String, String> ();
         final UserInformation user = createUserInformation ( properties, sessionResultProperties );
         final SessionImpl session = new SessionImpl ( user, sessionResultProperties );
         try

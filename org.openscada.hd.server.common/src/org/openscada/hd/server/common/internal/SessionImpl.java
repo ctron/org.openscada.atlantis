@@ -24,7 +24,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.Properties;
+import java.util.Map;
 import java.util.Set;
 
 import org.openscada.core.server.common.session.AbstractSessionImpl;
@@ -45,7 +45,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, ItemLis
 
     private ItemListListener itemListListener;
 
-    public SessionImpl ( final UserInformation user, final Properties properties )
+    public SessionImpl ( final UserInformation user, final Map<String, String> properties )
     {
         super ( user, properties );
         logger.info ( "Created new session" );
