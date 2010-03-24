@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 
 import org.openscada.ae.BrowserEntry;
@@ -41,7 +40,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
 
     private final Set<QueryImpl> queries = new HashSet<QueryImpl> ();
 
-    public SessionImpl ( final UserInformation userInformation, final Properties properties )
+    public SessionImpl ( final UserInformation userInformation, final Map<String, String> properties )
     {
         super ( userInformation, properties );
         logger.info ( "Created new session" );
