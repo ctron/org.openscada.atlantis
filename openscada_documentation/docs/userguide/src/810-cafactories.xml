@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="osgibundles"><title><trademark>OSGi</trademark> Bundles</title>
+<sect1 id="cafactories"><title>Configurable services</title>
 	<para>
 	This section describes the different <trademark>OSGi</trademark> bundles available in OpenSCADA.
 	</para>
