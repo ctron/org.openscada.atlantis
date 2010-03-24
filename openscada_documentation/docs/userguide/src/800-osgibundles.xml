@@ -180,9 +180,12 @@
 				</thead>
 				<tbody>
 					<row>
-						<entry>org.openscada.sec.provider.script.factory</entry>
+						<entry>
+						org.openscada.sec.provider.script.factory
+						</entry>
 						<entry>
 						A configuration entry used to configure the authorization provider.
+						See also <xref linkend="cafactory_org.openscada.sec.provider.script.factory"/>
 						</entry>
 					</row>
 				</tbody>

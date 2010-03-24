@@ -3,22 +3,27 @@
 
 <sect1 id="cafactories"><title>Configurable services</title>
 	<para>
-	This section describes the different <trademark>OSGi</trademark> bundles available in OpenSCADA.
+	This section describes the different configurable services of the OpenSCADA 
+	<trademark>OSGi</trademark> based system.
 	</para>
 	
-<sect2><title>org.openscada.osgi.equinox.console</title>
+<sect2
+	id="cafactory_org.openscada.sec.provider.script.factory"
+	><title>org.openscada.sec.provider.script.factory</title>
 <para>
-	The bundle <filename>org.openscada.osgi.equinox.console</filename> provides an implementation of
-	an <trademark>Equinox</trademark> console that is accessible using a normal
-	<acronym>TCP</acronym> (or Telnet) connection.	
+	This configuration factories creates entries that configure the script based
+	authentication service. Each entry is used in evaluating the authorization
+	request in the case the script based authorization provider is used. The entries
+	will not cause further <trademark></trademark> services to be created but only
+	create internal objects for the service itself.
 </para>
 
-	<sect3><title>System properties</title>
+	<sect3><title>Configuration</title>
 		<para>
-		The following system properties are available:
+		The following configuration properties are available:
 		</para>
 		
-		<table><title>System properties of <filename>org.openscada.osgi.equinox.console</filename></title>
+		<table><title>Configuration properties of <filename>org.openscada.sec.provider.script.factory</filename></title>
 				<tgroup cols="4">
 				<thead>
 					<row>
@@ -30,167 +35,195 @@
 				</thead>
 				<tbody>
 					<row>
-						<entry>org.openscada.osgi.equinox.console.port</entry>
-						<entry>Integer</entry>
-						<entry>optional</entry>
-						<entry>
-						The port number the console will bind to. It is important
-						that only one console at a time can bind to a port. Different
-						instances with different consoles must have different ports
-						otherwise the port cannot be opened and the console will
-						not be accessible.
-						</entry>
-					</row>
-					
-					<row>
-						<entry>org.openscada.osgi.equinox.console.timeout.login</entry>
-						<entry>Integer</entry>
-						<entry>optional</entry>
-						<entry>
-						The timeout in milliseconds during the login phase
-						(before the user is authenticated). If no input is received
-						for the specified amount of time the connection is closed by
-						the server.
-						</entry>
-					</row>
-					
-					<row>
-						<entry>org.openscada.osgi.equinox.console.secret</entry>
+						<entry>engine</entry>
 						<entry>String</entry>
 						<entry>optional</entry>
 						<entry>
-						The <quote>secret</quote> (<abbrev>aka</abbrev> <quote>password</quote>)
-						the user has to enter in order to gain access.
+						The name of the string engine to use. This must be a valid 
+						and registered JSR-223 script engine. If it is not specified
+						the JavaScript engine will be used.
 						</entry>
 					</row>
 					
 					<row>
-						<entry>org.openscada.osgi.equinox.console.timeout</entry>
+						<entry>priority</entry>
 						<entry>Integer</entry>
 						<entry>optional</entry>
 						<entry>
-						The timeout in milliseconds after the login phase
-						(after the user is authenticated). If no input is received
-						for the specified amount of time the connection is closed by
-						the server.
+						The priority of this entry. Gives a sort order in which the
+						entries will be evaluated. Lower number will be evaluates before
+						higher numbers.
 						</entry>
 					</row>
-				</tbody>
-				</tgroup>
-		</table>
-		
-	</sect3>
-
-</sect2>
-
-<sect2><title>org.openscada.ds.storage.file</title>
-<para>
-	The bundle <filename>org.openscada.ds.storage.file</filename> provides an implementation of
-	the <acronym>DS</acronym> (Data Store) service based on the file system.
-</para>
-
-	<sect3><title>System properties</title>
-		<para>
-		The following system properties are available:
-		</para>
-		
-		<table><title>System properties of <filename>org.openscada.ds.storage.file</filename></title>
-				<tgroup cols="4">
-				<thead>
+					
 					<row>
-						<entry>Property</entry>
-						<entry>Type</entry>
-						<entry>Required</entry>
-						<entry>Description</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>org.openscada.ds.storage.file.root</entry>
+						<entry>for.id</entry>
 						<entry>String</entry>
-						<entry>Required</entry>
+						<entry>optional</entry>
 						<entry>
-						The base path to the file system storage where all data will be stored.
-						Read and write access is required. If the directory does not exists
-						it will be created including all parent directories. The path must not
-						point to a file.
+						A regular expression that will filter out object id for this entry.
+						If the regular expression matches the entry it will be evaluated.
+						Otherwise the entry will not be evaluated for this request. If
+						the property is not set it will be considered as a match. 
 						</entry>
 					</row>
+					
+					<row>
+						<entry>for.type</entry>
+						<entry>String</entry>
+						<entry>optional</entry>
+						<entry>
+						A regular expression that will filter out object type for this entry.
+						If the regular expression matches the entry it will be evaluated.
+						Otherwise the entry will not be evaluated for this request. If
+						the property is not set it will be considered as a match.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>for.action</entry>
+						<entry>String</entry>
+						<entry>optional</entry>
+						<entry>
+						A regular expression that will filter out action for this entry.
+						If the regular expression matches the entry it will be evaluated.
+						Otherwise the entry will not be evaluated for this request. If
+						the property is not set it will be considered as a match.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>script</entry>
+						<entry>String</entry>
+						<entry>required</entry>
+						<entry>
+						The script that will be executed. See
+						<xref linkend="cafactory_org.openscada.sec.provider.script.factory_writing"/> for
+						more information about writing authorization scripts.
+						</entry>
+					</row>
+					
+					
 				</tbody>
 				</tgroup>
 		</table>
+		
+	</sect3>
+	
+	<sect3 id="cafactory_org.openscada.sec.provider.script.factory_writing">
+		<title>Writing authorization scripts</title>
+		<para>
+			The script has to evaluate if the request provided can be granted, is rejected
+			or if the script cannot decide about that. The script has to provide a return
+			value. How to do that depends on the scripting language you are using. The following
+			samples are based on the JavaScript script engine.
+		</para>
+		<para>
+			The script fragment will have the following global variables bound:
+			<variablelist>
+				<varlistentry>
+					<term>id</term>
+					<listitem>
+						<para>
+						The object id for which the authorization is requested.
+						This variable can be <code>null</code>.
+						</para>
+					</listitem>
+				</varlistentry>
+				
+				<varlistentry>
+					<term>type</term>
+					<listitem>
+						<para>
+						The object type for which the authorization is requested.
+						This variable can be <code>null</code>.
+						</para>
+					</listitem>
+				</varlistentry>
+				
+				<varlistentry>
+					<term>action</term>
+					<listitem>
+						<para>
+						The action for which the authorization is requested.
+						This variable can be <code>null</code>.
+						</para>
+					</listitem>
+				</varlistentry>
+				
+				<varlistentry>
+					<term>user</term>
+					<listitem>
+						<para>
+						The information about the user requesting the authorization.
+						 This variable can be <code>null</code>.
+						</para>
+					</listitem>
+				</varlistentry>
+				
+				<varlistentry>
+					<term>context</term>
+					<listitem>
+						<para>
+						A map containing additional information in  key/value pairs.
+						 This variable is never <code>null</code> but can be empty. 
+						</para>
+					</listitem>
+				</varlistentry>
+				
+				<varlistentry>
+					<term>GRANTED</term>
+					<listitem>
+						<para>
+						A pre-defined object instance which reflects a <quote>granted</quote>
+						result. This variable is never <code>null</code>.
+						</para>
+					</listitem>
+				</varlistentry>
+			</variablelist>
+		</para>
+		
+		<para>
+		The return value of the script fragment defined the result of the authorization check.
+		If no return value is given or if the return value is <code>null</code> then the entry
+		has not voted and the next entry is checked. The application itself decides what will
+		happen if no entry has voted.
+		</para>
+		
+		<para>
+		The return value can be either the predefined global variable <varname>GRANTED</varname>.
+		It can be a boolean value were <code>true</code> means <emphasis>granted</emphasis> and
+		<code>false</code> means <emphasis>rejected</emphasis>. It can be a number where
+		<emphasis>zero</emphasis> means <emphasis>granted</emphasis> and any other value means
+		<emphasis>rejected</emphasis>. The number itself is used as error code.
+		A string where an empty string means <emphasis>granted</emphasis>
+		and any other string will mean <emphasis>rejected</emphasis>. The string itself is used as
+		error message. It can be an instance of <classname>org.openscada.utils.statuscodes.StatusCode</classname>
+		which always means <emphasis>rejected</emphasis>. The status code is used as error code and message.
+		It can be a <classname>Throwable</classname> which always means <emphasis>rejected</emphasis>. If it
+		is a status coded exception the status code information will be used as well. It can be an instance
+		of <classname>org.openscada.sec.provider.script.Result</classname> which is a complex result structure
+		that contains all information. If the result type is something else then the previously describes types
+		the request is <emphasis>rejected</emphasis>.
+		</para>
+		
+		<para>
+			The following, rather simple example, shows a method to grant everything. Combined with
+			the <code>for.id</code>, <code>for.type</code> and <code>for.action</code> filters you
+			can have a rather simple start.
+<example><title><function>SampleClient1</function></title>
+				<programlisting language="Java">
+GRANTED;
+				</programlisting>
+</example>
+		</para>
+		
+		<para>
+			The following
+		</para>
 		
 	</sect3>
 
 </sect2>
 
-<sect2><title>org.openscada.sec.provider.script</title>
-	<para>
-	The bundle <filename>org.openscada.sec.provider.script</filename> contains
-	and implementation of a authorization provider which is configured using JavaScript
-	or other Java scripting compatible with JSR-223.
-</para>
-
-	<sect3><title>System properties</title>
-		<para>
-		No system properties are used by the bundle.
-		</para>
-	</sect3>
-	
-	<sect3><title>Exported services</title>
-		<para>
-		The following services are exported by this bundle:
-		</para>
-		
-		<table><title>Exported services of <filename>org.openscada.sec.provider.script</filename></title>
-				<tgroup cols="2">
-				<thead>
-					<row>
-						<entry>Supported interfaces</entry>
-						<entry>Description</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>org.openscada.sec.AuthorizationService</entry>
-						<entry>
-						A script language based authorization provider that evaluates requests
-						by iterating through its configured entries as configured using the
-						factory <filename>org.openscada.sec.provider.script.factory</filename>.
-						</entry>
-					</row>
-				</tbody>
-				</tgroup>
-		</table>
-		
-	</sect3>
-	
-	<sect3><title>Configurable services</title>
-		<para>
-		The following configurable services are provided by this bundle:
-		</para>
-		
-		<table><title>Configurable services of <filename>org.openscada.sec.provider.script</filename></title>
-				<tgroup cols="2">
-				<thead>
-					<row>
-						<entry>Factory ID</entry>
-						<entry>Description</entry>
-					</row>
-				</thead>
-				<tbody>
-					<row>
-						<entry>org.openscada.sec.provider.script.factory</entry>
-						<entry>
-						A configuration entry used to configure the authorization provider.
-						</entry>
-					</row>
-				</tbody>
-				</tgroup>
-		</table>
-		
-	</sect3>
-	
-</sect2>
-	
 </sect1>
