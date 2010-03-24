@@ -212,7 +212,7 @@
 			the <code>for.id</code>, <code>for.type</code> and <code>for.action</code> filters you
 			can have a rather simple start.
 <example><title><function>SampleClient1</function></title>
-				<programlisting language="Java">
+				<programlisting language="JavaScript">
 GRANTED;
 				</programlisting>
 </example>
