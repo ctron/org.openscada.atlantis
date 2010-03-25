@@ -4,7 +4,7 @@
         "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping package="org.openscada.ae.server.storage.jdbc.internal">
-	<class name="MutableEvent" table="org_openscada_ae_server_storage_events"
+	<class name="MutableEvent" table="openscada_ae_events"
 		mutable="true" dynamic-insert="true" dynamic-update="true">
 
 		<!-- always available fields -->
