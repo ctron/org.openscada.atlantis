@@ -75,9 +75,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Set of available calculation methods. */
     private final CalculationMethod[] calculationMethods;
 
-    /*** Flag indicating whether the query is only executed one but with complete data or if the query has to be executed in small parts. */
-    private boolean executeOnce;
-
     /** Input parameters of the query. */
     private QueryParameters parameters;
 
@@ -126,6 +123,8 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     /** Maximum compression level. */
     private long maximumCompressionLevel;
 
+    private volatile boolean updateData = false;
+
     /**
      * Constructor.
      * @param service service that created the query object
@@ -142,7 +141,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         startTimeIndicesToUpdate = new HashSet<Integer> ();
         initialLoadPerformed = false;
         maximumCompressionLevel = 0;
-        executeOnce = false;
         calculationLogicProviderFactory = new CalculationLogicProviderFactoryImpl ();
         closed = ( service == null ) || ( listener == null ) || ( parameters == null ) || ( parameters.getStartTimestamp () == null ) || ( parameters.getEndTimestamp () == null );
         if ( closed )
@@ -164,6 +162,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      */
     public void run ( final Map<Long, Map<CalculationMethod, Map<ExtendedStorageChannel, CalculationLogicProvider>>> storageChannels, final boolean updateData )
     {
+        this.updateData = updateData;
         if ( closed )
         {
             return;
@@ -186,12 +185,10 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         queryTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( QUERY_DATA_PROCESSOR_THREAD_ID ) );
         if ( updateData )
         {
-            executeOnce = true;
             queryTask.scheduleWithFixedDelay ( runnable, 0, DELAY_BETWEEN_TWO_QUERY_CALCULATIONS, TimeUnit.MILLISECONDS );
         }
         else
         {
-            executeOnce = false;
             queryTask.schedule ( runnable, 0, TimeUnit.MILLISECONDS );
         }
     }
@@ -688,6 +685,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     {
         if ( !closed )
         {
+            closed = true;
             if ( queryTask != null )
             {
                 queryTask.shutdown ();
@@ -698,7 +696,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                 sendingTask.shutdown ();
             }
             setQueryState ( QueryState.DISCONNECTED );
-            if ( executeOnce )
+            if ( !updateData )
             {
                 closerTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( QUERY_CLOSER_THREAD_ID ) );
                 closerTask.submit ( new Runnable () {
@@ -708,7 +706,6 @@ public class QueryImpl implements Query, ExtendedStorageChannel
                     }
                 } );
             }
-            closed = true;
         }
     }
 
