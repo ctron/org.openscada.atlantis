@@ -7,6 +7,7 @@ import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
@@ -21,6 +22,10 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 {
 
     private final EventProcessor eventProcessor;
+
+    private String source;
+
+    private String itemId;
 
     public MasterItemLogger ( final BundleContext context, final ObjectPoolTracker poolTracker, final int priority ) throws InvalidSyntaxException
     {
@@ -46,13 +51,30 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     }
 
     @Override
+    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    {
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+        final String source = cfg.getString ( "source", "'source' must be set" );
+        final String itemId = cfg.getString ( "item.id" );
+
+        super.update ( parameters );
+
+        this.source = source;
+        this.itemId = itemId;
+    }
+
+    @Override
     public WriteRequestResult processWrite ( final WriteRequest request )
     {
         if ( request.getValue () != null )
         {
             final EventBuilder builder = Event.create ();
             builder.sourceTimestamp ( new Date () );
-            builder.attribute ( Event.Fields.SOURCE, getMasterId () );
+            builder.attribute ( Event.Fields.SOURCE, this.source );
+            if ( this.itemId != null )
+            {
+                builder.attribute ( Event.Fields.ITEM, this.itemId );
+            }
             builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE" );
             builder.attribute ( Event.Fields.MONITOR_TYPE, "LOG" );
             builder.attribute ( Event.Fields.VALUE, request.getValue () );
