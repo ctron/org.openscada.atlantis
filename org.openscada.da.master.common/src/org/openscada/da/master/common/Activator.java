@@ -7,6 +7,7 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
+import org.openscada.da.master.common.block.BlockHandlerFactoryImpl;
 import org.openscada.da.master.common.manual.ManualHandlerFactoryImpl;
 import org.openscada.da.master.common.negate.NegateHandlerFactoryImpl;
 import org.openscada.da.master.common.scale.ScaleHandlerFactoryImpl;
@@ -40,6 +41,8 @@ public class Activator implements BundleActivator
     private NegateHandlerFactoryImpl factory6;
 
     private ManualHandlerFactoryImpl factory7;
+
+    private BlockHandlerFactoryImpl factory8;
 
     /*
      * (non-Javadoc)
@@ -83,6 +86,14 @@ public class Activator implements BundleActivator
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local manual override master handler" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class.getName (), this.factory7, properties );
+        }
+
+        {
+            this.factory8 = new BlockHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, Integer.MIN_VALUE );
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( Constants.SERVICE_DESCRIPTION, "A blocking operation handler" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, BlockHandlerFactoryImpl.FACTORY_ID );
+            context.registerService ( ConfigurationFactory.class.getName (), this.factory8, properties );
         }
     }
 
