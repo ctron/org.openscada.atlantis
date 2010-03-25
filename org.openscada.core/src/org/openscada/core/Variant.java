@@ -54,6 +54,10 @@ public class Variant implements Serializable, Comparable<Variant>
         {
             return NULL;
         }
+        if ( value instanceof Variant )
+        {
+            return (Variant)value;
+        }
         if ( value instanceof Boolean )
         {
             return valueOf ( ( (Boolean)value ).booleanValue () );
