@@ -3,6 +3,7 @@ package org.openscada.da.master;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Dictionary;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -20,17 +21,15 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private final static Logger logger = LoggerFactory.getLogger ( AbstractMasterHandlerImpl.class );
 
-    private ObjectPoolServiceTracker tracker;
-
     private final Set<MasterItem> items = new CopyOnWriteArraySet<MasterItem> ();
 
     private final int defaultPriority;
 
-    private String masterId;
-
     private final ObjectPoolTracker poolTracker;
 
     private volatile int priority;
+
+    private final Collection<ObjectPoolServiceTracker> trackers = new LinkedList<ObjectPoolServiceTracker> ();
 
     public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker, final int defaultPriority )
     {
@@ -41,50 +40,59 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     public synchronized void dispose ()
     {
-        if ( this.tracker != null )
-        {
-            this.tracker.close ();
-            this.tracker = null;
-        }
+        closeTrackers ();
     }
 
-    protected String getMasterId ()
+    private void closeTrackers ()
     {
-        return this.masterId;
+        for ( final ObjectPoolServiceTracker tracker : this.trackers )
+        {
+            tracker.close ();
+        }
+        this.trackers.clear ();
     }
 
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
-        if ( this.tracker != null )
-        {
-            this.tracker.close ();
-            this.tracker = null;
-        }
+        closeTrackers ();
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
         this.priority = cfg.getInteger ( "handlerPriority", this.defaultPriority );
-        this.masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) );
+        final String masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) );
+        final String splitPattern = cfg.getString ( "splitPattern", ", ?" );
 
-        this.tracker = new ObjectPoolServiceTracker ( this.poolTracker, this.masterId, new ObjectPoolListener () {
+        createTrackers ( masterId.split ( splitPattern ) );
 
-            public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
-            {
-                addItem ( (MasterItem)service );
-            }
+        for ( final ObjectPoolServiceTracker tracker : this.trackers )
+        {
+            tracker.open ();
+        }
+    }
 
-            public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
-            {
-                // TODO Auto-generated method stub
+    protected void createTrackers ( final String[] masterIds )
+    {
+        for ( final String masterId : masterIds )
+        {
+            this.trackers.add ( new ObjectPoolServiceTracker ( this.poolTracker, masterId, new ObjectPoolListener () {
 
-            }
+                public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
+                {
+                    addItem ( (MasterItem)service );
+                }
 
-            public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
-            {
-                removeItem ( (MasterItem)service );
-            }
-        } );
-        this.tracker.open ();
+                public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
+                {
+                    // TODO Auto-generated method stub
+
+                }
+
+                public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
+                {
+                    removeItem ( (MasterItem)service );
+                }
+            } ) );
+        }
     }
 
     protected boolean removeItem ( final MasterItem item )
