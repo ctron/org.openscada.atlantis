@@ -1,14 +1,13 @@
 package org.openscada.hd.server.storage;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -68,10 +67,10 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     private CalculatingStorageChannel rootStorageChannel;
 
     /** Flag indicating whether the service is currently starting or not. */
-    private boolean starting;
+    private volatile boolean starting;
 
     /** Flag indicating whether the service is currently running or not. */
-    private boolean started;
+    private volatile boolean started;
 
     /** List of currently open queries. */
     private final Collection<QueryImpl> openQueries;
@@ -124,7 +123,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         lockObject = new Object ();
         starting = false;
         started = false;
-        openQueries = new LinkedList<QueryImpl> ();
+        openQueries = new CopyOnWriteArrayList<QueryImpl> ();
         this.latestReliableTime = latestReliableTime;
         this.importMode = importMode;
         final Map<String, String> data = configuration.getData ();
@@ -206,7 +205,10 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                 public void run ()
                 {
                     query.run ( backEndManager.buildStorageChannelStructure (), updateData );
-                    service.addQuery ( query );
+                    if ( updateData )
+                    {
+                        service.addQuery ( query );
+                    }
                 }
             } );
             return query;
@@ -521,7 +523,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         }
 
         // close existing queries
-        for ( final QueryImpl query : new ArrayList<QueryImpl> ( openQueries ) )
+        for ( final QueryImpl query : openQueries )
         {
             query.close ();
         }
