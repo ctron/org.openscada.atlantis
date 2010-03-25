@@ -104,7 +104,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     protected void addItem ( final MasterItem item )
     {
-        logger.debug ( "Addeding master: {}", item );
+        logger.debug ( "Adding master: {}", item );
         if ( this.items.add ( item ) )
         {
             logger.debug ( "Added master: {} / {}", new Object[] { item, this.priority } );
