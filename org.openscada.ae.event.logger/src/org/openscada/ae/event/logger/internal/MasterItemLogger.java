@@ -54,7 +54,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        final String source = cfg.getString ( "source", "'source' must be set" );
+        final String source = cfg.getStringChecked ( "source", "'source' must be set" );
         final String itemId = cfg.getString ( "item.id" );
 
         super.update ( parameters );
