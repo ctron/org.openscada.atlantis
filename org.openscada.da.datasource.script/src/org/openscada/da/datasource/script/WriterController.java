@@ -1,10 +1,17 @@
 package org.openscada.da.datasource.script;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
-import org.openscada.core.connection.provider.ConnectionIdTracker;
-import org.openscada.da.connection.provider.ConnectionService;
+import org.openscada.da.datasource.DataSource;
+import org.openscada.da.datasource.WriteInformation;
+import org.openscada.utils.osgi.FilterUtil;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Filter;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.util.tracker.ServiceTracker;
 
 public class WriterController
 {
@@ -17,15 +24,20 @@ public class WriterController
         this.context = context;
     }
 
-    public void write ( final String connectionId, final String itemId, final Variant value )
+    public void write ( final String dataSourceId, final Object value ) throws Exception
     {
-        final ConnectionIdTracker tracker = new ConnectionIdTracker ( this.context, connectionId, null );
+        final Variant variant = Variant.valueOf ( value );
+
+        final ServiceTracker tracker = new ServiceTracker ( this.context, makeFilter ( dataSourceId ), null );
+
         tracker.open ();
         try
         {
             tracker.waitForService ( DEFAULT_TIMEOUT );
-            final org.openscada.da.connection.provider.ConnectionService service = (ConnectionService)tracker.getService ();
-            service.getConnection ().write ( itemId, value, null );
+            final DataSource source = (DataSource)tracker.getService ();
+
+            final WriteInformation writeInformation = new WriteInformation ( null );
+            source.startWriteValue ( writeInformation, variant );
         }
         catch ( final InterruptedException e )
         {
@@ -36,10 +48,17 @@ public class WriterController
         }
     }
 
-    public void write ( final String connectionId, final String itemId, final String value )
+    private Filter makeFilter ( final String dataSourceId ) throws InvalidSyntaxException
+    {
+        final Map<String, String> parameters = new HashMap<String, String> ();
+        parameters.put ( "datasource.id", dataSourceId );
+        return FilterUtil.createAndFilter ( DataSource.class.getName (), parameters );
+    }
+
+    public void writeAsText ( final String itemId, final String value ) throws Exception
     {
         final VariantEditor ve = new VariantEditor ();
         ve.setAsText ( value );
-        write ( connectionId, itemId, (Variant)ve.getValue () );
+        write ( itemId, ve.getValue () );
     }
 }
