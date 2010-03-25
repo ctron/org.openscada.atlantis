@@ -33,6 +33,26 @@ import org.slf4j.profiler.Profiler;
 
 public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 {
+    private class WrapperQuery implements Query
+    {
+        private final Query query;
+
+        public WrapperQuery ( final Query query )
+        {
+            this.query = query;
+        }
+
+        public void changeParameters ( final QueryParameters parameters )
+        {
+            this.query.changeParameters ( parameters );
+        }
+
+        public void close ()
+        {
+            openQueries.remove ( this );
+            this.query.close ();
+        }
+    }
 
     private final static Logger logger = LoggerFactory.getLogger ( HistoricalItemImpl.class );
 
@@ -154,7 +174,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
         p.start ( "call shi.createQuery" );
 
-        final Query query = this.service.createQuery ( parameters, listener, updateData );
+        final Query query = new WrapperQuery ( this.service.createQuery ( parameters, listener, updateData ) );
         if ( query != null )
         {
             this.openQueries.add ( query );
@@ -235,7 +255,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         {
             logger.debug ( "track datasource " + dataSourceId );
             this.dataSourceTracker = new SingleDataSourceTracker ( this.poolTracker, this.dataSourceId, new ServiceListener () {
-                public void dataSourceChanged ( DataSource dataSource )
+                public void dataSourceChanged ( final DataSource dataSource )
                 {
                     setMasterItem ( dataSource );
                 }
