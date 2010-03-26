@@ -1,5 +1,6 @@
 package org.openscada.da.master;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,14 +13,23 @@ public class WriteRequestResult
 
     private final Variant value;
 
-    private final HashMap<String, Variant> attributes;
+    private final Map<String, Variant> attributes;
 
     private final WriteAttributeResults attributeResults;
 
     public WriteRequestResult ( final Variant value, final Map<String, Variant> attributes, final WriteAttributeResults attributeResults )
     {
         this.value = value;
-        this.attributes = new HashMap<String, Variant> ( attributes );
+
+        if ( attributes != null )
+        {
+            this.attributes = new HashMap<String, Variant> ( attributes );
+        }
+        else
+        {
+            this.attributes = Collections.emptyMap ();
+        }
+
         if ( attributeResults != null )
         {
             this.attributeResults = (WriteAttributeResults)attributeResults.clone ();
@@ -44,7 +54,7 @@ public class WriteRequestResult
         return this.attributeResults;
     }
 
-    public HashMap<String, Variant> getAttributes ()
+    public Map<String, Variant> getAttributes ()
     {
         return this.attributes;
     }

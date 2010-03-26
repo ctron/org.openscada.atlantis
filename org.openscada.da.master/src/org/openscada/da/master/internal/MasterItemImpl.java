@@ -374,7 +374,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
             }
 
             // process attributes
-            final HashMap<String, Variant> attributes = result.getAttributes ();
+            final Map<String, Variant> attributes = result.getAttributes ();
             if ( !attributes.isEmpty () )
             {
                 final NotifyFuture<WriteAttributeResults> task = dataSource.startWriteAttributes ( writeRequest.getWriteInformation (), attributes );
@@ -402,6 +402,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         catch ( final Throwable e )
         {
             // total failure
+            logger.warn ( "Failed to write to master item", e );
             listener.error ( e );
         }
     }
@@ -446,7 +447,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
                 nextResult.getAttributeResults ().putAll ( finalResult.getAttributeResults () );
 
                 finalResult = nextResult;
-                final HashMap<String, Variant> nextAttributes = finalResult.getAttributes ();
+                final Map<String, Variant> nextAttributes = finalResult.getAttributes ();
 
                 // remove all attribute requests for which we have a result
                 for ( final Map.Entry<String, WriteAttributeResult> entry : finalResult.getAttributeResults ().entrySet () )
