@@ -121,6 +121,7 @@ public class Activator implements BundleActivator
         this.factory5.dispose ();
         this.factory6.dispose ();
         this.factory7.dispose ();
+        this.factory8.dispose ();
 
         this.poolTracker.close ();
         this.poolTracker = null;
