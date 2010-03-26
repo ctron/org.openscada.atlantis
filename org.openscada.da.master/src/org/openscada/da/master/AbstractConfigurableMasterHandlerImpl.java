@@ -102,7 +102,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
      */
     protected abstract WriteAttributeResults handleUpdate ( final WriteInformation writeInformation, final Map<String, Variant> attributes ) throws Exception;
 
-    protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final boolean fullSet ) throws OperationException
+    protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet ) throws OperationException
     {
         final WriteAttributeResults result = new WriteAttributeResults ();
 
@@ -125,7 +125,12 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         {
             for ( final String attr : data.keySet () )
             {
-                result.put ( this.prefix + "." + attr, WriteAttributeResult.OK );
+                final String fullKey = this.prefix + "." + attr;
+                if ( attributes.containsKey ( fullKey ) )
+                {
+                    // only add key to result if it was requested
+                    result.put ( fullKey, WriteAttributeResult.OK );
+                }
             }
 
             final ConfigurationAdministrator admin = (ConfigurationAdministrator)service;
