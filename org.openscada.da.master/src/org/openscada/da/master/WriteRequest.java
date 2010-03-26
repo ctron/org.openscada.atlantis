@@ -54,4 +54,16 @@ public class WriteRequest
     {
         return this.value;
     }
+
+    /**
+     * Check if the request is an empty request. A request
+     * is empty if neither attributes nor the primary value
+     * is requested to be written.
+     * @return <code>true</code>if the request is empty, <code>false</code>
+     * otherwise
+     */
+    public boolean isEmpty ()
+    {
+        return this.value == null && ( this.attributes == null || this.attributes.isEmpty () );
+    }
 }
