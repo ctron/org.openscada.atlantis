@@ -86,7 +86,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     private WriteRequestResult createBlockedResult ( final WriteRequestResult result )
     {
-        // for now we silenty ignore the rest
+        // for now we silently ignore the rest
         final WriteAttributeResults attributeResults = result.getAttributeResults ();
         return new WriteRequestResult ( null, null, attributeResults );
     }
