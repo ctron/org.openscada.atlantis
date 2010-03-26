@@ -84,7 +84,7 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
             data.put ( "active", active.asString () );
         }
 
-        return updateConfiguration ( data, false );
+        return updateConfiguration ( data, attributes, false );
     }
 
 }

@@ -155,9 +155,9 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
                 data.put ( "user", name );
             }
         }
-        this.timestamp = System.currentTimeMillis ();
+        data.put ( "timestamp", "" + System.currentTimeMillis () );
 
-        return updateConfiguration ( data, false );
+        return updateConfiguration ( data, attributes, false );
     }
 
     protected void publishEvent ( final UserInformation user, final String message, final Object value )

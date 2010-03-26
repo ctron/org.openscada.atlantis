@@ -97,7 +97,7 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
             data.put ( "offset", offset.asString () );
         }
 
-        return updateConfiguration ( data, false );
+        return updateConfiguration ( data, attributes, false );
     }
 
 }

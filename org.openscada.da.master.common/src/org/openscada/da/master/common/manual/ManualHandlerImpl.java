@@ -215,6 +215,6 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
         this.eventProcessor.publishEvent ( builder.build () );
 
-        return updateConfiguration ( data, false );
+        return updateConfiguration ( data, attributes, false );
     }
 }
