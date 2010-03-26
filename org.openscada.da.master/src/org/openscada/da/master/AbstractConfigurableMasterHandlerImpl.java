@@ -82,10 +82,21 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
             for ( final String attr : attributes.keySet () )
             {
-                result.put ( attr, new WriteAttributeResult ( new OperationException ( String.format ( "Attribute '%s' is not supported", attr ) ) ) );
+                result.put ( attr, new WriteAttributeResult ( new OperationException ( String.format ( "Attribute '%s' is not supported", this.prefix + "." + attr ) ) ) );
             }
 
-            return new WriteRequestResult ( request.getValue (), request.getAttributes (), result );
+            final Map<String, Variant> newAttributes = new HashMap<String, Variant> ( request.getAttributes () );
+            final WriteAttributeResults fullResults = new WriteAttributeResults ();
+            for ( final Map.Entry<String, WriteAttributeResult> entry : result.entrySet () )
+            {
+                final String fullKey = this.prefix + "." + entry.getKey ();
+                fullResults.put ( fullKey, entry.getValue () );
+
+                // remove from list of "to be written" attributes
+                newAttributes.remove ( fullKey );
+            }
+
+            return new WriteRequestResult ( request.getValue (), newAttributes, fullResults );
         }
         catch ( final Throwable e )
         {
@@ -125,11 +136,10 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         {
             for ( final String attr : data.keySet () )
             {
-                final String fullKey = this.prefix + "." + attr;
-                if ( attributes.containsKey ( fullKey ) )
+                if ( attributes.containsKey ( attr ) )
                 {
                     // only add key to result if it was requested
-                    result.put ( fullKey, WriteAttributeResult.OK );
+                    result.put ( attr, WriteAttributeResult.OK );
                 }
             }
 

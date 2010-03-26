@@ -9,6 +9,7 @@ import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
@@ -41,26 +42,41 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     protected DataItemValue processDataUpdate ( final DataItemValue value ) throws Exception
     {
-        return value;
+        final Builder builder = new Builder ( value );
+        injectAttributes ( builder );
+        return builder.build ();
     }
 
     @Override
     public WriteRequestResult processWrite ( final WriteRequest request )
     {
+        final boolean active = this.active;
+
         final WriteRequestResult result = super.processWrite ( request );
 
-        if ( !this.active )
+        if ( active )
         {
-            publishEvent ( request.getWriteInformation ().getUserInformation (), "Blocked write request: " + this.note, makeString ( result ) );
-            return createBlockedResult ( result );
+            final WriteRequest testRequest;
+            if ( result != null )
+            {
+                testRequest = new WriteRequest ( request.getWriteInformation (), result.getValue (), result.getAttributes () );
+            }
+            else
+            {
+                testRequest = request;
+            }
+
+            if ( !testRequest.isEmpty () )
+            {
+                // if there is a remaining request
+                publishEvent ( testRequest.getWriteInformation ().getUserInformation (), "Blocked write request: " + this.note, makeString ( testRequest ) );
+                return createBlockedResult ();
+            }
         }
-        else
-        {
-            return result;
-        }
+        return result;
     }
 
-    private String makeString ( final WriteRequestResult result )
+    private String makeString ( final WriteRequest result )
     {
         final StringBuilder sb = new StringBuilder ();
 
@@ -84,11 +100,9 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
         return sb.toString ();
     }
 
-    private WriteRequestResult createBlockedResult ( final WriteRequestResult result )
+    private WriteRequestResult createBlockedResult ()
     {
-        // for now we silently ignore the rest
-        final WriteAttributeResults attributeResults = result.getAttributeResults ();
-        return new WriteRequestResult ( null, null, attributeResults );
+        return new WriteRequestResult ( new OperationException ( "Unable to write to blocked item" ) );
     }
 
     @Override

@@ -443,10 +443,13 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
             if ( nextResult != null )
             {
-                // add previous attribute results first
-                nextResult.getAttributeResults ().putAll ( finalResult.getAttributeResults () );
+                finalResult = mergeNextResult ( finalResult, nextResult );
+                if ( finalResult.getError () != null )
+                {
+                    // abort here .. we got an error
+                    return finalResult;
+                }
 
-                finalResult = nextResult;
                 final Map<String, Variant> nextAttributes = finalResult.getAttributes ();
 
                 // remove all attribute requests for which we have a result
@@ -460,6 +463,27 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         }
 
         return finalResult;
+    }
+
+    private WriteRequestResult mergeNextResult ( final WriteRequestResult finalResult, final WriteRequestResult nextResult )
+    {
+        if ( nextResult.getError () != null )
+        {
+            return nextResult;
+        }
+
+        // merge current and previous results
+        final WriteAttributeResults result = new WriteAttributeResults ();
+        if ( nextResult.getAttributeResults () != null )
+        {
+            result.putAll ( nextResult.getAttributeResults () );
+        }
+        if ( finalResult.getAttributeResults () != null )
+        {
+            result.putAll ( finalResult.getAttributeResults () );
+        }
+
+        return new WriteRequestResult ( nextResult.getValue (), nextResult.getAttributes (), result );
     }
 
     public synchronized void update ( final Map<String, String> properties ) throws InvalidSyntaxException
