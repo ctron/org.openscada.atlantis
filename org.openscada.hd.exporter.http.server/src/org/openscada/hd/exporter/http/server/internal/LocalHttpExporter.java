@@ -56,7 +56,7 @@ public class LocalHttpExporter implements HttpExporter
 
         public void updateState ( final QueryState state )
         {
-            if ( state == QueryState.COMPLETE )
+            if ( state == QueryState.COMPLETE || state == QueryState.DISCONNECTED )
             {
                 setResult ( this.result );
             }
