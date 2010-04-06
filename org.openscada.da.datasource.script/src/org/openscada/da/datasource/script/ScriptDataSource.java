@@ -49,6 +49,8 @@ import org.slf4j.LoggerFactory;
 
 public class ScriptDataSource extends AbstractMultiSourceDataSource
 {
+    private static final String DEFAULT_ENGINE_NAME = "JavaScript";
+
     final static Logger logger = LoggerFactory.getLogger ( ScriptDataSource.class );
 
     private final Executor executor;
@@ -126,7 +128,12 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
     private void setScript ( final Map<String, String> parameters ) throws ScriptException
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        final String engine = cfg.getString ( "engine", "JavaScript" );
+
+        String engine = cfg.getString ( "engine", DEFAULT_ENGINE_NAME );
+        if ( "".equals ( engine ) )
+        {
+            engine = DEFAULT_ENGINE_NAME;
+        }
 
         this.scriptContext = new SimpleScriptContext ();
 
