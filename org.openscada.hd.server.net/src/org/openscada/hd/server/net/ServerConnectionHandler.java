@@ -178,12 +178,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         {
             p.start ( "remove" );
 
+            sendQueryState ( queryId, QueryState.DISCONNECTED );
             handler = this.queries.remove ( queryId );
-            if ( handler != null )
-            {
-                p.start ( "Send query state" );
-                sendQueryState ( queryId, QueryState.DISCONNECTED );
-            }
         }
 
         // close outside of lock
