@@ -29,7 +29,7 @@ public class QueryServiceFactory extends AbstractServiceConfigurationFactory<Bun
         query.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( Constants.SERVICE_PID, FACTORY_ID + "." + configurationId );
+        properties.put ( Constants.SERVICE_PID, configurationId );
         properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
 
         return new Entry<BundleConditionQuery> ( configurationId, query, context.registerService ( ConditionQuery.class.getName (), query, properties ) );
