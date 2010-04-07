@@ -10,7 +10,7 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 
-public class QueryServiceFactory extends AbstractServiceConfigurationFactory<BundleConditionQuery>
+public class QueryServiceFactory extends AbstractServiceConfigurationFactory<BundleMonitorQuery>
 {
     public final static String FACTORY_ID = "ae.monitor.query";
 
@@ -23,26 +23,26 @@ public class QueryServiceFactory extends AbstractServiceConfigurationFactory<Bun
     }
 
     @Override
-    protected Entry<BundleConditionQuery> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<BundleMonitorQuery> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final BundleConditionQuery query = new BundleConditionQuery ( context, this.poolTracker );
+        final BundleMonitorQuery query = new BundleMonitorQuery ( context, this.poolTracker );
         query.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, configurationId );
         properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
 
-        return new Entry<BundleConditionQuery> ( configurationId, query, context.registerService ( ConditionQuery.class.getName (), query, properties ) );
+        return new Entry<BundleMonitorQuery> ( configurationId, query, context.registerService ( ConditionQuery.class.getName (), query, properties ) );
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final BundleConditionQuery service )
+    protected void disposeService ( final String configurationId, final BundleMonitorQuery service )
     {
         service.dispose ();
     }
 
     @Override
-    protected Entry<BundleConditionQuery> updateService ( final String configurationId, final Entry<BundleConditionQuery> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<BundleMonitorQuery> updateService ( final String configurationId, final Entry<BundleMonitorQuery> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return entry;

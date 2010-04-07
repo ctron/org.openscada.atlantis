@@ -22,7 +22,7 @@ public class Activator implements BundleActivator
 
     private BundleContext context;
 
-    private BundleConditionQuery allQuery;
+    private BundleMonitorQuery allQuery;
 
     private ServiceRegistration handle;
 
@@ -45,7 +45,7 @@ public class Activator implements BundleActivator
         this.poolTracker = new ObjectPoolTracker ( context, MonitorService.class.getName () );
         this.poolTracker.open ();
 
-        this.allQuery = new BundleConditionQuery ( context, this.poolTracker );
+        this.allQuery = new BundleMonitorQuery ( context, this.poolTracker );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, context.getBundle ().getSymbolicName () + ".all" );

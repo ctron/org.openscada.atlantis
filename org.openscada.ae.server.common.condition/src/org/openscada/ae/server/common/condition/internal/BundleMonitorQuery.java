@@ -23,10 +23,10 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BundleConditionQuery extends ConditionQuery implements ConditionListener
+public class BundleMonitorQuery extends ConditionQuery implements ConditionListener
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( BundleConditionQuery.class );
+    private final static Logger logger = LoggerFactory.getLogger ( BundleMonitorQuery.class );
 
     private final Set<MonitorService> services = new HashSet<MonitorService> ();
 
@@ -36,13 +36,13 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
 
     private Filter filter = Filter.EMPTY;
 
-    public BundleConditionQuery ( final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
+    public BundleMonitorQuery ( final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
     {
         this.tracker = new AllObjectPoolServiceTracker ( poolTracker, new ObjectPoolListener () {
 
             public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
             {
-                BundleConditionQuery.this.handleRemoved ( (MonitorService)service );
+                BundleMonitorQuery.this.handleRemoved ( (MonitorService)service );
             }
 
             public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
@@ -51,7 +51,7 @@ public class BundleConditionQuery extends ConditionQuery implements ConditionLis
 
             public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
             {
-                BundleConditionQuery.this.handleAdded ( (MonitorService)service );
+                BundleMonitorQuery.this.handleAdded ( (MonitorService)service );
             }
         } );
         this.tracker.open ();

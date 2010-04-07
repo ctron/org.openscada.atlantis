@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Condition Plug-in
+Bundle-Name: Monitor Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.common.condition
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.ae.server.common.condition.internal.Activator
