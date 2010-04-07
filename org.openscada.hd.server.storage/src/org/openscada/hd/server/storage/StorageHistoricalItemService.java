@@ -118,19 +118,19 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     {
         this.backEndManager = backEndManager;
         final org.openscada.hsdb.configuration.Configuration configuration = backEndManager.getConfiguration ();
-        calculationMethods = Conversions.getCalculationMethods ( configuration );
-        rootStorageChannel = null;
-        lockObject = new Object ();
-        starting = false;
-        started = false;
-        openQueries = new CopyOnWriteArrayList<QueryImpl> ();
+        this.calculationMethods = Conversions.getCalculationMethods ( configuration );
+        this.rootStorageChannel = null;
+        this.lockObject = new Object ();
+        this.starting = false;
+        this.started = false;
+        this.openQueries = new CopyOnWriteArrayList<QueryImpl> ();
         this.latestReliableTime = latestReliableTime;
         this.importMode = importMode;
         final Map<String, String> data = configuration.getData ();
-        proposedDataAge = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
-        acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY ) );
-        expectedDataType = DataType.convertShortStringToDataType ( data.get ( ConfigurationImpl.DATA_TYPE_KEY ) );
-        registration = null;
+        this.proposedDataAge = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
+        this.acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY ) );
+        this.expectedDataType = DataType.convertShortStringToDataType ( data.get ( ConfigurationImpl.DATA_TYPE_KEY ) );
+        this.registration = null;
     }
 
     /**
@@ -139,7 +139,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized void addQuery ( final QueryImpl query )
     {
-        openQueries.add ( query );
+        this.openQueries.add ( query );
     }
 
     /**
@@ -149,7 +149,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized void removeQuery ( final QueryImpl query )
     {
-        openQueries.remove ( query );
+        this.openQueries.remove ( query );
     }
 
     /**
@@ -164,7 +164,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
             try
             {
                 final BaseValue[] result = storageChannel.getMetaData ().getDataType () == DataType.LONG_VALUE ? storageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE ) : storageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
-                return ( result != null ) && ( result.length > 0 ) ? result[0] : null;
+                return result != null && result.length > 0 ? result[0] : null;
             }
             catch ( final Exception e )
             {
@@ -180,7 +180,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public BaseValue getLatestValue ()
     {
-        return getLatestValue ( rootStorageChannel );
+        return getLatestValue ( this.rootStorageChannel );
     }
 
     /**
@@ -189,7 +189,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized BackEndManager<?> getBackEndManager ()
     {
-        return backEndManager;
+        return this.backEndManager;
     }
 
     /**
@@ -199,21 +199,27 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     {
         try
         {
-            final QueryImpl query = new QueryImpl ( this, listener, parameters, calculationMethods );
-            final StorageHistoricalItemService service = this;
-            createQueryTask.submit ( new Runnable () {
+            final QueryImpl query = new QueryImpl ( this, listener, parameters, this.calculationMethods );
+            this.createQueryTask.submit ( new Runnable () {
                 public void run ()
                 {
-                    query.run ( backEndManager.buildStorageChannelStructure (), updateData );
-                    if ( updateData )
+                    try
                     {
-                        service.addQuery ( query );
+                        query.run ( StorageHistoricalItemService.this.backEndManager.buildStorageChannelStructure (), updateData );
+                        if ( updateData )
+                        {
+                            StorageHistoricalItemService.this.addQuery ( query );
+                        }
+                    }
+                    catch ( final Throwable e )
+                    {
+                        logger.warn ( "Failed to process query", e );
                     }
                 }
             } );
             return query;
         }
-        catch ( final Exception e )
+        catch ( final Throwable e )
         {
             logger.warn ( "Failed to create query", e );
         }
@@ -226,7 +232,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     public synchronized HistoricalItemInformation getInformation ()
     {
         // prepare data for result
-        final org.openscada.hsdb.configuration.Configuration configuration = backEndManager.getConfiguration ();
+        final org.openscada.hsdb.configuration.Configuration configuration = this.backEndManager.getConfiguration ();
         final Map<String, Variant> variantData = new HashMap<String, Variant> ();
 
         // process data
@@ -248,9 +254,9 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     {
         final long now = System.currentTimeMillis ();
         logger.debug ( "receiving data at: " + now );
-        if ( dataReceiver != null )
+        if ( this.dataReceiver != null )
         {
-            dataReceiver.submit ( new Runnable () {
+            this.dataReceiver.submit ( new Runnable () {
                 public void run ()
                 {
                     // check if input is valid
@@ -268,21 +274,21 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                     }
                     final Calendar calendar = value.getTimestamp ();
                     final long time = calendar == null ? now : calendar.getTimeInMillis ();
-                    if ( !importMode && ( ( ( now - acceptedTimeDelta ) > time ) || ( ( now - proposedDataAge ) > time ) ) )
+                    if ( !StorageHistoricalItemService.this.importMode && ( now - StorageHistoricalItemService.this.acceptedTimeDelta > time || now - StorageHistoricalItemService.this.proposedDataAge > time ) )
                     {
-                        logger.warn ( String.format ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", backEndManager.getConfiguration ().getId (), time ) );
+                        logger.warn ( String.format ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", StorageHistoricalItemService.this.backEndManager.getConfiguration ().getId (), time ) );
                         return;
                     }
-                    if ( ( now + acceptedTimeDelta ) < time )
+                    if ( now + StorageHistoricalItemService.this.acceptedTimeDelta < time )
                     {
-                        logger.warn ( String.format ( "timestamp of data is located too far in the future! data will be ignored: (configuration: '%s'; time: %s)", backEndManager.getConfiguration ().getId (), time ) );
+                        logger.warn ( String.format ( "timestamp of data is located too far in the future! data will be ignored: (configuration: '%s'; time: %s)", StorageHistoricalItemService.this.backEndManager.getConfiguration ().getId (), time ) );
                         return;
                     }
 
                     // process data
-                    final double qualityIndicator = !value.isConnected () || value.isError () || variant.isNull () || ( ( expectedDataType == DataType.LONG_VALUE ) && ( variant.asLong ( null ) == null ) ) || ( ( expectedDataType == DataType.DOUBLE_VALUE ) && ( variant.asDouble ( null ) == null ) ) ? 0 : 1;
+                    final double qualityIndicator = !value.isConnected () || value.isError () || variant.isNull () || StorageHistoricalItemService.this.expectedDataType == DataType.LONG_VALUE && variant.asLong ( null ) == null || StorageHistoricalItemService.this.expectedDataType == DataType.DOUBLE_VALUE && variant.asDouble ( null ) == null ? 0 : 1;
                     final double isManual = value.isManual () ? 1 : 0;
-                    if ( expectedDataType == DataType.LONG_VALUE )
+                    if ( StorageHistoricalItemService.this.expectedDataType == DataType.LONG_VALUE )
                     {
                         processData ( new LongValue ( time, qualityIndicator, isManual, 1, variant.asLong ( 0L ) ) );
                     }
@@ -294,9 +300,9 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
 
                     // check processed data type and give warning if type does not match the expected type
                     final DataType receivedDataType = variant.isBoolean () || variant.isInteger () || variant.isLong () ? DataType.LONG_VALUE : DataType.DOUBLE_VALUE;
-                    if ( !variant.isNull () && ( expectedDataType != receivedDataType ) )
+                    if ( !variant.isNull () && StorageHistoricalItemService.this.expectedDataType != receivedDataType )
                     {
-                        logger.warn ( String.format ( "received data type (%s) does not match expected data type (%s) for configuration with id '%s'!", receivedDataType, expectedDataType, backEndManager.getConfiguration ().getId () ) );
+                        logger.warn ( String.format ( "received data type (%s) does not match expected data type (%s) for configuration with id '%s'!", receivedDataType, StorageHistoricalItemService.this.expectedDataType, StorageHistoricalItemService.this.backEndManager.getConfiguration ().getId () ) );
                     }
                 }
             } );
@@ -309,21 +315,21 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized void processData ( final BaseValue value )
     {
-        if ( !started || ( rootStorageChannel == null ) || ( value == null ) )
+        if ( !this.started || this.rootStorageChannel == null || value == null )
         {
             return;
         }
-        if ( latestProcessedValue == null )
+        if ( this.latestProcessedValue == null )
         {
-            latestProcessedValue = getLatestValue ();
+            this.latestProcessedValue = getLatestValue ();
         }
-        if ( latestProcessedValue == null )
+        if ( this.latestProcessedValue == null )
         {
-            latestProcessedValue = value;
+            this.latestProcessedValue = value;
         }
-        if ( value.getTime () < latestProcessedValue.getTime () )
+        if ( value.getTime () < this.latestProcessedValue.getTime () )
         {
-            logger.warn ( String.format ( "older value for configuration '%s' received than latest available value", backEndManager.getConfiguration ().getId () ) );
+            logger.warn ( String.format ( "older value for configuration '%s' received than latest available value", this.backEndManager.getConfiguration ().getId () ) );
         }
         try
         {
@@ -331,8 +337,8 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
             if ( value instanceof LongValue )
             {
                 final LongValue longValue = (LongValue)value;
-                rootStorageChannel.updateLong ( longValue );
-                for ( final QueryImpl query : openQueries )
+                this.rootStorageChannel.updateLong ( longValue );
+                for ( final QueryImpl query : this.openQueries )
                 {
                     query.updateLong ( longValue );
                 }
@@ -340,8 +346,8 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
             else
             {
                 final DoubleValue doubleValue = (DoubleValue)value;
-                rootStorageChannel.updateDouble ( doubleValue );
-                for ( final QueryImpl query : openQueries )
+                this.rootStorageChannel.updateDouble ( doubleValue );
+                for ( final QueryImpl query : this.openQueries )
                 {
                     query.updateDouble ( doubleValue );
                 }
@@ -349,7 +355,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
 
             // when importing data, the values are most likely strongly differing from each other in time.
             // this causes additional files to be generated that can be cleaned to increase performance
-            if ( importMode )
+            if ( this.importMode )
             {
                 cleanupRelicts ();
             }
@@ -369,36 +375,36 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     private synchronized void createInvalidEntry ( final long time )
     {
-        if ( rootStorageChannel != null )
+        if ( this.rootStorageChannel != null )
         {
             BaseValue[] values = null;
             try
             {
-                if ( rootStorageChannel.getCalculationLogicProvider ().getOutputType () == DataType.LONG_VALUE )
+                if ( this.rootStorageChannel.getCalculationLogicProvider ().getOutputType () == DataType.LONG_VALUE )
                 {
-                    values = rootStorageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                    values = this.rootStorageChannel.getLongValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
                 }
                 else
                 {
-                    values = rootStorageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
+                    values = this.rootStorageChannel.getDoubleValues ( Long.MAX_VALUE - 1, Long.MAX_VALUE );
                 }
             }
             catch ( final Exception e )
             {
                 logger.error ( "could not retrieve latest value from root storage channel", e );
             }
-            if ( ( values != null ) && ( values.length > 0 ) )
+            if ( values != null && values.length > 0 )
             {
                 final BaseValue value = values[values.length - 1];
                 try
                 {
                     if ( value instanceof LongValue )
                     {
-                        rootStorageChannel.updateLong ( new LongValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (LongValue)value ).getValue () ) );
+                        this.rootStorageChannel.updateLong ( new LongValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (LongValue)value ).getValue () ) );
                     }
                     else
                     {
-                        rootStorageChannel.updateDouble ( new DoubleValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (DoubleValue)value ).getValue () ) );
+                        this.rootStorageChannel.updateDouble ( new DoubleValue ( Math.max ( value.getTime () + 1, time ), 0, 0, 0, ( (DoubleValue)value ).getValue () ) );
                     }
                 }
                 catch ( final Exception e )
@@ -416,54 +422,54 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized void start ( final BundleContext bundleContext )
     {
-        starting = true;
-        started = true;
-        final String configurationId = backEndManager.getConfiguration ().getId ();
-        dataReceiver = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( DATA_RECEIVER_THREAD_ID_PREFIX + configurationId ) );
-        startUpTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
-        createQueryTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( CREATE_QUERY_THREAD_ID_PREFIX + configurationId ) );
-        startUpTask.submit ( new Runnable () {
+        this.starting = true;
+        this.started = true;
+        final String configurationId = this.backEndManager.getConfiguration ().getId ();
+        this.dataReceiver = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( DATA_RECEIVER_THREAD_ID_PREFIX + configurationId ) );
+        this.startUpTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
+        this.createQueryTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( CREATE_QUERY_THREAD_ID_PREFIX + configurationId ) );
+        this.startUpTask.submit ( new Runnable () {
             public void run ()
             {
-                startUpTask.shutdown ();
-                backEndManager.repairBackEndFragmentsIfRequired ( new AbortNotificator () {
+                StorageHistoricalItemService.this.startUpTask.shutdown ();
+                StorageHistoricalItemService.this.backEndManager.repairBackEndFragmentsIfRequired ( new AbortNotificator () {
                     public boolean getAbort ()
                     {
-                        synchronized ( lockObject )
+                        synchronized ( StorageHistoricalItemService.this.lockObject )
                         {
-                            return !starting || !started;
+                            return !StorageHistoricalItemService.this.starting || !StorageHistoricalItemService.this.started;
                         }
                     }
                 } );
                 boolean proceed = true;
-                synchronized ( lockObject )
+                synchronized ( StorageHistoricalItemService.this.lockObject )
                 {
-                    proceed = starting;
+                    proceed = StorageHistoricalItemService.this.starting;
                 }
                 if ( !proceed )
                 {
                     stop ();
                     return;
                 }
-                rootStorageChannel = backEndManager.buildStorageChannelTree ();
-                synchronized ( lockObject )
+                StorageHistoricalItemService.this.rootStorageChannel = StorageHistoricalItemService.this.backEndManager.buildStorageChannelTree ();
+                synchronized ( StorageHistoricalItemService.this.lockObject )
                 {
-                    proceed = starting;
+                    proceed = StorageHistoricalItemService.this.starting;
                 }
                 if ( !proceed )
                 {
                     stop ();
                     return;
                 }
-                if ( !importMode )
+                if ( !StorageHistoricalItemService.this.importMode )
                 {
-                    createInvalidEntry ( latestReliableTime );
+                    createInvalidEntry ( StorageHistoricalItemService.this.latestReliableTime );
                 }
                 registerService ( bundleContext );
-                synchronized ( lockObject )
+                synchronized ( StorageHistoricalItemService.this.lockObject )
                 {
-                    proceed = starting;
-                    starting = false;
+                    proceed = StorageHistoricalItemService.this.starting;
+                    StorageHistoricalItemService.this.starting = false;
                 }
                 if ( !proceed )
                 {
@@ -482,10 +488,10 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     {
         unregisterService ();
         final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
-        serviceProperties.put ( Constants.SERVICE_PID, backEndManager.getConfiguration ().getId () );
+        serviceProperties.put ( Constants.SERVICE_PID, this.backEndManager.getConfiguration ().getId () );
         serviceProperties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
         serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
-        registration = bundleContext.registerService ( new String[] { StorageHistoricalItemService.class.getName (), StorageHistoricalItem.class.getName () }, this, serviceProperties );
+        this.registration = bundleContext.registerService ( new String[] { StorageHistoricalItemService.class.getName (), StorageHistoricalItem.class.getName () }, this, serviceProperties );
     }
 
     /**
@@ -493,10 +499,10 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     private void unregisterService ()
     {
-        if ( registration != null )
+        if ( this.registration != null )
         {
-            registration.unregister ();
-            registration = null;
+            this.registration.unregister ();
+            this.registration = null;
         }
     }
 
@@ -510,20 +516,20 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     public synchronized void stop ()
     {
         // abort if service is not yet started
-        if ( starting )
+        if ( this.starting )
         {
-            synchronized ( lockObject )
+            synchronized ( this.lockObject )
             {
-                if ( starting )
+                if ( this.starting )
                 {
-                    starting = false;
+                    this.starting = false;
                     return;
                 }
             }
         }
 
         // close existing queries
-        for ( final QueryImpl query : openQueries )
+        for ( final QueryImpl query : this.openQueries )
         {
             query.close ();
         }
@@ -532,27 +538,27 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         unregisterService ();
 
         // stop data receiver
-        if ( dataReceiver != null )
+        if ( this.dataReceiver != null )
         {
-            dataReceiver.shutdown ();
-            dataReceiver = null;
+            this.dataReceiver.shutdown ();
+            this.dataReceiver = null;
         }
 
         // stop startup task
-        if ( startUpTask != null )
+        if ( this.startUpTask != null )
         {
-            startUpTask.shutdown ();
-            startUpTask = null;
+            this.startUpTask.shutdown ();
+            this.startUpTask = null;
         }
 
         // stop query startup task but keep it available to avoid synchronization issues
-        if ( createQueryTask != null )
+        if ( this.createQueryTask != null )
         {
-            createQueryTask.shutdown ();
+            this.createQueryTask.shutdown ();
         }
 
         // create entry with data marked as invalid
-        if ( started && !importMode )
+        if ( this.started && !this.importMode )
         {
             createInvalidEntry ( System.currentTimeMillis () );
         }
@@ -560,15 +566,15 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         // deinitialize back end manager
         try
         {
-            backEndManager.deinitialize ();
+            this.backEndManager.deinitialize ();
         }
         catch ( final Exception e )
         {
-            logger.error ( String.format ( "unable to deinitialize back end manager for configuration with id '%s'", backEndManager.getConfiguration ().getId () ), e );
+            logger.error ( String.format ( "unable to deinitialize back end manager for configuration with id '%s'", this.backEndManager.getConfiguration ().getId () ), e );
         }
 
         // set running flag
-        started = false;
+        this.started = false;
     }
 
     /**
@@ -577,21 +583,21 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     public synchronized void cleanupRelicts () throws Exception
     {
-        if ( !starting && started )
+        if ( !this.starting && this.started )
         {
             try
             {
                 // clean data
                 logger.info ( "cleaning old data" );
-                if ( rootStorageChannel != null )
+                if ( this.rootStorageChannel != null )
                 {
-                    rootStorageChannel.cleanupRelicts ();
+                    this.rootStorageChannel.cleanupRelicts ();
                 }
 
                 // notify queries
-                for ( final QueryImpl query : openQueries )
+                for ( final QueryImpl query : this.openQueries )
                 {
-                    query.updateDataBefore ( System.currentTimeMillis () - proposedDataAge );
+                    query.updateDataBefore ( System.currentTimeMillis () - this.proposedDataAge );
                 }
             }
             catch ( final Exception e )
