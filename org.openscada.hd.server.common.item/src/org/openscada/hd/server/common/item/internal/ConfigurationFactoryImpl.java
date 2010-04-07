@@ -130,6 +130,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( Constants.SERVICE_DESCRIPTION, new Variant ( "A historical item implementation" ) );
         attributes.put ( Constants.SERVICE_VENDOR, new Variant ( "inavare GmbH" ) );
+        attributes.put ( Constants.SERVICE_PID, Variant.valueOf ( configurationId ) );
         attributes.put ( "master.id", new Variant ( masterId ) );
 
         final HistoricalItemImpl item = new HistoricalItemImpl ( configurationId, attributes, masterId, this.context );

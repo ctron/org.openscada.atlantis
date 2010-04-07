@@ -52,6 +52,11 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
             HistoricalItemImpl.this.openQueries.remove ( this );
             this.query.close ();
         }
+
+        public boolean isValid ()
+        {
+            return this.query != null;
+        }
     }
 
     private final static Logger logger = LoggerFactory.getLogger ( HistoricalItemImpl.class );
@@ -169,15 +174,20 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
         if ( this.service == null )
         {
+            logger.warn ( "We have not service. We cannot create a query" );
             return null;
         }
 
         p.start ( "call shi.createQuery" );
 
-        final Query query = new WrapperQuery ( this.service.createQuery ( parameters, listener, updateData ) );
-        if ( query != null )
+        final WrapperQuery query = new WrapperQuery ( this.service.createQuery ( parameters, listener, updateData ) );
+        if ( query.isValid () )
         {
             this.openQueries.add ( query );
+        }
+        else
+        {
+            logger.warn ( "We have an invalid query" );
         }
 
         p.stop ().log ();
@@ -201,6 +211,8 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     public void stateChanged ( final DataItemValue value )
     {
+        logger.debug ( "state changed: {}", value );
+
         synchronized ( this )
         {
             if ( this.service != null )
