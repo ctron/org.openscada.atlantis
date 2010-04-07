@@ -71,20 +71,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     private final Map<Long, QueryHandler> queries = new HashMap<Long, QueryHandler> ();
 
-    private ExecutorService queryDisposer;
+    private final ExecutorService queryDisposer;
 
     public ServerConnectionHandler ( final Service service, final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
         super ( ioSession, connectionInformation );
 
-        try
-        {
-            this.queryDisposer = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ServerConnectionHandler/QueryDisposer" ) );
-        }
-        catch ( final Throwable e )
-        {
-            logger.warn ( "fucked up", e );
-        }
+        this.queryDisposer = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ServerConnectionHandler/QueryDisposer" ) );
 
         this.service = service;
 
