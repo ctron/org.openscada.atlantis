@@ -41,6 +41,7 @@ import org.openscada.hd.server.Session;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -218,8 +219,23 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
     public Object addingService ( final ServiceReference reference )
     {
         logger.info ( "Adding service: {}", reference );
+
+        final String itemId = (String)reference.getProperty ( Constants.SERVICE_PID );
+        if ( itemId == null )
+        {
+            logger.warn ( "Failed to register item {}. '{}' is not set", reference, Constants.SERVICE_PID );
+            return null;
+        }
+
         final HistoricalItem item = (HistoricalItem)this.context.getService ( reference );
         final HistoricalItemInformation info = item.getInformation ();
+
+        if ( !itemId.equals ( info.getId () ) )
+        {
+            logger.warn ( "Unable to register item since {} ({}) and item id ({}) don't match", new Object[] { Constants.SERVICE_PID, itemId, info.getId () } );
+            this.context.ungetService ( reference );
+            return null;
+        }
 
         synchronized ( this )
         {
@@ -244,7 +260,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
 
     public void removedService ( final ServiceReference reference, final Object service )
     {
-        final String itemId = (String)reference.getProperty ( "itemId" );
+        final String itemId = (String)reference.getProperty ( Constants.SERVICE_PID );
 
         synchronized ( this )
         {
