@@ -49,7 +49,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
         public void close ()
         {
-            openQueries.remove ( this );
+            HistoricalItemImpl.this.openQueries.remove ( this );
             this.query.close ();
         }
     }
@@ -97,7 +97,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     protected synchronized void setMasterItem ( final DataSource service )
     {
-        logger.info ( "Set master item: {}", service );
+        logger.info ( "Set data source item: {}", service );
 
         if ( this.dataSource != null )
         {
@@ -137,7 +137,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     public void start () throws InvalidSyntaxException
     {
-        logger.info ( "Start HistoricalItem: {}", itemInformation.getId () );
+        logger.info ( "Start HistoricalItem: {}", this.itemInformation.getId () );
 
         this.storageTracker.open ();
         this.poolTracker.open ();
@@ -146,7 +146,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     public void stop ()
     {
-        logger.info ( "Stop HistoricalItem: {}", itemInformation.getId () );
+        logger.info ( "Stop HistoricalItem: {}", this.itemInformation.getId () );
 
         this.storageTracker.close ();
         if ( this.dataSourceTracker != null )
@@ -232,7 +232,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
             {
                 this.maxBufferSize = Integer.parseInt ( properties.get ( "maxBufferSize" ) );
             }
-            catch ( NumberFormatException e )
+            catch ( final NumberFormatException e )
             {
                 this.maxBufferSize = DEFAULT_MAX_BUFFER_SIZE;
             }
@@ -251,9 +251,9 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
             this.dataSourceTracker.close ();
             this.dataSourceTracker = null;
         }
-        if ( dataSourceId != null )
+        if ( this.dataSourceId != null )
         {
-            logger.debug ( "track datasource " + dataSourceId );
+            logger.debug ( "track datasource " + this.dataSourceId );
             this.dataSourceTracker = new SingleDataSourceTracker ( this.poolTracker, this.dataSourceId, new ServiceListener () {
                 public void dataSourceChanged ( final DataSource dataSource )
                 {
