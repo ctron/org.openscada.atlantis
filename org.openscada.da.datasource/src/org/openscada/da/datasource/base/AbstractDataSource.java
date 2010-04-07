@@ -119,7 +119,7 @@ public abstract class AbstractDataSource implements DataSource
             catch ( final Exception e )
             {
                 // nothing
-                logger.warn ( "Failed to update timestamp", e );
+                logger.info ( "Failed to update timestamp", e );
             }
 
             final DataItemValue.Builder builder = new DataItemValue.Builder ( value );
