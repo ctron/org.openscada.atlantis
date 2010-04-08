@@ -3,10 +3,12 @@ package org.openscada.ae.filter.test;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 
+import org.junit.Assert;
 import org.junit.Test;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
+import org.openscada.ae.filter.internal.EventMatcherImpl;
 import org.openscada.core.Variant;
 
 public class TestFilter
@@ -73,14 +75,14 @@ public class TestFilter
 
     private void testFalse ( final Event event, final String filter )
     {
-        boolean result = new EventMatcher ( filter ).matches ( event );
+        boolean result = new EventMatcherImpl ( filter ).matches ( event );
         Assert.assertFalse ( "Filter test failed: " + filter + " " + event, result );
         System.out.print ( "!" );
     }
 
     private void testTrue ( final Event event, final String filter )
     {
-        boolean result = new EventMatcher ( filter ).matches ( event );
+        boolean result = new EventMatcherImpl ( filter ).matches ( event );
         Assert.assertTrue ( "Filter test failed: " + filter + " " + event, result );
         System.out.print ( "." );
     }
