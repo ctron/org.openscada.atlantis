@@ -229,6 +229,10 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
+        if ( left == null )
+        {
+            return false;
+        }
         if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof Date ) || ( assertion.getValue () instanceof Collection<?> ) ) )
         {
             return false;
