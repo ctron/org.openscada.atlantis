@@ -6,8 +6,11 @@ Bundle-Version: 0.14.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Bundle-Vendor: inavare GmbH
 Import-Package: org.openscada.ae,
+ org.openscada.ae.filter,
+ org.openscada.ae.filter.internal,
  org.openscada.ae.server.storage,
  org.openscada.core,
  org.openscada.utils.filter,
  org.openscada.utils.propertyeditors,
  org.osgi.framework
+Export-Package: org.openscada.ae.server.storage.memory
