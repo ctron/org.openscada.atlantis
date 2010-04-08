@@ -182,6 +182,7 @@
   	<openscada.builder.copyFeature id="org.openscada.ae"/>
   	  	
   	<openscada.builder.copyPlugin id="org.openscada.ae"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.filter"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.client.net"/>
 	<openscada.builder.copyPlugin id="org.openscada.ae.connection.provider"/>
