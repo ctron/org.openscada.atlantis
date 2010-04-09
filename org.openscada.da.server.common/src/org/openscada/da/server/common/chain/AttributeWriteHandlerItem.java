@@ -80,6 +80,11 @@ public class AttributeWriteHandlerItem extends DataItemInputChained
         }
         catch ( final Exception e )
         {
+            if ( result == null )
+            {
+                result = new WriteAttributeResults ();
+            }
+
             for ( final String attr : attributes.keySet () )
             {
                 result.put ( attr, new WriteAttributeResult ( e ) );
