@@ -227,11 +227,11 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
         for ( final Map.Entry<String, Collection<String>> entry : this.typeDeps.asMap ().entrySet () )
         {
-            logger.info ( String.format ( "'%s' depends on '%s'", entry.getKey (), entry.getValue () ) );
+            logger.debug ( String.format ( "'%s' depends on '%s'", entry.getKey (), entry.getValue () ) );
 
             if ( entry.getValue ().contains ( configurationId ) )
             {
-                logger.info ( String.format ( "Trigger dependency - '%s' depends on '%s'", entry.getKey (), configurationId ) );
+                logger.debug ( String.format ( "Trigger dependency - '%s' depends on '%s'", entry.getKey (), configurationId ) );
                 handleTypeChange ( entry.getKey () );
             }
         }
