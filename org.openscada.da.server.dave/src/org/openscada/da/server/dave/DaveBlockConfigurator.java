@@ -81,6 +81,8 @@ public class DaveBlockConfigurator
 
     protected void modifyBlock ( final ServiceReference reference, final BlockConfiguration service )
     {
+        logger.info ( "Modify block: {}", reference );
+
         // will be a quick remove and add operation
         addBlock ( reference, service );
     }
@@ -122,6 +124,8 @@ public class DaveBlockConfigurator
 
     private DaveRequestBlock makeBlock ( final BlockConfiguration block )
     {
+        logger.debug ( "Make new block: {}", block );
+
         final Request request = new Request ( (byte)block.getArea (), (short)block.getBlock (), (short)block.getStart (), (short)block.getCount () );
 
         final DaveRequestBlock deviceBlock = new DaveRequestBlock ( block.getId (), block.getName (), this.device, this.context, request, block.isEnableStatistics (), block.getPeriod () );
