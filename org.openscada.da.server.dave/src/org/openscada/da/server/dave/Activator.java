@@ -11,6 +11,7 @@ import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.dave.data.VariableManager;
 import org.openscada.da.server.dave.data.VariableManagerImpl;
 import org.openscada.da.server.dave.factory.ConfigurationFactoryImpl;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.BeanConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
@@ -49,7 +50,7 @@ public class Activator implements BundleActivator
 
         this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class.getName () );
 
-        this.executor = Executors.newSingleThreadExecutor ();
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
         this.service = new ConfigurationFactoryImpl ( context );
 
