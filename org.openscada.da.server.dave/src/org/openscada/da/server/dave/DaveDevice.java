@@ -12,11 +12,9 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.IoFuture;
 import org.apache.mina.core.future.IoFutureListener;
+import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.handler.multiton.SingleSessionIoHandler;
-import org.apache.mina.handler.multiton.SingleSessionIoHandlerDelegate;
-import org.apache.mina.handler.multiton.SingleSessionIoHandlerFactory;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
@@ -29,11 +27,12 @@ import org.openscada.protocols.dave.DaveMessage;
 import org.openscada.protocols.dave.DaveWriteRequest;
 import org.openscada.protocols.iso8073.COTPFilter;
 import org.openscada.protocols.tkpt.TPKTFilter;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DaveDevice implements SingleSessionIoHandler
+public class DaveDevice implements IoHandler
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( DaveDevice.class );
@@ -74,6 +73,8 @@ public class DaveDevice implements SingleSessionIoHandler
 
     private boolean disposed;
 
+    private ConnectionState state = ConnectionState.DISCONNECTED;
+
     private static enum ConnectionState
     {
         CONNECTING,
@@ -85,7 +86,7 @@ public class DaveDevice implements SingleSessionIoHandler
     {
         this.id = id;
         this.context = context;
-        this.executor = Executors.newSingleThreadScheduledExecutor ();
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "DaveDevice/" + id ) );
 
         this.jobManager = new DaveJobManager ( this );
         this.configurator = new DaveBlockConfigurator ( this, this.context );
@@ -169,23 +170,35 @@ public class DaveDevice implements SingleSessionIoHandler
         attributes.put ( "name", new Variant ( this.name ) );
         this.configItem.updateData ( Variant.TRUE, attributes, AttributeMode.SET );
 
-        disconnect ();
-        connect ();
+        synchronized ( this )
+        {
+            if ( !disconnect () )
+            {
+                connect ();
+            }
+        }
     }
 
-    private void connect ()
+    private synchronized void connect ()
     {
+        if ( this.state != ConnectionState.DISCONNECTED )
+        {
+            logger.warn ( "Tried to connect in state: {}", this.state );
+            return;
+        }
+
+        if ( this.session != null )
+        {
+            logger.error ( "We already have a session: {}", this.session );
+            logger.error ( "Connect error", new IllegalStateException ().fillInStackTrace () );
+            return;
+        }
+
         if ( this.connector == null )
         {
             this.connector = new NioSocketConnector ();
 
-            this.connector.setHandler ( new SingleSessionIoHandlerDelegate ( new SingleSessionIoHandlerFactory () {
-
-                public SingleSessionIoHandler getHandler ( final IoSession session ) throws Exception
-                {
-                    return DaveDevice.this;
-                }
-            } ) );
+            this.connector.setHandler ( this );
 
             // this.connector.getFilterChain ().addLast ( "logger", new LoggingFilter ( this.getClass ().getName () ) );
             this.connector.getFilterChain ().addLast ( "tpkt", new TPKTFilter ( 3 ) );
@@ -217,60 +230,86 @@ public class DaveDevice implements SingleSessionIoHandler
 
     private void setState ( final ConnectionState state )
     {
+        this.state = state;
         this.stateItem.updateData ( new Variant ( state.toString () ), null, null );
         this.connectionItem.updateData ( Variant.valueOf ( state == ConnectionState.CONNECTED ), null, null );
     }
 
-    protected void setSession ( final IoSession session )
+    protected synchronized void setSession ( final IoSession session )
     {
+        if ( this.session != null && session != null )
+        {
+            logger.error ( "We already have a session set!" );
+        }
+
         if ( session != null )
         {
-            session.getConfig ().setReaderIdleTime ( this.readTimeout / 1000 );
             setState ( ConnectionState.CONNECTED );
         }
         else
         {
+            logger.info ( "Disconnected" );
             setState ( ConnectionState.DISCONNECTED );
             this.jobManager.setSession ( null );
         }
         this.session = session;
     }
 
-    private void disconnected ()
+    private synchronized void disconnected ()
     {
-        if ( !this.disposed )
+        if ( this.disposed )
         {
-            setSession ( null );
-            this.executor.schedule ( new Runnable () {
-
-                public void run ()
-                {
-                    connect ();
-                }
-            }, 1000, TimeUnit.MILLISECONDS );
+            return;
         }
+
+        setSession ( null );
+        this.executor.schedule ( new Runnable () {
+
+            public void run ()
+            {
+                connect ();
+            }
+        }, 1000, TimeUnit.MILLISECONDS );
     }
 
-    private void disconnect ()
+    protected synchronized boolean disconnect ()
     {
         if ( this.session != null )
         {
             if ( !this.session.isClosing () )
             {
-                this.session.close ( false );
+                logger.info ( "Close session: {}", this.session );
+                this.session.close ( true );
+                return true;
+            }
+            else
+            {
+                logger.warn ( "Session already closing: {}", this.session );
             }
             // session will be set to null using #sessionClosed()
         }
+        else
+        {
+            logger.warn ( "Disconnected without session" );
+        }
+        return false;
     }
 
-    public void exceptionCaught ( final Throwable error ) throws Exception
+    public synchronized void exceptionCaught ( final IoSession session, final Throwable error ) throws Exception
     {
         logger.warn ( "Exception caught", error );
-        disconnect ();
+
+        if ( ! ( error instanceof WrongSessionException ) )
+        {
+            disconnect ();
+        }
     }
 
-    public void messageReceived ( final Object message ) throws Exception
+    public synchronized void messageReceived ( final IoSession session, final Object message ) throws Exception
     {
+        logger.debug ( "Message received: {}", message );
+        checkSession ( session );
+
         if ( message instanceof DaveConnectionEstablishedMessage )
         {
             // we must we till we received this message ... now we can trigger
@@ -288,30 +327,67 @@ public class DaveDevice implements SingleSessionIoHandler
         }
     }
 
-    public void messageSent ( final Object message ) throws Exception
+    public synchronized void messageSent ( final IoSession session, final Object message ) throws Exception
     {
+        logger.debug ( "Message sent: {}", message );
+        checkSession ( session );
     }
 
-    public void sessionClosed () throws Exception
+    protected void checkSession ( final IoSession session )
     {
-        logger.warn ( "Connection lost" );
+        if ( this.session != session && this.session != null )
+        {
+            logger.warn ( "Wrong session called: {} <-> {}", this.session, session );
+            throw new WrongSessionException ();
+        }
+    }
+
+    public synchronized void sessionClosed ( final IoSession session ) throws Exception
+    {
+        logger.warn ( "Connection lost: {}", session );
+        if ( this.session != null )
+        {
+            checkSession ( session );
+        }
+
         disconnected ();
     }
 
-    public void sessionCreated () throws Exception
+    public synchronized void sessionCreated ( final IoSession session ) throws Exception
     {
-        logger.debug ( "Session created" );
+        logger.info ( "Session created: {}", session );
+
+        if ( this.session != null )
+        {
+            checkSession ( session );
+        }
+
+        logger.info ( "Setting reader timeout: {} / {}", this.readTimeout, session );
+        session.getConfig ().setReaderIdleTime ( this.readTimeout / 1000 );
+
+        setSession ( session );
+
     }
 
-    public void sessionIdle ( final IdleStatus status ) throws Exception
+    public synchronized void sessionIdle ( final IoSession session, final IdleStatus status ) throws Exception
     {
-        logger.warn ( "Got idle: {}", status );
+        logger.warn ( "Got idle: {} / {}", status, session );
+
+        checkSession ( session );
+
         disconnect ();
     }
 
-    public void sessionOpened () throws Exception
+    public synchronized void sessionOpened ( final IoSession session ) throws Exception
     {
-        logger.debug ( "Session opened" );
+        logger.info ( "Session opened: {}", session );
+
+        if ( this.session != null )
+        {
+            checkSession ( session );
+        }
+
+        setSession ( session );
     }
 
     public Executor getExecutor ()
