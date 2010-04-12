@@ -191,10 +191,8 @@ public class DaveDevice implements IoHandler
 
         synchronized ( this )
         {
-            if ( !disconnect () )
-            {
-                connect ();
-            }
+            disconnect ();
+            connect ();
         }
     }
 
@@ -291,7 +289,7 @@ public class DaveDevice implements IoHandler
         }, 1000, TimeUnit.MILLISECONDS );
     }
 
-    protected synchronized boolean disconnect ()
+    protected synchronized void disconnect ()
     {
         if ( this.session != null )
         {
@@ -299,7 +297,6 @@ public class DaveDevice implements IoHandler
             {
                 logger.info ( "Close session: {}", this.session );
                 this.session.close ( true );
-                return true;
             }
             else
             {
@@ -311,7 +308,6 @@ public class DaveDevice implements IoHandler
         {
             logger.warn ( "Disconnected without session" );
         }
-        return false;
     }
 
     public synchronized void exceptionCaught ( final IoSession session, final Throwable error ) throws Exception
@@ -376,16 +372,8 @@ public class DaveDevice implements IoHandler
     {
         logger.info ( "Session created: {}", session );
 
-        if ( this.session != null )
-        {
-            checkSession ( session );
-        }
-
         logger.info ( "Setting reader timeout: {} / {}", this.readTimeout, session );
         session.getConfig ().setReaderIdleTime ( this.readTimeout / 1000 );
-
-        setSession ( session );
-
     }
 
     public synchronized void sessionIdle ( final IoSession session, final IdleStatus status ) throws Exception
