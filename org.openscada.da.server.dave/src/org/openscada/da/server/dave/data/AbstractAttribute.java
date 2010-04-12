@@ -64,7 +64,12 @@ public class AbstractAttribute
 
         final Request request = this.block.getRequest ();
 
-        return localAddress + this.offset - this.block.getRequest ().getStart ();
+        if ( request == null )
+        {
+            logger.error ( "no request found for block: {}", this.block );
+        }
+
+        return localAddress + this.offset - request.getStart ();
     }
 
 }
