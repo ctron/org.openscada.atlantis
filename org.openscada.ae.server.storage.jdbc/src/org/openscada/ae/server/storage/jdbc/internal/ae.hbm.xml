@@ -55,7 +55,7 @@
 		<!-- all other attribs are in a separate table -->
 		<map name="attributes" table="openscada_ae_events_attr"
 			access="field" cascade="all" lazy="false" fetch="join">
-			<key foreign-key="fk_org_openscada_ae_server_storage_1">
+			<key foreign-key="fkosae69807360914149">
 				<column name="ID" length="36" sql-type="CHAR(36)" />
 			</key>
 			<map-key type="string" column="KEY" />
