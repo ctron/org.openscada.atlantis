@@ -38,6 +38,8 @@ public class DaveRequestBlock
 
     private final String name;
 
+    private boolean disposed;
+
     private static class Statistics
     {
         private final DataItemInputChained lastUpdateItem;
@@ -157,6 +159,11 @@ public class DaveRequestBlock
      */
     public synchronized void handleDisconnect ()
     {
+        if ( this.disposed )
+        {
+            return;
+        }
+
         if ( this.variables != null )
         {
             for ( final Variable reg : this.variables )
@@ -168,6 +175,11 @@ public class DaveRequestBlock
 
     public synchronized void handleFailure ()
     {
+        if ( this.disposed )
+        {
+            return;
+        }
+
         this.lastUpdate = System.currentTimeMillis ();
 
         if ( this.statistics != null )
@@ -190,6 +202,11 @@ public class DaveRequestBlock
      */
     public synchronized void handleResponse ( final Result response )
     {
+        if ( this.disposed )
+        {
+            return;
+        }
+
         this.lastUpdate = System.currentTimeMillis ();
 
         if ( this.statistics != null )
@@ -233,6 +250,14 @@ public class DaveRequestBlock
 
     public synchronized void dispose ()
     {
+        if ( this.disposed )
+        {
+            return;
+        }
+
+        logger.info ( "Disposing: {}", this );
+        this.disposed = true;
+
         if ( this.statistics != null )
         {
             this.statistics.dispose ();
@@ -258,6 +283,11 @@ public class DaveRequestBlock
      */
     public synchronized void setVariables ( final Variable[] variables )
     {
+        if ( this.disposed )
+        {
+            return;
+        }
+
         this.settingVariablesItem.updateData ( Variant.TRUE, null, null );
 
         // dispose old
