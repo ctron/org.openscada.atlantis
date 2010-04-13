@@ -66,10 +66,13 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final Date now = new Date ();
         builder.sourceTimestamp ( now );
         builder.entryTimestamp ( now );
+
+        builder.attributes ( this.informationAttributes );
+
         builder.attribute ( Fields.MESSAGE, message );
         builder.attribute ( Fields.EVENT_TYPE, "DEBUG" );
         builder.attribute ( Fields.SOURCE, getId () );
-        builder.attributes ( this.informationAttributes );
+
         this.eventProcessor.publishEvent ( builder.build () );
     }
 
