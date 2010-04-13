@@ -107,6 +107,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         }
     }
 
+    @Override
     public void init ()
     {
         super.init ();
