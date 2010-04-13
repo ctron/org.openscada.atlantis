@@ -62,18 +62,29 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             return;
         }
 
+        final EventBuilder builder = createEventBuilder ();
+
+        builder.attribute ( Fields.MESSAGE, message );
+        builder.attribute ( Fields.EVENT_TYPE, "DEBUG" );
+
+        this.eventProcessor.publishEvent ( builder.build () );
+    }
+
+    /**
+     * Create an event builder pre-filled with the information we have
+     * 
+     * @return a new event builder
+     */
+    protected EventBuilder createEventBuilder ()
+    {
         final EventBuilder builder = Event.create ();
         final Date now = new Date ();
         builder.sourceTimestamp ( now );
         builder.entryTimestamp ( now );
 
-        builder.attributes ( this.eventInformationAttributes );
+        injectEventAttributes ( builder );
 
-        builder.attribute ( Fields.MESSAGE, message );
-        builder.attribute ( Fields.EVENT_TYPE, "DEBUG" );
-        builder.attribute ( Fields.SOURCE, getId () );
-
-        this.eventProcessor.publishEvent ( builder.build () );
+        return builder;
     }
 
     /**
@@ -248,7 +259,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private EventBuilder createEvent ( final Date timestamp, final UserInformation userInformation, final String eventType, final Variant value )
     {
-        final EventBuilder builder = Event.create ();
+        final EventBuilder builder = createEventBuilder ();
 
         final Date now = new Date ();
         builder.entryTimestamp ( now );
@@ -260,10 +271,6 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         {
             builder.sourceTimestamp ( now );
         }
-
-        builder.attributes ( this.eventInformationAttributes );
-
-        builder.attribute ( Fields.SOURCE, getId () );
 
         if ( userInformation != null && userInformation.getName () != null )
         {
@@ -400,6 +407,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected void injectEventAttributes ( final EventBuilder builder )
     {
+        builder.attributes ( this.eventInformationAttributes );
+
+        builder.attribute ( Fields.SOURCE, getId () );
     }
 
 }
