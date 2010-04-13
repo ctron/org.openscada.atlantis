@@ -2,13 +2,16 @@ package org.openscada.da.master;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Dictionary;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.utils.osgi.pool.ObjectPoolListener;
 import org.openscada.utils.osgi.pool.ObjectPoolServiceTracker;
@@ -31,11 +34,15 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private final Collection<ObjectPoolServiceTracker> trackers = new LinkedList<ObjectPoolServiceTracker> ();
 
+    protected Map<String, Variant> eventAttributes;
+
     public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker, final int defaultPriority )
     {
         this.poolTracker = poolTracker;
         this.defaultPriority = defaultPriority;
         this.priority = defaultPriority;
+
+        this.eventAttributes = Collections.emptyMap ();
     }
 
     public synchronized void dispose ()
@@ -62,12 +69,26 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         final String masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) );
         final String splitPattern = cfg.getString ( "splitPattern", ", ?" );
 
+        this.eventAttributes = convert ( cfg.getPrefixed ( "info." ) );
+
         createTrackers ( masterId.split ( splitPattern ) );
 
         for ( final ObjectPoolServiceTracker tracker : this.trackers )
         {
             tracker.open ();
         }
+    }
+
+    private Map<String, Variant> convert ( final Map<String, String> attributes )
+    {
+        final Map<String, Variant> result = new HashMap<String, Variant> ( attributes.size () );
+
+        for ( final Map.Entry<String, String> entry : attributes.entrySet () )
+        {
+            result.put ( entry.getKey (), Variant.valueOf ( entry.getValue () ) );
+        }
+
+        return result;
     }
 
     protected void createTrackers ( final String[] masterIds )

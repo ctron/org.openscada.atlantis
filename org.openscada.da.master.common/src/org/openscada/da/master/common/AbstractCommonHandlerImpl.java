@@ -1,7 +1,10 @@
 package org.openscada.da.master.common;
 
+import java.util.Date;
 import java.util.Map;
 
+import org.openscada.ae.Event;
+import org.openscada.ae.Event.EventBuilder;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
@@ -18,6 +21,22 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
     }
 
     protected abstract DataItemValue processDataUpdate ( final DataItemValue value ) throws Exception;
+
+    /**
+     * Create a pre-filled event builder
+     * @return a new event builder
+     */
+    protected EventBuilder createEventBuilder ()
+    {
+        final EventBuilder builder = Event.create ();
+
+        builder.sourceTimestamp ( new Date () );
+        builder.entryTimestamp ( new Date () );
+
+        builder.attributes ( this.eventAttributes );
+
+        return builder;
+    }
 
     @Override
     public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )

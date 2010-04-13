@@ -1,10 +1,8 @@
 package org.openscada.da.master.common.block;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
@@ -181,9 +179,8 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     protected EventBuilder createEvent ( final UserInformation user, final String message, final Object value )
     {
-        final EventBuilder builder = Event.create ();
+        final EventBuilder builder = createEventBuilder ();
 
-        builder.sourceTimestamp ( new Date () );
         if ( user != null && user.getName () != null )
         {
             builder.attribute ( Fields.ACTOR_TYPE, "USER" );

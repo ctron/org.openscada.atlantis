@@ -33,8 +33,6 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
     private final String id;
 
-    private final Map<String, Variant> eventAttributes = new HashMap<String, Variant> ();
-
     public ManualHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, ManualHandlerFactoryImpl.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
@@ -151,9 +149,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
     {
         final Map<String, String> data = new HashMap<String, String> ();
 
-        final Event.EventBuilder builder = Event.create ();
-
-        builder.attributes ( this.eventAttributes );
+        final Event.EventBuilder builder = createEventBuilder ();
 
         builder.entryTimestamp ( new Date () );
         builder.sourceTimestamp ( new Date () );

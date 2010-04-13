@@ -313,20 +313,36 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         }
     }
 
-    private Event createEvent ( final ConditionStatusInformation info, final String eventType )
+    /**
+     * Create a pre-filled event builder
+     * @return a new event builder
+     */
+    protected EventBuilder createEventBuilder ()
     {
         final EventBuilder builder = Event.create ();
+
+        builder.sourceTimestamp ( new Date () );
+        builder.entryTimestamp ( new Date () );
+
+        builder.attributes ( this.eventAttributes );
+
+        return builder;
+    }
+
+    private Event createEvent ( final ConditionStatusInformation info, final String eventType )
+    {
+        final EventBuilder builder = createEventBuilder ();
+
         builder.sourceTimestamp ( info.getStatusTimestamp () );
         builder.entryTimestamp ( new Date () );
         builder.attribute ( Fields.SOURCE, this.id );
         builder.attribute ( Fields.EVENT_TYPE, eventType );
-        builder.attributes ( this.attributes );
         return builder.build ();
     }
 
     protected synchronized void publishAckRequestEvent ( final UserInformation user, final Date aknTimestamp )
     {
-        final EventBuilder builder = Event.create ();
+        final EventBuilder builder = createEventBuilder ();
         builder.sourceTimestamp ( aknTimestamp );
         builder.entryTimestamp ( new Date () );
         builder.attribute ( Fields.SOURCE, this.id );
@@ -340,7 +356,6 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         {
             this.lastAckUser = null;
         }
-        builder.attributes ( this.attributes );
 
         // store the ack info
         doStore ();
