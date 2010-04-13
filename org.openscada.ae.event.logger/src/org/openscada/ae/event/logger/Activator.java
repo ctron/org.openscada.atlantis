@@ -8,6 +8,7 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 
 public class Activator implements BundleActivator
 {
@@ -23,6 +24,7 @@ public class Activator implements BundleActivator
         this.factory = new DataSourceLoggerFactory ( context );
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, context.getBundle ().getSymbolicName () );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "Records write requests" );
         context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );
     }
 
