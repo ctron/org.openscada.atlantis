@@ -28,13 +28,19 @@ public class WriterController
     {
         final Variant variant = Variant.valueOf ( value );
 
-        final ServiceTracker tracker = new ServiceTracker ( this.context, makeFilter ( dataSourceId ), null );
+        final Filter filter = makeFilter ( dataSourceId );
+
+        final ServiceTracker tracker = new ServiceTracker ( this.context, filter, null );
 
         tracker.open ();
         try
         {
-            tracker.waitForService ( DEFAULT_TIMEOUT );
-            final DataSource source = (DataSource)tracker.getService ();
+            final DataSource source = (DataSource)tracker.waitForService ( DEFAULT_TIMEOUT );
+
+            if ( source == null )
+            {
+                throw new IllegalStateException ( String.format ( "Failed to write. Service not found for filter '%s'", filter ) );
+            }
 
             final WriteInformation writeInformation = new WriteInformation ( null );
             source.startWriteValue ( writeInformation, variant );
