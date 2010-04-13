@@ -44,13 +44,13 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private boolean initSent = false;
 
-    private Map<String, Variant> informationAttributes;
+    private Map<String, Variant> eventInformationAttributes;
 
     public AbstractStateMachineMonitorService ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String id )
     {
         super ( id, executor, context );
         this.eventProcessor = eventProcessor;
-        this.informationAttributes = Collections.emptyMap ();
+        this.eventInformationAttributes = Collections.emptyMap ();
 
         sendDebugMessage ( "Initializing" );
     }
@@ -67,7 +67,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         builder.sourceTimestamp ( now );
         builder.entryTimestamp ( now );
 
-        builder.attributes ( this.informationAttributes );
+        builder.attributes ( this.eventInformationAttributes );
 
         builder.attribute ( Fields.MESSAGE, message );
         builder.attribute ( Fields.EVENT_TYPE, "DEBUG" );
@@ -112,15 +112,15 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         super.init ();
     }
 
-    protected void setInformationAttributes ( final Map<String, Variant> informationAttributes )
+    protected void setEventInformationAttributes ( final Map<String, Variant> informationAttributes )
     {
         if ( informationAttributes == null )
         {
-            this.informationAttributes = Collections.emptyMap ();
+            this.eventInformationAttributes = Collections.emptyMap ();
         }
         else
         {
-            this.informationAttributes = new HashMap<String, Variant> ( informationAttributes );
+            this.eventInformationAttributes = new HashMap<String, Variant> ( informationAttributes );
         }
     }
 
@@ -260,7 +260,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             builder.sourceTimestamp ( now );
         }
 
-        builder.attributes ( this.informationAttributes );
+        builder.attributes ( this.eventInformationAttributes );
 
         builder.attribute ( Fields.SOURCE, getId () );
 

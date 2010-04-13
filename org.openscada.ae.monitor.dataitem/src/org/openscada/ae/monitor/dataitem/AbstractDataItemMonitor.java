@@ -117,7 +117,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         this.handlerPriority = cfg.getInteger ( "handlerPriority", getDefaultPriority () );
         this.monitorType = cfg.getString ( "monitorType", this.defaultMonitorType );
 
-        setInformationAttributes ( convertAttributes ( cfg ) );
+        setEventInformationAttributes ( convertAttributes ( cfg ) );
         setActive ( cfg.getBoolean ( "active", true ) );
         setRequireAkn ( cfg.getBoolean ( "requireAck", false ) );
         connect ();
