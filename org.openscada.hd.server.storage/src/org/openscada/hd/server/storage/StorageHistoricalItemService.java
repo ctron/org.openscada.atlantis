@@ -25,13 +25,13 @@ import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.backend.AbortNotificator;
 import org.openscada.hsdb.backend.BackEndManager;
 import org.openscada.hsdb.calculation.CalculationMethod;
-import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.configuration.Conversions;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.hsdb.datatypes.DoubleValue;
 import org.openscada.hsdb.datatypes.LongValue;
 import org.openscada.hsdb.relict.RelictCleaner;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
@@ -425,9 +425,9 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         this.starting = true;
         this.started = true;
         final String configurationId = this.backEndManager.getConfiguration ().getId ();
-        this.dataReceiver = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( DATA_RECEIVER_THREAD_ID_PREFIX + configurationId ) );
-        this.startUpTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
-        this.createQueryTask = Executors.newSingleThreadExecutor ( HsdbThreadFactory.createFactory ( CREATE_QUERY_THREAD_ID_PREFIX + configurationId ) );
+        this.dataReceiver = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( DATA_RECEIVER_THREAD_ID_PREFIX + configurationId ) );
+        this.startUpTask = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
+        this.createQueryTask = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( CREATE_QUERY_THREAD_ID_PREFIX + configurationId ) );
         this.startUpTask.submit ( new Runnable () {
             public void run ()
             {

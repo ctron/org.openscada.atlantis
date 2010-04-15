@@ -23,11 +23,11 @@ import org.openscada.hsdb.backend.file.FileBackEndFactory;
 import org.openscada.hsdb.backend.file.FileBackEndManager;
 import org.openscada.hsdb.backend.file.FileBackEndManagerFactory;
 import org.openscada.hsdb.calculation.CalculationMethod;
-import org.openscada.hsdb.concurrent.HsdbThreadFactory;
 import org.openscada.hsdb.configuration.Conversions;
 import org.openscada.hsdb.datatypes.DataType;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -266,7 +266,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             }
 
             // start heart beat task
-            this.heartBeatTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( HEARTBEAT_THREAD_ID ) );
+            this.heartBeatTask = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( HEARTBEAT_THREAD_ID ) );
             this.heartBeatTask.scheduleWithFixedDelay ( new Runnable () {
                 public void run ()
                 {
@@ -282,7 +282,7 @@ public class StorageService implements SelfManagedConfigurationFactory
         }
 
         // start clean relicts timer
-        this.relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( HsdbThreadFactory.createFactory ( RELICT_CLEANER_THREAD_ID ) );
+        this.relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( RELICT_CLEANER_THREAD_ID ) );
         this.relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
             public void run ()
             {
