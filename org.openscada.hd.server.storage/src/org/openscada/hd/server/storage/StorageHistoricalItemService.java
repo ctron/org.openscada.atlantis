@@ -12,6 +12,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.core.Variant;
+import org.openscada.core.VariantType;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
@@ -257,7 +258,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     public void updateData ( final DataItemValue value )
     {
         final long now = System.currentTimeMillis ();
-        logger.debug ( "receiving data at: " + now );
+        logger.debug ( "receiving data ({}) at: {}", value, now);
         if ( this.dataReceiver != null )
         {
             this.dataReceiver.submit ( new Runnable () {
@@ -271,7 +272,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                         return;
                     }
                     final Variant variant = value.getValue ();
-                    if ( variant == null )
+                    if ( variant == null || variant.getType() == VariantType.NULL )
                     {
                         createInvalidEntry ( now );
                         return;
