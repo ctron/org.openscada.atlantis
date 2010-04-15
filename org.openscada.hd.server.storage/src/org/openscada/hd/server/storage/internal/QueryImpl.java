@@ -202,7 +202,10 @@ public class QueryImpl implements Query, ExtendedStorageChannel
         if ( this.listener != null && this.currentQueryState == null || this.currentQueryState != queryState )
         {
             this.currentQueryState = queryState;
-            this.listener.updateState ( queryState );
+            if ( this.listener != null )
+            {
+                this.listener.updateState ( queryState );
+            }
         }
     }
 
