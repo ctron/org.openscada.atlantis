@@ -108,6 +108,9 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     /** Object that is used for internal synchronization. */
     private final Object lockObject;
 
+    /** Flag indicating of the time stamp of the next valid input value should be adjusted to the current time or not. */
+    private volatile boolean adjustDataTimestamp;
+
     /**
      * Constructor.
      * @param backEndManager manager that will be used to handle and distribute back end objects
@@ -131,6 +134,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         this.acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY ) );
         this.expectedDataType = DataType.convertShortStringToDataType ( data.get ( ConfigurationImpl.DATA_TYPE_KEY ) );
         this.registration = null;
+        this.adjustDataTimestamp = false;
     }
 
     /**
@@ -273,7 +277,12 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                         return;
                     }
                     final Calendar calendar = value.getTimestamp ();
-                    final long time = calendar == null ? now : calendar.getTimeInMillis ();
+                    long time = calendar == null ? now : calendar.getTimeInMillis ();
+                    if ( adjustDataTimestamp )
+                    {
+                        adjustDataTimestamp = false;
+                        time = Math.max ( time, now );
+                    }
                     if ( !StorageHistoricalItemService.this.importMode && ( now - StorageHistoricalItemService.this.acceptedTimeDelta > time || now - StorageHistoricalItemService.this.proposedDataAge > time ) )
                     {
                         logger.warn ( String.format ( "data that is too old for being processed was received! data will be ignored: (configuration: '%s'; time: %s)", StorageHistoricalItemService.this.backEndManager.getConfiguration ().getId (), time ) );
@@ -310,7 +319,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     }
 
     /**
-     * This method processes the data tha is received via the data receiver task.
+     * This method processes the data that is received via the data receiver task.
      * @param value data that has to be processed
      */
     public synchronized void processData ( final BaseValue value )
@@ -375,6 +384,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      */
     private synchronized void createInvalidEntry ( final long time )
     {
+        this.adjustDataTimestamp = true;
         if ( this.rootStorageChannel != null )
         {
             BaseValue[] values = null;
@@ -562,6 +572,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         {
             createInvalidEntry ( System.currentTimeMillis () );
         }
+        this.adjustDataTimestamp = false;
 
         // deinitialize back end manager
         try
