@@ -20,6 +20,7 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
+import org.openscada.hd.server.storage.QueryManager;
 import org.openscada.hd.server.storage.StorageHistoricalItemService;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
@@ -64,7 +65,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
     private final static String QUERY_CLOSER_THREAD_ID = "hd.QueryCloser";
 
     /** Service that created the query object. */
-    private final StorageHistoricalItemService service;
+    private final QueryManager service;
 
     /** Map containing all available storage channels mapped by detail level id and calculation method including the calculation logic provider objects. */
     private Map<Long, Map<CalculationMethod, Map<ExtendedStorageChannel, CalculationLogicProvider>>> storageChannels;
@@ -132,7 +133,7 @@ public class QueryImpl implements Query, ExtendedStorageChannel
      * @param parameters input parameters of the query
      * @param calculationMethods set of calculation methods that will be available via the service
      */
-    public QueryImpl ( final StorageHistoricalItemService service, final QueryListener listener, final QueryParameters parameters, final CalculationMethod[] calculationMethods )
+    public QueryImpl ( final QueryManager service, final QueryListener listener, final QueryParameters parameters, final CalculationMethod[] calculationMethods )
     {
         this.service = service;
         this.listener = listener;

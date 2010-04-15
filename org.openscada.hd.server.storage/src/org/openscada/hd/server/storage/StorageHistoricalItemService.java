@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @see org.openscada.hd.server.common.StorageHistoricalItem
  * @author Ludwig Straub
  */
-public class StorageHistoricalItemService implements StorageHistoricalItem, RelictCleaner
+public class StorageHistoricalItemService implements StorageHistoricalItem, RelictCleaner, QueryManager
 {
     /** The default logger. */
     private final static Logger logger = LoggerFactory.getLogger ( StorageHistoricalItemService.class );
