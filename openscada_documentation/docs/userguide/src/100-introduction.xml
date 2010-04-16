@@ -175,7 +175,7 @@
 		<listitem><para><filename>org.openscada.ca.file</filename></para></listitem>
 		<listitem><para><filename>org.openscada.ca.servlet</filename></para></listitem>
 		<listitem><para><filename>*jetty*</filename></para></listitem>
-		<listitem><para><filename>org.eclipse*http*</filename></para></listitem>
+		<listitem><para><filename>org.eclipse.equinox.*http</filename></para></listitem>
 	</itemizedlist> 
 	And add required bundled automatically in order to add required dependencies.
 	</para>
@@ -183,9 +183,9 @@
 	Add the following command line arguments for the <trademark>Java</trademark>
 	virtual machine:
 	<code><![CDATA[
--Dorg.openscada.ca.file.root=/home/user/ca_test_root
--Dorg.openscada.da.server.osgi.exporter.net.port=1204
--Djetty.port=8080
+-Dorg.eclipse.equinox.http.jetty.http.port=8082
+-Dopenscada.da.net.exportUri=da:net://0.0.0.0:1204
+-Dorg.openscada.ca.file.root=/home/user/cas/test
 	]]></code>
 	</para>
 	<para>
@@ -216,7 +216,7 @@
 	</para></listitem>
 	
 	<listitem><para>
-	da.dataitem.datasource
+	da.dataitem.datasource with any id
 		<itemizedlist>
 			<listitem><para>datasource.id=datasource.1</para></listitem>
 			<listitem><para>item.id=alias.item.1</para></listitem>
