@@ -6,7 +6,7 @@
 	This section describes the different <trademark>OSGi</trademark> bundles available in OpenSCADA.
 	</para>
 	
-<sect2><title>org.openscada.osgi.equinox.console</title>
+<sect2 id="bundle_org.openscada.osgi.equinox.console"><title>org.openscada.osgi.equinox.console</title>
 <para>
 	The bundle <filename>org.openscada.osgi.equinox.console</filename> provides an implementation of
 	an <trademark>Equinox</trademark> console that is accessible using a normal
@@ -83,7 +83,7 @@
 
 </sect2>
 
-<sect2><title>org.openscada.ds.storage.file</title>
+<sect2 id="bundle_org.openscada.ds.storage.file"><title>org.openscada.ds.storage.file</title>
 <para>
 	The bundle <filename>org.openscada.ds.storage.file</filename> provides an implementation of
 	the <acronym>DS</acronym> (Data Store) service based on the file system.
@@ -124,7 +124,7 @@
 
 </sect2>
 
-<sect2><title>org.openscada.sec.provider.script</title>
+<sect2 id="bundle_org.openscada.sec.provider.script"><title>org.openscada.sec.provider.script</title>
 	<para>
 	The bundle <filename>org.openscada.sec.provider.script</filename> contains
 	and implementation of a authorization provider which is configured using JavaScript
@@ -195,5 +195,5 @@
 	</sect3>
 	
 </sect2>
-	
+
 </sect1>

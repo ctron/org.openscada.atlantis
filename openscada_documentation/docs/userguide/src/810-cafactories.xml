@@ -222,4 +222,47 @@ GRANTED;
 
 </sect2>
 
+
+<sect2
+	id="cafactory_da.connection"
+	><title>da.connection</title>
+	
+<para>
+	This factory creates and registers DA connections. The persistent id of the service
+	is the id of the configuration. By default connections will be automatically
+	re-connected when the connection drops.
+</para>
+
+	<sect3><title>Configuration</title>
+		<para>
+		The following configuration properties are available:
+		</para>
+		
+		<table><title>Configuration properties of <filename>org.openscada.sec.provider.script.factory</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Required</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>connection.uri</entry>
+						<entry>String</entry>
+						<entry>required</entry>
+						<entry>
+						The URI of the DA connection to create 
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect3>
+	
+</sect2>
+
 </sect1>
