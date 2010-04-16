@@ -38,7 +38,8 @@
 		<para>Switch to the <quote>DA</quote> perspective</para>
 		</listitem>
 		<listitem>
-		<para>Right click on the <quote>Standard</quote> entry in the <quote>Navigator</quote></para>
+		<para>Right click on the <quote>Default File Source</quote> entry in
+		the <quote>Navigator</quote></para>
 		</listitem>
 		<listitem>
 		<para>Add two new URIs: <uri>da:net://localhost:1202</uri> and <uri>da:net://localhost:1203</uri>
