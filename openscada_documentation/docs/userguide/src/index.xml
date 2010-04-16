@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE article PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" [
-  <!ENTITY sect1 SYSTEM "100-sect1.xml">
+  <!ENTITY sect-introduction SYSTEM "100-introduction.xml">
   <!ENTITY sect2 SYSTEM "200-sect2.xml">
   <!ENTITY sect-master SYSTEM "500-master.xml">
   <!ENTITY sect-osgibundles SYSTEM "800-osgibundles.xml">
