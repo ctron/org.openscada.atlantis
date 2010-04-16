@@ -52,7 +52,8 @@
 		<para>The two test servers use the TCP port number 1202 and 1203. You need to ensure that
 		the application has the permissions by the operating system (or your local firewall) to open
 		these ports in listen mode. Also you need to ensure that these ports are available and not used
-		by other applications. You can change the port numbers in the preferences dialog.
+		by other applications. You can change the port numbers in the preferences dialog. Of course
+		you need to change the URIs as well.
 		</para>
 		</footnote>
 		</para>
@@ -125,6 +126,17 @@
 	This gives you a short introduction on how to read a write data from a DA server.
 	</para>
 	
+</sect4>
+
+<sect4><title>Some short explanation</title>
+	<para>
+	In the above examples one might notice that in some cases the label in the navigator
+	(browser) is different than the item id itself. This is ok and correct since the
+	browser can use a different naming and only references the items by id. It can be compared
+	to a file system where the filename is just a name pointing to an inode which identifies
+	the actual file contents. In order to reduce confusion one should try to have some similarity
+	between the browser and the item id.  
+	</para>
 </sect4>
 
 </sect3>
