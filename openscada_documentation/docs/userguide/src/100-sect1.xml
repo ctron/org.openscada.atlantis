@@ -23,6 +23,9 @@
 	There is a test client called <productname>OSTC</productname>. Its purpose is to aid testing
 	and performing generic tasks. It is not a <quote>end user client</quote>.
 	</para>
+	
+	<sect4><title>Installation &amp; setup</title>
+	
 	<para>
 	See section <xref linkend="ostc_install"/> on how to install <productname>OSTC</productname>.
 	Once you have it up and running perform the following steps:
@@ -42,7 +45,16 @@
 		</para>
 		</listitem>
 		<listitem>
-		<para>Start the two simulation servers from the <quote>Testing</quote> menu</para>
+		<para>
+		Start the two simulation servers from the <quote>Testing</quote> menu
+		<footnote>
+		<para>The two test servers use the TCP port number 1202 and 1203. You need to ensure that
+		the application has the permissions by the operating system (or your local firewall) to open
+		these ports in listen mode. Also you need to ensure that these ports are available and not used
+		by other applications. You can change the port numbers in the preferences dialog.
+		</para>
+		</footnote>
+		</para>
 		</listitem>
 		<listitem>
 		<para>Right click on the previously created <acronym>URI</acronym> entries and
@@ -52,8 +64,68 @@
 	</itemizedlist>
 	
 	You can now browse through the items provided by the connected DA server.
-	
 	</para>
+</sect4>
+
+<sect4><title>Playing with the memory items</title>
+	<para>
+	There are some <quote>memory items</quote> which can be used to play around with. Data written
+	to these items will be feed in back as input. These items support both read and write operations.
+	</para>
+	
+	<para>
+	<itemizedlist>
+	
+	<listitem>
+	<para>Ensure that are switched to the DA perspective and have one real time list and the
+	navigator visible. Also ensure that you have the testing servers running as described earlier.</para>
+	</listitem>
+	
+	<listitem>
+	<para>Open the connection to <uri>da:net://localhost:1203</uri></para>
+	</listitem>
+	
+	<listitem>
+	<para>Navigate to the <filename>memory</filename> folder and right click on the
+	<filename>control</filename> item.
+	</para>
+	</listitem>
+	
+	<listitem>
+	<para>Issue a write command and write a positive integer number not too big (e.g. 10)</para>
+	</listitem>
+	
+	<listitem>
+	<para>After the write command there should appear exactly the amount of memory items
+	you requested in your write command</para>
+	</listitem>
+	
+	<listitem>
+	<para>Drag and drop some of these new items to the real time list. They should appear in
+	the real time list with the ID <filename>memory-cell-X</filename> where X is the
+	number of the memory item used.
+	</para>
+	</listitem>
+	
+	<listitem>
+	<para>The items in the real time list should have the status <quote>CONNECTED</quote>
+	and a value of <quote>NULL</quote>
+	</para>
+	</listitem>
+	
+	<listitem>
+	<para>Right click on one item in the real time list and issue another write command.
+	Write any value you like. The value should be provided by the data item after the
+	write command completed</para>
+	</listitem>
+	
+	</itemizedlist>
+	
+	This gives you a short introduction on how to read an write data from a DA server.
+	</para>
+	
+</sect4>
+
 </sect3>
  		
 </sect2>
