@@ -20,14 +20,14 @@
  		
 <sect3><title>Test Client</title>
 	<para>
-	There is a test client called <productname>OSTC</productname>. Its purpose is to aid testing
+	There is a test client called <filename>OSTC</filename>. Its purpose is to aid testing
 	and performing generic tasks. It is not a <quote>end user client</quote>.
 	</para>
 	
 	<sect4><title>Installation &amp; setup</title>
 	
 	<para>
-	See section <xref linkend="ostc_install"/> on how to install <productname>OSTC</productname>.
+	See section <xref linkend="ostc_install"/> on how to install <filename>OSTC</filename>.
 	Once you have it up and running perform the following steps:
 	
 	<itemizedlist>
