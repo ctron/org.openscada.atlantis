@@ -4,7 +4,7 @@
 		This section describes the application <application>OpenSCADA Test Client</application>.
   	</para>
 
-	<sect2><title>Installation and startup</title>
+	<sect2 id="ostc_install"><title>Installation and startup</title>
 		<para>
 			There are some ways of installing the
 			<application>OpenSCADA Test Client</application>.

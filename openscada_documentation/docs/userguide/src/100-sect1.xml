@@ -1,7 +1,61 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="overview"><title>Overview and Purpose</title>
+<sect1 id="introduction"><title>Introduction</title>
+	<para>
+		The following sections give you a short introduction into OpenSCADA.   		
+  	</para>
+  	
+  	<sect2 id="overview"><title>Overview and Purpose</title>
 	<para>
   		This document describes the different components of OpenSCADA from a users point of view.
   	</para>
+  	</sect2>
+  	
+<sect2 id="quickStart"><title>Quick Start</title>
+	<para>
+	This section is intended to give you a really quick start in some of the
+	<trademark>OpenSCADA</trademark> functionality.
+	</para>
+ 		
+<sect3><title>Test Client</title>
+	<para>
+	There is a test client called <productname>OSTC</productname>. Its purpose is to aid testing
+	and performing generic tasks. It is not a <quote>end user client</quote>.
+	</para>
+	<para>
+	See section <xref linkend="ostc_install"/> on how to install <productname>OSTC</productname>.
+	Once you have it up and running perform the following steps:
+	
+	<itemizedlist>
+		<listitem>
+		<para>Start the application</para>
+		</listitem>
+		<listitem>
+		<para>Switch to the <quote>DA</quote> perspective</para>
+		</listitem>
+		<listitem>
+		<para>Right click on the <quote>Standard</quote> entry in the <quote>Navigator</quote></para>
+		</listitem>
+		<listitem>
+		<para>Add two new URIs: <uri>da:net://localhost:1202</uri> and <uri>da:net://localhost:1203</uri>
+		</para>
+		</listitem>
+		<listitem>
+		<para>Start the two simulation servers from the <quote>Testing</quote> menu</para>
+		</listitem>
+		<listitem>
+		<para>Right click on the previously created <acronym>URI</acronym> entries and
+		issue the <quote>Connect</quote> command
+		</para>
+		</listitem>
+	</itemizedlist>
+	
+	You can now browse through the items provided by the connected DA server.
+	
+	</para>
+</sect3>
+ 		
+</sect2>
+  	
 </sect1>
