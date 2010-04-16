@@ -272,7 +272,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                         return;
                     }
                     final Variant variant = value.getValue ();
-                    if ( variant == null || variant.getType() == VariantType.NULL )
+                    if ( variant == null || variant.isNull() )
                     {
                         createInvalidEntry ( now );
                         return;
