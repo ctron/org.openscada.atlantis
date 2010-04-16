@@ -232,6 +232,11 @@ GRANTED;
 	is the id of the configuration. By default connections will be automatically
 	re-connected when the connection drops.
 </para>
+<note><para>
+	The factory cannot create the connections itself since it needs a connection provider that
+	implements the actual connection type. Once the connection provider becomes available in
+	<trademark>OSGi</trademark> the connection is created and registered. 
+</para></note>
 
 	<sect3><title>Configuration</title>
 		<para>
@@ -261,6 +266,14 @@ GRANTED;
 				</tgroup>
 		</table>
 		
+	</sect3>
+	
+	<sect3><title>Additional information</title>
+		<para>
+		For realizing DA NET connections start the bundles
+		<filename>org.openscada.da.connection.provider</filename>
+		and <filename>org.openscada.da.client.net</filename> 
+		</para>
 	</sect3>
 	
 </sect2>
