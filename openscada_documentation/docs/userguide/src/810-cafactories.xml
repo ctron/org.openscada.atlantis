@@ -278,4 +278,137 @@ GRANTED;
 	
 </sect2>
 
+
+<sect2
+	id="cafactory_da.dataitem.datasource"
+	><title>da.dataitem.datasource</title>
+	
+<para>
+	This factory creates and registers DA data items with an DA data item object pool. The values
+	this data item provides comes from a defined data source.
+</para>
+
+	<sect3><title>Configuration</title>
+		<para>
+		The following configuration properties are available:
+		</para>
+		
+		<table><title>Configuration properties of <filename>org.openscada.sec.provider.script.factory</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Required</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>datasource.id</entry>
+						<entry>String</entry>
+						<entry>required</entry>
+						<entry>
+						The id of the source data item which provides the values
+						exported by this data item. 
+						</entry>
+					</row>
+					
+					<row>
+						<entry>item.id</entry>
+						<entry>String</entry>
+						<entry>required</entry>
+						<entry>
+						The id of the data item when it is exported. This id must be
+						unique.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect3>
+	
+	<sect3><title>Additional information</title>
+		<para>
+		The created data item will subscribe to a data source with configured id (datasource.id).
+		Once it is attached to the data source it will export this data as an data item.
+		</para>
+		<para>
+		Although the data item is registered using an object pool there are two steps needed
+		in order to access it using a client application (e.g. OSTC) using the DA NET protocol.
+		First a Hive implementation is needed that catches up the data items from the object pools
+		and gathers them in a Hive instance. Next the hive instance must be exported using a
+		protocol implementation.
+		</para>
+		<para>
+		A ready to run hive implementation is provided by the bundle
+		<filename>org.openscada.da.server.osgi</filename> and a DA NET exporter is available
+		in the bundle <filename>org.openscada.da.server.osgi.exporter.net</filename>. Starting these
+		two bundles will do the trick. Be aware that the exporter bundle exports the service on TCP port
+		1202 by default. You might need to change that.
+		</para>
+	</sect3>
+	
+</sect2>
+
+
+<sect2
+	id="cafactory_da.datasource.dataitem"
+	><title>da.datasource.dataitem</title>
+	
+<para>
+	This factory creates and registers a data source that gets its input from a client
+	side data item.
+</para>
+
+	<sect3><title>Configuration</title>
+		<para>
+		The following configuration properties are available:
+		</para>
+		
+		<table><title>Configuration properties of <filename>org.openscada.sec.provider.script.factory</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Required</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>connection.id</entry>
+						<entry>String</entry>
+						<entry>required</entry>
+						<entry>
+						The service id of a DA connection which has the connection
+						to the hive of the data item
+						</entry>
+					</row>
+					<row>
+						<entry>item.id</entry>
+						<entry>String</entry>
+						<entry>required</entry>
+						<entry>
+						The item id of the data item to subscribe to in the remote hive
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect3>
+	
+	<sect3><title>Additional information</title>
+		<para>
+		The datasource creates a new data item subscription on the specified hive connection.
+		Once the connection is available and established it will automatically subscribe and
+		provide the values to data sources subscribe to itself. 
+		</para>
+	</sect3>
+	
+</sect2>
+
 </sect1>
