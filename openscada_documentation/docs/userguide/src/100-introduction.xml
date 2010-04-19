@@ -174,6 +174,7 @@
 		<listitem><para><filename>org.openscada.da.client.connection.service</filename></para></listitem>
 		<listitem><para><filename>org.openscada.ca.file</filename></para></listitem>
 		<listitem><para><filename>org.openscada.ca.servlet</filename></para></listitem>
+		<listitem><para><filename>org.openscada.sec.provider.dummy</filename></para></listitem>
 		<listitem><para><filename>*jetty*</filename></para></listitem>
 		<listitem><para><filename>org.eclipse.equinox.*http</filename></para></listitem>
 	</itemizedlist> 
