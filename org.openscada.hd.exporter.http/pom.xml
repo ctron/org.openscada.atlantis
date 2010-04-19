@@ -33,7 +33,7 @@
 		<dependency>
 			<groupId>org.openscada.external</groupId>
 			<artifactId>org.openscada.external.com.google.gson</artifactId>
-			<version>1.4</version>
+			<version>1.4.0</version>
 			<scope>compile</scope>
 		</dependency>
 	</dependencies>
