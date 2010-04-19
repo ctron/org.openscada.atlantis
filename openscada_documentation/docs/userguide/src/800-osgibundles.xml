@@ -201,7 +201,11 @@
 	The bundle <filename>org.openscada.sec.provider.dummy</filename> contains
 	and implementation of a authorization and authentication provider which grants
 	access to all operations and authorization credentials.
-</para>
+	</para>
+	<para>
+	The services are registered with lowest possible priority in <trademark>OSGi</trademark>
+	so any other service should override the dummy implementation. 
+	</para>
 
 	<sect2><title>System properties</title>
 		<para>
