@@ -26,7 +26,7 @@ import java.util.LinkedList;
 
 import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
-import org.openscada.da.exec2.configuration.RootDocument;
+import org.openscada.da.exec.configuration.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -88,14 +88,14 @@ public class Hive extends HiveCommon
 
         ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
-        this.setRootFolder ( this.rootFolder );
+        setRootFolder ( this.rootFolder );
         this.triggerFolder = new FolderCommon ();
         this.rootFolder.add ( TRIGGER_FOLDER_NAME, this.triggerFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains all triggers" ) ).getMap () );
 
         new XmlConfigurator ( document ).configure ( this );
 
         // Setup and start the queues
-        this.startQueues ();
+        startQueues ();
     }
 
     /**
