@@ -21,9 +21,9 @@ Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.da.server.exec;version="0.15.0";
   uses:="org.openscada.da.server.common.impl,
-   org.openscada.da.exec2.configuration,
    org.openscada.utils.statuscodes,
    org.openscada.da.server.exec.command,
+   org.openscada.da.exec.configuration,
    org.w3c.dom",
  org.openscada.da.server.exec.command;version="0.15.0";
   uses:="org.openscada.da.server.common,
@@ -33,9 +33,9 @@ Export-Package: org.openscada.da.server.exec;version="0.15.0";
    org.openscada.core,
    org.openscada.da.server.exec.splitter",
  org.openscada.da.server.exec.configuration;version="0.15.0";
-  uses:="org.openscada.da.exec2.configuration,
-   org.openscada.da.server.exec,
+  uses:="org.openscada.da.server.exec,
    org.openscada.utils.statuscodes,
+   org.openscada.da.exec.configuration,
    org.w3c.dom",
  org.openscada.da.server.exec.extractor;version="0.15.0";
   uses:="org.openscada.da.server.common.chain,
