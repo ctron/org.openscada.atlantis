@@ -3,8 +3,8 @@
 
 <chapter id="cafactories"><title>Configurable services</title>
 	<para>
-	This section describes the different configurable services of the OpenSCADA 
-	<trademark>OSGi</trademark> based system.
+	This section describes the different configurable services of the 
+	<trademark>OpenSCADA</trademark> <trademark>OSGi</trademark> based system.
 	</para>
 	
 <sect1
@@ -14,7 +14,7 @@
 	This configuration factories creates entries that configure the script based
 	authentication service. Each entry is used in evaluating the authorization
 	request in the case the script based authorization provider is used. The entries
-	will not cause further <trademark></trademark> services to be created but only
+	will not cause further <trademark>OSGi</trademark> services to be created but only
 	create internal objects for the service itself.
 </para>
 
