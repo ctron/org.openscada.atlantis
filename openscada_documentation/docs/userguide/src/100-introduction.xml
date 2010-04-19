@@ -202,25 +202,25 @@
 	<itemizedlist>
 	
 	<listitem><para>
-	da.connection with id <filename>connection.1</filename>
+	<filename>da.connection</filename> with id <filename>connection.1</filename>
 		<itemizedlist>
-			<listitem><para>connection.uri=1203</para></listitem>
+			<listitem><para><code>connection.uri=1203</code></para></listitem>
 		</itemizedlist>
 	</para></listitem>
 	
 	<listitem><para>
-	da.datasource.dataitem with id <filename>datasource.1</filename>
+	<filename>da.datasource.dataitem</filename> with id <filename>datasource.1</filename>
 		<itemizedlist>
-			<listitem><para>connection.id=connection.1</para></listitem>
-			<listitem><para>item.id=memory-cell-0</para></listitem>
+			<listitem><para><code>connection.id=connection.1</code></para></listitem>
+			<listitem><para><code>item.id=memory-cell-0</code></para></listitem>
 		</itemizedlist>
 	</para></listitem>
 	
 	<listitem><para>
-	da.dataitem.datasource with any id
+	<filename>da.dataitem.datasource</filename> with any id
 		<itemizedlist>
-			<listitem><para>datasource.id=datasource.1</para></listitem>
-			<listitem><para>item.id=alias.item.1</para></listitem>
+			<listitem><para><code>datasource.id=datasource.1</code></para></listitem>
+			<listitem><para><code>item.id=alias.item.1</code></para></listitem>
 		</itemizedlist>
 	</para></listitem>
 	
@@ -250,6 +250,11 @@
 	application. Of course there is lots more. See the sections <xref linkend="cafactories"/>
 	for factories that are available and provide more functionality and <xref linkend="osgibundles"/>
 	which <trademark>OSGi</trademark> bundles provide the functionality.
+	</para>
+	<para>
+	The <filename>org.openscada.sec.provider.dummy</filename> bundle is a security provider that
+	allows all access to and does not perform a check of the authentication credentials. This is
+	ok for testing but might be a problem for some deployments.
 	</para>
 </sect3>
 
