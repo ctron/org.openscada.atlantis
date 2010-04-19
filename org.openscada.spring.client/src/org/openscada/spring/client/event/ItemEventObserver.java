@@ -100,18 +100,18 @@ public class ItemEventObserver extends AbstractItemEventObserver
         }
         if ( attributes != null )
         {
-            final Map<String, Variant> newAttributes = this.value.getAttributes ();
+            final Map<String, Variant> newAttributes = new HashMap<String, Variant> ( this.value.getAttributes () );
             AttributesHelper.mergeAttributes ( newAttributes, attributes, cache );
             builder.setAttributes ( newAttributes );
         }
 
         this.value = builder.build ();
 
-        if ( !this.suppressCacheEvents && cache || !cache )
+        if ( ( !this.suppressCacheEvents && cache ) || !cache )
         {
             final boolean attributesChanged = attributes != null ? !attributes.isEmpty () : false;
 
-            if ( value != null || attributesChanged && !this.suppressAttributeEvents )
+            if ( ( value != null ) || ( attributesChanged && !this.suppressAttributeEvents ) )
             {
                 fireChange ();
             }
