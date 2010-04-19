@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<exec:root xmlns:exec="http://openscada.org/DA/Exec2/Configuration"
+<exec:root xmlns:exec="http://openscada.org/DA/Exec/Configuration"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://openscada.org/DA/Exec2/Configuration schema/exec2.xsd ">
+	xsi:schemaLocation="http://openscada.org/DA/Exec/Configuration schema/exec.xsd ">
 	
 	<!-- 
 	<exec:queue name="Q1">
