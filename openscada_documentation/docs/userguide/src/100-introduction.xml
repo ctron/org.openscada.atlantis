@@ -6,11 +6,11 @@
 		The following sections give you a short introduction into OpenSCADA.   		
   	</para>
   	
-  	<sect1 id="overview"><title>Overview and Purpose</title>
+<sect1 id="overview"><title>Overview and Purpose</title>
 	<para>
-  		This document describes the different components of OpenSCADA from a users point of view.
-  	</para>
-  	</sect1>
+	This document describes the different components of OpenSCADA from a users point of view.
+	</para>
+</sect1>
   	
 <sect1 id="quickStart"><title>Quick Start</title>
 	<para>
