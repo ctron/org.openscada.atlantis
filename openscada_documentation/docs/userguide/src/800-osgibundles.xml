@@ -196,4 +196,53 @@
 	
 </sect1>
 
+<sect1 id="bundle_org.openscada.sec.provider.dummy"><title>org.openscada.sec.provider.dummy</title>
+	<para>
+	The bundle <filename>org.openscada.sec.provider.dummy</filename> contains
+	and implementation of a authorization and authentication provider which grants
+	access to all operations and authorization credentials.
+</para>
+
+	<sect2><title>System properties</title>
+		<para>
+		No system properties are used by the bundle.
+		</para>
+	</sect2>
+	
+	<sect2><title>Exported services</title>
+		<para>
+		The following services are exported by this bundle:
+		</para>
+		
+		<table><title>Exported services of <filename>org.openscada.sec.provider.script</filename></title>
+				<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Supported interfaces</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>org.openscada.sec.AuthorizationService</entry>
+						<entry>
+						A dummy authorization service implementation.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.sec.AuthenticationService</entry>
+						<entry>
+						A dummy authentication service implementation.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect2>
+	
+</sect1>
+
+
+
 </chapter>
