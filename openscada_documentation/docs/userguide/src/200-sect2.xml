@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<sect1 id="ostc"><title>OpenSCADA Test Client</title>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
+
+<chapter id="ostc"><title>OpenSCADA Test Client</title>
 	<para>
 		This section describes the application <application>OpenSCADA Test Client</application>.
   	</para>
 
-	<sect2 id="ostc_install"><title>Installation and startup</title>
+	<sect1 id="ostc_install"><title>Installation and startup</title>
 		<para>
 			There are some ways of installing the
 			<application>OpenSCADA Test Client</application>.
@@ -13,7 +15,7 @@
 			from source using the <application><trademark>Eclipse</trademark> IDE</application>.
 		</para>
 		
-		<sect3><title>Downloading the compressed archive</title>
+		<sect2><title>Downloading the compressed archive</title>
 		<para>
 			In order to download the compressed archive version of the
 			<application>OpenSCADA Test Client</application> direct your
@@ -50,7 +52,7 @@
 				</para>
 			</note>
 		</para>
-		</sect3>
+		</sect2>
 		
-	</sect2>
-</sect1>
+	</sect1>
+</chapter>

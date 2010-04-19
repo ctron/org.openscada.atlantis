@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="osgibundles"><title><trademark>OSGi</trademark> Bundles</title>
+<chapter id="osgibundles"><title><trademark>OSGi</trademark> Bundles</title>
 	<para>
 	This section describes the different <trademark>OSGi</trademark> bundles available in OpenSCADA.
 	</para>
 	
-<sect2 id="bundle_org.openscada.osgi.equinox.console"><title>org.openscada.osgi.equinox.console</title>
+<sect1 id="bundle_org.openscada.osgi.equinox.console"><title>org.openscada.osgi.equinox.console</title>
 <para>
 	The bundle <filename>org.openscada.osgi.equinox.console</filename> provides an implementation of
 	an <trademark>Equinox</trademark> console that is accessible using a normal
 	<acronym>TCP</acronym> (or Telnet) connection.	
 </para>
 
-	<sect3><title>System properties</title>
+	<sect2><title>System properties</title>
 		<para>
 		The following system properties are available:
 		</para>
@@ -79,17 +79,17 @@
 				</tgroup>
 		</table>
 		
-	</sect3>
+	</sect2>
 
-</sect2>
+</sect1>
 
-<sect2 id="bundle_org.openscada.ds.storage.file"><title>org.openscada.ds.storage.file</title>
+<sect1 id="bundle_org.openscada.ds.storage.file"><title>org.openscada.ds.storage.file</title>
 <para>
 	The bundle <filename>org.openscada.ds.storage.file</filename> provides an implementation of
 	the <acronym>DS</acronym> (Data Store) service based on the file system.
 </para>
 
-	<sect3><title>System properties</title>
+	<sect2><title>System properties</title>
 		<para>
 		The following system properties are available:
 		</para>
@@ -120,24 +120,24 @@
 				</tgroup>
 		</table>
 		
-	</sect3>
+	</sect2>
 
-</sect2>
+</sect1>
 
-<sect2 id="bundle_org.openscada.sec.provider.script"><title>org.openscada.sec.provider.script</title>
+<sect1 id="bundle_org.openscada.sec.provider.script"><title>org.openscada.sec.provider.script</title>
 	<para>
 	The bundle <filename>org.openscada.sec.provider.script</filename> contains
 	and implementation of a authorization provider which is configured using JavaScript
 	or other Java scripting compatible with JSR-223.
 </para>
 
-	<sect3><title>System properties</title>
+	<sect2><title>System properties</title>
 		<para>
 		No system properties are used by the bundle.
 		</para>
-	</sect3>
+	</sect2>
 	
-	<sect3><title>Exported services</title>
+	<sect2><title>Exported services</title>
 		<para>
 		The following services are exported by this bundle:
 		</para>
@@ -163,9 +163,9 @@
 				</tgroup>
 		</table>
 		
-	</sect3>
+	</sect2>
 	
-	<sect3><title>Configurable services</title>
+	<sect2><title>Configurable services</title>
 		<para>
 		The following configurable services are provided by this bundle:
 		</para>
@@ -192,8 +192,8 @@
 				</tgroup>
 		</table>
 		
-	</sect3>
+	</sect2>
 	
-</sect2>
-
 </sect1>
+
+</chapter>

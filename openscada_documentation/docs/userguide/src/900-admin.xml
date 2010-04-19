@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="admin"><title>Administration</title>
+<chapter id="admin"><title>Administration</title>
 	<para>
 	This section describes some administrative tasks of the <trademark>OpenSCADA</trademark> system.
 	</para>
 	
-<sect2><title><trademark>OSGi</trademark> based servers</title>
+<sect1><title><trademark>OSGi</trademark> based servers</title>
 	<para>
 	This section focuses on the administration of <trademark>OSGi</trademark> based server installations.
 	</para>
 	
-<sect3><title>Requirements &amp; preconditions</title>
+<sect2><title>Requirements &amp; preconditions</title>
 <para>
 	The following requirements must be satisfied:
 	<itemizedlist>
@@ -27,9 +27,9 @@
 		
 	</itemizedlist>
 </para>
-</sect3>
+</sect2>
 
-<sect3><title>Installation of administrative Tools</title>
+<sect2><title>Installation of administrative Tools</title>
 	<note><para>
 	The installation of the administrative tools is currently only supported on RPM based systems
 	like <trademark>RedHat Enterprise Linux</trademark>. Of course we want to expand this to other
@@ -49,9 +49,9 @@
 	<prompt>#</prompt> rpm -Uvh *.rpm
 	</screen>
 	</para>
-</sect3>
+</sect2>
 
-<sect3><title>Create a P2 base installation</title>
+<sect2><title>Create a P2 base installation</title>
 	<para>
 	It is now required to create a base server installation. This will install the
 	<trademark>OSGi</trademark> container but will not install much functionality
@@ -79,9 +79,9 @@
 	<para>
 	Next the custom artifacts that should be included in the setup need to be installed.
 	</para>
-</sect3>
+</sect2>
 
-<sect3><title>Deploying the <trademark>OpenSCADA</trademark> artifacts</title>
+<sect2><title>Deploying the <trademark>OpenSCADA</trademark> artifacts</title>
 	<para>
 	The next step is to deploy the <trademark>OpenSCADA</trademark> bundles and features
 	to the previously created P2 installation. Depending on the functionality you want to
@@ -98,17 +98,17 @@
 	It might also be that you need some project specific features that you need to install
 	now.
 	</para>
-</sect3>
+</sect2>
 
-<sect3><title>Setting runtime parameters</title>
+<sect2><title>Setting runtime parameters</title>
 	<para>
 	In order to set up some <trademark>Java</trademark> system properties you can edit the
 	file <filename>laucher.properties</filename> which contains a <code>key=value</code> scheme
 	of system properties that will be set on startup of the container.
 	</para>
-</sect3>
+</sect2>
 
-<sect3><title>Starting the <trademark>Equinox</trademark> container</title>
+<sect2><title>Starting the <trademark>Equinox</trademark> container</title>
 	<para>
 	In order to start the container change the current directory to the installation
 	directory issue the following command: 
@@ -126,9 +126,9 @@
 	<screen>
 	<prompt>osgi&gt;</prompt> close  
 	</screen>
-</sect3>
+</sect2>
 
-<sect3><title>Customizing services</title>
+<sect2><title>Customizing services</title>
 	<para>
 	After installing the feature <filename>org.openscada.deploy.feature.group</filename> you will
 	have all services and features installed. Bundles that you do not want to be in the container
@@ -153,9 +153,9 @@
 	<trademark>Equinox</trademark> will remember which services were started and will restart
 	them the next time the container is started.
 	</para>
-</sect3>
+</sect2>
 
-<sect3><title>A quick introduction into the <trademark>Equinox</trademark> <trademark>OSGi</trademark>
+<sect2><title>A quick introduction into the <trademark>Equinox</trademark> <trademark>OSGi</trademark>
 console</title>
 
 	<para>
@@ -185,8 +185,8 @@ console</title>
 	<screen>
 	<prompt>osgi&gt;</prompt> stop org.openscada.ca.file
 	</screen>
-</sect3>
-
 </sect2>
-	
+
 </sect1>
+	
+</chapter>

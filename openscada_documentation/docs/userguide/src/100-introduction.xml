@@ -1,30 +1,30 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="introduction"><title>Introduction</title>
+<chapter id="introduction"><title>Introduction</title>
 	<para>
 		The following sections give you a short introduction into OpenSCADA.   		
   	</para>
   	
-  	<sect2 id="overview"><title>Overview and Purpose</title>
+  	<sect1 id="overview"><title>Overview and Purpose</title>
 	<para>
   		This document describes the different components of OpenSCADA from a users point of view.
   	</para>
-  	</sect2>
+  	</sect1>
   	
-<sect2 id="quickStart"><title>Quick Start</title>
+<sect1 id="quickStart"><title>Quick Start</title>
 	<para>
 	This section is intended to give you a really quick start in some of the
 	<trademark>OpenSCADA</trademark> functionality.
 	</para>
  		
-<sect3 id="quickStart_ostc"><title>Test Client</title>
+<sect2 id="quickStart_ostc"><title>Test Client</title>
 	<para>
 	There is a test client called <filename>OSTC</filename>. Its purpose is to aid testing
 	and performing generic tasks. It is not a <quote>end user client</quote>.
 	</para>
 	
-	<sect4><title>Installation &amp; setup</title>
+	<sect3><title>Installation &amp; setup</title>
 	
 	<para>
 	See section <xref linkend="ostc_install"/> on how to install <filename>OSTC</filename>.
@@ -67,9 +67,9 @@
 	
 	You can now browse through the items provided by the connected DA server.
 	</para>
-</sect4>
+</sect3>
 
-<sect4><title>Playing with the memory items</title>
+<sect3><title>Playing with the memory items</title>
 	<para>
 	There are some <quote>memory items</quote> which can be used to play around with. Data written
 	to these items will be feed in back as input. These items support both read and write operations.
@@ -126,9 +126,9 @@
 	This gives you a short introduction on how to read a write data from a DA server.
 	</para>
 	
-</sect4>
+</sect3>
 
-<sect4><title>Some short explanation</title>
+<sect3><title>Some short explanation</title>
 	<para>
 	In the above examples one might notice that in some cases the label in the navigator
 	(browser) is different than the item id itself. This is ok and correct since the
@@ -137,11 +137,11 @@
 	the actual file contents. In order to reduce confusion one should try to have some similarity
 	between the browser and the item id.  
 	</para>
-</sect4>
-
 </sect3>
 
-<sect3><title>Setting up an OSGi based master server</title>
+</sect2>
+
+<sect2><title>Setting up an OSGi based master server</title>
 	<para>
 	After playing around with the client it might be a good idea to try out the
 	<quote>master server</quote>. The master server is normally used to aggregate
@@ -151,7 +151,7 @@
 	<trademark>OSGi</trademark> based application that provides bundles to achieve that.
 	</para>
 	
-<sect4><title>Pre-conditions</title>
+<sect3><title>Pre-conditions</title>
 	<para>
 	You need Eclipse 3.5.2 (at the moment of writing).
 	</para>
@@ -159,9 +159,9 @@
 	You need a checked out version of OpenSCADA or a correctly set up target platform
 	containing all OpenSCADA repositories (see also XXX).
 	</para>
-</sect4>
+</sect3>
 
-<sect4><title>Run configuration</title>
+<sect3><title>Run configuration</title>
 	<para>
 	Create a new <trademark>OSGi</trademark> run configuration for Equinox. Activate the
 	following bundles:
@@ -191,9 +191,9 @@
 	<para>
 	Now start the configuration and wait for the <trademark>OSGi</trademark> prompt.
 	</para>
-</sect4>
+</sect3>
 
-<sect4><title>Configure the master server</title>
+<sect3><title>Configure the master server</title>
 	<para>
 	Now head your web server to <uri>http://localhost:8080/ca</uri> and create the following
 	configuration objects:
@@ -224,9 +224,9 @@
 	</para></listitem>
 	
 	</itemizedlist>
-</sect4>
+</sect3>
 
-<sect4><title>Connecting</title>
+<sect3><title>Connecting</title>
 	<para>
 	Start the OSTC and connect to <uri>da:net://localhost:1204</uri>. You should find an item
 	named <filename>alias.item.1</filename> which (when draged to the real time list) is
@@ -241,19 +241,19 @@
 	After the write operation is complete you should see that also the item
 	<filename>alias.item.1</filename> has changed to the value you just wrote.
 	</para>
-</sect4>
+</sect3>
 
-<sect4><title>Summary</title>
+<sect3><title>Summary</title>
 	<para>
 	This was just a quick and easy setup of an <trademark>OSGi</trademark> based server
 	application. Of course there is lots more. See the sections <xref linkend="cafactories"/>
 	for factories that are available and provide more functionality and <xref linkend="osgibundles"/>
 	which <trademark>OSGi</trademark> bundles provide the functionality.
 	</para>
-</sect4>
-
 </sect3>
- 		
+
 </sect2>
-  	
+ 		
 </sect1>
+  	
+</chapter>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="master"><title>Master Server</title>
+<chapter id="master"><title>Master Server</title>
 	<para>
   		This section describes the <quote>master server</quote> which actually
   		is an <trademark>OSGi</trademark> container that is configured with
@@ -12,7 +12,7 @@
   		that provide <acronym>SCADA</acronym> functionality.
   	</para>
   	
-  	<sect2><title>Master Server Overview</title>
+  	<sect1><title>Master Server Overview</title>
   	
   	<para>
   	 	As seen in illustration <xref linkend="master_overview_illustration"/> the master server gets its
@@ -76,22 +76,22 @@
   		order of processing. Master item handlers on the other side have a priority. So the master item
   		will call the handlers in that defined order. 
   	</para>
-  	</sect2>
+  	</sect1>
   	
-  	<sect2><title>Available data sources</title>
+  	<sect1><title>Available data sources</title>
   		<para>To be written...</para>
-  	</sect2>
+  	</sect1>
   	
-  	<sect2><title>Available master handlers</title>
+  	<sect1><title>Available master handlers</title>
   		<para>To be written...</para>
-  	</sect2>
+  	</sect1>
   	
-  	<sect2><title>Setting up a master server</title>
+  	<sect1><title>Setting up a master server</title>
   		<para>To be written...</para>
-  	</sect2>
+  	</sect1>
   	
-  	<sect2><title>Configuring a master server</title>
+  	<sect1><title>Configuring a master server</title>
   		<para>To be written...</para>
-  	</sect2>
+  	</sect1>
 
-</sect1>
+</chapter>

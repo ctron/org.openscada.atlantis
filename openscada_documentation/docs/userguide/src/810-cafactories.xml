@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
 
-<sect1 id="cafactories"><title>Configurable services</title>
+<chapter id="cafactories"><title>Configurable services</title>
 	<para>
 	This section describes the different configurable services of the OpenSCADA 
 	<trademark>OSGi</trademark> based system.
 	</para>
 	
-<sect2
+<sect1
 	id="cafactory_org.openscada.sec.provider.script.factory"
 	><title>org.openscada.sec.provider.script.factory</title>
 <para>
@@ -18,7 +18,7 @@
 	create internal objects for the service itself.
 </para>
 
-	<sect3><title>Configuration</title>
+	<sect2><title>Configuration</title>
 		<para>
 		The following configuration properties are available:
 		</para>
@@ -108,9 +108,9 @@
 				</tgroup>
 		</table>
 		
-	</sect3>
+	</sect2>
 	
-	<sect3 id="cafactory_org.openscada.sec.provider.script.factory_writing">
+	<sect2 id="cafactory_org.openscada.sec.provider.script.factory_writing">
 		<title>Writing authorization scripts</title>
 		<para>
 			The script has to evaluate if the request provided can be granted, is rejected
@@ -218,12 +218,12 @@ GRANTED;
 </example>
 		</para>
 		
-	</sect3>
+	</sect2>
 
-</sect2>
+</sect1>
 
 
-<sect2
+<sect1
 	id="cafactory_da.connection"
 	><title>da.connection</title>
 	
@@ -238,7 +238,7 @@ GRANTED;
 	<trademark>OSGi</trademark> the connection is created and registered. 
 </para></note>
 
-	<sect3><title>Configuration</title>
+	<sect2><title>Configuration</title>
 		<para>
 		The following configuration properties are available:
 		</para>
@@ -266,20 +266,20 @@ GRANTED;
 				</tgroup>
 		</table>
 		
-	</sect3>
+	</sect2>
 	
-	<sect3><title>Additional information</title>
+	<sect2><title>Additional information</title>
 		<para>
 		For realizing DA NET connections start the bundles
 		<filename>org.openscada.da.connection.provider</filename>
 		and <filename>org.openscada.da.client.net</filename> 
 		</para>
-	</sect3>
+	</sect2>
 	
-</sect2>
+</sect1>
 
 
-<sect2
+<sect1
 	id="cafactory_da.dataitem.datasource"
 	><title>da.dataitem.datasource</title>
 	
@@ -288,7 +288,7 @@ GRANTED;
 	this data item provides comes from a defined data source.
 </para>
 
-	<sect3><title>Configuration</title>
+	<sect2><title>Configuration</title>
 		<para>
 		The following configuration properties are available:
 		</para>
@@ -327,9 +327,9 @@ GRANTED;
 				</tgroup>
 		</table>
 		
-	</sect3>
+	</sect2>
 	
-	<sect3><title>Additional information</title>
+	<sect2><title>Additional information</title>
 		<para>
 		The created data item will subscribe to a data source with configured id (datasource.id).
 		Once it is attached to the data source it will export this data as an data item.
@@ -348,12 +348,12 @@ GRANTED;
 		two bundles will do the trick. Be aware that the exporter bundle exports the service on TCP port
 		1202 by default. You might need to change that.
 		</para>
-	</sect3>
+	</sect2>
 	
-</sect2>
+</sect1>
 
 
-<sect2
+<sect1
 	id="cafactory_da.datasource.dataitem"
 	><title>da.datasource.dataitem</title>
 	
@@ -362,7 +362,7 @@ GRANTED;
 	side data item.
 </para>
 
-	<sect3><title>Configuration</title>
+	<sect2><title>Configuration</title>
 		<para>
 		The following configuration properties are available:
 		</para>
@@ -399,16 +399,16 @@ GRANTED;
 				</tgroup>
 		</table>
 		
-	</sect3>
+	</sect2>
 	
-	<sect3><title>Additional information</title>
+	<sect2><title>Additional information</title>
 		<para>
 		The datasource creates a new data item subscription on the specified hive connection.
 		Once the connection is available and established it will automatically subscribe and
 		provide the values to data sources subscribe to itself. 
 		</para>
-	</sect3>
+	</sect2>
 	
-</sect2>
-
 </sect1>
+
+</chapter>

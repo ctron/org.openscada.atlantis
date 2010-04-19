@@ -8,8 +8,8 @@
   <!ENTITY sect-admin SYSTEM "900-admin.xml">
   <!ENTITY glossary SYSTEM "a01-glossary.xml">
 ]>
-<article lang="en">
-	<articleinfo>
+<book lang="en">
+	<bookinfo>
 		<title>OpenSCADA User Guide</title>
 		<authorgroup>
 			<author>
@@ -38,7 +38,7 @@
            </para>
 		</legalnotice>
 		
-	</articleinfo>
+	</bookinfo>
 	
 	&sect-introduction;
 	&sect2;
@@ -48,4 +48,4 @@
 	&sect-admin;
 	
 	&glossary;
- </article>
+ </book>
