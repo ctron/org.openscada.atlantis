@@ -141,7 +141,7 @@
 
 </sect2>
 
-<sect2><title>Setting up an OSGi based master server</title>
+<sect2 id="quickStart_osgi"><title>Setting up an OSGi based master server</title>
 	<para>
 	After playing around with the client it might be a good idea to try out the
 	<quote>master server</quote>. The master server is normally used to aggregate
@@ -258,6 +258,100 @@
 	</para>
 </sect3>
 
+</sect2>
+
+<sect2 id="quickStart_exec"><title>Quick Start: Exec Driver</title>
+	<para>
+	The <quote>Exec Server</quote> is an application that provides DA data item based on
+	different shell scripts and command line applications. Processes can be started in
+	different variations and the result (e.g. standard out stream or return code) can be
+	extracted and provided as data items.
+	</para>
+	<para>
+	This sample gives you a short introduction in setting up a simple sample.
+	</para>
+	
+	<sect3><title>Pre-requisites</title>
+	<para>
+	For running this sample you will need:
+	<itemizedlist>
+		<listitem><para>Java 1.5+</para></listitem>
+		<listitem><para>Ant 1.6+</para></listitem>
+		<listitem><para>Subversion 1.5+ for getting the setup</para></listitem>
+	</itemizedlist>
+	</para>
+	</sect3>
+	
+	<sect3><title>Downloading</title>
+	<para>
+	You need to check out the example project at
+	<uri>http://pubsvn.inavare.net/openscada/modules/examples/trunk/sample_exec1/</uri>. It is
+	an Eclipse project but it can also be checked out on the command line without the need
+	to use Eclipse.
+	</para>
+	<para>
+	Once you checked out the project, change into the checked out director and start the library
+	download:
+	<screen>
+		<prompt>$ </prompt>ant download
+	</screen>
+	
+	This will start Ant and download the required <acronym>JAR</acronym> files.
+	
+	</para>
+	</sect3>
+	
+	<sect3><title>Running</title>
+	<para>
+	In order to start the exmaple just use Ant and the <quote>run</quote> target:
+	<screen>
+	<prompt>$ </prompt>ant run
+	</screen>
+	The application will start and export the hive on TCP port 1202.
+	</para>
+	 <para>
+	 Start up the OSTC and connect to <uri>da:net://localhost:1202</uri> (or
+	 which host the application is running on) and you will see the sample data.
+	 </para>
+	</sect3>
+	
+	<sect3><title>Configuration</title>
+	<para>
+	The configuration is located in <filename>configuration/exporter.xml</filename>
+	and can easly be changed using the Eclipse XML editor or any other XML schema
+	aware editor.
+	</para>
+	<note>
+	<para>You might set the default logging level to <quote>INFO</quote> in the file
+	<filename>configuration/log4j.properties</filename> in order to find errors
+	in the configuration file.</para>
+	</note>
+	<para>
+	You should also be aware of the fact that the sample configuration uses some
+	commands that might work differently or your computer, produce different output
+	or are completly missing. The <quote>exec server</quote> is only designed to start
+	shell scripts or other command line programs and they might differ from platform to
+	platform or even from version to version.
+	</para>
+	</sect3>
+	
+	<sect3><title>Where to go from here?!</title>
+	<para>
+	The <quote>exec server</quote> can be quite a powerfull tool. Together with the JDBC server,
+	which is like an exec server for databases, existing stuff can be integrated into 
+	<trademark>OpenSCADA</trademark>. The <quote>exec server</quote> also supports extracting
+	the Nagios style return codes so that existing Nagios script can be added to the configuration.
+	</para>
+	<para>
+	Also the <quote>openscada_ping</quote> application can be added to the exec configuration.
+	This is a C/C++ based application which continously performs ICMP echo/echo reply (aka ping)
+	checks. It extracts the round trip time and package loss and provides continously updated
+	information. Since this requires a raw IP socket you will need the application to have root
+	permissions (e.g. using the SUID bit). You can download a precompiled version and source 
+	packages of the application at <uri>http://download.openscada.org/aurora/openscada_ping/</uri>.
+	</para>
+	</sect3>
+	
 </sect2>
  		
 </sect1>
