@@ -177,7 +177,7 @@
          ================================= -->
     <target name="foponly" depends="" description="Testing fop">
     	<antcall target="fop">
-			<param name="output" value="${deploy.dir}/pdf"/>
+			<param name="output" value="${deploy.dir}/pdf.fo"/>
 			<param name="outputName" value="reference"/>
     	</antcall>
     </target>
@@ -221,20 +221,20 @@
         	<prepareDocbook dir="@{dir}"/>
         	<copyImages dir="@{dir}" output="@{output}" outputName="@{outputName}"/>
 
-        	<mkdir dir="${deploy.dir}/pdf/@{outputName}"/>
+        	<mkdir dir="@{output}/@{outputName}"/>
         	
         	<echo message="dir: @{dir}"/>
         	
         	<exec dir="@{dir}" executable="docbook2pdf" failonerror="true">
         		<arg file="@{dir}.transform/src/index.xml"/>
         		<arg value="-o"/>
-        		<arg value="${deploy.dir}/pdf/@{outputName}"/>
+        		<arg value="@{output}/@{outputName}"/>
         		<arg value="-d"/>
         		<arg value="@{dir}/../common/style/driver.sgml"/>
         	</exec>
         	
-        	<copy file="${deploy.dir}/pdf/@{outputName}/index.pdf" tofile="${deploy.dir}/pdf/@{outputName}.pdf"/>
-        	<delete dir="${deploy.dir}/pdf/@{outputName}"/>
+        	<copy file="@{output}/@{outputName}/index.pdf" tofile="@{output}/@{outputName}.pdf"/>
+        	<delete dir="@{output}/@{outputName}"/>
         	
         </sequential>
     </macrodef>
