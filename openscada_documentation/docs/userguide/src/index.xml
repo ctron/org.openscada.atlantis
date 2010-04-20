@@ -34,8 +34,7 @@
     with Invariant Sections being <xref linkend="overview"/>,
     with the Front-Cover Texts being
     <quote><trademark>OpenSCADA</trademark> User Guide</quote>, and no Back-Cover Texts.
-    A copy of the license is included in the section entitled "GNU
-    Free Documentation License".
+    A copy of the license is included in the section entitled <xref linkend="fdl"/>.
            </para>
 		</legalnotice>
 		

@@ -40,7 +40,7 @@
     with the Front-Cover Texts being
     <quote><trademark>OpenSCADA</trademark> Developer Reference</quote>,
     and no Back-Cover Texts. A copy of the license is included in the
-    section entitled <quote>GNU Free Documentation License</quote>.
+    section entitled <xref linkend="fdl"/>.
            </para>
 		</legalnotice>
 		
