@@ -293,7 +293,7 @@
 	Once you checked out the project, change into the checked out director and start the library
 	download:
 	<screen>
-		<prompt>$ </prompt>ant download
+	<prompt>$ </prompt>ant download
 	</screen>
 	
 	This will start Ant and download the required <acronym>JAR</acronym> files.
