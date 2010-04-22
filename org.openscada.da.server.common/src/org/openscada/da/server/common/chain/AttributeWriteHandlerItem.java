@@ -29,6 +29,7 @@ import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.NotifyFuture;
 
@@ -45,7 +46,7 @@ public class AttributeWriteHandlerItem extends DataItemInputChained
 
     public AttributeWriteHandlerItem ( final String itemId, final AttributeWriteHandler writeHandler, final Executor executor )
     {
-        super ( itemId, executor );
+        super ( new DataItemInformationBase ( itemId ), executor );
         this.writeHandler = writeHandler;
     }
 
