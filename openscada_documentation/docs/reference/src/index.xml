@@ -2,7 +2,6 @@
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" [
   <!ENTITY chap1 SYSTEM "100-sect1.xml">
   <!ENTITY chap2 SYSTEM "200-sect2.xml">
-  <!ENTITY chap3 SYSTEM "300-connections.xml">
   <!ENTITY chap4 SYSTEM "400-da.xml">
   <!ENTITY glossary SYSTEM "a01-glossary.xml">
   <!ENTITY license SYSTEM "a02-license.xml">
@@ -48,7 +47,6 @@
 	
 	&chap1;
 	&chap2;
-	&chap3;
 	&chap4;
 	
 	&glossary;

@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE book PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" [
   <!ENTITY sect-introduction SYSTEM "100-introduction.xml">
+  <!ENTITY sect-connections SYSTEM "150-connections.xml">
   <!ENTITY sect2 SYSTEM "200-sect2.xml">
   <!ENTITY sect-master SYSTEM "500-master.xml">
   <!ENTITY sect-osgibundles SYSTEM "800-osgibundles.xml">
@@ -41,6 +42,7 @@
 	</bookinfo>
 	
 	&sect-introduction;
+	&sect-connections;
 	&sect2;
 	&sect-master;
 	&sect-osgibundles;

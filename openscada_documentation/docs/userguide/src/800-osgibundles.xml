@@ -244,9 +244,60 @@
 		</table>
 		
 	</sect2>
-	
 </sect1>
 
+<sect1 id="bundle_org.openscada.da.server.osgi.exporter.net"><title>org.openscada.da.server.osgi.exporter.net</title>
+	<para>
+	The bundle <filename>org.openscada.da.server.osgi.exporter.net</filename> exports
+	the first Hive instance registered with <trademark>OSGi</trademark>.
+	</para>
 
+	<sect2><title>System properties</title>
+		<para>
+		The following system properties are available:
+		</para>
+		
+		<table><title>System properties of <filename>org.openscada.osgi.equinox.console</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Required</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>openscada.da.net.exportUri</entry>
+						<entry>URI</entry>
+						<entry>optional</entry>
+						<entry>
+						<para>
+						The exporter URI that describes the options when exporting the service.
+						The URI must start with <quote>da:net:</quote> since this bundle is specifically
+						a DA NET exporter.
+						</para>
+						<para>
+						The default value is <uri>da:net://0.0.0.0:1202</uri>
+						</para> 
+						<para>
+						See <xref linkend="connections"/> for more information information
+						about possible values.
+						</para>
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect2>
+	
+	<sect2><title>Exported services</title>
+		<para>
+		No services are exported by this bundle.
+		</para>
+	</sect2>
+</sect1>
 
 </chapter>
