@@ -19,7 +19,6 @@
 
 package org.openscada.da.server.spring;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.chain.storage.ChainStorageService;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
@@ -34,9 +33,6 @@ import org.springframework.context.ApplicationContextAware;
 
 public class Hive extends HiveCommon implements InitializingBean, ApplicationContextAware
 {
-    @SuppressWarnings ( "unused" )
-    private static Logger logger = Logger.getLogger ( Hive.class );
-
     private ApplicationContext ctx;
 
     private boolean enableChainPersistenceService = true;
