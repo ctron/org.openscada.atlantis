@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.server.spring;
@@ -45,7 +45,7 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
 
     protected void setup ()
     {
-        if ( enableChainPersistenceService )
+        if ( this.enableChainPersistenceService )
         {
             ChainStorageServiceHelper.registerDefaultPropertyService ( this );
         }
@@ -54,24 +54,24 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
             ChainStorageServiceHelper.registerService ( this, this.chainPersistenceService );
         }
 
-        for ( String beanName : ctx.getBeanNamesForType ( DataItemValidator.class ) )
+        for ( final String beanName : this.ctx.getBeanNamesForType ( DataItemValidator.class ) )
         {
-            addDataItemValidator ( (DataItemValidator)ctx.getBean ( beanName ) );
+            addDataItemValidator ( (DataItemValidator)this.ctx.getBean ( beanName ) );
         }
 
-        for ( String beanName : ctx.getBeanNamesForType ( DataItemFactory.class ) )
+        for ( final String beanName : this.ctx.getBeanNamesForType ( DataItemFactory.class ) )
         {
-            addItemFactory ( (DataItemFactory)ctx.getBean ( beanName ) );
+            addItemFactory ( (DataItemFactory)this.ctx.getBean ( beanName ) );
         }
 
-        for ( String beanName : ctx.getBeanNamesForType ( FactoryTemplate.class ) )
+        for ( final String beanName : this.ctx.getBeanNamesForType ( FactoryTemplate.class ) )
         {
-            registerTemplate ( (FactoryTemplate)ctx.getBean ( beanName ) );
+            registerTemplate ( (FactoryTemplate)this.ctx.getBean ( beanName ) );
         }
 
-        for ( String beanName : ctx.getBeanNamesForType ( DataItem.class ) )
+        for ( final String beanName : this.ctx.getBeanNamesForType ( DataItem.class ) )
         {
-            registerItem ( (DataItem)ctx.getBean ( beanName ) );
+            registerItem ( (DataItem)this.ctx.getBean ( beanName ) );
         }
     }
 
@@ -80,22 +80,22 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
         setup ();
     }
 
-    public DataItem findDataItem ( String itemId )
+    public DataItem findDataItem ( final String itemId )
     {
         return findRegisteredDataItem ( itemId );
     }
 
-    public void setApplicationContext ( ApplicationContext ctx ) throws BeansException
+    public void setApplicationContext ( final ApplicationContext ctx ) throws BeansException
     {
         this.ctx = ctx;
     }
 
-    public void setEnableChainPersistenceService ( boolean enableChainPersistenceService )
+    public void setEnableChainPersistenceService ( final boolean enableChainPersistenceService )
     {
         this.enableChainPersistenceService = enableChainPersistenceService;
     }
 
-    public void setChainPersistenceService ( ChainStorageService chainPersistenceService )
+    public void setChainPersistenceService ( final ChainStorageService chainPersistenceService )
     {
         this.chainPersistenceService = chainPersistenceService;
     }

@@ -46,7 +46,6 @@ Export-Package: org.openscada.da.server.spring;version="0.15.0";
    org.springframework.beans.factory"
 Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-DA-Server-Spring
-Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: inavare GmbH
 Bundle-SymbolicName: org.openscada.da.server.spring

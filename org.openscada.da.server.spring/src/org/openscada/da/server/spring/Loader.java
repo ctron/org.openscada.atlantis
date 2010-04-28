@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.server.spring;
@@ -31,41 +31,43 @@ import org.openscada.da.server.common.DataItem;
 public class Loader
 {
     protected String _itemPrefix;
+
     protected Hive _hive;
+
     protected Collection<ItemStorage> _storages;
 
-    public void setHive ( Hive hive )
+    public void setHive ( final Hive hive )
     {
         this._hive = hive;
     }
-    
-    public void setStorages ( Collection<ItemStorage> storages )
+
+    public void setStorages ( final Collection<ItemStorage> storages )
     {
         this._storages = storages;
     }
-    
-    public void setItemPrefix ( String itemPrefix )
+
+    public void setItemPrefix ( final String itemPrefix )
     {
-        _itemPrefix = itemPrefix;
+        this._itemPrefix = itemPrefix;
     }
-    
-    public void injectItem ( DataItem item )
+
+    public void injectItem ( final DataItem item )
     {
         injectItem ( item, new HashMap<String, Variant> () );
     }
-    
-    public void injectItem ( DataItem item, Map<String, Variant> attributes )
+
+    public void injectItem ( final DataItem item, final Map<String, Variant> attributes )
     {
-        injectItem ( _hive, _storages, item, attributes );
+        injectItem ( this._hive, this._storages, item, attributes );
     }
-    
-    protected static void injectItem ( Hive hive, Collection<ItemStorage> storages, DataItem item, Map<String, Variant> attributes )
+
+    protected static void injectItem ( final Hive hive, final Collection<ItemStorage> storages, final DataItem item, final Map<String, Variant> attributes )
     {
         hive.registerItem ( item );
-        for ( ItemStorage storage : storages )
+        for ( final ItemStorage storage : storages )
         {
             storage.added ( new ItemDescriptor ( item, attributes ) );
-        }        
+        }
     }
 
 }

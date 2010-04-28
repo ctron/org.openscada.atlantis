@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2007 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
- * This program is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
-
- * This program is distributed in the hope that it will be useful,
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.server.spring;
@@ -29,28 +29,28 @@ public class Folder extends FolderCommon implements InitializingBean
 {
     protected Map<String, Entry> _entries = new HashMap<String, Entry> ();
 
-    public void setFolders ( Map<String, Entry> folders )
+    public void setFolders ( final Map<String, Entry> folders )
     {
-        _entries = folders;
+        this._entries = folders;
     }
 
     public void afterPropertiesSet () throws Exception
     {
-        for ( Map.Entry<String, Entry> entry : _entries.entrySet () )
+        for ( final Map.Entry<String, Entry> entry : this._entries.entrySet () )
         {
             if ( entry.getValue () instanceof FolderEntry )
             {
-                FolderEntry folderEntry = (FolderEntry)entry.getValue ();
+                final FolderEntry folderEntry = (FolderEntry)entry.getValue ();
                 add ( entry.getKey (), folderEntry.getFolder (), entry.getValue ().getAttributes () );
             }
             else if ( entry.getValue () instanceof DataItemEntry )
             {
-                DataItemEntry dataItemEntry = (DataItemEntry)entry.getValue ();
+                final DataItemEntry dataItemEntry = (DataItemEntry)entry.getValue ();
                 add ( entry.getKey (), dataItemEntry.getItem (), entry.getValue ().getAttributes () );
             }
             else if ( entry.getValue () instanceof DataItemReferenceEntry )
             {
-                DataItemReferenceEntry dataItemReferenceEntry = (DataItemReferenceEntry)entry.getValue ();
+                final DataItemReferenceEntry dataItemReferenceEntry = (DataItemReferenceEntry)entry.getValue ();
                 add ( entry.getKey (), dataItemReferenceEntry.getDataItem (), entry.getValue ().getAttributes () );
             }
         }
