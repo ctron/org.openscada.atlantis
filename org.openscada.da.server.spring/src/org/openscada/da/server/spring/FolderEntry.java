@@ -21,15 +21,15 @@ package org.openscada.da.server.spring;
 
 public class FolderEntry extends Entry
 {
-    private org.openscada.da.server.browser.common.Folder _folder;
+    private org.openscada.da.server.browser.common.Folder folder;
 
     public org.openscada.da.server.browser.common.Folder getFolder ()
     {
-        return this._folder;
+        return this.folder;
     }
 
     public void setFolder ( final org.openscada.da.server.browser.common.Folder folder )
     {
-        this._folder = folder;
+        this.folder = folder;
     }
 }

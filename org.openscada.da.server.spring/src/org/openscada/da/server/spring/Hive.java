@@ -35,7 +35,7 @@ import org.springframework.context.ApplicationContextAware;
 public class Hive extends HiveCommon implements InitializingBean, ApplicationContextAware
 {
     @SuppressWarnings ( "unused" )
-    private static Logger _log = Logger.getLogger ( Hive.class );
+    private static Logger logger = Logger.getLogger ( Hive.class );
 
     private ApplicationContext ctx;
 

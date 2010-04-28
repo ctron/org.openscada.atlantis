@@ -48,13 +48,13 @@ public class CSVLoader extends Loader implements InitializingBean
 {
     private static Logger logger = Logger.getLogger ( CSVLoader.class );
 
-    private Resource _resource;
+    private Resource resource;
 
-    private String _data;
+    private String data;
 
-    private String[] _mapping = new String[] { "id", "readable", "writable", "description", "initialValue" };
+    private String[] mapping = new String[] { "id", "readable", "writable", "description", "initialValue" };
 
-    private int _skipLines = 0;
+    private int skipLines = 0;
 
     private Collection<ItemStorage> _controllerStorages = new LinkedList<ItemStorage> ();
 
@@ -72,17 +72,17 @@ public class CSVLoader extends Loader implements InitializingBean
 
     public void setResource ( final Resource resource )
     {
-        this._resource = resource;
+        this.resource = resource;
     }
 
     public void setData ( final String data )
     {
-        this._data = data;
+        this.data = data;
     }
 
     public void setSkipLines ( final int skipLines )
     {
-        this._skipLines = skipLines;
+        this.skipLines = skipLines;
     }
 
     public void setControllerStorages ( final Collection<ItemStorage> controllerStorages )
@@ -92,9 +92,9 @@ public class CSVLoader extends Loader implements InitializingBean
 
     public void afterPropertiesSet () throws Exception
     {
-        Assert.notNull ( this._hive, "'hive' must not be null" );
-        Assert.state ( this._resource != null || this._data != null, "'resource' and 'data' are both unset. One must be set!" );
-        Assert.notNull ( this._storages, "'storages' must not be null" );
+        Assert.notNull ( this.hive, "'hive' must not be null" );
+        Assert.state ( this.resource != null || this.data != null, "'resource' and 'data' are both unset. One must be set!" );
+        Assert.notNull ( this.storages, "'storages' must not be null" );
 
         load ();
     }
@@ -102,11 +102,11 @@ public class CSVLoader extends Loader implements InitializingBean
     protected void load ( final Reader reader, final String sourceName )
     {
         final ColumnPositionMappingStrategy strat = new ColumnPositionMappingStrategy ();
-        strat.setColumnMapping ( this._mapping );
+        strat.setColumnMapping ( this.mapping );
         strat.setType ( ItemEntry.class );
 
         final CsvToBean<ItemEntry> bean = new CsvToBean<ItemEntry> ();
-        final Collection<ItemEntry> beans = bean.parse ( this._skipLines, strat, reader );
+        final Collection<ItemEntry> beans = bean.parse ( this.skipLines, strat, reader );
         for ( final ItemEntry entry : beans )
         {
             entry.setId ( entry.getId ().trim () );
@@ -119,15 +119,15 @@ public class CSVLoader extends Loader implements InitializingBean
 
     private void load () throws IOException
     {
-        if ( this._resource != null )
+        if ( this.resource != null )
         {
-            final Reader reader = new InputStreamReader ( this._resource.getInputStream () );
-            load ( reader, this._resource.toString () );
+            final Reader reader = new InputStreamReader ( this.resource.getInputStream () );
+            load ( reader, this.resource.toString () );
             reader.close ();
         }
-        if ( this._data != null )
+        if ( this.data != null )
         {
-            final Reader reader = new StringReader ( this._data );
+            final Reader reader = new StringReader ( this.data );
             load ( reader, "inline data" );
             reader.close ();
         }
@@ -150,13 +150,13 @@ public class CSVLoader extends Loader implements InitializingBean
         attributes.put ( "loader.csv.source", new Variant ( sourceName ) );
         attributes.put ( "initialValue", new Variant ( entry.getInitialValue () ) );
 
-        final CSVDataItem item = new CSVDataItem ( this._hive, this._itemPrefix + entry.getId (), io );
+        final CSVDataItem item = new CSVDataItem ( this.hive, this.itemPrefix + entry.getId (), io );
         injectItem ( item, attributes );
 
         // create and inject the controller item
-        attributes.put ( "loader.csv.controllerFor", new Variant ( this._itemPrefix + entry.getId () ) );
+        attributes.put ( "loader.csv.controllerFor", new Variant ( this.itemPrefix + entry.getId () ) );
         final CSVControllerDataItem controllerItem = new CSVControllerDataItem ( item, this.executor );
-        Loader.injectItem ( this._hive, this._controllerStorages, controllerItem, attributes );
+        Loader.injectItem ( this.hive, this._controllerStorages, controllerItem, attributes );
 
         // set the initial value
         try
@@ -171,6 +171,6 @@ public class CSVLoader extends Loader implements InitializingBean
 
     public void setMapping ( final String[] mapping )
     {
-        this._mapping = mapping;
+        this.mapping = mapping;
     }
 }

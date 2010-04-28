@@ -23,63 +23,63 @@ import org.openscada.core.Variant;
 
 public class ItemEntry
 {
-    private String _id;
+    private String id;
 
-    private boolean _readable = false;
+    private boolean readable = false;
 
-    private boolean _writable = false;
+    private boolean writable = false;
 
-    private String _description = "";
+    private String description = "";
 
-    private Variant _initialValue = new Variant ();
+    private Variant initialValue = Variant.NULL;
 
     public String getId ()
     {
-        return this._id;
+        return this.id;
     }
 
     public void setId ( final String id )
     {
-        this._id = id;
+        this.id = id;
     }
 
     public boolean isReadable ()
     {
-        return this._readable;
+        return this.readable;
     }
 
     public void setReadable ( final boolean readable )
     {
-        this._readable = readable;
+        this.readable = readable;
     }
 
     public boolean isWritable ()
     {
-        return this._writable;
+        return this.writable;
     }
 
     public void setWritable ( final boolean writeable )
     {
-        this._writable = writeable;
+        this.writable = writeable;
     }
 
     public String getDescription ()
     {
-        return this._description;
+        return this.description;
     }
 
     public void setDescription ( final String description )
     {
-        this._description = description;
+        this.description = description;
     }
 
     public Variant getInitialValue ()
     {
-        return this._initialValue;
+        return this.initialValue;
     }
 
     public void setInitialValue ( final Variant initialValue )
     {
-        this._initialValue = initialValue;
+        this.initialValue = initialValue;
     }
 }

@@ -31,13 +31,13 @@ import org.openscada.utils.concurrent.NotifyFuture;
 
 public class CSVControllerDataItem extends DataItemInputOutputChained
 {
-    private final CSVDataItem _item;
+    private final CSVDataItem item;
 
     public CSVControllerDataItem ( final CSVDataItem item, final Executor executor )
     {
         super ( item.getInformation ().getName () + "#controller", executor );
-        this._item = item;
-        this._item.setController ( this );
+        this.item = item;
+        this.item.setController ( this );
     }
 
     public void handleWrite ( final Variant value )
@@ -62,6 +62,6 @@ public class CSVControllerDataItem extends DataItemInputOutputChained
 
     protected void performUpdate ( final Variant value )
     {
-        this._item.updateData ( value, null, null );
+        this.item.updateData ( value, null, null );
     }
 }

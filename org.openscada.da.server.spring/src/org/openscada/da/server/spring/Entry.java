@@ -26,7 +26,7 @@ import org.openscada.core.Variant;
 
 public class Entry
 {
-    private Map<String, Variant> _attributes = new HashMap<String, Variant> ();
+    private Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
     public Entry ()
     {
@@ -35,11 +35,11 @@ public class Entry
 
     public Map<String, Variant> getAttributes ()
     {
-        return this._attributes;
+        return this.attributes;
     }
 
     public void setAttributes ( final Map<String, Variant> attributes )
     {
-        this._attributes = attributes;
+        this.attributes = attributes;
     }
 }

@@ -26,34 +26,34 @@ import org.openscada.da.server.common.DataItem;
 
 public class DataItemReferenceEntry extends Entry
 {
-    private EnumSet<IODirection> _ioDirections;
+    private EnumSet<IODirection> ioDirections;
 
-    private String _id;
+    private String id;
 
-    private Hive _hive;
+    private Hive hive;
 
     public EnumSet<IODirection> getIODirections ()
     {
-        return this._ioDirections;
+        return this.ioDirections;
     }
 
     public void setIoDirections ( final EnumSet<IODirection> ioDirections )
     {
-        this._ioDirections = ioDirections;
+        this.ioDirections = ioDirections;
     }
 
     public DataItem getDataItem ()
     {
-        return this._hive.findDataItem ( this._id );
+        return this.hive.findDataItem ( this.id );
     }
 
     public void setId ( final String id )
     {
-        this._id = id;
+        this.id = id;
     }
 
     public void setHive ( final Hive hive )
     {
-        this._hive = hive;
+        this.hive = hive;
     }
 }

@@ -27,16 +27,16 @@ import org.springframework.beans.factory.InitializingBean;
 
 public class Folder extends FolderCommon implements InitializingBean
 {
-    protected Map<String, Entry> _entries = new HashMap<String, Entry> ();
+    protected Map<String, Entry> entries = new HashMap<String, Entry> ();
 
     public void setFolders ( final Map<String, Entry> folders )
     {
-        this._entries = folders;
+        this.entries = folders;
     }
 
     public void afterPropertiesSet () throws Exception
     {
-        for ( final Map.Entry<String, Entry> entry : this._entries.entrySet () )
+        for ( final Map.Entry<String, Entry> entry : this.entries.entrySet () )
         {
             if ( entry.getValue () instanceof FolderEntry )
             {

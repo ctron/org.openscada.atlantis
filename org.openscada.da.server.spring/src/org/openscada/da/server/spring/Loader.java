@@ -30,25 +30,25 @@ import org.openscada.da.server.common.DataItem;
 
 public class Loader
 {
-    protected String _itemPrefix;
+    protected String itemPrefix;
 
-    protected Hive _hive;
+    protected Hive hive;
 
-    protected Collection<ItemStorage> _storages;
+    protected Collection<ItemStorage> storages;
 
     public void setHive ( final Hive hive )
     {
-        this._hive = hive;
+        this.hive = hive;
     }
 
     public void setStorages ( final Collection<ItemStorage> storages )
     {
-        this._storages = storages;
+        this.storages = storages;
     }
 
     public void setItemPrefix ( final String itemPrefix )
     {
-        this._itemPrefix = itemPrefix;
+        this.itemPrefix = itemPrefix;
     }
 
     public void injectItem ( final DataItem item )
@@ -58,7 +58,7 @@ public class Loader
 
     public void injectItem ( final DataItem item, final Map<String, Variant> attributes )
     {
-        injectItem ( this._hive, this._storages, item, attributes );
+        injectItem ( this.hive, this.storages, item, attributes );
     }
 
     protected static void injectItem ( final Hive hive, final Collection<ItemStorage> storages, final DataItem item, final Map<String, Variant> attributes )
