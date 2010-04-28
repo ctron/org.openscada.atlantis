@@ -43,6 +43,7 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.lang.Disposable;
 
 public class ObjectExporter implements PropertyChangeListener, Disposable
@@ -175,7 +176,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
         {
             return this.factory.createInputOutput ( pd.getName (), new WriteHandler () {
 
-                public void handleWrite ( final Variant value ) throws Exception
+                public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
                 {
                     ObjectExporter.this.writeAttribute ( pd, value );
                 }

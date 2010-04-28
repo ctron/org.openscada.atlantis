@@ -27,6 +27,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteResult;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -72,11 +73,13 @@ public class WriteHandlerItem extends DataItemInputOutputChained
             return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
         }
 
+        final UserInformation userInformation = session.getUserInformation ();
+
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
             public WriteResult call () throws Exception
             {
-                writeHandler.handleWrite ( value );
+                writeHandler.handleWrite ( userInformation, value );
                 return new WriteResult ();
             }
         } );

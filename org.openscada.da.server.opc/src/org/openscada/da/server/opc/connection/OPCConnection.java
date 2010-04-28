@@ -43,6 +43,7 @@ import org.openscada.da.server.opc.Hive;
 import org.openscada.da.server.opc.browser.OPCRootTreeFolder;
 import org.openscada.da.server.opc.preload.ItemSource;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.collection.MapBuilder;
 
 public class OPCConnection implements PropertyChangeListener
@@ -191,7 +192,7 @@ public class OPCConnection implements PropertyChangeListener
 
         this.loopDelayDataItem = this.connectionItemFactory.createInputOutput ( "loopDelay", new WriteHandler () {
 
-            public void handleWrite ( final Variant value ) throws Exception
+            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
                 setLoopDelay ( value );
             }
@@ -199,7 +200,7 @@ public class OPCConnection implements PropertyChangeListener
 
         this.loopDelayDataItem = this.connectionItemFactory.createInputOutput ( "defaultTimeout", new WriteHandler () {
 
-            public void handleWrite ( final Variant value ) throws Exception
+            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
                 try
                 {

@@ -10,6 +10,7 @@ import org.openscada.core.connection.provider.ConnectionService;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.osgi.factory.DataItemFactory;
 import org.openscada.da.server.common.osgi.factory.SimpleObjectExporter;
+import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -35,7 +36,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
 
         this.factory.createOutput ( "connect", null, new WriteHandler () {
 
-            public void handleWrite ( final Variant value ) throws Exception
+            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
                 ConnectionAnalyzer.this.handleConnect ();
             }
@@ -43,7 +44,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
 
         this.factory.createOutput ( "disconnect", null, new WriteHandler () {
 
-            public void handleWrite ( final Variant value ) throws Exception
+            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
                 ConnectionAnalyzer.this.handleDisconnect ();
             }

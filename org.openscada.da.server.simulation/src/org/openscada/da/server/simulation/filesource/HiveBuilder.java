@@ -31,6 +31,7 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.sec.UserInformation;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@inavare.net&gt;
@@ -217,7 +218,7 @@ public class HiveBuilder
                 hive.getScriptEngine ().put ( "item", item );
                 final int i = ( (Double)hive.getScriptEngine ().eval ( "registerItem(server, item, " + itemDefinition.getCallback () + ", " + itemDefinition.getWriteHandler () + ");" ) ).intValue ();
                 item.setWriteHandler ( new WriteHandler () {
-                    public void handleWrite ( final Variant value ) throws Exception
+                    public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
                     {
                         hive.getScriptEngine ().put ( "value", value );
                         hive.getScriptEngine ().eval ( "writeValue(" + i + ", value);" );

@@ -37,6 +37,7 @@ import org.openscada.da.server.proxy.Hive;
 import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.lifecycle.LifecycleAware;
 
@@ -126,7 +127,7 @@ public class ProxyConnection implements LifecycleAware
         // active Connection
         this.activeConnectionItem = new WriteHandlerItem ( itemName ( "active" ), new WriteHandler () {
 
-            public void handleWrite ( final Variant value ) throws Exception
+            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
                 final String newId = value.asString ( null );
                 ProxyConnection.this.switchTo ( newId );

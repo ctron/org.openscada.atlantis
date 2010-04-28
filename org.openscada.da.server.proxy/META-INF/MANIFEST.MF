@@ -31,6 +31,7 @@ Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.openscada.da.server.proxy.connection;version="0.14",
  org.openscada.da.server.proxy.item;version="0.14",
  org.openscada.da.server.proxy.utils;version="0.14",
+ org.openscada.sec;version="0.1.0",
  org.openscada.utils.collection;version="0.13",
  org.openscada.utils.concurrent;version="0.13",
  org.openscada.utils.lifecycle;version="0.13"

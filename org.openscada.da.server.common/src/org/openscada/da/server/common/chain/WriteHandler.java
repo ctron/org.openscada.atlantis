@@ -20,6 +20,7 @@
 package org.openscada.da.server.common.chain;
 
 import org.openscada.core.Variant;
+import org.openscada.sec.UserInformation;
 
 public interface WriteHandler
 {
@@ -27,8 +28,10 @@ public interface WriteHandler
      * Handle the write call
      * <p>
      * e.g. performs a write call to a subsystem
+     * @param userInformation the user information of the write call.
+     * May also be <code>null<code> if there is no user information.
      * @param value the value to write
      * @throws Exception if anything goes wrong
      */
-    public abstract void handleWrite ( Variant value ) throws Exception;
+    public abstract void handleWrite ( UserInformation userInformation, Variant value ) throws Exception;
 }
