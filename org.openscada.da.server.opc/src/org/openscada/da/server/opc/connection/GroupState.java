@@ -1,7 +1,7 @@
 package org.openscada.da.server.opc.connection;
 
-import org.openscada.da.server.common.exporter.AbstractPropertyChange;
 import org.openscada.opc.dcom.da.OPCGroupState;
+import org.openscada.utils.beans.AbstractPropertyChange;
 
 public class GroupState extends AbstractPropertyChange
 {
@@ -34,7 +34,7 @@ public class GroupState extends AbstractPropertyChange
     {
         final boolean oldConnected = this.connected;
         this.connected = connected;
-        this.listeners.firePropertyChange ( PROP_CONNECTED, oldConnected, connected );
+        firePropertyChange ( PROP_CONNECTED, oldConnected, connected );
     }
 
     public Integer getUpdateRate ()
@@ -46,7 +46,7 @@ public class GroupState extends AbstractPropertyChange
     {
         final Integer oldUpdateRate = this.updateRate;
         this.updateRate = updateRate;
-        this.listeners.firePropertyChange ( PROP_UPDATE_RATE, oldUpdateRate, updateRate );
+        firePropertyChange ( PROP_UPDATE_RATE, oldUpdateRate, updateRate );
     }
 
     public Float getPercentDeadband ()
@@ -58,7 +58,7 @@ public class GroupState extends AbstractPropertyChange
     {
         final Float oldPercentDeadband = this.percentDeadband;
         this.percentDeadband = percentDeadband;
-        this.listeners.firePropertyChange ( PROP_PERCENT_DEADBAND, oldPercentDeadband, percentDeadband );
+        firePropertyChange ( PROP_PERCENT_DEADBAND, oldPercentDeadband, percentDeadband );
     }
 
     public String getName ()
@@ -70,7 +70,7 @@ public class GroupState extends AbstractPropertyChange
     {
         final String oldName = this.name;
         this.name = name;
-        this.listeners.firePropertyChange ( PROP_NAME, oldName, name );
+        firePropertyChange ( PROP_NAME, oldName, name );
     }
 
     public Integer getLocaleId ()
@@ -82,7 +82,7 @@ public class GroupState extends AbstractPropertyChange
     {
         final Integer oldLocaleId = this.localeId;
         this.localeId = localeId;
-        this.listeners.firePropertyChange ( PROP_LOCALE_ID, oldLocaleId, localeId );
+        firePropertyChange ( PROP_LOCALE_ID, oldLocaleId, localeId );
     }
 
     public void update ( final OPCGroupState state )

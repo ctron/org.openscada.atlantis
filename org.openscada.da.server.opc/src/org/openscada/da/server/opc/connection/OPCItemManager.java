@@ -37,7 +37,6 @@ import org.openscada.da.server.browser.common.query.PatternNameProvider;
 import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.configuration.ConfigurationError;
-import org.openscada.da.server.common.exporter.AbstractPropertyChange;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
@@ -48,6 +47,7 @@ import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.ValueData;
+import org.openscada.utils.beans.AbstractPropertyChange;
 import org.openscada.utils.collection.MapBuilder;
 
 public class OPCItemManager extends AbstractPropertyChange implements IOListener
@@ -98,7 +98,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
     {
         final int oldRegisteredItemCount = this.registeredItemCount;
         this.registeredItemCount = registeredItemCount;
-        this.listeners.firePropertyChange ( PROP_REGISTERED_ITEM_COUNT, oldRegisteredItemCount, registeredItemCount );
+        firePropertyChange ( PROP_REGISTERED_ITEM_COUNT, oldRegisteredItemCount, registeredItemCount );
     }
 
     public void shutdown ()

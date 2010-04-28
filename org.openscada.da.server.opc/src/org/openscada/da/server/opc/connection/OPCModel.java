@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.jinterop.dcom.core.JISession;
-import org.openscada.da.server.common.exporter.AbstractPropertyChange;
 import org.openscada.opc.dcom.common.impl.OPCCommon;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.opc.dcom.da.impl.OPCAsyncIO2;
@@ -31,6 +30,7 @@ import org.openscada.opc.dcom.da.impl.OPCGroupStateMgt;
 import org.openscada.opc.dcom.da.impl.OPCItemMgt;
 import org.openscada.opc.dcom.da.impl.OPCServer;
 import org.openscada.opc.dcom.da.impl.OPCSyncIO;
+import org.openscada.utils.beans.AbstractPropertyChange;
 
 public class OPCModel extends AbstractPropertyChange
 {
@@ -81,21 +81,23 @@ public class OPCModel extends AbstractPropertyChange
     private Long readJobTimeout = null;
 
     private int updateRate = 250;
-    
-	/**
+
+    /**
      * Flag that indicates if the driver should ignore timestamp only changes completly
      */
     private boolean ignoreTimestampOnlyChange = false;
 
     private short qualityErrorIfLessThen = 192;
 
-    public short getQualityErrorIfLessThen() {
-		return qualityErrorIfLessThen;
-	}
+    public short getQualityErrorIfLessThen ()
+    {
+        return this.qualityErrorIfLessThen;
+    }
 
-	public void setQualityErrorIfLessThen(short qualityErrorIfLessThen) {
-		this.qualityErrorIfLessThen = qualityErrorIfLessThen;
-	}
+    public void setQualityErrorIfLessThen ( final short qualityErrorIfLessThen )
+    {
+        this.qualityErrorIfLessThen = qualityErrorIfLessThen;
+    }
 
     public boolean isIgnoreTimestampOnlyChange ()
     {
@@ -106,7 +108,7 @@ public class OPCModel extends AbstractPropertyChange
     {
         final boolean oldIgnoreTimestampOnlyChange = this.ignoreTimestampOnlyChange;
         this.ignoreTimestampOnlyChange = ignoreTimestampOnlyChange;
-        this.listeners.firePropertyChange ( "ignoreTimestampOnlyChange", oldIgnoreTimestampOnlyChange, ignoreTimestampOnlyChange );
+        firePropertyChange ( "ignoreTimestampOnlyChange", oldIgnoreTimestampOnlyChange, ignoreTimestampOnlyChange );
     }
 
     public void setLastConnectNow ()
@@ -118,7 +120,7 @@ public class OPCModel extends AbstractPropertyChange
     {
         final long oldLastConnect = this.lastConnect;
         this.lastConnect = lastConnect;
-        this.listeners.firePropertyChange ( "lastConnect", oldLastConnect, lastConnect );
+        firePropertyChange ( "lastConnect", oldLastConnect, lastConnect );
     }
 
     public long getLastConnect ()
@@ -148,8 +150,8 @@ public class OPCModel extends AbstractPropertyChange
 
         this.session = session;
 
-        this.listeners.firePropertyChange ( "session", oldSession, session );
-        this.listeners.firePropertyChange ( "connected", oldConnected, isConnected () );
+        firePropertyChange ( "session", oldSession, session );
+        firePropertyChange ( "connected", oldConnected, isConnected () );
     }
 
     public OPCServer getServer ()
@@ -164,8 +166,8 @@ public class OPCModel extends AbstractPropertyChange
 
         this.server = server;
 
-        this.listeners.firePropertyChange ( "session", oldServer, this.session );
-        this.listeners.firePropertyChange ( "connected", oldConnected, isConnected () );
+        firePropertyChange ( "session", oldServer, this.session );
+        firePropertyChange ( "connected", oldConnected, isConnected () );
     }
 
     public boolean isConnectionRequested ()
@@ -187,7 +189,7 @@ public class OPCModel extends AbstractPropertyChange
     {
         final boolean oldConnecting = this.connecting;
         this.connecting = connecting;
-        this.listeners.firePropertyChange ( "connecting", oldConnecting, connecting );
+        firePropertyChange ( "connecting", oldConnecting, connecting );
     }
 
     public long getReconnectDelay ()
@@ -209,7 +211,7 @@ public class OPCModel extends AbstractPropertyChange
     {
         final OPCSERVERSTATUS oldServerState = this.serverState;
         this.serverState = serverState;
-        this.listeners.firePropertyChange ( "serverState", oldServerState, serverState );
+        firePropertyChange ( "serverState", oldServerState, serverState );
     }
 
     public OPCGroupStateMgt getGroup ()
@@ -261,7 +263,7 @@ public class OPCModel extends AbstractPropertyChange
     {
         final Throwable oldLastConnectionError = this.lastConnectionError;
         this.lastConnectionError = lastConnectionError;
-        this.listeners.firePropertyChange ( "lastConnectionError", oldLastConnectionError, lastConnectionError );
+        firePropertyChange ( "lastConnectionError", oldLastConnectionError, lastConnectionError );
     }
 
     public ConnectionState getConnectionState ()
@@ -273,7 +275,7 @@ public class OPCModel extends AbstractPropertyChange
     {
         final ConnectionState oldConnectionState = this.connectionState;
         this.connectionState = connectionState;
-        this.listeners.firePropertyChange ( "connectionState", oldConnectionState, connectionState );
+        firePropertyChange ( "connectionState", oldConnectionState, connectionState );
     }
 
     public long getNumDisposersRunning ()
@@ -292,7 +294,7 @@ public class OPCModel extends AbstractPropertyChange
             this.disposersRunning.add ( disposer );
             disposersRunning = this.disposersRunning.size ();
         }
-        this.listeners.firePropertyChange ( "numDisposersRunning", oldDisposersRunning, disposersRunning );
+        firePropertyChange ( "numDisposersRunning", oldDisposersRunning, disposersRunning );
     }
 
     public void removeDisposerRunning ( final Thread disposer )
@@ -306,7 +308,7 @@ public class OPCModel extends AbstractPropertyChange
             this.disposersRunning.remove ( disposer );
             disposersRunning = this.disposersRunning.size ();
         }
-        this.listeners.firePropertyChange ( "numDisposersRunning", oldDisposersRunning, disposersRunning );
+        firePropertyChange ( "numDisposersRunning", oldDisposersRunning, disposersRunning );
     }
 
     public ControllerState getControllerState ()
@@ -318,7 +320,7 @@ public class OPCModel extends AbstractPropertyChange
     {
         final ControllerState oldControllerState = this.controllerState;
         this.controllerState = controllerState;
-        this.listeners.firePropertyChange ( "controllerState", oldControllerState, controllerState );
+        firePropertyChange ( "controllerState", oldControllerState, controllerState );
     }
 
     public long getLoopDelay ()
@@ -330,7 +332,7 @@ public class OPCModel extends AbstractPropertyChange
     {
         final long oldLoopDelay = this.loopDelay;
         this.loopDelay = loopDelay;
-        this.listeners.firePropertyChange ( "loopDelay", oldLoopDelay, loopDelay );
+        firePropertyChange ( "loopDelay", oldLoopDelay, loopDelay );
     }
 
     public long getDefaultTimeout ()
@@ -367,7 +369,7 @@ public class OPCModel extends AbstractPropertyChange
     {
         final int oldUpdateRate = this.updateRate;
         this.updateRate = updateRate;
-        this.listeners.firePropertyChange ( "updateRate", oldUpdateRate, updateRate );
+        firePropertyChange ( "updateRate", oldUpdateRate, updateRate );
     }
 
     public long getConnectJobTimeout ()

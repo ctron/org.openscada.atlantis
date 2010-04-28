@@ -35,7 +35,6 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.Variant;
-import org.openscada.da.server.common.exporter.AbstractPropertyChange;
 import org.openscada.da.server.opc.Helper;
 import org.openscada.da.server.opc.job.Worker;
 import org.openscada.da.server.opc.job.impl.ErrorMessageJob;
@@ -51,6 +50,7 @@ import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
+import org.openscada.utils.beans.AbstractPropertyChange;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -192,14 +192,14 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
         this.writeRequests.clear ();
 
-        this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
+        firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
 
         this.clientHandleMap.clear ();
         this.clientHandleMapRev.clear ();
 
         this.serverHandleMap.clear ();
         this.serverHandleMapRev.clear ();
-        this.listeners.firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
+        firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
 
     }
 
@@ -334,7 +334,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         }
 
         // fire updates
-        this.listeners.firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
+        firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
     }
 
     public void wakeupItem ( final String item )
@@ -385,7 +385,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         {
             ctx.setWriteRequests ( new ArrayList<FutureTask<Result<WriteRequest>>> ( this.writeRequests ) );
             this.writeRequests.clear ();
-            this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
+            firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
         }
 
         // read
@@ -603,9 +603,9 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         final int size = this.writeRequests.size ();
         this.writeRequestMax = Math.max ( this.writeRequestMax, size );
         final long total = this.writeRequestTotal.incrementAndGet ();
-        this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, size );
-        this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_MAX, null, size );
-        this.listeners.firePropertyChange ( PROP_WRITE_REQUEST_TOTAL, null, total );
+        firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, size );
+        firePropertyChange ( PROP_WRITE_REQUEST_MAX, null, size );
+        firePropertyChange ( PROP_WRITE_REQUEST_TOTAL, null, total );
 
         return future;
     }

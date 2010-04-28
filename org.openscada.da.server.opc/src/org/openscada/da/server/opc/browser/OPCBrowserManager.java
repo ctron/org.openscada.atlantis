@@ -24,12 +24,12 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openscada.da.server.common.exporter.AbstractPropertyChange;
 import org.openscada.da.server.opc.Hive;
 import org.openscada.da.server.opc.connection.ConnectionSetup;
 import org.openscada.da.server.opc.connection.OPCModel;
 import org.openscada.da.server.opc.job.Worker;
 import org.openscada.da.server.opc.job.impl.BrowseJob;
+import org.openscada.utils.beans.AbstractPropertyChange;
 
 public class OPCBrowserManager extends AbstractPropertyChange
 {
@@ -76,7 +76,7 @@ public class OPCBrowserManager extends AbstractPropertyChange
     {
         final int oldQueuedRequests = this.queuedRequests;
         this.queuedRequests = queuedRequests;
-        this.listeners.firePropertyChange ( PROP_QUEUED_REQUESTS, oldQueuedRequests, queuedRequests );
+        firePropertyChange ( PROP_QUEUED_REQUESTS, oldQueuedRequests, queuedRequests );
     }
 
     public int getActiveRequests ()
@@ -88,7 +88,7 @@ public class OPCBrowserManager extends AbstractPropertyChange
     {
         final int oldActiveRequests = this.activeRequests;
         this.activeRequests = activeRequests;
-        this.listeners.firePropertyChange ( PROP_ACTIVE_REQUESTS, oldActiveRequests, activeRequests );
+        firePropertyChange ( PROP_ACTIVE_REQUESTS, oldActiveRequests, activeRequests );
     }
 
     /**
