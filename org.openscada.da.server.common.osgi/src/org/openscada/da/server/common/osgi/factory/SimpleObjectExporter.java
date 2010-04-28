@@ -55,9 +55,34 @@ public class SimpleObjectExporter<T>
         setValue ( null );
     }
 
+    /**
+     * Set the current value with default timestamp handling
+     * @param value the new value to set
+     */
     public void setValue ( final T value )
     {
-        final long timestamp = System.currentTimeMillis ();
+        setValue ( value, false );
+    }
+
+    /**
+     * Set the current value and apply the current timestamp to all values
+     * <p>
+     * All values will receive exactly the same timestamp
+     * </p>
+     * @param value the new value
+     * @param forceTimestamp the flag whether to force a timestamp update for all values
+     */
+    public void setValue ( final T value, final boolean forceTimestamp )
+    {
+        final Long timestamp;
+        if ( forceTimestamp )
+        {
+            timestamp = System.currentTimeMillis ();
+        }
+        else
+        {
+            timestamp = null;
+        }
 
         try
         {
@@ -123,12 +148,16 @@ public class SimpleObjectExporter<T>
         attributes.put ( "property.type", new Variant ( pd.getPropertyType ().getName () ) );
     }
 
-    private void setItemValue ( final PropertyDescriptor pd, final DataItemInputChained item, final Object data, final long timestamp )
+    private void setItemValue ( final PropertyDescriptor pd, final DataItemInputChained item, final Object data, final Long timestamp )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         fillAttributes ( pd, attributes );
-        attributes.put ( "timestamp", new Variant ( timestamp ) );
+
+        if ( timestamp != null )
+        {
+            attributes.put ( "timestamp", Variant.valueOf ( timestamp ) );
+        }
 
         item.updateData ( new Variant ( data ), attributes, AttributeMode.SET );
     }
