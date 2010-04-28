@@ -27,11 +27,12 @@ import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 
-public class Hive extends HiveCommon implements InitializingBean, ApplicationContextAware
+public class Hive extends HiveCommon implements InitializingBean, DisposableBean, ApplicationContextAware
 {
     private ApplicationContext ctx;
 
@@ -74,6 +75,12 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
     public void afterPropertiesSet () throws Exception
     {
         setup ();
+        start ();
+    }
+
+    public void destroy () throws Exception
+    {
+        stop ();
     }
 
     public DataItem findDataItem ( final String itemId )
