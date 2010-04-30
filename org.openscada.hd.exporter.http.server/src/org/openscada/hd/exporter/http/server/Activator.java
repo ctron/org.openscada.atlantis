@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.hd.exporter.http.server;
 
 import java.util.Properties;
@@ -23,7 +42,7 @@ public class Activator implements BundleActivator
     private final SingleServiceListener httpServiceListener = new SingleServiceListener () {
         public void serviceChange ( final ServiceReference reference, final Object service )
         {
-            HttpService httpService = (HttpService)service;
+            final HttpService httpService = (HttpService)service;
             if ( Activator.this.httpService != null )
             {
                 Activator.this.httpService.unregister ( SERVLET_PATH );
@@ -36,7 +55,7 @@ public class Activator implements BundleActivator
                 Activator.this.httpService.registerServlet ( SERVLET_PATH, Activator.this.jsonServlet, null, null );
                 Activator.this.httpService.registerResources ( SERVLET_PATH + "/ui", "/ui", null );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 e.printStackTrace ();
             }
@@ -46,7 +65,7 @@ public class Activator implements BundleActivator
     private final SingleServiceListener exporterServiceListener = new SingleServiceListener () {
         public void serviceChange ( final ServiceReference reference, final Object service )
         {
-            HttpExporter exporter = (HttpExporter)service;
+            final HttpExporter exporter = (HttpExporter)service;
             Activator.this.jsonServlet.setExporter ( exporter );
         }
     };
@@ -58,16 +77,16 @@ public class Activator implements BundleActivator
             {
                 Activator.this.localHdServerServiceRegistration.unregister ();
             }
-            Service hdService = (Service)service;
+            final Service hdService = (Service)service;
             if ( hdService != null )
             {
-                Properties props = new Properties ();
+                final Properties props = new Properties ();
                 props.put ( Constants.SERVICE_RANKING, 20 );
                 try
                 {
                     Activator.this.localHdServerServiceRegistration = context.registerService ( HttpExporter.class.getName (), new LocalHttpExporter ( (Service)service ), props );
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     e.printStackTrace ();
                 }
@@ -114,7 +133,7 @@ public class Activator implements BundleActivator
     private void registerRemoteExporter ( final BundleContext context )
     {
         // TODO: create clientConnection
-        Properties props = new Properties ();
+        final Properties props = new Properties ();
         props.put ( Constants.SERVICE_RANKING, 10 );
         context.registerService ( HttpExporter.class.getName (), new RemoteHttpExporter (), props );
     }

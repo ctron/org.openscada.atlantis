@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.hd.exporter.http.server.internal;
 
 import java.io.IOException;
@@ -71,7 +90,7 @@ public class JsonServlet extends HttpServlet
     private void sendInfo ( final HttpServletRequest request, final HttpServletResponse response ) throws IOException
     {
         response.setContentType ( "text/html" );
-        PrintWriter pw = new PrintWriter ( response.getOutputStream () );
+        final PrintWriter pw = new PrintWriter ( response.getOutputStream () );
         pw.println ( "current Exporter is: " + this.exporter.get ().getClass ().getCanonicalName () );
         pw.close ();
     }
@@ -79,12 +98,12 @@ public class JsonServlet extends HttpServlet
     private void sendAvailableItems ( final HttpServletRequest request, final HttpServletResponse response ) throws IOException, ServletException
     {
         setHeaders ( request, response );
-        PrintWriter pw = new PrintWriter ( response.getOutputStream () );
+        final PrintWriter pw = new PrintWriter ( response.getOutputStream () );
         try
         {
             pw.println ( Utils.gson.toJson ( this.exporter.get ().getItems () ) );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             throw new ServletException ( e );
         }
@@ -94,12 +113,12 @@ public class JsonServlet extends HttpServlet
     private void sendAvailableSeries ( final HttpServletRequest request, final HttpServletResponse response, final String itemId ) throws IOException, ServletException
     {
         setHeaders ( request, response );
-        PrintWriter pw = new PrintWriter ( response.getOutputStream () );
+        final PrintWriter pw = new PrintWriter ( response.getOutputStream () );
         try
         {
             pw.println ( Utils.gson.toJson ( this.exporter.get ().getSeries ( itemId ) ) );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             throw new ServletException ( e );
         }
@@ -112,12 +131,12 @@ public class JsonServlet extends HttpServlet
         final Date from = requiredDate ( request, "from" );
         final Date to = requiredDate ( request, "to" );
         final Integer number = requiredInteger ( request, "no" );
-        PrintWriter pw = new PrintWriter ( response.getOutputStream () );
+        final PrintWriter pw = new PrintWriter ( response.getOutputStream () );
         try
         {
             pw.println ( Utils.gson.toJson ( this.exporter.get ().getData ( itemId, type, from, to, number ) ) );
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             throw new ServletException ( e );
         }
@@ -126,8 +145,8 @@ public class JsonServlet extends HttpServlet
 
     private void setHeaders ( final HttpServletRequest request, final HttpServletResponse response )
     {
-        String accept = request.getHeader ( "Accept" );
-        if ( ( accept != null ) && accept.contains ( "application/json" ) )
+        final String accept = request.getHeader ( "Accept" );
+        if ( accept != null && accept.contains ( "application/json" ) )
         {
             response.setContentType ( "application/json" );
         }
@@ -159,7 +178,7 @@ public class JsonServlet extends HttpServlet
         {
             return Integer.parseInt ( intToParse );
         }
-        catch ( NumberFormatException e )
+        catch ( final NumberFormatException e )
         {
             throw new ServletException ( "parameter '" + parameter + "' threw " + e.getMessage () );
         }
@@ -172,7 +191,7 @@ public class JsonServlet extends HttpServlet
         {
             return Utils.isoDateFormat.parse ( dateToParse );
         }
-        catch ( ParseException e )
+        catch ( final ParseException e )
         {
             throw new ServletException ( "parameter '" + parameter + "' threw " + e.getMessage () );
         }

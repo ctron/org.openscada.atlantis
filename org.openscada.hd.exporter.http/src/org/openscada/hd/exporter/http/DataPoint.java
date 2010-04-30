@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.hd.exporter.http;
 
 import java.io.Serializable;
@@ -64,10 +83,10 @@ public class DataPoint implements Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( ( this.manual == null ) ? 0 : this.manual.hashCode () );
-        result = prime * result + ( ( this.quality == null ) ? 0 : this.quality.hashCode () );
-        result = prime * result + ( ( this.timestamp == null ) ? 0 : this.timestamp.hashCode () );
-        result = prime * result + ( ( this.value == null ) ? 0 : this.value.hashCode () );
+        result = prime * result + ( this.manual == null ? 0 : this.manual.hashCode () );
+        result = prime * result + ( this.quality == null ? 0 : this.quality.hashCode () );
+        result = prime * result + ( this.timestamp == null ? 0 : this.timestamp.hashCode () );
+        result = prime * result + ( this.value == null ? 0 : this.value.hashCode () );
         return result;
     }
 
@@ -86,7 +105,7 @@ public class DataPoint implements Serializable
         {
             return false;
         }
-        DataPoint other = (DataPoint)obj;
+        final DataPoint other = (DataPoint)obj;
         if ( this.manual == null )
         {
             if ( other.manual != null )
