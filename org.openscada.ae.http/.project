@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.openscada.ae.http</name>
+	<name>org.openscada.ae.server.http</name>
 	<comment></comment>
 	<projects>
 	</projects>

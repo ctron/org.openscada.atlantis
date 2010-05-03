@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA AE HTTP Interface
-Bundle-SymbolicName: org.openscada.ae.http
+Bundle-SymbolicName: org.openscada.ae.server.http
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.ae.http.Activator
 Import-Package: com.google.gson;version="1.4.0",
