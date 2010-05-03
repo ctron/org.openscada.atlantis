@@ -3,13 +3,10 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA AE HTTP Interface
 Bundle-SymbolicName: org.openscada.ae.server.http
 Bundle-Version: 0.15.0.qualifier
-Bundle-Activator: org.openscada.ae.http.Activator
+Bundle-Activator: org.openscada.ae.server.http.Activator
 Import-Package: com.google.gson;version="1.4.0",
  com.google.gson.annotations;version="1.4.0",
  com.google.gson.reflect;version="1.4.0",
- com.inavare.sass.alarms.event;version="2.3.0",
- com.inavare.sass.common.valueobjects;version="2.3.0",
- com.inavare.tas.alarms.api;version="2.3.0",
  javax.servlet;version="2.5.0",
  javax.servlet.http;version="2.5.0",
  org.openscada.ae;version="0.15.0",

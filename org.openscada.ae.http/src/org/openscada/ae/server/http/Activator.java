@@ -1,9 +1,9 @@
-package org.openscada.ae.http;
+package org.openscada.ae.server.http;
 
 import javax.servlet.ServletException;
 
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.http.internal.JsonServlet;
+import org.openscada.ae.server.http.internal.JsonServlet;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

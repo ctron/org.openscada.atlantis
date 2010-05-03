@@ -1,4 +1,4 @@
-package org.openscada.ae.http.internal;
+package org.openscada.ae.server.http.internal;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -11,8 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.event.EventProcessor;
-
-import com.inavare.tas.alarms.api.AlarmsConverter;
 
 public class JsonServlet extends HttpServlet
 {
@@ -44,7 +42,7 @@ public class JsonServlet extends HttpServlet
             {
                 sb.append ( buffer, 0, len );
             }
-            Event event = AlarmsConverter.deserializeEvent ( sb.toString () );
+            Event event = EventSerializer.deserializeEvent ( sb.toString () );
             // publish event
             this.eventProcessor.publishEvent ( event );
             // return output
