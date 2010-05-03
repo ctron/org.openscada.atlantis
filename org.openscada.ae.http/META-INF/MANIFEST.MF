@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Http
+Bundle-Name: OpenSCADA AE HTTP Interface
 Bundle-SymbolicName: org.openscada.ae.http
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.ae.http.Activator
 Import-Package: com.google.gson;version="1.4.0",
  com.google.gson.annotations;version="1.4.0",
@@ -19,3 +19,4 @@ Import-Package: com.google.gson;version="1.4.0",
  org.osgi.service.http,
  org.osgi.util.tracker;version="1.4.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-Vendor: inavare GmbH
