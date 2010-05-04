@@ -19,7 +19,10 @@
 
 package org.openscada.ca.client;
 
+import java.util.Collection;
+
 import org.openscada.ca.ConfigurationInformation;
+import org.openscada.ca.DiffEntry;
 import org.openscada.ca.FactoryInformation;
 import org.openscada.utils.concurrent.NotifyFuture;
 
@@ -34,4 +37,6 @@ public interface Connection extends org.openscada.core.client.Connection
     public NotifyFuture<FactoryInformation> getFactoryWithData ( String factoryId );
 
     public NotifyFuture<ConfigurationInformation> getConfiguration ( String factoryId, String configurationId );
+
+    public NotifyFuture<Void> applyDiff ( final Collection<DiffEntry> changeSet );
 }
