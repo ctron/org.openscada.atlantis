@@ -19,30 +19,28 @@
 
 package org.openscada.ca.client.jaxws.impl;
 
+import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import org.openscada.ca.ConfigurationInformation;
+import org.openscada.ca.DiffEntry;
 import org.openscada.ca.client.jaxws.RemoteConfigurationClient;
 
-public class LoadConfigurationFactory implements Callable<ConfigurationInformation>
+public class ApplyDiff implements Callable<Void>
 {
 
     private final RemoteConfigurationClient port;
 
-    private final String factoryId;
+    private final Collection<DiffEntry> changeSet;
 
-    private final String configurationId;
-
-    public LoadConfigurationFactory ( final RemoteConfigurationClient port, final String factoryId, final String configurationId )
+    public ApplyDiff ( final RemoteConfigurationClient port, final Collection<DiffEntry> changeSet )
     {
-        this.factoryId = factoryId;
-        this.configurationId = configurationId;
         this.port = port;
+        this.changeSet = changeSet;
     }
 
-    public ConfigurationInformation call () throws Exception
+    public Void call () throws Exception
     {
-        final ConfigurationInformation result = this.port.getPort ().getConfiguration ( this.factoryId, this.configurationId );
-        return result;
+        this.port.getPort ().applyDiff ( this.changeSet, 0 );
+        return null;
     }
 }

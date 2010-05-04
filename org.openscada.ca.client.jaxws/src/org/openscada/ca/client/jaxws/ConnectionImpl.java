@@ -19,6 +19,7 @@
 
 package org.openscada.ca.client.jaxws;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -30,9 +31,11 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.ca.ConfigurationInformation;
+import org.openscada.ca.DiffEntry;
 import org.openscada.ca.FactoryInformation;
 import org.openscada.ca.client.Connection;
 import org.openscada.ca.client.FactoriesListener;
+import org.openscada.ca.client.jaxws.impl.ApplyDiff;
 import org.openscada.ca.client.jaxws.impl.LoadConfigurationFactory;
 import org.openscada.ca.client.jaxws.impl.QueryFactory;
 import org.openscada.ca.client.jaxws.impl.QueryFactoryList;
@@ -274,6 +277,22 @@ public class ConnectionImpl implements Connection
         final LoadConfigurationFactory call = new LoadConfigurationFactory ( this.port, factoryId, configurationId );
 
         final FutureTask<ConfigurationInformation> task = new FutureTask<ConfigurationInformation> ( call );
+
+        this.executor.execute ( task );
+
+        return task;
+    }
+
+    public synchronized NotifyFuture<Void> applyDiff ( final Collection<DiffEntry> changeSet )
+    {
+        if ( this.executor == null )
+        {
+            return new InstantErrorFuture<Void> ( new OperationException ( "Not connected" ) );
+        }
+
+        final ApplyDiff call = new ApplyDiff ( this.port, changeSet );
+
+        final FutureTask<Void> task = new FutureTask<Void> ( call );
 
         this.executor.execute ( task );
 
