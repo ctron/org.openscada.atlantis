@@ -194,17 +194,21 @@ public class AutoReconnectController implements ConnectionStateListener
 
     private void performCheckNow ()
     {
+        ConnectionState currentState;
+        boolean connect;
         synchronized ( this )
         {
+            currentState = this.state;
+            connect = this.connect;
             this.checkScheduled = false;
         }
 
-        logger.debug ( String.format ( "Performing state check: %s (request: %s)", this.state, this.connect ) );
+        logger.debug ( String.format ( "Performing state check: %s (request: %s)", currentState, connect ) );
 
-        switch ( this.state )
+        switch ( currentState )
         {
         case CLOSED:
-            if ( this.connect )
+            if ( connect )
             {
                 logger.info ( "Trigger connect" );
                 this.connection.connect ();
@@ -214,7 +218,7 @@ public class AutoReconnectController implements ConnectionStateListener
         case CONNECTING:
         case CONNECTED:
         case BOUND:
-            if ( !this.connect )
+            if ( !connect )
             {
                 logger.info ( "Trigger disconnect" );
                 this.connection.disconnect ();
