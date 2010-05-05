@@ -24,7 +24,7 @@ import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.log4j.Logger;
-import org.openscada.core.ConnectionInformation;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 
 /**
  * A automatic reconnect controller which keeps connection in the requested state
@@ -45,24 +45,6 @@ import org.openscada.core.ConnectionInformation;
  */
 public class AutoReconnectController implements ConnectionStateListener
 {
-    private final static class ThreadFactoryImplementation implements ThreadFactory
-    {
-        private final ConnectionInformation connectionInformation;
-
-        private ThreadFactoryImplementation ( final ConnectionInformation connectionInformation )
-        {
-            this.connectionInformation = connectionInformation;
-        }
-
-        public Thread newThread ( final Runnable r )
-        {
-            final Thread t = new Thread ( r );
-            t.setDaemon ( true );
-            t.setName ( "AutoReconnect/" + this.connectionInformation );
-            return t;
-        }
-    }
-
     private static Logger logger = Logger.getLogger ( AutoReconnectController.class );
 
     private static final long DEFAULT_RECONNECT_DELAY = Long.getLong ( "openscada.default.reconnect.delay", 10 * 1000 );
@@ -112,8 +94,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
         this.connection.addConnectionStateListener ( this );
 
-        final ThreadFactory threadFactory = new ThreadFactoryImplementation ( connection.getConnectionInformation () );
-
+        final ThreadFactory threadFactory = new NamedThreadFactory ( "AutoReconnect/" + connection.getConnectionInformation () );
         this.executor = new ScheduledThreadPoolExecutor ( 1, threadFactory );
     }
 
