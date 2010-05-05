@@ -121,7 +121,7 @@ public class AutoReconnectController implements ConnectionStateListener
         // we want that now!
         this.lastTimestamp = 0;
 
-        triggerUpdate ( this.connection.getState () );
+        triggerUpdate ( this.state );
     }
 
     public synchronized void disconnect ()
