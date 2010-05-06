@@ -22,7 +22,7 @@ package org.openscada.da.datasource.script;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
@@ -40,7 +40,7 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
 
     private final static Logger logger = LoggerFactory.getLogger ( ScriptSourceFactory.class );
 
-    private final Executor executor;
+    private final ScheduledExecutorService executor;
 
     private final ObjectPoolTracker poolTracker;
 
@@ -48,7 +48,7 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
 
     private final ServiceRegistration poolRegistration;
 
-    public ScriptSourceFactory ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
+    public ScriptSourceFactory ( final BundleContext context, final ScheduledExecutorService executor ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = executor;

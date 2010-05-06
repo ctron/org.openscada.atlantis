@@ -21,8 +21,8 @@ package org.openscada.da.datasource.script;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
@@ -34,7 +34,7 @@ import org.osgi.framework.Constants;
 public class Activator implements BundleActivator
 {
 
-    private ExecutorService executor;
+    private ScheduledExecutorService executor;
 
     private ScriptSourceFactory factory;
 
@@ -44,7 +44,7 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
         this.factory = new ScriptSourceFactory ( context, this.executor );
 

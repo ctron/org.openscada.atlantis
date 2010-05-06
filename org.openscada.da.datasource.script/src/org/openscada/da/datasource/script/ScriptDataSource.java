@@ -23,6 +23,9 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
@@ -53,7 +56,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     final static Logger logger = LoggerFactory.getLogger ( ScriptDataSource.class );
 
-    private final Executor executor;
+    private final ScheduledExecutorService executor;
 
     private final ScriptEngineManager manager;
 
@@ -67,7 +70,9 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private final WriterController writer;
 
-    public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final Executor executor )
+    private ScheduledFuture<?> timer;
+
+    public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor )
     {
         super ( poolTracker );
         this.executor = executor;
@@ -108,14 +113,19 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
+        stopTimer ();
+
         final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
         try
         {
             final ClassLoader classLoader = getClass ().getClassLoader ();
             Thread.currentThread ().setContextClassLoader ( classLoader );
 
-            setScript ( parameters );
+            final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+
+            setScript ( cfg );
             setDataSources ( parameters );
+            startTimer ( cfg.getInteger ( "timer", -1 ) );
 
             handleChange ();
         }
@@ -125,9 +135,34 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         }
     }
 
-    private void setScript ( final Map<String, String> parameters ) throws ScriptException
+    private void startTimer ( final int period )
     {
-        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+        if ( period <= 0 )
+        {
+            return;
+        }
+
+        this.timer = this.executor.scheduleAtFixedRate ( new Runnable () {
+
+            @Override
+            public void run ()
+            {
+                handleChange ();
+            }
+        }, period, period, TimeUnit.MILLISECONDS );
+    }
+
+    private void stopTimer ()
+    {
+        if ( this.timer != null )
+        {
+            this.timer.cancel ( false );
+            this.timer = null;
+        }
+    }
+
+    private void setScript ( final ConfigurationDataHelper cfg ) throws ScriptException
+    {
 
         String engine = cfg.getString ( "engine", DEFAULT_ENGINE_NAME );
         if ( "".equals ( engine ) )
@@ -144,13 +179,13 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         }
 
         // trigger init script
-        final String initScript = parameters.get ( "init" );
+        final String initScript = cfg.getString ( "init" );
         if ( initScript != null )
         {
             this.scriptEngine.eval ( initScript, this.scriptContext );
         }
 
-        this.updateCommand = parameters.get ( "updateCommand" );
+        this.updateCommand = cfg.getString ( "updateCommand" );
     }
 
     /**
@@ -159,37 +194,39 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
     @Override
     protected synchronized void handleChange ()
     {
-        // calcuate
-        if ( this.updateCommand != null )
+        if ( this.updateCommand == null )
         {
-            // gather all data
-            final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ();
-            for ( final Map.Entry<String, DataSourceHandler> entry : this.sources.entrySet () )
-            {
-                values.put ( entry.getKey (), entry.getValue ().getValue () );
-            }
+            return;
+        }
 
-            final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
+        // calcuate
+        // gather all data
+        final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ();
+        for ( final Map.Entry<String, DataSourceHandler> entry : this.sources.entrySet () )
+        {
+            values.put ( entry.getKey (), entry.getValue ().getValue () );
+        }
 
-            try
-            {
-                this.scriptContext.setAttribute ( "data", values, ScriptContext.ENGINE_SCOPE );
-                this.scriptContext.setAttribute ( "writer", this.writer, ScriptContext.ENGINE_SCOPE );
+        final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
 
-                Thread.currentThread ().setContextClassLoader ( this.classLoader );
+        try
+        {
+            this.scriptContext.setAttribute ( "data", values, ScriptContext.ENGINE_SCOPE );
+            this.scriptContext.setAttribute ( "writer", this.writer, ScriptContext.ENGINE_SCOPE );
 
-                setResult ( this.scriptEngine.eval ( this.updateCommand, this.scriptContext ) );
-            }
-            catch ( final Throwable e )
-            {
-                logger.warn ( "Failed to evaluate", e );
-                logger.debug ( "Failed script: {}", this.updateCommand );
-                setError ( e );
-            }
-            finally
-            {
-                Thread.currentThread ().setContextClassLoader ( currentClassLoader );
-            }
+            Thread.currentThread ().setContextClassLoader ( this.classLoader );
+
+            setResult ( this.scriptEngine.eval ( this.updateCommand, this.scriptContext ) );
+        }
+        catch ( final Throwable e )
+        {
+            logger.warn ( "Failed to evaluate", e );
+            logger.debug ( "Failed script: {}", this.updateCommand );
+            setError ( e );
+        }
+        finally
+        {
+            Thread.currentThread ().setContextClassLoader ( currentClassLoader );
         }
     }
 
