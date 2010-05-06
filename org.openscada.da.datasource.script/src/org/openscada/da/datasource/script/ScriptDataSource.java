@@ -19,9 +19,12 @@
 
 package org.openscada.da.datasource.script;
 
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -92,7 +95,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
             Thread.currentThread ().setContextClassLoader ( currentClassLoader );
         }
 
-        this.writer = new WriterController ( context );
+        this.writer = new WriterController ( poolTracker );
     }
 
     @Override
@@ -125,6 +128,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
             final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
+            setWriteItems ( cfg );
             setScript ( cfg );
             setDataSources ( parameters );
             startTimer ( cfg.getInteger ( "timer", -1 ) );
@@ -135,6 +139,12 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         {
             Thread.currentThread ().setContextClassLoader ( currentClassLoader );
         }
+    }
+
+    private void setWriteItems ( final ConfigurationDataHelper cfg )
+    {
+        final Set<String> dataSourceIds = new HashSet<String> ( Arrays.asList ( cfg.getString ( "writeSources", "" ).split ( ", \t\n\r" ) ) );
+        this.writer.setWriteItems ( dataSourceIds );
     }
 
     private void startTimer ( final int period )
@@ -252,7 +262,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         builder.setTimestamp ( Calendar.getInstance () );
         builder.setAttribute ( "script.error", Variant.TRUE );
         builder.setAttribute ( "script.error.message", new Variant ( e.getMessage () ) );
-        this.updateData ( builder.build () );
+        updateData ( builder.build () );
     }
 
     private synchronized void setResult ( final Object result )
@@ -262,20 +272,19 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         if ( result instanceof Builder )
         {
             logger.debug ( "Using builder" );
-            this.updateData ( ( (Builder)result ).build () );
+            updateData ( ( (Builder)result ).build () );
         }
         else if ( result instanceof DataItemValue )
         {
             logger.debug ( "Using data item value" );
-            this.updateData ( ( (DataItemValue)result ) );
+            updateData ( ( (DataItemValue)result ) );
         }
         else
         {
             logger.debug ( "Falling back to plain value" );
             final Builder builder = new DataItemValue.Builder ();
-            builder.setValue ( new Variant ( result ) );
-            builder.setTimestamp ( Calendar.getInstance () );
-            this.updateData ( builder.build () );
+            builder.setValue ( Variant.valueOf ( result ) );
+            updateData ( builder.build () );
         }
     }
 

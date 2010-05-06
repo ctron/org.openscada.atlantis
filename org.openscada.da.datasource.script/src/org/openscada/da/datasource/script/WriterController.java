@@ -19,65 +19,71 @@
 
 package org.openscada.da.datasource.script;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.WriteInformation;
-import org.openscada.utils.osgi.FilterUtil;
-import org.osgi.framework.BundleContext;
-import org.osgi.framework.Filter;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.util.tracker.ServiceTracker;
+import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 
 public class WriterController
 {
-    private static final long DEFAULT_TIMEOUT = 10000;
+    private final ObjectPoolTracker tracker;
 
-    private final BundleContext context;
+    private volatile Map<String, SingleObjectPoolServiceTracker> trackers = Collections.emptyMap ();
 
-    public WriterController ( final BundleContext context )
+    public WriterController ( final ObjectPoolTracker tracker )
     {
-        this.context = context;
+        this.tracker = tracker;
     }
 
-    public void write ( final String dataSourceId, final Object value ) throws Exception
+    public void setWriteItems ( final Set<String> datasources )
     {
-        final Variant variant = Variant.valueOf ( value );
-
-        final Filter filter = makeFilter ( dataSourceId );
-
-        final ServiceTracker tracker = new ServiceTracker ( this.context, filter, null );
-
-        tracker.open ();
-        try
+        // create new tracker map
+        final Map<String, SingleObjectPoolServiceTracker> newTrackers = new HashMap<String, SingleObjectPoolServiceTracker> ( 1 );
+        for ( final String dataSourceId : datasources )
         {
-            final DataSource source = (DataSource)tracker.waitForService ( DEFAULT_TIMEOUT );
-
-            if ( source == null )
-            {
-                throw new IllegalStateException ( String.format ( "Failed to write. Service not found for filter '%s'", filter ) );
-            }
-
-            final WriteInformation writeInformation = new WriteInformation ( null );
-            source.startWriteValue ( writeInformation, variant );
+            final SingleObjectPoolServiceTracker objectTracker = new SingleObjectPoolServiceTracker ( this.tracker, dataSourceId, null );
+            objectTracker.open ();
+            newTrackers.put ( dataSourceId, objectTracker );
         }
-        catch ( final InterruptedException e )
-        {
-        }
-        finally
+
+        // swap
+        final Map<String, SingleObjectPoolServiceTracker> oldTrackers = this.trackers;
+        this.trackers = newTrackers;
+
+        // close old stuff
+        for ( final SingleObjectPoolServiceTracker tracker : oldTrackers.values () )
         {
             tracker.close ();
         }
     }
 
-    private Filter makeFilter ( final String dataSourceId ) throws InvalidSyntaxException
+    public void write ( final String dataSourceId, final Object value ) throws Exception
     {
-        final Map<String, String> parameters = new HashMap<String, String> ();
-        parameters.put ( "datasource.id", dataSourceId );
-        return FilterUtil.createAndFilter ( DataSource.class.getName (), parameters );
+        final SingleObjectPoolServiceTracker objectTracker = this.trackers.get ( dataSourceId );
+        if ( objectTracker == null )
+        {
+            throw new IllegalArgumentException ( String.format ( "Data source '%s' is not configured", dataSourceId ) );
+        }
+
+        final Object o = objectTracker.getCurrentService ();
+        if ( o == null )
+        {
+            throw new IllegalStateException ( String.format ( "Data source '%s' was not found", dataSourceId ) );
+        }
+        if ( ! ( o instanceof DataSource ) )
+        {
+            throw new IllegalStateException ( String.format ( "Data source '%s' is not a data source", dataSourceId ) );
+        }
+
+        final WriteInformation wi = new WriteInformation ( null );
+        ( (DataSource)o ).startWriteValue ( wi, Variant.valueOf ( value ) );
     }
 
     public void writeAsText ( final String itemId, final String value ) throws Exception
