@@ -251,6 +251,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         IoSession session;
 
+        boolean doClose = false;
+
         synchronized ( this )
         {
             // disconnect the messenger here
@@ -263,11 +265,14 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
                 if ( !session.isConnected () )
                 {
+                    logger.debug ( "Connection is not connected. Switch to CLOSED" );
                     setState ( ConnectionState.CLOSED, reason );
                 }
                 else
                 {
+                    logger.debug ( "Connection still connected. Close it first!" );
                     setState ( ConnectionState.CLOSING, reason );
+                    doClose = true;
                 }
                 this.session = null;
             }
@@ -275,7 +280,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             disposeConnector ();
         }
 
-        if ( session != null && session.isConnected () )
+        if ( session != null && doClose )
         {
             session.close ( true );
         }
