@@ -186,6 +186,15 @@ public class ConnectionInformation implements Cloneable
         }
     }
 
+    /**
+     * Get the password from the properties
+     * @return the password or <code>null</code> if none was set
+     */
+    public String getPassword ()
+    {
+        return this.properties.get ( PROP_PASSWORD );
+    }
+
     @Override
     public String toString ()
     {
