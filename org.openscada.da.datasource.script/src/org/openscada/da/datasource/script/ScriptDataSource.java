@@ -64,6 +64,8 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private String updateCommand;
 
+    private String timerCommand;
+
     private ScriptEngine scriptEngine;
 
     private final ClassLoader classLoader;
@@ -186,6 +188,14 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         }
 
         this.updateCommand = cfg.getString ( "updateCommand" );
+        this.timerCommand = cfg.getString ( "timerCommand" );
+    }
+
+    protected synchronized void handleTimer ()
+    {
+        this.scriptContext.setAttribute ( "writer", this.writer, ScriptContext.ENGINE_SCOPE );
+
+        executeScript ( this.timerCommand );
     }
 
     /**
@@ -194,10 +204,6 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
     @Override
     protected synchronized void handleChange ()
     {
-        if ( this.updateCommand == null )
-        {
-            return;
-        }
 
         // calcuate
         // gather all data
@@ -207,21 +213,30 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
             values.put ( entry.getKey (), entry.getValue ().getValue () );
         }
 
+        this.scriptContext.setAttribute ( "data", values, ScriptContext.ENGINE_SCOPE );
+        this.scriptContext.setAttribute ( "writer", this.writer, ScriptContext.ENGINE_SCOPE );
+
+        executeScript ( this.updateCommand );
+    }
+
+    protected void executeScript ( final String command )
+    {
+        if ( command == null )
+        {
+            return;
+        }
+
         final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
 
         try
         {
-            this.scriptContext.setAttribute ( "data", values, ScriptContext.ENGINE_SCOPE );
-            this.scriptContext.setAttribute ( "writer", this.writer, ScriptContext.ENGINE_SCOPE );
-
             Thread.currentThread ().setContextClassLoader ( this.classLoader );
-
-            setResult ( this.scriptEngine.eval ( this.updateCommand, this.scriptContext ) );
+            setResult ( this.scriptEngine.eval ( command, this.scriptContext ) );
         }
         catch ( final Throwable e )
         {
             logger.warn ( "Failed to evaluate", e );
-            logger.debug ( "Failed script: {}", this.updateCommand );
+            logger.debug ( "Failed script: {}", command );
             setError ( e );
         }
         finally
