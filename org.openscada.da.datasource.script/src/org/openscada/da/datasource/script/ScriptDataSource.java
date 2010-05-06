@@ -149,7 +149,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
             @Override
             public void run ()
             {
-                handleChange ();
+                handleTimer ();
             }
         }, period, period, TimeUnit.MILLISECONDS );
     }
