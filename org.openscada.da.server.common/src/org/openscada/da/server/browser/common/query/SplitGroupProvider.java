@@ -74,7 +74,7 @@ public class SplitGroupProvider implements GroupProvider
             final String[] tok = this.regex.split ( name );
             if ( this.skipPrefix + this.skipSuffix >= tok.length )
             {
-                return null;
+                return new String[0];
             }
             final String[] result = new String[tok.length - ( this.skipPrefix + this.skipSuffix )];
             for ( int i = this.skipPrefix; i < tok.length - this.skipSuffix; i++ )

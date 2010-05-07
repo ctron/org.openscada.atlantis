@@ -45,6 +45,10 @@ public class BrowserTest2
 
         Assert.assertArrayEquals ( new String[] { "is", "the", "id" }, testGroup ( "this.is.the.id", 1, 0 ) );
         Assert.assertArrayEquals ( new String[] { "the", "id" }, testGroup ( "this.is.the.id", 2, 0 ) );
+
+        Assert.assertArrayEquals ( new String[] {}, testGroup ( "the.id", 2, 0 ) );
+        Assert.assertArrayEquals ( new String[] {}, testGroup ( "the", 2, 0 ) );
+        Assert.assertArrayEquals ( new String[] {}, testGroup ( "", 2, 0 ) );
     }
 
     private String[] testGroup ( final String itemId, final int skipPrefix, final int skipSuffix )
