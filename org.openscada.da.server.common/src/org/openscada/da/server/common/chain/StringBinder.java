@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
- * This library is distributed in the hope that it will be useful,
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.server.common.chain;
@@ -23,23 +23,23 @@ import org.openscada.core.Variant;
 
 public class StringBinder implements AttributeBinder
 {
-    private String _value = null;
+    private String value = null;
 
     public void bind ( final Variant value ) throws Exception
     {
         if ( value == null )
         {
-            this._value = null;
+            this.value = null;
         }
         else
         {
-            this._value = value.asString ( null );
+            this.value = value.asString ( null );
         }
     }
 
     public String getValue ()
     {
-        return this._value;
+        return this.value;
     }
 
     public Variant getAttributeValue ()
