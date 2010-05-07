@@ -21,8 +21,14 @@ package org.openscada.da.server.browser.common.query;
 
 import java.util.regex.Pattern;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class SplitGroupProvider implements GroupProvider
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( SplitGroupProvider.class );
+
     private final NameProvider nameProvider;
 
     private final Pattern regex;
@@ -79,6 +85,7 @@ public class SplitGroupProvider implements GroupProvider
         }
         catch ( final Exception e )
         {
+            logger.warn ( "Failed to split", e );
             return null;
         }
     }
