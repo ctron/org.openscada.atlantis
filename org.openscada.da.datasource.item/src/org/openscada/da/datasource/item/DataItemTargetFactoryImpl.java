@@ -113,7 +113,7 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
         final String description = parameters.get ( "description" );
         if ( description != null )
         {
-            properties.put ( "description", description );
+            properties.put ( Constants.SERVICE_DESCRIPTION, description );
         }
 
         // register
