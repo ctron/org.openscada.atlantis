@@ -143,7 +143,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private void setWriteItems ( final ConfigurationDataHelper cfg )
     {
-        final Set<String> dataSourceIds = new HashSet<String> ( Arrays.asList ( cfg.getString ( "writeSources", "" ).split ( ", \t\n\r" ) ) );
+        final Set<String> dataSourceIds = new HashSet<String> ( Arrays.asList ( cfg.getString ( "writeSources", "" ).split ( "[, \t\n\r]+" ) ) );
         this.writer.setWriteItems ( dataSourceIds );
     }
 
