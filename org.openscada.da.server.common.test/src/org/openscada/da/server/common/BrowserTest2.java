@@ -7,6 +7,7 @@ import org.junit.Test;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.query.IDNameProvider;
 import org.openscada.da.server.browser.common.query.ItemDescriptor;
+import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.browser.common.query.SplitNameProvider;
 
 public class BrowserTest2
@@ -32,5 +33,23 @@ public class BrowserTest2
     {
         final SplitNameProvider snp = new SplitNameProvider ( new IDNameProvider (), "\\.", fromStart, fromEnd, "." );
         return snp.getName ( new ItemDescriptor ( new DataItemInputCommon ( itemId ), new HashMap<String, Variant> () ) );
+    }
+
+    @Test
+    public void test2 ()
+    {
+        Assert.assertArrayEquals ( new String[] { "this", "is", "the", "id" }, testGroup ( "this.is.the.id", 0, 0 ) );
+
+        Assert.assertArrayEquals ( new String[] { "this", "is", "the" }, testGroup ( "this.is.the.id", 0, 1 ) );
+        Assert.assertArrayEquals ( new String[] { "this", "is" }, testGroup ( "this.is.the.id", 0, 2 ) );
+
+        Assert.assertArrayEquals ( new String[] { "is", "the", "id" }, testGroup ( "this.is.the.id", 1, 0 ) );
+        Assert.assertArrayEquals ( new String[] { "the", "id" }, testGroup ( "this.is.the.id", 2, 0 ) );
+    }
+
+    private String[] testGroup ( final String itemId, final int skipPrefix, final int skipSuffix )
+    {
+        final SplitGroupProvider sgp = new SplitGroupProvider ( new IDNameProvider (), "\\.", skipPrefix, skipSuffix );
+        return sgp.getGrouping ( new ItemDescriptor ( new DataItemInputCommon ( itemId ), new HashMap<String, Variant> () ) );
     }
 }
