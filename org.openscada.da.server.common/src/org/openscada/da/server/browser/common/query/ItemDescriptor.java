@@ -19,6 +19,8 @@
 
 package org.openscada.da.server.browser.common.query;
 
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
@@ -35,13 +37,21 @@ public class ItemDescriptor
     public ItemDescriptor ( final DataItem item, final Map<String, Variant> attributes )
     {
         this.item = item;
-        this.attributes = attributes;
         this.itemId = item.getInformation ().getName ();
+
+        if ( attributes != null )
+        {
+            this.attributes = new HashMap<String, Variant> ( attributes );
+        }
+        else
+        {
+            this.attributes = Collections.emptyMap ();
+        }
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return this.attributes;
+        return Collections.unmodifiableMap ( this.attributes );
     }
 
     public DataItem getItem ()
