@@ -107,8 +107,14 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
         final String datasourceId = parameters.get ( "datasource.id" );
         final DataItemTargetImpl item = new DataItemTargetImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId, this.authorization );
 
-        final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( Constants.SERVICE_DESCRIPTION, "inavare GmbH" );
+        final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
+        properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+
+        final String description = parameters.get ( "description" );
+        if ( description != null )
+        {
+            properties.put ( "description", description );
+        }
 
         // register
         this.itemPool.addService ( configurationId, item, properties );
