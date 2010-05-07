@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2008-2010 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
- * This library is distributed in the hope that it will be useful,
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.server.osgi;
@@ -33,6 +33,7 @@ import org.openscada.da.server.browser.common.query.IDNameProvider;
 import org.openscada.da.server.browser.common.query.InvisibleStorage;
 import org.openscada.da.server.browser.common.query.ItemDescriptor;
 import org.openscada.da.server.browser.common.query.SplitGroupProvider;
+import org.openscada.da.server.browser.common.query.SplitNameProvider;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -41,6 +42,7 @@ import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.osgi.AuthenticationHelper;
 import org.openscada.sec.osgi.AuthorizationHelper;
+import org.openscada.utils.collection.MapBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -75,8 +77,8 @@ public class HiveImpl extends HiveCommon
         this.items = new HashMap<ServiceReference, ItemDescriptor> ();
 
         this.storage = new InvisibleStorage ();
-        final GroupFolder allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new IDNameProvider (), "\\.", 0, 1 ), new IDNameProvider () );
-        this.rootFolder.add ( "all", allItemsFolder, new HashMap<String, Variant> () );
+        final GroupFolder allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new IDNameProvider (), "\\.", 0, 2 ), new SplitNameProvider ( new IDNameProvider (), "\\.", 0, 2, "." ) );
+        this.rootFolder.add ( "all", allItemsFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "A folder containing the full item space" ) ).getMap () );
         this.storage.addChild ( allItemsFolder );
     }
 
@@ -161,7 +163,7 @@ public class HiveImpl extends HiveCommon
     public synchronized void removeItem ( final DataItem item )
     {
         unregisterItem ( item );
-        this.storage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> ( 0 ) ) );
+        this.storage.removed ( new ItemDescriptor ( item, null ) );
     }
 
     public synchronized void addItem ( final ServiceReference serviceReference )
