@@ -19,32 +19,34 @@
 
 package org.openscada.da.server.browser.common.query;
 
+import java.util.regex.Pattern;
+
 public class SplitGroupProvider implements GroupProvider
 {
-    private NameProvider nameProvider = null;
+    private final NameProvider nameProvider;
 
-    private String regex = "";
+    private final Pattern regex;
 
-    private int skipPrefix = 0;
+    private final int skipPrefix;
 
-    private int skipSuffix = 0;
+    private final int skipSuffix;
 
     public SplitGroupProvider ( final NameProvider nameProvider, final String regex )
     {
-        this.nameProvider = nameProvider;
-        this.regex = regex;
+        this ( nameProvider, Pattern.compile ( regex ), 0, 0 );
     }
 
-    public SplitGroupProvider ( final NameProvider nameProvider, final String regex, final int skipPrefix, final int skipSuffix )
+    public SplitGroupProvider ( final NameProvider nameProvider, final Pattern pattern, final int skipPrefix, final int skipSuffix )
     {
         this.nameProvider = nameProvider;
-        this.regex = regex;
+        this.regex = pattern;
         this.skipPrefix = skipPrefix;
         this.skipSuffix = skipSuffix;
     }
 
-    public SplitGroupProvider ()
+    public SplitGroupProvider ( final NameProvider nameProvider, final String regex, final int skipPrefix, final int skipSuffix )
     {
+        this ( nameProvider, Pattern.compile ( regex ), skipPrefix, skipSuffix );
     }
 
     public String[] getGrouping ( final ItemDescriptor descriptor )
@@ -63,7 +65,7 @@ public class SplitGroupProvider implements GroupProvider
 
         try
         {
-            final String[] tok = name.split ( this.regex );
+            final String[] tok = this.regex.split ( name );
             if ( this.skipPrefix + this.skipSuffix >= tok.length )
             {
                 return null;
@@ -79,26 +81,6 @@ public class SplitGroupProvider implements GroupProvider
         {
             return null;
         }
-    }
-
-    public void setNameProvider ( final NameProvider nameProvider )
-    {
-        this.nameProvider = nameProvider;
-    }
-
-    public void setRegex ( final String regex )
-    {
-        this.regex = regex;
-    }
-
-    public void setSkipPrefix ( final int skipPrefix )
-    {
-        this.skipPrefix = skipPrefix;
-    }
-
-    public void setSkipSuffix ( final int skipSuffix )
-    {
-        this.skipSuffix = skipSuffix;
     }
 
 }
