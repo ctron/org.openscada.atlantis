@@ -55,8 +55,6 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
 
     private boolean listIsAlarm;
 
-    protected Date timestamp;
-
     public ListAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id )
     {
         super ( context, executor, poolTracker, eventProcessor, id, id, "VALUE" );
@@ -166,7 +164,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         {
             setUnsafe ();
         }
-        else if ( isAlarm ( this.value ) )
+        else if ( isOk ( this.value ) )
         {
             setOk ( new Variant ( this.value ), this.timestamp );
         }
@@ -176,7 +174,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         }
     }
 
-    protected boolean isAlarm ( final Variant value )
+    protected boolean isOk ( final Variant value )
     {
         if ( this.referenceList.contains ( value ) )
         {
