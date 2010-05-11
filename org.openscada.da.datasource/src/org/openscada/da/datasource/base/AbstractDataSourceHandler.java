@@ -19,6 +19,9 @@
 
 package org.openscada.da.datasource.base;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
+
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
@@ -51,6 +54,10 @@ public abstract class AbstractDataSourceHandler extends AbstractDataSource
 
     private final DataSourceListener dataSourceListener;
 
+    private final Lock dataSourceReadLock;
+
+    private final Lock dataSourceWriteLock;
+
     public AbstractDataSourceHandler ( final ObjectPoolTracker poolTracker )
     {
         this.poolTracker = poolTracker;
@@ -69,49 +76,79 @@ public abstract class AbstractDataSourceHandler extends AbstractDataSource
                 AbstractDataSourceHandler.this.stateChanged ( value );
             }
         };
+
+        final ReentrantReadWriteLock lock = new ReentrantReadWriteLock ();
+        this.dataSourceReadLock = lock.readLock ();
+        this.dataSourceWriteLock = lock.writeLock ();
     }
 
     protected abstract void stateChanged ( DataItemValue value );
 
-    protected synchronized void setDataSource ( final DataSource dataSource )
+    protected void setDataSource ( final DataSource dataSource )
     {
         logger.debug ( "Set datasource: {}", dataSource );
 
-        if ( this.dataSource != null )
+        try
         {
-            this.dataSource.removeListener ( this.dataSourceListener );
-            this.dataSource = null;
+            this.dataSourceWriteLock.lock ();
 
-            stateChanged ( null );
+            if ( this.dataSource != null )
+            {
+                this.dataSource.removeListener ( this.dataSourceListener );
+                this.dataSource = null;
+
+                stateChanged ( null );
+            }
+
+            this.dataSource = dataSource;
+
+            if ( this.dataSource != null )
+            {
+                this.dataSource.addListener ( this.dataSourceListener );
+            }
         }
-
-        this.dataSource = dataSource;
-
-        if ( this.dataSource != null )
+        finally
         {
-            this.dataSource.addListener ( this.dataSourceListener );
+            this.dataSourceWriteLock.unlock ();
         }
     }
 
-    protected synchronized DataSource getDataSource ()
+    protected DataSource getDataSource ()
     {
-        return this.dataSource;
+        try
+        {
+            this.dataSourceReadLock.lock ();
+            return this.dataSource;
+        }
+        finally
+        {
+            this.dataSourceReadLock.unlock ();
+        }
     }
 
-    protected synchronized void setDataSource ( final String dataSourceId ) throws InvalidSyntaxException
+    protected void setDataSource ( final String dataSourceId ) throws InvalidSyntaxException
     {
         logger.debug ( "Set datasource request: {}", dataSourceId );
 
-        if ( this.tracker != null )
+        try
         {
-            this.tracker.close ();
-            this.tracker = null;
-        }
+            this.dataSourceWriteLock.lock ();
 
-        if ( dataSourceId != null )
+            if ( this.tracker != null )
+            {
+                this.tracker.close ();
+                this.tracker = null;
+            }
+
+            if ( dataSourceId != null )
+            {
+                this.tracker = new SingleDataSourceTracker ( this.poolTracker, dataSourceId, this.serviceListener );
+                this.tracker.open ();
+            }
+        }
+        finally
         {
-            this.tracker = new SingleDataSourceTracker ( this.poolTracker, dataSourceId, this.serviceListener );
-            this.tracker.open ();
+            this.dataSourceWriteLock.unlock ();
         }
     }
 
