@@ -386,6 +386,11 @@ public class Messenger implements MessageListener
         {
             synchronized ( this )
             {
+                if ( this.connection == null )
+                {
+                    return;
+                }
+
                 logger.warn ( String.format ( "Closing connection due to receive timeout: %s (timeout: %s)", timeDiff, this.sessionTimeout ) );
                 this.connection.close ();
                 disconnected ();
