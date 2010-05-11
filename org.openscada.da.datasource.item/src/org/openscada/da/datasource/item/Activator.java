@@ -49,7 +49,7 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        this.authorization = new AuthorizationHelper ( context, true );
+        this.authorization = new AuthorizationHelper ( context );
         this.authorization.open ();
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
