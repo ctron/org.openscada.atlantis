@@ -98,7 +98,7 @@ public class Activator implements BundleActivator
             }
             catch ( final Throwable e )
             {
-                e.printStackTrace ();
+                logger.warn ( "Failed to start", e );
                 this.exporter = null;
                 this.currentService = null;
                 this.context.ungetService ( serviceReference );
