@@ -81,11 +81,11 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
         return null;
     }
 
-    public synchronized boolean acknowledge ( final String conditionId, final UserInformation aknUser, final Date aknTimestamp )
+    public synchronized boolean acknowledge ( final String monitorId, final UserInformation aknUser, final Date aknTimestamp )
     {
-        logger.debug ( "Try to process ACK: {}", conditionId );
+        logger.debug ( "Try to process ACK: {}", monitorId );
 
-        final Entry<DataItemMonitor> entry = getService ( conditionId );
+        final Entry<DataItemMonitor> entry = getService ( monitorId );
         if ( entry != null )
         {
             entry.getService ().akn ( aknUser, aknTimestamp );
