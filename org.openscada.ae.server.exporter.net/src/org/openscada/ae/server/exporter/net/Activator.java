@@ -65,9 +65,9 @@ public class Activator implements BundleActivator
         {
             this.exporter.stop ();
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
-            e.printStackTrace ();
+            logger.warn ( "Failed to stop", e );
         }
         finally
         {
@@ -81,12 +81,12 @@ public class Activator implements BundleActivator
 
     protected void startExporter ( final ServiceReference serviceReference )
     {
-        if ( ( this.currentServiceReference != null ) || ( serviceReference == null ) )
+        if ( this.currentServiceReference != null || serviceReference == null )
         {
             return;
         }
 
-        Object o = this.context.getService ( serviceReference );
+        final Object o = this.context.getService ( serviceReference );
         if ( o instanceof Service )
         {
             try
@@ -96,7 +96,7 @@ public class Activator implements BundleActivator
                 this.exporter = new Exporter ( this.currentService, this.connectionInformation );
                 this.exporter.start ();
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
                 e.printStackTrace ();
                 this.exporter = null;
