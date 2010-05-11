@@ -13,6 +13,8 @@ import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.dataitem.monitor.internal.bit.BooleanAlarmMonitor;
 import org.openscada.ae.monitor.dataitem.monitor.internal.bit.MonitorFactoryImpl;
 import org.openscada.ae.monitor.dataitem.monitor.internal.level.LevelMonitorFactoryImpl;
+import org.openscada.ae.monitor.dataitem.monitor.internal.list.ListAlarmMonitor;
+import org.openscada.ae.monitor.dataitem.monitor.internal.list.ListAlarmMonitorFactoryImpl;
 import org.openscada.ae.monitor.dataitem.monitor.internal.remote.RemoteAttributeMonitorFactoryImpl;
 import org.openscada.ae.monitor.dataitem.monitor.internal.remote.RemoteBooleanAttributeAlarmMonitor;
 import org.openscada.ae.monitor.dataitem.monitor.internal.remote.RemoteBooleanValueAlarmMonitor;
@@ -85,7 +87,7 @@ public class Activator implements BundleActivator
             this.factories.add ( factory );
         }
 
-        // remote monitor service
+        // remote attribute monitor service
         {
             final RemoteAttributeMonitorFactoryImpl factory = new RemoteAttributeMonitorFactoryImpl ( context, this.monitorServicePool, this.executor, this.poolTracker, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
@@ -95,12 +97,22 @@ public class Activator implements BundleActivator
             this.factories.add ( factory );
         }
 
-        // remote monitor service
+        // remote value monitor service
         {
             final RemoteValueMonitorFactoryImpl factory = new RemoteValueMonitorFactoryImpl ( context, this.monitorServicePool, this.executor, this.poolTracker, this.eventProcessor );
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, RemoteBooleanValueAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Remote Boolean value alarms" );
+            context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
+            this.factories.add ( factory );
+        }
+
+        // list based alarm monitor
+        {
+            final ListAlarmMonitorFactoryImpl factory = new ListAlarmMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor );
+            properties = new Hashtable<Object, Object> ();
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, ListAlarmMonitor.FACTORY_ID );
+            properties.put ( Constants.SERVICE_DESCRIPTION, "Reference list alarm monitor" );
             context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
             this.factories.add ( factory );
         }
