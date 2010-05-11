@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: AE Filter Support
+Bundle-Name: OpenSCADA AE Filter Support
 Bundle-SymbolicName: org.openscada.ae.filter
 Bundle-Version: 0.15.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
@@ -10,5 +10,6 @@ Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.utils.lang,
  org.openscada.utils.propertyeditors,
  org.openscada.utils.str
-Export-Package: org.openscada.ae.filter;version="0.15.0",
- org.openscada.ae.filter.internal;version="0.15.0"
+Export-Package: org.openscada.ae.filter;version="0.15.0";uses:="org.openscada.ae",
+ org.openscada.ae.filter.internal;version="0.15.0";uses:="org.openscada.ae.filter,org.openscada.utils.filter,org.openscada.ae"
+Bundle-Vendor: inavare GmbH
