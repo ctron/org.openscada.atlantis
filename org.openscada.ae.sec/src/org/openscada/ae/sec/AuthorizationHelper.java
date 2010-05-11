@@ -38,6 +38,11 @@ public class AuthorizationHelper extends org.openscada.sec.osgi.AuthorizationHel
 
     private final EventProcessor eventProcessor;
 
+    public AuthorizationHelper ( final BundleContext context ) throws InvalidSyntaxException
+    {
+        this ( context, Boolean.getBoolean ( "org.openscada.ae.sec.logAll" ) );
+    }
+
     public AuthorizationHelper ( final BundleContext context, final boolean logAll ) throws InvalidSyntaxException
     {
         super ( context );
