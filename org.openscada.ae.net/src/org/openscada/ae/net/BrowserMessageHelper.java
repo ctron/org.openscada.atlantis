@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.net;
 
 import java.util.ArrayList;
@@ -25,13 +44,13 @@ public class BrowserMessageHelper
             return null;
         }
 
-        List<BrowserEntry> result = new ArrayList<BrowserEntry> ();
+        final List<BrowserEntry> result = new ArrayList<BrowserEntry> ();
 
-        ListValue value = (ListValue)baseValue;
+        final ListValue value = (ListValue)baseValue;
 
-        for ( Value entryValue : value.getValues () )
+        for ( final Value entryValue : value.getValues () )
         {
-            BrowserEntry entry = fromValueEntry ( entryValue );
+            final BrowserEntry entry = fromValueEntry ( entryValue );
             if ( entry != null )
             {
                 result.add ( entry );
@@ -48,15 +67,15 @@ public class BrowserMessageHelper
 
     private static Set<BrowserType> getTypes ( final Value value )
     {
-        EnumSet<BrowserType> result = EnumSet.noneOf ( BrowserType.class );
+        final EnumSet<BrowserType> result = EnumSet.noneOf ( BrowserType.class );
 
         if ( value instanceof ListValue )
         {
-            for ( Value entry : ( (ListValue)value ).getValues () )
+            for ( final Value entry : ( (ListValue)value ).getValues () )
             {
                 if ( entry instanceof StringValue )
                 {
-                    BrowserType type = BrowserType.valueOf ( ( (StringValue)entry ).getValue () );
+                    final BrowserType type = BrowserType.valueOf ( ( (StringValue)entry ).getValue () );
                     if ( type != null )
                     {
                         result.add ( type );
@@ -78,19 +97,19 @@ public class BrowserMessageHelper
             return null;
         }
 
-        MapValue value = (MapValue)entryValue;
+        final MapValue value = (MapValue)entryValue;
         try
         {
 
-            String id = ( ( (StringValue)value.get ( "id" ) ).getValue () );
+            final String id = ( (StringValue)value.get ( "id" ) ).getValue ();
 
-            Set<BrowserType> types = getTypes ( value.get ( "types" ) );
+            final Set<BrowserType> types = getTypes ( value.get ( "types" ) );
             if ( types == null )
             {
                 return null;
             }
 
-            Value attributes = value.get ( "attributes" );
+            final Value attributes = value.get ( "attributes" );
 
             if ( ! ( attributes instanceof MapValue ) )
             {
@@ -99,11 +118,11 @@ public class BrowserMessageHelper
 
             return new BrowserEntry ( id, types, MessageHelper.mapToAttributes ( (MapValue)attributes ) );
         }
-        catch ( ClassCastException e )
+        catch ( final ClassCastException e )
         {
             return null;
         }
-        catch ( NullPointerException e )
+        catch ( final NullPointerException e )
         {
             return null;
         }
@@ -111,11 +130,11 @@ public class BrowserMessageHelper
 
     public static Value toValue ( final BrowserEntry[] added )
     {
-        ListValue result = new ListValue ();
+        final ListValue result = new ListValue ();
 
         if ( added != null )
         {
-            for ( BrowserEntry entry : added )
+            for ( final BrowserEntry entry : added )
             {
                 result.add ( toValue ( entry ) );
             }
@@ -126,11 +145,11 @@ public class BrowserMessageHelper
 
     private static Value toValue ( final BrowserEntry entry )
     {
-        MapValue value = new MapValue ();
+        final MapValue value = new MapValue ();
 
         value.put ( "id", new StringValue ( entry.getId () ) );
-        ListValue types = new ListValue ();
-        for ( BrowserType type : entry.getTypes () )
+        final ListValue types = new ListValue ();
+        for ( final BrowserType type : entry.getTypes () )
         {
             types.add ( new StringValue ( type.toString () ) );
         }
@@ -147,9 +166,9 @@ public class BrowserMessageHelper
             return new VoidValue ();
         }
 
-        ListValue result = new ListValue ();
+        final ListValue result = new ListValue ();
 
-        for ( String entry : removed )
+        for ( final String entry : removed )
         {
             result.add ( new StringValue ( entry ) );
         }
@@ -164,8 +183,8 @@ public class BrowserMessageHelper
             return null;
         }
 
-        Set<String> removed = new HashSet<String> ();
-        for ( Value entryValue : ( (ListValue)value ).getValues () )
+        final Set<String> removed = new HashSet<String> ();
+        for ( final Value entryValue : ( (ListValue)value ).getValues () )
         {
             if ( entryValue instanceof StringValue )
             {
