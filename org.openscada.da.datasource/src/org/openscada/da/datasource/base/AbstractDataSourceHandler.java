@@ -20,6 +20,7 @@
 package org.openscada.da.datasource.base;
 
 import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openscada.da.client.DataItemValue;
@@ -58,6 +59,8 @@ public abstract class AbstractDataSourceHandler extends AbstractDataSource
 
     private final Lock dataSourceWriteLock;
 
+    private final Lock trackerLock;
+
     public AbstractDataSourceHandler ( final ObjectPoolTracker poolTracker )
     {
         this.poolTracker = poolTracker;
@@ -80,6 +83,8 @@ public abstract class AbstractDataSourceHandler extends AbstractDataSource
         final ReentrantReadWriteLock lock = new ReentrantReadWriteLock ();
         this.dataSourceReadLock = lock.readLock ();
         this.dataSourceWriteLock = lock.writeLock ();
+
+        this.trackerLock = new ReentrantLock ();
     }
 
     protected abstract void stateChanged ( DataItemValue value );
@@ -132,7 +137,7 @@ public abstract class AbstractDataSourceHandler extends AbstractDataSource
 
         try
         {
-            this.dataSourceWriteLock.lock ();
+            this.trackerLock.lock ();
 
             if ( this.tracker != null )
             {
@@ -148,7 +153,7 @@ public abstract class AbstractDataSourceHandler extends AbstractDataSource
         }
         finally
         {
-            this.dataSourceWriteLock.unlock ();
+            this.trackerLock.unlock ();
         }
     }
 
