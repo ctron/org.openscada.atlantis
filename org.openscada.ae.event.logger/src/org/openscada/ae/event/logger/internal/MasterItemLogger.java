@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.event.logger.internal;
 
 import java.util.Date;
@@ -8,6 +27,7 @@ import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
@@ -66,34 +86,59 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     @Override
     public WriteRequestResult processWrite ( final WriteRequest request )
     {
+
         if ( request.getValue () != null )
         {
-            final EventBuilder builder = Event.create ();
-            builder.sourceTimestamp ( new Date () );
-            builder.attribute ( Event.Fields.SOURCE, this.source );
-            if ( this.itemId != null )
-            {
-                builder.attribute ( Event.Fields.ITEM, this.itemId );
-            }
-            builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE" );
-            builder.attribute ( Event.Fields.MONITOR_TYPE, "LOG" );
+            final EventBuilder builder = createEvent ( request );
+
             builder.attribute ( Event.Fields.VALUE, request.getValue () );
             builder.attribute ( Event.Fields.MESSAGE, "Write main value" );
 
-            final WriteInformation wi = request.getWriteInformation ();
-            if ( wi != null )
-            {
-                final UserInformation ui = wi.getUserInformation ();
-                if ( ui != null )
-                {
-                    builder.attribute ( Fields.ACTOR_NAME, ui.getName () );
-                    builder.attribute ( Fields.ACTOR_TYPE, "USER" );
-                }
-            }
+            this.eventProcessor.publishEvent ( builder.build () );
+        }
+        if ( request.getAttributes () != null && !request.getAttributes ().isEmpty () )
+        {
+            final EventBuilder builder = createEvent ( request );
+
+            builder.attribute ( Event.Fields.VALUE, formatAttributes ( request.getAttributes () ) );
+            builder.attribute ( Event.Fields.MESSAGE, "Write attributes" );
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
+
+        // return "no-change"
         return null;
+    }
+
+    protected Variant formatAttributes ( final Map<String, Variant> attributes )
+    {
+        return Variant.valueOf ( attributes.toString () );
+    }
+
+    protected EventBuilder createEvent ( final WriteRequest request )
+    {
+        final EventBuilder builder = Event.create ();
+        builder.sourceTimestamp ( new Date () );
+
+        builder.attribute ( Event.Fields.SOURCE, this.source );
+        if ( this.itemId != null )
+        {
+            builder.attribute ( Event.Fields.ITEM, this.itemId );
+        }
+        builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE" );
+        builder.attribute ( Event.Fields.MONITOR_TYPE, "LOG" );
+
+        final WriteInformation wi = request.getWriteInformation ();
+        if ( wi != null )
+        {
+            final UserInformation ui = wi.getUserInformation ();
+            if ( ui != null )
+            {
+                builder.attribute ( Fields.ACTOR_NAME, ui.getName () );
+                builder.attribute ( Fields.ACTOR_TYPE, "USER" );
+            }
+        }
+        return builder;
     }
 
 }
