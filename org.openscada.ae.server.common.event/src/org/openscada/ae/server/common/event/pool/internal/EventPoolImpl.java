@@ -1,8 +1,13 @@
 package org.openscada.ae.server.common.event.pool.internal;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Comparator;
+import java.util.GregorianCalendar;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
@@ -19,10 +24,18 @@ import org.openscada.utils.collection.BoundedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Iterators;
+import com.google.common.collect.UnmodifiableIterator;
+
 public class EventPoolImpl implements EventListener, EventQuery
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( EventPoolImpl.class );
+
+    private final static int daysToRetrieve = 90;
+
+    private static final String isoDatePattern = "yyyy-MM-dd HH:mm:ss.SSS";
+
+    private static final DateFormat isoDateFormat = new SimpleDateFormat ( isoDatePattern );
 
     private final BoundedQueue<Event> events;
 
@@ -58,8 +71,10 @@ public class EventPoolImpl implements EventListener, EventQuery
         // add to event manager
         this.eventManager.addEventListener ( this );
 
-        // load initial set from storage
-        final Query query = this.storage.query ( this.filter );
+        // load initial set from storage, but restrict it to *daysToRetrieve* days
+        Calendar cal = new GregorianCalendar ();
+        cal.add ( Calendar.DAY_OF_YEAR, -daysToRetrieve );
+        final Query query = this.storage.query ( "(&" + this.filter + "(sourceTimestamp>=" + isoDateFormat.format ( cal.getTime () ) + "))" );
         try
         {
             final Collection<Event> result = query.getNext ( this.events.getCapacity () );
@@ -118,7 +133,12 @@ public class EventPoolImpl implements EventListener, EventQuery
 
             public void run ()
             {
-                eventListener.handleEvent ( EventPoolImpl.this.events.toArray ( new Event[EventPoolImpl.this.events.size ()] ) );
+                UnmodifiableIterator<List<Event>> it = Iterators.partition ( EventPoolImpl.this.events.iterator (), 250 );
+                while ( it.hasNext () )
+                {
+                    final List<org.openscada.ae.Event> chunk = it.next ();
+                    eventListener.handleEvent ( chunk.toArray ( new Event[chunk.size ()] ) );
+                }
             }
         } );
     }
