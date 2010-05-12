@@ -117,8 +117,10 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
     protected EventBuilder createEvent ( final WriteRequest request )
     {
+
         final EventBuilder builder = Event.create ();
         builder.sourceTimestamp ( new Date () );
+        builder.attributes ( this.eventAttributes );
 
         builder.attribute ( Event.Fields.SOURCE, this.source );
         if ( this.itemId != null )
