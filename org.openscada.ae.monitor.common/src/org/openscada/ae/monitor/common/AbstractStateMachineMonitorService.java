@@ -261,6 +261,8 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     {
         final EventBuilder builder = createEventBuilder ();
 
+        builder.attributes ( this.eventInformationAttributes );
+
         final Date now = new Date ();
         builder.entryTimestamp ( now );
         if ( timestamp != null )
@@ -397,8 +399,6 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void publishEvent ( final EventBuilder builder )
     {
-        injectEventAttributes ( builder );
-
         if ( isActivated () )
         {
             this.eventProcessor.publishEvent ( builder.build () );

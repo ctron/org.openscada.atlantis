@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.regex.Pattern;
 
+import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.EventHelper;
 import org.openscada.ae.monitor.dataitem.AbstractVariantMonitor;
@@ -92,7 +93,9 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         final Collection<Variant> newReferenceList = parseValues ( cfg.getString ( "referenceList", "" ) );
         if ( isDifferent ( this.referenceList, newReferenceList ) )
         {
-            publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Change reference value list", Variant.valueOf ( newReferenceList ), new Date () ) );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( this.getId (), "Change reference value list", Variant.valueOf ( newReferenceList ), new Date () );
+            injectEventAttributes ( builder );
+            publishEvent ( builder );
             this.referenceList = newReferenceList;
         }
 
@@ -100,7 +103,10 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         final boolean listIsAlarm = cfg.getBoolean ( "listIsAlarm", true );
         if ( isDifferent ( this.listIsAlarm, listIsAlarm ) )
         {
-            publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Items in reference list are alarm", Variant.valueOf ( listIsAlarm ), new Date () ) );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( this.getId (), "Items in reference list are alarm", Variant.valueOf ( listIsAlarm ), new Date () );
+            injectEventAttributes ( builder );
+            publishEvent ( builder );
+
             this.listIsAlarm = listIsAlarm;
         }
 

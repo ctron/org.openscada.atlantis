@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.EventHelper;
 import org.openscada.ae.monitor.dataitem.AbstractBooleanMonitor;
@@ -75,7 +76,9 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
         final boolean newReference = Boolean.parseBoolean ( properties.get ( "reference" ) );
         if ( isDifferent ( this.reference, newReference ) )
         {
-            publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Change reference value", Variant.valueOf ( newReference ), new Date () ) );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( this.getId (), "Change reference value", Variant.valueOf ( newReference ), new Date () );
+            injectEventAttributes ( builder );
+            publishEvent ( builder );
             this.reference = newReference;
         }
 

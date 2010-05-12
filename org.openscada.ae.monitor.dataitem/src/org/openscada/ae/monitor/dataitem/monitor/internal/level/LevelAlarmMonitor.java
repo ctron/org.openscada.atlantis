@@ -23,6 +23,7 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.EventHelper;
 import org.openscada.ae.monitor.dataitem.AbstractNumericMonitor;
@@ -96,7 +97,9 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             this.limit = newLimit;
             if ( !isInitialUpdate () )
             {
-                publishEvent ( EventHelper.newConfigurationEvent ( this.getId (), "Change preset", Variant.valueOf ( newLimit ), new Date () ) );
+                final EventBuilder builder = EventHelper.newConfigurationEvent ( this.getId (), "Change preset", Variant.valueOf ( newLimit ), new Date () );
+                injectEventAttributes ( builder );
+                publishEvent ( builder );
             }
         }
 
