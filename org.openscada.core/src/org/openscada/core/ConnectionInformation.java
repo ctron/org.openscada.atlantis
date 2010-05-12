@@ -442,7 +442,7 @@ public class ConnectionInformation implements Cloneable
     }
 
     @Override
-    public Object clone ()
+    public ConnectionInformation clone ()
     {
         final ConnectionInformation connectionInformation = new ConnectionInformation ();
 
@@ -454,5 +454,38 @@ public class ConnectionInformation implements Cloneable
         connectionInformation.target = this.target;
 
         return connectionInformation;
+    }
+
+    /**
+     * Returns a string with the password masked out if one is set.
+     * <p>
+     * The method actually replaces the password with the mask if it is set
+     * and calls {@link #toString()} on the result. The current instance is not altered
+     * in the process.
+     * </p>
+     * @param mask The mask to use instead of the password
+     * @return the masked string
+     * @see #toString()
+     */
+    public String toMaskedString ( final String mask )
+    {
+        final ConnectionInformation connectionInformation = this.clone ();
+        final String password = connectionInformation.getPassword ();
+        if ( password != null )
+        {
+            connectionInformation.setPassword ( mask );
+        }
+        return connectionInformation.toString ();
+    }
+
+    /**
+     * Return a masked string with the default mask
+     * 
+     * @return a masked string
+     * @see #toMaskedString(String)
+     */
+    public String toMaskedString ()
+    {
+        return toMaskedString ( "***" );
     }
 }
