@@ -105,6 +105,14 @@ public class HiveImpl extends HiveCommon
 
         authorizeSessionPriviliges ( properties, result, sessionResultProperties );
 
+        if ( result != null && result.getRoles () != null )
+        {
+            for ( final String role : result.getRoles () )
+            {
+                sessionResultProperties.put ( "userInformation.roles." + role, "true" );
+            }
+        }
+
         return result;
     }
 
