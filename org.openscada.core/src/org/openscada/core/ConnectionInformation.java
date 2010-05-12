@@ -463,7 +463,8 @@ public class ConnectionInformation implements Cloneable
      * and calls {@link #toString()} on the result. The current instance is not altered
      * in the process.
      * </p>
-     * @param mask The mask to use instead of the password
+     * @param mask The mask to use instead of the password or <code>null</code> if the password
+     * should simply be removed
      * @return the masked string
      * @see #toString()
      */
