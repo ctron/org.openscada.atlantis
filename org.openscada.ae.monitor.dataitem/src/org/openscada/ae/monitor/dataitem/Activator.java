@@ -98,7 +98,7 @@ public class Activator implements BundleActivator
 
         // monitor service
         {
-            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor );
+            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, 4000 );
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BooleanAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Boolean alarms" );
@@ -128,7 +128,7 @@ public class Activator implements BundleActivator
 
         // list based alarm monitor
         {
-            final ListAlarmMonitorFactoryImpl factory = new ListAlarmMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor );
+            final ListAlarmMonitorFactoryImpl factory = new ListAlarmMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, 4000 );
             properties = new Hashtable<Object, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ListAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Reference list alarm monitor" );

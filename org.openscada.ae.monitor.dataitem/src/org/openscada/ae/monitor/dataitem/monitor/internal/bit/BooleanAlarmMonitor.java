@@ -41,9 +41,18 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
 
     private boolean reference;
 
-    public BooleanAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id )
+    private final int defaultPriority;
+
+    public BooleanAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int defaultPriority )
     {
         super ( context, executor, poolTracker, eventProcessor, id, "ae.monitor.booleanAlarm", "VALUE" );
+        this.defaultPriority = defaultPriority;
+    }
+
+    @Override
+    protected int getDefaultPriority ()
+    {
+        return this.defaultPriority;
     }
 
     @Override

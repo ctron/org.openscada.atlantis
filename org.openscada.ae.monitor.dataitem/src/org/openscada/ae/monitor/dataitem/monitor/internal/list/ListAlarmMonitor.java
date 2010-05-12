@@ -55,9 +55,12 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
 
     private boolean listIsAlarm;
 
-    public ListAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id )
+    private final int defaultPriority;
+
+    public ListAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int defaultPriority )
     {
         super ( context, executor, poolTracker, eventProcessor, id, id, "VALUE" );
+        this.defaultPriority = defaultPriority;
     }
 
     @Override
@@ -70,6 +73,12 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
     protected String getConfigurationId ()
     {
         return getId ();
+    }
+
+    @Override
+    protected int getDefaultPriority ()
+    {
+        return this.defaultPriority;
     }
 
     @Override

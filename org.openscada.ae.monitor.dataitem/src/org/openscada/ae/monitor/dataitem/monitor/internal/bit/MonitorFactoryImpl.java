@@ -34,17 +34,20 @@ public class MonitorFactoryImpl extends AbstractMonitorFactory
 
     private final Executor executor;
 
-    public MonitorFactoryImpl ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor )
+    private final int defaultPriority;
+
+    public MonitorFactoryImpl ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor, final int defaultPriority )
     {
         super ( context, servicePool, eventProcessor );
         this.poolTracker = poolTracker;
         this.executor = executor;
+        this.defaultPriority = defaultPriority;
     }
 
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new BooleanAlarmMonitor ( this.context, this.executor, this.poolTracker, eventProcessor, configurationId );
+        return new BooleanAlarmMonitor ( this.context, this.executor, this.poolTracker, eventProcessor, configurationId, this.defaultPriority );
     }
 
 }
