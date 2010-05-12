@@ -178,11 +178,11 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
     {
         if ( this.referenceList.contains ( value ) )
         {
-            return this.listIsAlarm;
+            return !this.listIsAlarm;
         }
         else
         {
-            return !this.listIsAlarm;
+            return this.listIsAlarm;
         }
     }
 
