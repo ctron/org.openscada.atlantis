@@ -33,6 +33,8 @@ public class EventPoolImpl implements EventListener, EventQuery
 
     private final static int daysToRetrieve = 90;
 
+    private final static int chunkSize = 250;
+
     private static final String isoDatePattern = "yyyy-MM-dd HH:mm:ss.SSS";
 
     private static final DateFormat isoDateFormat = new SimpleDateFormat ( isoDatePattern );
@@ -80,7 +82,13 @@ public class EventPoolImpl implements EventListener, EventQuery
             final Collection<Event> result = query.getNext ( this.events.getCapacity () );
             logger.debug ( "Loaded {} entries from storage", result.size () );
             this.events.addAll ( result );
-            notifyEvent ( result.toArray ( new Event[result.size ()] ) );
+
+            UnmodifiableIterator<List<Event>> it = Iterators.partition ( result.iterator (), chunkSize );
+            while ( it.hasNext () )
+            {
+                final List<org.openscada.ae.Event> chunk = it.next ();
+                notifyEvent ( chunk.toArray ( new Event[chunk.size ()] ) );
+            }
         }
         finally
         {
@@ -133,7 +141,7 @@ public class EventPoolImpl implements EventListener, EventQuery
 
             public void run ()
             {
-                UnmodifiableIterator<List<Event>> it = Iterators.partition ( EventPoolImpl.this.events.iterator (), 250 );
+                UnmodifiableIterator<List<Event>> it = Iterators.partition ( EventPoolImpl.this.events.iterator (), chunkSize );
                 while ( it.hasNext () )
                 {
                     final List<org.openscada.ae.Event> chunk = it.next ();
