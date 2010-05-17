@@ -29,7 +29,7 @@ public abstract class AbstractMonitorService implements MonitorService
         this.executor = executor;
         this.id = id;
 
-        this.currentState = new ConditionStatusInformation ( id, ConditionStatus.INIT, new Date (), null, null, null );
+        this.currentState = new ConditionStatusInformation ( id, ConditionStatus.INIT, new Date (), null, null, null, null );
     }
 
     public String getId ()

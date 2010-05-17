@@ -15,6 +15,7 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.StateInformation.State;
 import org.openscada.core.Variant;
 import org.openscada.sec.UserInformation;
+import org.openscada.utils.collection.MapBuilder;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -306,7 +307,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         {
             // if we are initialized we send out our current status
             this.initSent = false;
-            csi = new ConditionStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser () );
+            final MapBuilder<String, Variant> mapBuilder = new MapBuilder<String, Variant> ();
+            buildMonitorAttributes ( mapBuilder );
+            csi = new ConditionStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser (), mapBuilder.getMap () );
             storeData ( this.information );
         }
         else
@@ -316,7 +319,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             // otherwise send out our dummy status until we got initialized
             if ( !this.initSent )
             {
-                csi = new ConditionStatusInformation ( getId (), ConditionStatus.INIT, new Date (), Variant.NULL, null, null );
+                csi = new ConditionStatusInformation ( getId (), ConditionStatus.INIT, new Date (), Variant.NULL, null, null, null );
                 this.initSent = true;
             }
             else
@@ -330,6 +333,11 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             notifyStateChange ( csi );
         }
 
+    }
+
+    protected void buildMonitorAttributes ( final MapBuilder<String, Variant> builder )
+    {
+        builder.putAll ( this.eventInformationAttributes );
     }
 
     private synchronized void applyAndSendStatus ( final StateInformation newInformation )
