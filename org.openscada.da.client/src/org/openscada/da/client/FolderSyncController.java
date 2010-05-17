@@ -24,13 +24,14 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FolderSyncController extends FolderWatcher
 {
-    private static Logger logger = Logger.getLogger ( FolderSyncController.class );
+    private final static Logger logger = LoggerFactory.getLogger ( FolderSyncController.class );
 
     private final Set<FolderListener> listener = new CopyOnWriteArraySet<FolderListener> ();
 

@@ -25,17 +25,18 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Observable;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataItem extends Observable
 {
     private static final String PROP_VALUE = "snapshotValue";
 
-    private static Logger logger = Logger.getLogger ( DataItem.class );
+    private final static Logger logger = LoggerFactory.getLogger ( DataItem.class );
 
     private final String itemId;
 

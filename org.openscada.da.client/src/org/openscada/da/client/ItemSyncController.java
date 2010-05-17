@@ -23,20 +23,21 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A controller that synchronizes the subscription state for one item.
- * <br>
  * @author Jens Reimann <jens.reimann@inavare.net>
  *
  */
 public class ItemSyncController implements ItemUpdateListener
 {
-    private static Logger log = Logger.getLogger ( ItemSyncController.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ItemSyncController.class );
 
     private final org.openscada.da.client.Connection connection;
 
@@ -195,7 +196,7 @@ public class ItemSyncController implements ItemUpdateListener
     {
         try
         {
-            log.debug ( "Syncing listen state: active" );
+            logger.debug ( "Syncing listen state: active" );
             this.subscribed = true;
             this.connection.subscribeItem ( this.itemId );
         }
@@ -209,7 +210,7 @@ public class ItemSyncController implements ItemUpdateListener
     {
         try
         {
-            log.debug ( "Syncing listen state: inactive" );
+            logger.debug ( "Syncing listen state: inactive" );
             this.subscribed = false;
             this.connection.unsubscribeItem ( this.itemId );
             notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
@@ -222,7 +223,7 @@ public class ItemSyncController implements ItemUpdateListener
 
     private synchronized void handleError ( final Throwable e )
     {
-        log.warn ( "Failed to subscribe", e );
+        logger.warn ( "Failed to subscribe", e );
         this.subscribed = false;
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }

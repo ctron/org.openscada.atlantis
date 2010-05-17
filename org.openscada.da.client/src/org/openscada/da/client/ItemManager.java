@@ -23,13 +23,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ItemManager implements ConnectionStateListener
 {
-    private static Logger log = Logger.getLogger ( ItemManager.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ItemManager.class );
 
     protected org.openscada.da.client.Connection connection = null;
 
@@ -92,26 +94,26 @@ public class ItemManager implements ConnectionStateListener
      */
     protected synchronized void resyncAllItems ()
     {
-        log.debug ( "Syncing all items" );
+        logger.debug ( "Syncing all items" );
 
         for ( final Map.Entry<String, ItemSyncController> entry : this.itemListeners.entrySet () )
         {
             entry.getValue ().sync ( true );
         }
 
-        log.debug ( "re-sync complete" );
+        logger.debug ( "re-sync complete" );
     }
 
     protected synchronized void disconnectAllItems ()
     {
-        log.debug ( "Disconnecting all items" );
+        logger.debug ( "Disconnecting all items" );
 
         for ( final Map.Entry<String, ItemSyncController> entry : this.itemListeners.entrySet () )
         {
             entry.getValue ().disconnect ();
         }
 
-        log.debug ( "Disconnecting all items: complete" );
+        logger.debug ( "Disconnecting all items: complete" );
     }
 
     public synchronized void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
