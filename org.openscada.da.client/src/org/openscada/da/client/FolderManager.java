@@ -99,7 +99,13 @@ public class FolderManager implements ConnectionStateListener
         {
             for ( final Map.Entry<Location, FolderSyncController> entry : this.folderListeners.entrySet () )
             {
-                entry.getValue ().disconnected ();
+                this.connection.getExecutor ().execute ( new Runnable () {
+
+                    public void run ()
+                    {
+                        entry.getValue ().disconnected ();
+                    }
+                } );
             }
         }
     }
