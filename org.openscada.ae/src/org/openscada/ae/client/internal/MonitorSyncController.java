@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.client.internal;
 
 import java.util.Arrays;
@@ -43,20 +62,20 @@ public class MonitorSyncController implements ConditionListener
         if ( removed != null )
         {
             final Set<ConditionStatusInformation> toRemove = new HashSet<ConditionStatusInformation> ();
-            List<String> removedList = Arrays.asList ( removed );
-            for ( ConditionStatusInformation monitor : this.cachedMonitors )
+            final List<String> removedList = Arrays.asList ( removed );
+            for ( final ConditionStatusInformation monitor : this.cachedMonitors )
             {
                 if ( removedList.contains ( monitor.getId () ) )
                 {
                     toRemove.add ( monitor );
                 }
             }
-            for ( ConditionStatusInformation monitor : toRemove )
+            for ( final ConditionStatusInformation monitor : toRemove )
             {
                 this.cachedMonitors.remove ( monitor );
             }
         }
-        for ( ConditionListener listener : this.listeners )
+        for ( final ConditionListener listener : this.listeners )
         {
             listener.dataChanged ( addedOrUpdated, removed );
         }
@@ -71,7 +90,7 @@ public class MonitorSyncController implements ConditionListener
     public synchronized boolean removeListener ( final ConditionListener listener )
     {
         this.listeners.remove ( listener );
-        return ( this.listeners.size () == 0 );
+        return this.listeners.size () == 0;
     }
 
     public void statusChanged ( final SubscriptionState state )
@@ -79,7 +98,7 @@ public class MonitorSyncController implements ConditionListener
         switch ( state )
         {
         case CONNECTED:
-            for ( ConditionListener listener : this.listeners )
+            for ( final ConditionListener listener : this.listeners )
             {
                 listener.dataChanged ( this.cachedMonitors.toArray ( new ConditionStatusInformation[] {} ), null );
             }
