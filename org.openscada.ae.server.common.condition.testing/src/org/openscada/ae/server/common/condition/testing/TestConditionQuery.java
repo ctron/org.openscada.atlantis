@@ -30,7 +30,7 @@ public class TestConditionQuery extends ConditionQuery
 
     protected void tick ()
     {
-        updateData ( new ConditionStatusInformation[] { new ConditionStatusInformation ( "test", r.nextBoolean () ? ConditionStatus.OK : ConditionStatus.NOT_OK, new Date (), new Variant (), new Date (), "system" ) }, null );
+        updateData ( new ConditionStatusInformation[] { new ConditionStatusInformation ( "test", r.nextBoolean () ? ConditionStatus.OK : ConditionStatus.NOT_OK, new Date (), new Variant (), new Date (), "system", null ) }, null );
     }
 
     public void stop ()
