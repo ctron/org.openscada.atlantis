@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.openscada.ae.ConditionStatus;
@@ -104,7 +105,9 @@ public class ConditionMessageHelper
                 return null;
             }
 
-            return new ConditionStatusInformation ( id, status, statusTimestamp, currentValue, lastAknTimestamp, lastAknUser );
+            final Map<String, Variant> attributes = MessageHelper.mapToAttributes ( (MapValue)value.get ( "attributes" ) );
+
+            return new ConditionStatusInformation ( id, status, statusTimestamp, currentValue, lastAknTimestamp, lastAknUser, attributes );
         }
         catch ( final ClassCastException e )
         {
