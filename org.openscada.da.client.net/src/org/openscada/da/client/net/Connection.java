@@ -98,7 +98,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     {
         super ( connectionInformantion );
 
-        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ConnectionExecutor" ) );
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + connectionInformantion.toMaskedString () ) );
         init ();
     }
 
