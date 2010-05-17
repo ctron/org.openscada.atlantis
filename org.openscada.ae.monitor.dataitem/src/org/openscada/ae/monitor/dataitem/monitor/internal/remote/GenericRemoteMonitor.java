@@ -22,7 +22,6 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.remote;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -57,22 +56,6 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 {
     private final static Logger logger = LoggerFactory.getLogger ( GenericRemoteMonitor.class );
 
-    protected static Map<String, Variant> convertAttributes ( final Map<String, String> parameters )
-    {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 1 );
-
-        for ( final Map.Entry<String, String> entry : parameters.entrySet () )
-        {
-            final String key = entry.getKey ();
-            if ( key.startsWith ( "info." ) )
-            {
-                attributes.put ( key.substring ( "info.".length () ), new Variant ( entry.getValue () ) );
-            }
-        }
-
-        return attributes;
-    }
-
     protected final String id;
 
     protected ConditionStatus state;
@@ -82,8 +65,6 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
     private final Set<ConditionListener> listeners = new HashSet<ConditionListener> ();
 
     protected final EventProcessor eventProcessor;
-
-    protected Map<String, Variant> attributes = new HashMap<String, Variant> ( 0 );
 
     protected final Executor executor;
 
@@ -307,13 +288,6 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         return handleUpdate ( value );
     }
 
-    @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
-    {
-        super.update ( parameters );
-        this.attributes = convertAttributes ( parameters );
-    }
-
     private ConditionStatusInformation createStatus ()
     {
         Date timestamp = this.timestamp;
@@ -324,12 +298,17 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
         if ( this.persistentState == null )
         {
-            return new ConditionStatusInformation ( this.id, ConditionStatus.INIT, timestamp, null, this.aknTimestamp, this.lastAckUser );
+            return new ConditionStatusInformation ( this.id, ConditionStatus.INIT, timestamp, null, this.aknTimestamp, this.lastAckUser, getMonitorAttributes () );
         }
         else
         {
-            return new ConditionStatusInformation ( this.id, this.state, timestamp, null, this.aknTimestamp, this.lastAckUser );
+            return new ConditionStatusInformation ( this.id, this.state, timestamp, null, this.aknTimestamp, this.lastAckUser, getMonitorAttributes () );
         }
+    }
+
+    protected Map<String, Variant> getMonitorAttributes ()
+    {
+        return this.eventAttributes;
     }
 
     /**
