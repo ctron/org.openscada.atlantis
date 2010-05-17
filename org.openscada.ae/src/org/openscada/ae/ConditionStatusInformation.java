@@ -31,7 +31,8 @@ import org.openscada.utils.lang.Immutable;
 @Immutable
 public class ConditionStatusInformation implements Serializable
 {
-    private static final long serialVersionUID = 7037926327295003076L;
+
+    private static final long serialVersionUID = 6138369511783020510L;
 
     private final String id;
 
