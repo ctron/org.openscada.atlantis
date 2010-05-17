@@ -105,7 +105,15 @@ public class ConditionMessageHelper
                 return null;
             }
 
-            final Map<String, Variant> attributes = MessageHelper.mapToAttributes ( (MapValue)value.get ( "attributes" ) );
+            final Map<String, Variant> attributes;
+            if ( value.get ( "attributes" ) != null )
+            {
+                attributes = MessageHelper.mapToAttributes ( (MapValue)value.get ( "attributes" ) );
+            }
+            else
+            {
+                attributes = null;
+            }
 
             return new ConditionStatusInformation ( id, status, statusTimestamp, currentValue, lastAknTimestamp, lastAknUser, attributes );
         }
@@ -153,6 +161,10 @@ public class ConditionMessageHelper
         if ( condition.getLastAknTimestamp () != null )
         {
             value.put ( "lastAknTimestamp", new LongValue ( condition.getLastAknTimestamp ().getTime () ) );
+        }
+        if ( condition.getAttributes () != null )
+        {
+            value.put ( "attributes", MessageHelper.attributesToMap ( condition.getAttributes () ) );
         }
 
         return value;
