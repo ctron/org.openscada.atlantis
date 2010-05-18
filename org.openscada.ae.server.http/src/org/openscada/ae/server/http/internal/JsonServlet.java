@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.server.http.monitor.EventMonitorEvaluator;
 
 public class JsonServlet extends HttpServlet
 {
@@ -37,9 +38,20 @@ public class JsonServlet extends HttpServlet
 
     private final EventProcessor eventProcessor;
 
-    public JsonServlet ( final EventProcessor eventProcessor )
+    private final EventMonitorEvaluator eventMonitorEvaluator;
+
+    public JsonServlet ( final EventProcessor eventProcessor, final EventMonitorEvaluator evaluator )
     {
+        if ( eventProcessor == null )
+        {
+            throw new IllegalArgumentException ( "eventProcessor must not be null" );
+        }
+        if ( evaluator == null )
+        {
+            throw new IllegalArgumentException ( "evaluator must not be null" );
+        }
         this.eventProcessor = eventProcessor;
+        this.eventMonitorEvaluator = evaluator;
     }
 
     @Override
@@ -63,7 +75,8 @@ public class JsonServlet extends HttpServlet
             }
             final Event event = EventSerializer.deserializeEvent ( sb.toString () );
             // publish event
-            this.eventProcessor.publishEvent ( event );
+            final Event evalEvent = this.eventMonitorEvaluator.evaluate ( event );
+            this.eventProcessor.publishEvent ( evalEvent );
             // return output
             response.setContentType ( "text/html" );
             final PrintWriter pw = new PrintWriter ( response.getOutputStream () );
