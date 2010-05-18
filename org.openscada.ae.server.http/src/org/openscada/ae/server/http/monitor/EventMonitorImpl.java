@@ -20,6 +20,8 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
 {
     private EventMatcher matcher = null;
 
+    private String monitorType = "EXT";
+
     public EventMonitorImpl ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String id )
     {
         super ( context, executor, eventProcessor, id );
@@ -33,11 +35,17 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
         setActive ( cfg.getBoolean ( "active", true ) );
         setRequireAkn ( cfg.getBoolean ( "requireAck", true ) );
         setEventMatcher ( cfg.getString ( "filter", "" ) );
+        setMonitorType ( cfg.getString ( "monitorType", "EXT" ) );
     }
 
     private void setEventMatcher ( final String filter )
     {
         this.matcher = new EventMatcherImpl ( filter );
+    }
+
+    private void setMonitorType ( final String monitorType )
+    {
+        this.monitorType = monitorType;
     }
 
     private static Map<String, Variant> convertAttributes ( final ConfigurationDataHelper cfg )
@@ -61,11 +69,40 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
                 // FIXME: just for now, the real implementation should set AKN directly
                 this.setFailure ( new Variant (), event.getSourceTimestamp () );
                 this.setOk ( new Variant (), event.getSourceTimestamp () );
-                final Event resultEvent = Event.create ().event ( event ).attribute ( Fields.MONITOR_TYPE, getId () ).build ();
+                final Event resultEvent = Event.create () //
+                .event ( event ) //
+                .attribute ( Fields.COMMENT, annotateCommentWithSource ( event ) ) //
+                .attribute ( Fields.SOURCE, this.getId () ) //
+                .attribute ( Fields.MONITOR_TYPE, this.monitorType )//
+                .build ();
                 return new Pair<Boolean, Event> ( true, resultEvent );
             }
         }
         return new Pair<Boolean, Event> ( false, event );
+    }
+
+    private Variant annotateCommentWithSource ( final Event event )
+    {
+        StringBuilder sb = new StringBuilder ();
+        Variant originalComment = event.getField ( Fields.COMMENT );
+        Variant originalSource = event.getField ( Fields.SOURCE );
+        boolean commentThere = false;
+        if ( ( originalComment != null ) && originalComment.isString () && ( originalComment.asString ( "" ).length () > 0 ) )
+        {
+            commentThere = true;
+            sb.append ( originalComment.asString ( "" ) );
+        }
+        if ( ( originalSource != null ) && originalSource.isString () && ( originalSource.asString ( "" ).length () > 0 ) )
+        {
+            if ( commentThere )
+            {
+                sb.append ( "; " );
+            }
+            sb.append ( "original source: " );
+            sb.append ( originalSource.asString ( "" ) );
+        }
+
+        return new Variant ( sb.toString () );
     }
 
     @Override
