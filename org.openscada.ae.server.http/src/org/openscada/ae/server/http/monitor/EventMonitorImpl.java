@@ -20,7 +20,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
 {
     private EventMatcher matcher = null;
 
-    private String monitorType = "EXT";
+    private String monitorType = "EVENT";
 
     public EventMonitorImpl ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String id )
     {
@@ -35,7 +35,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
         setActive ( cfg.getBoolean ( "active", true ) );
         setRequireAkn ( cfg.getBoolean ( "requireAck", true ) );
         setEventMatcher ( cfg.getString ( "filter", "" ) );
-        setMonitorType ( cfg.getString ( "monitorType", "EXT" ) );
+        setMonitorType ( cfg.getString ( "monitorType", "EVENT" ) );
     }
 
     private void setEventMatcher ( final String filter )
