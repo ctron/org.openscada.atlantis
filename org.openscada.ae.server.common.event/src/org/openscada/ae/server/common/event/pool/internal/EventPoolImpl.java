@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.common.event.pool.internal;
 
 import java.text.DateFormat;
@@ -74,7 +93,7 @@ public class EventPoolImpl implements EventListener, EventQuery
         this.eventManager.addEventListener ( this );
 
         // load initial set from storage, but restrict it to *daysToRetrieve* days
-        Calendar cal = new GregorianCalendar ();
+        final Calendar cal = new GregorianCalendar ();
         cal.add ( Calendar.DAY_OF_YEAR, -daysToRetrieve );
         final Query query = this.storage.query ( "(&" + this.filter + "(sourceTimestamp>=" + isoDateFormat.format ( cal.getTime () ) + "))" );
         try
@@ -83,7 +102,7 @@ public class EventPoolImpl implements EventListener, EventQuery
             logger.debug ( "Loaded {} entries from storage", result.size () );
             this.events.addAll ( result );
 
-            UnmodifiableIterator<List<Event>> it = Iterators.partition ( result.iterator (), chunkSize );
+            final UnmodifiableIterator<List<Event>> it = Iterators.partition ( result.iterator (), chunkSize );
             while ( it.hasNext () )
             {
                 final List<org.openscada.ae.Event> chunk = it.next ();
@@ -141,7 +160,7 @@ public class EventPoolImpl implements EventListener, EventQuery
 
             public void run ()
             {
-                UnmodifiableIterator<List<Event>> it = Iterators.partition ( EventPoolImpl.this.events.iterator (), chunkSize );
+                final UnmodifiableIterator<List<Event>> it = Iterators.partition ( EventPoolImpl.this.events.iterator (), chunkSize );
                 while ( it.hasNext () )
                 {
                     final List<org.openscada.ae.Event> chunk = it.next ();

@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc;
 
 import java.util.ArrayList;
@@ -32,33 +51,33 @@ public class JdbcQuery implements Query
 
     private boolean hasMore = true;
 
-    private HqlConverter.HqlResult hqlResult;
-    
+    private final HqlConverter.HqlResult hqlResult;
+
     /**
      * @param jdbcStorageDAO
      * @param filter
      */
-    public JdbcQuery ( JdbcStorageDAO jdbcStorageDAO, Filter filter ) throws Exception
+    public JdbcQuery ( final JdbcStorageDAO jdbcStorageDAO, final Filter filter ) throws Exception
     {
         this.jdbcStorageDAO = jdbcStorageDAO;
         this.filter = filter;
         FilterUtils.toVariant ( this.filter );
-        hqlResult = HqlConverter.toHql ( filter );
+        this.hqlResult = HqlConverter.toHql ( filter );
     }
 
     /* (non-Javadoc)
      * @see org.openscada.ae.server.storage.Query#getNext(long)
      */
-    public Collection<Event> getNext ( long count ) throws Exception
+    public Collection<Event> getNext ( final long count ) throws Exception
     {
-        final List<MutableEvent> queryResult = jdbcStorageDAO.queryEventSlice ( hqlResult.getHql (), first, (int) count, hqlResult.getParameters () );
+        final List<MutableEvent> queryResult = this.jdbcStorageDAO.queryEventSlice ( this.hqlResult.getHql (), this.first, (int)count, this.hqlResult.getParameters () );
         final List<Event> result = new ArrayList<Event> ();
-        for ( MutableEvent m : queryResult )
+        for ( final MutableEvent m : queryResult )
         {
             result.add ( MutableEvent.toEvent ( m ) );
         }
-        first += result.size ();
-        hasMore = count >= result.size ();
+        this.first += result.size ();
+        this.hasMore = count >= result.size ();
         return result;
     }
 
@@ -67,7 +86,7 @@ public class JdbcQuery implements Query
      */
     public boolean hasMore ()
     {
-        return hasMore;
+        return this.hasMore;
     }
 
     /* (non-Javadoc)

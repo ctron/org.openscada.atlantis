@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.filter.internal;
 
 import java.beans.PropertyEditor;
@@ -139,7 +158,7 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
-        if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof UUID ) || ( assertion.getValue () instanceof Collection<?> ) ) )
+        if ( ! ( assertion.getValue () instanceof String || assertion.getValue () instanceof UUID || assertion.getValue () instanceof Collection<?> ) )
         {
             return false;
         }
@@ -147,17 +166,17 @@ public class EventMatcherImpl implements EventMatcher
         {
             return left.toString ().matches ( toRegEx ( (Collection<String>)assertion.getValue () ) );
         }
-        UUID right = UUID.fromString ( assertion.getValue ().toString () );
+        final UUID right = UUID.fromString ( assertion.getValue ().toString () );
         switch ( assertion.getAssertion () )
         {
         case LESSTHAN:
             return left.compareTo ( right ) == -1;
         case LESSEQ:
-            return ( left.compareTo ( right ) == -1 ) || ( left.compareTo ( right ) == 0 );
+            return left.compareTo ( right ) == -1 || left.compareTo ( right ) == 0;
         case EQUALITY:
             return left.compareTo ( right ) == 0;
         case GREATEREQ:
-            return ( left.compareTo ( right ) == 1 ) || ( left.compareTo ( right ) == 0 );
+            return left.compareTo ( right ) == 1 || left.compareTo ( right ) == 0;
         case GREATERTHAN:
             return left.compareTo ( right ) == 1;
         case APPROXIMATE:
@@ -177,7 +196,7 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
-        if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof Date ) || ( assertion.getValue () instanceof Collection<?> ) ) )
+        if ( ! ( assertion.getValue () instanceof String || assertion.getValue () instanceof Date || assertion.getValue () instanceof Collection<?> ) )
         {
             return false;
         }
@@ -188,7 +207,7 @@ public class EventMatcherImpl implements EventMatcher
         Date right = null;
         if ( assertion.getValue () instanceof String )
         {
-            PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( Date.class );
+            final PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( Date.class );
             pe.setAsText ( (String)assertion.getValue () );
             right = (Date)pe.getValue ();
         }
@@ -205,11 +224,11 @@ public class EventMatcherImpl implements EventMatcher
         case LESSTHAN:
             return left.compareTo ( right ) == -1;
         case LESSEQ:
-            return ( left.compareTo ( right ) == -1 ) || ( left.compareTo ( right ) == 0 );
+            return left.compareTo ( right ) == -1 || left.compareTo ( right ) == 0;
         case EQUALITY:
             return left.compareTo ( right ) == 0;
         case GREATEREQ:
-            return ( left.compareTo ( right ) == 1 ) || ( left.compareTo ( right ) == 0 );
+            return left.compareTo ( right ) == 1 || left.compareTo ( right ) == 0;
         case GREATERTHAN:
             return left.compareTo ( right ) == 1;
         case APPROXIMATE:
@@ -233,7 +252,7 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
-        if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof Date ) || ( assertion.getValue () instanceof Collection<?> ) ) )
+        if ( ! ( assertion.getValue () instanceof String || assertion.getValue () instanceof Date || assertion.getValue () instanceof Collection<?> ) )
         {
             return false;
         }
@@ -244,7 +263,7 @@ public class EventMatcherImpl implements EventMatcher
         Variant right = null;
         if ( assertion.getValue () instanceof String )
         {
-            PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( Variant.class );
+            final PropertyEditor pe = propertyEditorRegistry.findCustomEditor ( Variant.class );
             pe.setAsText ( (String)assertion.getValue () );
             right = (Variant)pe.getValue ();
         }
@@ -261,11 +280,11 @@ public class EventMatcherImpl implements EventMatcher
         case LESSTHAN:
             return left.compareTo ( right ) == -1;
         case LESSEQ:
-            return ( left.compareTo ( right ) == -1 ) || ( left.compareTo ( right ) == 0 );
+            return left.compareTo ( right ) == -1 || left.compareTo ( right ) == 0;
         case EQUALITY:
             return left.compareTo ( right ) == 0;
         case GREATEREQ:
-            return ( left.compareTo ( right ) == 1 ) || ( left.compareTo ( right ) == 0 );
+            return left.compareTo ( right ) == 1 || left.compareTo ( right ) == 0;
         case GREATERTHAN:
             return left.compareTo ( right ) == 1;
         case APPROXIMATE:

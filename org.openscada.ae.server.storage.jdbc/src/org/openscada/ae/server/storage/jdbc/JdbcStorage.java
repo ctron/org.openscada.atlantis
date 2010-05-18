@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc;
 
 import java.util.List;
@@ -37,25 +56,25 @@ public class JdbcStorage extends BaseStorage
     private ExecutorService storageQueueProcessor;
 
     private long shutDownTimeout = 30000;
-    
-    private AtomicInteger queueSize = new AtomicInteger (0);
+
+    private final AtomicInteger queueSize = new AtomicInteger ( 0 );
 
     public JdbcStorageDAO getJdbcStorageDAO ()
     {
-        return jdbcStorageDAO.get ();
+        return this.jdbcStorageDAO.get ();
     }
 
-    public void setJdbcStorageDAO ( JdbcStorageDAO jdbcStorageDAO )
+    public void setJdbcStorageDAO ( final JdbcStorageDAO jdbcStorageDAO )
     {
         this.jdbcStorageDAO.set ( jdbcStorageDAO );
     }
 
     public long getShutDownTimeout ()
     {
-        return shutDownTimeout;
+        return this.shutDownTimeout;
     }
 
-    public void setShutDownTimeout ( long shutDownTimeout )
+    public void setShutDownTimeout ( final long shutDownTimeout )
     {
         this.shutDownTimeout = shutDownTimeout;
     }
@@ -69,8 +88,8 @@ public class JdbcStorage extends BaseStorage
     public void start () throws Exception
     {
         logger.info ( "jdbcStorageDAO instanciated" );
-        storageQueueProcessor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
-            public Thread newThread ( Runnable r )
+        this.storageQueueProcessor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
+            public Thread newThread ( final Runnable r )
             {
                 return new Thread ( r, "Executor-" + JdbcStorage.class.getCanonicalName () );
             }
@@ -86,13 +105,13 @@ public class JdbcStorage extends BaseStorage
      */
     public void stop () throws Exception
     {
-        List<Runnable> openTasks = storageQueueProcessor.shutdownNow ();
+        final List<Runnable> openTasks = this.storageQueueProcessor.shutdownNow ();
         final int numOfOpenTasks = openTasks.size ();
         if ( numOfOpenTasks > 0 )
         {
             int numOfOpenTasksRemaining = numOfOpenTasks;
             logger.info ( "jdbcStorageDAO is beeing shut down, but there are still {} events to store", numOfOpenTasks );
-            for ( Runnable runnable : openTasks )
+            for ( final Runnable runnable : openTasks )
             {
                 runnable.run ();
                 numOfOpenTasksRemaining -= 1;
@@ -105,10 +124,10 @@ public class JdbcStorage extends BaseStorage
     /* (non-Javadoc)
      * @see org.openscada.ae.server.storage.Storage#query(java.lang.String)
      */
-    public Query query ( String filter ) throws Exception
+    public Query query ( final String filter ) throws Exception
     {
         logger.debug ( "Query requested {}", filter );
-        return new JdbcQuery ( jdbcStorageDAO.get (), new FilterParser ( filter ).getFilter () );
+        return new JdbcQuery ( this.jdbcStorageDAO.get (), new FilterParser ( filter ).getFilter () );
     }
 
     /**
@@ -120,28 +139,28 @@ public class JdbcStorage extends BaseStorage
      */
     public Event store ( final Event event, final StoreListener listener )
     {
-        queueSize.incrementAndGet ();
+        this.queueSize.incrementAndGet ();
         final Event eventToStore = createEvent ( event );
         logger.debug ( "Save Event to database: " + event );
-        storageQueueProcessor.submit ( new Callable<Boolean> () {
+        this.storageQueueProcessor.submit ( new Callable<Boolean> () {
             public Boolean call ()
             {
                 try
                 {
-                    jdbcStorageDAO.get ().storeEvent ( MutableEvent.fromEvent ( eventToStore ) );
-                    queueSize.decrementAndGet ();
+                    JdbcStorage.this.jdbcStorageDAO.get ().storeEvent ( MutableEvent.fromEvent ( eventToStore ) );
+                    JdbcStorage.this.queueSize.decrementAndGet ();
                     if ( listener != null )
                     {
                         listener.notify ( eventToStore );
                     }
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     logger.error ( "Exception occured ({}) while saving Event to database: {}", e, event );
                     logger.info ( "Exception was", e );
                     return false;
                 }
-                logger.debug ( "Event saved to database - remaining queue: {}, event: {}", queueSize.get (), event );
+                logger.debug ( "Event saved to database - remaining queue: {}, event: {}", JdbcStorage.this.queueSize.get (), event );
                 return true;
             }
         } );
@@ -154,24 +173,24 @@ public class JdbcStorage extends BaseStorage
         eventToUpdate.getAttributes ().put ( Fields.COMMENT.getName (), comment );
         final Event event = MutableEvent.toEvent ( eventToUpdate );
         logger.debug ( "Update Event comment in database: " + event );
-        storageQueueProcessor.submit ( new Callable<Boolean> () {
+        this.storageQueueProcessor.submit ( new Callable<Boolean> () {
             public Boolean call ()
             {
                 try
                 {
-                    jdbcStorageDAO.get ().storeEvent ( eventToUpdate );
+                    JdbcStorage.this.jdbcStorageDAO.get ().storeEvent ( eventToUpdate );
                     if ( listener != null )
                     {
                         listener.notify ( event );
                     }
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     logger.error ( "Exception occured ({}) while updating comment of Event in database: {}", e, event );
                     logger.info ( "Exception was", e );
                     return false;
                 }
-                logger.debug ( "Event updated in database: {}",  event );
+                logger.debug ( "Event updated in database: {}", event );
                 return true;
             }
         } );
@@ -180,6 +199,6 @@ public class JdbcStorage extends BaseStorage
 
     public Event update ( final UUID id, final String comment, final StoreListener listener ) throws Exception
     {
-        return updateInternal ( id, new Variant (comment), listener );
+        return updateInternal ( id, new Variant ( comment ), listener );
     }
 }

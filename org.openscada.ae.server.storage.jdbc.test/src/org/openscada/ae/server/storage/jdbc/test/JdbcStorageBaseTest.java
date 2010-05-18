@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc.test;
 
 import java.util.GregorianCalendar;
@@ -31,10 +50,10 @@ public class JdbcStorageBaseTest
     @BeforeClass
     public static void start () throws Exception
     {
-        BundleContext bundleContext = Activator.getBundleContext ();
+        final BundleContext bundleContext = Activator.getBundleContext ();
 
         // get spring application context
-        ServiceTracker stSpring = new ServiceTracker ( bundleContext, bundleContext.createFilter ( "(objectClass=org.springframework.context.ApplicationContext)" ), null );
+        final ServiceTracker stSpring = new ServiceTracker ( bundleContext, bundleContext.createFilter ( "(objectClass=org.springframework.context.ApplicationContext)" ), null );
         stSpring.open ();
         appContext = (BeanFactory)stSpring.waitForService ( SERVICE_TRACKER_TIMEOUT );
         stSpring.close ();
@@ -57,17 +76,17 @@ public class JdbcStorageBaseTest
         return (Storage)appContext.getBean ( "jdbcStorage" );
     }
 
-    public UUID makeUUID ( long seed ) throws Exception
+    public UUID makeUUID ( final long seed ) throws Exception
     {
-        Random rnd = new Random ( seed );
-        long l1 = rnd.nextLong ();
-        long l2 = rnd.nextLong ();
+        final Random rnd = new Random ( seed );
+        final long l1 = rnd.nextLong ();
+        final long l2 = rnd.nextLong ();
         return UUID.nameUUIDFromBytes ( ( Long.toBinaryString ( l1 ) + Long.toBinaryString ( l2 ) ).getBytes ( "ASCII" ) );
     }
 
-    public Event makeEvent ( int nr ) throws Exception
+    public Event makeEvent ( final int nr ) throws Exception
     {
-        EventBuilder eb = Event.create ();
+        final EventBuilder eb = Event.create ();
         eb.sourceTimestamp ( new GregorianCalendar ().getTime () );
         eb.attribute ( MutableEvent.Fields.SOURCE.getName (), "TEST" );
         eb.attribute ( MutableEvent.Fields.PRIORITY.getName (), 5 );
