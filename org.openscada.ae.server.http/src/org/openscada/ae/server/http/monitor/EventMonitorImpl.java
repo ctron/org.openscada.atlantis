@@ -67,13 +67,17 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
             if ( this.matcher.matches ( event ) )
             {
                 // FIXME: just for now, the real implementation should set AKN directly
-                this.setFailure ( new Variant (), event.getSourceTimestamp () );
-                this.setOk ( new Variant (), event.getSourceTimestamp () );
+                SequenceEventDecorator eventDecorator = new SequenceEventDecorator ();
+                eventDecorator.setSequence ( 1 );
+                this.setFailure ( new Variant (), event.getSourceTimestamp (), eventDecorator );
+                eventDecorator.setSequence ( 2 );
+                this.setOk ( new Variant (), event.getSourceTimestamp (), eventDecorator );
                 final Event resultEvent = Event.create () //
                 .event ( event ) //
                 .attribute ( Fields.COMMENT, annotateCommentWithSource ( event ) ) //
                 .attribute ( Fields.SOURCE, this.getId () ) //
                 .attribute ( Fields.MONITOR_TYPE, this.monitorType )//
+                .attribute ( "sequence", 0 )//
                 .build ();
                 return new Pair<Boolean, Event> ( true, resultEvent );
             }
