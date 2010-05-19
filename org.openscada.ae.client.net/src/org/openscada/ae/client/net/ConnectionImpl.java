@@ -104,7 +104,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
             public Thread newThread ( final Runnable r )
             {
-                final Thread t = new Thread ( r, "ConnectionExecutor/" + getConnectionInformation () );
+                final Thread t = new Thread ( r, "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () );
                 t.setDaemon ( true );
                 return t;
             }
