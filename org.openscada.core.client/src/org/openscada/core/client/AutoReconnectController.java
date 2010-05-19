@@ -92,7 +92,7 @@ public class AutoReconnectController implements ConnectionStateListener
             reconnectDelay = DEFAULT_RECONNECT_DELAY;
         }
 
-        final ThreadFactory threadFactory = new NamedThreadFactory ( "AutoReconnect/" + connection.getConnectionInformation () );
+        final ThreadFactory threadFactory = new NamedThreadFactory ( "AutoReconnect/" + connection.getConnectionInformation ().toMaskedString () );
         this.executor = new ScheduledThreadPoolExecutor ( 1, threadFactory );
 
         this.connection.addConnectionStateListener ( this );
