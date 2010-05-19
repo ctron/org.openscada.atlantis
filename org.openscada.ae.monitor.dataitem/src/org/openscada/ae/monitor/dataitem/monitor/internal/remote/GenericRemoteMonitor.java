@@ -341,8 +341,9 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
     protected synchronized void publishAckRequestEvent ( final UserInformation user, final Date aknTimestamp )
     {
         final EventBuilder builder = createEventBuilder ();
-        builder.sourceTimestamp ( aknTimestamp );
-        builder.entryTimestamp ( new Date () );
+        final Date now = new Date ();
+        builder.sourceTimestamp ( now );
+        builder.entryTimestamp ( now );
         builder.attribute ( Fields.SOURCE, this.id );
         builder.attribute ( Fields.EVENT_TYPE, "ACK-REQ" );
         if ( user != null && user.getName () != null )
