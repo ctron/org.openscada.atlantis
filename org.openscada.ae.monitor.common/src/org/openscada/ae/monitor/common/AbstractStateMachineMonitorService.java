@@ -111,6 +111,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
      * Restore from persistent state
      * @param state the persisted state
      */
+    @Override
     protected synchronized void setPersistentState ( final StateInformation state )
     {
         logger.debug ( "Setting persistent state: {}", state );
@@ -156,6 +157,15 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         }
     }
 
+    protected Map<String, Variant> getEventInformationAttributes ()
+    {
+        if ( this.eventInformationAttributes == null )
+        {
+            return Collections.emptyMap ();
+        }
+        return Collections.unmodifiableMap ( this.eventInformationAttributes );
+    }
+
     @Override
     protected synchronized void switchToInit ()
     {
@@ -167,9 +177,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         applyState ( this.information );
     }
 
-    protected synchronized void setFailure ( final Variant value, final Date timestamp )
+    protected synchronized void setFailure ( final Variant value, final Date timestamp, final EventDecorator eventDecorator )
     {
-        if ( this.information.getState () != null && this.information.getState () == State.FAILED )
+        if ( ( this.information.getState () != null ) && ( this.information.getState () == State.FAILED ) )
         {
             // no change
             return;
@@ -181,12 +191,17 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         newInformation.setTimestamp ( timestamp );
         newInformation.setLastFailTimestamp ( timestamp );
 
-        applyAndSendStatus ( newInformation );
+        applyAndSendStatus ( newInformation, eventDecorator );
     }
 
-    protected synchronized void setOk ( final Variant value, Date timestamp )
+    protected synchronized void setFailure ( final Variant value, final Date timestamp )
     {
-        if ( this.information.getState () != null && this.information.getState () == State.OK )
+        setFailure ( value, timestamp, EventDecoratorAdapter.getDummyDecorator () );
+    }
+
+    protected synchronized void setOk ( final Variant value, Date timestamp, final EventDecorator eventDecorator )
+    {
+        if ( ( this.information.getState () != null ) && ( this.information.getState () == State.OK ) )
         {
             // no change
             return;
@@ -202,12 +217,17 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         newInformation.setValue ( value );
         newInformation.setTimestamp ( timestamp );
 
-        applyAndSendStatus ( newInformation );
+        applyAndSendStatus ( newInformation, eventDecorator );
     }
 
-    protected synchronized void setUnsafe ()
+    protected synchronized void setOk ( final Variant value, final Date timestamp )
     {
-        if ( this.information.getState () != null && this.information.getState () == State.UNSAFE )
+        setOk ( value, timestamp, EventDecoratorAdapter.getDummyDecorator () );
+    }
+
+    protected synchronized void setUnsafe ( final EventDecorator eventDecorator )
+    {
+        if ( ( this.information.getState () != null ) && ( this.information.getState () == State.UNSAFE ) )
         {
             // no change
             return;
@@ -220,12 +240,17 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         newInformation.setValue ( null );
         newInformation.setTimestamp ( now );
 
-        applyAndSendStatus ( newInformation );
+        applyAndSendStatus ( newInformation, eventDecorator );
     }
 
-    public synchronized void setActive ( final boolean state )
+    protected synchronized void setUnsafe ()
     {
-        if ( this.information.getActive () != null && this.information.getActive () == state )
+        setUnsafe ( EventDecoratorAdapter.getDummyDecorator () );
+    }
+
+    public synchronized void setActive ( final boolean state, final EventDecorator eventDecorator )
+    {
+        if ( ( this.information.getActive () != null ) && ( this.information.getActive () == state ) )
         {
             // no change
             return;
@@ -233,11 +258,16 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setActive ( state );
 
-        publishEvent ( createEvent ( new Date (), null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change active state" ) );
+        publishEvent ( eventDecorator.decorate ( createEvent ( new Date (), null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change active state" ) ) );
         applyAndSendStatus ( newInformation );
     }
 
-    public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
+    public synchronized void setActive ( final boolean state )
+    {
+        setActive ( state, EventDecoratorAdapter.getDummyDecorator () );
+    }
+
+    public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp, final EventDecorator eventDecorator )
     {
         if ( !ackPending ( this.information ) )
         {
@@ -249,13 +279,18 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         newInformation.setLastAckUser ( getUserName ( userInformation ) );
         newInformation.setTimestamp ( aknTimestamp );
 
-        publishEvent ( createEvent ( aknTimestamp, userInformation, "AKN", null ) );
+        publishEvent ( eventDecorator.decorate ( createEvent ( aknTimestamp, userInformation, "AKN", null ) ) );
         applyAndSendStatus ( newInformation );
     }
 
-    public synchronized void setRequireAkn ( final boolean state )
+    public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
     {
-        if ( this.information.getRequireAck () != null && this.information.getRequireAck () == state )
+        akn ( userInformation, aknTimestamp, EventDecoratorAdapter.getDummyDecorator () );
+    }
+
+    public synchronized void setRequireAkn ( final boolean state, final EventDecorator eventDecorator )
+    {
+        if ( ( this.information.getRequireAck () != null ) && ( this.information.getRequireAck () == state ) )
         {
             // no change
             return;
@@ -264,8 +299,13 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setRequireAck ( state );
 
-        publishEvent ( createEvent ( new Date (), null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change require acknowledge state" ) );
+        publishEvent ( eventDecorator.decorate ( createEvent ( new Date (), null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change require acknowledge state" ) ) );
         applyAndSendStatus ( newInformation );
+    }
+
+    public synchronized void setRequireAkn ( final boolean state )
+    {
+        setRequireAkn ( state, EventDecoratorAdapter.getDummyDecorator () );
     }
 
     private String getUserName ( final UserInformation userInformation )
@@ -294,7 +334,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             builder.sourceTimestamp ( now );
         }
 
-        if ( userInformation != null && userInformation.getName () != null )
+        if ( ( userInformation != null ) && ( userInformation.getName () != null ) )
         {
             builder.attribute ( Fields.ACTOR_NAME, userInformation.getName () );
             builder.attribute ( Fields.ACTOR_TYPE, "USER" );
@@ -359,28 +399,33 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         builder.putAll ( this.eventInformationAttributes );
     }
 
-    private synchronized void applyAndSendStatus ( final StateInformation newInformation )
+    private synchronized void applyAndSendStatus ( final StateInformation newInformation, final EventDecorator eventDecorator )
     {
         final ConditionStatusInformation oldConditionState = this.currentState;
         applyState ( newInformation );
         final ConditionStatusInformation newConditionState = this.currentState;
-        sendStatusWhenChanged ( oldConditionState, newConditionState );
+        sendStatusWhenChanged ( oldConditionState, newConditionState, eventDecorator );
     }
 
-    private synchronized void sendStatusWhenChanged ( final ConditionStatusInformation oldConditionState, final ConditionStatusInformation newConditionState )
+    private synchronized void applyAndSendStatus ( final StateInformation newInformation )
+    {
+        applyAndSendStatus ( newInformation, EventDecoratorAdapter.getDummyDecorator () );
+    }
+
+    private synchronized void sendStatusWhenChanged ( final ConditionStatusInformation oldConditionState, final ConditionStatusInformation newConditionState, final EventDecorator eventDecorator )
     {
         final ConditionStatus oldState = oldConditionState.getStatus ();
         final ConditionStatus newState = newConditionState.getStatus ();
 
-        if ( oldConditionState != newConditionState && oldState != ConditionStatus.INIT && newState != ConditionStatus.INIT )
+        if ( ( oldConditionState != newConditionState ) && ( oldState != ConditionStatus.INIT ) && ( newState != ConditionStatus.INIT ) )
         {
-            publishEvent ( createEvent ( newConditionState.getStatusTimestamp (), null, newConditionState.getStatus ().toString (), newConditionState.getValue () ) );
+            publishEvent ( eventDecorator.decorate ( createEvent ( newConditionState.getStatusTimestamp (), null, newConditionState.getStatus ().toString (), newConditionState.getValue () ) ) );
         }
     }
 
     private static ConditionStatus generateStatus ( final StateInformation information )
     {
-        if ( information.getActive () == null || information.getRequireAck () == null )
+        if ( ( information.getActive () == null ) || ( information.getRequireAck () == null ) )
         {
             return ConditionStatus.INIT;
         }
@@ -388,7 +433,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         {
             return ConditionStatus.INACTIVE;
         }
-        else if ( information.getValue () == null || information.getState () == State.UNSAFE )
+        else if ( ( information.getValue () == null ) || ( information.getState () == State.UNSAFE ) )
         {
             return ConditionStatus.UNSAFE;
         }
