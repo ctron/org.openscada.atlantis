@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.da.server.stock.items;
 
 import java.util.Arrays;
@@ -10,51 +29,51 @@ import org.openscada.da.server.stock.domain.StockQuote;
 
 public class UpdateManager
 {
-    private Map<String, StockQuoteListener> _registeredSymbols = new HashMap<String, StockQuoteListener> ();
+    private final Map<String, StockQuoteListener> _registeredSymbols = new HashMap<String, StockQuoteListener> ();
 
     private StockQuoteService _stockQuoteService = null;
-    
+
     public synchronized void update ()
     {
-        if ( !_registeredSymbols.isEmpty () )
+        if ( !this._registeredSymbols.isEmpty () )
         {
-            fireEvents ( _stockQuoteService.getStockQuotes ( _registeredSymbols.keySet () ) );
+            fireEvents ( this._stockQuoteService.getStockQuotes ( this._registeredSymbols.keySet () ) );
         }
     }
 
-    public synchronized void add ( String symbol, StockQuoteListener listener )
+    public synchronized void add ( final String symbol, final StockQuoteListener listener )
     {
-        _registeredSymbols.put ( symbol, listener );
+        this._registeredSymbols.put ( symbol, listener );
         updateNow ( symbol );
     }
 
-    protected void updateNow ( String symbol )
+    protected void updateNow ( final String symbol )
     {
-        fireEvents ( _stockQuoteService.getStockQuotes ( Arrays.asList ( new String[] { symbol } ) ) );
+        fireEvents ( this._stockQuoteService.getStockQuotes ( Arrays.asList ( new String[] { symbol } ) ) );
     }
 
-    protected void fireEvents ( Collection<StockQuote> stockQuotes )
+    protected void fireEvents ( final Collection<StockQuote> stockQuotes )
     {
-        for ( StockQuote stockQuote : stockQuotes )
+        for ( final StockQuote stockQuote : stockQuotes )
         {
-            StockQuoteListener listener = _registeredSymbols.get ( stockQuote.getSymbol () );
+            final StockQuoteListener listener = this._registeredSymbols.get ( stockQuote.getSymbol () );
             try
             {
                 listener.update ( stockQuote );
             }
-            catch ( Throwable e )
+            catch ( final Throwable e )
             {
             }
         }
     }
 
-    public synchronized void remove ( String symbol )
+    public synchronized void remove ( final String symbol )
     {
-        _registeredSymbols.remove ( symbol );
+        this._registeredSymbols.remove ( symbol );
     }
 
-    public void setStockQuoteService ( StockQuoteService stockQuoteService )
+    public void setStockQuoteService ( final StockQuoteService stockQuoteService )
     {
-        _stockQuoteService = stockQuoteService;
+        this._stockQuoteService = stockQuoteService;
     }
 }

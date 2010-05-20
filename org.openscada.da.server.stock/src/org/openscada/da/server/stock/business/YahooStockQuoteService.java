@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.da.server.stock.business;
 
 import java.io.IOException;
@@ -21,33 +40,33 @@ import org.openscada.utils.str.StringHelper;
 public class YahooStockQuoteService implements StockQuoteService
 {
     private String _baseUrl = "http://download.finance.yahoo.com/d/quotes.csv?&f=sl1d1t1c1ohgv&e=.csv&s=";
-    
-    public Collection<StockQuote> getStockQuotes ( Collection<String> symbols )
+
+    public Collection<StockQuote> getStockQuotes ( final Collection<String> symbols )
     {
         try
         {
-            URL url = generateURL ( symbols );
-            URLConnection connection = url.openConnection ();
+            final URL url = generateURL ( symbols );
+            final URLConnection connection = url.openConnection ();
             connection.setDoInput ( true );
             return parseResult ( symbols, connection.getInputStream () );
         }
-        catch ( Throwable e )
+        catch ( final Throwable e )
         {
             return failAll ( symbols, e );
         }
 
     }
 
-    private Collection<StockQuote> parseResult ( Collection<String> symbols, InputStream inputStream ) throws IOException
+    private Collection<StockQuote> parseResult ( final Collection<String> symbols, final InputStream inputStream ) throws IOException
     {
-        LineNumberReader reader = new LineNumberReader ( new InputStreamReader ( inputStream, "UTF-8" ) );
+        final LineNumberReader reader = new LineNumberReader ( new InputStreamReader ( inputStream, "UTF-8" ) );
 
-        Map<String, StockQuote> result = new HashMap<String, StockQuote> ();
+        final Map<String, StockQuote> result = new HashMap<String, StockQuote> ();
 
         // first fill error
-        for ( String symbol : symbols )
+        for ( final String symbol : symbols )
         {
-            StockQuote quote = new StockQuote ();
+            final StockQuote quote = new StockQuote ();
             quote.setSymbol ( symbol );
             quote.setError ( "No update" );
             result.put ( symbol, quote );
@@ -56,24 +75,24 @@ public class YahooStockQuoteService implements StockQuoteService
         String line;
         while ( ( line = reader.readLine () ) != null )
         {
-            String[] toks = line.split ( "," );
+            final String[] toks = line.split ( "," );
 
-            StockQuote quote = new StockQuote ();
+            final StockQuote quote = new StockQuote ();
             try
             {
-                String symbolTok = toks[0];
+                final String symbolTok = toks[0];
                 quote.setSymbol ( symbolTok.replaceAll ( "(^\"|\"$)", "" ) );
-                
-                String valueTok = toks[1];
-                String dateTok = toks[2].replaceAll ( "(^\"|\"$)", "" );
-                String timeTok = toks[3].replaceAll ( "(^\"|\"$)", "" );
-                
+
+                final String valueTok = toks[1];
+                final String dateTok = toks[2].replaceAll ( "(^\"|\"$)", "" );
+                final String timeTok = toks[3].replaceAll ( "(^\"|\"$)", "" );
+
                 quote.setValue ( Double.valueOf ( valueTok ) );
-                Calendar c = Calendar.getInstance ();
-                c.setTime ( new SimpleDateFormat ("MM/dd/yyyy h:mma").parse ( dateTok + " " + timeTok ) );
+                final Calendar c = Calendar.getInstance ();
+                c.setTime ( new SimpleDateFormat ( "MM/dd/yyyy h:mma" ).parse ( dateTok + " " + timeTok ) );
                 quote.setTimestamp ( c );
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 quote.setError ( e.getMessage () );
                 quote.setTimestamp ( Calendar.getInstance () );
@@ -88,27 +107,27 @@ public class YahooStockQuoteService implements StockQuoteService
         return result.values ();
     }
 
-    private Collection<StockQuote> failAll ( Collection<String> symbols, Throwable e )
+    private Collection<StockQuote> failAll ( final Collection<String> symbols, final Throwable e )
     {
-        List<StockQuote> result = new ArrayList<StockQuote> ( symbols.size () );
-        for ( String symbol : symbols )
+        final List<StockQuote> result = new ArrayList<StockQuote> ( symbols.size () );
+        for ( final String symbol : symbols )
         {
-            StockQuote quote = new StockQuote ();
+            final StockQuote quote = new StockQuote ();
             quote.setSymbol ( symbol );
             quote.setError ( e.getMessage () );
         }
         return result;
     }
 
-    private URL generateURL ( Collection<String> symbols ) throws MalformedURLException
+    private URL generateURL ( final Collection<String> symbols ) throws MalformedURLException
     {
-        String queryAdd = StringHelper.join ( symbols, "+" );
-        return new URL ( _baseUrl + queryAdd );
+        final String queryAdd = StringHelper.join ( symbols, "+" );
+        return new URL ( this._baseUrl + queryAdd );
     }
 
-    public void setBaseUrl ( String baseUrl )
+    public void setBaseUrl ( final String baseUrl )
     {
-        _baseUrl = baseUrl;
+        this._baseUrl = baseUrl;
     }
 
 }
