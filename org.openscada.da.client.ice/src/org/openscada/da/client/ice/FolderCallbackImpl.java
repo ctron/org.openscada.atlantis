@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
- * This library is distributed in the hope that it will be useful,
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.client.ice;
@@ -32,19 +32,19 @@ import OpenSCADA.DA.Browser._FolderCallbackDisp;
 public class FolderCallbackImpl extends _FolderCallbackDisp
 {
     private static Logger _log = Logger.getLogger ( FolderCallbackImpl.class );
-    
+
     private Connection _connection = null;
-    
-    public FolderCallbackImpl ( Connection connection )
+
+    public FolderCallbackImpl ( final Connection connection )
     {
         super ();
-        _connection = connection;
+        this._connection = connection;
     }
-    
-    public void folderChanged ( String [] location, Entry[] added, String[] removed, boolean full, Current __current )
+
+    public void folderChanged ( final String[] location, final Entry[] added, final String[] removed, final boolean full, final Current __current )
     {
         _log.debug ( String.format ( "folderChanged - location: %s added: %d removed: %d full: %s", Arrays.deepToString ( location ), added.length, removed.length, full ) );
-        _connection.folderChanged ( new Location ( location ), BrowserEntryHelper.fromIce ( added ), removed, full );
+        this._connection.folderChanged ( new Location ( location ), BrowserEntryHelper.fromIce ( added ), removed, full );
     }
 
 }
