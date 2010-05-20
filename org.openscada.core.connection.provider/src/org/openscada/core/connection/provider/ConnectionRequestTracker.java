@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.core.connection.provider;
 
 import java.util.Dictionary;
@@ -54,7 +73,7 @@ public class ConnectionRequestTracker extends ConnectionTracker
 
     public synchronized void request ()
     {
-        if ( ( this.handle == null ) && ( this.request != null ) )
+        if ( this.handle == null && this.request != null )
         {
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( DriverFactory.DRIVER_NAME, this.request.getConnectionInformation ().getDriver () );
