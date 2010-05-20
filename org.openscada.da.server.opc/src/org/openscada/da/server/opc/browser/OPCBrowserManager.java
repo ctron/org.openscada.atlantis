@@ -1,21 +1,20 @@
 /*
- * This file is part of the OpenSCADA projecimport java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.openscada.da.server.opc.Hive;
-import org.openscada.da.server.opc.connection.ConnectionSetup;
-import org.openscada.da.server.opc.connection.OPCModel;
-import org.openscada.da.server.opc.job.Worker;
-import org.openscada.da.server.opc.job.impl.BrowseJob;
-d in the hope that it will be useful,
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
-
- * You should have received a copy of the GNU General Public License along
- * with this program; if not, write to the Free Software Foundation, Inc.,
- * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.server.opc.browser;
