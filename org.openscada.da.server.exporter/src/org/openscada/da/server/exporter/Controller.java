@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
- * This library is distributed in the hope that it will be useful,
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.server.exporter;
@@ -84,9 +84,10 @@ public class Controller
     {
         final ConfigurationType configuration = configurationDocument.getConfiguration ();
 
-        for (final AnnouncerType announcer : configuration.getAnnouncerList () ) {
+        for ( final AnnouncerType announcer : configuration.getAnnouncerList () )
+        {
             final String klass = announcer.getClass1 ();
-            announcers.add ( klass );
+            this.announcers.add ( klass );
         }
 
         for ( final HiveType hive : configuration.getHiveList () )
@@ -116,7 +117,7 @@ public class Controller
                         log.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getRef (), export.getUri () ) );
                     }
                 }
-                hives.add ( hiveExport );
+                this.hives.add ( hiveExport );
             }
             catch ( final Throwable e )
             {
@@ -131,7 +132,7 @@ public class Controller
      */
     public synchronized void start () throws Exception
     {
-        for ( final HiveExport hive : hives )
+        for ( final HiveExport hive : this.hives )
         {
             hive.start ();
             // announce hive
@@ -144,7 +145,7 @@ public class Controller
      */
     public synchronized void stop () throws Exception
     {
-        for ( final HiveExport hive : hives )
+        for ( final HiveExport hive : this.hives )
         {
             hive.stop ();
         }

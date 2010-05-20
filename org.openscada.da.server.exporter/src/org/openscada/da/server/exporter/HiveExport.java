@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2007 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
- * This library is distributed in the hope that it will be useful,
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.server.exporter;
@@ -44,11 +44,11 @@ public class HiveExport
 
     public synchronized void start () throws Exception
     {
-        log.info ( String.format ( "Starting hive: %s", hive ) );
+        log.info ( String.format ( "Starting hive: %s", this.hive ) );
 
-        hive.start ();
+        this.hive.start ();
 
-        for ( final Export export : exports )
+        for ( final Export export : this.exports )
         {
             try
             {
@@ -63,9 +63,9 @@ public class HiveExport
 
     public synchronized void stop () throws Exception
     {
-        log.info ( String.format ( "Stopping hive: %s", hive ) );
+        log.info ( String.format ( "Stopping hive: %s", this.hive ) );
 
-        for ( final Export export : exports )
+        for ( final Export export : this.exports )
         {
             try
             {
@@ -77,7 +77,7 @@ public class HiveExport
             }
         }
 
-        hive.stop ();
+        this.hive.stop ();
     }
 
     public Export addExport ( final String endpointUri ) throws ConfigurationError
@@ -89,7 +89,7 @@ public class HiveExport
 
         if ( export != null )
         {
-            exports.add ( export );
+            this.exports.add ( export );
         }
         else
         {
@@ -114,12 +114,12 @@ public class HiveExport
             if ( ci.getDriver ().equalsIgnoreCase ( "net" ) || ci.getDriver ().equalsIgnoreCase ( "gmpp" ) )
             {
                 log.debug ( "Create new 'net' exporter" );
-                return new NetExport ( hive, ci );
+                return new NetExport ( this.hive, ci );
             }
             else if ( ci.getDriver ().equalsIgnoreCase ( "ice" ) )
             {
                 log.debug ( "Create new 'ice' exporter" );
-                return new IceExport ( hive, ci );
+                return new IceExport ( this.hive, ci );
             }
             else
             {
@@ -134,6 +134,6 @@ public class HiveExport
 
     public Collection<Export> getExports ()
     {
-        return Collections.unmodifiableCollection ( exports );
+        return Collections.unmodifiableCollection ( this.exports );
     }
 }

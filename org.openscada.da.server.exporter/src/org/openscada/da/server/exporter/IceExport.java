@@ -1,20 +1,20 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 inavare GmbH (http://inavare.com)
- * 
- * This library is free software; you can redistribute it and/or
- * modify it under the terms of the GNU Lesser General Public
- * License as published by the Free Software Foundation; either
- * version 2.1 of the License, or (at your option) any later version.
+ * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
  *
- * This library is distributed in the hope that it will be useful,
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
- * Lesser General Public License for more details.
-
- * You should have received a copy of the GNU Lesser General Public
- * License along with this library; if not, write to the Free Software
- * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.da.server.exporter;
@@ -42,44 +42,44 @@ public class IceExport implements Export
     {
         super ();
         this.hive = hive;
-        connectionInformation = ci;
+        this.connectionInformation = ci;
     }
 
     public synchronized void start () throws Exception
     {
-        logger.info ( String.format ( "Starting exporter (%s) on endpoints '%s'", hive, connectionInformation ) );
+        logger.info ( String.format ( "Starting exporter (%s) on endpoints '%s'", this.hive, this.connectionInformation ) );
 
         final Ice.InitializationData initData = new Ice.InitializationData ();
         initData.properties = Ice.Util.createProperties ();
 
-        for ( final Map.Entry<String, String> entry : connectionInformation.getProperties ().entrySet () )
+        for ( final Map.Entry<String, String> entry : this.connectionInformation.getProperties ().entrySet () )
         {
             initData.properties.setProperty ( entry.getKey (), entry.getValue () );
         }
 
-        communicator = Ice.Util.initialize ( initData );
+        this.communicator = Ice.Util.initialize ( initData );
 
-        exporter = new Exporter ( hive, communicator, connectionInformation );
+        this.exporter = new Exporter ( this.hive, this.communicator, this.connectionInformation );
 
-        exporter.start ();
+        this.exporter.start ();
     }
 
     public synchronized void stop ()
     {
-        exporter.stop ();
-        communicator.shutdown ();
+        this.exporter.stop ();
+        this.communicator.shutdown ();
 
-        communicator = null;
-        exporter = null;
+        this.communicator = null;
+        this.exporter = null;
     }
 
     public Ice.Communicator getCommunicator ()
     {
-        return communicator;
+        return this.communicator;
     }
 
     public ConnectionInformation getConnectionInformation ()
     {
-        return connectionInformation;
+        return this.connectionInformation;
     }
 }
