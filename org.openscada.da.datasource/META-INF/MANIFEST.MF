@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Datasource
 Bundle-SymbolicName: org.openscada.da.datasource
 Bundle-Version: 0.15.0.qualifier
-Bundle-Activator: org.openscada.da.datasource.Activator
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.core;version="0.15.0",
