@@ -70,6 +70,8 @@ public class ConnectionAnalyzer implements ConnectionStateListener
         } );
 
         this.service = service;
+
+        stateChange ( service.getConnection (), service.getConnection ().getState (), null );
         service.getConnection ().addConnectionStateListener ( this );
     }
 
