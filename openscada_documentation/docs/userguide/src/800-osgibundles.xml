@@ -124,6 +124,91 @@
 
 </sect1>
 
+
+<sect1 id="bundle_org.openscada.ds.storage.jdbc"><title>org.openscada.ds.storage.jdbc</title>
+<para>
+	The bundle <filename>org.openscada.ds.storage.jdbc</filename> provides an implementation of
+	the <acronym>DS</acronym> (Data Store) service based on a <acronym>JDBC</acronym> data source.
+</para>
+<para>
+	This bundle will, most likely, need a fragment bundle that contains the driver class itself or
+	better a reference to the bundle which holds the driver class. Either bundle or
+	package reference are possible.
+</para>
+
+	<sect2><title>System properties</title>
+		<para>
+		The following system properties are available:
+		</para>
+		
+		<table><title>System properties of <filename>org.openscada.ds.storage.jdbc</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Required</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>org.openscada.ds.storage.jdbc.schema</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						Name of the schema in the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ds.storage.jdbc.instance</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						Instance name used to differ between different instances using
+						the same table. Defaults to <filename>default</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ds.jdbc.url</entry>
+						<entry>String</entry>
+						<entry>Required</entry>
+						<entry>
+						<acronym>URL</acronym> to the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ds.storage.jdbc.username</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						The user name used when connecting with the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ds.storage.jdbc.password</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						The password used when connecting with the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ds.storage.jdbc.driver</entry>
+						<entry>String</entry>
+						<entry>Required</entry>
+						<entry>
+						The name of the JDBC driver class.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect2>
+
+</sect1>
+
 <sect1 id="bundle_org.openscada.sec.provider.script"><title>org.openscada.sec.provider.script</title>
 	<para>
 	The bundle <filename>org.openscada.sec.provider.script</filename> contains
