@@ -29,7 +29,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
@@ -62,6 +61,8 @@ import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 import org.openscada.utils.exec.LongRunningState;
 import org.openscada.utils.lang.Holder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Connection extends SessionConnectionBase implements org.openscada.da.client.Connection
 {
@@ -73,7 +74,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     public static final String VERSION = "0.1.8";
 
-    private static Logger logger = Logger.getLogger ( Connection.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Connection.class );
 
     private final Map<String, ItemUpdateListener> itemListeners = new ConcurrentHashMap<String, ItemUpdateListener> ();
 
@@ -266,7 +267,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
         final Location location = new Location ( path );
 
-        logger.debug ( String.format ( "Folder: %1$s Added: %2$d Removed: %3$d", location.toString (), added.size (), removed.size () ) );
+        logger.debug ( "Folder: {} - Added: {} - Removed: {}", new Object[] { location, added.size (), removed.size () } );
 
         fireBrowseEvent ( location, added, removed, initial.value );
     }
