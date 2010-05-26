@@ -1,13 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Testing Plug-in
-Bundle-SymbolicName: org.openscada.ae.server.common.condition.testing
-Bundle-Version: 0.14.0.qualifier
-Bundle-Activator: org.openscada.ae.server.common.condition.testing.Activator
+Bundle-SymbolicName: org.openscada.ae.server.common.monitor.testing
+Bundle-Version: 0.15.0.qualifier
+Bundle-Activator: org.openscada.ae.server.common.monitor.testing.Activator
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Import-Package: org.openscada.ae,
- org.openscada.ae.server.common.akn,
- org.openscada.ae.server.common.condition,
- org.openscada.core,
+Import-Package: org.openscada.ae;version="0.15.0",
+ org.openscada.ae.server.common.akn;version="0.15.0",
+ org.openscada.ae.server.common.condition;version="0.15.0",
+ org.openscada.core;version="0.15.0",
  org.osgi.framework;version="1.3.0"
