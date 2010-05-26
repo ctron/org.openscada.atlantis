@@ -613,7 +613,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     public void sessionIdle ( final IoSession session, final IdleStatus status ) throws Exception
     {
-        logger.info ( "Session idle: " + status + " - " + session );
+        logger.debug ( "Session idle: " + status + " - " + session );
 
         if ( session != this.session )
         {
@@ -676,7 +676,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
     protected void finalize () throws Throwable
     {
         logger.info ( "Finalized" );
-        this.lookupExecutor.shutdown ();
+        if ( !this.lookupExecutor.isShutdown () )
+        {
+            this.lookupExecutor.shutdown ();
+        }
         super.finalize ();
     }
 
