@@ -25,7 +25,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.apache.mina.core.session.IoSession;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
@@ -59,13 +58,15 @@ import org.openscada.utils.concurrent.task.DefaultTaskHandler;
 import org.openscada.utils.concurrent.task.ResultFutureHandler;
 import org.openscada.utils.concurrent.task.TaskHandler;
 import org.openscada.utils.lang.Holder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServerConnectionHandler extends AbstractServerConnectionHandler implements ItemChangeListener, FolderListener
 {
 
     public final static String VERSION = "0.1.8";
 
-    private static Logger logger = Logger.getLogger ( ServerConnectionHandler.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ServerConnectionHandler.class );
 
     private Hive hive = null;
 
@@ -238,7 +239,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         final String itemName = message.getValues ().get ( "item-id" ).toString ();
         final boolean initial = message.getValues ().containsKey ( "cache-read" );
 
-        logger.debug ( "Subscribe to " + itemName + " initial " + initial );
+        logger.debug ( "Subscribe to {} initial {}", itemName, initial );
 
         try
         {
@@ -462,7 +463,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public void folderChanged ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
-        logger.debug ( "Got folder change event from hive for folder: " + location.toString () );
+        logger.debug ( "Got folder change event from hive for folder: {}", location );
         this.messenger.sendMessage ( ListBrowser.createEvent ( location.asArray (), added, removed, full ) );
     }
 
@@ -481,18 +482,18 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            logger.debug ( "Subscribe to folder: " + location.toString () );
+            logger.debug ( "Subscribe to folder: {}", location.toString () );
             browser.subscribe ( this.session, location );
         }
         catch ( final NoSuchFolderException e )
         {
-            logger.warn ( "Unable to subscribe to folder: " + location.toString (), e );
+            logger.warn ( "Unable to subscribe to folder: " + location, e );
             this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "Folder not found" ) );
             return;
         }
         catch ( final InvalidSessionException e )
         {
-            logger.warn ( "Unable to subscribe to folder: " + location.toString (), e );
+            logger.warn ( "Unable to subscribe to folder: " + location, e );
             this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "Invalid session" ) );
             return;
         }
@@ -519,7 +520,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            logger.debug ( "Unsubscribe from folder: " + location.toString () );
+            logger.debug ( "Unsubscribe from folder: {}", location.toString () );
             browser.unsubscribe ( this.session, location );
         }
         catch ( final NoSuchFolderException e )

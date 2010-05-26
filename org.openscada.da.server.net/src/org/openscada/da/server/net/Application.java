@@ -19,9 +19,10 @@
 
 package org.openscada.da.server.net;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Application to export a hive using the OpenSCADA NET protocol
@@ -30,7 +31,8 @@ import org.openscada.da.core.server.Hive;
  */
 public class Application
 {
-    private static Logger logger = Logger.getLogger ( Application.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Application.class );
 
     public static void main ( final String[] args )
     {
@@ -65,7 +67,7 @@ public class Application
         catch ( final Throwable e )
         {
             // ops
-            logger.fatal ( "Error in OpenSCADA DA[NET] Server", e );
+            logger.error ( "Error in OpenSCADA DA[NET] Server", e );
             System.exit ( 1 );
         }
     }
