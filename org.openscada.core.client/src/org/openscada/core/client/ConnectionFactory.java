@@ -22,12 +22,14 @@ package org.openscada.core.client;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionFactory
 {
-    private static Logger logger = Logger.getLogger ( ConnectionFactory.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionFactory.class );
 
     protected static List<DriverFactory> registeredDrivers = new LinkedList<DriverFactory> ();
 

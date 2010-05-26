@@ -19,7 +19,8 @@
 
 package org.openscada.core.client;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The connect wait controller makes the {@link Connection#connect()} call a synchronous operation 
@@ -28,13 +29,13 @@ import org.apache.log4j.Logger;
  */
 public class ConnectWaitController implements ConnectionStateListener
 {
-    private static Logger logger = Logger.getLogger ( ConnectWaitController.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectWaitController.class );
 
     private final Connection connection;
 
-    private ConnectionState state = null;
+    private ConnectionState state;
 
-    private Throwable error = null;
+    private Throwable error;
 
     public ConnectWaitController ( final Connection connection )
     {
