@@ -22,7 +22,7 @@ package org.openscada.ae.server.common.monitor.testing;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.openscada.ae.server.common.condition.ConditionQuery;
+import org.openscada.ae.server.common.condition.MonitorQuery;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -47,7 +47,7 @@ public class Activator implements BundleActivator
         this.service = new TestConditionQuery ();
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, "test" );
-        this.handle = this.context.registerService ( ConditionQuery.class.getName (), this.service, properties );
+        this.handle = this.context.registerService ( MonitorQuery.class.getName (), this.service, properties );
     }
 
     /*

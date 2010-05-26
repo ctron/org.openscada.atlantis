@@ -37,7 +37,7 @@ import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 
-public class ConditionMessageHelper
+public class MonitorMessageHelper
 {
 
     public static MonitorStatusInformation[] fromValue ( final Value baseValue )

@@ -33,21 +33,21 @@ import org.openscada.core.Variant;
 import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 
-public class TestingCondition extends AbstractStateMachineMonitorService implements AknHandler
+public class TestingMonitor extends AbstractStateMachineMonitorService implements AknHandler
 {
 
     private final ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor ( 1 );
 
     private final Random r = new Random ();
 
-    public TestingCondition ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String sourceName )
+    public TestingMonitor ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String sourceName )
     {
         super ( context, executor, eventProcessor, sourceName );
         this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
             public void run ()
             {
-                TestingCondition.this.tick ();
+                TestingMonitor.this.tick ();
             }
         }, 1000, 1000, TimeUnit.MILLISECONDS );
     }

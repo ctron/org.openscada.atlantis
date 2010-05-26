@@ -23,7 +23,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.openscada.ae.server.common.condition.ConditionQuery;
+import org.openscada.ae.server.common.condition.MonitorQuery;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
@@ -51,7 +51,7 @@ public class QueryServiceFactory extends AbstractServiceConfigurationFactory<Bun
         properties.put ( Constants.SERVICE_PID, configurationId );
         properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
 
-        return new Entry<BundleMonitorQuery> ( configurationId, query, context.registerService ( ConditionQuery.class.getName (), query, properties ) );
+        return new Entry<BundleMonitorQuery> ( configurationId, query, context.registerService ( MonitorQuery.class.getName (), query, properties ) );
     }
 
     @Override

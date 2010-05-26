@@ -37,8 +37,8 @@ import org.openscada.ae.UnknownQueryException;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
 import org.openscada.ae.server.common.akn.AknHandler;
-import org.openscada.ae.server.common.condition.ConditionQuery;
-import org.openscada.ae.server.common.condition.ConditionQuerySource;
+import org.openscada.ae.server.common.condition.MonitorQuery;
+import org.openscada.ae.server.common.condition.MonitorQuerySource;
 import org.openscada.ae.server.common.event.EventQuery;
 import org.openscada.ae.server.common.event.EventQuerySource;
 import org.openscada.core.InvalidSessionException;
@@ -71,7 +71,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
 
     private final BundleContext context;
 
-    private final Map<String, ConditionQuery> conditionQueryRefs = new HashMap<String, ConditionQuery> ();
+    private final Map<String, MonitorQuery> conditionQueryRefs = new HashMap<String, MonitorQuery> ();
 
     private final Map<String, EventQuery> eventQueryRefs = new HashMap<String, EventQuery> ();
 
@@ -118,10 +118,10 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
-    protected void addConditionQuery ( final String id, final ConditionQuery query )
+    protected void addConditionQuery ( final String id, final MonitorQuery query )
     {
         logger.info ( "Adding new query: " + id );
-        this.conditionSubscriptions.setSource ( id, new ConditionQuerySource ( id, query ) );
+        this.conditionSubscriptions.setSource ( id, new MonitorQuerySource ( id, query ) );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.CONDITIONS ), attributes );
@@ -129,7 +129,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         triggerBrowserChange ( new BrowserEntry[] { entry }, null, false );
     }
 
-    protected void removeConditionQuery ( final String id, final ConditionQuery query )
+    protected void removeConditionQuery ( final String id, final MonitorQuery query )
     {
         logger.info ( "Removing query: " + id );
         this.conditionSubscriptions.setSource ( id, null );
@@ -317,8 +317,8 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
                 {
                     ServiceImpl.this.serviceChanged ( event );
                 }
-            }, "(" + Constants.OBJECTCLASS + "=" + ConditionQuery.class.getName () + ")" );
-            final ServiceReference[] refs = this.context.getServiceReferences ( ConditionQuery.class.getName (), null );
+            }, "(" + Constants.OBJECTCLASS + "=" + MonitorQuery.class.getName () + ")" );
+            final ServiceReference[] refs = this.context.getServiceReferences ( MonitorQuery.class.getName (), null );
             if ( refs != null )
             {
                 for ( final ServiceReference ref : refs )
@@ -405,7 +405,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
                 break;
             case ServiceEvent.UNREGISTERING:
                 final String id = getQueryId ( ref );
-                final ConditionQuery query = this.conditionQueryRefs.remove ( id );
+                final MonitorQuery query = this.conditionQueryRefs.remove ( id );
                 if ( query != null )
                 {
                     removeConditionQuery ( id, query );
@@ -431,9 +431,9 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         logger.info ( "Checking query: " + ref );
 
         final Object o = this.context.getService ( ref );
-        if ( o instanceof ConditionQuery )
+        if ( o instanceof MonitorQuery )
         {
-            final ConditionQuery query = (ConditionQuery)o;
+            final MonitorQuery query = (MonitorQuery)o;
             final String id = getQueryId ( ref );
             if ( id != null )
             {

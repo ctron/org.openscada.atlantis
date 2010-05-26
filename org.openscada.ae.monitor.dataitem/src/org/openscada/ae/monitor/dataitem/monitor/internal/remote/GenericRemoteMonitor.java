@@ -33,7 +33,7 @@ import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.ConditionListener;
+import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -62,7 +62,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     protected Date timestamp;
 
-    private final Set<ConditionListener> listeners = new HashSet<ConditionListener> ();
+    private final Set<MonitorListener> listeners = new HashSet<MonitorListener> ();
 
     protected final EventProcessor eventProcessor;
 
@@ -237,12 +237,12 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     private synchronized void notifyListener ( final MonitorStatusInformation info )
     {
-        final ArrayList<ConditionListener> listnersClone = new ArrayList<ConditionListener> ( this.listeners );
+        final ArrayList<MonitorListener> listnersClone = new ArrayList<MonitorListener> ( this.listeners );
         this.executor.execute ( new Runnable () {
 
             public void run ()
             {
-                for ( final ConditionListener listener : listnersClone )
+                for ( final MonitorListener listener : listnersClone )
                 {
                     listener.statusChanged ( info );
                 }
@@ -382,7 +382,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         return builder;
     }
 
-    public synchronized void addStatusListener ( final ConditionListener listener )
+    public synchronized void addStatusListener ( final MonitorListener listener )
     {
         if ( this.listeners.add ( listener ) )
         {
@@ -397,7 +397,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         }
     }
 
-    public synchronized void removeStatusListener ( final ConditionListener listener )
+    public synchronized void removeStatusListener ( final MonitorListener listener )
     {
         this.listeners.remove ( listener );
     }

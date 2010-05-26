@@ -35,7 +35,7 @@ import org.openscada.ae.Query;
 import org.openscada.ae.QueryState;
 import org.openscada.ae.UnknownQueryException;
 import org.openscada.ae.net.BrowserMessageHelper;
-import org.openscada.ae.net.ConditionMessageHelper;
+import org.openscada.ae.net.MonitorMessageHelper;
 import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
 import org.openscada.ae.server.MonitorListener;
@@ -589,8 +589,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         final Message message = new Message ( Messages.CC_CONDITIONS_DATA );
 
         message.getValues ().put ( MESSAGE_QUERY_ID, new StringValue ( subscriptionId ) );
-        message.getValues ().put ( "conditions.addedOrUpdated", ConditionMessageHelper.toValue ( addedOrUpdated ) );
-        message.getValues ().put ( "conditions.removed", ConditionMessageHelper.toValue ( removed ) );
+        message.getValues ().put ( "conditions.addedOrUpdated", MonitorMessageHelper.toValue ( addedOrUpdated ) );
+        message.getValues ().put ( "conditions.removed", MonitorMessageHelper.toValue ( removed ) );
 
         this.messenger.sendMessage ( message );
     }

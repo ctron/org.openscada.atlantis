@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.monitor.ConditionListener;
+import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -35,7 +35,7 @@ public abstract class AbstractMonitorService implements MonitorService
 {
     private final static Logger logger = LoggerFactory.getLogger ( AbstractStateMachineMonitorService.class );
 
-    protected Set<ConditionListener> conditionListeners = new HashSet<ConditionListener> ();
+    protected Set<MonitorListener> monitorListeners = new HashSet<MonitorListener> ();
 
     private final String id;
 
@@ -56,14 +56,14 @@ public abstract class AbstractMonitorService implements MonitorService
         return this.id;
     }
 
-    public synchronized void addStatusListener ( final ConditionListener listener )
+    public synchronized void addStatusListener ( final MonitorListener listener )
     {
         if ( listener == null )
         {
             return;
         }
 
-        if ( this.conditionListeners.add ( listener ) )
+        if ( this.monitorListeners.add ( listener ) )
         {
             final MonitorStatusInformation state = this.currentState;
             this.executor.execute ( new Runnable () {
@@ -78,7 +78,7 @@ public abstract class AbstractMonitorService implements MonitorService
 
     protected synchronized void notifyStateChange ( final MonitorStatusInformation state )
     {
-        final ConditionListener[] listeners = this.conditionListeners.toArray ( new ConditionListener[this.conditionListeners.size ()] );
+        final MonitorListener[] listeners = this.monitorListeners.toArray ( new MonitorListener[this.monitorListeners.size ()] );
 
         this.currentState = state;
 
@@ -86,7 +86,7 @@ public abstract class AbstractMonitorService implements MonitorService
 
             public void run ()
             {
-                for ( final ConditionListener listener : listeners )
+                for ( final MonitorListener listener : listeners )
                 {
                     try
                     {
@@ -101,9 +101,9 @@ public abstract class AbstractMonitorService implements MonitorService
         } );
     }
 
-    public synchronized void removeStatusListener ( final ConditionListener listener )
+    public synchronized void removeStatusListener ( final MonitorListener listener )
     {
-        this.conditionListeners.remove ( listener );
+        this.monitorListeners.remove ( listener );
     }
 
 }

@@ -23,7 +23,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.ae.server.common.condition.ConditionQuery;
+import org.openscada.ae.server.common.condition.MonitorQuery;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -71,7 +71,7 @@ public class Activator implements BundleActivator
         properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A condition query containing all condition services" );
 
-        this.handle = this.context.registerService ( ConditionQuery.class.getName (), this.allQuery, properties );
+        this.handle = this.context.registerService ( MonitorQuery.class.getName (), this.allQuery, properties );
 
         // register factory
         this.factory = new QueryServiceFactory ( context, this.poolTracker );

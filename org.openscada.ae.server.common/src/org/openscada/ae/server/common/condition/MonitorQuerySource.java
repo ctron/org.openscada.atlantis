@@ -32,11 +32,11 @@ import org.openscada.core.subscription.SubscriptionSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConditionQuerySource implements SubscriptionSource, ConditionQueryListener
+public class MonitorQuerySource implements SubscriptionSource, MonitorQueryListener
 {
-    private final static Logger logger = LoggerFactory.getLogger ( ConditionQuerySource.class );
+    private final static Logger logger = LoggerFactory.getLogger ( MonitorQuerySource.class );
 
-    private final ConditionQuery conditionQuery;
+    private final MonitorQuery monitorQuery;
 
     private final Set<MonitorListener> listeners = new HashSet<MonitorListener> ();
 
@@ -44,10 +44,10 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
 
     private final String queryId;
 
-    public ConditionQuerySource ( final String queryId, final ConditionQuery conditionQuery )
+    public MonitorQuerySource ( final String queryId, final MonitorQuery monitorQuery )
     {
         this.queryId = queryId;
-        this.conditionQuery = conditionQuery;
+        this.monitorQuery = monitorQuery;
     }
 
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
@@ -67,7 +67,7 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
 
         if ( wasEmpty && !this.listeners.isEmpty () )
         {
-            this.conditionQuery.setListener ( this );
+            this.monitorQuery.setListener ( this );
         }
     }
 
@@ -81,7 +81,7 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
 
         if ( this.listeners.isEmpty () )
         {
-            this.conditionQuery.setListener ( null );
+            this.monitorQuery.setListener ( null );
             this.cachedData.clear ();
         }
     }

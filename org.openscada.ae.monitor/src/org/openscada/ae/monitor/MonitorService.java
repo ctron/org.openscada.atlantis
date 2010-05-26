@@ -27,9 +27,9 @@ public interface MonitorService
 {
     public String getId ();
 
-    public void addStatusListener ( ConditionListener listener );
+    public void addStatusListener ( MonitorListener listener );
 
-    public void removeStatusListener ( ConditionListener listener );
+    public void removeStatusListener ( MonitorListener listener );
 
     public void akn ( UserInformation userInformation, Date aknTimestamp );
 

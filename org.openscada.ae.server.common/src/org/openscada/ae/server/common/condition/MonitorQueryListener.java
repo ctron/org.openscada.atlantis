@@ -21,7 +21,7 @@ package org.openscada.ae.server.common.condition;
 
 import org.openscada.ae.MonitorStatusInformation;
 
-public interface ConditionQueryListener
+public interface MonitorQueryListener
 {
     public void dataChanged ( MonitorStatusInformation[] addedOrUpdated, String[] removed );
 }

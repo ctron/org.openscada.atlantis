@@ -29,20 +29,20 @@ import org.openscada.ae.MonitorStatusInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConditionQuery
+public class MonitorQuery
 {
-    private final static Logger logger = LoggerFactory.getLogger ( ConditionQuery.class );
+    private final static Logger logger = LoggerFactory.getLogger ( MonitorQuery.class );
 
-    private ConditionQueryListener listener;
+    private MonitorQueryListener listener;
 
     private final Map<String, MonitorStatusInformation> cachedData;
 
-    public ConditionQuery ()
+    public MonitorQuery ()
     {
         this.cachedData = new HashMap<String, MonitorStatusInformation> ();
     }
 
-    public synchronized void setListener ( final ConditionQueryListener listener )
+    public synchronized void setListener ( final MonitorQueryListener listener )
     {
         this.listener = listener;
         fireListener ( this.cachedData.values ().toArray ( new MonitorStatusInformation[0] ), null );

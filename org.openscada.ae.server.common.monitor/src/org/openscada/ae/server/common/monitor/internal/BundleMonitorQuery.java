@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.monitor.ConditionListener;
+import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.ae.server.common.condition.ConditionQuery;
+import org.openscada.ae.server.common.condition.MonitorQuery;
 import org.openscada.utils.filter.Filter;
 import org.openscada.utils.filter.FilterParser;
 import org.openscada.utils.filter.bean.BeanMatcher;
@@ -42,7 +42,7 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BundleMonitorQuery extends ConditionQuery implements ConditionListener
+public class BundleMonitorQuery extends MonitorQuery implements MonitorListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( BundleMonitorQuery.class );

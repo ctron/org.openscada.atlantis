@@ -41,7 +41,7 @@ import org.openscada.ae.QueryState;
 import org.openscada.ae.client.MonitorListener;
 import org.openscada.ae.client.EventListener;
 import org.openscada.ae.net.BrowserMessageHelper;
-import org.openscada.ae.net.ConditionMessageHelper;
+import org.openscada.ae.net.MonitorMessageHelper;
 import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
 import org.openscada.core.ConnectionInformation;
@@ -371,8 +371,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 }
             }
 
-            final MonitorStatusInformation[] data = ConditionMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
-            final String[] removed = ConditionMessageHelper.fromValueRemoved ( message.getValues ().get ( "conditions.removed" ) );
+            final MonitorStatusInformation[] data = MonitorMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
+            final String[] removed = MonitorMessageHelper.fromValueRemoved ( message.getValues ().get ( "conditions.removed" ) );
 
             if ( queryId != null && ( data != null || removed != null ) )
             {

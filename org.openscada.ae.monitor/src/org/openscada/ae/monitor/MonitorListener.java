@@ -21,7 +21,7 @@ package org.openscada.ae.monitor;
 
 import org.openscada.ae.MonitorStatusInformation;
 
-public interface ConditionListener
+public interface MonitorListener
 {
     public void statusChanged ( MonitorStatusInformation status );
 }

@@ -36,7 +36,7 @@ public class Activator implements BundleActivator
 
     private EventProcessor processor;
 
-    private TestingCondition service;
+    private TestingMonitor service;
 
     private ObjectPoolImpl monitorServicePool;
 
@@ -54,7 +54,7 @@ public class Activator implements BundleActivator
 
         this.processor = new EventProcessor ( context );
         this.processor.open ();
-        this.service = new TestingCondition ( context, this.executor, this.processor, context.getBundle ().getSymbolicName () + ".test" );
+        this.service = new TestingMonitor ( context, this.executor, this.processor, context.getBundle ().getSymbolicName () + ".test" );
         this.service.init ();
 
         this.monitorServicePool = new ObjectPoolImpl ();
