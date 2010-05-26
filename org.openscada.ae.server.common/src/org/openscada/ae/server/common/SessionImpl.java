@@ -27,9 +27,9 @@ import java.util.Set;
 
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
-import org.openscada.ae.server.ConditionListener;
+import org.openscada.ae.server.MonitorListener;
 import org.openscada.ae.server.EventListener;
 import org.openscada.ae.server.Session;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
@@ -45,9 +45,9 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
 
     private final EventListener eventListener;
 
-    private final ConditionListener conditionListener;
+    private final MonitorListener monitorListener;
 
-    private volatile ConditionListener clientConditionListener;
+    private volatile MonitorListener clientConditionListener;
 
     private volatile EventListener clientEventListener;
 
@@ -76,9 +76,9 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
                 SessionImpl.this.eventStatusChanged ( poolId.toString (), state );
             }
         };
-        this.conditionListener = new ConditionListener () {
+        this.monitorListener = new MonitorListener () {
 
-            public void dataChanged ( final String subscriptionId, final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+            public void dataChanged ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
             {
                 SessionImpl.this.conditionDataChanged ( subscriptionId, addedOrUpdated, removed );
             }
@@ -92,16 +92,16 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
 
     protected void conditionStatusChanged ( final String string, final SubscriptionState state )
     {
-        final ConditionListener listener = this.clientConditionListener;
+        final MonitorListener listener = this.clientConditionListener;
         if ( listener != null )
         {
             listener.updateStatus ( string, state );
         }
     }
 
-    protected void conditionDataChanged ( final String subscriptionId, final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+    protected void conditionDataChanged ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
     {
-        final ConditionListener listener = this.clientConditionListener;
+        final MonitorListener listener = this.clientConditionListener;
         if ( listener != null )
         {
             logger.info ( String.format ( "Condition Data Change: %s - %s - %s", subscriptionId, addedOrUpdated != null ? addedOrUpdated.length : "none", removed != null ? removed.length : "none" ) );
@@ -127,7 +127,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         }
     }
 
-    public void setConditionListener ( final ConditionListener listener )
+    public void setConditionListener ( final MonitorListener listener )
     {
         this.clientConditionListener = listener;
     }
@@ -157,9 +157,9 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         this.clientBrowserListener = null;
     }
 
-    public ConditionListener getConditionListener ()
+    public MonitorListener getConditionListener ()
     {
-        return this.conditionListener;
+        return this.monitorListener;
     }
 
     public EventListener getEventListener ()

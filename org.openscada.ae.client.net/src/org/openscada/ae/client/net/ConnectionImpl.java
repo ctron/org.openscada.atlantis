@@ -33,12 +33,12 @@ import java.util.concurrent.ThreadFactory;
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.QueryState;
-import org.openscada.ae.client.ConditionListener;
+import org.openscada.ae.client.MonitorListener;
 import org.openscada.ae.client.EventListener;
 import org.openscada.ae.net.BrowserMessageHelper;
 import org.openscada.ae.net.ConditionMessageHelper;
@@ -72,7 +72,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private Executor executor;
 
-    private final Map<String, ConditionListener> conditionListeners = new HashMap<String, ConditionListener> ();
+    private final Map<String, MonitorListener> monitorListeners = new HashMap<String, MonitorListener> ();
 
     private final Map<String, EventListener> eventListeners = new HashMap<String, EventListener> ();
 
@@ -371,12 +371,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 }
             }
 
-            final ConditionStatusInformation[] data = ConditionMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
+            final MonitorStatusInformation[] data = ConditionMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
             final String[] removed = ConditionMessageHelper.fromValueRemoved ( message.getValues ().get ( "conditions.removed" ) );
 
             if ( queryId != null && ( data != null || removed != null ) )
             {
-                final ConditionListener listener = this.conditionListeners.get ( queryId );
+                final MonitorListener listener = this.monitorListeners.get ( queryId );
                 fireConditionDataChange ( listener, data, removed );
             }
             else
@@ -391,7 +391,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     }
 
-    private void fireConditionDataChange ( final ConditionListener listener, final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+    private void fireConditionDataChange ( final MonitorListener listener, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
     {
         if ( listener == null )
         {
@@ -470,7 +470,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         if ( queryId != null && status != null )
         {
-            final ConditionListener listener = this.conditionListeners.get ( queryId );
+            final MonitorListener listener = this.monitorListeners.get ( queryId );
             fireConditionStatusChange ( listener, status );
         }
     }
@@ -521,7 +521,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.messenger.sendMessage ( message );
     }
 
-    public synchronized void setConditionListener ( final String conditionQueryId, final ConditionListener listener )
+    public synchronized void setConditionListener ( final String conditionQueryId, final MonitorListener listener )
     {
         if ( listener == null )
         {
@@ -533,11 +533,11 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         }
     }
 
-    private void updateConditionListener ( final String conditionQueryId, final ConditionListener listener )
+    private void updateConditionListener ( final String conditionQueryId, final MonitorListener listener )
     {
-        ConditionListener oldListener;
+        MonitorListener oldListener;
 
-        oldListener = this.conditionListeners.put ( conditionQueryId, listener );
+        oldListener = this.monitorListeners.put ( conditionQueryId, listener );
         if ( oldListener == listener )
         {
             return;
@@ -560,9 +560,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private void clearConditionListener ( final String conditionQueryId )
     {
-        ConditionListener oldListener;
+        MonitorListener oldListener;
 
-        oldListener = this.conditionListeners.remove ( conditionQueryId );
+        oldListener = this.monitorListeners.remove ( conditionQueryId );
         if ( oldListener != null )
         {
             sendSubscribeConditions ( conditionQueryId, false );
@@ -589,7 +589,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.messenger.sendMessage ( message );
     }
 
-    private void fireConditionStatusChange ( final ConditionListener listener, final SubscriptionState status )
+    private void fireConditionStatusChange ( final MonitorListener listener, final SubscriptionState status )
     {
         if ( listener == null )
         {
@@ -693,7 +693,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             sendSubscribeEventQuery ( key, true );
         }
-        for ( final String key : this.conditionListeners.keySet () )
+        for ( final String key : this.monitorListeners.keySet () )
         {
             sendSubscribeConditions ( key, true );
         }
@@ -703,7 +703,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     public synchronized void sessionClosed ( final IoSession session ) throws Exception
     {
         // set states to DISCONNECTED
-        for ( final ConditionListener listener : this.conditionListeners.values () )
+        for ( final MonitorListener listener : this.monitorListeners.values () )
         {
             fireConditionStatusChange ( listener, SubscriptionState.DISCONNECTED );
         }

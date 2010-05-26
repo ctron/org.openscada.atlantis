@@ -37,7 +37,7 @@ public interface Connection extends org.openscada.core.client.Connection
     /**
      * Set the listener that should receive condition updates
      */
-    public void setConditionListener ( String conditionQueryId, ConditionListener listener );
+    public void setConditionListener ( String conditionQueryId, MonitorListener listener );
 
     // Event - online
     /**

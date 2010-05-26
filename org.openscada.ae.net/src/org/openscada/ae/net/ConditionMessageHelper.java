@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.ae.ConditionStatus;
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.core.Variant;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.data.ListValue;
@@ -40,20 +40,20 @@ import org.openscada.net.base.data.VoidValue;
 public class ConditionMessageHelper
 {
 
-    public static ConditionStatusInformation[] fromValue ( final Value baseValue )
+    public static MonitorStatusInformation[] fromValue ( final Value baseValue )
     {
         if ( ! ( baseValue instanceof ListValue ) )
         {
             return null;
         }
 
-        final List<ConditionStatusInformation> result = new ArrayList<ConditionStatusInformation> ();
+        final List<MonitorStatusInformation> result = new ArrayList<MonitorStatusInformation> ();
 
         final ListValue value = (ListValue)baseValue;
 
         for ( final Value entryValue : value.getValues () )
         {
-            final ConditionStatusInformation entry = fromValueEntry ( entryValue );
+            final MonitorStatusInformation entry = fromValueEntry ( entryValue );
             if ( entry != null )
             {
                 result.add ( entry );
@@ -65,10 +65,10 @@ public class ConditionMessageHelper
             return null;
         }
 
-        return result.toArray ( new ConditionStatusInformation[result.size ()] );
+        return result.toArray ( new MonitorStatusInformation[result.size ()] );
     }
 
-    private static ConditionStatusInformation fromValueEntry ( final Value entryValue )
+    private static MonitorStatusInformation fromValueEntry ( final Value entryValue )
     {
         if ( ! ( entryValue instanceof MapValue ) )
         {
@@ -99,7 +99,7 @@ public class ConditionMessageHelper
             Date statusTimestamp = null;
             statusTimestamp = new Date ( ( (LongValue)value.get ( "statusTimestamp" ) ).getValue () );
             // get status
-            final ConditionStatus status = ConditionStatus.valueOf ( ( (StringValue)value.get ( "status" ) ).getValue () );
+            final MonitorStatus status = MonitorStatus.valueOf ( ( (StringValue)value.get ( "status" ) ).getValue () );
             if ( status == null )
             {
                 return null;
@@ -115,7 +115,7 @@ public class ConditionMessageHelper
                 attributes = null;
             }
 
-            return new ConditionStatusInformation ( id, status, statusTimestamp, currentValue, lastAknTimestamp, lastAknUser, attributes );
+            return new MonitorStatusInformation ( id, status, statusTimestamp, currentValue, lastAknTimestamp, lastAknUser, attributes );
         }
         catch ( final ClassCastException e )
         {
@@ -127,13 +127,13 @@ public class ConditionMessageHelper
         }
     }
 
-    public static Value toValue ( final ConditionStatusInformation[] added )
+    public static Value toValue ( final MonitorStatusInformation[] added )
     {
         final ListValue result = new ListValue ();
 
         if ( added != null )
         {
-            for ( final ConditionStatusInformation condition : added )
+            for ( final MonitorStatusInformation condition : added )
             {
                 result.add ( toValue ( condition ) );
             }
@@ -142,7 +142,7 @@ public class ConditionMessageHelper
         return result;
     }
 
-    private static Value toValue ( final ConditionStatusInformation condition )
+    private static Value toValue ( final MonitorStatusInformation condition )
     {
         final MapValue value = new MapValue ();
 

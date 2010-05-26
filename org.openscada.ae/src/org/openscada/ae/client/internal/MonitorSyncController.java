@@ -26,20 +26,20 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.openscada.ae.ConditionStatusInformation;
-import org.openscada.ae.client.ConditionListener;
+import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.client.MonitorListener;
 import org.openscada.ae.client.Connection;
 import org.openscada.core.subscription.SubscriptionState;
 
-public class MonitorSyncController implements ConditionListener
+public class MonitorSyncController implements MonitorListener
 {
-    private final List<ConditionListener> listeners = new CopyOnWriteArrayList<ConditionListener> ();
+    private final List<MonitorListener> listeners = new CopyOnWriteArrayList<MonitorListener> ();
 
     private final Connection connection;
 
     private final String id;
 
-    private final Set<ConditionStatusInformation> cachedMonitors = CollectionsBackPort.<ConditionStatusInformation> newSetFromMap ( new ConcurrentHashMap<ConditionStatusInformation, Boolean> () );
+    private final Set<MonitorStatusInformation> cachedMonitors = CollectionsBackPort.<MonitorStatusInformation> newSetFromMap ( new ConcurrentHashMap<MonitorStatusInformation, Boolean> () );
 
     public MonitorSyncController ( final Connection connection, final String id )
     {
@@ -52,7 +52,7 @@ public class MonitorSyncController implements ConditionListener
         this.connection.setConditionListener ( this.id, this );
     }
 
-    public void dataChanged ( final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+    public void dataChanged ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
     {
         if ( addedOrUpdated != null )
         {
@@ -61,33 +61,33 @@ public class MonitorSyncController implements ConditionListener
         }
         if ( removed != null )
         {
-            final Set<ConditionStatusInformation> toRemove = new HashSet<ConditionStatusInformation> ();
+            final Set<MonitorStatusInformation> toRemove = new HashSet<MonitorStatusInformation> ();
             final List<String> removedList = Arrays.asList ( removed );
-            for ( final ConditionStatusInformation monitor : this.cachedMonitors )
+            for ( final MonitorStatusInformation monitor : this.cachedMonitors )
             {
                 if ( removedList.contains ( monitor.getId () ) )
                 {
                     toRemove.add ( monitor );
                 }
             }
-            for ( final ConditionStatusInformation monitor : toRemove )
+            for ( final MonitorStatusInformation monitor : toRemove )
             {
                 this.cachedMonitors.remove ( monitor );
             }
         }
-        for ( final ConditionListener listener : this.listeners )
+        for ( final MonitorListener listener : this.listeners )
         {
             listener.dataChanged ( addedOrUpdated, removed );
         }
     }
 
-    public synchronized void addListener ( final ConditionListener listener )
+    public synchronized void addListener ( final MonitorListener listener )
     {
         this.listeners.add ( listener );
-        listener.dataChanged ( this.cachedMonitors.toArray ( new ConditionStatusInformation[] {} ), null );
+        listener.dataChanged ( this.cachedMonitors.toArray ( new MonitorStatusInformation[] {} ), null );
     }
 
-    public synchronized boolean removeListener ( final ConditionListener listener )
+    public synchronized boolean removeListener ( final MonitorListener listener )
     {
         this.listeners.remove ( listener );
         return this.listeners.size () == 0;
@@ -98,9 +98,9 @@ public class MonitorSyncController implements ConditionListener
         switch ( state )
         {
         case CONNECTED:
-            for ( final ConditionListener listener : this.listeners )
+            for ( final MonitorListener listener : this.listeners )
             {
-                listener.dataChanged ( this.cachedMonitors.toArray ( new ConditionStatusInformation[] {} ), null );
+                listener.dataChanged ( this.cachedMonitors.toArray ( new MonitorStatusInformation[] {} ), null );
             }
             break;
         default:

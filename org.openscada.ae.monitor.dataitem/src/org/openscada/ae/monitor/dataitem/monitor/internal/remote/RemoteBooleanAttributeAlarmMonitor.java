@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.ConditionStatus;
+import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
 import org.openscada.ca.ConfigurationDataHelper;
@@ -75,7 +75,7 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
 
         if ( value == null )
         {
-            setState ( ConditionStatus.UNSAFE );
+            setState ( MonitorStatus.UNSAFE );
             return injectState ( builder ).build ();
         }
 
@@ -91,15 +91,15 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
             activeFlag = active.asBoolean ();
         }
 
-        final ConditionStatus state;
+        final MonitorStatus state;
 
         if ( !activeFlag )
         {
-            state = ConditionStatus.INACTIVE;
+            state = MonitorStatus.INACTIVE;
         }
         else if ( ack == null )
         {
-            state = alarmFlag ? ConditionStatus.NOT_OK : ConditionStatus.OK;
+            state = alarmFlag ? MonitorStatus.NOT_OK : MonitorStatus.OK;
         }
         else
         {
@@ -108,22 +108,22 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
             {
                 if ( ackRequiredFlag )
                 {
-                    state = ConditionStatus.NOT_OK_NOT_AKN;
+                    state = MonitorStatus.NOT_OK_NOT_AKN;
                 }
                 else
                 {
-                    state = ConditionStatus.NOT_OK_AKN;
+                    state = MonitorStatus.NOT_OK_AKN;
                 }
             }
             else
             {
                 if ( ackRequiredFlag )
                 {
-                    state = ConditionStatus.NOT_AKN;
+                    state = MonitorStatus.NOT_AKN;
                 }
                 else
                 {
-                    state = ConditionStatus.OK;
+                    state = MonitorStatus.OK;
                 }
             }
         }

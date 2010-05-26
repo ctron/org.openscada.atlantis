@@ -75,7 +75,7 @@ public class MonitorManager implements ConnectionStateListener
         }
     }
 
-    public synchronized void addMonitorListener ( final String id, final ConditionListener listener )
+    public synchronized void addMonitorListener ( final String id, final MonitorListener listener )
     {
         MonitorSyncController monitorSyncController = this.monitorListeners.get ( id );
         if ( monitorSyncController == null )
@@ -86,7 +86,7 @@ public class MonitorManager implements ConnectionStateListener
         monitorSyncController.addListener ( listener );
     }
 
-    public synchronized void removeMonitorListener ( final String id, final ConditionListener listener )
+    public synchronized void removeMonitorListener ( final String id, final MonitorListener listener )
     {
         final MonitorSyncController monitorSyncController = this.monitorListeners.get ( id );
         if ( monitorSyncController == null )

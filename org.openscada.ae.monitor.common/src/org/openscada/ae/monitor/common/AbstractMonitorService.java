@@ -24,8 +24,8 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.ConditionStatus;
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.monitor.ConditionListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.slf4j.Logger;
@@ -41,14 +41,14 @@ public abstract class AbstractMonitorService implements MonitorService
 
     private final Executor executor;
 
-    protected ConditionStatusInformation currentState;
+    protected MonitorStatusInformation currentState;
 
     public AbstractMonitorService ( final String id, final Executor executor )
     {
         this.executor = executor;
         this.id = id;
 
-        this.currentState = new ConditionStatusInformation ( id, ConditionStatus.INIT, new Date (), null, null, null, null );
+        this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, new Date (), null, null, null, null );
     }
 
     public String getId ()
@@ -65,7 +65,7 @@ public abstract class AbstractMonitorService implements MonitorService
 
         if ( this.conditionListeners.add ( listener ) )
         {
-            final ConditionStatusInformation state = this.currentState;
+            final MonitorStatusInformation state = this.currentState;
             this.executor.execute ( new Runnable () {
 
                 public void run ()
@@ -76,7 +76,7 @@ public abstract class AbstractMonitorService implements MonitorService
         }
     }
 
-    protected synchronized void notifyStateChange ( final ConditionStatusInformation state )
+    protected synchronized void notifyStateChange ( final MonitorStatusInformation state )
     {
         final ConditionListener[] listeners = this.conditionListeners.toArray ( new ConditionListener[this.conditionListeners.size ()] );
 

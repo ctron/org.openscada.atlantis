@@ -27,7 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.monitor.ConditionListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.condition.ConditionQuery;
@@ -51,7 +51,7 @@ public class BundleMonitorQuery extends ConditionQuery implements ConditionListe
 
     private final AllObjectPoolServiceTracker tracker;
 
-    private final Map<String, ConditionStatusInformation> cachedData = new HashMap<String, ConditionStatusInformation> ();
+    private final Map<String, MonitorStatusInformation> cachedData = new HashMap<String, MonitorStatusInformation> ();
 
     private Filter filter = Filter.EMPTY;
 
@@ -124,11 +124,11 @@ public class BundleMonitorQuery extends ConditionQuery implements ConditionListe
         setData ( getFiltered () );
     }
 
-    protected synchronized ConditionStatusInformation[] getFiltered ()
+    protected synchronized MonitorStatusInformation[] getFiltered ()
     {
-        final List<ConditionStatusInformation> result = new ArrayList<ConditionStatusInformation> ();
+        final List<MonitorStatusInformation> result = new ArrayList<MonitorStatusInformation> ();
 
-        for ( final ConditionStatusInformation ci : this.cachedData.values () )
+        for ( final MonitorStatusInformation ci : this.cachedData.values () )
         {
             if ( matchesFilter ( ci ) )
             {
@@ -136,10 +136,10 @@ public class BundleMonitorQuery extends ConditionQuery implements ConditionListe
             }
         }
 
-        return result.toArray ( new ConditionStatusInformation[result.size ()] );
+        return result.toArray ( new MonitorStatusInformation[result.size ()] );
     }
 
-    private boolean matchesFilter ( final ConditionStatusInformation status )
+    private boolean matchesFilter ( final MonitorStatusInformation status )
     {
         return BeanMatcher.matches ( this.filter, status, true, null );
     }
@@ -156,7 +156,7 @@ public class BundleMonitorQuery extends ConditionQuery implements ConditionListe
         this.tracker.close ();
     }
 
-    public synchronized void statusChanged ( final ConditionStatusInformation status )
+    public synchronized void statusChanged ( final MonitorStatusInformation status )
     {
         if ( logger.isDebugEnabled () )
         {
@@ -167,7 +167,7 @@ public class BundleMonitorQuery extends ConditionQuery implements ConditionListe
 
         if ( matchesFilter ( status ) )
         {
-            updateData ( new ConditionStatusInformation[] { status }, null );
+            updateData ( new MonitorStatusInformation[] { status }, null );
         }
         else
         {

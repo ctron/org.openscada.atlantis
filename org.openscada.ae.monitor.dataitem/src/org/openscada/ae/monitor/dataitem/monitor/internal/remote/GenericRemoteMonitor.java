@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.ConditionStatus;
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
@@ -58,7 +58,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     protected final String id;
 
-    protected ConditionStatus state;
+    protected MonitorStatus state;
 
     protected Date timestamp;
 
@@ -90,7 +90,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         this.eventProcessor = eventProcessor;
         this.id = id;
 
-        this.state = ConditionStatus.INIT;
+        this.state = MonitorStatus.INIT;
 
         this.listener = new DataListener () {
 
@@ -134,7 +134,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         this.persistentState = (PersistentState)o;
         this.lastAckUser = this.persistentState.getLastAckUser ();
 
-        final ConditionStatus currentState = this.state;
+        final MonitorStatus currentState = this.state;
         this.state = this.persistentState.getState ();
         final Date currentTimestamp = this.timestamp;
         this.timestamp = this.persistentState.getTimestamp ();
@@ -142,10 +142,10 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         this.aknTimestamp = this.persistentState.getAckTimestamp ();
 
         // now send the status
-        final ConditionStatusInformation info = createStatus ();
+        final MonitorStatusInformation info = createStatus ();
         notifyListener ( info );
 
-        if ( currentState != ConditionStatus.INIT )
+        if ( currentState != MonitorStatus.INIT )
         {
             // perform the transition to "now"
             setState ( currentState, currentTimestamp, currentAknTimestamp );
@@ -186,12 +186,12 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
     {
     }
 
-    protected void setState ( final ConditionStatus state )
+    protected void setState ( final MonitorStatus state )
     {
         setState ( state, new Date (), null );
     }
 
-    protected synchronized void setState ( final ConditionStatus state, final Date timestamp, final Date aknTimestamp )
+    protected synchronized void setState ( final MonitorStatus state, final Date timestamp, final Date aknTimestamp )
     {
         if ( this.state != state )
         {
@@ -225,7 +225,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     private void doNotify ()
     {
-        final ConditionStatusInformation info = createStatus ();
+        final MonitorStatusInformation info = createStatus ();
         notifyListener ( info );
 
         if ( this.persistentState != null )
@@ -235,7 +235,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         }
     }
 
-    private synchronized void notifyListener ( final ConditionStatusInformation info )
+    private synchronized void notifyListener ( final MonitorStatusInformation info )
     {
         final ArrayList<ConditionListener> listnersClone = new ArrayList<ConditionListener> ( this.listeners );
         this.executor.execute ( new Runnable () {
@@ -281,14 +281,14 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
     {
         if ( value == null )
         {
-            setState ( ConditionStatus.UNSAFE );
+            setState ( MonitorStatus.UNSAFE );
             return null;
         }
 
         return handleUpdate ( value );
     }
 
-    private ConditionStatusInformation createStatus ()
+    private MonitorStatusInformation createStatus ()
     {
         Date timestamp = this.timestamp;
         if ( timestamp == null )
@@ -298,11 +298,11 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
         if ( this.persistentState == null )
         {
-            return new ConditionStatusInformation ( this.id, ConditionStatus.INIT, timestamp, null, this.aknTimestamp, this.lastAckUser, getMonitorAttributes () );
+            return new MonitorStatusInformation ( this.id, MonitorStatus.INIT, timestamp, null, this.aknTimestamp, this.lastAckUser, getMonitorAttributes () );
         }
         else
         {
-            return new ConditionStatusInformation ( this.id, this.state, timestamp, null, this.aknTimestamp, this.lastAckUser, getMonitorAttributes () );
+            return new MonitorStatusInformation ( this.id, this.state, timestamp, null, this.aknTimestamp, this.lastAckUser, getMonitorAttributes () );
         }
     }
 
@@ -327,7 +327,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         return builder;
     }
 
-    private Event createEvent ( final ConditionStatusInformation info, final String eventType )
+    private Event createEvent ( final MonitorStatusInformation info, final String eventType )
     {
         final EventBuilder builder = createEventBuilder ();
 
@@ -386,7 +386,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
     {
         if ( this.listeners.add ( listener ) )
         {
-            final ConditionStatusInformation state = createStatus ();
+            final MonitorStatusInformation state = createStatus ();
             this.executor.execute ( new Runnable () {
 
                 public void run ()

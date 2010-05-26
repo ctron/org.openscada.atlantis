@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.ae.ConditionStatusInformation;
-import org.openscada.ae.server.ConditionListener;
+import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.server.MonitorListener;
 import org.openscada.core.subscription.SubscriptionInformation;
 import org.openscada.core.subscription.SubscriptionSource;
 import org.slf4j.Logger;
@@ -38,9 +38,9 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
 
     private final ConditionQuery conditionQuery;
 
-    private final Set<ConditionListener> listeners = new HashSet<ConditionListener> ();
+    private final Set<MonitorListener> listeners = new HashSet<MonitorListener> ();
 
-    private final Map<String, ConditionStatusInformation> cachedData = new HashMap<String, ConditionStatusInformation> ();
+    private final Map<String, MonitorStatusInformation> cachedData = new HashMap<String, MonitorStatusInformation> ();
 
     private final String queryId;
 
@@ -56,12 +56,12 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
 
         for ( final SubscriptionInformation information : listeners )
         {
-            final ConditionListener listener = (ConditionListener)information.getListener ();
+            final MonitorListener listener = (MonitorListener)information.getListener ();
             this.listeners.add ( listener );
 
             if ( !this.cachedData.isEmpty () )
             {
-                listener.dataChanged ( this.queryId, this.cachedData.values ().toArray ( new ConditionStatusInformation[0] ), null );
+                listener.dataChanged ( this.queryId, this.cachedData.values ().toArray ( new MonitorStatusInformation[0] ), null );
             }
         }
 
@@ -75,7 +75,7 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
     {
         for ( final SubscriptionInformation information : listeners )
         {
-            final ConditionListener listener = (ConditionListener)information.getListener ();
+            final MonitorListener listener = (MonitorListener)information.getListener ();
             this.listeners.remove ( listener );
         }
 
@@ -88,10 +88,10 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
 
     public boolean supportsListener ( final SubscriptionInformation subscriptionInformation )
     {
-        return subscriptionInformation.getListener () instanceof ConditionListener;
+        return subscriptionInformation.getListener () instanceof MonitorListener;
     }
 
-    public synchronized void dataChanged ( final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+    public synchronized void dataChanged ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
     {
         if ( removed != null )
         {
@@ -102,12 +102,12 @@ public class ConditionQuerySource implements SubscriptionSource, ConditionQueryL
         }
         if ( addedOrUpdated != null )
         {
-            for ( final ConditionStatusInformation info : addedOrUpdated )
+            for ( final MonitorStatusInformation info : addedOrUpdated )
             {
                 this.cachedData.put ( info.getId (), info );
             }
         }
-        for ( final ConditionListener listener : this.listeners )
+        for ( final MonitorListener listener : this.listeners )
         {
             try
             {

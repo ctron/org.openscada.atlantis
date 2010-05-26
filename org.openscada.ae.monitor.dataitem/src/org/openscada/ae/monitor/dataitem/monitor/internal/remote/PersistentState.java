@@ -22,7 +22,7 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.remote;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.openscada.ae.ConditionStatus;
+import org.openscada.ae.MonitorStatus;
 
 public class PersistentState implements Serializable
 {
@@ -30,7 +30,7 @@ public class PersistentState implements Serializable
 
     private String lastAckUser;
 
-    private ConditionStatus state;
+    private MonitorStatus state;
 
     private Date timestamp;
 
@@ -38,7 +38,7 @@ public class PersistentState implements Serializable
 
     public PersistentState ()
     {
-        this.state = ConditionStatus.INIT;
+        this.state = MonitorStatus.INIT;
     }
 
     public String getLastAckUser ()
@@ -51,12 +51,12 @@ public class PersistentState implements Serializable
         this.lastAckUser = lastAckUser;
     }
 
-    public ConditionStatus getState ()
+    public MonitorStatus getState ()
     {
         return this.state;
     }
 
-    public void setState ( final ConditionStatus state )
+    public void setState ( final MonitorStatus state )
     {
         this.state = state;
     }

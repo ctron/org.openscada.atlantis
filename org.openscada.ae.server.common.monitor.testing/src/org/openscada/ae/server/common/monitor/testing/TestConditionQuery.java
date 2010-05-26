@@ -24,8 +24,8 @@ import java.util.Random;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.ae.ConditionStatus;
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.server.common.condition.ConditionQuery;
 import org.openscada.core.Variant;
 
@@ -49,7 +49,7 @@ public class TestConditionQuery extends ConditionQuery
 
     protected void tick ()
     {
-        updateData ( new ConditionStatusInformation[] { new ConditionStatusInformation ( "test", r.nextBoolean () ? ConditionStatus.OK : ConditionStatus.NOT_OK, new Date (), new Variant (), new Date (), "system", null ) }, null );
+        updateData ( new MonitorStatusInformation[] { new MonitorStatusInformation ( "test", r.nextBoolean () ? MonitorStatus.OK : MonitorStatus.NOT_OK, new Date (), new Variant (), new Date (), "system", null ) }, null );
     }
 
     public void stop ()

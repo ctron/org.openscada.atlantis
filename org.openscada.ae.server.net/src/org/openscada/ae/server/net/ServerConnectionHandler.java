@@ -29,7 +29,7 @@ import java.util.Set;
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryState;
@@ -38,7 +38,7 @@ import org.openscada.ae.net.BrowserMessageHelper;
 import org.openscada.ae.net.ConditionMessageHelper;
 import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
-import org.openscada.ae.server.ConditionListener;
+import org.openscada.ae.server.MonitorListener;
 import org.openscada.ae.server.EventListener;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
@@ -86,7 +86,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     private EventListener eventListener;
 
     @SuppressWarnings ( "unused" )
-    private ConditionListener conditionListener;
+    private MonitorListener monitorListener;
 
     private final Map<Long, QueryImpl> queries = new HashMap<Long, QueryImpl> ();
 
@@ -498,9 +498,9 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                 ServerConnectionHandler.this.statusChangedEvents ( topic.toString (), state );
             }
         } );
-        this.session.setConditionListener ( this.conditionListener = new ConditionListener () {
+        this.session.setConditionListener ( this.monitorListener = new MonitorListener () {
 
-            public void dataChanged ( final String subscriptionId, final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+            public void dataChanged ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
             {
                 dataChangedConditions ( subscriptionId, addedOrUpdated, removed );
             }
@@ -584,7 +584,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.messenger.sendMessage ( message );
     }
 
-    public void dataChangedConditions ( final String subscriptionId, final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+    public void dataChangedConditions ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
     {
         final Message message = new Message ( Messages.CC_CONDITIONS_DATA );
 

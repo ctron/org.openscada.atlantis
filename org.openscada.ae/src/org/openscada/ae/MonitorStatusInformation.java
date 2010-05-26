@@ -29,14 +29,14 @@ import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class ConditionStatusInformation implements Serializable
+public class MonitorStatusInformation implements Serializable
 {
 
     private static final long serialVersionUID = 6138369511783020510L;
 
     private final String id;
 
-    private final ConditionStatus status;
+    private final MonitorStatus status;
 
     private final Date statusTimestamp;
 
@@ -48,7 +48,7 @@ public class ConditionStatusInformation implements Serializable
 
     private final Map<String, Variant> attributes;
 
-    public ConditionStatusInformation ( final String id, final ConditionStatus status, final Date statusTimestamp, final Variant value, final Date lastAknTimestamp, final String lastAknUser, final Map<String, Variant> attributes )
+    public MonitorStatusInformation ( final String id, final MonitorStatus status, final Date statusTimestamp, final Variant value, final Date lastAknTimestamp, final String lastAknUser, final Map<String, Variant> attributes )
     {
         super ();
 
@@ -87,7 +87,7 @@ public class ConditionStatusInformation implements Serializable
         return this.id;
     }
 
-    public ConditionStatus getStatus ()
+    public MonitorStatus getStatus ()
     {
         return this.status;
     }
@@ -137,11 +137,11 @@ public class ConditionStatusInformation implements Serializable
         {
             return false;
         }
-        if ( ! ( obj instanceof ConditionStatusInformation ) )
+        if ( ! ( obj instanceof MonitorStatusInformation ) )
         {
             return false;
         }
-        final ConditionStatusInformation other = (ConditionStatusInformation)obj;
+        final MonitorStatusInformation other = (MonitorStatusInformation)obj;
         if ( this.id == null )
         {
             if ( other.id != null )

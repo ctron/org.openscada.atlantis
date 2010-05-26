@@ -17,11 +17,12 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae;
+package org.openscada.ae.server;
 
-public enum ConditionQueryStatus
+import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.core.subscription.SubscriptionListener;
+
+public interface MonitorListener extends SubscriptionListener
 {
-    CONNECTED,
-    GRANTED,
-    DISCONNECTED
+    public void dataChanged ( String subscriptionId, MonitorStatusInformation[] addedOrUpdated, String[] removed );
 }

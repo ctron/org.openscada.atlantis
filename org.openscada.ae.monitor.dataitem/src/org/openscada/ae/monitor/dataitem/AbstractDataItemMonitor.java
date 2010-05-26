@@ -26,8 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.ConditionStatus;
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
@@ -70,7 +70,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     private boolean akn;
 
-    private ConditionStatus state;
+    private MonitorStatus state;
 
     private int handlerPriority;
 
@@ -261,13 +261,13 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     protected abstract String getConfigurationId ();
 
     @Override
-    protected void notifyStateChange ( final ConditionStatusInformation status )
+    protected void notifyStateChange ( final MonitorStatusInformation status )
     {
         super.notifyStateChange ( status );
         this.state = status.getStatus ();
-        this.akn = this.state == ConditionStatus.NOT_AKN || this.state == ConditionStatus.NOT_OK_NOT_AKN;
-        this.unsafe = this.state == ConditionStatus.UNSAFE;
-        this.alarm = this.state == ConditionStatus.NOT_OK || this.state == ConditionStatus.NOT_OK_AKN || this.state == ConditionStatus.NOT_OK_NOT_AKN;
+        this.akn = this.state == MonitorStatus.NOT_AKN || this.state == MonitorStatus.NOT_OK_NOT_AKN;
+        this.unsafe = this.state == MonitorStatus.UNSAFE;
+        this.alarm = this.state == MonitorStatus.NOT_OK || this.state == MonitorStatus.NOT_OK_AKN || this.state == MonitorStatus.NOT_OK_NOT_AKN;
         reprocess ();
     }
 

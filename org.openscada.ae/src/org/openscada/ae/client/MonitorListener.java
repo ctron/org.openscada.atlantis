@@ -17,16 +17,14 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae;
+package org.openscada.ae.client;
 
-public enum ConditionStatus
+import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.core.subscription.SubscriptionState;
+
+public interface MonitorListener
 {
-    INACTIVE,
-    OK,
-    NOT_OK,
-    NOT_OK_AKN,
-    NOT_AKN,
-    NOT_OK_NOT_AKN,
-    UNSAFE,
-    INIT,
+    public void statusChanged ( SubscriptionState state );
+
+    public void dataChanged ( MonitorStatusInformation[] addedOrUpdated, String[] removed );
 }

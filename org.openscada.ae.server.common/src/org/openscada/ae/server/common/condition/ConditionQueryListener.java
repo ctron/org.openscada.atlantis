@@ -19,9 +19,9 @@
 
 package org.openscada.ae.server.common.condition;
 
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatusInformation;
 
 public interface ConditionQueryListener
 {
-    public void dataChanged ( ConditionStatusInformation[] addedOrUpdated, String[] removed );
+    public void dataChanged ( MonitorStatusInformation[] addedOrUpdated, String[] removed );
 }

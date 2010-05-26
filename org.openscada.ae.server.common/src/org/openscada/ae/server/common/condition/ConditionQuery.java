@@ -25,7 +25,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatusInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -35,20 +35,20 @@ public class ConditionQuery
 
     private ConditionQueryListener listener;
 
-    private final Map<String, ConditionStatusInformation> cachedData;
+    private final Map<String, MonitorStatusInformation> cachedData;
 
     public ConditionQuery ()
     {
-        this.cachedData = new HashMap<String, ConditionStatusInformation> ();
+        this.cachedData = new HashMap<String, MonitorStatusInformation> ();
     }
 
     public synchronized void setListener ( final ConditionQueryListener listener )
     {
         this.listener = listener;
-        fireListener ( this.cachedData.values ().toArray ( new ConditionStatusInformation[0] ), null );
+        fireListener ( this.cachedData.values ().toArray ( new MonitorStatusInformation[0] ), null );
     }
 
-    private synchronized void fireListener ( final ConditionStatusInformation[] addedOrUpdated, final String[] removed )
+    private synchronized void fireListener ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
     {
         if ( this.listener != null )
         {
@@ -56,11 +56,11 @@ public class ConditionQuery
         }
     }
 
-    protected synchronized void updateData ( final ConditionStatusInformation[] data, final String[] removed )
+    protected synchronized void updateData ( final MonitorStatusInformation[] data, final String[] removed )
     {
         if ( data != null )
         {
-            for ( final ConditionStatusInformation info : data )
+            for ( final MonitorStatusInformation info : data )
             {
                 this.cachedData.put ( info.getId (), info );
             }
@@ -89,23 +89,23 @@ public class ConditionQuery
      * Set current data set. Will handle notifications accordingly.
      * @param data the new data set
      */
-    protected synchronized void setData ( final ConditionStatusInformation[] data )
+    protected synchronized void setData ( final MonitorStatusInformation[] data )
     {
         logger.debug ( "Set new data: {}", data.length );
 
         clear ();
 
-        final ArrayList<ConditionStatusInformation> newData = new ArrayList<ConditionStatusInformation> ( data.length );
-        for ( final ConditionStatusInformation ci : data )
+        final ArrayList<MonitorStatusInformation> newData = new ArrayList<MonitorStatusInformation> ( data.length );
+        for ( final MonitorStatusInformation ci : data )
         {
             newData.add ( ci );
-            final ConditionStatusInformation oldCi = this.cachedData.put ( ci.getId (), ci );
+            final MonitorStatusInformation oldCi = this.cachedData.put ( ci.getId (), ci );
             if ( oldCi != null )
             {
                 newData.remove ( oldCi );
             }
         }
-        fireListener ( newData.toArray ( new ConditionStatusInformation[newData.size ()] ), null );
+        fireListener ( newData.toArray ( new MonitorStatusInformation[newData.size ()] ), null );
     }
 
     protected synchronized void clear ()

@@ -25,8 +25,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.ConditionStatus;
-import org.openscada.ae.ConditionStatusInformation;
+import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
@@ -356,7 +356,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private synchronized void applyState ( final StateInformation information )
     {
-        final ConditionStatusInformation csi;
+        final MonitorStatusInformation csi;
 
         logger.debug ( "Apply new state: {} for {}", new Object[] { information, getId () } );
 
@@ -368,7 +368,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             this.initSent = false;
             final MapBuilder<String, Variant> mapBuilder = new MapBuilder<String, Variant> ();
             buildMonitorAttributes ( mapBuilder );
-            csi = new ConditionStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser (), mapBuilder.getMap () );
+            csi = new MonitorStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser (), mapBuilder.getMap () );
             storeData ( this.information );
         }
         else
@@ -378,7 +378,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             // otherwise send out our dummy status until we got initialized
             if ( !this.initSent )
             {
-                csi = new ConditionStatusInformation ( getId (), ConditionStatus.INIT, new Date (), Variant.NULL, null, null, null );
+                csi = new MonitorStatusInformation ( getId (), MonitorStatus.INIT, new Date (), Variant.NULL, null, null, null );
                 this.initSent = true;
             }
             else
@@ -401,9 +401,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private synchronized void applyAndSendStatus ( final StateInformation newInformation, final EventDecorator eventDecorator )
     {
-        final ConditionStatusInformation oldConditionState = this.currentState;
+        final MonitorStatusInformation oldConditionState = this.currentState;
         applyState ( newInformation );
-        final ConditionStatusInformation newConditionState = this.currentState;
+        final MonitorStatusInformation newConditionState = this.currentState;
         sendStatusWhenChanged ( oldConditionState, newConditionState, eventDecorator );
     }
 
@@ -412,46 +412,46 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         applyAndSendStatus ( newInformation, EventDecoratorAdapter.getDummyDecorator () );
     }
 
-    private synchronized void sendStatusWhenChanged ( final ConditionStatusInformation oldConditionState, final ConditionStatusInformation newConditionState, final EventDecorator eventDecorator )
+    private synchronized void sendStatusWhenChanged ( final MonitorStatusInformation oldConditionState, final MonitorStatusInformation newConditionState, final EventDecorator eventDecorator )
     {
-        final ConditionStatus oldState = oldConditionState.getStatus ();
-        final ConditionStatus newState = newConditionState.getStatus ();
+        final MonitorStatus oldState = oldConditionState.getStatus ();
+        final MonitorStatus newState = newConditionState.getStatus ();
 
-        if ( ( oldConditionState != newConditionState ) && ( oldState != ConditionStatus.INIT ) && ( newState != ConditionStatus.INIT ) )
+        if ( ( oldConditionState != newConditionState ) && ( oldState != MonitorStatus.INIT ) && ( newState != MonitorStatus.INIT ) )
         {
             publishEvent ( eventDecorator.decorate ( createEvent ( newConditionState.getStatusTimestamp (), null, newConditionState.getStatus ().toString (), newConditionState.getValue () ) ) );
         }
     }
 
-    private static ConditionStatus generateStatus ( final StateInformation information )
+    private static MonitorStatus generateStatus ( final StateInformation information )
     {
         if ( ( information.getActive () == null ) || ( information.getRequireAck () == null ) )
         {
-            return ConditionStatus.INIT;
+            return MonitorStatus.INIT;
         }
         else if ( !information.getActive () )
         {
-            return ConditionStatus.INACTIVE;
+            return MonitorStatus.INACTIVE;
         }
         else if ( ( information.getValue () == null ) || ( information.getState () == State.UNSAFE ) )
         {
-            return ConditionStatus.UNSAFE;
+            return MonitorStatus.UNSAFE;
         }
 
         if ( !information.getRequireAck () )
         {
-            return information.getState () == State.OK ? ConditionStatus.OK : ConditionStatus.NOT_OK;
+            return information.getState () == State.OK ? MonitorStatus.OK : MonitorStatus.NOT_OK;
         }
         else
         {
             final boolean isAckPending = ackPending ( information );
             if ( information.getState () == State.OK )
             {
-                return isAckPending ? ConditionStatus.NOT_AKN : ConditionStatus.OK;
+                return isAckPending ? MonitorStatus.NOT_AKN : MonitorStatus.OK;
             }
             else
             {
-                return isAckPending ? ConditionStatus.NOT_OK_NOT_AKN : ConditionStatus.NOT_OK_AKN;
+                return isAckPending ? MonitorStatus.NOT_OK_NOT_AKN : MonitorStatus.NOT_OK_AKN;
             }
         }
     }
