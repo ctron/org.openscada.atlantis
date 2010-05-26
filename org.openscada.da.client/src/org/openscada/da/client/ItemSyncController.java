@@ -60,16 +60,16 @@ public class ItemSyncController implements ItemUpdateListener
      */
     private static class ListenerInfo
     {
-        private final ItemUpdateListener _listener;
+        private final ItemUpdateListener listener;
 
         public ListenerInfo ( final ItemUpdateListener listener )
         {
-            this._listener = listener;
+            this.listener = listener;
         }
 
         public ItemUpdateListener getListener ()
         {
-            return this._listener;
+            return this.listener;
         }
 
         @Override
@@ -86,11 +86,11 @@ public class ItemSyncController implements ItemUpdateListener
 
             if ( obj instanceof ItemUpdateListener )
             {
-                return obj == this._listener;
+                return obj == this.listener;
             }
             else if ( obj instanceof ListenerInfo )
             {
-                return ( (ListenerInfo)obj )._listener == this._listener;
+                return ( (ListenerInfo)obj ).listener == this.listener;
             }
             else
             {
@@ -101,7 +101,7 @@ public class ItemSyncController implements ItemUpdateListener
         @Override
         public int hashCode ()
         {
-            return this._listener.hashCode ();
+            return this.listener.hashCode ();
         }
     }
 
