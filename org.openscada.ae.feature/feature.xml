@@ -321,7 +321,7 @@ Library.
          unpack="false"/>
 
    <plugin
-         id="org.openscada.ae.server.common.condition"
+         id="org.openscada.ae.server.common.monitor"
          download-size="0"
          install-size="0"
          version="0.0.0"
