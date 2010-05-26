@@ -19,9 +19,9 @@
 
 package org.openscada.da.client;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
@@ -43,19 +43,19 @@ public class ItemSyncController implements ItemUpdateListener
 
     private final String itemId;
 
-    private boolean subscribed = false;
+    private boolean subscribed;
 
-    private Variant cachedValue = new Variant ();
+    private Variant cachedValue = Variant.NULL;
 
-    private final Map<String, Variant> cachedAttributes = new ConcurrentHashMap<String, Variant> ();
+    private final Map<String, Variant> cachedAttributes = new HashMap<String, Variant> ( 0 );
 
     private SubscriptionState subscriptionState = SubscriptionState.DISCONNECTED;
 
-    private Throwable subscriptionError = null;
+    private Throwable subscriptionError;
 
     /**
      * Holds some additional listener information 
-     * @author jens
+     * @author Jens Reimann
      *
      */
     private static class ListenerInfo
@@ -105,7 +105,7 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
-    private final Map<ItemUpdateListener, ListenerInfo> listeners = new ConcurrentHashMap<ItemUpdateListener, ListenerInfo> ();
+    private final Map<ItemUpdateListener, ListenerInfo> listeners = new HashMap<ItemUpdateListener, ListenerInfo> ( 0 );
 
     private final ItemManager itemManager;
 
@@ -153,10 +153,9 @@ public class ItemSyncController implements ItemUpdateListener
 
     public synchronized void remove ( final ItemUpdateListener listener )
     {
-        if ( this.listeners.containsKey ( listener ) )
+        final ListenerInfo result = this.listeners.remove ( listener );
+        if ( result != null )
         {
-            this.listeners.remove ( listener );
-
             triggerSync ();
         }
     }
@@ -290,7 +289,6 @@ public class ItemSyncController implements ItemUpdateListener
     public synchronized void disconnect ()
     {
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
-        notifyDataChange ( new Variant (), new HashMap<String, Variant> (), true );
+        notifyDataChange ( Variant.NULL, Collections.<String, Variant> emptyMap (), true );
     }
-
 }

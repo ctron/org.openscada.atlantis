@@ -33,11 +33,11 @@ public class ItemManager implements ConnectionStateListener
 
     private final static Logger logger = LoggerFactory.getLogger ( ItemManager.class );
 
-    protected org.openscada.da.client.Connection connection = null;
+    protected org.openscada.da.client.Connection connection;
 
     private final Map<String, ItemSyncController> itemListeners = new HashMap<String, ItemSyncController> ();
 
-    private boolean connected = false;
+    private boolean connected;
 
     public ItemManager ( final org.openscada.da.client.Connection connection )
     {
@@ -68,23 +68,22 @@ public class ItemManager implements ConnectionStateListener
 
     public synchronized void addItemUpdateListener ( final String itemName, final ItemUpdateListener listener )
     {
-        if ( !this.itemListeners.containsKey ( itemName ) )
+        ItemSyncController controller = this.itemListeners.get ( itemName );
+        if ( controller == null )
         {
-            this.itemListeners.put ( itemName, new ItemSyncController ( this.connection, this, itemName ) );
+            controller = new ItemSyncController ( this.connection, this, itemName );
+            this.itemListeners.put ( itemName, controller );
         }
-
-        final ItemSyncController controller = this.itemListeners.get ( itemName );
         controller.add ( listener );
     }
 
     public synchronized void removeItemUpdateListener ( final String itemName, final ItemUpdateListener listener )
     {
-        if ( !this.itemListeners.containsKey ( itemName ) )
+        final ItemSyncController controller = this.itemListeners.get ( itemName );
+        if ( itemName == null )
         {
             return;
         }
-
-        final ItemSyncController controller = this.itemListeners.get ( itemName );
         controller.remove ( listener );
     }
 

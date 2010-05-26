@@ -36,7 +36,7 @@ public interface ItemUpdateListener
      * A change on the data item occurred.
      * @param value The new value, or <code>null</code> if the value did not change
      * @param attributes The attributes that changed, may be <code>null</code> if no
-     * attribute change at all
+     * attribute change at all. The must be unmodifiable by the receiver
      * @param cache Indicating that the change came from the cache, this means
      * that the change was not triggered by a device and that <em>all</em>
      * attribute where sent, not only the changed ones
