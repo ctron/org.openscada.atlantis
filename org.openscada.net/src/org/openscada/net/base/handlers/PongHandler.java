@@ -19,21 +19,20 @@
 
 package org.openscada.net.base.handlers;
 
-import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PongHandler implements MessageListener
 {
-    private static Logger logger = Logger.getLogger ( PongHandler.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( PongHandler.class );
 
     public void messageReceived ( final Message message )
     {
         // no-op
-        if ( logger.isDebugEnabled () )
-        {
-            logger.debug ( "Pong request: " + message.getValues ().get ( "pong-data" ) );
-        }
+        logger.debug ( "Pong request: {}", message.getValues ().get ( "pong-data" ) );
     }
 
 }

@@ -19,17 +19,17 @@
 
 package org.openscada.net.base;
 
-import org.apache.log4j.Logger;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.handlers.PingHandler;
 import org.openscada.net.base.handlers.PongHandler;
 import org.openscada.net.mina.Messenger;
 import org.openscada.net.utils.MessageCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PingService
 {
-
-    private static Logger logger = Logger.getLogger ( PingService.class );
+    private final static Logger logger = LoggerFactory.getLogger ( PingService.class );
 
     private final Messenger messenger;
 

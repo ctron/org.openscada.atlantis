@@ -19,15 +19,17 @@
 
 package org.openscada.net.base.handlers;
 
-import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.Messenger;
 import org.openscada.net.utils.MessageCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PingHandler implements MessageListener
 {
-    private static Logger logger = Logger.getLogger ( PingHandler.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( PingHandler.class );
 
     private final Messenger messenger;
 
@@ -38,10 +40,7 @@ public class PingHandler implements MessageListener
 
     public void messageReceived ( final Message message )
     {
-        if ( logger.isDebugEnabled () )
-        {
-            logger.debug ( "Ping request: " + message.getValues ().get ( "ping-data" ) );
-        }
+        logger.debug ( "Ping request: {}", message.getValues ().get ( "ping-data" ) );
 
         this.messenger.sendMessage ( MessageCreator.createPong ( message ) );
     }

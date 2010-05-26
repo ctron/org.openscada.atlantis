@@ -25,16 +25,18 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.Messenger;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LongRunningController implements MessageListener
 {
-    private static Logger log = Logger.getLogger ( LongRunningController.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( LongRunningController.class );
 
     private final Set<Integer> _commandCodes = new HashSet<Integer> ();
 
@@ -140,7 +142,7 @@ public class LongRunningController implements MessageListener
             }
         }
 
-        log.debug ( String.format ( "Received long-op reply with id %d", id ) );
+        logger.debug ( "Received long-op reply with id {}", id );
 
         if ( id != 0 )
         {
@@ -157,7 +159,7 @@ public class LongRunningController implements MessageListener
             }
             else
             {
-                log.warn ( "Received long-op message for unregistered operation" );
+                logger.warn ( "Received long-op message for unregistered operation" );
             }
         }
     }

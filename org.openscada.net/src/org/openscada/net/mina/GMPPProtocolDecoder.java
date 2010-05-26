@@ -25,7 +25,6 @@ import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
 
-import org.apache.log4j.Logger;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.CumulativeProtocolDecoder;
@@ -40,11 +39,12 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GMPPProtocol
 {
-
-    private static Logger logger = Logger.getLogger ( GMPPProtocolDecoder.class );
+    private final static Logger logger = LoggerFactory.getLogger ( GMPPProtocolDecoder.class );
 
     private final CharsetDecoder charDecoder = Charset.forName ( "utf-8" ).newDecoder ();
 
@@ -78,10 +78,7 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
         final int type = buffer.getInt ();
         final int len = buffer.getInt ();
 
-        if ( logger.isDebugEnabled () )
-        {
-            logger.debug ( "Additional data: " + type + " len: " + len );
-        }
+        logger.debug ( "Additional data: {} len: {}", type, len );
 
         switch ( type )
         {

@@ -19,14 +19,16 @@
 
 package org.openscada.net.base;
 
-import org.apache.log4j.Logger;
 import org.openscada.net.base.data.Message;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LongRunningOperation implements org.openscada.utils.exec.LongRunningOperation
 {
-    private static Logger log = Logger.getLogger ( LongRunningOperation.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( LongRunningOperation.class );
 
     @SuppressWarnings ( "unused" )
     private LongRunningController controller = null;
@@ -55,7 +57,7 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
 
     private synchronized void stateChange ( final LongRunningState state, final Message message, final Throwable error )
     {
-        log.debug ( "LongRunningState change: " + state.toString () );
+        logger.debug ( "LongRunningState change: {}", state.toString () );
 
         this.longRunningState = state;
         this.reply = message;
@@ -76,7 +78,7 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
 
     protected synchronized void granted ( final long id )
     {
-        log.debug ( String.format ( "Granted: %d", id ) );
+        logger.debug ( "Granted: {}", id );
         this.id = id;
 
         stateChange ( LongRunningState.RUNNING, null, null );
@@ -84,7 +86,7 @@ public class LongRunningOperation implements org.openscada.utils.exec.LongRunnin
 
     protected synchronized void result ( final Message message )
     {
-        log.debug ( String.format ( "Result: %d", this.id ) );
+        logger.debug ( "Result: {}", this.id );
 
         stateChange ( LongRunningState.SUCCESS, message, null );
 

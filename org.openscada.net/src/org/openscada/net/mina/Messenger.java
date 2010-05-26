@@ -29,15 +29,17 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.utils.MessageCreator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Messenger implements MessageListener
 {
-    private static Logger logger = Logger.getLogger ( Messenger.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Messenger.class );
 
     private TimerTask timeoutJob = null;
 
@@ -307,7 +309,8 @@ public class Messenger implements MessageListener
             if ( this.tagList.containsKey ( seq ) )
             {
                 tag = this.tagList.get ( seq );
-                logger.info ( String.format ( "Found tag for message %s but it is timed out", seq ) );
+                logger.info ( "Found tag for message {} but it is timed out", seq );
+
                 // if the tag is timed out then we don't process it here and let processTimeOuts () do the job
                 if ( !tag.isTimedOut () )
                 {
@@ -325,7 +328,7 @@ public class Messenger implements MessageListener
         {
             if ( tag != null )
             {
-                logger.debug ( String.format ( "Processing message listener for message %s", seq ) );
+                logger.debug ( "Processing message listener for message {}", seq );
                 tag.getListener ().messageReply ( message );
             }
         }
@@ -391,7 +394,7 @@ public class Messenger implements MessageListener
                     return;
                 }
 
-                logger.warn ( String.format ( "Closing connection due to receive timeout: %s (timeout: %s)", timeDiff, this.sessionTimeout ) );
+                logger.warn ( "Closing connection due to receive timeout: {} (timeout: {})", timeDiff, this.sessionTimeout );
                 this.connection.close ();
                 disconnected ();
             }
@@ -471,11 +474,11 @@ public class Messenger implements MessageListener
                 errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
             }
 
-            logger.warn ( "Failed message: " + message.getSequence () + "/" + message.getReplySequence () + " Message: " + errorInfo );
+            logger.warn ( "Failed message: {} / {} / Message: {}", new Object[] { message.getSequence (), message.getReplySequence (), errorInfo } );
             return true;
 
         case Message.CC_UNKNOWN_COMMAND_CODE:
-            logger.warn ( "Reply to unknown message command code from peer: " + message.getSequence () + "/" + message.getReplySequence () );
+            logger.warn ( "Reply to unknown message command code from peer: {} / {}", message.getSequence (), message.getReplySequence () );
             return true;
 
         case Message.CC_ACK:
@@ -494,7 +497,7 @@ public class Messenger implements MessageListener
         {
             try
             {
-                logger.debug ( String.format ( "Let handler %s serve message 0x%08x", listener, message.getCommandCode () ) );
+                logger.debug ( "Let handler {} serve message {}", listener, message.getCommandCode () );
                 listener.messageReceived ( message );
             }
             catch ( final Throwable e )
@@ -508,7 +511,7 @@ public class Messenger implements MessageListener
         }
         else
         {
-            logger.warn ( String.format ( "Received message which cannot be processed by handler! cc = %x", message.getCommandCode () ) );
+            logger.warn ( "Received message which cannot be processed by handler! cc = {}", message.getCommandCode () );
             return false;
         }
 
