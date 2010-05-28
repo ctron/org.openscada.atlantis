@@ -27,23 +27,23 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.QueryState;
-import org.openscada.ae.client.MonitorListener;
 import org.openscada.ae.client.EventListener;
+import org.openscada.ae.client.MonitorListener;
 import org.openscada.ae.net.BrowserMessageHelper;
-import org.openscada.ae.net.MonitorMessageHelper;
 import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
+import org.openscada.ae.net.MonitorMessageHelper;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.net.SessionConnectionBase;
 import org.openscada.core.subscription.SubscriptionState;
@@ -53,6 +53,7 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
-    private Executor executor;
+    private final ExecutorService executor;
 
     private final Map<String, MonitorListener> monitorListeners = new HashMap<String, MonitorListener> ();
 
@@ -94,21 +95,14 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         super ( connectionInformantion );
 
-        setupAsyncExecutor ();
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () ) );
         init ();
     }
 
-    private void setupAsyncExecutor ()
+    protected void finalize () throws Throwable
     {
-        this.executor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
-
-            public Thread newThread ( final Runnable r )
-            {
-                final Thread t = new Thread ( r, "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () );
-                t.setDaemon ( true );
-                return t;
-            }
-        } );
+        this.executor.shutdown ();
+        super.finalize ();
     }
 
     protected void init ()
