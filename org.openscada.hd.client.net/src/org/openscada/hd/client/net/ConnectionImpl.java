@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
@@ -50,6 +50,7 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.VoidValue;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,7 +70,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private static final int MAX_QUERY_ENTRIES = Integer.getInteger ( "org.openscada.hd.client.net.maxQuerySize", 4096 );
 
-    private final Executor executor;
+    private final ExecutorService executor;
 
     private final Set<ItemListListener> itemListListeners = new HashSet<ItemListListener> ();
 
@@ -87,17 +88,16 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         super ( connectionInformantion );
 
-        this.executor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
-
-            public Thread newThread ( final Runnable r )
-            {
-                final Thread t = new Thread ( r, "ConnectionExecutor/" + getConnectionInformation () );
-                t.setDaemon ( true );
-                return t;
-            }
-        } );
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () ) );
 
         init ();
+    }
+
+    @Override
+    protected void finalize () throws Throwable
+    {
+        this.executor.shutdown ();
+        super.finalize ();
     }
 
     protected void init ()
