@@ -115,6 +115,7 @@ public class EventMatcherImpl implements EventMatcher
             {
                 result = result || matches ( subFilter, event );
             }
+            return result;
         }
         else if ( expression.getOperator () == Operator.NOT )
         {
@@ -158,7 +159,7 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
-        if ( ! ( assertion.getValue () instanceof String || assertion.getValue () instanceof UUID || assertion.getValue () instanceof Collection<?> ) )
+        if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof UUID ) || ( assertion.getValue () instanceof Collection<?> ) ) )
         {
             return false;
         }
@@ -172,11 +173,11 @@ public class EventMatcherImpl implements EventMatcher
         case LESSTHAN:
             return left.compareTo ( right ) == -1;
         case LESSEQ:
-            return left.compareTo ( right ) == -1 || left.compareTo ( right ) == 0;
+            return ( left.compareTo ( right ) == -1 ) || ( left.compareTo ( right ) == 0 );
         case EQUALITY:
             return left.compareTo ( right ) == 0;
         case GREATEREQ:
-            return left.compareTo ( right ) == 1 || left.compareTo ( right ) == 0;
+            return ( left.compareTo ( right ) == 1 ) || ( left.compareTo ( right ) == 0 );
         case GREATERTHAN:
             return left.compareTo ( right ) == 1;
         case APPROXIMATE:
@@ -196,7 +197,7 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
-        if ( ! ( assertion.getValue () instanceof String || assertion.getValue () instanceof Date || assertion.getValue () instanceof Collection<?> ) )
+        if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof Date ) || ( assertion.getValue () instanceof Collection<?> ) ) )
         {
             return false;
         }
@@ -224,11 +225,11 @@ public class EventMatcherImpl implements EventMatcher
         case LESSTHAN:
             return left.compareTo ( right ) == -1;
         case LESSEQ:
-            return left.compareTo ( right ) == -1 || left.compareTo ( right ) == 0;
+            return ( left.compareTo ( right ) == -1 ) || ( left.compareTo ( right ) == 0 );
         case EQUALITY:
             return left.compareTo ( right ) == 0;
         case GREATEREQ:
-            return left.compareTo ( right ) == 1 || left.compareTo ( right ) == 0;
+            return ( left.compareTo ( right ) == 1 ) || ( left.compareTo ( right ) == 0 );
         case GREATERTHAN:
             return left.compareTo ( right ) == 1;
         case APPROXIMATE:
@@ -252,7 +253,7 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
-        if ( ! ( assertion.getValue () instanceof String || assertion.getValue () instanceof Date || assertion.getValue () instanceof Collection<?> ) )
+        if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof Date ) || ( assertion.getValue () instanceof Collection<?> ) ) )
         {
             return false;
         }
@@ -280,11 +281,11 @@ public class EventMatcherImpl implements EventMatcher
         case LESSTHAN:
             return left.compareTo ( right ) == -1;
         case LESSEQ:
-            return left.compareTo ( right ) == -1 || left.compareTo ( right ) == 0;
+            return ( left.compareTo ( right ) == -1 ) || ( left.compareTo ( right ) == 0 );
         case EQUALITY:
             return left.compareTo ( right ) == 0;
         case GREATEREQ:
-            return left.compareTo ( right ) == 1 || left.compareTo ( right ) == 0;
+            return ( left.compareTo ( right ) == 1 ) || ( left.compareTo ( right ) == 0 );
         case GREATERTHAN:
             return left.compareTo ( right ) == 1;
         case APPROXIMATE:
