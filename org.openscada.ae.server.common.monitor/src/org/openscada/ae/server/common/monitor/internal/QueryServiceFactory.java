@@ -23,7 +23,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.openscada.ae.server.common.condition.MonitorQuery;
+import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;

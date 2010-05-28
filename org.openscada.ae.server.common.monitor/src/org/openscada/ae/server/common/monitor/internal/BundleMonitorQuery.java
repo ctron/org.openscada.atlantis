@@ -30,7 +30,7 @@ import java.util.Set;
 import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.ae.server.common.condition.MonitorQuery;
+import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.utils.filter.Filter;
 import org.openscada.utils.filter.FilterParser;
 import org.openscada.utils.filter.bean.BeanMatcher;

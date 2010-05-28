@@ -27,5 +27,5 @@ Import-Package: org.openscada.ae;version="0.15.0",
  org.osgi.util.tracker;version="1.4.0",
  org.slf4j;version="1.5.8"
 Export-Package: org.openscada.ae.server.common.akn;version="0.15.0",
- org.openscada.ae.server.common.condition;version="0.15.0";uses:="org.openscada.core.subscription",
- org.openscada.ae.server.common.event;version="0.15.0"
+ org.openscada.ae.server.common.event;version="0.15.0",
+ org.openscada.ae.server.common.monitor;version="0.15.0";uses:="org.openscada.core.subscription"

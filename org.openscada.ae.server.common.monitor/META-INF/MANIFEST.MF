@@ -8,7 +8,7 @@ Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.ae.monitor;version="0.15.0",
- org.openscada.ae.server.common.condition;version="0.15.0",
+ org.openscada.ae.server.common.monitor;version="0.15.0",
  org.openscada.ca;version="0.15.0",
  org.openscada.ca.common;version="0.14.0",
  org.openscada.ca.common.factory;version="0.14.0",

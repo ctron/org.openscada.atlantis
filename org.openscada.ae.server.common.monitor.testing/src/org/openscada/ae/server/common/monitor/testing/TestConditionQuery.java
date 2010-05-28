@@ -26,7 +26,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.server.common.condition.MonitorQuery;
+import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.core.Variant;
 
 public class TestConditionQuery extends MonitorQuery

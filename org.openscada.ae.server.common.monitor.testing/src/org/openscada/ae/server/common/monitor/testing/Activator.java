@@ -22,7 +22,7 @@ package org.openscada.ae.server.common.monitor.testing;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.openscada.ae.server.common.condition.MonitorQuery;
+import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

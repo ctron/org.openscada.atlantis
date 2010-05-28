@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae.server.common.condition;
+package org.openscada.ae.server.common.monitor;
 
 import org.openscada.ae.MonitorStatusInformation;
 
