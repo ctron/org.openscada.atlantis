@@ -27,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.core.ConnectionInformation;
@@ -87,7 +88,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     private WriteAttributesOperationController writeAttributesController = null;
 
-    private final Executor executor;
+    private final ExecutorService executor;
 
     @Override
     public String getRequiredVersion ()
@@ -101,6 +102,13 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + connectionInformantion.toMaskedString () ) );
         init ();
+    }
+
+    @Override
+    protected void finalize () throws Throwable
+    {
+        this.executor.shutdown ();
+        super.finalize ();
     }
 
     /**
