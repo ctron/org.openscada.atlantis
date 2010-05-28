@@ -36,7 +36,6 @@ import org.slf4j.LoggerFactory;
  */
 public class ItemSyncController implements ItemUpdateListener
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( ItemSyncController.class );
 
     private final org.openscada.da.client.Connection connection;
