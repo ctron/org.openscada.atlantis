@@ -6,8 +6,7 @@ Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.hd.client.net.Activator
 Bundle-Vendor: inavare GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Import-Package: org.apache.log4j;version="1.2.0",
- org.apache.mina.core.session;version="2.0.0",
+Import-Package: org.apache.mina.core.session;version="2.0.0",
  org.openscada.core;version="0.14.0",
  org.openscada.core.client;version="0.14.0",
  org.openscada.core.client.net;version="0.14.0",
