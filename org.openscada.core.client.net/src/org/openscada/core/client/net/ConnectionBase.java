@@ -81,7 +81,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         super ();
         this.connectionInformation = connectionInformation;
 
-        this.lookupExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation ) );
+        this.lookupExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation.toMaskedString () ) );
 
         this.messenger = new Messenger ( getMessageTimeout () );
 
