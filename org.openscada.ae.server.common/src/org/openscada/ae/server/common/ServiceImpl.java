@@ -34,6 +34,7 @@ import org.openscada.ae.BrowserType;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.UnknownQueryException;
+import org.openscada.ae.sec.AuthorizationHelper;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
 import org.openscada.ae.server.common.akn.AknHandler;
@@ -47,6 +48,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.server.common.ServiceCommon;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.ValidationException;
+import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
@@ -87,6 +89,8 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
 
     private ServiceListener eventServiceListener;
 
+    private final AuthorizationHelper authorizationHelper;
+
     public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         this.context = context;
@@ -96,16 +100,23 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         // create akn handler
         this.aknTracker = new ServiceTracker ( context, AknHandler.class.getName (), null );
 
+        this.authorizationHelper = new AuthorizationHelper ( context );
     }
 
     public void acknowledge ( final Session session, final String conditionId, final Date aknTimestamp ) throws InvalidSessionException
     {
         final SessionImpl sessionImpl = validateSession ( session );
-        logger.debug ( String.format ( "Request akn: %s (%s)", conditionId, aknTimestamp ) );
+
+        logger.debug ( "Request akn: {} ({})", conditionId, aknTimestamp );
 
         final UserInformation userInformation = sessionImpl.getUserInformation ();
 
-        // FIXME: implemention of akn
+        final AuthorizationResult result = this.authorizationHelper.authorize ( conditionId, "MONITOR", "AKN", userInformation, null, null );
+        if ( !result.isGranted () )
+        {
+            return;
+        }
+
         for ( final Object o : this.aknTracker.getServices () )
         {
             if ( o instanceof AknHandler )
@@ -308,6 +319,8 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         this.queryLoadExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ServiceImpl/QueryLoad" ) );
         this.eventExecutor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ServiceImpl/Event" ) );
 
+        this.authorizationHelper.open ();
+
         // create monitor query listener
         synchronized ( this )
         {
@@ -375,6 +388,8 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
 
         this.eventExecutor.shutdown ();
         this.eventExecutor = null;
+
+        this.authorizationHelper.close ();
     }
 
     protected SessionImpl validateSession ( final Session session ) throws InvalidSessionException

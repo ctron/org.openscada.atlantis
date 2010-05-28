@@ -65,6 +65,12 @@ public class AuthorizationHelper extends org.openscada.sec.osgi.AuthorizationHel
     }
 
     @Override
+    public AuthorizationResult authorize ( final String objectId, final String objectType, final String action, final UserInformation userInformation, final Map<String, Object> context )
+    {
+        return authorize ( objectId, objectType, action, userInformation, context, DEFAULT_RESULT );
+    }
+
+    @Override
     public AuthorizationResult authorize ( final String objectId, final String objectType, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
     {
         if ( this.logAll )
