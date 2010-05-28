@@ -250,11 +250,13 @@ public class ItemSyncController implements ItemUpdateListener
 
         if ( change )
         {
+            final ListenerInfo[] listeners = ItemSyncController.this.listeners.values ().toArray ( new ListenerInfo[this.listeners.size ()] );
+
             this.itemManager.getExecutor ().execute ( new Runnable () {
 
                 public void run ()
                 {
-                    for ( final ListenerInfo listenerInfo : ItemSyncController.this.listeners.values () )
+                    for ( final ListenerInfo listenerInfo : listeners )
                     {
                         listenerInfo.getListener ().notifyDataChange ( value, attributes, cache );
                     }
@@ -273,11 +275,13 @@ public class ItemSyncController implements ItemUpdateListener
         this.subscriptionState = subscriptionState;
         this.subscriptionError = e;
 
+        final ListenerInfo[] listeners = ItemSyncController.this.listeners.values ().toArray ( new ListenerInfo[this.listeners.size ()] );
+
         this.itemManager.getExecutor ().execute ( new Runnable () {
 
             public void run ()
             {
-                for ( final ListenerInfo listenerInfo : ItemSyncController.this.listeners.values () )
+                for ( final ListenerInfo listenerInfo : listeners )
                 {
                     listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState, e );
                 }
