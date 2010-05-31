@@ -169,11 +169,14 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     public synchronized void addVariableListener ( final String type, final VariableListener listener )
     {
         this.listeners.put ( type, listener );
+
+        final Variable[] vars = createVariables ( type );
+
         this.executor.execute ( new Runnable () {
 
             public void run ()
             {
-                listener.variableConfigurationChanged ( createVariables ( type ) );
+                listener.variableConfigurationChanged ( vars );
             }
         } );
     }
@@ -197,6 +200,8 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
         // make a clone
         final Collection<VariableListener> listeners = new ArrayList<VariableListener> ( this.listeners.get ( type ) );
 
+        final Variable[] vars = createVariables ( type );
+
         this.executor.execute ( new Runnable () {
 
             public void run ()
@@ -204,7 +209,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 for ( final VariableListener listener : listeners )
                 {
                     logger.info ( "Apply type change: {}", type );
-                    listener.variableConfigurationChanged ( createVariables ( type ) );
+                    listener.variableConfigurationChanged ( vars );
                 }
             }
         } );
