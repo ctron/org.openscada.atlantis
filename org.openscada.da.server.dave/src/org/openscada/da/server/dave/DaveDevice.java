@@ -221,7 +221,7 @@ public class DaveDevice implements IoHandler
             this.connector.getFilterChain ().addLast ( "tpkt", new TPKTFilter ( 3 ) );
             this.connector.getFilterChain ().addLast ( "cotp", new COTPFilter ( this.rack, this.slot ) );
             this.connector.getFilterChain ().addLast ( "dave", new DaveFilter () );
-            this.connector.setConnectTimeoutMillis ( 5 * 1000 );
+            this.connector.setConnectTimeoutMillis ( this.readTimeout );
         }
 
         setState ( ConnectionState.CONNECTING );
