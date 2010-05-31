@@ -44,6 +44,7 @@ import org.slf4j.LoggerFactory;
 
 public class SumDataSource extends AbstractMultiSourceDataSource
 {
+    private final boolean debug;
 
     private final static Logger logger = LoggerFactory.getLogger ( SumDataSource.class );
 
@@ -57,6 +58,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
     {
         super ( poolTracker );
         this.executor = executor;
+        this.debug = Boolean.getBoolean ( "org.openscada.da.datasource.sum.debug" );
     }
 
     @Override
@@ -143,6 +145,10 @@ public class SumDataSource extends AbstractMultiSourceDataSource
                 {
                     increment ( counts, "error" );
                 }
+                if ( this.debug )
+                {
+                    builder.setAttribute ( "sum.disconnected." + entry.getKey (), Variant.TRUE );
+                }
                 logger.debug ( "Skipping item {} since it is disconnected", entry.getKey () );
                 continue;
             }
@@ -152,6 +158,10 @@ public class SumDataSource extends AbstractMultiSourceDataSource
             {
                 if ( value.isAttribute ( group, false ) )
                 {
+                    if ( this.debug )
+                    {
+                        builder.setAttribute ( "sum." + group + "." + entry.getKey (), Variant.TRUE );
+                    }
                     increment ( counts, group );
                 }
             }
@@ -162,6 +172,10 @@ public class SumDataSource extends AbstractMultiSourceDataSource
             {
                 if ( value.getValue ().asBoolean () )
                 {
+                    if ( this.debug )
+                    {
+                        builder.setAttribute ( "sum.main." + entry.getKey (), Variant.TRUE );
+                    }
                     increment ( counts, type );
                 }
             }
