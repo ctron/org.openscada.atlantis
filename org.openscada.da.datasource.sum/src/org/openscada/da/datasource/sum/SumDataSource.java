@@ -138,6 +138,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
 
             if ( value == null || !value.isConnected () )
             {
+                increment ( counts, "disconnected" );
                 if ( this.groups.contains ( "error" ) )
                 {
                     increment ( counts, "error" );
@@ -176,7 +177,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
         return builder.build ();
     }
 
-    private void increment ( final Map<String, Integer> counts, final String group )
+    private static void increment ( final Map<String, Integer> counts, final String group )
     {
         if ( !counts.containsKey ( group ) )
         {
