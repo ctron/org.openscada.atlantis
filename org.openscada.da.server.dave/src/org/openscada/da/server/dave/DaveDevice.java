@@ -108,7 +108,6 @@ public class DaveDevice implements IoHandler
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "DaveDevice/" + id ) );
 
         this.jobManager = new DaveJobManager ( this );
-        this.configurator = new DaveBlockConfigurator ( this, this.context );
 
         this.itemFactory = new DataItemFactory ( context, this.executor, getItemId ( null ) );
 
@@ -118,7 +117,15 @@ public class DaveDevice implements IoHandler
         this.connectionItem = this.itemFactory.createInput ( "connection", props );
         this.configItem = this.itemFactory.createInput ( "config", props );
 
+        /*
+         * FIXME: this call is needed since the block configurator might immediately
+         * trigger changes which then call to an unconfigured DaveDevice. This should
+         * be handled in a start() call instead.
+         */
+
         update ( properties );
+
+        this.configurator = new DaveBlockConfigurator ( this, this.context );
     }
 
     public String getItemId ( final String localId )

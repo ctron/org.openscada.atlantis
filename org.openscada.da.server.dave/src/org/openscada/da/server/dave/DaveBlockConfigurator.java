@@ -91,6 +91,7 @@ public class DaveBlockConfigurator
         }
         catch ( final Exception e )
         {
+            logger.warn ( "Failed to configure", e );
         }
         if ( this.tracker != null )
         {
