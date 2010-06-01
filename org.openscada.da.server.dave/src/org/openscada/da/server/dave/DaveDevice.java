@@ -135,10 +135,10 @@ public class DaveDevice implements IoHandler
 
     public String getVarItemId ( final String localId )
     {
-        final String name = this.name;
+        String name = this.name;
         if ( name == null )
         {
-            this.name = this.id;
+            name = this.id;
         }
 
         if ( localId != null )
