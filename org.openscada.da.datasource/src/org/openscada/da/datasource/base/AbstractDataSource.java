@@ -43,13 +43,17 @@ public abstract class AbstractDataSource implements DataSource
 
     private DataItemValue value = new DataItemValue ();
 
-    protected abstract Executor getExecutor ();
-
     private final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ( 1 );
 
     private Variant lastValue = Variant.NULL;
 
     private Calendar lastTimestamp = null;
+
+    /**
+     * Return the executor to use for sending out events 
+     * @return the executor to use, must never be <code>null</code>
+     */
+    protected abstract Executor getExecutor ();
 
     public synchronized void addListener ( final DataSourceListener listener )
     {
