@@ -200,7 +200,6 @@ Library.
 &lt;/pre&gt;
    </license>
 
-
    <includes
          id="org.openscada.core"
          version="0.0.0"/>
@@ -392,6 +391,13 @@ Library.
 
    <plugin
          id="org.openscada.ae.server.http"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.ae.server.info"
          download-size="0"
          install-size="0"
          version="0.0.0"
