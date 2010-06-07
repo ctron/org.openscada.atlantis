@@ -181,7 +181,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private void performClosed ( final Throwable error )
     {
-        logger.info ( "Performin close stuff" );
+        logger.info ( "Performing close stuff" );
         setState ( ConnectionState.CLOSED, error );
         this.messenger.disconnected ();
         disposeConnector ();
