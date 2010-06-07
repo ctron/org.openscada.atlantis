@@ -78,16 +78,16 @@ public class CommandExecutor
         }
         finally
         {
+            if ( listener != null )
+            {
+                listener.processCompleted ();
+            }
+
             if ( p != null )
             {
                 closeStream ( p.getErrorStream () );
                 closeStream ( p.getInputStream () );
                 closeStream ( p.getOutputStream () );
-            }
-
-            if ( listener != null )
-            {
-                listener.processCompleted ();
             }
         }
 
