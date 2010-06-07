@@ -432,7 +432,7 @@ public class Messenger implements MessageListener
      */
     public void sendMessage ( final Message message, final MessageStateListener listener, final long timeout )
     {
-        boolean isSent = false;
+        final boolean isSent;
 
         final MessageSender connection = this.connection;
         if ( connection != null )
@@ -450,6 +450,10 @@ public class Messenger implements MessageListener
                     registerMessageTag ( message.getSequence (), tag );
                 }
             } );
+        }
+        else
+        {
+            isSent = false;
         }
 
         // If the message was not sent, notify that
