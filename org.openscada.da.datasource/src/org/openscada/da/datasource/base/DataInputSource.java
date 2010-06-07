@@ -42,5 +42,4 @@ public class DataInputSource extends AbstractInputDataSource
     {
         updateData ( value );
     }
-
 }
