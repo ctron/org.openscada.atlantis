@@ -26,7 +26,7 @@
          ================================= -->
     <target name="default" depends="generate" description="--> Copy and generate">
 		<echo message="Selecting ice: ${ice.version}"/>
-		<copy file="lib/Ice-${ice.version}.jar" tofile="lib/Ice.jar"/>
+		<copy file="lib/Ice-${ice.version}.jar" tofile="lib/Ice.jar" overwrite="true"/>
     </target>
 
 	
