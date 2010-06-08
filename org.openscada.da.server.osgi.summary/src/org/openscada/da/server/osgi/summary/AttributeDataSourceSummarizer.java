@@ -30,6 +30,7 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,7 +101,18 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
 
     protected void updateStats ()
     {
-        this.countValue.setValue ( Variant.valueOf ( this.matchingSources.size () ) );
+        final int count = this.matchingSources.size ();
+
+        this.countValue.setValue ( Variant.valueOf ( count ) );
+        if ( count < 10 )
+        {
+            this.countValue.setAttribute ( "debug.info", Variant.valueOf ( StringHelper.join ( this.matchingSources, "," ) ) );
+        }
+        else
+        {
+            this.countValue.clearAttribute ( "debug.info" );
+        }
+
         final DataItemValue value = this.countValue.build ();
 
         logger.debug ( "Update value: {}", value );
