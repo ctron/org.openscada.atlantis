@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.da.datasource.DataSource;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
@@ -45,7 +46,7 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
     public ProxyDataSourceFactory ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
-        this.executor = Executors.newSingleThreadExecutor ();
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
         this.objectPool = new ObjectPoolImpl ();
         this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class.getName () );
