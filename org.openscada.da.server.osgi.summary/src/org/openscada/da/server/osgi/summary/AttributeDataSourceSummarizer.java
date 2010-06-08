@@ -29,6 +29,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;
+import org.openscada.da.master.MasterItem;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
@@ -44,6 +45,8 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
     private final Builder countValue = new Builder ();
 
     private String attributeName;
+
+    private boolean onlyMaster;
 
     public AttributeDataSourceSummarizer ( final Executor executor, final ObjectPoolTracker tracker )
     {
@@ -87,6 +90,11 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
 
     protected boolean isMatch ( final DataSource source, final DataItemValue value )
     {
+        if ( ! ( source instanceof MasterItem ) && this.onlyMaster )
+        {
+            return false;
+        }
+
         if ( value.getAttributes () == null )
         {
             return false;
@@ -131,6 +139,7 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
         close ();
 
         this.attributeName = cfg.getStringChecked ( "attribute", "'attribute' must be set" );
+        this.onlyMaster = cfg.getBoolean ( "onlyMaster", false );
 
         open ();
     }
