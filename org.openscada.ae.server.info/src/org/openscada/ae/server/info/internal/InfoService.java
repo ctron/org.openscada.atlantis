@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
 
 public class InfoService
 {
-    private final static String ALERT_ITEM = "ALERT_ACTIVE";
+    private final static String ALERT_ACTIVE_ITEM = "ALERT_ACTIVE";
 
     private final static String ALERT_DISABLED_ITEM = "ALERT_DISABLED";
 
@@ -60,6 +60,8 @@ public class InfoService
     private final ObjectPoolImpl dataSourcePool;
 
     private final Map<String, DataInputSource> items = new HashMap<String, DataInputSource> ();
+
+    private final DataInputOutputSource alertActiveItem;
 
     private final DataInputOutputSource alertDisabledItem;
 
@@ -93,7 +95,13 @@ public class InfoService
         {
             items.put ( monitorStatus.name (), new DataInputSource ( executor ) );
         }
-        items.put ( ALERT_ITEM, new DataInputSource ( executor ) );
+        alertActiveItem = new DataInputOutputSource ( executor );
+        alertActiveItem.setWriteHandler ( new WriteHandler () {
+            public void handleWrite ( UserInformation userInformation, Variant value ) throws Exception
+            {
+                setValue ( alertActiveItem, value.asBoolean ( false ) );
+            }
+        } );
         alertDisabledItem = new DataInputOutputSource ( executor );
         alertDisabledItem.setWriteHandler ( new WriteHandler () {
             public void handleWrite ( UserInformation userInformation, Variant value ) throws Exception
@@ -156,7 +164,7 @@ public class InfoService
 
         // set default values
         notifyChanges ();
-        setValue ( items.get ( ALERT_ITEM ), false );
+        setValue ( alertActiveItem, false );
         setValue ( alertDisabledItem, alertDisabled );
     }
 
@@ -218,6 +226,7 @@ public class InfoService
             logger.info ( "register item with id {}", id );
             this.dataSourcePool.addService ( id, entry.getValue (), new Properties () );
         }
+        this.dataSourcePool.addService ( prefix + "." + ALERT_ACTIVE_ITEM, alertActiveItem, new Properties () );
         this.dataSourcePool.addService ( prefix + "." + ALERT_DISABLED_ITEM, alertDisabledItem, new Properties () );
     }
 
@@ -232,6 +241,7 @@ public class InfoService
             this.dataSourcePool.removeService ( id, entry.getValue () );
             logger.info ( "unregister item with id {}", id );
         }
+        this.dataSourcePool.removeService ( prefix + "." + ALERT_ACTIVE_ITEM, alertActiveItem );
         this.dataSourcePool.removeService ( prefix + "." + ALERT_DISABLED_ITEM, alertDisabledItem );
     }
 
@@ -269,7 +279,7 @@ public class InfoService
         logger.info ( "alert enabled" );
         if ( !alertDisabled )
         {
-            setValue ( items.get ( ALERT_ITEM ), true );
+            setValue ( alertActiveItem, true );
         }
     }
 
@@ -279,7 +289,7 @@ public class InfoService
     private void silenceAlert ()
     {
         logger.info ( "alert disabled" );
-        setValue ( items.get ( ALERT_ITEM ), false );
+        setValue ( alertActiveItem, false );
     }
 
     /**
@@ -289,6 +299,10 @@ public class InfoService
     {
         alertDisabled = disabled;
         setValue ( alertDisabledItem, alertDisabled );
+        if ( disabled )
+        {
+            silenceAlert ();
+        }
     }
 
     /**
