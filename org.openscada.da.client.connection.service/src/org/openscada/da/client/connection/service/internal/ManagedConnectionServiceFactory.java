@@ -108,8 +108,27 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
         this.connections.put ( pid, manager );
     }
 
-    public void purge ()
+    public void dispose ()
     {
+        Map<String, ServiceRegistration> connectionsRegs;
+        Map<String, ConnectionManager> connections;
+
+        synchronized ( this )
+        {
+            connectionsRegs = new HashMap<String, ServiceRegistration> ( this.connectionsRegs );
+            connections = new HashMap<String, ConnectionManager> ( this.connections );
+            this.connectionsRegs.clear ();
+            this.connections.clear ();
+        }
+
+        for ( final ServiceRegistration reg : connectionsRegs.values () )
+        {
+            reg.unregister ();
+        }
+        for ( final ConnectionManager manager : connections.values () )
+        {
+            manager.dispose ();
+        }
 
     }
 }

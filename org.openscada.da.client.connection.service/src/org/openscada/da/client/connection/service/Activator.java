@@ -62,6 +62,7 @@ public class Activator implements BundleActivator
     public void stop ( final BundleContext context ) throws Exception
     {
         this.handle.unregister ();
+        this.service.dispose ();
         this.context = null;
         this.service = null;
     }
