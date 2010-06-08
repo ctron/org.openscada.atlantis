@@ -26,6 +26,7 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;
@@ -51,6 +52,7 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
     public AttributeDataSourceSummarizer ( final Executor executor, final ObjectPoolTracker tracker )
     {
         super ( executor, tracker );
+        this.countValue.setSubscriptionState ( SubscriptionState.CONNECTED );
         this.countValue.setValue ( Variant.valueOf ( 0 ) );
         updateData ( this.countValue.build () );
     }
