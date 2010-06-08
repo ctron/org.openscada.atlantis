@@ -33,7 +33,7 @@ import org.osgi.framework.BundleContext;
 public class FactoryImpl extends AbstractServiceConfigurationFactory<AttributeDataSourceSummarizer>
 {
 
-    public static final String FACTORY_ID = "org.openscada.da.server.osgi.summary";
+    public static final String FACTORY_ID = "org.openscada.da.server.osgi.summary.attribute";
 
     private final Executor executor;
 
