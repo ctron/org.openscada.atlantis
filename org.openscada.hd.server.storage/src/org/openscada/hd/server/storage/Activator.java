@@ -25,6 +25,7 @@ import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.SelfManagedConfigurationFactory;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -59,7 +60,7 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext context ) throws Exception
     {
         final Object lock = lockObject;
-        executor = Executors.newSingleThreadExecutor ();
+        executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
         executor.submit ( new Runnable () {
             public void run ()
             {
