@@ -167,7 +167,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     @Override
     protected synchronized void update ( final Builder builder )
     {
-        logger.debug ( "Handle data update: {}", builder );
+        logger.debug ( "Handle data update: {} (value: {}, timestamp: {}, limit: {})", new Object[] { builder, this.value, this.timestamp, this.limit } );
 
         if ( this.value == null || this.timestamp == null || this.limit == null )
         {
