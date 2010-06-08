@@ -411,4 +411,54 @@ GRANTED;
 	
 </sect1>
 
+
+<sect1
+	id="cafactory_org.openscada.da.server.osgi.summary.attribute"
+	><title>org.openscada.da.server.osgi.summary.attribute</title>
+	
+<para>
+	This factory created and registers data sources which summarize all other data
+	sources by attribute name.
+</para>
+
+	<sect2><title>Configuration</title>
+		<para>
+		The following configuration properties are available:
+		</para>
+		
+		<table><title>Configuration properties of <filename>org.openscada.da.server.osgi.summary.attribute</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Required</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>attribute</entry>
+						<entry>String</entry>
+						<entry>required</entry>
+						<entry>
+						The name of the attribute by which the summarization should be performed.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect2>
+	
+	<sect2><title>Additional information</title>
+		<para>
+		The datasource creates a new data item subscription on the specified hive connection.
+		Once the connection is available and established it will automatically subscribe and
+		provide the values to data sources subscribe to itself. 
+		</para>
+	</sect2>
+	
+</sect1>
+
 </chapter>

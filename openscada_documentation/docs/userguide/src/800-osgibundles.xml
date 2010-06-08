@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "http://docbook.org/xml/4.4/docbookx.dtd" []>
+<!DOCTYPE chapter PUBLIC "-//OASIS//DTD DocBook XML V4.4//EN" "../../../docbook/dtd/docbookx.dtd" []>
 
 <chapter id="osgibundles"><title><trademark>OSGi</trademark> Bundles</title>
 	<para>
@@ -329,6 +329,78 @@
 		</table>
 		
 	</sect2>
+</sect1>
+
+<sect1 id="bundle_org.openscada.da.server.osgi.summary"><title>org.openscada.da.server.osgi.summary</title>
+	<para>
+	The bundle <filename>org.openscada.da.server.osgi.summary</filename> provides summary information
+	summarized over all available data sources.
+	</para>
+	
+	<sect2><title>System properties</title>
+		<para>
+		No system properties are used by the bundle.
+		</para>
+	</sect2>
+	
+	
+	<sect2><title>Exported services</title>
+		<para>
+		The following services are exported by this bundle:
+		</para>
+		
+		<table><title>Exported services of <filename>org.openscada.da.server.osgi.summary</filename></title>
+				<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Supported interfaces</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>org.openscada.da.datasource.DataSource</entry>
+						<entry>
+						Each configured service implements the <interfacename>DataSource</interfacename>
+						interface.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect2>
+	
+	<sect2><title>Configurable services</title>
+		<para>
+		The following configurable services are provided by this bundle:
+		</para>
+		
+		<table><title>Configurable services of <filename>org.openscada.da.server.osgi.summary</filename></title>
+				<tgroup cols="2">
+				<thead>
+					<row>
+						<entry>Factory ID</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>
+						org.openscada.da.server.osgi.summary.attribute
+						</entry>
+						<entry>
+						A datasource which aggregates all datasources and summarizes by the specifies
+						attribute name.
+						See also <xref linkend="cafactory_org.openscada.da.server.osgi.summary.attribute"/>
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect2>
+	
 </sect1>
 
 <sect1 id="bundle_org.openscada.da.server.osgi.exporter.net"><title>org.openscada.da.server.osgi.exporter.net</title>
