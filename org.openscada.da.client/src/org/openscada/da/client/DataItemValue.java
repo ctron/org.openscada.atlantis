@@ -430,7 +430,14 @@ public class DataItemValue
 
         public void setAttribute ( final String name, final Variant value )
         {
-            this.attributes.put ( name, value );
+            if ( value == null )
+            {
+                this.attributes.remove ( name );
+            }
+            else
+            {
+                this.attributes.put ( name, value );
+            }
         }
 
         public void clearAttribute ( final String name )
@@ -442,7 +449,7 @@ public class DataItemValue
         {
             if ( timestamp == null )
             {
-                setAttribute ( "timestamp", null );
+                clearAttribute ( "timestamp" );
             }
             else
             {
