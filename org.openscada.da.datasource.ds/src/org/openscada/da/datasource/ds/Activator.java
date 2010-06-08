@@ -27,6 +27,7 @@ import java.util.concurrent.Executors;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.ds.DataNodeTracker;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -46,7 +47,7 @@ public class Activator implements BundleActivator
      */
     public void start ( final BundleContext context ) throws Exception
     {
-        this.executor = Executors.newSingleThreadExecutor ();
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
         this.dataNodeTracker = new DataNodeTracker ( context );
 
