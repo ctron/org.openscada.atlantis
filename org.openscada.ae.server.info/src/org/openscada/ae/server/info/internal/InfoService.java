@@ -91,20 +91,20 @@ public class InfoService
         clearAggregatedMonitors ();
 
         // create items
-        for ( MonitorStatus monitorStatus : MonitorStatus.values () )
+        for ( final MonitorStatus monitorStatus : MonitorStatus.values () )
         {
-            items.put ( monitorStatus.name (), new DataInputSource ( executor ) );
+            this.items.put ( monitorStatus.name (), new DataInputSource ( executor ) );
         }
-        alertActiveItem = new DataInputOutputSource ( executor );
-        alertActiveItem.setWriteHandler ( new WriteHandler () {
-            public void handleWrite ( UserInformation userInformation, Variant value ) throws Exception
+        this.alertActiveItem = new DataInputOutputSource ( executor );
+        this.alertActiveItem.setWriteHandler ( new WriteHandler () {
+            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
-                setValue ( alertActiveItem, value.asBoolean ( false ) );
+                setValue ( InfoService.this.alertActiveItem, value.asBoolean ( false ) );
             }
         } );
-        alertDisabledItem = new DataInputOutputSource ( executor );
-        alertDisabledItem.setWriteHandler ( new WriteHandler () {
-            public void handleWrite ( UserInformation userInformation, Variant value ) throws Exception
+        this.alertDisabledItem = new DataInputOutputSource ( executor );
+        this.alertDisabledItem.setWriteHandler ( new WriteHandler () {
+            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
                 setAlertDisabled ( new Variant ( value ).asBoolean ( false ) );
             }
@@ -125,17 +125,17 @@ public class InfoService
 
         // listener for all monitors of a pool
         final ObjectPoolListener objectPoolListener = new ObjectPoolListener () {
-            public void serviceAdded ( Object service, Dictionary<?, ?> properties )
+            public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
             {
                 ( (MonitorService)service ).addStatusListener ( ml );
             }
 
-            public void serviceRemoved ( Object service, Dictionary<?, ?> properties )
+            public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
             {
                 ( (MonitorService)service ).removeStatusListener ( ml );
             }
 
-            public void serviceModified ( Object service, Dictionary<?, ?> properties )
+            public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
             {
                 ( (MonitorService)service ).removeStatusListener ( ml );
                 ( (MonitorService)service ).addStatusListener ( ml );
@@ -144,17 +144,17 @@ public class InfoService
 
         // listener for all monitor pools
         monitorPoolTracker.addListener ( new ObjectPoolServiceListener () {
-            public void poolAdded ( ObjectPool objectPool, int priority )
+            public void poolAdded ( final ObjectPool objectPool, final int priority )
             {
                 objectPool.addListener ( objectPoolListener );
             }
 
-            public void poolRemoved ( ObjectPool objectPool )
+            public void poolRemoved ( final ObjectPool objectPool )
             {
                 objectPool.removeListener ( objectPoolListener );
             }
 
-            public void poolModified ( ObjectPool objectPool, int newPriority )
+            public void poolModified ( final ObjectPool objectPool, final int newPriority )
             {
                 objectPool.removeListener ( objectPoolListener );
                 objectPool.addListener ( objectPoolListener );
@@ -164,8 +164,8 @@ public class InfoService
 
         // set default values
         notifyChanges ();
-        setValue ( alertActiveItem, false );
-        setValue ( alertDisabledItem, alertDisabled );
+        setValue ( this.alertActiveItem, false );
+        setValue ( this.alertDisabledItem, this.alertDisabled );
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -177,7 +177,7 @@ public class InfoService
      */
     public void update ( final Map<String, String> parameters )
     {
-        executor.execute ( new Runnable () {
+        this.executor.execute ( new Runnable () {
             public void run ()
             {
                 handleUpdate ( parameters );
@@ -191,10 +191,10 @@ public class InfoService
      */
     public void dispose ()
     {
-        executor.execute ( new Runnable () {
+        this.executor.execute ( new Runnable () {
             public void run ()
             {
-                unregisterItems ( prefix );
+                unregisterItems ( InfoService.this.prefix );
             }
         } );
     }
@@ -206,7 +206,7 @@ public class InfoService
     /**
      * @param parameters
      */
-    private void handleUpdate ( Map<String, String> parameters )
+    private void handleUpdate ( final Map<String, String> parameters )
     {
         logger.debug ( "parameter change requested" );
         unregisterItems ( this.prefix );
@@ -220,14 +220,14 @@ public class InfoService
      */
     private void registerItems ( final String prefix )
     {
-        for ( Entry<String, DataInputSource> entry : items.entrySet () )
+        for ( final Entry<String, DataInputSource> entry : this.items.entrySet () )
         {
             final String id = prefix + "." + entry.getKey ();
             logger.info ( "register item with id {}", id );
             this.dataSourcePool.addService ( id, entry.getValue (), new Properties () );
         }
-        this.dataSourcePool.addService ( prefix + "." + ALERT_ACTIVE_ITEM, alertActiveItem, new Properties () );
-        this.dataSourcePool.addService ( prefix + "." + ALERT_DISABLED_ITEM, alertDisabledItem, new Properties () );
+        this.dataSourcePool.addService ( prefix + "." + ALERT_ACTIVE_ITEM, this.alertActiveItem, new Properties () );
+        this.dataSourcePool.addService ( prefix + "." + ALERT_DISABLED_ITEM, this.alertDisabledItem, new Properties () );
     }
 
     /**
@@ -235,38 +235,53 @@ public class InfoService
      */
     private void unregisterItems ( final String prefix )
     {
-        for ( Entry<String, DataInputSource> entry : items.entrySet () )
+        for ( final Entry<String, DataInputSource> entry : this.items.entrySet () )
         {
             final String id = prefix + "." + entry.getKey ();
             this.dataSourcePool.removeService ( id, entry.getValue () );
             logger.info ( "unregister item with id {}", id );
         }
-        this.dataSourcePool.removeService ( prefix + "." + ALERT_ACTIVE_ITEM, alertActiveItem );
-        this.dataSourcePool.removeService ( prefix + "." + ALERT_DISABLED_ITEM, alertDisabledItem );
+        this.dataSourcePool.removeService ( prefix + "." + ALERT_ACTIVE_ITEM, this.alertActiveItem );
+        this.dataSourcePool.removeService ( prefix + "." + ALERT_DISABLED_ITEM, this.alertDisabledItem );
     }
 
     /**
      * @param msi
      */
-    private void handleStatusChanged ( MonitorStatusInformation msi )
+    private void handleStatusChanged ( final MonitorStatusInformation msi )
     {
         if ( msi == null )
         {
             throw new IllegalArgumentException ( "'monitorInformation' must not be null" );
         }
-        MonitorStatusInformation oldMsi = cachedMonitors.put ( msi.getId (), msi );
+
+        Boolean active = null;
+
+        final MonitorStatusInformation oldMsi = this.cachedMonitors.put ( msi.getId (), msi );
         if ( oldMsi != null )
         {
-            aggregatedMonitors.get ( oldMsi.getStatus () ).decrementAndGet ();
+            this.aggregatedMonitors.get ( oldMsi.getStatus () ).decrementAndGet ();
             if ( oldMsi.getStatus () == MonitorStatus.NOT_OK_NOT_AKN || oldMsi.getStatus () == MonitorStatus.NOT_AKN )
+            {
+                active = false;
+            }
+        }
+        this.aggregatedMonitors.get ( msi.getStatus () ).incrementAndGet ();
+        if ( msi.getStatus () == MonitorStatus.NOT_OK_NOT_AKN || msi.getStatus () == MonitorStatus.NOT_AKN )
+        {
+            active = true;
+        }
+
+        if ( active != null )
+        {
+            if ( active )
+            {
+                alert ();
+            }
+            else
             {
                 silenceAlert ();
             }
-        }
-        aggregatedMonitors.get ( msi.getStatus () ).incrementAndGet ();
-        if ( msi.getStatus () == MonitorStatus.NOT_OK_NOT_AKN || msi.getStatus () == MonitorStatus.NOT_AKN )
-        {
-            alert ();
         }
         notifyChanges ();
     }
@@ -277,9 +292,9 @@ public class InfoService
     private void alert ()
     {
         logger.info ( "alert enabled" );
-        if ( !alertDisabled )
+        if ( !this.alertDisabled )
         {
-            setValue ( alertActiveItem, true );
+            setValue ( this.alertActiveItem, true );
         }
     }
 
@@ -289,16 +304,16 @@ public class InfoService
     private void silenceAlert ()
     {
         logger.info ( "alert disabled" );
-        setValue ( alertActiveItem, false );
+        setValue ( this.alertActiveItem, false );
     }
 
     /**
      * @param disabled
      */
-    private void setAlertDisabled ( boolean disabled )
+    private void setAlertDisabled ( final boolean disabled )
     {
-        alertDisabled = disabled;
-        setValue ( alertDisabledItem, alertDisabled );
+        this.alertDisabled = disabled;
+        setValue ( this.alertDisabledItem, this.alertDisabled );
         if ( disabled )
         {
             silenceAlert ();
@@ -310,10 +325,10 @@ public class InfoService
      */
     private void clearAggregatedMonitors ()
     {
-        aggregatedMonitors.clear ();
-        for ( MonitorStatus status : MonitorStatus.values () )
+        this.aggregatedMonitors.clear ();
+        for ( final MonitorStatus status : MonitorStatus.values () )
         {
-            aggregatedMonitors.put ( status, new AtomicInteger ( 0 ) );
+            this.aggregatedMonitors.put ( status, new AtomicInteger ( 0 ) );
         }
     }
 
@@ -322,9 +337,9 @@ public class InfoService
      */
     private void notifyChanges ()
     {
-        for ( MonitorStatus monitorStatus : MonitorStatus.values () )
+        for ( final MonitorStatus monitorStatus : MonitorStatus.values () )
         {
-            setValue ( items.get ( monitorStatus.name () ), aggregatedMonitors.get ( monitorStatus ) );
+            setValue ( this.items.get ( monitorStatus.name () ), this.aggregatedMonitors.get ( monitorStatus ) );
         }
     }
 
@@ -336,9 +351,9 @@ public class InfoService
      * @param item
      * @param value
      */
-    private void setValue ( DataInputSource item, Object value )
+    private void setValue ( final DataInputSource item, final Object value )
     {
-        Builder div = new DataItemValue.Builder ();
+        final Builder div = new DataItemValue.Builder ();
         div.setValue ( new Variant ( value ) );
         item.setValue ( div.build () );
     }
@@ -349,9 +364,9 @@ public class InfoService
      * @param defaultValue
      * @return
      */
-    private String defaultParameter ( Map<String, String> parameters, String key, String defaultValue )
+    private String defaultParameter ( final Map<String, String> parameters, final String key, final String defaultValue )
     {
-        String value = parameters.get ( key );
+        final String value = parameters.get ( key );
         if ( value == null || "".equals ( value.trim () ) )
         {
             return defaultValue;
