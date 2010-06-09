@@ -20,11 +20,12 @@
 package org.openscada.da.master;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
@@ -51,7 +52,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private volatile int priority;
 
-    private final Collection<ObjectPoolServiceTracker> trackers = new LinkedList<ObjectPoolServiceTracker> ();
+    private final Map<String, ObjectPoolServiceTracker> trackers = new HashMap<String, ObjectPoolServiceTracker> ();
 
     protected Map<String, Variant> eventAttributes;
 
@@ -71,7 +72,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private void closeTrackers ()
     {
-        for ( final ObjectPoolServiceTracker tracker : this.trackers )
+        for ( final ObjectPoolServiceTracker tracker : this.trackers.values () )
         {
             tracker.close ();
         }
@@ -80,21 +81,30 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
-        closeTrackers ();
-
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
-        this.priority = cfg.getInteger ( "handlerPriority", this.defaultPriority );
         final String masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) );
         final String splitPattern = cfg.getString ( "splitPattern", ", ?" );
+        final String[] newIds = masterId.split ( splitPattern );
+        final boolean trackerUpdate = !this.trackers.keySet ().equals ( new HashSet<String> ( Arrays.asList ( newIds ) ) );
 
+        logger.debug ( "Need tracker update: {}", trackerUpdate );
+
+        if ( trackerUpdate )
+        {
+            closeTrackers ();
+        }
+
+        this.priority = cfg.getInteger ( "handlerPriority", this.defaultPriority );
         this.eventAttributes = convert ( cfg.getPrefixed ( "info." ) );
 
-        createTrackers ( masterId.split ( splitPattern ) );
-
-        for ( final ObjectPoolServiceTracker tracker : this.trackers )
+        if ( trackerUpdate )
         {
-            tracker.open ();
+            createTrackers ( newIds );
+            for ( final ObjectPoolServiceTracker tracker : this.trackers.values () )
+            {
+                tracker.open ();
+            }
         }
     }
 
@@ -114,7 +124,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
     {
         for ( final String masterId : masterIds )
         {
-            this.trackers.add ( new ObjectPoolServiceTracker ( this.poolTracker, masterId, new ObjectPoolListener () {
+            this.trackers.put ( masterId, new ObjectPoolServiceTracker ( this.poolTracker, masterId, new ObjectPoolListener () {
 
                 public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
                 {

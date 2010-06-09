@@ -242,6 +242,16 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     public void reprocess ()
     {
+        this.executor.execute ( new Runnable () {
+            public void run ()
+            {
+                doReprocess ();
+            }
+        } );
+    }
+
+    protected synchronized void doReprocess ()
+    {
         process ( this.sourceValue );
     }
 
@@ -385,7 +395,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
                         }
                         catch ( final Throwable e )
                         {
-                            logger.warn ( "Failed to write value", e );
+                            logger.info ( "Failed to write value", e );
                             listener.error ( e );
                         }
                     }
@@ -407,7 +417,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
                         }
                         catch ( final Throwable e )
                         {
-                            logger.warn ( "Failed to write attributes", e );
+                            logger.info ( "Failed to write attributes", e );
                             listener.error ( e );
                         }
                     }
@@ -421,7 +431,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         catch ( final Throwable e )
         {
             // total failure
-            logger.warn ( "Failed to write to master item", e );
+            logger.info ( "Failed to write to master item", e );
             listener.error ( e );
         }
     }
@@ -484,7 +494,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         return finalResult;
     }
 
-    private WriteRequestResult mergeNextResult ( final WriteRequestResult finalResult, final WriteRequestResult nextResult )
+    private static WriteRequestResult mergeNextResult ( final WriteRequestResult finalResult, final WriteRequestResult nextResult )
     {
         if ( nextResult.getError () != null )
         {
