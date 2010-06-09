@@ -35,9 +35,14 @@ import org.openscada.da.core.server.browser.FolderListener;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SessionCommon extends AbstractSessionImpl implements Session, DataItemSubscriptionListener
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( SessionCommon.class );
+
     private final HiveCommon hive;
 
     private volatile ItemChangeListener listener;
@@ -100,6 +105,8 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
 
     public void dataChanged ( final DataItem item, final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
+        logger.debug ( "Data changed - itemId: {}, value: {}, attributes: {}, cache: {}", new Object[] { item.getInformation ().getName (), value, attributes, cache } );
+
         ItemChangeListener listener;
 
         if ( ( listener = this.listener ) != null )
