@@ -289,6 +289,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public void dataChanged ( final String itemId, final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
+        logger.debug ( "Data changed - itemId: {}, value: {}, attributes: {}, cache: {}", new Object[] { itemId, value, attributes, cache } );
+
         this.messenger.sendMessage ( Messages.notifyData ( itemId, value, attributes, cache ) );
     }
 
