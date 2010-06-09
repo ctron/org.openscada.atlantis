@@ -104,7 +104,6 @@ public abstract class AbstractDataSource implements DataSource
                 {
                     listener.stateChanged ( finalValue );
                 }
-
             } );
         }
     }
