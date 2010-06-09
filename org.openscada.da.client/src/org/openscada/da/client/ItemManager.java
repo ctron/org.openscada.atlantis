@@ -39,6 +39,16 @@ public class ItemManager implements ConnectionStateListener
 
     private boolean connected;
 
+    /**
+     * Create a new item manager.
+     * <p>
+     * Only one item manager should be created per connection since the item manager acquires
+     * the listeners for data items using {@link Connection#setItemUpdateListener(String, ItemUpdateListener)}
+     * which directs all further updates to this item manager an disconnects all other item managers.
+     * So item managers should be shared.
+     * </p>
+     * @param connection the new connection to use for this item manager
+     */
     public ItemManager ( final org.openscada.da.client.Connection connection )
     {
         super ();
