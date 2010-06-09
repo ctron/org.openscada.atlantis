@@ -81,7 +81,7 @@ public class MonitorQuerySource implements SubscriptionSource, MonitorQueryListe
 
         if ( this.listeners.isEmpty () )
         {
-            this.monitorQuery.removeListener ( null );
+            this.monitorQuery.removeListener ( this );
             this.cachedData.clear ();
         }
     }
