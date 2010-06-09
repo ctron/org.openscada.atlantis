@@ -24,6 +24,8 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.server.common.chain.DataItemBaseChained;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is an abstract base class for the {@link DataItem} interface. It also supports
@@ -33,6 +35,9 @@ import org.openscada.da.server.common.chain.DataItemBaseChained;
  */
 public abstract class DataItemBase implements DataItem
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( DataItemBase.class );
+
     protected ItemListener listener;
 
     private final DataItemInformation information;
@@ -132,6 +137,8 @@ public abstract class DataItemBase implements DataItem
      */
     public void notifyData ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
+        logger.debug ( "Notify data - value: {}, attributes: {}, cache: {}", new Object[] { value, attributes, cache } );
+
         final ItemListener listener;
 
         synchronized ( this )
