@@ -194,7 +194,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 
     }
 
-    private void fireDataChange ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache, final DataItemSubscriptionListener[] listeners )
+    private static void fireDataChange ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache, final DataItemSubscriptionListener[] listeners )
     {
         for ( final DataItemSubscriptionListener listener : listeners )
         {
