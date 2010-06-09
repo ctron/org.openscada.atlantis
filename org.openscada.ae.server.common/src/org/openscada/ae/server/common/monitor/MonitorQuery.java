@@ -33,26 +33,52 @@ public class MonitorQuery
 {
     private final static Logger logger = LoggerFactory.getLogger ( MonitorQuery.class );
 
-    private MonitorQueryListener listener;
+    private final Set<MonitorQueryListener> listeners;
 
     private final Map<String, MonitorStatusInformation> cachedData;
 
     public MonitorQuery ()
     {
         this.cachedData = new HashMap<String, MonitorStatusInformation> ();
+        this.listeners = new HashSet<MonitorQueryListener> ();
     }
 
-    public synchronized void setListener ( final MonitorQueryListener listener )
+    /**
+     * Add a listener to the monitor query
+     * <p>
+     * If the listener was already added this operation has no effect
+     * </p>
+     * <p>
+     * The listener will receive all current known elements in a first update call.
+     * </p>
+     * @param listener the listener to add
+     */
+    public synchronized void addListener ( final MonitorQueryListener listener )
     {
-        this.listener = listener;
-        fireListener ( this.cachedData.values ().toArray ( new MonitorStatusInformation[0] ), null );
+        if ( this.listeners.add ( listener ) )
+        {
+            final MonitorStatusInformation[] data = this.cachedData.values ().toArray ( new MonitorStatusInformation[0] );
+            listener.dataChanged ( data, null );
+        }
+    }
+
+    public synchronized void removeListener ( final MonitorQueryListener listener )
+    {
+        this.listeners.remove ( listener );
     }
 
     private synchronized void fireListener ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
     {
-        if ( this.listener != null )
+        for ( final MonitorQueryListener listener : this.listeners )
         {
-            this.listener.dataChanged ( addedOrUpdated, removed );
+            try
+            {
+                listener.dataChanged ( addedOrUpdated, removed );
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to notify", e );
+            }
         }
     }
 
@@ -82,7 +108,7 @@ public class MonitorQuery
     public synchronized void dispose ()
     {
         clear ();
-        this.listener = null;
+        this.listeners.clear ();
     }
 
     /**
@@ -110,7 +136,7 @@ public class MonitorQuery
 
     protected synchronized void clear ()
     {
-        fireListener ( null, this.cachedData.keySet ().toArray ( new String[0] ) );
+        fireListener ( null, this.cachedData.keySet ().toArray ( new String[this.cachedData.size ()] ) );
         this.cachedData.clear ();
     }
 }

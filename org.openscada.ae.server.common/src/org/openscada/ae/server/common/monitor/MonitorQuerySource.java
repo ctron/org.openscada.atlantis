@@ -67,7 +67,7 @@ public class MonitorQuerySource implements SubscriptionSource, MonitorQueryListe
 
         if ( wasEmpty && !this.listeners.isEmpty () )
         {
-            this.monitorQuery.setListener ( this );
+            this.monitorQuery.addListener ( this );
         }
     }
 
@@ -81,7 +81,7 @@ public class MonitorQuerySource implements SubscriptionSource, MonitorQueryListe
 
         if ( this.listeners.isEmpty () )
         {
-            this.monitorQuery.setListener ( null );
+            this.monitorQuery.removeListener ( null );
             this.cachedData.clear ();
         }
     }
