@@ -97,6 +97,10 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
             return false;
         }
 
+        if ( value == null )
+        {
+            return false;
+        }
         if ( value.getAttributes () == null )
         {
             return false;
@@ -113,6 +117,8 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
     {
         final int count = this.matchingSources.size ();
 
+        logger.debug ( "Update size: {}", count );
+
         this.countValue.setValue ( Variant.valueOf ( count ) );
         if ( count < 10 )
         {
@@ -122,12 +128,7 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
         {
             this.countValue.clearAttribute ( "debug.info" );
         }
-
-        final DataItemValue value = this.countValue.build ();
-
-        logger.debug ( "Update value: {}", value );
-
-        updateData ( value );
+        updateData ( this.countValue.build () );
     }
 
     public void dispose ()
