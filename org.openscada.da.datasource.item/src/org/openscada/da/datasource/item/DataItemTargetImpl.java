@@ -208,6 +208,8 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
     public synchronized void stateChanged ( final DataItemValue value )
     {
+        logger.debug ( "State changed: {}", value );
+
         if ( value == null )
         {
             this.currentValue = value;
@@ -225,8 +227,12 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
             AttributesHelper.set ( target, value.getAttributes (), diff );
 
+            final Variant oldValue = Variant.valueOf ( this.currentValue.getValue () );
+            final Variant newValue = Variant.valueOf ( value.getValue () );
+
             this.currentValue = value;
-            if ( !diff.isEmpty () )
+
+            if ( !diff.isEmpty () || !oldValue.equals ( newValue ) )
             {
                 notifyData ( value.getValue (), diff );
             }
