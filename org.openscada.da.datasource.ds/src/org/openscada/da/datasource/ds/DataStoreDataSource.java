@@ -89,15 +89,7 @@ public class DataStoreDataSource extends AbstractDataSource implements DataListe
 
     private String getNodeId ()
     {
-        final String nodeId = this.nodeId;
-        if ( nodeId != null )
-        {
-            return nodeId;
-        }
-        else
-        {
-            return "org.openscada.da.datasource.ds/" + this.id;
-        }
+        return this.nodeId;
     }
 
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
@@ -113,7 +105,7 @@ public class DataStoreDataSource extends AbstractDataSource implements DataListe
         }
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.nodeId = cfg.getString ( "node.id", "DataSource/" + this.id );
+        this.nodeId = cfg.getString ( "node.id", "org.openscada.da.datasource.ds/" + this.id );
 
         this.dataNodeTracker.addListener ( this.nodeId, this );
     }
@@ -130,14 +122,24 @@ public class DataStoreDataSource extends AbstractDataSource implements DataListe
 
     public void nodeChanged ( final DataNode node )
     {
+        logger.debug ( "Node data changed: {}", node );
         try
         {
-            final Variant variant = (Variant)node.getDataAsObject ( this.context.getBundle () );
-            final Builder builder = new Builder ();
-            builder.setSubscriptionState ( SubscriptionState.CONNECTED );
-            builder.setValue ( variant );
-
-            updateData ( builder.build () );
+            if ( node != null )
+            {
+                final Variant variant = (Variant)node.getDataAsObject ( this.context.getBundle () );
+                final Builder builder = new Builder ();
+                builder.setSubscriptionState ( SubscriptionState.CONNECTED );
+                builder.setValue ( variant );
+                updateData ( builder.build () );
+            }
+            else
+            {
+                final Builder builder = new Builder ();
+                builder.setSubscriptionState ( SubscriptionState.CONNECTED );
+                builder.setValue ( Variant.NULL );
+                updateData ( builder.build () );
+            }
         }
         catch ( final Throwable e )
         {
@@ -147,6 +149,8 @@ public class DataStoreDataSource extends AbstractDataSource implements DataListe
 
     private void setError ( final Throwable e )
     {
+        logger.warn ( "Failed to read data", e );
+
         final Builder builder = new Builder ();
         builder.setSubscriptionState ( SubscriptionState.CONNECTED );
         builder.setValue ( Variant.NULL );
