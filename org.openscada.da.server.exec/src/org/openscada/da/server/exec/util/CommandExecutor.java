@@ -20,10 +20,10 @@
 package org.openscada.da.server.exec.util;
 
 import java.io.BufferedReader;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 
 import org.openscada.da.server.exec.command.ExecutionResult;
 import org.openscada.da.server.exec.command.ProcessListener;
@@ -54,6 +54,8 @@ public class CommandExecutor
             {
                 listener.processCreated ( p );
             }
+
+            closeStream ( p.getOutputStream () );
 
             p.waitFor ();
             final long end = System.currentTimeMillis ();
@@ -94,7 +96,7 @@ public class CommandExecutor
         return result;
     }
 
-    protected static void closeStream ( final Object stream )
+    protected static void closeStream ( final Closeable stream )
     {
         if ( stream == null )
         {
@@ -102,14 +104,7 @@ public class CommandExecutor
         }
         try
         {
-            if ( stream instanceof InputStream )
-            {
-                ( (InputStream)stream ).close ();
-            }
-            else if ( stream instanceof OutputStream )
-            {
-                ( (OutputStream)stream ).close ();
-            }
+            stream.close ();
         }
         catch ( final IOException e )
         {
