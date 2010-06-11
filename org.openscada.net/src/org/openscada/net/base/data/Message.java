@@ -33,105 +33,105 @@ public class Message
 
     public final static String FIELD_ERROR_INFO = "error-info";
 
-    private int _commandCode = 0;
+    private int commandCode = 0;
 
-    private long _sequence = 0;
+    private long sequence = 0;
 
-    private long _replySequence = 0;
+    private long replySequence = 0;
 
-    private long _timestamp = System.currentTimeMillis ();
+    private long timestamp = System.currentTimeMillis ();
 
-    private MapValue _values = null;
+    private MapValue values = null;
 
     // ctors
 
     public Message ()
     {
         super ();
-        this._values = new MapValue ();
+        this.values = new MapValue ();
     }
 
     public Message ( final int commandCode )
     {
         super ();
-        this._commandCode = commandCode;
-        this._values = new MapValue ();
+        this.commandCode = commandCode;
+        this.values = new MapValue ();
     }
 
     public Message ( final int commandCode, final long replySequence )
     {
         super ();
-        this._commandCode = commandCode;
-        this._replySequence = replySequence;
-        this._values = new MapValue ();
+        this.commandCode = commandCode;
+        this.replySequence = replySequence;
+        this.values = new MapValue ();
     }
 
     // methods
 
     public int getCommandCode ()
     {
-        return this._commandCode;
+        return this.commandCode;
     }
 
     public void setCommandCode ( final int commandCode )
     {
-        this._commandCode = commandCode;
+        this.commandCode = commandCode;
     }
 
     public long getSequence ()
     {
-        return this._sequence;
+        return this.sequence;
     }
 
     public void setSequence ( final long sequence )
     {
-        this._sequence = sequence;
+        this.sequence = sequence;
     }
 
     public MapValue getValues ()
     {
-        return this._values;
+        return this.values;
     }
 
     public void setValues ( final MapValue values )
     {
-        this._values = values;
+        this.values = values;
     }
 
     public long getReplySequence ()
     {
-        return this._replySequence;
+        return this.replySequence;
     }
 
     public void setReplySequence ( final long replySequence )
     {
-        this._replySequence = replySequence;
+        this.replySequence = replySequence;
     }
 
     // tool methods
     public void setValue ( final String name, final Value value )
     {
-        this._values.put ( name, value );
+        this.values.put ( name, value );
     }
 
     public void setValue ( final String name, final String value )
     {
-        this._values.put ( name, new StringValue ( value ) );
+        this.values.put ( name, new StringValue ( value ) );
     }
 
     public void unsetValue ( final String name )
     {
-        this._values.remove ( name );
+        this.values.remove ( name );
     }
 
     public long getTimestamp ()
     {
-        return this._timestamp;
+        return this.timestamp;
     }
 
     public void setTimestamp ( final long timestamp )
     {
-        this._timestamp = timestamp;
+        this.timestamp = timestamp;
     }
 
 }
