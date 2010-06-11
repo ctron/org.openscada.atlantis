@@ -37,20 +37,17 @@ public class IoSessionSender implements MessageSender
         this.session = session;
     }
 
-    public boolean sendMessage ( final Message message, final PrepareSendHandler handler )
+    public synchronized boolean sendMessage ( final Message message, final PrepareSendHandler handler )
     {
-        synchronized ( this )
+        message.setSequence ( nextSequence () );
+
+        // if we have a prepare send handler .. notify
+        if ( handler != null )
         {
-            message.setSequence ( nextSequence () );
-
-            // if we have a prepare send handler .. notify
-            if ( handler != null )
-            {
-                handler.prepareSend ( message );
-            }
-
-            this.session.write ( message );
+            handler.prepareSend ( message );
         }
+
+        this.session.write ( message );
 
         return true;
     }
