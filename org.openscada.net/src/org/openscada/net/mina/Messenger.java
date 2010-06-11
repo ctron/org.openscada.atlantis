@@ -432,6 +432,7 @@ public class Messenger implements MessageListener
      */
     public void sendMessage ( final Message message, final MessageStateListener listener, final long timeout )
     {
+        logger.debug ( "Sending message: {}", message.getCommandCode () );
         final boolean isSent;
 
         final MessageSender connection = this.connection;
