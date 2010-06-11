@@ -588,6 +588,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     private void fireSubscriptionChange ( final String item, final SubscriptionState subscriptionState )
     {
+        // FIXME: should be synchronized
         final ItemUpdateListener listener = this.itemListeners.get ( item );
 
         if ( listener != null )
