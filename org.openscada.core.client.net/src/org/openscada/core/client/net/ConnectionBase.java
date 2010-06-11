@@ -36,6 +36,8 @@ import org.apache.mina.core.service.IoConnector;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.core.session.IoSessionConfig;
+import org.apache.mina.transport.socket.SocketSessionConfig;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
@@ -601,6 +603,21 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         session.getConfig ().setReaderIdleTime ( getPingPeriod () / 1000 );
 
+        final IoSessionConfig config = session.getConfig ();
+        if ( config instanceof SocketSessionConfig )
+        {
+            final Integer sendBuffer = getSocketSendBufferSize ();
+            if ( sendBuffer != null )
+            {
+                ( (SocketSessionConfig)config ).setSendBufferSize ( sendBuffer );
+            }
+            final Integer receiveBuffer = getSocketReceiveBufferSize ();
+            if ( receiveBuffer != null )
+            {
+                ( (SocketSessionConfig)config ).setReceiveBufferSize ( receiveBuffer );
+            }
+        }
+
         if ( this.session == null )
         {
             this.session = session;
@@ -649,12 +666,22 @@ public abstract class ConnectionBase implements Connection, IoHandler
         return getIntProperty ( "pingPeriod", getIntProperty ( "timeout", DEFAULT_TIMEOUT ) / getIntProperty ( "pingFrequency", 3 ) );
     }
 
+    public Integer getSocketReceiveBufferSize ()
+    {
+        return getIntProperty ( "socketReceiveBufferSize", Integer.getInteger ( "org.openscada.core.client.net.socketReceiveBufferSize", null ) );
+    }
+
+    public Integer getSocketSendBufferSize ()
+    {
+        return getIntProperty ( "socketSendBufferSize", Integer.getInteger ( "org.openscada.core.client.net.socketSendBufferSize", null ) );
+    }
+
     public int getMessageTimeout ()
     {
         return getIntProperty ( "messageTimeout", getIntProperty ( "timeout", DEFAULT_TIMEOUT ) );
     }
 
-    protected int getIntProperty ( final String propertyName, final int defaultValue )
+    protected Integer getIntProperty ( final String propertyName, final Integer defaultValue )
     {
         try
         {
