@@ -77,6 +77,7 @@ public class FolderSyncController extends FolderWatcher
     {
         synchronized ( this )
         {
+            // FIXME: use isEmpty
             final boolean needSubscription = this.listener.size () > 0;
 
             if ( needSubscription != this.subscribed || force )
