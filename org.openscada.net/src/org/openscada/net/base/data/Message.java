@@ -134,4 +134,9 @@ public class Message
         this.timestamp = timestamp;
     }
 
+    @Override
+    public String toString ()
+    {
+        return String.format ( "[Message - cc: %s, seq: %s]", this.commandCode, this.sequence );
+    }
 }
