@@ -96,7 +96,7 @@ public class FolderSyncController extends FolderWatcher
 
     private synchronized void subscribe ()
     {
-        logger.debug ( "subscribing to folder: " + this.location.toString () );
+        logger.debug ( "subscribing to folder: {}", this.location );
 
         this.subscribed = true;
 
@@ -112,7 +112,7 @@ public class FolderSyncController extends FolderWatcher
 
     private synchronized void unsubscribe ()
     {
-        logger.debug ( "unsubscribing from folder: " + this.location.toString () );
+        logger.debug ( "unsubscribing from folder: {}", this.location );
 
         this.subscribed = false;
 
