@@ -133,6 +133,7 @@ public class FolderSyncController extends FolderWatcher
 
     private void transmitCache ( final FolderListener listener )
     {
+        // FIXME: use emptyList
         listener.folderChanged ( this.cache.values (), new LinkedList<String> (), true );
     }
 
@@ -157,6 +158,7 @@ public class FolderSyncController extends FolderWatcher
 
         for ( final FolderListener listener : this.listener )
         {
+            // FIXME: use emptyList
             listener.folderChanged ( new LinkedList<Entry> (), new LinkedList<String> (), true );
         }
     }
