@@ -529,6 +529,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     public void subscribeItem ( final String item ) throws NoConnectionException
     {
+        logger.debug ( "Subscribe to item: {}", item );
         this.messenger.sendMessage ( Messages.subscribeItem ( item ) );
     }
 
@@ -549,6 +550,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     public void subscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
+        logger.debug ( "Subscribe to folder: {}", location );
         this.messenger.sendMessage ( ListBrowser.createSubscribe ( location.asArray () ) );
     }
 
