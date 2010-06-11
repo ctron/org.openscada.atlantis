@@ -518,6 +518,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                 }
                 catch ( final Exception e )
                 {
+                    logger.info ( "Failed to complete browse", e );
                     throw new OperationException ( e );
                 }
             }
@@ -661,6 +662,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         }
         catch ( final Exception e )
         {
+            logger.info ( "Failed to start browsing", e );
             callback.error ( e );
         }
     }
