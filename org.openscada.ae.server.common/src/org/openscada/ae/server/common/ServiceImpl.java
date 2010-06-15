@@ -111,7 +111,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
 
         final UserInformation userInformation = sessionImpl.getUserInformation ();
 
-        final AuthorizationResult result = this.authorizationHelper.authorize ( conditionId, "MONITOR", "AKN", userInformation, null, null );
+        final AuthorizationResult result = this.authorizationHelper.authorize ( conditionId, "MONITOR", "AKN", userInformation, null );
         if ( !result.isGranted () )
         {
             return;
