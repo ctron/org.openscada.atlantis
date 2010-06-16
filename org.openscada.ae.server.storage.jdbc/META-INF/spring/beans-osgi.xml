@@ -3,8 +3,7 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:osgi="http://www.springframework.org/schema/osgi"
 	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
                       http://www.springframework.org/schema/osgi http://www.springframework.org/schema/osgi/spring-osgi.xsd">
-	
-	<osgi:service ref="jdbcStorage" interface="org.openscada.ae.server.storage.Storage">
+	<osgi:service ref="jdbcStorage" interface="org.openscada.ae.server.storage.Storage" context-class-loader="service-provider">
 		<osgi:service-properties>
 			<entry key="type" value="org.openscada.ae.server.storage.jdbc" />
 		</osgi:service-properties>
