@@ -20,6 +20,7 @@
 package org.openscada.core;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import org.openscada.utils.lang.Immutable;
 
@@ -172,6 +173,10 @@ public class Variant implements Serializable, Comparable<Variant>
         else if ( value instanceof Float )
         {
             setValue ( ( (Float)value ).doubleValue () );
+        }
+        else if ( value instanceof BigDecimal )
+        {
+            setValue ( ( (BigDecimal)value ).doubleValue () );
         }
         else if ( value instanceof Number )
         {
@@ -453,10 +458,10 @@ public class Variant implements Serializable, Comparable<Variant>
     {
         try
         {
-        	if ( this.value == null )
-        	{
-        		return false;
-        	}
+            if ( this.value == null )
+            {
+                return false;
+            }
             if ( this.value instanceof Boolean )
             {
                 return ( (Boolean)this.value ).booleanValue ();
