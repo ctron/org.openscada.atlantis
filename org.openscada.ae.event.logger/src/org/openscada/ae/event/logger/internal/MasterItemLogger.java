@@ -101,7 +101,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
         {
             final EventBuilder builder = createEvent ( null );
 
-            builder.attribute ( Event.Fields.VALUE, diff.getValue () );
+            builder.attribute ( Event.Fields.VALUE, formatAttributes ( diff.getAttributes () ) );
             builder.attribute ( Event.Fields.EVENT_TYPE, "ATTRIBUTES" );
 
             this.eventProcessor.publishEvent ( builder.build () );
