@@ -51,6 +51,7 @@ public class MemoryDataSource extends AbstractDataSource
         this.executor = executor;
 
         this.builder.setSubscriptionState ( SubscriptionState.CONNECTED );
+        update ();
     }
 
     @Override
