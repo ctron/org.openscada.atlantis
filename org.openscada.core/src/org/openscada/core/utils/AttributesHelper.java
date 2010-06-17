@@ -182,7 +182,6 @@ public class AttributesHelper
      */
     public static Map<String, Variant> diff ( Map<String, Variant> source, final Map<String, Variant> target )
     {
-
         final Map<String, Variant> result;
         if ( target != null )
         {
