@@ -20,6 +20,7 @@
 package org.openscada.core.utils;
 
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -171,6 +172,53 @@ public class AttributesHelper
             target.remove ( key );
             diff.put ( key, null );
         }
+    }
+
+    /**
+     * Generate the difference between two maps
+     * @param source the source map
+     * @param target the target map
+     * @return the difference
+     */
+    public static Map<String, Variant> diff ( Map<String, Variant> source, final Map<String, Variant> target )
+    {
+
+        final Map<String, Variant> result;
+        if ( target != null )
+        {
+            result = new HashMap<String, Variant> ( target );
+        }
+        else
+        {
+            result = Collections.emptyMap ();
+        }
+
+        if ( source == null )
+        {
+            source = Collections.emptyMap ();
+        }
+
+        final Set<String> removeSet = new HashSet<String> ();
+
+        for ( final Map.Entry<String, Variant> entry : source.entrySet () )
+        {
+            final Variant value = result.get ( entry.getKey () );
+            if ( value == null )
+            {
+                result.put ( entry.getKey (), null );
+            }
+            else if ( value.equals ( entry.getValue () ) )
+            {
+                removeSet.add ( entry.getKey () );
+            }
+        }
+
+        for ( final String key : removeSet )
+        {
+            result.remove ( key );
+        }
+
+        return result;
     }
 
 }

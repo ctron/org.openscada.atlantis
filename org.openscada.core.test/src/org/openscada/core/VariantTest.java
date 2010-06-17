@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.core.test;
+package org.openscada.core;
 
 import org.junit.Assert;
 import org.junit.Test;
