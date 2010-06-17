@@ -47,6 +47,8 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
     private String itemId;
 
+    private DataItemValue lastValue;
+
     public MasterItemLogger ( final BundleContext context, final ObjectPoolTracker poolTracker, final int priority ) throws InvalidSyntaxException
     {
         super ( poolTracker, priority );
@@ -67,7 +69,43 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     @Override
     public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
-        return null;
+        final DataItemValue diff = DataItemValueDiff.diff ( this.lastValue, value );
+        this.lastValue = value;
+
+        publishDiff ( diff );
+
+        return value;
+    }
+
+    private void publishDiff ( final DataItemValue diff )
+    {
+        if ( diff.getSubscriptionState () != null )
+        {
+            final EventBuilder builder = createEvent ( null );
+
+            builder.attribute ( Event.Fields.VALUE, diff.getSubscriptionState () );
+            builder.attribute ( Event.Fields.EVENT_TYPE, "SUBSCRIPTION" );
+
+            this.eventProcessor.publishEvent ( builder.build () );
+        }
+        if ( diff.getValue () != null )
+        {
+            final EventBuilder builder = createEvent ( null );
+
+            builder.attribute ( Event.Fields.VALUE, diff.getValue () );
+            builder.attribute ( Event.Fields.EVENT_TYPE, "VALUE" );
+
+            this.eventProcessor.publishEvent ( builder.build () );
+        }
+        if ( diff.getAttributes () != null && !diff.getAttributes ().isEmpty () )
+        {
+            final EventBuilder builder = createEvent ( null );
+
+            builder.attribute ( Event.Fields.VALUE, diff.getValue () );
+            builder.attribute ( Event.Fields.EVENT_TYPE, "ATTRIBUTES" );
+
+            this.eventProcessor.publishEvent ( builder.build () );
+        }
     }
 
     @Override
@@ -86,13 +124,12 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     @Override
     public WriteRequestResult processWrite ( final WriteRequest request )
     {
-
         if ( request.getValue () != null )
         {
             final EventBuilder builder = createEvent ( request );
 
             builder.attribute ( Event.Fields.VALUE, request.getValue () );
-            builder.attribute ( Event.Fields.MESSAGE, "Write main value" );
+            builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE" );
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
@@ -101,7 +138,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
             final EventBuilder builder = createEvent ( request );
 
             builder.attribute ( Event.Fields.VALUE, formatAttributes ( request.getAttributes () ) );
-            builder.attribute ( Event.Fields.MESSAGE, "Write attributes" );
+            builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE_ATTRIBUTES" );
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
@@ -127,20 +164,21 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
         {
             builder.attribute ( Event.Fields.ITEM, this.itemId );
         }
-        builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE" );
         builder.attribute ( Event.Fields.MONITOR_TYPE, "LOG" );
 
-        final WriteInformation wi = request.getWriteInformation ();
-        if ( wi != null )
+        if ( request != null )
         {
-            final UserInformation ui = wi.getUserInformation ();
-            if ( ui != null )
+            final WriteInformation wi = request.getWriteInformation ();
+            if ( wi != null )
             {
-                builder.attribute ( Fields.ACTOR_NAME, ui.getName () );
-                builder.attribute ( Fields.ACTOR_TYPE, "USER" );
+                final UserInformation ui = wi.getUserInformation ();
+                if ( ui != null )
+                {
+                    builder.attribute ( Fields.ACTOR_NAME, ui.getName () );
+                    builder.attribute ( Fields.ACTOR_TYPE, "USER" );
+                }
             }
         }
         return builder;
     }
-
 }
