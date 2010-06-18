@@ -102,7 +102,7 @@ public class EventPoolImpl implements EventListener, EventQuery
             logger.debug ( "Loaded {} entries from storage", result.size () );
             this.events.addAll ( result );
 
-            final UnmodifiableIterator<List<Event>> it = Iterators.partition ( result.iterator (), chunkSize );
+            final UnmodifiableIterator<List<Event>> it = Iterators.partition ( this.events.iterator (), chunkSize );
             while ( it.hasNext () )
             {
                 final List<org.openscada.ae.Event> chunk = it.next ();
@@ -133,7 +133,7 @@ public class EventPoolImpl implements EventListener, EventQuery
                 }
             }
         }
-        notifyEvent ( toNotify.toArray ( new Event[0] ) );
+        notifyEvent ( toNotify.toArray ( new Event[toNotify.size ()] ) );
     }
 
     private void notifyEvent ( final Event[] event )
