@@ -49,6 +49,12 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
     private DataItemValue lastValue;
 
+    private boolean logSubscription;
+
+    private boolean logValue;
+
+    private boolean logAttributes;
+
     public MasterItemLogger ( final BundleContext context, final ObjectPoolTracker poolTracker, final int priority ) throws InvalidSyntaxException
     {
         super ( poolTracker, priority );
@@ -69,17 +75,19 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     @Override
     public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
-        final DataItemValue diff = DataItemValueDiff.diff ( this.lastValue, value );
-        this.lastValue = value;
+        if ( this.logValue || this.logSubscription || this.logAttributes )
+        {
+            publishDiff ( DataItemValueDiff.diff ( this.lastValue, value ) );
+        }
 
-        publishDiff ( diff );
+        this.lastValue = value;
 
         return value;
     }
 
     private void publishDiff ( final DataItemValue diff )
     {
-        if ( diff.getSubscriptionState () != null )
+        if ( this.logSubscription && diff.getSubscriptionState () != null )
         {
             final EventBuilder builder = createEvent ( null );
 
@@ -88,7 +96,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
-        if ( diff.getValue () != null )
+        if ( this.logValue && diff.getValue () != null )
         {
             final EventBuilder builder = createEvent ( null );
 
@@ -97,7 +105,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
-        if ( diff.getAttributes () != null && !diff.getAttributes ().isEmpty () )
+        if ( this.logAttributes && diff.getAttributes () != null && !diff.getAttributes ().isEmpty () )
         {
             final EventBuilder builder = createEvent ( null );
 
@@ -114,6 +122,10 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         final String source = cfg.getStringChecked ( "source", "'source' must be set" );
         final String itemId = cfg.getString ( "item.id" );
+
+        this.logSubscription = cfg.getBoolean ( "logSubscription", false );
+        this.logValue = cfg.getBoolean ( "logValue", false );
+        this.logAttributes = cfg.getBoolean ( "logAttributes", false );
 
         super.update ( parameters );
 
