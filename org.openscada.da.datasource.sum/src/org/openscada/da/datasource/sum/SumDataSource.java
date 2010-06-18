@@ -44,8 +44,6 @@ import org.slf4j.LoggerFactory;
 
 public class SumDataSource extends AbstractMultiSourceDataSource
 {
-    private final boolean debug;
-
     private final static Logger logger = LoggerFactory.getLogger ( SumDataSource.class );
 
     private final Executor executor;
@@ -58,7 +56,6 @@ public class SumDataSource extends AbstractMultiSourceDataSource
     {
         super ( poolTracker );
         this.executor = executor;
-        this.debug = Boolean.getBoolean ( "org.openscada.da.datasource.sum.debug" );
     }
 
     @Override
@@ -126,6 +123,11 @@ public class SumDataSource extends AbstractMultiSourceDataSource
         updateData ( aggregate ( values ) );
     }
 
+    private boolean isDebug ()
+    {
+        return Boolean.getBoolean ( "org.openscada.da.datasource.sum.debug" );
+    }
+
     private synchronized DataItemValue aggregate ( final Map<String, DataItemValue> values )
     {
         final Builder builder = new Builder ();
@@ -145,7 +147,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
                 {
                     increment ( counts, "error" );
                 }
-                if ( this.debug )
+                if ( isDebug () )
                 {
                     builder.setAttribute ( "sum.disconnected." + entry.getKey (), Variant.TRUE );
                 }
@@ -158,7 +160,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
             {
                 if ( value.isAttribute ( group, false ) )
                 {
-                    if ( this.debug )
+                    if ( isDebug () )
                     {
                         builder.setAttribute ( "sum." + group + "." + entry.getKey (), Variant.TRUE );
                     }
@@ -172,7 +174,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
             {
                 if ( value.getValue ().asBoolean () )
                 {
-                    if ( this.debug )
+                    if ( isDebug () )
                     {
                         builder.setAttribute ( "sum.main." + entry.getKey (), Variant.TRUE );
                     }
