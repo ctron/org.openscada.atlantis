@@ -155,19 +155,19 @@ public class EventPoolImpl implements EventListener, EventQuery
     {
         this.listeners.add ( eventListener );
 
-        // deliver pool events
-        this.executor.execute ( new Runnable () {
+        final UnmodifiableIterator<List<Event>> it = Iterators.partition ( EventPoolImpl.this.events.iterator (), chunkSize );
+        while ( it.hasNext () )
+        {
+            final List<org.openscada.ae.Event> chunk = it.next ();
+            this.executor.execute ( new Runnable () {
 
-            public void run ()
-            {
-                final UnmodifiableIterator<List<Event>> it = Iterators.partition ( EventPoolImpl.this.events.iterator (), chunkSize );
-                while ( it.hasNext () )
+                public void run ()
                 {
-                    final List<org.openscada.ae.Event> chunk = it.next ();
                     eventListener.handleEvent ( chunk.toArray ( new Event[chunk.size ()] ) );
                 }
-            }
-        } );
+            } );
+        }
+
     }
 
     public synchronized void removeListener ( final EventListener eventListener )
