@@ -20,6 +20,7 @@
 package org.openscada.da.server.spring;
 
 import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.chain.storage.ChainStorageService;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.factory.DataItemFactory;
@@ -39,8 +40,12 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
 
     private ChainStorageService chainPersistenceService;
 
+    private ValidationStrategy validationStrategy = ValidationStrategy.GRANT_ALL;
+
     protected void setup ()
     {
+        setValidatonStrategy ( this.validationStrategy );
+
         if ( this.enableChainPersistenceService )
         {
             ChainStorageServiceHelper.registerDefaultPropertyService ( this );
@@ -94,5 +99,10 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
     public void setChainPersistenceService ( final ChainStorageService chainPersistenceService )
     {
         this.chainPersistenceService = chainPersistenceService;
+    }
+
+    public void setValidationStrategy ( final ValidationStrategy validationStrategy )
+    {
+        this.validationStrategy = validationStrategy;
     }
 }
