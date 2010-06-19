@@ -39,6 +39,7 @@ import javax.script.SimpleScriptContext;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
@@ -283,6 +284,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         {
             logger.debug ( "Falling back to plain value" );
             final Builder builder = new DataItemValue.Builder ();
+            builder.setSubscriptionState ( SubscriptionState.CONNECTED );
             builder.setValue ( Variant.valueOf ( result ) );
             updateData ( builder.build () );
         }
