@@ -102,7 +102,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
                 {
                     types.put ( key, toks[1] );
                 }
-                logger.info ( "Adding datasource: {} -> {}", new Object[] { key, id } );
+                logger.info ( "Adding datasource: {} -> {}", key, id );
                 addDataSource ( key, id );
             }
         }
@@ -205,7 +205,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
             int i = counts.get ( group );
             i++;
             counts.put ( group, i );
-            logger.debug ( "Increment group - '{}': {}", new Object[] { group, i } );
+            logger.debug ( "Increment group - '{}': {}", group, i );
         }
     }
 }
