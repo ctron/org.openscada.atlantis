@@ -35,4 +35,9 @@ public class DataItemValueBuilder extends DataItemValue.Builder
     public static SubscriptionState GRANTED = SubscriptionState.GRANTED;
 
     public static SubscriptionState DISCONNECTED = SubscriptionState.DISCONNECTED;
+
+    public void setConnected ( final boolean flag )
+    {
+        setSubscriptionState ( flag ? SubscriptionState.CONNECTED : SubscriptionState.DISCONNECTED );
+    }
 }
