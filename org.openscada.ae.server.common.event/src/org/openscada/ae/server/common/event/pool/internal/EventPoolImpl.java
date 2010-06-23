@@ -133,6 +133,7 @@ public class EventPoolImpl implements EventListener, EventQuery
                 }
             }
         }
+        logger.debug ( "new event pool size: {}", this.events.size () );
         notifyEvent ( toNotify.toArray ( new Event[toNotify.size ()] ) );
     }
 
@@ -175,4 +176,8 @@ public class EventPoolImpl implements EventListener, EventQuery
         this.listeners.remove ( eventListener );
     }
 
+    public int getCapacity ()
+    {
+        return this.events.getCapacity ();
+    }
 }

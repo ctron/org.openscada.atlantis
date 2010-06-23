@@ -26,4 +26,6 @@ public interface EventQuery
     public void addListener ( EventListener eventListener );
 
     public void removeListener ( EventListener eventListener );
+
+    public int getCapacity ();
 }

@@ -22,7 +22,6 @@ package org.openscada.ae.server.common.event;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.Queue;
 import java.util.Set;
 
@@ -30,6 +29,7 @@ import org.openscada.ae.Event;
 import org.openscada.ae.server.EventListener;
 import org.openscada.core.subscription.SubscriptionInformation;
 import org.openscada.core.subscription.SubscriptionSource;
+import org.openscada.utils.collection.BoundedPriorityQueueSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,12 +44,13 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
 
     private final Set<EventListener> listeners = new HashSet<EventListener> ();
 
-    private final Queue<Event> cachedData = new LinkedList<Event> ();
+    private final Queue<Event> cachedData;
 
     public EventQuerySource ( final String id, final EventQuery query )
     {
         this.id = id;
         this.eventQuery = query;
+        this.cachedData = new BoundedPriorityQueueSet<Event> ( query.getCapacity () );
     }
 
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
