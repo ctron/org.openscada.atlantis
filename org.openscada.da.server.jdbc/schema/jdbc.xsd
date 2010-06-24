@@ -27,6 +27,7 @@
     		<element name="query" type="jdbc:QueryType"
     			maxOccurs="unbounded" minOccurs="0">
     		</element>
+    		<element name="update" type="jdbc:UpdateType" maxOccurs="unbounded" minOccurs="0"></element>
     	</sequence>
     	<attribute name="id" type="string" use="required"></attribute>
     	<attribute name="connectionClass" type="string"></attribute>
@@ -34,5 +35,23 @@
     	<attribute name="username" type="string"></attribute>
     	<attribute name="password" type="string"></attribute>
     	<attribute name="timeout" type="int"></attribute>
+    </complexType>
+
+    <complexType name="UpdateType">
+    	<sequence>
+    		<element name="sql" type="string" maxOccurs="1"
+    			minOccurs="0">
+    		</element>
+    		<element name="mapping" type="jdbc:UpdateMappingType"
+    			maxOccurs="unbounded" minOccurs="0">
+    		</element>
+    	</sequence>
+    	<attribute name="id" type="string" use="required"></attribute>
+    	<attribute name="sql" type="string"></attribute>
+    </complexType>
+    
+    <complexType name="UpdateMappingType">
+    	<attribute name="name" type="string" use="required"></attribute>
+    	<attribute name="namedParameter" type="string" use="required"></attribute>
     </complexType>
 </schema>

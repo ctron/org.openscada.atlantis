@@ -34,6 +34,8 @@ public class Connection
 
     private final Collection<Query> queries = new LinkedList<Query> ();
 
+    private final Collection<Update> updates = new LinkedList<Update> ();
+
     private final String username;
 
     private final String password;
@@ -79,6 +81,11 @@ public class Connection
         {
             query.register ( timer, this.itemFactory );
         }
+
+        for ( final Update update : this.updates )
+        {
+            update.register ( this.itemFactory );
+        }
     }
 
     public void unregister ( final Hive hive )
@@ -86,6 +93,11 @@ public class Connection
         for ( final Query query : this.queries )
         {
             query.unregister ();
+        }
+
+        for ( final Update update : this.updates )
+        {
+            update.unregister ();
         }
 
         this.itemFactory.dispose ();
@@ -111,5 +123,10 @@ public class Connection
     public Integer getTimeout ()
     {
         return this.timeout;
+    }
+
+    public void add ( final Update update )
+    {
+        this.updates.add ( update );
     }
 }

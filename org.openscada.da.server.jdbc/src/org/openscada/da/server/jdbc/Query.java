@@ -63,6 +63,7 @@ public class Query
 
         logger.info ( "Created new query: " + this.id );
 
+        // FIXME: use executor
         this.task = new TimerTask () {
 
             @Override

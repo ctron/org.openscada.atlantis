@@ -30,9 +30,12 @@ import org.apache.xmlbeans.XmlException;
 import org.openscada.da.jdbc.configuration.ConnectionType;
 import org.openscada.da.jdbc.configuration.QueryType;
 import org.openscada.da.jdbc.configuration.RootDocument;
+import org.openscada.da.jdbc.configuration.UpdateMappingType;
+import org.openscada.da.jdbc.configuration.UpdateType;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.jdbc.Update.Mapping;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
@@ -103,7 +106,32 @@ public class Hive extends HiveCommon
             createQuery ( connection, queryType );
         }
 
+        for ( final UpdateType updateType : connectionType.getUpdateList () )
+        {
+            createUpdate ( connection, updateType );
+        }
+
         this.connections.add ( connection );
+    }
+
+    private void createUpdate ( final Connection connection, final UpdateType updateType )
+    {
+        String sql = updateType.getSql ();
+        if ( sql == null || sql.length () == 0 )
+        {
+            sql = updateType.getSql2 ();
+        }
+
+        logger.info ( "Create update:" + sql );
+
+        final Update update = new Update ( updateType.getId (), sql, connection );
+
+        for ( final UpdateMappingType mappingValue : updateType.getMappingList () )
+        {
+            update.addMapping ( new Mapping ( mappingValue.getName (), mappingValue.getNamedParameter () ) );
+        }
+
+        connection.add ( update );
     }
 
     private void createQuery ( final Connection connection, final QueryType queryType )
