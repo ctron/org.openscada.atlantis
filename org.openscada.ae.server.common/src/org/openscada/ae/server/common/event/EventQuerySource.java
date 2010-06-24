@@ -21,6 +21,7 @@ package org.openscada.ae.server.common.event;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Queue;
 import java.util.Set;
@@ -50,7 +51,12 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
     {
         this.id = id;
         this.eventQuery = query;
-        this.cachedData = new BoundedPriorityQueueSet<Event> ( query.getCapacity () );
+        this.cachedData = new BoundedPriorityQueueSet<Event> ( query.getCapacity (), new Comparator<Event> () {
+            public int compare ( final Event o1, final Event o2 )
+            {
+                return Event.comparator.compare ( o2, o1 );
+            }
+        } );
     }
 
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
