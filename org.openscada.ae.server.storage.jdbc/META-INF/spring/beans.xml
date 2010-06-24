@@ -59,7 +59,7 @@
 	<bean name="jdbcStorageDAOTarget"
 		class="org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAOImpl">
 		<property name="sessionFactory" ref="sessionFactory" />
-		<property name="maxLength" ref="${org.openscada.ae.server.storage.jdbc.maxlength}" />
+		<property name="maxLength" value="${org.openscada.ae.server.storage.jdbc.maxlength}" />
 	</bean>
 
 	<bean name="jdbcStorage" class="org.openscada.ae.server.storage.jdbc.JdbcStorage"
@@ -71,7 +71,6 @@
 		class="org.springframework.transaction.interceptor.TransactionProxyFactoryBean">
 		<property name="transactionManager" ref="txManager" />
 		<property name="target" ref="jdbcStorageDAOTarget" />
-		<property name="maxLength" value="${org.openscada.ae.server.storage.jdbc.maxlength}" />
 		<property name="transactionAttributes">
 			<props>
 				<prop key="storeEvent">PROPAGATION_REQUIRED</prop>
