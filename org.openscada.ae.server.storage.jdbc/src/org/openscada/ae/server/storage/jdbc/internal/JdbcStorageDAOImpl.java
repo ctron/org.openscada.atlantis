@@ -20,6 +20,8 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
 {
     private static final Logger logger = LoggerFactory.getLogger ( JdbcStorageDAOImpl.class );
 
+    private int maxLength = 0;
+
     public MutableEvent loadEvent ( final UUID id )
     {
         logger.debug ( "loadEvent: {}", id );
@@ -91,7 +93,65 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
     public void storeEvent ( final MutableEvent event )
     {
         logger.debug ( "storeEvent: {}", MutableEvent.toEvent ( event ) );
+        if ( maxLength > 0 )
+        {
+            clipStrings ( event );
+        }
         this.saveOrUpdate ( event );
         this.flush ();
+    }
+
+    private void clipStrings ( MutableEvent event )
+    {
+        if ( event.getMonitorType () != null && event.getMonitorType ().length () > 32 )
+        {
+            event.setMonitorType ( event.getMonitorType ().substring ( 0, 32 ) );
+        }
+        if ( event.getEventType () != null && event.getEventType ().length () > 32 )
+        {
+            event.setEventType ( event.getEventType ().substring ( 0, 32 ) );
+        }
+        if ( event.getMessageCode () != null && event.getMessageCode ().length () > 255 )
+        {
+            event.setMessageCode ( event.getMessageCode ().substring ( 0, 255 ) );
+        }
+        if ( event.getMessage () != null && event.getMessage ().length () > 255 )
+        {
+            event.setMessage ( event.getMessage ().substring ( 0, 255 ) );
+        }
+        if ( event.getSource () != null && event.getSource ().length () > 255 )
+        {
+            event.setSource ( event.getSource ().substring ( 0, 255 ) );
+        }
+        if ( event.getActorName () != null && event.getActorName ().length () > 128 )
+        {
+            event.setActorName ( event.getActorName ().substring ( 0, 128 ) );
+        }
+        if ( event.getActorType () != null && event.getActorType ().length () > 32 )
+        {
+            event.setActorType ( event.getActorType ().substring ( 0, 32 ) );
+        }
+        if ( event.getValue () != null && event.getValue ().isString () && event.getValue ().asString ( "" ).length () > maxLength )
+        {
+            event.setValue ( new Variant ( event.getValue ().asString ( "" ).substring ( 0, maxLength ) ) );
+        }
+        for ( String key : event.getAttributes ().keySet () )
+        {
+            Variant value = event.getAttributes ().get ( key );
+            if ( value != null && value.isString () && value.asString ( "" ).length () > maxLength )
+            {
+                event.getAttributes ().put ( key, new Variant ( value.asString ( "" ).substring ( 0, maxLength ) ) );
+            }
+        }
+    }
+
+    public int getMaxLength ()
+    {
+        return maxLength;
+    }
+
+    public void setMaxLength ( int maxLength )
+    {
+        this.maxLength = maxLength;
     }
 }
