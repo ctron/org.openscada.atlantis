@@ -35,7 +35,6 @@ import org.openscada.utils.lang.Immutable;
 
 public class Update
 {
-
     private final String id;
 
     private final String sql;
