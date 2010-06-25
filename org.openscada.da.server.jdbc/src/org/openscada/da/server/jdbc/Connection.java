@@ -25,12 +25,13 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Timer;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.browser.common.FolderCommon;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Connection
 {
-    private static Logger logger = Logger.getLogger ( Connection.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Connection.class );
 
     private final Collection<Query> queries = new LinkedList<Query> ();
 

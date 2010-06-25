@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
 Import-Package: javax.xml.stream;version="1.0.1",
- org.apache.log4j;version="1.2",
  org.apache.xmlbeans;version="2.4",
  org.apache.xmlbeans.impl.values;version="2.4",
  org.apache.xmlbeans.xml.stream;version="2.4",
@@ -17,7 +16,8 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.da.server.common.item.factory;version="0.14",
  org.openscada.sec;version="0.1.0",
  org.openscada.utils.lang,
- org.openscada.utils.lifecycle;version="0.13.1"
+ org.openscada.utils.lifecycle;version="0.13.1",
+ org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.da.server.jdbc;version="0.15.0";
   uses:="org.openscada.da.server.browser.common,

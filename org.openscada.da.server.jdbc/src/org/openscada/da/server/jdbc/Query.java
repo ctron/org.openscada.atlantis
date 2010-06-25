@@ -27,15 +27,16 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Query
 {
-    private static Logger logger = Logger.getLogger ( Query.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Query.class );
 
     private final String id;
 
@@ -61,7 +62,7 @@ public class Query
         this.sql = sql;
         this.connection = connection;
 
-        logger.info ( "Created new query: " + this.id );
+        logger.info ( "Created new query: {}", this.id );
 
         // FIXME: use executor
         this.task = new TimerTask () {
@@ -183,8 +184,7 @@ public class Query
 
     private void setValue ( final String key, final Variant value )
     {
-        // TODO Auto-generated method stub
-        logger.debug ( "Setting value: " + key + "=" + value );
+        logger.debug ( "Setting value: {} = {}", key, value );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "jdbc.error", null );
@@ -195,7 +195,7 @@ public class Query
 
     private void setError ( final String key, final Throwable e )
     {
-        logger.debug ( "Setting error: " + key + " = " + e.getMessage () );
+        logger.debug ( "Setting error: {} = {}", key, e.getMessage () );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "jdbc.error", Variant.TRUE );

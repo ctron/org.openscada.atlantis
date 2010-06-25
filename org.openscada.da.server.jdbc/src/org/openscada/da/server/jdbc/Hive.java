@@ -25,7 +25,6 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Timer;
 
-import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.jdbc.configuration.ConnectionType;
 import org.openscada.da.jdbc.configuration.QueryType;
@@ -36,11 +35,14 @@ import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.jdbc.Update.Mapping;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
-    private static Logger logger = Logger.getLogger ( Hive.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Hive.class );
 
     private FolderCommon rootFolder = null;
 
@@ -122,7 +124,7 @@ public class Hive extends HiveCommon
             sql = updateType.getSql2 ();
         }
 
-        logger.info ( "Create update:" + sql );
+        logger.info ( "Create update: {}", sql );
 
         final Update update = new Update ( updateType.getId (), sql, connection );
 
@@ -142,7 +144,7 @@ public class Hive extends HiveCommon
             sql = queryType.getSql2 ();
         }
 
-        logger.info ( "Creating new query: " + sql );
+        logger.info ( "Creating new query: {}", sql );
 
         connection.add ( new Query ( queryType.getId (), queryType.getPeriod (), sql, connection ) );
     }

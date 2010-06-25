@@ -32,9 +32,14 @@ import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.lang.Immutable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Update
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( Update.class );
+
     private final String id;
 
     private final String sql;
@@ -119,6 +124,7 @@ public class Update
         }
         catch ( final Exception e )
         {
+            logger.warn ( "Failed to perform update", e );
             final Map<String, Variant> attributes = new HashMap<String, Variant> ();
             attributes.put ( "sql.error", Variant.TRUE );
             attributes.put ( "sql.error.message", Variant.valueOf ( e.getMessage () ) );
