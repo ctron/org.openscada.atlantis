@@ -3,21 +3,11 @@
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://openscada.org/DA/JDBC/Configuration schema/configuration.xsd ">
 	<jdbc:connection id="CON1" connectionClass="oracle.jdbc.driver.OracleDriver"
-		uri="jdbc:oracle:thin:@(DESCRIPTION =     (ADDRESS = (PROTOCOL = TCP)(HOST = VS-IPT-RR1-HRN-11)(PORT = 1521))     (CONNECT_DATA =       (SID = VSIPT1)     )   )" username="vimsp" password="oracle" timeout="5000">
+		uri="jdbc:oracle:thin:@172.16.223.130:1521:db" username="oracle" password="oracle" timeout="5000">
 		<jdbc:query period="1000" id="QUERY1">
 			<jdbc:sql>
 <![CDATA[select 1 as field from dual]]>
 			</jdbc:sql>
 		</jdbc:query>
-		
-			<jdbc:query period="5000" id="TANK06">
-						<jdbc:sql><![CDATA[select CUR_DENS15 as DENS15 from vimsp.md_tank where tank_name='T-01']]></jdbc:sql>
-					</jdbc:query>
-					
-					<jdbc:update id="UPDATE_TANK01">
-						<jdbc:sql><![CDATA[update vimsp.md_tank set CUR_DENS15=:DENS15 where tank_name='T-01']]></jdbc:sql>
-						<jdbc:mapping namedParameter="DENS15"/>
-					</jdbc:update>
-		
 	</jdbc:connection>
 </jdbc:root>
