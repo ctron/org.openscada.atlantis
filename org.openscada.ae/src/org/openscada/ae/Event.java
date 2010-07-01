@@ -19,6 +19,7 @@
 
 package org.openscada.ae;
 
+import java.io.Serializable;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
@@ -31,8 +32,10 @@ import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class Event implements Cloneable, Comparable<Event>
+public class Event implements Cloneable, Comparable<Event>, Serializable
 {
+    private static final long serialVersionUID = 1133904558084283872L;
+
     public static class EventComparator implements Comparator<Event>
     {
         public int compare ( final Event o1, final Event o2 )
