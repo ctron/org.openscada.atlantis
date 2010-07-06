@@ -119,7 +119,8 @@ public class HiveExport
             else if ( ci.getDriver ().equalsIgnoreCase ( "ice" ) )
             {
                 log.debug ( "Create new 'ice' exporter" );
-                return new IceExport ( this.hive, ci );
+                // return new IceExport ( this.hive, ci );
+                return null;
             }
             else
             {

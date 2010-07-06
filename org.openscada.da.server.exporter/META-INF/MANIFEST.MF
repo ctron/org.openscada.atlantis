@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
-Import-Package: Ice,
- javax.xml.stream;version="1.0.1",
+Import-Package: javax.xml.stream;version="1.0.1",
  org.apache.log4j;version="1.2",
  org.apache.xmlbeans;version="2.4",
  org.apache.xmlbeans.impl.values;version="2.4",
@@ -10,13 +9,11 @@ Import-Package: Ice,
  org.openscada.da.core.server;version="0.14",
  org.openscada.da.server.common.configuration;version="0.14",
  org.openscada.da.server.exporter;version="0.14",
- org.openscada.da.server.ice;version="0.14",
  org.openscada.da.server.net;version="0.14",
  org.openscada.utils.lifecycle;version="0.13.0"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.da.server.exporter;version="0.15.0";
-  uses:="Ice,
-   org.openscada.da.core.server,
+  uses:="org.openscada.da.core.server,
    org.openscada.core,
    org.w3c.dom,
    org.openscada.utils.lifecycle"
