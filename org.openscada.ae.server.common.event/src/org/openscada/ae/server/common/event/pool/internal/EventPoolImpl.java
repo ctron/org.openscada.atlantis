@@ -52,7 +52,7 @@ public class EventPoolImpl implements EventListener, EventQuery
 
     private final static int daysToRetrieve = 90;
 
-    private final static int chunkSize = 250;
+    private final static int chunkSize = Integer.getInteger ( "org.openscada.ae.common.event.pool.chunkSize", 100 );
 
     private static final String isoDatePattern = "yyyy-MM-dd HH:mm:ss.SSS";
 
