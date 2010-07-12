@@ -100,6 +100,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         init ();
     }
 
+    @Override
     protected void finalize () throws Throwable
     {
         this.executor.shutdown ();
@@ -325,6 +326,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             }
             fireEventDataChange ( listener, data );
         }
+
+        this.messenger.sendMessage ( MessageCreator.createACK ( message ) );
     }
 
     private void fireEventDataChange ( final EventListener listener, final Event[] data )
