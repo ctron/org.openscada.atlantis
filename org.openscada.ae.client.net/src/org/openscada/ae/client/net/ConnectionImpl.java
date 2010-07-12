@@ -53,6 +53,7 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.openscada.net.utils.MessageCreator;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -189,6 +190,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 }
             } );
         }
+
+        this.messenger.sendMessage ( MessageCreator.createACK ( message ) );
     }
 
     protected void handleQueryStateChange ( final Message message )
