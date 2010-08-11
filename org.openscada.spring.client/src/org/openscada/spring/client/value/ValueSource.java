@@ -19,6 +19,7 @@
 
 package org.openscada.spring.client.value;
 
+import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 
 /**
@@ -28,5 +29,11 @@ import org.openscada.da.client.DataItemValue;
  */
 public interface ValueSource
 {
-    public abstract DataItemValue getValue ();
+    /**
+     * Get the value as {@link DataItemValue}
+     * @return the current value
+     */
+    public DataItemValue getValue ();
+
+    public Value<Variant> getVariantValue () throws ValueSourceException;
 }

@@ -10,7 +10,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
-public class StaticValueSource implements ValueSource, InitializingBean, DisposableBean
+public class StaticValueSource extends AbstractBaseValueSource implements ValueSource, InitializingBean, DisposableBean
 {
     private Map<String, Variant> attributes = new HashMap<String, Variant> ();
 

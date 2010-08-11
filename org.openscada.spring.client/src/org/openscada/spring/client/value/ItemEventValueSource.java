@@ -12,7 +12,7 @@ import org.springframework.util.Assert;
  * @author jens
  *
  */
-public class ItemEventValueSource implements ValueSource, DisposableBean, InitializingBean
+public class ItemEventValueSource extends AbstractBaseValueSource implements ValueSource, DisposableBean, InitializingBean
 {
     private Connection connection;
 

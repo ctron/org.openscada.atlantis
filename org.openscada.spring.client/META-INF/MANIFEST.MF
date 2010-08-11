@@ -11,6 +11,7 @@ Import-Package: org.apache.commons.beanutils;version="1.8.0",
  org.openscada.da.server.common;version="0.13.0",
  org.openscada.da.server.common.chain;version="0.13.0",
  org.openscada.utils.concurrent;version="0.13.0",
+ org.openscada.utils.lang;version="0.15.0",
  org.springframework.beans.factory;version="2.5.0",
  org.springframework.core.task;version="2.5.0",
  org.springframework.util;version="2.5.0"
