@@ -52,4 +52,20 @@ public interface ValueSource
     public Value<Boolean> getBooleanValue () throws ValueSourceException;
 
     public Value<Boolean> getBooleanValue ( final Boolean defaultValue );
+
+    public Long getLong ( final Long defaultValue );
+
+    public long getLong () throws ValueSourceException;
+
+    public Value<Long> getLongValue () throws ValueSourceException;
+
+    public Value<Long> getLongValue ( final Long defaultValue );
+
+    public Integer getInteger ( final Integer defaultValue );
+
+    public int getInteger () throws ValueSourceException;
+
+    public Value<Integer> getIntegerValue () throws ValueSourceException;
+
+    public Value<Integer> getIntegerValue ( final Integer defaultValue );
 }

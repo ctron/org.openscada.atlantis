@@ -9,7 +9,7 @@ import org.springframework.util.Assert;
 
 /**
  * A value source based on OpenSCADA DA items
- * @author jens
+ * @author Jens Reimann
  *
  */
 public class ItemEventValueSource extends AbstractBaseValueSource implements ValueSource, DisposableBean, InitializingBean

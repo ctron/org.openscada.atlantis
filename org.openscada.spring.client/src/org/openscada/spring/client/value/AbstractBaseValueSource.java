@@ -92,7 +92,6 @@ public abstract class AbstractBaseValueSource implements ValueSource
         {
             throw new ValueSourceException ( "Failed to convert value", e );
         }
-
     }
 
     public double getDouble () throws ValueSourceException
@@ -103,5 +102,83 @@ public abstract class AbstractBaseValueSource implements ValueSource
     public Double getDouble ( final Double defaultValue )
     {
         return getDoubleValue ( defaultValue ).getValue ();
+    }
+
+    // long
+
+    public Value<Long> getLongValue ( final Long defaultValue )
+    {
+        try
+        {
+            return getLongValue ();
+        }
+        catch ( final ValueSourceException e )
+        {
+            return Value.createDefault ( defaultValue );
+        }
+    }
+
+    public Value<Long> getLongValue () throws ValueSourceException
+    {
+        final Value<Variant> value = getVariantValue ();
+
+        try
+        {
+            final Long data = value.getValue ().asLong ();
+            return new Value<Long> ( data, value );
+        }
+        catch ( final Exception e )
+        {
+            throw new ValueSourceException ( "Failed to convert value", e );
+        }
+    }
+
+    public long getLong () throws ValueSourceException
+    {
+        return getLongValue ().getValue ();
+    }
+
+    public Long getLong ( final Long defaultValue )
+    {
+        return getLongValue ( defaultValue ).getValue ();
+    }
+
+    // integer
+
+    public Value<Integer> getIntegerValue ( final Integer defaultValue )
+    {
+        try
+        {
+            return getIntegerValue ();
+        }
+        catch ( final ValueSourceException e )
+        {
+            return Value.createDefault ( defaultValue );
+        }
+    }
+
+    public Value<Integer> getIntegerValue () throws ValueSourceException
+    {
+        final Value<Variant> value = getVariantValue ();
+
+        try
+        {
+            final Integer data = value.getValue ().asInteger ();
+            return new Value<Integer> ( data, value );
+        }
+        catch ( final Exception e )
+        {
+            throw new ValueSourceException ( "Failed to convert value", e );
+        }
+    }
+
+    public int getInteger () throws ValueSourceException
+    {
+        return getIntegerValue ().getValue ();
+    }
+
+    public Integer getInteger ( final Integer defaultValue )
+    {
+        return getIntegerValue ( defaultValue ).getValue ();
     }
 }
