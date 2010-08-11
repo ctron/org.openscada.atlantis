@@ -36,4 +36,20 @@ public interface ValueSource
     public DataItemValue getValue ();
 
     public Value<Variant> getVariantValue () throws ValueSourceException;
+
+    public Double getDouble ( final Double defaultValue );
+
+    public double getDouble () throws ValueSourceException;
+
+    public Value<Double> getDoubleValue () throws ValueSourceException;
+
+    public Value<Double> getDoubleValue ( final Double defaultValue );
+
+    public Boolean getBoolean ( final Boolean defaultValue );
+
+    public boolean getBoolean () throws ValueSourceException;
+
+    public Value<Boolean> getBooleanValue () throws ValueSourceException;
+
+    public Value<Boolean> getBooleanValue ( final Boolean defaultValue );
 }
