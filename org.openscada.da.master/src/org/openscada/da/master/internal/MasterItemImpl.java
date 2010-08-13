@@ -268,7 +268,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     protected synchronized void handleReprocess ( final DataItemValue value )
     {
-        logger.info ( "Reprocessing" );
+        logger.debug ( "Reprocessing" );
         updateData ( processHandler ( value ) );
     }
 
