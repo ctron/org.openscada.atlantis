@@ -26,9 +26,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.ae.Event;
 import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractStateMachineMonitorService;
@@ -241,7 +241,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         injectAttributes ( builder );
 
         final DataItemValue newValue = builder.build ();
-        logger.info ( "Setting new value: {}", newValue );
+        logger.debug ( "Setting new value: {}", newValue );
 
         return newValue;
     }
