@@ -289,8 +289,17 @@ public class HqlConverter
             }
             else
             {
-                term.hql += "index(A) = '" + field + "' AND (A.string " + op + " ? OR A.integer " + op + " ? OR A.double " + op + " ?))";
-                term.parameters = new Object[] { strValue, longValue, doubleValue };
+                // special case for string
+                if ( strValue != null && longValue == null && doubleValue == null )
+                {
+                    term.hql += "index(A) = '" + field + "' AND (A.string " + op + " ?))";
+                    term.parameters = new Object[] { strValue };
+                }
+                else
+                {
+                    term.hql += "index(A) = '" + field + "' AND (A.string " + op + " ? OR A.integer " + op + " ? OR A.double " + op + " ?))";
+                    term.parameters = new Object[] { strValue, longValue, doubleValue };
+                }
             }
         }
         return term;

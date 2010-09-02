@@ -8,6 +8,7 @@ import java.util.UUID;
 import org.hibernate.HibernateException;
 import org.hibernate.Query;
 import org.hibernate.Session;
+import org.hibernate.transform.DistinctRootEntityResultTransformer;
 import org.hibernate.type.CompositeCustomType;
 import org.hibernate.type.CustomType;
 import org.openscada.core.Variant;
@@ -68,6 +69,7 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
                 final Query q = getSession ().createQuery ( hql );
                 q.setFirstResult ( first );
                 q.setMaxResults ( max );
+                q.setResultTransformer ( DistinctRootEntityResultTransformer.INSTANCE );
                 int i = 0;
                 for ( final Object object : parameters )
                 {
