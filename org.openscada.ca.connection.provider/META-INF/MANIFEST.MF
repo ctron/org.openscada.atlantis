@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA CA Connection Provider
 Bundle-SymbolicName: org.openscada.ca.connection.provider
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.ca.connection.provider.Activator
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.ca.client;version="0.15.0",
  org.openscada.core.client;version="0.14.0",
