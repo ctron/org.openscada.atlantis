@@ -117,7 +117,9 @@
   	<openscada.builder.copyPlugin id="org.openscada.core.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.client.net"/>
+  	<!--
   	<openscada.builder.copyPlugin id="org.openscada.core.ice"/>
+  	-->
   	<openscada.builder.copyPlugin id="org.openscada.core.server.exporter"/>
   		
   	<!-- OpenSCADA DA -->
@@ -135,9 +137,11 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.common.osgi"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.net"/>
   	
+  	<!--
   	<openscada.builder.copyPlugin id="org.openscada.da.ice"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.ice"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.ice"/>
+  	-->
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.test"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.sysinfo"/>
