@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA HD NET Base
 Bundle-SymbolicName: org.openscada.hd.net
 Bundle-Version: 0.14.0.qualifier
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.core.net;version="0.14.0",

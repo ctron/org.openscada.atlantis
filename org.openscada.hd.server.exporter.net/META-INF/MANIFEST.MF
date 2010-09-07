@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA HD NET Server Exporter
 Bundle-SymbolicName: org.openscada.hd.server.exporter.net
 Bundle-Version: 0.14.0.qualifier
 Bundle-Activator: org.openscada.hd.server.exporter.net.Activator
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.hd;version="0.14.0",

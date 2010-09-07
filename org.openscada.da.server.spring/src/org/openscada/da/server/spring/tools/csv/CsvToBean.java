@@ -1,7 +1,7 @@
 package org.openscada.da.server.spring.tools.csv;
 
 /**
- Copyright 2007 Kyle Miller and Jens Reimann (inavare GmbH)
+ Copyright 2007 Kyle Miller and Jens Reimann (TH4 SYSTEMS GmbH)
 
  Licensed under the Apache License, Version 2.0 (the "License");
  you may not use this file except in compliance with the License.

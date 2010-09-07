@@ -7,6 +7,6 @@ Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA Core Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-SymbolicName: org.openscada.core.server
 

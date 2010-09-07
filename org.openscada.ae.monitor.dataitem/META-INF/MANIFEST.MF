@@ -4,7 +4,7 @@ Bundle-Name: Dataitem Plug-in
 Bundle-SymbolicName: org.openscada.ae.monitor.dataitem
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.ae.monitor.dataitem.Activator
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.apache.log4j,
  org.openscada.ae;version="0.15.0",

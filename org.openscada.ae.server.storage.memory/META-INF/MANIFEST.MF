@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA A&E Storage In Memory Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.storage.memory
 Bundle-Version: 0.14.0.qualifier
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Import-Package: org.openscada.ae,
  org.openscada.ae.filter,
  org.openscada.ae.filter.internal,

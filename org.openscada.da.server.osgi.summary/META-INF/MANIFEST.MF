@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA DA Server OSGi Summary Generator
 Bundle-SymbolicName: org.openscada.da.server.osgi.summary
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.da.server.osgi.summary.Activator
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.ca;version="0.15.0",
  org.openscada.ca.common.factory;version="0.14.0",

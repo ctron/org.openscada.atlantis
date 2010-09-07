@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA DA Master Common Implementations
 Bundle-SymbolicName: org.openscada.da.master.common
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.da.master.common.Activator
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.ae.event;version="0.15.0",

@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA DA Connections Plug-in
 Bundle-SymbolicName: org.openscada.da.client.connection.service
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.da.client.connection.service.Activator
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.apache.log4j,
  org.openscada.ca;version="0.14.0",
@@ -18,4 +18,4 @@ Import-Package: org.apache.log4j,
  org.osgi.util.tracker;version="1.4.2"
 Export-Package: org.openscada.da.client.connection.service;version="0.15.0";uses:="org.osgi.framework"
 Bundle-License: http://opensource.org/licenses/lgpl-2.1.php
-Bundle-Copyright: 2006-2009 inavare GmbH
+Bundle-Copyright: 2006-2009 TH4 SYSTEMS GmbH

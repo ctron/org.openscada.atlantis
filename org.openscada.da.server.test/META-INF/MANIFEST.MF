@@ -42,5 +42,5 @@ Export-Package: org.openscada.da.server.test;version="0.15.0";uses:="org.opensca
 Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA-DA-Server-Test
 Bundle-ManifestVersion: 2
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-SymbolicName: org.openscada.da.server.test

@@ -29,4 +29,4 @@ Import-Package: com.google.gson;version="1.4.0",
  org.osgi.util.tracker;version="1.4.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH

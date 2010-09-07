@@ -25,4 +25,4 @@ Import-Package: org.openscada.ae,
  org.openscada.utils.propertyeditors;version="0.15.0",
  org.osgi.framework;version="1.5.0",
  org.slf4j;version="1.5.8"
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH

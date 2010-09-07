@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://inavare.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -69,7 +69,7 @@ public class Activator implements BundleActivator
                     final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
                     final Hashtable<String, String> gescheiteHT = new Hashtable<String, String> ();
                     gescheiteHT.put ( Constants.SERVICE_DESCRIPTION, StorageService.SERVICE_DESCRIPTION );
-                    gescheiteHT.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+                    gescheiteHT.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
                     gescheiteHT.put ( ConfigurationAdministrator.FACTORY_ID, StorageService.FACTORY_ID );
                     logger.info ( bundleName + " starting..." );
                     service = new StorageService ( context );

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://inavare.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -50,7 +50,7 @@ public class Activator implements BundleActivator
         this.service = new ManagedConnectionServiceFactory ( context );
         final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, FACTORY_ID );
-        properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "An OpenSCADA DA Connection Service Factory" );
         this.handle = this.context.registerService ( ConfigurationFactory.class.getName (), this.service, properties );
     }

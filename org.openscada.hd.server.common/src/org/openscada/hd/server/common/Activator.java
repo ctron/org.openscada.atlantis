@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://inavare.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -51,7 +51,7 @@ public class Activator implements BundleActivator
         this.service.start ();
 
         final Hashtable<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "An OpenSCADA HD service implementation" );
         this.serviceRegistration = context.registerService ( Service.class.getName (), this.service, properties );
     }

@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA AE Net Exporter Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.exporter.net
 Bundle-Version: 0.14.0.qualifier
 Bundle-Activator: org.openscada.ae.server.exporter.net.Activator
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.apache.log4j,
  org.openscada.core,

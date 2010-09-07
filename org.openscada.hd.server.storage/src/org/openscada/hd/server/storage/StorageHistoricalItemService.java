@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://inavare.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -519,7 +519,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         unregisterService ();
         final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
         serviceProperties.put ( Constants.SERVICE_PID, this.backEndManager.getConfiguration ().getId () );
-        serviceProperties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        serviceProperties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A OpenSCADA Storage Historical Item Implementation" );
         this.registration = bundleContext.registerService ( new String[] { StorageHistoricalItemService.class.getName (), StorageHistoricalItem.class.getName () }, this, serviceProperties );
     }

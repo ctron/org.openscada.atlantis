@@ -149,7 +149,7 @@ Export-Package: org.openscada.common;version="0.15.0";
 Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA DA Server Common
 Bundle-DocURL: http://www.inavare.net
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.common
 Bundle-ClassPath: schemabin/,

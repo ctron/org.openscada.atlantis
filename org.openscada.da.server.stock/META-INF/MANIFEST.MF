@@ -25,5 +25,5 @@ Export-Package: org.openscada.da.server.stock;version="0.15.0";uses:="org.opensc
 Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA DA Stock Server
 Bundle-ManifestVersion: 2
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-SymbolicName: org.openscada.da.server.stock

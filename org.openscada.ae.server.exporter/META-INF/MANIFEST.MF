@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA A&E Server Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.exporter
 Bundle-Version: 0.14.0.qualifier
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Export-Package: org.openscada.ae.server.exporter;version="0.14.0";uses:="org.openscada.core,org.openscada.utils.lifecycle"
 Import-Package: org.openscada.ae.server,

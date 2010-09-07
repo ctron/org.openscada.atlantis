@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA DA Connection Provider
 Bundle-SymbolicName: org.openscada.da.connection.provider
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.da.connection.provider.Activator
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: J2SE-1.5
 Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.core.client;version="0.14.0",

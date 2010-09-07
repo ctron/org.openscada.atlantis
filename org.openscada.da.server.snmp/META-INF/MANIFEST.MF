@@ -51,7 +51,7 @@ Export-Package: org.openscada.da.server.snmp;version="0.15.0";
    org.snmp4j.smi"
 Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA DA SNMP Server
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.snmp
 Bundle-ClassPath: lib/grammatica-bin-1.4.jar,

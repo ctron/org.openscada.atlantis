@@ -3,7 +3,7 @@
       id="org.openscada.atlantis.sdk"
       label="OpenSCADA Atlantis SDK"
       version="0.15.0.qualifier"
-      provider-name="inavare GmbH">
+      provider-name="TH4 SYSTEMS GmbH">
 
    <description>
       Project Atlantis is the reference implementation of OpenSCADA

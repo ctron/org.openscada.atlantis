@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://inavare.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -47,7 +47,7 @@ public class Activator implements BundleActivator
         properties.put ( org.openscada.core.client.DriverFactory.INTERFACE_NAME, "da" );
         properties.put ( org.openscada.core.client.DriverFactory.DRIVER_NAME, "net" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "OpenSCADA DA NET Adapter" );
-        properties.put ( Constants.SERVICE_VENDOR, "inavare GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         this.handle = context.registerService ( org.openscada.core.client.DriverFactory.class.getName (), this.factory, properties );
     }
 
