@@ -18,6 +18,7 @@
 
 	<target name="clean">
 		<delete failonerror="false" dir="schemabin"/>
+		<delete failonerror="false" dir="schemasrc"/>
 	</target>
 	
 	<target name="main" depends="clean">
@@ -29,8 +30,12 @@
 			verbose="true"
             classpathref="xmlbeanspath"
 			>
-			<fileset dir="schema" includes="*.xsd"/>
+			<fileset dir="schema">
+				<include name="*.xsd"/>
+				<include name=".xsdconfig"/>
+			</fileset>
         </xmlbean>
+		<delete file="xmltypes.jar"/>
   	</target>
   
 </project>

@@ -26,7 +26,6 @@ import java.util.LinkedList;
 
 import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
-import org.openscada.da.exec.configuration.RootDocument;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -35,6 +34,7 @@ import org.openscada.da.server.exec.command.ContinuousCommand;
 import org.openscada.da.server.exec.command.TriggerCommand;
 import org.openscada.da.server.exec.configuration.ConfigurationException;
 import org.openscada.da.server.exec.configuration.XmlConfigurator;
+import org.openscada.da.server.exec.configuration.model.RootDocument;
 import org.openscada.utils.collection.MapBuilder;
 import org.w3c.dom.Node;
 
