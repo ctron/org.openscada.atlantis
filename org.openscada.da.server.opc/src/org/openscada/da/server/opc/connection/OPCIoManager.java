@@ -104,7 +104,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     private final Map<Integer, String> errorCodeCache = new HashMap<Integer, String> ();
 
-    private boolean connected = false;
+    protected volatile boolean connected = false;
 
     public OPCIoManager ( final Worker worker, final OPCModel model, final OPCController controller )
     {
@@ -172,7 +172,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     /**
      * May only be called by the controller
      */
-    public synchronized void handleConnected () throws InvocationTargetException
+    public void handleConnected () throws InvocationTargetException
     {
         registerAllItems ();
         this.connected = true;
@@ -181,26 +181,33 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     /**
      * May only be called by the controller
      */
-    public synchronized void handleDisconnected ()
+    public void handleDisconnected ()
     {
-        this.connected = true;
-        this.itemUnregistrations.clear ();
+        final Collection<FutureTask<Result<WriteRequest>>> copyWriteRequests;
 
-        for ( final FutureTask<Result<WriteRequest>> request : this.writeRequests )
+        this.connected = true;
+
+        synchronized ( this )
+        {
+            this.itemUnregistrations.clear ();
+
+            copyWriteRequests = new ArrayList<FutureTask<Result<WriteRequest>>> ( this.writeRequests );
+            this.writeRequests.clear ();
+
+            firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
+
+            this.clientHandleMap.clear ();
+            this.clientHandleMapRev.clear ();
+
+            this.serverHandleMap.clear ();
+            this.serverHandleMapRev.clear ();
+            firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
+        }
+
+        for ( final FutureTask<Result<WriteRequest>> request : copyWriteRequests )
         {
             request.cancel ( true );
         }
-
-        this.writeRequests.clear ();
-
-        firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
-
-        this.clientHandleMap.clear ();
-        this.clientHandleMapRev.clear ();
-
-        this.serverHandleMap.clear ();
-        this.serverHandleMapRev.clear ();
-        firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
 
     }
 
@@ -210,7 +217,14 @@ public abstract class OPCIoManager extends AbstractPropertyChange
      */
     private void registerAllItems () throws InvocationTargetException
     {
-        performRealizeItems ( this.requestedMap.values () );
+        Collection<ItemRegistrationRequest> requested;
+
+        synchronized ( this )
+        {
+            requested = new ArrayList<ItemRegistrationRequest> ( this.requestedMap.values () );
+        }
+
+        performRealizeItems ( requested );
         setActive ( true, this.activeSet );
     }
 
@@ -564,7 +578,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         if ( !this.model.isConnected () )
         {
             // discard write request
-            logger.warn ( String.format ( "OPC is not connected", value ) );
+            logger.warn ( String.format ( "OPC is not connected" ) );
             return new InstantErrorFuture<Result<WriteRequest>> ( new RuntimeException ( "OPC is not connected" ).fillInStackTrace () );
         }
 

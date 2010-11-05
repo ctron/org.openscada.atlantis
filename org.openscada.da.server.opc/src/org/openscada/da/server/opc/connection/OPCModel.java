@@ -285,30 +285,22 @@ public class OPCModel extends AbstractPropertyChange
 
     public void addDisposerRunning ( final Thread disposer )
     {
-        long oldDisposersRunning;
-        long disposersRunning;
+        final long disposersRunning;
 
-        synchronized ( this.disposersRunning )
-        {
-            oldDisposersRunning = this.disposersRunning.size ();
-            this.disposersRunning.add ( disposer );
-            disposersRunning = this.disposersRunning.size ();
-        }
-        firePropertyChange ( "numDisposersRunning", oldDisposersRunning, disposersRunning );
+        this.disposersRunning.add ( disposer );
+        disposersRunning = this.disposersRunning.size ();
+
+        firePropertyChange ( "numDisposersRunning", null, disposersRunning );
     }
 
     public void removeDisposerRunning ( final Thread disposer )
     {
-        long oldDisposersRunning;
-        long disposersRunning;
+        final long disposersRunning;
 
-        synchronized ( this.disposersRunning )
-        {
-            oldDisposersRunning = this.disposersRunning.size ();
-            this.disposersRunning.remove ( disposer );
-            disposersRunning = this.disposersRunning.size ();
-        }
-        firePropertyChange ( "numDisposersRunning", oldDisposersRunning, disposersRunning );
+        this.disposersRunning.remove ( disposer );
+        disposersRunning = this.disposersRunning.size ();
+
+        firePropertyChange ( "numDisposersRunning", null, disposersRunning );
     }
 
     public ControllerState getControllerState ()

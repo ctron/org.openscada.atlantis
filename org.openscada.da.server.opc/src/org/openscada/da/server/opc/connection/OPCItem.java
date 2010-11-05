@@ -82,7 +82,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     {
         if ( !this.getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
         {
-            logger.warn ( String.format ( "Failed to write to read-only item ()", this.opcItemId ) );
+            logger.warn ( String.format ( "Failed to write to read-only item (%s)", this.opcItemId ) );
             return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
         }
 

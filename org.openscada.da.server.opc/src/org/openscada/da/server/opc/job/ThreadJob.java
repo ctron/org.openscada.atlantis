@@ -33,7 +33,7 @@ public abstract class ThreadJob extends Job
 {
     private static Logger logger = Logger.getLogger ( ThreadJob.class );
 
-    protected Thread runningThread;
+    protected volatile Thread runningThread;
 
     public ThreadJob ( final long timeout )
     {

@@ -45,12 +45,9 @@ import org.openscada.utils.concurrent.FutureTask;
 
 public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
 {
-
     private static Logger logger = Logger.getLogger ( OPCAsync2IoManager.class );
 
     private EventHandler eventHandler;
-
-    private volatile boolean connected = false;
 
     private final Queue<KeyedResultSet<Integer, ValueData>> incomingChanges = new LinkedList<KeyedResultSet<Integer, ValueData>> ();
 
@@ -64,8 +61,6 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
     {
         super.handleConnected ();
 
-        this.connected = true;
-
         final AttachGroupJob job = new AttachGroupJob ( this.model.getConnectJobTimeout (), this.model, this );
         this.eventHandler = this.worker.execute ( job, job );
     }
@@ -73,8 +68,6 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
     @Override
     public void handleDisconnected ()
     {
-        this.connected = false;
-
         try
         {
             final EventHandler eventHandler = this.eventHandler;
