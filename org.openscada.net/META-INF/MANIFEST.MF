@@ -24,9 +24,9 @@ Export-Package: org.openscada.net.base;version="0.15.0";uses:="org.openscada.net
    org.apache.mina.core.service,
    org.apache.mina.filter.codec",
  org.openscada.net.utils;version="0.15.0";uses:="org.openscada.net.base.data"
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.15.1.qualifier
 Bundle-Name: OpenSCADA Net
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
-Bundle-Vendor: inavare GmbH
+Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-SymbolicName: org.openscada.net

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 inavare GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://inavare.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -178,41 +178,56 @@ public class Messenger implements MessageListener
             }
         }
 
-        // now fire events from cleanup but outside the sync lock
-        if ( tags != null )
+        fireTimeouts ( tags );
+    }
+
+    /**
+     * Disconnects the messenger from the current connection (if there is one).
+     * <p>
+     * Be aware that the returned message tags have to be timed out (e.g. using {@link #fireTimeouts(Collection)}),
+     * otherwise they will wait forever!
+     * </p>
+     * @return
+     */
+    protected synchronized Collection<MessageTag> performDisconnect ()
+    {
+        if ( this.connection != null )
         {
-            for ( final MessageTag tag : tags )
+            this.connection = null;
+            logger.info ( "Disconnected" );
+            final Collection<MessageTag> tags = cleanTagList ();
+            if ( this.timeoutJob != null )
             {
-                tag.getListener ().messageTimedOut ();
+                this.timeoutJob.cancel ();
+                this.timeoutJob = null;
             }
+            if ( this.timer != null )
+            {
+                this.timer.cancel ();
+                this.timer = null;
+            }
+            return tags;
+        }
+        else
+        {
+            return null;
         }
     }
 
     public void disconnected ()
     {
-        Collection<MessageTag> tags = null;
-
-        synchronized ( this )
-        {
-            if ( this.connection != null )
-            {
-                this.connection = null;
-                logger.info ( "Disconnected" );
-                tags = cleanTagList ();
-                if ( this.timeoutJob != null )
-                {
-                    this.timeoutJob.cancel ();
-                    this.timeoutJob = null;
-                }
-                if ( this.timer != null )
-                {
-                    this.timer.cancel ();
-                    this.timer = null;
-                }
-            }
-        }
+        final Collection<MessageTag> tags = performDisconnect ();
 
         // now fire events from cleanup but outside the sync lock
+        fireTimeouts ( tags );
+    }
+
+    /**
+     * Fire timeouts for all provided tags
+     * @param tags a list of tags to time out, accepts <code>null</code> 
+     */
+    private static void fireTimeouts ( final Collection<MessageTag> tags )
+    {
         if ( tags != null )
         {
             for ( final MessageTag tag : tags )
@@ -309,7 +324,6 @@ public class Messenger implements MessageListener
             if ( this.tagList.containsKey ( seq ) )
             {
                 tag = this.tagList.get ( seq );
-                logger.info ( "Found tag for message {} but it is timed out", seq );
 
                 // if the tag is timed out then we don't process it here and let processTimeOuts () do the job
                 if ( !tag.isTimedOut () )
@@ -318,6 +332,7 @@ public class Messenger implements MessageListener
                 }
                 else
                 {
+                    logger.info ( "Found tag for message {} but it is timed out", seq );
                     tag = null;
                     return true;
                 }
@@ -387,6 +402,7 @@ public class Messenger implements MessageListener
 
         if ( timeDiff > this.sessionTimeout )
         {
+            final Collection<MessageTag> tags;
             synchronized ( this )
             {
                 if ( this.connection == null )
@@ -396,8 +412,9 @@ public class Messenger implements MessageListener
 
                 logger.warn ( "Closing connection due to receive timeout: {} (timeout: {})", timeDiff, this.sessionTimeout );
                 this.connection.close ();
-                disconnected ();
+                tags = performDisconnect ();
             }
+            fireTimeouts ( tags );
         }
     }
 
