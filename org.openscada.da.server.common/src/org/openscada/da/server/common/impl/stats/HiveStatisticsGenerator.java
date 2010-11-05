@@ -87,5 +87,4 @@ public class HiveStatisticsGenerator implements HiveEventListener, Tickable
     {
         this.itemsValue.add ( -1 );
     }
-
 }

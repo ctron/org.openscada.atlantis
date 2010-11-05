@@ -66,7 +66,6 @@ import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
-import org.openscada.da.server.common.impl.stats.HiveEventListener;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -100,7 +99,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private ValidationStrategy validatonStrategy = ValidationStrategy.FULL_CHECK;
 
-    private HiveEventListener hiveEventListener;
+    private HiveCommonStatisticsGenerator statisticsGenerator;
 
     private boolean autoEnableStats = true;
 
@@ -133,6 +132,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     public void stop () throws Exception
     {
+        logger.info ( "Stopping hive" );
+
+        disableStats ();
+
         if ( this.browser != null )
         {
             this.browser.stop ();
@@ -157,9 +160,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private void fireSessionCreate ( final SessionCommon session )
     {
-        if ( this.hiveEventListener != null )
+        if ( this.statisticsGenerator != null )
         {
-            this.hiveEventListener.sessionCreated ( session );
+            this.statisticsGenerator.sessionCreated ( session );
         }
 
         for ( final SessionListener listener : this.sessionListeners )
@@ -177,9 +180,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private void fireSessionDestroy ( final SessionCommon session )
     {
-        if ( this.hiveEventListener != null )
+        if ( this.statisticsGenerator != null )
         {
-            this.hiveEventListener.sessionDestroyed ( session );
+            this.statisticsGenerator.sessionDestroyed ( session );
         }
 
         synchronized ( this.sessionListeners )
@@ -224,13 +227,31 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private void enableStats ( final FolderCommon rootFolder )
     {
+        disableStats ();
+
         final HiveCommonStatisticsGenerator stats = new HiveCommonStatisticsGenerator ( "statistics" );
-        this.hiveEventListener = stats;
+        this.statisticsGenerator = stats;
 
         final FolderCommon statsFolder = new FolderCommon ();
         rootFolder.add ( "statistics", statsFolder, new HashMap<String, Variant> () );
 
         stats.register ( this, statsFolder );
+    }
+
+    private void disableStats ()
+    {
+        if ( this.statisticsGenerator == null )
+        {
+            return;
+        }
+
+        this.statisticsGenerator.unregister ();
+        this.statisticsGenerator = null;
+
+        if ( this.rootFolder instanceof FolderCommon && this.autoEnableStats )
+        {
+            ( (FolderCommon)this.rootFolder ).remove ( "statistics" );
+        }
     }
 
     /**
@@ -345,9 +366,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
                 // first add internally ...
                 this.itemMap.put ( new DataItemInformationBase ( item.getInformation () ), item );
 
-                if ( this.hiveEventListener != null )
+                if ( this.statisticsGenerator != null )
                 {
-                    this.hiveEventListener.itemRegistered ( item );
+                    this.statisticsGenerator.itemRegistered ( item );
                 }
             }
             else
@@ -356,7 +377,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             }
 
             // add new topic to the new item subscription manager
-            this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( this.getOperationService (), item, this.hiveEventListener ) );
+            this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( this.getOperationService (), item, this.statisticsGenerator ) );
         }
     }
 
@@ -387,9 +408,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             if ( this.itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
             {
                 this.itemMap.remove ( new DataItemInformationBase ( item.getInformation () ) );
-                if ( this.hiveEventListener != null )
+                if ( this.statisticsGenerator != null )
                 {
-                    this.hiveEventListener.itemUnregistered ( item );
+                    this.statisticsGenerator.itemUnregistered ( item );
                 }
             }
 
@@ -553,9 +574,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
 
         // stats
-        if ( this.hiveEventListener != null )
+        if ( this.statisticsGenerator != null )
         {
-            this.hiveEventListener.startWriteAttributes ( session, itemId, attributes.size () );
+            this.statisticsGenerator.startWriteAttributes ( session, itemId, attributes.size () );
         }
 
         // go
@@ -577,9 +598,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
 
         // stats
-        if ( this.hiveEventListener != null )
+        if ( this.statisticsGenerator != null )
         {
-            this.hiveEventListener.startWrite ( session, itemId, value );
+            this.statisticsGenerator.startWrite ( session, itemId, value );
         }
 
         // go
