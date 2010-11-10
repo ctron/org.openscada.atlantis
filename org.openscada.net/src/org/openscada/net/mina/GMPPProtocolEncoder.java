@@ -163,6 +163,11 @@ public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
 
     private void codeValue ( final IoBuffer buffer, final Value value ) throws InvalidValueTypeException
     {
+        if ( value == null )
+        {
+            // at least provide some more information
+            throw new NullPointerException ( "Trying to encode a 'null' value. Use VoidValue instead!" );
+        }
         final Class<?> clazz = value.getClass ();
 
         if ( clazz == StringValue.class )
@@ -199,11 +204,6 @@ public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
         }
         else
         {
-            if ( value == null )
-            {
-                // at least provide some more information
-                throw new NullPointerException ( "Trying to encode a 'null' value. Use VoidValue instead!" );
-            }
             throw new InvalidValueTypeException ( String.format ( "The type '%s' is unknown", value.getClass ().getName () ) );
         }
     }
