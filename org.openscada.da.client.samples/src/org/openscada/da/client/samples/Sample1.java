@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -36,7 +36,7 @@ import org.openscada.da.client.ItemUpdateListener;
  * We will listen to the <em>time</em> data item of the test server. The item is an input
  * item and will provided the current unix timestamp every second.
  * 
- * @author Jens Reimann <jens.reimann@inavare.net>
+ * @author Jens Reimann <jens.reimann@th4-systems.com>
  */
 public class Sample1 extends SampleBase implements ItemUpdateListener
 {

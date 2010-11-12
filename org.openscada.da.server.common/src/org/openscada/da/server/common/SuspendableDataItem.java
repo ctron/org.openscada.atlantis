@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://inavare.com)
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,7 +25,7 @@ package org.openscada.da.server.common;
  * Note that this interface must be fed by someone. It is not automatically fed by the Hive
  * anymore since the item should take care itself of this state. See {@link DataItemBase} for
  * a class supporting this interface.
- * @author Jens Reimann &lt;jens.reimann@inavare.net&gt;
+ * @author Jens Reimann &lt;jens.reimann@th4-systems.com&gt;
  * @see DataItemBase
  */
 public interface SuspendableDataItem
