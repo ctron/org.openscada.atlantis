@@ -20,7 +20,7 @@
 			failonerror="true"
 			download="false"
 			classgendir="schemabin"
-			javasource="1.5"
+			javasource="1.6"
 			verbose="true"
             classpathref="xmlbeanspath"
 			>

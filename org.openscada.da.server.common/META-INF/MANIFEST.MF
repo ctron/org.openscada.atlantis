@@ -27,7 +27,7 @@ Import-Package: org.apache.log4j;version="1.2.6",
  org.openscada.utils.statuscodes;version="0.15.0",
  org.openscada.utils.str;version="0.13",
  org.slf4j;version="1.5.0"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.common;version="0.15.0";
   uses:="org.apache.xmlbeans.xml.stream,
    org.apache.xmlbeans,
@@ -146,7 +146,7 @@ Export-Package: org.openscada.common;version="0.15.0";
    org.openscada.da.server.common,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common.impl"
-Bundle-Version: 0.15.1.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA DA Server Common
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: TH4 SYSTEMS GmbH
