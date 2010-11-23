@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.openscada.ae.monitor.common
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.ae.monitor.common.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae;version="0.14.0",
  org.openscada.ae.event;version="0.14.0",
  org.openscada.ae.monitor;version="0.14.0",
