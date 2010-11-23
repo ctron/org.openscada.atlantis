@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA AE Filter Support
 Bundle-SymbolicName: org.openscada.ae.filter
 Bundle-Version: 0.15.0.qualifier
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.core,
  org.openscada.utils.filter,
