@@ -8,7 +8,7 @@ Import-Package: org.openscada.core;version="0.15.0",
  org.openscada.da.core.browser;version="0.15.0",
  org.openscada.utils.lang;version="0.15.0",
  org.slf4j;version="1.5.8"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.client;version="0.15.0";
   uses:="org.openscada.core.client,
    org.openscada.core,
