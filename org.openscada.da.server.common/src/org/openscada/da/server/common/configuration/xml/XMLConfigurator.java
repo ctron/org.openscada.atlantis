@@ -120,6 +120,7 @@ public class XMLConfigurator implements Configurator
     /* (non-Javadoc)
      * @see org.openscada.da.server.common.configuration.Configurator#configure()
      */
+    @Override
     public synchronized void configure ( final ConfigurableHive hive ) throws ConfigurationError
     {
         this._factories.clear ();
@@ -132,7 +133,6 @@ public class XMLConfigurator implements Configurator
         configureBrowser ( hive, this._browserPart );
     }
 
-    @SuppressWarnings ( "unchecked" )
     private void configureFactories ( final ConfigurableHive hive, final FactoriesType factories ) throws ConfigurationError
     {
         if ( factories == null )
@@ -142,7 +142,7 @@ public class XMLConfigurator implements Configurator
 
         for ( final FactoryType factory : factories.getFactoryList () )
         {
-            Class factoryClass;
+            Class<?> factoryClass;
             try
             {
                 factoryClass = Class.forName ( factory.getFactoryClass () );
@@ -155,7 +155,7 @@ public class XMLConfigurator implements Configurator
             Object factoryObject = null;
             try
             {
-                for ( final Constructor ctor : factoryClass.getConstructors () )
+                for ( final Constructor<?> ctor : factoryClass.getConstructors () )
                 {
                     if ( ctor.getParameterTypes ().length == 1 )
                     {
