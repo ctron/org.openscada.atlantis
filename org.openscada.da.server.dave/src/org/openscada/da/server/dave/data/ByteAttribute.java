@@ -30,36 +30,31 @@ import org.openscada.da.server.dave.DaveDevice;
  * @author Jens Reimann
  *
  */
-public class BitAttribute extends AbstractAttribute implements Attribute
+public class ByteAttribute extends AbstractAttribute implements Attribute
 {
-
     private final int index;
 
-    private final int subIndex;
-
-    private Boolean lastValue;
+    private Byte lastValue;
 
     private Variant lastTimestamp;
 
     private final boolean enableTimestamp;
 
-    public BitAttribute ( final String name, final int index, final int subIndex, final boolean enableTimestamp )
+    public ByteAttribute ( final String name, final int index, final boolean enableTimestamp )
     {
         super ( name );
         this.index = index;
-        this.subIndex = subIndex;
         this.enableTimestamp = enableTimestamp;
     }
 
     public void handleData ( final IoBuffer data, final Map<String, Variant> attributes, final Variant timestamp )
     {
         final byte b = data.get ( toAddress ( this.index ) );
-        final boolean flag = ( b & 1 << this.subIndex ) != 0;
-        attributes.put ( this.name, Variant.valueOf ( flag ) );
+        attributes.put ( this.name, Variant.valueOf ( b ) );
 
-        if ( !Boolean.valueOf ( flag ).equals ( this.lastValue ) )
+        if ( !Byte.valueOf ( b ).equals ( this.lastValue ) )
         {
-            this.lastValue = flag;
+            this.lastValue = b;
             this.lastTimestamp = timestamp;
         }
 
@@ -84,7 +79,11 @@ public class BitAttribute extends AbstractAttribute implements Attribute
             throw new IllegalStateException ( "Device is not connected" );
         }
 
-        device.writeBit ( this.block, this.offset + this.index, this.subIndex, value.asBoolean () );
+        final Integer i = value.asInteger ( null );
+        if ( i != null )
+        {
+            device.writeByte ( this.block, this.offset + this.index, i.byteValue () );
+        }
     }
 
 }

@@ -20,6 +20,7 @@
 package org.openscada.da.server.dave.data;
 
 import org.apache.mina.core.buffer.IoBuffer;
+import org.openscada.core.Variant;
 import org.openscada.da.server.dave.DaveDevice;
 import org.openscada.da.server.dave.DaveRequestBlock;
 import org.osgi.framework.BundleContext;
@@ -43,11 +44,11 @@ public class UdtVariable implements Variable
         }
     }
 
-    public void handleData ( final IoBuffer data )
+    public void handleData ( final IoBuffer data, final Variant timestamp )
     {
         for ( final Variable var : this.variables )
         {
-            var.handleData ( data );
+            var.handleData ( data, timestamp );
         }
     }
 

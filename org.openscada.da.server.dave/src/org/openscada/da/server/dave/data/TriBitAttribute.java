@@ -72,7 +72,7 @@ public class TriBitAttribute extends AbstractAttribute implements Attribute
         this.enableTimestamp = enableTimestamp;
     }
 
-    public void handleData ( final IoBuffer data, final Map<String, Variant> attributes )
+    public void handleData ( final IoBuffer data, final Map<String, Variant> attributes, final Variant timestamp )
     {
         final byte b = data.get ( toAddress ( this.readIndex ) );
         final boolean flag = ( b & 1 << this.readSubIndex ) != 0;
@@ -88,7 +88,7 @@ public class TriBitAttribute extends AbstractAttribute implements Attribute
         if ( !Boolean.valueOf ( flag ).equals ( this.lastValue ) )
         {
             this.lastValue = flag;
-            this.lastTimestamp = new Variant ( System.currentTimeMillis () );
+            this.lastTimestamp = timestamp;
         }
 
         if ( this.enableTimestamp )

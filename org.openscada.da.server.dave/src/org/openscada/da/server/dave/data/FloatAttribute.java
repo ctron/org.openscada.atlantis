@@ -47,7 +47,7 @@ public class FloatAttribute extends AbstractAttribute implements Attribute
         this.enableTimestamp = enableTimestamp;
     }
 
-    public void handleData ( final IoBuffer data, final Map<String, Variant> attributes )
+    public void handleData ( final IoBuffer data, final Map<String, Variant> attributes, final Variant timestamp )
     {
         final float f = data.getFloat ( toAddress ( this.index ) );
         attributes.put ( this.name, new Variant ( f ) );
@@ -55,7 +55,7 @@ public class FloatAttribute extends AbstractAttribute implements Attribute
         if ( !Float.valueOf ( f ).equals ( this.lastValue ) )
         {
             this.lastValue = f;
-            this.lastTimestamp = new Variant ( System.currentTimeMillis () );
+            this.lastTimestamp = timestamp;
         }
 
         if ( this.enableTimestamp )

@@ -424,6 +424,20 @@ public class DaveDevice implements IoHandler
         this.jobManager.addWriteRequest ( request );
     }
 
+    public void writeDoubleInteger ( final DaveRequestBlock block, final int index, final int value )
+    {
+        logger.info ( "DINT write request - index: {} -> {}", new Object[] { index, value } );
+        final DaveWriteRequest request = new DaveWriteRequest ();
+
+        final IoBuffer data = IoBuffer.allocate ( 4 );
+        data.putInt ( value );
+        data.flip ();
+
+        request.addRequest ( new DaveWriteRequest.ByteRequest ( block.getRequest ().getArea (), block.getRequest ().getBlock (), (short)index, data ) );
+
+        this.jobManager.addWriteRequest ( request );
+    }
+
     public void writeWord ( final DaveRequestBlock block, final int index, final short value )
     {
         logger.info ( "Word write request - index: {} -> {}", new Object[] { index, value } );
@@ -431,6 +445,20 @@ public class DaveDevice implements IoHandler
 
         final IoBuffer data = IoBuffer.allocate ( 2 );
         data.putShort ( value );
+        data.flip ();
+
+        request.addRequest ( new DaveWriteRequest.ByteRequest ( block.getRequest ().getArea (), block.getRequest ().getBlock (), (short)index, data ) );
+
+        this.jobManager.addWriteRequest ( request );
+    }
+
+    public void writeByte ( final DaveRequestBlock block, final int index, final byte value )
+    {
+        logger.info ( "Byte write request - index: {} -> {}", new Object[] { index, value } );
+        final DaveWriteRequest request = new DaveWriteRequest ();
+
+        final IoBuffer data = IoBuffer.allocate ( 1 );
+        data.put ( value );
         data.flip ();
 
         request.addRequest ( new DaveWriteRequest.ByteRequest ( block.getRequest ().getArea (), block.getRequest ().getBlock (), (short)index, data ) );

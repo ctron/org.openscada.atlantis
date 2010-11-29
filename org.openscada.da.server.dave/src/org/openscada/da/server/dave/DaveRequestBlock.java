@@ -249,11 +249,12 @@ public class DaveRequestBlock
 
             if ( this.variables != null )
             {
+                final Variant timestamp = Variant.valueOf ( System.currentTimeMillis () );
                 for ( final Variable reg : this.variables )
                 {
                     try
                     {
-                        reg.handleData ( data );
+                        reg.handleData ( data, timestamp );
                     }
                     catch ( final Exception e )
                     {

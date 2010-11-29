@@ -51,6 +51,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
         BYTE,
         FLOAT,
         WORD,
+        DINT,
         UDT
     }
 
@@ -289,6 +290,9 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 case WORD:
                     result.add ( new WordVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
                     break;
+                case DINT:
+                    result.add ( new DoubleIntegerVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
+                    break;
                 case UDT:
                     result.add ( new UdtVariable ( entry.getName (), entry.getIndex (), createVariables ( entry.getTypeName () ) ) );
                     break;
@@ -319,6 +323,15 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             case TRIBIT:
                 final int[] index = attrEntry.getIndexes ();
                 result.add ( new TriBitAttribute ( attrEntry.getName (), index[0], index[1], index[2], index[3], index[4], index[5], index[6] != 0, index[7] != 0 ) );
+                break;
+            case BYTE:
+                result.add ( new ByteAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
+                break;
+            case WORD:
+                result.add ( new WordAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
+                break;
+            case DINT:
+                result.add ( new DoubleIntegerAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
                 break;
             default:
                 break;
@@ -355,6 +368,9 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 break;
             case WORD:
                 result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
+                break;
+            case DINT:
+                result.add ( new TypeEntry ( varName, TYPE.DINT, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
                 break;
             case UDT:
                 result.add ( new TypeEntry ( varName, toks[1], Integer.parseInt ( toks[2] ) ) );
@@ -401,6 +417,9 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 break;
             case WORD:
                 result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
+                break;
+            case DINT:
+                result.add ( new TypeEntry ( toks[0], TYPE.DINT, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
                 break;
             case UDT:
                 result.add ( new TypeEntry ( toks[0], toks[2], Integer.parseInt ( toks[3] ) ) );
@@ -453,6 +472,12 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 break;
             case BYTE:
                 result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
+                break;
+            case WORD:
+                result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
+                break;
+            case DINT:
+                result.add ( new TypeEntry ( toks[0], TYPE.DINT, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
                 break;
             default:
                 break;

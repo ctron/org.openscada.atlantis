@@ -179,7 +179,7 @@ public abstract class ScalarVariable implements Variable
 
     protected abstract Variant extractValue ( IoBuffer data, Map<String, Variant> attributes );
 
-    public void handleData ( final IoBuffer data )
+    public void handleData ( final IoBuffer data, final Variant timestamp )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
@@ -187,7 +187,7 @@ public abstract class ScalarVariable implements Variable
 
         for ( final Attribute attr : this.attributes )
         {
-            attr.handleData ( data, attributes );
+            attr.handleData ( data, attributes, timestamp );
         }
 
         this.item.updateData ( value, attributes, AttributeMode.SET );

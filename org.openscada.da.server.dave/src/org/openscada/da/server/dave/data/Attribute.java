@@ -34,7 +34,7 @@ import org.openscada.da.server.dave.DaveRequestBlock;
  */
 public interface Attribute
 {
-    public void handleData ( IoBuffer data, Map<String, Variant> attributes );
+    public void handleData ( IoBuffer data, Map<String, Variant> attributes, Variant timestamp );
 
     public void handleError ( Map<String, Variant> attributes );
 
