@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA HD Common Client
 Bundle-SymbolicName: org.openscada.hd.client.common
 Bundle-Version: 0.14.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core.client;version="0.14.0",
  org.openscada.hd;version="0.14.0",
  org.openscada.hd.client;version="0.14.0"
