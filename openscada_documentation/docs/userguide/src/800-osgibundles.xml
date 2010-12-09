@@ -198,11 +198,34 @@
 						<entry>String</entry>
 						<entry>Required</entry>
 						<entry>
-						The name of the JDBC driver class.
+						The password for the user.
 						</entry>
 					</row>
+					
 					<row>
-						<entry>org.openscada.ca.jdbc.fixNull</entry>
+						<entry>org.openscada.ca.jdbc.chunksize</entry>
+						<entry>Integer</entry>
+						<entry>Optional</entry>
+						<entry>
+						If the value is greate than zero the data will be split up in chunks instead
+						of put in one record. This is sometimes necessary for databases that have no
+						support for text types of unlimited size. If the field CA_VALUE is limited
+						use this limit as chunk size.
+						Defaults to zero (deactivated).
+						</entry>
+					</row>
+					
+					<row>
+						<entry>org.openscada.ca.jdbc.table</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						The table name to use. Defaults to <filename>ca_data</filename>.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>org.openscada.ca.jdbc.fixnull</entry>
 						<entry>Boolean</entry>
 						<entry>Optional</entry>
 						<entry>
