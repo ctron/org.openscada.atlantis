@@ -295,6 +295,17 @@ CREATE TABLE OPENSCADA_CA (
 						Name of the schema in the database.
 						</entry>
 					</row>
+					
+					<row>
+						<entry>org.openscada.ds.storage.jdbc.table</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						The name of the database table to use.
+						Defaults to <filename>DATASTORE</filename>.
+						</entry>
+					</row>
+
 					<row>
 						<entry>org.openscada.ds.storage.jdbc.instance</entry>
 						<entry>String</entry>
@@ -328,14 +339,42 @@ CREATE TABLE OPENSCADA_CA (
 						The password used when connecting with the database.
 						</entry>
 					</row>
+					
 					<row>
 						<entry>org.openscada.ds.storage.jdbc.driver</entry>
 						<entry>String</entry>
-						<entry>Required</entry>
+						<entry>Optional</entry>
 						<entry>
-						The name of the JDBC driver class.
+						The name of the JDBC driver class. Normally this is set be
+						the fragment bundle and must not be specified.
 						</entry>
 					</row>
+					
+					<row>
+						<entry>org.openscada.ds.storage.jdbc.encoder</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						Defines the way binary data is stored. Either <code>blob</code>
+						can be used if the field <filename>DATA</filename> is a BLOB type field.
+						Or <filename>base64</filename> if the binary data is Base 64 encoded. If
+						the base64 option is used the property
+						<filename>org.openscada.ds.storage.jdbc.chunkSize</filename>
+						can also to be specified.
+						Defaults to <code>blob</code>.
+						</entry>
+					</row>
+					
+					<row>
+						<entry>org.openscada.ds.storage.jdbc.chunkSize</entry>
+						<entry>Integer</entry>
+						<entry>Optional</entry>
+						<entry>
+						If the binary data is base 64 encoded this defines a maximum chunk size
+						the content is split up for databases where the data field is limited. 
+						</entry>
+					</row>
+					
 				</tbody>
 				</tgroup>
 		</table>
