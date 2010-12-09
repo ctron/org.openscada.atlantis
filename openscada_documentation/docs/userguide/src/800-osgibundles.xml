@@ -124,6 +124,118 @@
 
 </sect1>
 
+<sect1 id="bundle_org.openscada.ca.jdbc"><title>org.openscada.ca.jdbc</title>
+<para>
+	The bundle <filename>org.openscada.ca.jdbc</filename> provides and implementation of
+	the <acronym>CA</acronym> (Configuration Administrator) service based on a <acronym>JDBC</acronym>
+	data source.
+</para>
+<para>
+	This bundle will, most likely, need a fragment bundle that contains the driver class itself or
+	better a reference to the bundle which holds the driver class. Either bundle or
+	package reference are possible.
+</para>
+
+	<sect2><title>System properties</title>
+		<para>
+		The following system properties are available:
+		</para>
+		
+		<table><title>System properties of <filename>org.openscada.ca.jdbc</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Required</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>org.openscada.ca.jdbc.schema</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						Name of the schema in the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ca.jdbc.instance</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						Instance name used to differ between different instances using
+						the same table. Defaults to <filename>default</filename>.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ca.jdbc.url</entry>
+						<entry>String</entry>
+						<entry>Required</entry>
+						<entry>
+						<acronym>URL</acronym> to the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ca.jdbc.username</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						The user name used when connecting with the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ds.storage.jdbc.password</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						The password used when connecting with the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ca.jdbc.password</entry>
+						<entry>String</entry>
+						<entry>Required</entry>
+						<entry>
+						The name of the JDBC driver class.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ca.jdbc.fixNull</entry>
+						<entry>Boolean</entry>
+						<entry>Optional</entry>
+						<entry>
+						A flag that indicates whether the database stores empty string as <code>null</code>
+						which has to be handled differently in that case. (e.g. Oracle required <code>true</code> here).
+						Defaults to <filename>false</filename>.
+						</entry>
+					</row>
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect2>
+	
+	<sect2><title>Table structure</title>
+		<para>
+		The following tables have to be created for the bundle:
+		<programlisting language="SQL">
+CREATE TABLE OPENSCADA_CA (
+ INSTANCE_ID VARCHAR2(255),
+ FACTORY_ID VARCHAR(255),
+ CONFIGURATION_ID VARCHAR(255),
+ CA_KEY VARCHAR(512),
+ CA_VALUE VARCHAR(4000),
+ CHUNK_SEQ NUMBER(6),
+ 
+ PRIMARY KEY (INSTANCE_ID, FACTORY_ID, CONFIGURATION_ID, CA_KEY, CHUNK_SEQ)
+);
+		</programlisting>
+		</para>
+	</sect2>
+
+</sect1>
 
 <sect1 id="bundle_org.openscada.ds.storage.jdbc"><title>org.openscada.ds.storage.jdbc</title>
 <para>
@@ -205,6 +317,133 @@
 				</tgroup>
 		</table>
 		
+	</sect2>
+	
+	<sect2><title>Table structure</title>
+		<para>
+		The following tables have to be created for the bundle:
+		<programlisting language="SQL">
+CREATE TABLE OPENSCADA_DS (
+ INSTANCE_ID VARCHAR(255),
+ NODE_ID VARCHAR(512),
+ DATA  VARCHAR2(4000),
+ SEQUENCE_NR NUMBER(6),
+ 
+ PRIMARY KEY (INSTANCE_ID, NODE_ID, SEQUENCE_NR)
+);
+		</programlisting>
+		</para>
+	</sect2>
+
+</sect1>
+
+<sect1 id="bundle_org.openscada.ae.server.storage.jdbc"><title>org.openscada.ae.server.storage.jdbc</title>
+<para>
+	The bundle <filename>org.openscada.ae.server.storage.jdbc</filename> provides an implementation of
+	the <acronym>AE</acronym> (Alarms &amp; Events) service based on a <acronym>JDBC</acronym> data source.
+</para>
+<para>
+	This bundle will, most likely, need a fragment bundle that contains the driver class itself or
+	better a reference to the bundle which holds the driver class. Either bundle or
+	package reference are possible.
+</para>
+
+	<sect2><title>System properties</title>
+		<para>
+		The following system properties are available:
+		</para>
+		
+		<table><title>System properties of <filename>org.openscada.ds.storage.jdbc</filename></title>
+				<tgroup cols="4">
+				<thead>
+					<row>
+						<entry>Property</entry>
+						<entry>Type</entry>
+						<entry>Required</entry>
+						<entry>Description</entry>
+					</row>
+				</thead>
+				<tbody>
+					<row>
+						<entry>org.openscada.ae.server.storage.jdbc.schema</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						Name of the schema in the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ae.server.storage.jdbc.url</entry>
+						<entry>String</entry>
+						<entry>Required</entry>
+						<entry>
+						<acronym>URL</acronym> to the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ae.server.storage.jdbc.username</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						The user name used when connecting with the database.
+						</entry>
+					</row>
+					<row>
+						<entry>org.openscada.ae.server.storage.jdbc.password</entry>
+						<entry>String</entry>
+						<entry>Optional</entry>
+						<entry>
+						The password used when connecting with the database.
+						</entry>
+					</row>
+
+				</tbody>
+				</tgroup>
+		</table>
+		
+	</sect2>
+	
+	<sect2><title>Table structure</title>
+		<para>
+		The following tables have to be created for the bundle:
+		<programlisting language="SQL">
+CREATE TABLE OPENSCADA_AE_EVENTS (
+   ID CHAR(36),
+   SOURCE_TIMESTAMP TIMESTAMP(6),
+   ENTRY_TIMESTAMP TIMESTAMP(6),
+   MONITOR_TYPE VARCHAR2(32),
+   EVENT_TYPE VARCHAR2(32),
+   VALUE_TYPE VARCHAR2(32),
+   VALUE_STRING VARCHAR2(4000),
+   VALUE_INTEGER INTEGER,
+   VALUE_DOUBLE DOUBLE PRECISION,
+   MESSAGE VARCHAR2(4000),
+   MESSAGE_CODE VARCHAR2(255),
+   PRIORITY SMALLINT,
+   SOURCE  VARCHAR2(255),
+   ACTOR_NAME VARCHAR2(128),
+   ACTOR_TYPE VARCHAR2(32),
+   
+   PRIMARY KEY (ID)
+);
+
+CREATE TABLE OPENSCADA_AE_EVENTS_ATTR (
+   ID CHAR(36),
+   "KEY" VARCHAR2(64),
+   VARIANT_TYPE VARCHAR2(32),
+   VALUE_TYPE VARCHAR2(32),
+   VALUE_STRING VARCHAR2(4000),
+   VALUE_INTEGER INTEGER,
+   VALUE_DOUBLE DOUBLE PRECISION,
+
+   FOREIGN KEY (ID) REFERENCES OPENSCADA_AE_EVENTS (ID) ON DELETE CASCADE
+);
+
+CREATE INDEX idx_openscada_ae_1 ON OPENSCADA_AE_EVENTS (SOURCE_TIMESTAMP);
+CREATE INDEX idx_openscada_ae_2 ON OPENSCADA_AE_EVENTS (ENTRY_TIMESTAMP);
+
+		</programlisting>
+		</para>
 	</sect2>
 
 </sect1>
