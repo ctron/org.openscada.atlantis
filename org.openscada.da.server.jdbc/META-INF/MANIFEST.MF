@@ -18,7 +18,7 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.utils.lang,
  org.openscada.utils.lifecycle;version="0.13.1",
  org.slf4j;version="1.5.8"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.jdbc;version="0.15.0";
   uses:="org.openscada.da.server.browser.common,
    org.apache.log4j,
