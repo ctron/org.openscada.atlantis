@@ -19,7 +19,7 @@ Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
  org.openscada.utils.collection;version="0.13",
  org.openscada.utils.statuscodes;version="0.13",
  org.slf4j;version="1.5.8"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.exec;version="0.15.0";
   uses:="org.openscada.da.server.exec.configuration.model,
    org.openscada.da.server.common.impl,
