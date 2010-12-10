@@ -121,7 +121,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
         this.connection = (org.openscada.da.client.Connection)ConnectionFactory.create ( this.connectionInformation );
         if ( this.connection == null )
         {
-            throw new RuntimeException ( "No connection provider found that can handle: " + this.connectionInformation );
+            throw new RuntimeException ( "No connection provider found that can handle: " + this.connectionInformation.toMaskedString () );
         }
         this.connection.addConnectionStateListener ( this );
 
@@ -302,7 +302,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
 
     public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
     {
-        final String message = String.format ( "Connection %s changes status: %s", this.connectionInformation, state );
+        final String message = String.format ( "Connection %s changes status: %s", this.connectionInformation.toMaskedString (), state );
         if ( error != null )
         {
             log.info ( message, error );
