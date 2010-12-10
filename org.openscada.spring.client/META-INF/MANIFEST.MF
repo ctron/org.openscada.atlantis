@@ -15,7 +15,7 @@ Import-Package: org.apache.commons.beanutils;version="1.8.0",
  org.springframework.beans.factory;version="2.5.0",
  org.springframework.core.task;version="2.5.0",
  org.springframework.util;version="2.5.0"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.spring.client;version="0.14.0";
   uses:="org.openscada.core,
    org.apache.log4j,
@@ -71,7 +71,7 @@ Export-Package: org.openscada.spring.client;version="0.14.0";
    org.openscada.da.client,
    org.openscada.core.subscription,
    org.openscada.core"
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA Spring Client
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
