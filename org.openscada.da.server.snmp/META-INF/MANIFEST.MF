@@ -21,7 +21,7 @@ Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.openscada.utils.concurrent;version="0.13",
  org.openscada.utils.exec;version="0.15.0",
  org.openscada.utils.str;version="0.13"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.snmp;version="0.15.0";
   uses:="org.openscada.da.server.common,
    org.openscada.da.server.browser.common,
