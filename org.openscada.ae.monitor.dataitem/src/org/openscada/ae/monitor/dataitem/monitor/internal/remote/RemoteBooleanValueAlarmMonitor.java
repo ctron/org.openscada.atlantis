@@ -30,6 +30,7 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
+import org.openscada.core.VariantEditor;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.WriteInformation;
@@ -53,11 +54,14 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
 
     private String attributeAckTimestamp;
 
+    private Variant aknValue = Variant.TRUE;
+
     public RemoteBooleanValueAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
     {
         super ( context, executor, poolTracker, priority, id, eventProcessor );
     }
 
+    @Override
     protected DataItemValue handleUpdate ( final DataItemValue itemValue )
     {
         logger.debug ( "Perform update" );
@@ -141,7 +145,8 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
         publishAckRequestEvent ( aknUser, aknTimestamp );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( this.attributeAck, Variant.TRUE );
+
+        attributes.put ( this.attributeAck, this.aknValue );
 
         for ( final MasterItem item : getMasterItems () )
         {
@@ -172,6 +177,10 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
         this.attributeAck = cfg.getString ( "attribute.ack.name" );
         this.attributeActive = cfg.getString ( "attribute.active.name" );
         this.attributeAckTimestamp = cfg.getStringNonEmpty ( "attribute.ack.timestamp.name" );
+
+        final VariantEditor ve = new VariantEditor ();
+        ve.setAsText ( cfg.getString ( "attribute.ack.value", "BOOL#true" ) );
+        this.aknValue = (Variant)ve.getValue ();
 
         reprocess ();
 
