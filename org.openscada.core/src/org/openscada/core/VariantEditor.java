@@ -31,7 +31,7 @@ public class VariantEditor extends PropertyEditorSupport
         {
             if ( toks[0].equalsIgnoreCase ( "INT" ) || toks[0].equalsIgnoreCase ( "INT32" ) || toks[0].equalsIgnoreCase ( "INTEGER" ) )
             {
-                setValue ( new Variant ( Integer.parseInt ( toks[1] ) ) );
+                setValue ( Variant.valueOf ( Integer.parseInt ( toks[1] ) ) );
             }
             else if ( toks[0].equalsIgnoreCase ( "BOOLEAN" ) || toks[0].equalsIgnoreCase ( "BOOL" ) )
             {
@@ -39,19 +39,19 @@ public class VariantEditor extends PropertyEditorSupport
             }
             else if ( toks[0].equalsIgnoreCase ( "DOUBLE" ) || toks[0].equalsIgnoreCase ( "FLOAT" ) )
             {
-                setValue ( new Variant ( Double.parseDouble ( toks[1] ) ) );
+                setValue ( Variant.valueOf ( Double.parseDouble ( toks[1] ) ) );
             }
             else if ( toks[0].equalsIgnoreCase ( "LONG" ) || toks[0].equalsIgnoreCase ( "INT64" ) )
             {
-                setValue ( new Variant ( Long.parseLong ( toks[1] ) ) );
+                setValue ( Variant.valueOf ( Long.parseLong ( toks[1] ) ) );
             }
             else if ( toks[0].equalsIgnoreCase ( "STRING" ) || toks[0].equalsIgnoreCase ( "UNKNOWN" ) )
             {
-                setValue ( new Variant ( toks[1] ) );
+                setValue ( Variant.valueOf ( toks[1] ) );
             }
             else if ( toks[0].equalsIgnoreCase ( "NULL" ) )
             {
-                setValue ( new Variant () );
+                setValue ( Variant.NULL );
             }
             else
             {
@@ -60,7 +60,7 @@ public class VariantEditor extends PropertyEditorSupport
         }
         else
         {
-            setValue ( new Variant ( text ) );
+            setValue ( Variant.valueOf ( text ) );
         }
     }
 }
