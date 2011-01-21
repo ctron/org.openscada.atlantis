@@ -211,6 +211,8 @@
   	<!-- Additional stuff -->
   	
   	<openscada.builder.copyPlugin id="org.openscada.spring.client"/>
+  	<openscada.builder.copyPlugin id="org.openscada.spring.server"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.service"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.core.connection.provider"/>
