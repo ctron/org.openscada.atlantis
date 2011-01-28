@@ -104,6 +104,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         this.messenger.setHandler ( Messages.CC_HD_LIST_UPDATE, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleListUpdate ( message );
@@ -112,6 +113,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.messenger.setHandler ( Messages.CC_HD_UPDATE_QUERY_DATA, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleQueryDataUpdate ( message );
@@ -120,6 +122,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.messenger.setHandler ( Messages.CC_HD_UPDATE_QUERY_STATUS, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleQueryStatusUpdate ( message );
@@ -128,6 +131,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.messenger.setHandler ( Messages.CC_HD_UPDATE_QUERY_PARAMETERS, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleQueryParameterUpdate ( message );
@@ -220,6 +224,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 for ( final ItemListListener listener : listeners )
@@ -289,6 +294,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         }
     }
 
+    @Override
     public synchronized void addListListener ( final ItemListListener listener )
     {
         final boolean isEmpty = this.itemListListeners.isEmpty ();
@@ -305,6 +311,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 listener.listChanged ( currentItems, null, true );
@@ -312,6 +319,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         } );
     }
 
+    @Override
     public synchronized void removeListListener ( final ItemListListener listener )
     {
         final boolean isEmpty = this.itemListListeners.isEmpty ();
@@ -328,6 +336,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.messenger.sendMessage ( ItemListHelper.createRequestList ( flag ) );
     }
 
+    @Override
     public Query createQuery ( final String itemId, final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         synchronized ( this )
@@ -360,7 +369,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         message.getValues ().put ( "parameters", QueryHelper.toValue ( checkParameters ( parameters ) ) );
         if ( updateData )
         {
-            message.getValues ().put ( "updateData", new VoidValue () );
+            message.getValues ().put ( "updateData", VoidValue.INSTANCE );
         }
         this.messenger.sendMessage ( message );
     }

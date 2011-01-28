@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA HD NET Client
 Bundle-SymbolicName: org.openscada.hd.client.net
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Activator: org.openscada.hd.client.net.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core.session;version="2.0.0",
  org.openscada.core;version="0.14.0",
  org.openscada.core.client;version="0.14.0",
@@ -20,4 +20,11 @@ Import-Package: org.apache.mina.core.session;version="2.0.0",
  org.openscada.utils.concurrent;version="0.15.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.0"
-Export-Package: org.openscada.hd.client.net;version="0.14.0"
+Export-Package: org.openscada.hd.client.net;version="0.16.0";
+  uses:="org.openscada.core.client,
+   org.openscada.net.base.data,
+   org.openscada.hd,
+   org.openscada.core.client.net,
+   org.openscada.hd.client,
+   org.osgi.framework,
+   org.openscada.core"
