@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA A&E Net Base Plug-in
 Bundle-SymbolicName: org.openscada.ae.net
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.ae.net;version="0.15.0";uses:="org.openscada.net.base.data,org.openscada.ae"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.ae.net;version="0.16.0";uses:="org.openscada.net.base.data,org.openscada.ae"
 Import-Package: org.openscada.ae;version="0.14.0",
  org.openscada.core;version="0.14.0",
  org.openscada.core.net;version="0.14.0",
