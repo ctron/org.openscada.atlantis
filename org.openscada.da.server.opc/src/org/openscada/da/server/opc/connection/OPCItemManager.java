@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -236,7 +236,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
             {
                 logger.warn ( "Failed to apply item template", e );
             }
-            item.processSetAttributes ( ft.getItemAttributes () );
+            item.processSetAttributes ( ft.getItemAttributes (), null );
         }
     }
 
@@ -257,6 +257,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         }
     }
 
+    @Override
     public void dataRead ( final String itemId, final KeyedResult<Integer, ValueData> entry, final String errorMessage )
     {
         final OPCItem item = this.itemMap.get ( itemId );
@@ -268,6 +269,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         item.updateStatus ( entry, errorMessage );
     }
 
+    @Override
     public void itemRealized ( final String itemId, final KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
     {
         final OPCItem item;
@@ -284,6 +286,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         item.itemRealized ( entry );
     }
 
+    @Override
     public void itemUnrealized ( final String itemId )
     {
         final OPCItem item = this.itemMap.get ( itemId );

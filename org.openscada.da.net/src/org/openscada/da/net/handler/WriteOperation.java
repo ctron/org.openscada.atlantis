@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,28 +21,38 @@ package org.openscada.da.net.handler;
 
 import org.openscada.core.Variant;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.da.core.OperationParameters;
+import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.utils.lang.Holder;
 
-public class WriteOperation
+public class WriteOperation extends Operation
 {
 
-    public static Message create ( final String itemName, final Variant value )
+    public static Message create ( final String itemName, final Variant value, final OperationParameters operationParameters )
     {
         final Message message = new Message ( Messages.CC_WRITE_OPERATION );
 
         message.getValues ().put ( "item-name", new StringValue ( itemName ) );
         message.getValues ().put ( "value", MessageHelper.variantToValue ( value ) );
 
+        encodeOperationParameters ( operationParameters, message );
+
         return message;
     }
 
-    public static void parse ( final Message message, final Holder<String> itemName, final Holder<Variant> value )
+    public static void parse ( final Message message, final Holder<String> itemName, final Holder<Variant> value, final Holder<OperationParameters> operationParameters )
     {
         // FIXME: handle missing item name
-        itemName.value = message.getValues ().get ( "item-name" ).toString ();
 
-        value.value = MessageHelper.valueToVariant ( message.getValues ().get ( "value" ), new Variant () );
+        final MapValue values = message.getValues ();
+
+        itemName.value = values.get ( "item-name" ).toString ();
+
+        value.value = MessageHelper.valueToVariant ( values.get ( "value" ), new Variant () );
+
+        operationParameters.value = convertOperationParameters ( values.get ( FIELD_OPERATION_PARAMETERS ) );
     }
+
 }

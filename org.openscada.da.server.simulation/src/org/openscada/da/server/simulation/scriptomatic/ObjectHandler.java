@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,6 +22,7 @@ package org.openscada.da.server.simulation.scriptomatic;
 import javax.script.ScriptException;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.OperationParameters;
 
 public class ObjectHandler implements ScriptomaticHandler
 {
@@ -40,22 +41,26 @@ public class ObjectHandler implements ScriptomaticHandler
         this.context.getInvocable ().invokeMethod ( this.object, methodName, args );
     }
 
+    @Override
     public void cyclic () throws ScriptException, NoSuchMethodException
     {
         eval ( "cyclic" );
     }
 
+    @Override
     public void start () throws ScriptException, NoSuchMethodException
     {
         eval ( "start" );
     }
 
+    @Override
     public void stop () throws ScriptException, NoSuchMethodException
     {
         eval ( "stop" );
     }
 
-    public void trigger ( final Variant value ) throws ScriptException, NoSuchMethodException
+    @Override
+    public void trigger ( final Variant value, final OperationParameters operationParameters ) throws ScriptException, NoSuchMethodException
     {
         eval ( "trigger", value );
     }

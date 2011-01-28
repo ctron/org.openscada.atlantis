@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,13 +25,13 @@ import java.util.List;
 import javax.script.ScriptException;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
-import org.openscada.sec.UserInformation;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
@@ -207,7 +207,7 @@ public class HiveBuilder
             else if ( Direction.OUT.equals ( itemDefinition.getDirection () ) )
             {
                 final DataItemCommand item = factory.createCommand ( itemDefinition.getName () );
-                item.startSetAttributes ( null, item.getAttributes () );
+                item.startSetAttributes ( item.getAttributes (), null );
                 hive.getScriptEngine ().put ( "item", item );
                 hive.getScriptEngine ().eval ( "registerItem(server, item, " + itemDefinition.getCallback () + ");" );
             }
@@ -218,9 +218,11 @@ public class HiveBuilder
                 hive.getScriptEngine ().put ( "item", item );
                 final int i = ( (Double)hive.getScriptEngine ().eval ( "registerItem(server, item, " + itemDefinition.getCallback () + ", " + itemDefinition.getWriteHandler () + ");" ) ).intValue ();
                 item.setWriteHandler ( new WriteHandler () {
-                    public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
+                    @Override
+                    public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
                     {
                         hive.getScriptEngine ().put ( "value", value );
+                        hive.getScriptEngine ().put ( "operationParameters", operationParameters );
                         hive.getScriptEngine ().eval ( "writeValue(" + i + ", value);" );
                     }
                 } );

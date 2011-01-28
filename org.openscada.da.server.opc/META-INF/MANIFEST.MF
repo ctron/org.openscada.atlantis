@@ -38,8 +38,8 @@ Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
  org.openscada.utils.collection;version="0.13",
  org.openscada.utils.concurrent;version="0.13",
  org.openscada.utils.str;version="0.13"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.da.server.opc;version="0.15.0";
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.da.server.opc;version="0.16.0";
   uses:="org.openscada.da.server.opc.connection,
    org.jinterop.dcom.core,
    org.openscada.da.server.common.impl,
@@ -48,16 +48,15 @@ Export-Package: org.openscada.da.server.opc;version="0.15.0";
    org.openscada.core,
    org.w3c.dom,
    org.openscada.opc.dcom.common",
- org.openscada.da.server.opc.browser;version="0.15.0";
+ org.openscada.da.server.opc.browser;version="0.16.0";
   uses:="org.openscada.da.server.browser.common,
    org.openscada.da.server.opc.connection,
    org.openscada.utils.beans,
    org.openscada.da.server.opc,
    org.openscada.da.server.opc.job",
- org.openscada.da.server.opc.configuration;version="0.15.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc,org.w3c.dom",
- org.openscada.da.server.opc.connection;version="0.15.0";
+ org.openscada.da.server.opc.configuration;version="0.16.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc,org.w3c.dom",
+ org.openscada.da.server.opc.connection;version="0.16.0";
   uses:="org.openscada.da.server.browser.common,
-   org.openscada.core.server.common.session,
    org.openscada.da.server.common,
    org.jinterop.dcom.core,
    org.openscada.opc.lib.common,
@@ -75,8 +74,8 @@ Export-Package: org.openscada.da.server.opc;version="0.15.0";
    org.openscada.da.server.opc.job,
    org.openscada.core,
    org.openscada.opc.dcom.common",
- org.openscada.da.server.opc.job;version="0.15.0",
- org.openscada.da.server.opc.job.impl;version="0.15.0";
+ org.openscada.da.server.opc.job;version="0.16.0",
+ org.openscada.da.server.opc.job.impl;version="0.16.0";
   uses:="org.jinterop.dcom.core,
    org.openscada.da.server.opc.connection,
    org.openscada.opc.dcom.da,
@@ -87,8 +86,8 @@ Export-Package: org.openscada.da.server.opc;version="0.15.0";
    org.openscada.da.server.opc.browser,
    org.openscada.opc.lib.da,
    org.openscada.opc.dcom.common",
- org.openscada.da.server.opc.preload;version="0.15.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc.connection,org.openscada.da.server.common.item.factory"
-Bundle-Version: 0.15.1.qualifier
+ org.openscada.da.server.opc.preload;version="0.16.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc.connection,org.openscada.da.server.common.item.factory"
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA DA OPC Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: TH4 SYSTEMS GmbH

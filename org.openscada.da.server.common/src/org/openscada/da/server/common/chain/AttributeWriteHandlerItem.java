@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,8 +24,8 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -95,13 +95,14 @@ public class AttributeWriteHandlerItem extends DataItemInputChained
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
+            @Override
             public WriteResult call () throws Exception
             {
-                return processWriteValue ( value );
+                return processWriteValue ( value, operationParameters );
             }
         } );
 
@@ -110,7 +111,7 @@ public class AttributeWriteHandlerItem extends DataItemInputChained
         return task;
     }
 
-    protected WriteResult processWriteValue ( final Variant value )
+    protected WriteResult processWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         final AttributeWriteHandler handler = this.writeHandler;
         if ( handler == null )

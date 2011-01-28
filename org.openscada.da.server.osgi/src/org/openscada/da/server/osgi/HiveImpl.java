@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -136,9 +136,15 @@ public class HiveImpl extends HiveCommon
         }
     }
 
+    @Override
+    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
+    {
+        return this.authorizationManager.authorize ( objectId, objectType, action, userInformation, context, defaultResult );
+    }
+
     private boolean authenticateSessionPrivilege ( final UserInformation user, final String key, final String value )
     {
-        final AuthorizationResult result = this.authorizationManager.authorize ( key, "SESSION", value, user, null );
+        final AuthorizationResult result = authorize ( key, "SESSION", value, user, null );
         return result.isGranted ();
     }
 

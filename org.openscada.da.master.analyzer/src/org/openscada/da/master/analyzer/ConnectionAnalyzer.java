@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,10 +26,10 @@ import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.connection.provider.ConnectionService;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.osgi.factory.DataItemFactory;
 import org.openscada.da.server.common.osgi.factory.SimpleObjectExporter;
-import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -55,7 +55,8 @@ public class ConnectionAnalyzer implements ConnectionStateListener
 
         this.factory.createOutput ( "connect", null, new WriteHandler () {
 
-            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
+            @Override
+            public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
             {
                 ConnectionAnalyzer.this.handleConnect ();
             }
@@ -63,7 +64,8 @@ public class ConnectionAnalyzer implements ConnectionStateListener
 
         this.factory.createOutput ( "disconnect", null, new WriteHandler () {
 
-            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
+            @Override
+            public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
             {
                 ConnectionAnalyzer.this.handleDisconnect ();
             }
@@ -110,6 +112,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
         return "" + reference.getProperty ( Constants.SERVICE_ID );
     }
 
+    @Override
     public void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )
     {
         this.value.setState ( state );

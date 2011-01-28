@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,9 +24,11 @@ import java.util.Map;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
 import org.openscada.core.server.Service;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.server.browser.HiveBrowser;
+import org.openscada.sec.PermissionDeniedException;
 import org.openscada.utils.concurrent.NotifyFuture;
 
 public interface Hive extends Service
@@ -59,12 +61,14 @@ public interface Hive extends Service
      * @param session the session to use 
      * @param itemId The item to write to
      * @param value The value to write
+     * @param operationParameters additional parameters to the write request, can be <code>null</code>
      * @return An operation ID which can be used to cancel or run the operation
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
+     * @throws PermissionDeniedException if the user has no permission to perform this operation
      */
 
-    public NotifyFuture<WriteResult> startWrite ( Session session, String itemId, Variant value ) throws InvalidSessionException, InvalidItemException;
+    public NotifyFuture<WriteResult> startWrite ( Session session, String itemId, Variant value, OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException;
 
     /**
      * Start a write attributes operation
@@ -74,12 +78,14 @@ public interface Hive extends Service
      * @param session the session to use 
      * @param itemId The item to write to
      * @param attribute The attributes to write
+     * @param operationParameters additional parameters to the write request, can be <code>null</code>
      * @return An operation ID which can be used to cancel or run the operation
      * @throws InvalidSessionException In the case the session is not a valid session
      * @throws InvalidItemException In the case the item is not valid
+     * @throws PermissionDeniedException if the user has no permission to perform this operation
      */
 
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( Session session, String itemId, Map<String, Variant> attribute ) throws InvalidSessionException, InvalidItemException;
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( Session session, String itemId, Map<String, Variant> attribute, OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException;
 
     public HiveBrowser getBrowser ();
 

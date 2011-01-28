@@ -25,7 +25,7 @@ Import-Package: jxl,
  org.openscada.utils.lifecycle;version="0.14.0",
  org.openscada.utils.statuscodes;version="0.13"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.simulation.filesource;version="0.15.0.qualifier";
+Export-Package: org.openscada.da.server.simulation.filesource;version="0.16.0.qualifier";
   uses:="org.openscada.da.server.browser.common,
    org.openscada.da.server.common.impl,
    org.openscada.da.simulation.configuration,
@@ -33,29 +33,29 @@ Export-Package: org.openscada.da.server.simulation.filesource;version="0.15.0.qu
    org.openscada.core,
    javax.script,
    org.w3c.dom",
- org.openscada.da.server.simulation.filesource.scripts;version="0.15.0.qualifier",
- org.openscada.da.server.simulation.scriptomatic;version="0.15.0.qualifier";
+ org.openscada.da.server.simulation.filesource.scripts;version="0.16.0.qualifier",
+ org.openscada.da.server.simulation.scriptomatic;version="0.16.0.qualifier";
   uses:="org.openscada.da.server.simulation.scriptomatic.configuration,
    org.openscada.da.server.common.chain,
-   org.openscada.core.server.common.session,
    org.openscada.da.server.common.impl,
    org.openscada.utils.concurrent,
    org.openscada.core,
+   org.openscada.da.core,
    javax.script",
- org.openscada.da.server.simulation.scriptomatic.configuration;version="0.15.0.qualifier";uses:="org.openscada.utils.statuscodes,org.openscada.da.server.simulation.scriptomatic",
- org.openscada.da.simulation.components;version="0.15.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
- org.openscada.da.simulation.components.impl;version="0.15.0.qualifier";
+ org.openscada.da.server.simulation.scriptomatic.configuration;version="0.16.0.qualifier";uses:="org.openscada.utils.statuscodes,org.openscada.da.server.simulation.scriptomatic",
+ org.openscada.da.simulation.components;version="0.16.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
+ org.openscada.da.simulation.components.impl;version="0.16.0.qualifier";
   uses:="org.apache.xmlbeans.impl.values,
    org.apache.xmlbeans,
    javax.xml.namespace,
    org.openscada.da.simulation.components",
- org.openscada.da.simulation.configuration;version="0.15.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
- org.openscada.da.simulation.configuration.impl;version="0.15.0.qualifier";
+ org.openscada.da.simulation.configuration;version="0.16.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
+ org.openscada.da.simulation.configuration.impl;version="0.16.0.qualifier";
   uses:="org.apache.xmlbeans.impl.values,
    org.openscada.da.simulation.configuration,
    org.apache.xmlbeans,
    javax.xml.namespace"
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA DA Simulation Server
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-ManifestVersion: 2

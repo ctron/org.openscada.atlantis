@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,6 +34,7 @@ import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.Location;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.browser.Entry;
@@ -84,6 +85,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( MessageHelper.CC_CREATE_SESSION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 createSession ( message );
@@ -92,6 +94,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( MessageHelper.CC_CLOSE_SESSION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 closeSession ();
@@ -100,6 +103,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_SUBSCRIBE_ITEM, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 subscribe ( message );
@@ -108,6 +112,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_UNSUBSCRIBE_ITEM, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 unsubscribe ( message );
@@ -116,6 +121,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_WRITE_OPERATION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 performWrite ( message );
@@ -124,6 +130,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_WRITE_ATTRIBUTES_OPERATION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 performWriteAttributes ( message );
@@ -132,6 +139,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_BROWSER_LIST_REQ, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 performBrowse ( message );
@@ -140,6 +148,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_BROWSER_SUBSCRIBE, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 performBrowserSubscribe ( message );
@@ -148,6 +157,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_BROWSER_UNSUBSCRIBE, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 performBrowserUnsubscribe ( message );
@@ -287,6 +297,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         disposeSession ();
     }
 
+    @Override
     public void dataChanged ( final String itemId, final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         logger.debug ( "Data changed - itemId: {}, value: {}, attributes: {}, cache: {}", new Object[] { itemId, value, attributes, cache } );
@@ -294,6 +305,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.messenger.sendMessage ( Messages.notifyData ( itemId, value, attributes, cache ) );
     }
 
+    @Override
     public void subscriptionChanged ( final String item, final SubscriptionState subscriptionState )
     {
         this.messenger.sendMessage ( Messages.notifySubscriptionChange ( item, subscriptionState ) );
@@ -303,12 +315,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     {
         final Holder<String> itemId = new Holder<String> ();
         final Holder<Variant> value = new Holder<Variant> ();
+        final Holder<OperationParameters> operationParameters = new Holder<OperationParameters> ();
 
-        org.openscada.da.net.handler.WriteOperation.parse ( request, itemId, value );
+        org.openscada.da.net.handler.WriteOperation.parse ( request, itemId, value, operationParameters );
 
         try
         {
-            final NotifyFuture<WriteResult> task = this.hive.startWrite ( this.session, itemId.value, value.value );
+            final NotifyFuture<WriteResult> task = this.hive.startWrite ( this.session, itemId.value, value.value, operationParameters.value );
             final TaskHandler.Handle handle = this.taskHandler.addTask ( task );
 
             try
@@ -325,6 +338,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
             scheduleTask ( task, handle.getId (), new ResultHandler<WriteResult> () {
 
+                @Override
                 public void completed ( final WriteResult result )
                 {
                     final Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
@@ -333,6 +347,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                     handle.dispose ();
                 }
 
+                @Override
                 public void failed ( final Throwable e )
                 {
                     final Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
@@ -367,12 +382,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     {
         final Holder<String> itemId = new Holder<String> ();
         final Holder<Map<String, Variant>> attributes = new Holder<Map<String, Variant>> ();
+        final Holder<OperationParameters> operationParameters = new Holder<OperationParameters> ();
 
-        WriteAttributesOperation.parseRequest ( request, itemId, attributes );
+        WriteAttributesOperation.parseRequest ( request, itemId, attributes, operationParameters );
 
         try
         {
-            final NotifyFuture<WriteAttributeResults> task = this.hive.startWriteAttributes ( this.session, itemId.value, attributes.value );
+            final NotifyFuture<WriteAttributeResults> task = this.hive.startWriteAttributes ( this.session, itemId.value, attributes.value, operationParameters.value );
             final TaskHandler.Handle handle = this.taskHandler.addTask ( task );
 
             try
@@ -389,6 +405,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
             scheduleTask ( task, handle.getId (), new ResultHandler<WriteAttributeResults> () {
 
+                @Override
                 public void completed ( final WriteAttributeResults result )
                 {
                     final Message message = WriteAttributesOperation.createResponse ( handle.getId (), result );
@@ -396,6 +413,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                     handle.dispose ();
                 }
 
+                @Override
                 public void failed ( final Throwable e )
                 {
                     final Message message = WriteAttributesOperation.createResponse ( handle.getId (), e );
@@ -443,12 +461,14 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
             scheduleTask ( task, handle.getId (), new ResultHandler<Entry[]> () {
 
+                @Override
                 public void completed ( final Entry[] result )
                 {
                     ServerConnectionHandler.this.messenger.sendMessage ( ListBrowser.createResponse ( handle.getId (), result ) );
                     handle.dispose ();
                 }
 
+                @Override
                 public void failed ( final Throwable e )
                 {
                     ServerConnectionHandler.this.messenger.sendMessage ( ListBrowser.createResponse ( handle.getId (), e.getMessage () ) );
@@ -463,6 +483,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
     }
 
+    @Override
     public void folderChanged ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
         logger.debug ( "Got folder change event from hive for folder: {}", location );

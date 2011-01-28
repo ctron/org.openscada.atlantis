@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -33,6 +33,7 @@ import org.openscada.core.client.NoConnectionException;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
@@ -110,6 +111,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
      * </p>
      * @throws ClassNotFoundException 
      */
+    @Override
     public void start () throws ClassNotFoundException
     {
         if ( this.className != null && this.className.length () > 0 )
@@ -166,6 +168,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
      * This will disconnect the currently established connection and prevent further reconnects.
      * </p>
      */
+    @Override
     public void stop ()
     {
         disconnect ();
@@ -205,6 +208,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
         return this.itemManager;
     }
 
+    @Override
     public void afterPropertiesSet () throws Exception
     {
         if ( this.reconnectDelay <= 0 )
@@ -214,6 +218,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
         start ();
     }
 
+    @Override
     public void destroy () throws Exception
     {
         stop ();
@@ -226,6 +231,11 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
 
     public void writeItem ( final String itemName, final Variant value ) throws NoConnectionException, OperationException
     {
+        writeItem ( itemName, value, null );
+    }
+
+    public void writeItem ( final String itemName, final Variant value, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
+    {
         final org.openscada.da.client.Connection connection = this.connection;
         if ( connection == null )
         {
@@ -234,18 +244,21 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
 
         logWrite.info ( String.format ( "Writing: %s to %s", value, itemName ) );
 
-        connection.write ( itemName, value, new WriteOperationCallback () {
+        connection.write ( itemName, value, operationParameters, new WriteOperationCallback () {
 
+            @Override
             public void complete ()
             {
                 log.debug ( String.format ( "Write operation to %s (%s) completed", itemName, value ) );
             }
 
+            @Override
             public void error ( final Throwable arg0 )
             {
                 log.warn ( String.format ( "Write operation to %s (%s) failed", itemName, value ), arg0 );
             }
 
+            @Override
             public void failed ( final String arg0 )
             {
                 log.warn ( String.format ( "Write operation to %s (%s) failed: %s", itemName, value, arg0 ) );
@@ -255,6 +268,11 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
 
     public void writeAttributes ( final String itemName, final Map<String, Variant> attributes ) throws NoConnectionException, OperationException
     {
+        writeAttributes ( itemName, attributes, null );
+    }
+
+    public void writeAttributes ( final String itemName, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
+    {
         final org.openscada.da.client.Connection connection = this.connection;
         if ( connection == null )
         {
@@ -263,18 +281,21 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
 
         logWrite.info ( String.format ( "Writing: %s to %s", attributes, itemName ) );
 
-        connection.writeAttributes ( itemName, attributes, new WriteAttributeOperationCallback () {
+        connection.writeAttributes ( itemName, attributes, operationParameters, new WriteAttributeOperationCallback () {
 
+            @Override
             public void complete ( final WriteAttributeResults writeAttributeResults )
             {
                 log.debug ( String.format ( "Write attributes operation to %s (%s) completed", itemName, attributes ) );
             }
 
+            @Override
             public void error ( final Throwable throwable )
             {
                 log.warn ( String.format ( "Write attributes operation to %s (%s) failed", itemName, attributes ), throwable );
             }
 
+            @Override
             public void failed ( final String reason )
             {
                 log.warn ( String.format ( "Write operation to %s (%s) failed: %s", itemName, attributes, reason ) );
@@ -282,6 +303,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
         } );
     }
 
+    @Override
     public ConnectionState getConnectionState ()
     {
         final org.openscada.da.client.Connection connection = this.connection;
@@ -295,11 +317,13 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
         }
     }
 
+    @Override
     public String getConnectionStateString ()
     {
         return getConnectionState ().name ();
     }
 
+    @Override
     public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
     {
         final String message = String.format ( "Connection %s changes status: %s", this.connectionInformation.toMaskedString (), state );

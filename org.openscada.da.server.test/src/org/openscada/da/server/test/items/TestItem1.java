@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,7 +25,7 @@ import java.util.Map;
 import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -36,25 +36,27 @@ import org.openscada.utils.concurrent.NotifyFuture;
 
 public class TestItem1 extends DataItemOutput
 {
-    private static Logger _log = Logger.getLogger ( TestItem1.class );
+    private static Logger logger = Logger.getLogger ( TestItem1.class );
 
     public TestItem1 ( final String name )
     {
         super ( name );
     }
 
+    @Override
     public Map<String, Variant> getAttributes ()
     {
         return new HashMap<String, Variant> ();
     }
 
-    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
+    @Override
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         final WriteAttributeResults results = new WriteAttributeResults ();
 
         for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
-            _log.info ( String.format ( "Attribute: '%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
+            logger.info ( String.format ( "Attribute: '%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
             if ( entry.getKey ().startsWith ( "error" ) )
             {
                 results.put ( entry.getKey (), new WriteAttributeResult ( new Exception ( "Testing error" ) ) );
@@ -68,9 +70,10 @@ public class TestItem1 extends DataItemOutput
         return new InstantFuture<WriteAttributeResults> ( results );
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
+    @Override
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
-        _log.debug ( "set value: " + value.toString () );
+        logger.debug ( "set value: " + value.toString () );
 
         String data;
         try

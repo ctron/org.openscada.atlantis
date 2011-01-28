@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,7 +34,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
@@ -44,6 +43,7 @@ import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.SubscriptionValidator;
 import org.openscada.core.subscription.ValidationException;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.server.Hive;
@@ -66,14 +66,17 @@ import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
+import org.openscada.sec.AuthorizationResult;
+import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive, HiveServiceRegistry
 {
-
-    private static Logger logger = Logger.getLogger ( HiveCommon.class );
+    private final static Logger logger = LoggerFactory.getLogger ( HiveCommon.class );
 
     private final Set<SessionCommon> sessions = new HashSet<SessionCommon> ();
 
@@ -115,6 +118,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         // set the validator of the subscription manager
         this.itemSubscriptionManager.setValidator ( new SubscriptionValidator () {
 
+            @Override
             public boolean validate ( final SubscriptionListener listener, final Object topic )
             {
                 return validateItem ( topic.toString () );
@@ -123,6 +127,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     }
 
+    @Override
     public void start () throws Exception
     {
         logger.info ( "Starting Hive" );
@@ -130,6 +135,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         this.operationService = Executors.newFixedThreadPool ( 1, new NamedThreadFactory ( "HiveCommon" ) );
     }
 
+    @Override
     public void stop () throws Exception
     {
         logger.info ( "Stopping hive" );
@@ -204,6 +210,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
      * Get the root folder
      * @return the root folder or <code>null</code> if browsing is not supported
      */
+    @Override
     public Folder getRootFolder ()
     {
         return this.rootFolder;
@@ -213,6 +220,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
      * Set the root folder. The root folder can only be set once. All
      * further set requests are ignored.
      */
+    @Override
     public synchronized void setRootFolder ( final Folder rootFolder )
     {
         if ( this.rootFolder == null )
@@ -283,6 +291,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     // implementation of hive interface
 
+    @Override
     public Session createSession ( final Properties props ) throws UnableToCreateSessionException
     {
         final Map<String, String> sessionProperties = new HashMap<String, String> ();
@@ -304,6 +313,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
      * The session will be invalid after it has been closed. All subscriptions
      * will become invalid. All pending operation will get canceled. 
      */
+    @Override
     public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
     {
         final SessionCommon sessionCommon = validateSession ( session );
@@ -323,6 +333,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         sessionCommon.dispose ();
     }
 
+    @Override
     public void subscribeItem ( final Session session, final String itemId ) throws InvalidSessionException, InvalidItemException
     {
         // validate the session first
@@ -343,6 +354,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     /**
      * Unsubscribe a session from an item
      */
+    @Override
     public void unsubscribeItem ( final Session session, final String itemId ) throws InvalidSessionException, InvalidItemException
     {
         final SessionCommon sessionCommon = validateSession ( session );
@@ -355,6 +367,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
      * Register a new item with the hive
      * @param item the item to register
      */
+    @Override
     public void registerItem ( final DataItem item )
     {
         synchronized ( this.itemMap )
@@ -377,7 +390,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             }
 
             // add new topic to the new item subscription manager
-            this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( this.getOperationService (), item, this.statisticsGenerator ) );
+            this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( getOperationService (), item, this.statisticsGenerator ) );
         }
     }
 
@@ -389,6 +402,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     public Executor getOperationService ()
     {
         return new Executor () {
+            @Override
             public void execute ( final Runnable command )
             {
                 getOperationServiceInstance ().execute ( command );
@@ -460,6 +474,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
      *  
      * @return <code>true</code> if the item id is valid <code>false</code> otherwise
      */
+    @Override
     public boolean validateItem ( final String id )
     {
         if ( this.validatonStrategy == ValidationStrategy.GRANT_ALL )
@@ -498,6 +513,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         return false;
     }
 
+    @Override
     public DataItem lookupItem ( final String id )
     {
         return this.itemMap.get ( new DataItemInformationBase ( id ) );
@@ -549,6 +565,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         return retrieveItem ( request );
     }
 
+    @Override
     public DataItem retrieveItem ( final DataItemFactoryRequest request )
     {
         synchronized ( this.itemMap )
@@ -562,9 +579,18 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
     }
 
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Session session, final String itemId, final Map<String, Variant> attributes ) throws InvalidSessionException, InvalidItemException
+    private static final String OBJECT_TYPE = "DataItem";
+
+    @Override
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Session session, final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
     {
         final SessionCommon sessionCommon = validateSession ( session );
+
+        final AuthorizationResult result = authorize ( itemId, OBJECT_TYPE, "WRITE_ATTRIBUTES", operationParameters.getUserInformation (), makeSetAttributesContext ( attributes ) );
+        if ( !result.isGranted () )
+        {
+            throw new PermissionDeniedException ( result );
+        }
 
         final DataItem item = retrieveItem ( itemId );
 
@@ -580,15 +606,97 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
 
         // go
-        final NotifyFuture<WriteAttributeResults> future = item.startSetAttributes ( sessionCommon, attributes );
+        final NotifyFuture<WriteAttributeResults> future = item.startSetAttributes ( attributes, makeOperationParameters ( sessionCommon, operationParameters ) );
         sessionCommon.addFuture ( future );
 
         return future;
     }
 
-    public NotifyFuture<WriteResult> startWrite ( final Session session, final String itemId, final Variant value ) throws InvalidSessionException, InvalidItemException
+    private Map<String, Object> makeSetAttributesContext ( final Map<String, Variant> attributes )
+    {
+        final Map<String, Object> context = new HashMap<String, Object> ( 1 );
+        context.put ( "attributes", attributes );
+        return context;
+    }
+
+    private Map<String, Object> makeWriteValueContext ( final Variant value )
+    {
+        final Map<String, Object> context = new HashMap<String, Object> ( 1 );
+        context.put ( "value", value );
+        return context;
+    }
+
+    protected static final AuthorizationResult DEFAULT_RESULT = AuthorizationResult.create ( org.openscada.sec.StatusCodes.AUTHORIZATION_FAILED, "No authentication provider voted. Rejecting request!" );
+
+    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context )
+    {
+        return authorize ( objectType, objectId, action, userInformation, context, DEFAULT_RESULT );
+    }
+
+    /**
+     * Authorize an operation
+     * <p>
+     * The default implementation grants everything. Override to change according to your needs.
+     * </p>
+     * @param objectType the type of the object the operation takes place
+     * @param objectId the id of the object the operation takes place
+     * @param userInformation the user information
+     * @param context the context information
+     * @param defaultResult the default result that should be returned if no one votes, must not be <code>null</code>
+     * @return the authorization result, never returns <code>null</code>
+     */
+    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
+    {
+        logger.info ( "Requesting authorization - objectType: {}, objectId: {}, action: {}, userInformation: {}, context: {}, defaultResult: {} ... defaulting to GRANTED", new Object[] { objectType, objectId, action, userInformation, context, defaultResult } );
+        return AuthorizationResult.GRANTED;
+    }
+
+    private OperationParameters makeOperationParameters ( final SessionCommon session, final OperationParameters operationParameters ) throws PermissionDeniedException
+    {
+
+        UserInformation sessionInformation = session.getUserInformation ();
+        if ( sessionInformation == null )
+        {
+            sessionInformation = UserInformation.ANONYMOUS;
+        }
+
+        if ( operationParameters == null )
+        {
+            return new OperationParameters ( sessionInformation );
+        }
+
+        final UserInformation userInformation;
+
+        if ( operationParameters.getUserInformation () != null && operationParameters.getUserInformation ().getName () != null )
+        {
+            // try to set proxy user
+            final AuthorizationResult result = authorize ( "SESSION", operationParameters.getUserInformation ().getName (), "PROXY_USER", session.getUserInformation (), null );
+            if ( !result.isGranted () )
+            {
+                // not allowed to use proxy user
+                throw new PermissionDeniedException ( result.getErrorCode (), result.getMessage () );
+            }
+
+            userInformation = new UserInformation ( operationParameters.getUserInformation ().getName (), sessionInformation.getRoles () );
+        }
+        else
+        {
+            userInformation = sessionInformation;
+        }
+
+        return new OperationParameters ( userInformation );
+    }
+
+    @Override
+    public NotifyFuture<WriteResult> startWrite ( final Session session, final String itemId, final Variant value, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
     {
         final SessionCommon sessionCommon = validateSession ( session );
+
+        final AuthorizationResult result = authorize ( itemId, OBJECT_TYPE, "WRITE", operationParameters.getUserInformation (), makeWriteValueContext ( value ) );
+        if ( !result.isGranted () )
+        {
+            throw new PermissionDeniedException ( result );
+        }
 
         final DataItem item = retrieveItem ( itemId );
 
@@ -604,11 +712,12 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
 
         // go
-        final NotifyFuture<WriteResult> future = item.startWriteValue ( sessionCommon, value );
+        final NotifyFuture<WriteResult> future = item.startWriteValue ( value, makeOperationParameters ( sessionCommon, operationParameters ) );
         sessionCommon.addFuture ( future );
         return future;
     }
 
+    @Override
     public synchronized HiveBrowser getBrowser ()
     {
         if ( this.browser == null )
@@ -633,6 +742,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     /* (non-Javadoc)
      * @see org.openscada.da.server.common.impl.ConfigurableHive#addItemFactory(org.openscada.da.server.common.DataItemFactory)
      */
+    @Override
     public void addItemFactory ( final DataItemFactory factory )
     {
         this.factoryList.add ( factory );
@@ -661,6 +771,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
     }
 
+    @Override
     public void registerTemplate ( final FactoryTemplate template )
     {
         synchronized ( this.templates )
@@ -739,6 +850,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     /* (non-Javadoc)
      * @see org.openscada.da.server.common.impl.HiveServiceRegistry#registerService(java.lang.String, org.openscada.da.server.common.HiveService)
      */
+    @Override
     public HiveService registerService ( final String serviceName, final HiveService service )
     {
         HiveService oldService = null;
@@ -762,6 +874,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     /* (non-Javadoc)
      * @see org.openscada.da.server.common.impl.HiveServiceRegistry#unregisterService(java.lang.String)
      */
+    @Override
     public HiveService unregisterService ( final String serviceName )
     {
         HiveService service = null;
@@ -800,6 +913,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     /* (non-Javadoc)
      * @see org.openscada.da.server.common.impl.HiveServiceRegistry#getService(java.lang.String)
      */
+    @Override
     public HiveService getService ( final String serviceName )
     {
         return this.services.get ( serviceName );

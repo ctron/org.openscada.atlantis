@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.net.base.data.LongValue;
@@ -33,20 +34,22 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.utils.lang.Holder;
 
-public class WriteAttributesOperation
+public class WriteAttributesOperation extends Operation
 {
 
-    public static Message createRequest ( final String itemId, final Map<String, Variant> attributes )
+    public static Message createRequest ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         final Message message = new Message ( Messages.CC_WRITE_ATTRIBUTES_OPERATION );
 
         message.getValues ().put ( "item-id", new StringValue ( itemId ) );
         message.getValues ().put ( "attributes", MessageHelper.attributesToMap ( attributes ) );
 
+        encodeOperationParameters ( operationParameters, message );
+
         return message;
     }
 
-    public static void parseRequest ( final Message message, final Holder<String> itemId, final Holder<Map<String, Variant>> attributes )
+    public static void parseRequest ( final Message message, final Holder<String> itemId, final Holder<Map<String, Variant>> attributes, final Holder<OperationParameters> operationParameters )
     {
         // FIXME: handle missing item name
         itemId.value = message.getValues ().get ( "item-id" ).toString ();
@@ -56,6 +59,8 @@ public class WriteAttributesOperation
         {
             attributes.value = MessageHelper.mapToAttributes ( (MapValue)value );
         }
+
+        operationParameters.value = convertOperationParameters ( message.getValues ().get ( FIELD_OPERATION_PARAMETERS ) );
     }
 
     public static Message createResponse ( final long id, final WriteAttributeResults writeAttributeResults )
@@ -73,7 +78,7 @@ public class WriteAttributesOperation
             }
             else
             {
-                resultValues.put ( writeAttributeResult.getKey (), new VoidValue () );
+                resultValues.put ( writeAttributeResult.getKey (), VoidValue.INSTANCE );
             }
         }
 

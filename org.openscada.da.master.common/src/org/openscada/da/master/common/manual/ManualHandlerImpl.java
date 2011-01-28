@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,8 +32,8 @@ import org.openscada.core.VariantEditor;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
@@ -164,7 +164,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    protected WriteAttributeResults handleUpdate ( final WriteInformation writeInformation, final Map<String, Variant> attributes ) throws Exception
+    protected WriteAttributeResults handleUpdate ( final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws Exception
     {
         final Map<String, String> data = new HashMap<String, String> ();
 
@@ -195,9 +195,9 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
             builder.attribute ( Fields.VALUE, value );
         }
 
-        if ( writeInformation.getUserInformation () != null && writeInformation.getUserInformation ().getName () != null )
+        if ( operationParameters != null && operationParameters.getUserInformation () != null && operationParameters.getUserInformation ().getName () != null )
         {
-            final String name = writeInformation.getUserInformation ().getName ();
+            final String name = operationParameters.getUserInformation ().getName ();
             data.put ( "user", name );
             builder.attribute ( Fields.ACTOR_NAME, name );
             builder.attribute ( Fields.ACTOR_TYPE, "USER" );

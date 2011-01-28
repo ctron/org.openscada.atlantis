@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,10 +24,9 @@ import java.util.concurrent.Executor;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
-import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -63,7 +62,7 @@ public class WriteHandlerItem extends DataItemInputOutputChained
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters )
     {
         final WriteHandler writeHandler = this.writeHandler;
 
@@ -73,13 +72,12 @@ public class WriteHandlerItem extends DataItemInputOutputChained
             return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
         }
 
-        final UserInformation userInformation = session.getUserInformation ();
-
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
+            @Override
             public WriteResult call () throws Exception
             {
-                writeHandler.handleWrite ( userInformation, value );
+                writeHandler.handleWrite ( value, operationParameters );
                 return new WriteResult ();
             }
         } );
@@ -88,5 +86,4 @@ public class WriteHandlerItem extends DataItemInputOutputChained
 
         return task;
     }
-
 }

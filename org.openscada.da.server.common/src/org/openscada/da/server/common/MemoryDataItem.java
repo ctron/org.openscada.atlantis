@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,8 +24,8 @@ import java.util.Map;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -49,12 +49,14 @@ public class MemoryDataItem extends DataItemBase
         this.attributes = new AttributeManager ( this );
     }
 
+    @Override
     public NotifyFuture<Variant> readValue () throws InvalidOperationException
     {
         return new InstantFuture<Variant> ( this.value );
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
+    @Override
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         if ( !this.value.equals ( value ) )
         {
@@ -66,6 +68,7 @@ public class MemoryDataItem extends DataItemBase
         return new InstantFuture<WriteResult> ( new WriteResult () );
     }
 
+    @Override
     public Map<String, Variant> getAttributes ()
     {
         return this.attributes.get ();
@@ -83,7 +86,8 @@ public class MemoryDataItem extends DataItemBase
         return this.value;
     }
 
-    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
+    @Override
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 

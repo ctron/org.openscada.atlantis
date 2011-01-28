@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,12 +32,12 @@ import java.util.concurrent.Executor;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.MultiDataSourceTracker;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.MultiDataSourceTracker.ServiceListener;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -174,6 +174,7 @@ public class ProxyDataSource extends AbstractDataSource implements ServiceListen
             this.priority = priority;
         }
 
+        @Override
         public int compareTo ( final DataItemValueEntry other )
         {
             if ( this.priority == other.priority )
@@ -228,6 +229,7 @@ public class ProxyDataSource extends AbstractDataSource implements ServiceListen
             return new DataItemValueEntry ( this.value, this.priority );
         }
 
+        @Override
         public void stateChanged ( final DataItemValue value )
         {
             this.value = value;
@@ -301,28 +303,33 @@ public class ProxyDataSource extends AbstractDataSource implements ServiceListen
         }
     }
 
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
+    @Override
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         // FIXME: implement write call
         return new InstantErrorFuture<WriteAttributeResults> ( new OperationException ( "'writeAttributes' not supported" ) );
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
+    @Override
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         // FIXME: implement write call
         return new InstantErrorFuture<WriteResult> ( new OperationException ( "'writeAttributes' not supported" ) );
     }
 
+    @Override
     public void dataSourceAdded ( final String id, final Dictionary<?, ?> properties, final DataSource dataSource )
     {
         addSource ( dataSource, getPriority ( id, properties ) );
     }
 
+    @Override
     public void dataSourceModified ( final String id, final Dictionary<?, ?> properties, final DataSource dataSource )
     {
         updateSource ( dataSource, getPriority ( id, properties ) );
     }
 
+    @Override
     public void dataSourceRemoved ( final String id, final Dictionary<?, ?> properties, final DataSource dataSource )
     {
         removeSource ( dataSource );

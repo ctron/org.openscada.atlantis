@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,9 +31,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.server.common.AttributeManager;
@@ -64,6 +64,7 @@ public abstract class DataItemBaseChained extends DataItemBase
         this.secondaryAttributes = new AttributeManager ( this );
     }
 
+    @Override
     public Map<String, Variant> getAttributes ()
     {
         return this.secondaryAttributes.get ();
@@ -79,13 +80,15 @@ public abstract class DataItemBaseChained extends DataItemBase
      * @param attributes Attributes to set
      * @return status for the attribute write request  
      */
-    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
+    @Override
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         final FutureTask<WriteAttributeResults> task = new FutureTask<WriteAttributeResults> ( new Callable<WriteAttributeResults> () {
 
+            @Override
             public WriteAttributeResults call () throws Exception
             {
-                return DataItemBaseChained.this.processSetAttributes ( attributes );
+                return DataItemBaseChained.this.processSetAttributes ( attributes, operationParameters );
             }
         } );
 
@@ -94,7 +97,7 @@ public abstract class DataItemBaseChained extends DataItemBase
         return task;
     }
 
-    protected WriteAttributeResults processSetAttributes ( final Map<String, Variant> attributes )
+    protected WriteAttributeResults processSetAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
 

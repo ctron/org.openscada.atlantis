@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -80,6 +80,7 @@ public class ProxyGroup implements LifecycleAware
             this.name = name;
         }
 
+        @Override
         public Thread newThread ( final Runnable r )
         {
             final Thread t = new Thread ( r, "ProxyItemListener/" + this.name );
@@ -89,6 +90,7 @@ public class ProxyGroup implements LifecycleAware
     }
 
     private static Executor defaultExecutor = new Executor () {
+        @Override
         public void execute ( final Runnable r )
         {
             r.run ();
@@ -141,6 +143,7 @@ public class ProxyGroup implements LifecycleAware
         }
     }
 
+    @Override
     public void start ()
     {
         createProxyFolder ();
@@ -151,6 +154,7 @@ public class ProxyGroup implements LifecycleAware
         this.registeredItemsStorage.addChild ( this.registeredItemsFolder );
     }
 
+    @Override
     public void stop ()
     {
 
@@ -327,8 +331,8 @@ public class ProxyGroup implements LifecycleAware
             if ( item == null )
             {
                 // create actual item
-                final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), this.getPrefix (), this.getCurrentConnection (), id );
-                final ProxyWriteHandler pwh = new ProxyWriteHandlerImpl ( this.hive.getSeparator (), this.getPrefix (), this.getSubConnections (), this.getCurrentConnection (), id );
+                final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), getPrefix (), getCurrentConnection (), id );
+                final ProxyWriteHandler pwh = new ProxyWriteHandlerImpl ( this.hive.getSeparator (), getPrefix (), getSubConnections (), getCurrentConnection (), id );
                 item = new ProxyDataItem ( id, pvh, pwh, this.hive.getOperationService () );
                 this.registeredItems.put ( id, item );
 
@@ -375,7 +379,7 @@ public class ProxyGroup implements LifecycleAware
             {
                 logger.warn ( "Failed to apply item template", e );
             }
-            item.setTemplateAttributes ( ft.getItemAttributes () );
+            item.setTemplateAttributes ( ft.getItemAttributes (), null );
         }
     }
 

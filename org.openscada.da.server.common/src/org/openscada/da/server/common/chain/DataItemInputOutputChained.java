@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -46,7 +46,7 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( Variant value, final OperationParameters operationParameters )
     {
         synchronized ( this )
         {
@@ -69,8 +69,8 @@ public abstract class DataItemInputOutputChained extends DataItemInputChained
         // FIXME: for the moment output chain item don't show up in the attribute list
         // secondaryAttributes.set ( primaryAttributes );
 
-        return startWriteCalculatedValue ( session, value );
+        return startWriteCalculatedValue ( value, operationParameters );
     }
 
-    protected abstract NotifyFuture<WriteResult> startWriteCalculatedValue ( UserSession session, final Variant value );
+    protected abstract NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, OperationParameters operationParameters );
 }

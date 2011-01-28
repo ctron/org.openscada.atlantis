@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,9 +28,9 @@ import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.ds.DataListener;
 import org.openscada.ds.DataNode;
@@ -70,12 +70,12 @@ public class DataStoreDataSource extends AbstractDataSource implements DataListe
         return this.executor;
     }
 
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         return new InstantErrorFuture<WriteAttributeResults> ( new InvalidOperationException ().fillInStackTrace () );
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         if ( this.dataNodeTracker.write ( new DataNode ( getNodeId (), value ) ) )
         {

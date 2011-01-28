@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,14 +31,14 @@ import org.openscada.core.connection.provider.ConnectionTracker;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.connection.provider.ConnectionService;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.AbstractFuture;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -54,16 +54,19 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
 
     private static class WriteListenerAttributeImpl extends AbstractFuture<WriteAttributeResults> implements WriteAttributeOperationCallback
     {
+        @Override
         public void complete ( final WriteAttributeResults results )
         {
             setResult ( results );
         }
 
+        @Override
         public void failed ( final String error )
         {
             setError ( new OperationException ( error ).fillInStackTrace () );
         }
 
+        @Override
         public void error ( final Throwable error )
         {
             setError ( error );
@@ -73,16 +76,19 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
     private static class WriteListenerValueImpl extends AbstractFuture<WriteResult> implements WriteOperationCallback
     {
 
+        @Override
         public void failed ( final String error )
         {
             setError ( new OperationException ( error ).fillInStackTrace () );
         }
 
+        @Override
         public void error ( final Throwable error )
         {
             setError ( error );
         }
 
+        @Override
         public void complete ()
         {
             setResult ( new WriteResult () );
@@ -151,6 +157,7 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
     {
         this.tracker = new ConnectionIdTracker ( this.context, this.connectionId, new ConnectionTracker.Listener () {
 
+            @Override
             public void setConnection ( final org.openscada.core.connection.provider.ConnectionService connectionService )
             {
                 DataItemSourceImpl.this.setConnection ( (ConnectionService)connectionService );
@@ -195,6 +202,7 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
         updateData ( this.sourceValue );
     }
 
+    @Override
     public synchronized void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         logger.debug ( "Data update: {} -> {} / {} (cache: {})", new Object[] { this.itemId, value, attributes, cache } );
@@ -244,6 +252,7 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
         newValue.setAttribute ( "source.error", newValue.getSubscriptionState () != SubscriptionState.CONNECTED ? Variant.TRUE : Variant.FALSE );
     }
 
+    @Override
     public synchronized void notifySubscriptionChange ( final SubscriptionState state, final Throwable error )
     {
         logger.info ( "Subscription state changed: {}", state );
@@ -263,14 +272,15 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
         return newValue;
     }
 
-    public synchronized NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
+    @Override
+    public synchronized NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         final WriteListenerValueImpl task = new WriteListenerValueImpl ();
 
         final ConnectionService connection = this.connection;
         if ( connection != null )
         {
-            connection.getConnection ().write ( this.itemId, value, task );
+            connection.getConnection ().write ( this.itemId, value, operationParameters, task );
         }
         else
         {
@@ -279,14 +289,15 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
         return task;
     }
 
-    public synchronized NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
+    @Override
+    public synchronized NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         final WriteListenerAttributeImpl task = new WriteListenerAttributeImpl ();
 
         final ConnectionService connection = this.connection;
         if ( connection != null )
         {
-            connection.getConnection ().writeAttributes ( this.itemId, attributes, task );
+            connection.getConnection ().writeAttributes ( this.itemId, attributes, operationParameters, task );
         }
         else
         {

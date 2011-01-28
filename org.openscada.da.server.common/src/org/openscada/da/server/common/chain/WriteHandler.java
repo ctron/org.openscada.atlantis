@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,7 +20,7 @@
 package org.openscada.da.server.common.chain;
 
 import org.openscada.core.Variant;
-import org.openscada.sec.UserInformation;
+import org.openscada.da.core.OperationParameters;
 
 public interface WriteHandler
 {
@@ -28,10 +28,9 @@ public interface WriteHandler
      * Handle the write call
      * <p>
      * e.g. performs a write call to a subsystem
-     * @param userInformation the user information of the write call.
-     * May also be <code>null<code> if there is no user information.
      * @param value the value to write
+     * @param operationParameters optional operation parameters, may be <code>null</code> 
      * @throws Exception if anything goes wrong
      */
-    public abstract void handleWrite ( UserInformation userInformation, Variant value ) throws Exception;
+    public abstract void handleWrite ( Variant value, OperationParameters operationParameters ) throws Exception;
 }

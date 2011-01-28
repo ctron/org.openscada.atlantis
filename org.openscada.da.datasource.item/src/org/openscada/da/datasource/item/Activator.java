@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,7 +24,6 @@ import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.openscada.ae.sec.AuthorizationHelper;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.utils.concurrent.NamedThreadFactory;
@@ -41,21 +40,17 @@ public class Activator implements BundleActivator
 
     private DataItemSourceFactoryImpl factory2;
 
-    private AuthorizationHelper authorization;
-
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.authorization = new AuthorizationHelper ( context );
-        this.authorization.open ();
-
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
         {
-            this.factory = new DataItemTargetFactoryImpl ( context, this.authorization );
+            this.factory = new DataItemTargetFactoryImpl ( context );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, DataItemTargetFactoryImpl.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "A dataitem based on a datasource" );
@@ -75,16 +70,13 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
-
         this.factory.dispose ();
         this.factory2.dispose ();
 
         this.executor.shutdown ();
-
-        this.authorization.close ();
-
     }
 
 }

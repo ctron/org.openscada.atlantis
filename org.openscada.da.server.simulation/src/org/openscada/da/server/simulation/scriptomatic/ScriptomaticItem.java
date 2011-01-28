@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,7 +34,7 @@ import javax.script.ScriptException;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.utils.concurrent.FutureTask;
@@ -62,13 +62,14 @@ public class ScriptomaticItem extends DataItemInputOutputChained
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
+            @Override
             public WriteResult call () throws Exception
             {
-                ScriptomaticItem.this.performWrite ( value );
+                ScriptomaticItem.this.performWrite ( value, operationParameters );
                 return new WriteResult ();
             }
         } );
@@ -76,14 +77,14 @@ public class ScriptomaticItem extends DataItemInputOutputChained
         return task;
     }
 
-    protected void performWrite ( final Variant value ) throws Exception
+    protected void performWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
     {
-        this.handler.trigger ( value );
+        this.handler.trigger ( value, operationParameters );
     }
 
     public String getId ()
     {
-        return this.getInformation ().getName ();
+        return getInformation ().getName ();
     }
 
     private boolean isCyclic ()
@@ -106,6 +107,7 @@ public class ScriptomaticItem extends DataItemInputOutputChained
         {
             this.job = scheduler.scheduleAtFixedRate ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     ScriptomaticItem.this.tick ();

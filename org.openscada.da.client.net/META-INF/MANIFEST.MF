@@ -1,26 +1,26 @@
 Manifest-Version: 1.0
 Bundle-Activator: org.openscada.da.client.net.Activator
-Import-Package: org.apache.mina.core.service;version="2.0",
- org.openscada.core;version="0.14",
- org.openscada.core.client;version="0.14",
- org.openscada.core.client.net;version="0.14",
+Import-Package: org.apache.mina.core.service;version="2.0.0",
+ org.openscada.core;version="0.14.0",
+ org.openscada.core.client;version="0.14.0",
+ org.openscada.core.client.net;version="0.14.0",
  org.openscada.core.net;version="0.15",
- org.openscada.core.subscription;version="0.14",
- org.openscada.da.client;version="0.14",
- org.openscada.da.core;version="0.14",
- org.openscada.da.core.browser;version="0.14",
- org.openscada.da.net.handler;version="0.14",
- org.openscada.net.base;version="0.15",
- org.openscada.net.base.data;version="0.15",
- org.openscada.net.mina;version="0.15",
+ org.openscada.core.subscription;version="0.14.0",
+ org.openscada.da.client;version="0.14.0",
+ org.openscada.da.core;version="0.14.0",
+ org.openscada.da.core.browser;version="0.14.0",
+ org.openscada.da.net.handler;version="0.14.0",
+ org.openscada.net.base;version="0.15.0",
+ org.openscada.net.base.data;version="0.15.0",
+ org.openscada.net.mina;version="0.15.0",
  org.openscada.utils.concurrent;version="0.15.0",
  org.openscada.utils.concurrent.task;version="0.15.0",
- org.openscada.utils.exec;version="0.13",
- org.openscada.utils.lang;version="0.13",
- org.osgi.framework;version="1.3",
+ org.openscada.utils.exec;version="0.13.0",
+ org.openscada.utils.lang;version="0.13.0",
+ org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.0"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.da.client.net;version="0.15.0";
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.da.client.net;version="0.16.0";
   uses:="org.openscada.core.client,
    org.openscada.net.base.data,
    org.openscada.utils.exec,
@@ -29,8 +29,8 @@ Export-Package: org.openscada.da.client.net;version="0.15.0";
    org.osgi.framework,
    org.openscada.core,
    org.openscada.da.core",
- org.openscada.da.client.net.operations;version="0.15.0";uses:="org.openscada.utils.exec,org.openscada.core,org.openscada.net.mina"
-Bundle-Version: 0.15.0.qualifier
+ org.openscada.da.client.net.operations;version="0.16.0";uses:="org.openscada.utils.exec,org.openscada.core,org.openscada.net.mina"
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA DA Client Net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH

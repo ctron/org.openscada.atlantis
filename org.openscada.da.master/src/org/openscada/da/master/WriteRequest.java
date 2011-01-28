@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,30 +24,30 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.datasource.WriteInformation;
+import org.openscada.da.core.OperationParameters;
 
 public class WriteRequest
 {
-    private final WriteInformation writeInformation;
+    private final OperationParameters operationParameters;
 
     private final Variant value;
 
     private final Map<String, Variant> attributes;
 
-    public WriteRequest ( final WriteInformation writeInformation, final Variant value )
+    public WriteRequest ( final Variant value, final OperationParameters operationParameters )
     {
-        this ( writeInformation, value, null );
+        this ( value, null, operationParameters );
     }
 
-    public WriteRequest ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
+    public WriteRequest ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
-        this ( writeInformation, null, attributes );
+        this ( null, attributes, operationParameters );
     }
 
-    public WriteRequest ( final WriteInformation writeInformation, final Variant value, final Map<String, Variant> attributes )
+    public WriteRequest ( final Variant value, final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         this.value = value;
-        this.writeInformation = writeInformation;
+        this.operationParameters = operationParameters;
 
         if ( attributes != null )
         {
@@ -64,9 +64,9 @@ public class WriteRequest
         return Collections.unmodifiableMap ( this.attributes );
     }
 
-    public WriteInformation getWriteInformation ()
+    public OperationParameters getOperationParameters ()
     {
-        return this.writeInformation;
+        return this.operationParameters;
     }
 
     public Variant getValue ()

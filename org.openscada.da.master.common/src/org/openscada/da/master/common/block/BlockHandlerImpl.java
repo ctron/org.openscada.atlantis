@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,8 +30,8 @@ import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
@@ -57,6 +57,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
         this.eventProcessor = eventProcessor;
     }
 
+    @Override
     protected DataItemValue processDataUpdate ( final DataItemValue value ) throws Exception
     {
         final Builder builder = new Builder ( value );
@@ -76,7 +77,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             final WriteRequest testRequest;
             if ( result != null )
             {
-                testRequest = new WriteRequest ( request.getWriteInformation (), result.getValue (), result.getAttributes () );
+                testRequest = new WriteRequest ( result.getValue (), result.getAttributes (), request.getOperationParameters () );
             }
             else
             {
@@ -86,7 +87,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             if ( !testRequest.isEmpty () )
             {
                 // if there is a remaining request
-                publishEvent ( testRequest.getWriteInformation ().getUserInformation (), "Blocked write request: " + this.note, makeString ( testRequest ) );
+                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, "Blocked write request: " + this.note, makeString ( testRequest ) );
                 return createBlockedResult ();
             }
         }
@@ -163,7 +164,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    protected WriteAttributeResults handleUpdate ( final WriteInformation writeInformation, final Map<String, Variant> attributes ) throws Exception
+    protected WriteAttributeResults handleUpdate ( final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws Exception
     {
         final Map<String, String> data = new HashMap<String, String> ();
 
@@ -178,9 +179,9 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
         {
             data.put ( "note", factor.asString () );
         }
-        if ( writeInformation != null && writeInformation.getUserInformation () != null )
+        if ( operationParameters != null && operationParameters.getUserInformation () != null )
         {
-            final String name = writeInformation.getUserInformation ().getName ();
+            final String name = operationParameters.getUserInformation ().getName ();
             if ( name != null )
             {
                 data.put ( "user", name );

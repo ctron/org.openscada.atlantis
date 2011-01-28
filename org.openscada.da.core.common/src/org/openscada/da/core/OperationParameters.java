@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -17,13 +17,24 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.core.server;
+package org.openscada.da.core;
 
-import org.openscada.core.Variant;
+import org.openscada.sec.UserInformation;
+import org.openscada.utils.lang.Immutable;
 
-public interface ReadOperationListener
+@Immutable
+public class OperationParameters
 {
-    public void success ( Variant value );
+    private final UserInformation userInformation;
 
-    public void failure ( String errorMessage );
+    public OperationParameters ( final UserInformation userInformation )
+    {
+        this.userInformation = userInformation;
+    }
+
+    public UserInformation getUserInformation ()
+    {
+        return this.userInformation;
+    }
+
 }

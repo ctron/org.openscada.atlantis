@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,10 +30,10 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -63,11 +63,13 @@ public class ProxyDataItem extends DataItemInputOutputChained
         super ( new DataItemInformationBase ( id, EnumSet.allOf ( IODirection.class ) ), executor );
         this.proxyValueHolder = proxyValueHolder;
         this.proxyValueHolder.setListener ( new ItemUpdateListener () {
+            @Override
             public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
             {
                 ProxyDataItem.this.updateData ( value, attributes, cache ? AttributeMode.SET : AttributeMode.UPDATE );
             }
 
+            @Override
             public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
             {
                 // TODO: (jr2) is there something which is to be done?
@@ -86,22 +88,24 @@ public class ProxyDataItem extends DataItemInputOutputChained
     }
 
     @Override
-    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         final FutureTask<WriteAttributeResults> task = new FutureTask<WriteAttributeResults> ( new Callable<WriteAttributeResults> () {
 
+            @Override
             public WriteAttributeResults call () throws Exception
             {
-                return processSetAttributes ( attributes );
+                return processSetAttributes ( attributes, operationParameters );
             }
         } );
         this.executor.execute ( task );
         return task;
     }
 
-    protected WriteAttributeResults processSetAttributes ( final Map<String, Variant> attributes )
+    @Override
+    protected WriteAttributeResults processSetAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
-        final WriteAttributeResults writeAttributeResults = super.processSetAttributes ( attributes );
+        final WriteAttributeResults writeAttributeResults = super.processSetAttributes ( attributes, operationParameters );
         // all attributes which could be successfully processed by chain must be ignored
         for ( final Entry<String, WriteAttributeResult> entry : writeAttributeResults.entrySet () )
         {
@@ -110,26 +114,27 @@ public class ProxyDataItem extends DataItemInputOutputChained
                 attributes.remove ( entry.getKey () );
             }
         }
-        this.writeHandler.writeAttributes ( this.getInformation ().getName (), attributes, writeAttributeResults );
+        this.writeHandler.writeAttributes ( getInformation ().getName (), attributes, writeAttributeResults, operationParameters );
         return writeAttributeResults;
     }
 
     /**
      * @param attributes
      */
-    public void setTemplateAttributes ( final Map<String, Variant> attributes )
+    public void setTemplateAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
-        super.processSetAttributes ( attributes );
+        super.processSetAttributes ( attributes, operationParameters );
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
+            @Override
             public WriteResult call () throws Exception
             {
-                processWriteCalculatedValue ( value );
+                processWriteCalculatedValue ( value, operationParameters );
                 return new WriteResult ();
             }
         } );
@@ -137,11 +142,11 @@ public class ProxyDataItem extends DataItemInputOutputChained
         return task;
     }
 
-    protected void processWriteCalculatedValue ( final Variant value ) throws NotConvertableException, InvalidOperationException
+    protected void processWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters ) throws NotConvertableException, InvalidOperationException
     {
         try
         {
-            this.writeHandler.write ( this.getInformation ().getName (), value );
+            this.writeHandler.write ( getInformation ().getName (), value, operationParameters );
         }
         catch ( final NoConnectionException e )
         {

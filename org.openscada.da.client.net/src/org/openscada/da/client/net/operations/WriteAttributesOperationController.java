@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,6 +22,7 @@ package org.openscada.da.client.net.operations;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.net.handler.Messages;
 import org.openscada.da.net.handler.WriteAttributesOperation;
 import org.openscada.net.base.LongRunningController;
@@ -32,28 +33,28 @@ import org.openscada.utils.exec.LongRunningOperation;
 
 public class WriteAttributesOperationController
 {
-    private LongRunningController _controller = null;
+    private LongRunningController controller = null;
 
     public WriteAttributesOperationController ( final Messenger connection )
     {
-        this._controller = new LongRunningController ( connection, Messages.CC_WRITE_ATTRIBUTES_OPERATION_RESULT );
+        this.controller = new LongRunningController ( connection, Messages.CC_WRITE_ATTRIBUTES_OPERATION_RESULT );
     }
 
     public void register ()
     {
-        this._controller.register ();
+        this.controller.register ();
     }
 
     public void unregister ()
     {
-        this._controller.unregister ();
+        this.controller.unregister ();
     }
 
-    public LongRunningOperation start ( final String itemName, final Map<String, Variant> attributes, final LongRunningListener listener )
+    public LongRunningOperation start ( final String itemName, final Map<String, Variant> attributes, final OperationParameters operationParameters, final LongRunningListener listener )
     {
-        final Message message = WriteAttributesOperation.createRequest ( itemName, attributes );
+        final Message message = WriteAttributesOperation.createRequest ( itemName, attributes, operationParameters );
 
-        return this._controller.start ( message, listener );
+        return this.controller.start ( message, listener );
     }
 
 }

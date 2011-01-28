@@ -15,14 +15,15 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.da.server.stock.business;version="0.14",
  org.openscada.da.server.stock.domain;version="0.14",
  org.openscada.da.server.stock.items;version="0.14",
+ org.openscada.sec;version="0.1.0",
  org.openscada.utils.collection;version="0.13",
  org.openscada.utils.str;version="0.13"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.da.server.stock;version="0.15.0";uses:="org.openscada.da.server.common.configuration,org.openscada.da.server.common.impl",
- org.openscada.da.server.stock.business;version="0.15.0",
- org.openscada.da.server.stock.domain;version="0.15.0",
- org.openscada.da.server.stock.items;version="0.15.0";uses:="org.openscada.da.server.common,org.openscada.da.server.stock.domain,org.openscada.da.server.stock.business"
-Bundle-Version: 0.15.0.qualifier
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.da.server.stock;version="0.16.0";uses:="org.openscada.da.server.common.configuration,org.openscada.da.server.common.impl",
+ org.openscada.da.server.stock.business;version="0.16.0",
+ org.openscada.da.server.stock.domain;version="0.16.0",
+ org.openscada.da.server.stock.items;version="0.16.0";uses:="org.openscada.da.server.common,org.openscada.da.server.stock.domain,org.openscada.da.server.stock.business"
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA DA Stock Server
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH

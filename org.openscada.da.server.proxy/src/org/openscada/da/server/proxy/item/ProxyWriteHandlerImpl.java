@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +25,7 @@ import java.util.Map;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.server.proxy.connection.ProxySubConnection;
@@ -45,24 +46,26 @@ public class ProxyWriteHandlerImpl extends ProxyItemSupport implements ProxyWrit
     /* (non-Javadoc)
      * @see org.openscada.da.server.proxy.ProxyWriteHandler#write(java.lang.String, org.openscada.core.Variant)
      */
-    public void write ( final String itemId, final Variant value ) throws NoConnectionException, OperationException
+    @Override
+    public void write ( final String itemId, final Variant value, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
     {
         final ProxySubConnection subConnection = this.subConnections.get ( this.currentConnection );
         final String actualItemId = ProxyUtils.originalItemId ( itemId, this.separator, this.prefix, subConnection.getPrefix () );
-        subConnection.getConnection ().write ( actualItemId, value );
+        subConnection.getConnection ().write ( actualItemId, value, operationParameters );
     }
 
     /* (non-Javadoc)
      * @see org.openscada.da.server.proxy.ProxyWriteHandler#writeAttributes(java.lang.String, java.util.Map, org.openscada.da.core.WriteAttributeResults)
      */
-    public void writeAttributes ( final String itemId, final Map<String, Variant> attributes, final WriteAttributeResults writeAttributeResults )
+    @Override
+    public void writeAttributes ( final String itemId, final Map<String, Variant> attributes, final WriteAttributeResults writeAttributeResults, final OperationParameters operationParameters )
     {
         final ProxySubConnection subConnection = this.subConnections.get ( this.currentConnection );
         final String actualItemId = ProxyUtils.originalItemId ( itemId, this.separator, this.prefix, subConnection.getPrefix () );
         WriteAttributeResults actualWriteAttributeResults;
         try
         {
-            actualWriteAttributeResults = subConnection.getConnection ().writeAttributes ( actualItemId, attributes );
+            actualWriteAttributeResults = subConnection.getConnection ().writeAttributes ( actualItemId, attributes, operationParameters );
         }
         catch ( final NoConnectionException e )
         {

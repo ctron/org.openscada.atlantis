@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,9 +26,9 @@ import java.util.Map;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -91,7 +91,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
         try
         {
-            final WriteAttributeResults result = handleUpdate ( request.getWriteInformation (), Collections.unmodifiableMap ( attributes ) );
+            final WriteAttributeResults result = handleUpdate ( Collections.unmodifiableMap ( attributes ), request.getOperationParameters () );
 
             // remove processed attributes
             for ( final String attr : result.keySet () )
@@ -130,7 +130,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
      * @return the attribute result of the written attributes
      * @throws Exception if anything goes wrong
      */
-    protected abstract WriteAttributeResults handleUpdate ( final WriteInformation writeInformation, final Map<String, Variant> attributes ) throws Exception;
+    protected abstract WriteAttributeResults handleUpdate ( final Map<String, Variant> attributes, OperationParameters operationParameters ) throws Exception;
 
     protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet ) throws OperationException
     {

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,10 +29,10 @@ import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.da.server.common.WriteAttributesHelper;
 import org.openscada.utils.concurrent.FutureTask;
@@ -60,10 +60,12 @@ public class MemoryDataSource extends AbstractDataSource
         return this.executor;
     }
 
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes )
+    @Override
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         final FutureTask<WriteAttributeResults> task = new FutureTask<WriteAttributeResults> ( new Callable<WriteAttributeResults> () {
 
+            @Override
             public WriteAttributeResults call () throws Exception
             {
                 return MemoryDataSource.this.setAttributes ( attributes );
@@ -74,10 +76,12 @@ public class MemoryDataSource extends AbstractDataSource
         return task;
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
+    @Override
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
+            @Override
             public WriteResult call () throws Exception
             {
                 return MemoryDataSource.this.setValue ( value );

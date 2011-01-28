@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,7 +27,6 @@ import java.util.Set;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
 import org.openscada.da.datasource.DataSource;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 
@@ -82,8 +81,7 @@ public class WriterController
             throw new IllegalStateException ( String.format ( "Data source '%s' is not a data source", dataSourceId ) );
         }
 
-        final WriteInformation wi = new WriteInformation ( null );
-        ( (DataSource)o ).startWriteValue ( wi, Variant.valueOf ( value ) );
+        ( (DataSource)o ).startWriteValue ( Variant.valueOf ( value ), null );
     }
 
     public void writeAsText ( final String itemId, final String value ) throws Exception

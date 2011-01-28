@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,6 +26,7 @@ import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.da.core.Location;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.browser.Entry;
 
@@ -98,17 +99,17 @@ public interface Connection extends org.openscada.core.client.Connection
      */
     public abstract void browse ( Location location, BrowseOperationCallback callback );
 
-    public abstract void write ( String itemName, Variant value ) throws NoConnectionException, OperationException;
+    public abstract void write ( String itemName, Variant value, OperationParameters operationParameters ) throws NoConnectionException, OperationException;
 
-    public abstract void write ( String itemName, Variant value, int timeout ) throws NoConnectionException, OperationException;
+    public abstract void write ( String itemName, Variant value, OperationParameters operationParameters, int timeout ) throws NoConnectionException, OperationException;
 
-    public abstract void write ( String itemName, Variant value, WriteOperationCallback callback );
+    public abstract void write ( String itemName, Variant value, OperationParameters operationParameters, WriteOperationCallback callback );
 
-    public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes ) throws NoConnectionException, OperationException;
+    public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes, OperationParameters operationParameters ) throws NoConnectionException, OperationException;
 
-    public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes, int timeout ) throws NoConnectionException, OperationException;
+    public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes, OperationParameters operationParameters, int timeout ) throws NoConnectionException, OperationException;
 
-    public abstract void writeAttributes ( String itemId, Map<String, Variant> attributes, WriteAttributeOperationCallback callback );
+    public abstract void writeAttributes ( String itemId, Map<String, Variant> attributes, OperationParameters operationParameters, WriteAttributeOperationCallback callback );
 
     public abstract void subscribeFolder ( Location location ) throws NoConnectionException, OperationException;
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,19 +26,17 @@ import java.util.Map;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.SingleDataSourceTracker;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
 import org.openscada.da.server.common.DataItemBase;
-import org.openscada.sec.osgi.AuthorizationHelper;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -49,8 +47,6 @@ import org.slf4j.LoggerFactory;
 
 public class DataItemTargetImpl extends DataItemBase implements DataSourceListener
 {
-    private static final String OBJECT_TYPE = "DataItem";
-
     private final static Logger logger = LoggerFactory.getLogger ( DataItemTargetImpl.class );
 
     private DataItemValue currentValue = new DataItemValue ();
@@ -59,20 +55,13 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
     private DataSource dataSource;
 
-    private final AuthorizationHelper authorization;
-
-    private final String id;
-
-    public DataItemTargetImpl ( final ObjectPoolTracker poolTracker, final DataItemInformation information, final String dataSourceId, final AuthorizationHelper authorization ) throws InvalidSyntaxException
+    public DataItemTargetImpl ( final ObjectPoolTracker poolTracker, final DataItemInformation information, final String dataSourceId ) throws InvalidSyntaxException
     {
         super ( information );
 
-        this.id = information.getName ();
-
-        this.authorization = authorization;
-
         this.tracker = new SingleDataSourceTracker ( poolTracker, dataSourceId, new ServiceListener () {
 
+            @Override
             public void dataSourceChanged ( final DataSource dataSource )
             {
                 DataItemTargetImpl.this.setDataSource ( dataSource );
@@ -138,27 +127,24 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         }
     }
 
+    @Override
     public synchronized Map<String, Variant> getAttributes ()
     {
         return Collections.unmodifiableMap ( this.currentValue.getAttributes () );
     }
 
+    @Override
     public synchronized NotifyFuture<Variant> readValue () throws InvalidOperationException
     {
         return new InstantFuture<Variant> ( this.currentValue.getValue () );
     }
 
-    public synchronized NotifyFuture<WriteAttributeResults> startSetAttributes ( final UserSession session, final Map<String, Variant> attributes )
+    @Override
+    public synchronized NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
-        final NotifyFuture<WriteAttributeResults> future = this.authorization.authorize ( this.id, OBJECT_TYPE, "WRITE_ATTRIBUTES", session.getUserInformation (), makeSetAttributesContext ( attributes ) ).asFuture ();
-        if ( future != null )
-        {
-            return future;
-        }
-
         if ( this.dataSource != null )
         {
-            return this.dataSource.startWriteAttributes ( new WriteInformation ( session.getUserInformation () ), attributes );
+            return this.dataSource.startWriteAttributes ( attributes, operationParameters );
         }
         else
         {
@@ -166,36 +152,17 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         }
     }
 
-    private Map<String, Object> makeSetAttributesContext ( final Map<String, Variant> attributes )
+    @Override
+    public synchronized NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
-        final Map<String, Object> context = new HashMap<String, Object> ( 1 );
-        context.put ( "attributes", attributes );
-        return context;
-    }
-
-    public synchronized NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
-    {
-        final NotifyFuture<WriteResult> future = this.authorization.authorize ( this.id, OBJECT_TYPE, "WRITE", session.getUserInformation (), makeWriteValueContext ( value ) ).asFuture ();
-        if ( future != null )
-        {
-            return future;
-        }
-
         if ( this.dataSource != null )
         {
-            return this.dataSource.startWriteValue ( new WriteInformation ( session.getUserInformation () ), value );
+            return this.dataSource.startWriteValue ( value, operationParameters );
         }
         else
         {
             return new InstantErrorFuture<WriteResult> ( new OperationException ( "Disconnected data source" ) );
         }
-    }
-
-    private Map<String, Object> makeWriteValueContext ( final Variant value )
-    {
-        final Map<String, Object> context = new HashMap<String, Object> ( 1 );
-        context.put ( "value", value );
-        return context;
     }
 
     public synchronized void dispose ()
@@ -206,6 +173,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         }
     }
 
+    @Override
     public synchronized void stateChanged ( final DataItemValue value )
     {
         logger.debug ( "State changed: {}", value );
@@ -213,7 +181,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         if ( value == null )
         {
             this.currentValue = value;
-            notifyData ( Variant.NULL, new HashMap<String, Variant> (), true );
+            notifyData ( Variant.NULL, new HashMap<String, Variant> ( 1 ), true );
         }
         else
         {

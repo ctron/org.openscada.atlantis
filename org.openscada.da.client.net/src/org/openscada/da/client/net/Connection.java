@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -46,6 +46,7 @@ import org.openscada.da.client.net.operations.BrowseOperationController;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
 import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.Location;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.net.handler.ListBrowser;
@@ -118,6 +119,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     {
         this.messenger.setHandler ( Messages.CC_NOTIFY_DATA, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 notifyDataChange ( message );
@@ -126,6 +128,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
         this.messenger.setHandler ( Messages.CC_BROWSER_EVENT, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 logger.debug ( "Browse event message from server" );
@@ -135,6 +138,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
         this.messenger.setHandler ( Messages.CC_SUBSCRIPTION_CHANGE, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 logger.debug ( "received subscription change" );
@@ -160,6 +164,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         {
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.folderChanged ( added, removed, full );
@@ -175,6 +180,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         {
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.notifyDataChange ( value, attributes, cache );
@@ -282,14 +288,16 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     // write operation
 
-    public void write ( final String item, final Variant value ) throws NoConnectionException, OperationException
+    @Override
+    public void write ( final String item, final Variant value, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
     {
-        write ( item, value, null );
+        write ( item, value, operationParameters, null );
     }
 
-    public void write ( final String item, final Variant value, final int timeout ) throws NoConnectionException, OperationException
+    @Override
+    public void write ( final String item, final Variant value, final OperationParameters operationParameters, final int timeout ) throws NoConnectionException, OperationException
     {
-        final LongRunningOperation op = this.writeController.start ( item, value, null );
+        final LongRunningOperation op = this.writeController.start ( item, value, operationParameters, null );
         try
         {
             op.waitForCompletion ( timeout );
@@ -301,12 +309,14 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         completeWrite ( op );
     }
 
-    public void write ( final String item, final Variant value, final WriteOperationCallback callback )
+    @Override
+    public void write ( final String item, final Variant value, final OperationParameters operationParameters, final WriteOperationCallback callback )
     {
         try
         {
-            this.writeController.start ( item, value, new LongRunningListener () {
+            this.writeController.start ( item, value, operationParameters, new LongRunningListener () {
 
+                @Override
                 public void stateChanged ( final LongRunningOperation operation, final LongRunningState state, final Throwable error )
                 {
                     switch ( state )
@@ -373,14 +383,16 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     }
 
     // write attributes operation
-    public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes ) throws NoConnectionException, OperationException
+    @Override
+    public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
     {
-        return writeAttributes ( itemId, attributes, 0 );
+        return writeAttributes ( itemId, attributes, operationParameters, 0 );
     }
 
-    public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes, final int timeout ) throws NoConnectionException, OperationException
+    @Override
+    public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final int timeout ) throws NoConnectionException, OperationException
     {
-        final LongRunningOperation op = this.writeAttributesController.start ( itemId, attributes, null );
+        final LongRunningOperation op = this.writeAttributesController.start ( itemId, attributes, operationParameters, null );
         try
         {
             op.waitForCompletion ();
@@ -392,12 +404,14 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         return completeWriteAttributes ( op );
     }
 
-    public void writeAttributes ( final String item, final Map<String, Variant> attributes, final WriteAttributeOperationCallback callback )
+    @Override
+    public void writeAttributes ( final String item, final Map<String, Variant> attributes, final OperationParameters operationParameters, final WriteAttributeOperationCallback callback )
     {
         try
         {
-            this.writeAttributesController.start ( item, attributes, new LongRunningListener () {
+            this.writeAttributesController.start ( item, attributes, operationParameters, new LongRunningListener () {
 
+                @Override
                 public void stateChanged ( final LongRunningOperation operation, final LongRunningState state, final Throwable error )
                 {
                     switch ( state )
@@ -465,11 +479,13 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         return null;
     }
 
+    @Override
     public Entry[] browse ( final String[] path ) throws NoConnectionException, OperationException
     {
         return browse ( new Location ( path ) );
     }
 
+    @Override
     public Entry[] browse ( final String[] path, final int timeout ) throws OperationException
     {
         try
@@ -482,6 +498,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         }
     }
 
+    @Override
     public void browse ( final String[] path, final BrowseOperationCallback callback )
     {
         browse ( new Location ( path ), callback );
@@ -527,33 +544,39 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         return null;
     }
 
+    @Override
     public void subscribeItem ( final String item ) throws NoConnectionException
     {
         logger.debug ( "Subscribe to item: {}", item );
         this.messenger.sendMessage ( Messages.subscribeItem ( item ) );
     }
 
+    @Override
     public void unsubscribeItem ( final String itemId ) throws NoConnectionException
     {
         this.messenger.sendMessage ( Messages.unsubscribeItem ( itemId ) );
     }
 
+    @Override
     public ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
     {
         return this.itemListeners.put ( itemId, listener );
     }
 
+    @Override
     public FolderListener setFolderListener ( final Location location, final FolderListener listener )
     {
         return this.folderListeners.put ( location, listener );
     }
 
+    @Override
     public void subscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
         logger.debug ( "Subscribe to folder: {}", location );
         this.messenger.sendMessage ( ListBrowser.createSubscribe ( location.asArray () ) );
     }
 
+    @Override
     public void unsubscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
         this.messenger.sendMessage ( ListBrowser.createUnsubscribe ( location.asArray () ) );
@@ -567,6 +590,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
         getExecutor ().execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 for ( final Map.Entry<Location, FolderListener> entry : listeners.entrySet () )
@@ -598,6 +622,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         {
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.notifySubscriptionChange ( subscriptionState, null );
@@ -606,11 +631,13 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         }
     }
 
+    @Override
     public Entry[] browse ( final Location location ) throws NoConnectionException, OperationException
     {
         return browse ( location, 0 );
     }
 
+    @Override
     public Entry[] browse ( final Location location, final int timeout ) throws NoConnectionException, OperationException
     {
         final LongRunningOperation op = this.browseController.start ( location.asArray (), null );
@@ -625,12 +652,14 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         }
     }
 
+    @Override
     public void browse ( final Location location, final BrowseOperationCallback callback )
     {
         try
         {
             this.browseController.start ( location.asArray (), new LongRunningListener () {
 
+                @Override
                 public void stateChanged ( final LongRunningOperation operation, final LongRunningState state, final Throwable error )
                 {
                     switch ( state )
@@ -669,6 +698,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         }
     }
 
+    @Override
     public Executor getExecutor ()
     {
         return this.executor;

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
-Import-Package: org.apache.commons.beanutils;version="1.8",
- org.apache.log4j;version="1.2",
- org.openscada.core;version="0.14",
+Import-Package: org.apache.commons.beanutils;version="1.8.0",
+ org.apache.log4j;version="1.2.0",
+ org.openscada.core;version="0.14.0",
  org.openscada.core.server;version="0.14.0",
  org.openscada.core.server.common;version="0.15.0",
  org.openscada.core.server.common.session;version="0.15.0",
@@ -15,16 +15,17 @@ Import-Package: org.apache.commons.beanutils;version="1.8",
  org.openscada.da.server.common.chain.storage;version="0.14",
  org.openscada.da.server.common.factory;version="0.14",
  org.openscada.da.server.common.impl;version="0.14",
- org.openscada.utils.concurrent;version="0.13",
- org.springframework.beans;version="2.5",
- org.springframework.beans.factory;version="2.5",
- org.springframework.context;version="2.5",
- org.springframework.core.io;version="2.5",
- org.springframework.core.task;version="2.5",
- org.springframework.core.task.support;version="2.5",
- org.springframework.util;version="2.5"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.da.server.spring;version="0.15.0";
+ org.openscada.sec;version="0.1.0",
+ org.openscada.utils.concurrent;version="0.13.0",
+ org.springframework.beans;version="2.5.0",
+ org.springframework.beans.factory;version="2.5.0",
+ org.springframework.context;version="2.5.0",
+ org.springframework.core.io;version="2.5.0",
+ org.springframework.core.task;version="2.5.0",
+ org.springframework.core.task.support;version="2.5.0",
+ org.springframework.util;version="2.5.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.da.server.spring;version="0.16.0";
   uses:="org.openscada.core.server.common.session,
    org.openscada.da.server.common,
    org.openscada.da.server.browser.common,
@@ -36,7 +37,7 @@ Export-Package: org.openscada.da.server.spring;version="0.15.0";
    org.openscada.core,
    org.openscada.da.server.common.chain.storage,
    org.springframework.beans.factory",
- org.openscada.da.server.spring.tools.csv;version="0.15.0";
+ org.openscada.da.server.spring.tools.csv;version="0.16.0";
   uses:="org.openscada.core.server.common.session,
    org.openscada.da.server.spring,
    org.springframework.core.io,
@@ -46,7 +47,7 @@ Export-Package: org.openscada.da.server.spring;version="0.15.0";
    org.openscada.core,
    org.springframework.core.task,
    org.springframework.beans.factory"
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA DA Server Spring
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH

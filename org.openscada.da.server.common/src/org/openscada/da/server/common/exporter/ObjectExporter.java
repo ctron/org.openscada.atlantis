@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,6 +35,7 @@ import org.apache.log4j.Logger;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItem;
@@ -43,7 +44,6 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
-import org.openscada.sec.UserInformation;
 import org.openscada.utils.lang.Disposable;
 
 public class ObjectExporter implements PropertyChangeListener, Disposable
@@ -72,6 +72,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
         this.factory = rootFactory.createSubFolderFactory ( localId );
     }
 
+    @Override
     public void dispose ()
     {
         this.factory.dispose ();
@@ -176,7 +177,8 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
         {
             return this.factory.createInputOutput ( pd.getName (), new WriteHandler () {
 
-                public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
+                @Override
+                public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
                 {
                     ObjectExporter.this.writeAttribute ( pd, value );
                 }
@@ -191,6 +193,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
             final DataItemCommand item = this.factory.createCommand ( pd.getName () );
             item.addListener ( new DataItemCommand.Listener () {
 
+                @Override
                 public void command ( final Variant value ) throws Exception
                 {
                     ObjectExporter.this.writeAttribute ( pd, value );
@@ -318,6 +321,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
         }
     }
 
+    @Override
     public synchronized void propertyChange ( final PropertyChangeEvent evt )
     {
         updateAttribute ( evt.getPropertyName (), evt.getNewValue (), null, null );

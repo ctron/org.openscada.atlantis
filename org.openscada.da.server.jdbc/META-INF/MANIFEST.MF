@@ -19,19 +19,16 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.utils.lifecycle;version="0.13.1",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.jdbc;version="0.15.0";
-  uses:="org.openscada.da.server.browser.common,
-   org.apache.log4j,
+Export-Package: org.openscada.da.server.jdbc;version="0.16.0";
+  uses:="org.openscada.da.server.common.chain,
+   org.openscada.da.server.browser.common,
    org.openscada.da.server.common.impl,
    org.openscada.da.server.common.item.factory,
-   org.openscada.da.server.common.chain,
-   org.openscada.da.server.common.chain.item,
-   org.openscada.da.server.common,
+   org.openscada.core,
    org.openscada.da.core,
-   org.apache.xmlbeans,
    org.w3c.dom,
-   org.openscada.core"
-Bundle-Version: 0.15.0.qualifier
+   org.openscada.da.jdbc.configuration"
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA DA JDBC Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: TH4 SYSTEMS GmbH

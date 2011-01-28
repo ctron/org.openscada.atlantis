@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,9 +28,9 @@ import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
@@ -74,13 +74,13 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         this.ignoreTimestampOnlyChange = controller.getModel ().isIgnoreTimestampOnlyChange ();
         this.qualityErrorIfLessThen = controller.getModel ().getQualityErrorIfLessThen ();
 
-        this.updateData ( null, new MapBuilder<String, Variant> ().put ( "opc.connection.error", Variant.TRUE ).put ( "opc.itemId", new Variant ( opcItemId ) ).getMap (), AttributeMode.SET );
+        updateData ( null, new MapBuilder<String, Variant> ().put ( "opc.connection.error", Variant.TRUE ).put ( "opc.itemId", new Variant ( opcItemId ) ).getMap (), AttributeMode.SET );
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters )
     {
-        if ( !this.getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
+        if ( !getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
         {
             logger.warn ( String.format ( "Failed to write to read-only item (%s)", this.opcItemId ) );
             return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
@@ -105,18 +105,20 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         return new WriteFuture ( this, future );
     }
 
+    @Override
     public void suspend ()
     {
-        logger.info ( "Suspend item: " + this.getInformation ().getName () );
+        logger.info ( "Suspend item: " + getInformation ().getName () );
 
         this.suspended = true;
         this.controller.getIoManager ().suspendItem ( this.opcItemId );
         this.controller.getIoManager ().unrequestItem ( this.opcItemId );
     }
 
+    @Override
     public void wakeup ()
     {
-        logger.info ( "Wakeup item: " + this.getInformation ().getName () );
+        logger.info ( "Wakeup item: " + getInformation ().getName () );
 
         this.suspended = false;
         this.controller.getIoManager ().wakeupItem ( this.opcItemId );
@@ -233,20 +235,20 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         attributes.putAll ( Helper.convertToAttributes ( entry.getKey () ) );
         attributes.putAll ( Helper.convertToAttributes ( entry.getValue () ) );
 
-        this.updateData ( null, attributes, AttributeMode.UPDATE );
+        updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
     public void itemUnrealized ()
     {
         final Map<String, Variant> attributes = Helper.clearAttributes ();
         attributes.put ( "opc.connection.error", Variant.TRUE );
-        this.updateData ( null, attributes, AttributeMode.UPDATE );
+        updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
     @Override
-    public WriteAttributeResults processSetAttributes ( final Map<String, Variant> attributes )
+    public WriteAttributeResults processSetAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
-        return super.processSetAttributes ( attributes );
+        return super.processSetAttributes ( attributes, operationParameters );
     }
 
 }

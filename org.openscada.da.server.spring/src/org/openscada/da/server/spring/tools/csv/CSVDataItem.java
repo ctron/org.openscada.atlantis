@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,8 +23,8 @@ import java.util.EnumSet;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.MemoryItemChained;
@@ -57,24 +57,24 @@ public class CSVDataItem extends MemoryItemChained
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters )
     {
         fireWrite ( value );
         if ( isReadable () )
         {
-            return super.startWriteCalculatedValue ( session, value );
+            return super.startWriteCalculatedValue ( value, operationParameters );
         }
         return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         if ( !isWriteable () )
         {
             return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
         }
-        return super.startWriteValue ( session, value );
+        return super.startWriteValue ( value, operationParameters );
     }
 
     private void fireWrite ( final Variant value )
@@ -93,12 +93,12 @@ public class CSVDataItem extends MemoryItemChained
 
     public boolean isReadable ()
     {
-        return this.getInformation ().getIODirection ().contains ( IODirection.INPUT );
+        return getInformation ().getIODirection ().contains ( IODirection.INPUT );
     }
 
     public boolean isWriteable ()
     {
-        return this.getInformation ().getIODirection ().contains ( IODirection.OUTPUT );
+        return getInformation ().getIODirection ().contains ( IODirection.OUTPUT );
     }
 
 }

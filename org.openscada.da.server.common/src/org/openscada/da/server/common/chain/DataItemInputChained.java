@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,10 +26,10 @@ import java.util.concurrent.Executor;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
 import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
@@ -133,12 +133,14 @@ public class DataItemInputChained extends DataItemBaseChained
         this.secondaryAttributes.set ( newValue, newAttributes );
     }
 
+    @Override
     public NotifyFuture<Variant> readValue () throws InvalidOperationException
     {
         return new InstantFuture<Variant> ( this.secondaryValue );
     }
 
-    public NotifyFuture<WriteResult> startWriteValue ( final UserSession session, final Variant value )
+    @Override
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         return new InstantErrorFuture<WriteResult> ( new InvalidOperationException () );
     }

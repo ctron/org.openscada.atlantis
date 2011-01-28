@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,7 +29,7 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.datasource.WriteInformation;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
@@ -180,7 +180,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
         if ( request != null )
         {
-            final WriteInformation wi = request.getWriteInformation ();
+            final OperationParameters wi = request.getOperationParameters ();
             if ( wi != null )
             {
                 final UserInformation ui = wi.getUserInformation ();

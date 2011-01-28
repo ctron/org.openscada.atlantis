@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,13 +19,16 @@
 
 package org.openscada.net.base.data;
 
+import org.openscada.utils.lang.Immutable;
+
 /**
  * A void value type.
  * <p>
  * A void instance is equal to all other void instances since they don't have a real value.
  * 
- * @author jens
+ * @author Jens Reimann
  */
+@Immutable
 public class VoidValue extends Value
 {
     public final static VoidValue INSTANCE = new VoidValue ();

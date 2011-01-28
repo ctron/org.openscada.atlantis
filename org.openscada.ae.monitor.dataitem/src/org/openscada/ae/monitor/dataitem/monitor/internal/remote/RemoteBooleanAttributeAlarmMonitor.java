@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -33,7 +33,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.openscada.da.datasource.WriteInformation;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -147,7 +147,7 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
 
         for ( final MasterItem item : getMasterItems () )
         {
-            item.startWriteAttributes ( new WriteInformation ( aknUser ), attributes );
+            item.startWriteAttributes ( attributes, new OperationParameters ( aknUser ) );
         }
     }
 
@@ -159,7 +159,7 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
 
         for ( final MasterItem item : getMasterItems () )
         {
-            item.startWriteAttributes ( new WriteInformation ( null ), attributes );
+            item.startWriteAttributes ( attributes, new OperationParameters ( UserInformation.ANONYMOUS ) );
         }
     }
 

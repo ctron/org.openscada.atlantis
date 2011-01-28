@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,18 +26,17 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
-import org.openscada.sec.UserInformation;
 import org.openscada.utils.lang.Immutable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class Update
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( Update.class );
 
     private final String id;
@@ -108,14 +107,15 @@ public class Update
         this.itemFactory = parentItemFactory.createSubFolderFactory ( this.id );
         this.item = this.itemFactory.createInputOutput ( "START", new WriteHandler () {
 
-            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
+            @Override
+            public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
             {
-                performUpdate ( userInformation, value );
+                performUpdate ( value, operationParameters );
             }
         } );
     }
 
-    protected void performUpdate ( final UserInformation userInformation, final Variant value )
+    protected void performUpdate ( final Variant value, final OperationParameters operationParameters )
     {
         try
         {

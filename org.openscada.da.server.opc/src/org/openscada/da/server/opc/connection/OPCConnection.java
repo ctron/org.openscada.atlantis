@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,6 +31,7 @@ import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemCommand;
@@ -43,7 +44,6 @@ import org.openscada.da.server.opc.Hive;
 import org.openscada.da.server.opc.browser.OPCRootTreeFolder;
 import org.openscada.da.server.opc.preload.ItemSource;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
-import org.openscada.sec.UserInformation;
 import org.openscada.utils.collection.MapBuilder;
 
 public class OPCConnection implements PropertyChangeListener
@@ -164,6 +164,7 @@ public class OPCConnection implements PropertyChangeListener
         this.connectDataItem = this.connectionItemFactory.createCommand ( "connect" );
         this.connectDataItem.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 connect ();
@@ -173,6 +174,7 @@ public class OPCConnection implements PropertyChangeListener
         this.disconnectDataItem = this.connectionItemFactory.createCommand ( "disconnect" );
         this.disconnectDataItem.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 disconnect ();
@@ -182,6 +184,7 @@ public class OPCConnection implements PropertyChangeListener
         this.reconnectDataItem = this.connectionItemFactory.createCommand ( "reconnect" );
         this.reconnectDataItem.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 OPCConnection.this.reconnect ();
@@ -192,7 +195,8 @@ public class OPCConnection implements PropertyChangeListener
 
         this.loopDelayDataItem = this.connectionItemFactory.createInputOutput ( "loopDelay", new WriteHandler () {
 
-            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
+            @Override
+            public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
             {
                 setLoopDelay ( value );
             }
@@ -200,7 +204,8 @@ public class OPCConnection implements PropertyChangeListener
 
         this.loopDelayDataItem = this.connectionItemFactory.createInputOutput ( "defaultTimeout", new WriteHandler () {
 
-            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
+            @Override
+            public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
             {
                 try
                 {
@@ -216,6 +221,7 @@ public class OPCConnection implements PropertyChangeListener
         this.suicideCommandDataItem = this.connectionItemFactory.createCommand ( "suicide" );
         this.suicideCommandDataItem.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 suicide ();
@@ -378,6 +384,7 @@ public class OPCConnection implements PropertyChangeListener
         return this.socketTimeout;
     }
 
+    @Override
     public void propertyChange ( final PropertyChangeEvent evt )
     {
         final String propertyName = evt.getPropertyName ();

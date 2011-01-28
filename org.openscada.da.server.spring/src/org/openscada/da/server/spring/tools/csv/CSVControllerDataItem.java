@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,7 +23,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.session.UserSession;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.utils.concurrent.FutureTask;
@@ -46,13 +46,14 @@ public class CSVControllerDataItem extends DataItemInputOutputChained
     }
 
     @Override
-    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final UserSession session, final Variant value )
+    protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters )
     {
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
+            @Override
             public WriteResult call () throws Exception
             {
-                performUpdate ( value );
+                performUpdate ( value, operationParameters );
                 return new WriteResult ();
             }
         } );
@@ -60,7 +61,7 @@ public class CSVControllerDataItem extends DataItemInputOutputChained
         return task;
     }
 
-    protected void performUpdate ( final Variant value )
+    protected void performUpdate ( final Variant value, final OperationParameters operationParameters )
     {
         this.item.updateData ( value, null, null );
     }

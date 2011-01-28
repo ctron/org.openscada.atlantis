@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -90,6 +90,7 @@ public class CSVLoader extends Loader implements InitializingBean
         this._controllerStorages = controllerStorages;
     }
 
+    @Override
     public void afterPropertiesSet () throws Exception
     {
         Assert.notNull ( this.hive, "'hive' must not be null" );
@@ -161,7 +162,7 @@ public class CSVLoader extends Loader implements InitializingBean
         // set the initial value
         try
         {
-            controllerItem.startWriteValue ( null, entry.getInitialValue () ).get ();
+            controllerItem.startWriteValue ( entry.getInitialValue (), null ).get ();
         }
         catch ( final Throwable e )
         {

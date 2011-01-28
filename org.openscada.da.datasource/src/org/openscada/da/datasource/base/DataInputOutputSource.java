@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * This library is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU Lesser General Public
+ * License as published by the Free Software Foundation; either
+ * version 2.1 of the License, or (at your option) any later version.
+ *
+ * This library is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the GNU
+ * Lesser General Public License for more details.
+
+ * You should have received a copy of the GNU Lesser General Public
+ * License along with this library; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
+ */
+
 package org.openscada.da.datasource.base;
 
 import java.util.Map;
@@ -6,9 +25,9 @@ import java.util.concurrent.Executor;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
-import org.openscada.da.datasource.WriteInformation;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -22,14 +41,14 @@ public class DataInputOutputSource extends DataInputSource
         super ( executor );
     }
 
-    public DataInputOutputSource ( final Executor executor, WriteHandler writeHandler )
+    public DataInputOutputSource ( final Executor executor, final WriteHandler writeHandler )
     {
         super ( executor );
         this.writeHandler = writeHandler;
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value )
+    public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         final WriteHandler writeHandler = this.writeHandler;
 
@@ -41,9 +60,10 @@ public class DataInputOutputSource extends DataInputSource
 
         final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
 
+            @Override
             public WriteResult call () throws Exception
             {
-                writeHandler.handleWrite ( writeInformation.getUserInformation (), value );
+                writeHandler.handleWrite ( operationParameters.getUserInformation (), value );
                 return new WriteResult ();
             }
         } );
@@ -54,12 +74,12 @@ public class DataInputOutputSource extends DataInputSource
     }
 
     @Override
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( WriteInformation writeInformation, Map<String, Variant> attributes )
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         return new InstantErrorFuture<WriteAttributeResults> ( new InvalidOperationException ().fillInStackTrace () );
     }
 
-    public void setWriteHandler ( WriteHandler writeHandler )
+    public void setWriteHandler ( final WriteHandler writeHandler )
     {
         this.writeHandler = writeHandler;
     }

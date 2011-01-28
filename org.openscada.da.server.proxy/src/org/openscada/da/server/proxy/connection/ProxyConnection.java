@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,6 +27,7 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.client.Connection;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemCommand;
@@ -37,7 +38,6 @@ import org.openscada.da.server.proxy.Hive;
 import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
-import org.openscada.sec.UserInformation;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.lifecycle.LifecycleAware;
 
@@ -117,6 +117,7 @@ public class ProxyConnection implements LifecycleAware
     /**
      * 
      */
+    @Override
     public void start ()
     {
         this.switchStarted = createItem ( "switch.started" );
@@ -127,7 +128,8 @@ public class ProxyConnection implements LifecycleAware
         // active Connection
         this.activeConnectionItem = new WriteHandlerItem ( itemName ( "active" ), new WriteHandler () {
 
-            public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
+            @Override
+            public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
             {
                 final String newId = value.asString ( null );
                 ProxyConnection.this.switchTo ( newId );
@@ -148,6 +150,7 @@ public class ProxyConnection implements LifecycleAware
         this.connectItem = new DataItemCommand ( itemName ( "connect" ), this.hive.getOperationService () );
         this.connectItem.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value ) throws Exception
             {
                 ProxyConnection.this.group.connectCurrentConnection ();
@@ -159,6 +162,7 @@ public class ProxyConnection implements LifecycleAware
         this.disconnectItem = new DataItemCommand ( itemName ( "disconnect" ), this.hive.getOperationService () );
         this.disconnectItem.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value ) throws Exception
             {
                 ProxyConnection.this.group.connectCurrentConnection ();
@@ -227,6 +231,7 @@ public class ProxyConnection implements LifecycleAware
     /**
      * 
      */
+    @Override
     public void stop ()
     {
         this.hive.removeItemFactory ( this.factory );

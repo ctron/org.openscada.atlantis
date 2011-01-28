@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,6 +22,7 @@ package org.openscada.da.datasource;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -34,7 +35,7 @@ public interface DataSource
 
     public abstract void removeListener ( final DataSourceListener listener );
 
-    public abstract NotifyFuture<WriteResult> startWriteValue ( final WriteInformation writeInformation, final Variant value );
+    public abstract NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters );
 
-    public abstract NotifyFuture<WriteAttributeResults> startWriteAttributes ( final WriteInformation writeInformation, final Map<String, Variant> attributes );
+    public abstract NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters );
 }

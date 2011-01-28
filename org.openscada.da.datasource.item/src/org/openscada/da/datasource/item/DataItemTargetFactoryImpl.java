@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,7 +26,6 @@ import java.util.Map;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.sec.osgi.AuthorizationHelper;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
@@ -48,12 +47,9 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
 
     private final ServiceRegistration itemPoolHandle;
 
-    private final AuthorizationHelper authorization;
-
-    public DataItemTargetFactoryImpl ( final BundleContext context, final AuthorizationHelper authorization ) throws InvalidSyntaxException
+    public DataItemTargetFactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
-        this.authorization = authorization;
         this.itemPool = new ObjectPoolImpl ();
 
         this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class.getName () );
@@ -105,7 +101,7 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
         }
 
         final String datasourceId = parameters.get ( "datasource.id" );
-        final DataItemTargetImpl item = new DataItemTargetImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId, this.authorization );
+        final DataItemTargetImpl item = new DataItemTargetImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
