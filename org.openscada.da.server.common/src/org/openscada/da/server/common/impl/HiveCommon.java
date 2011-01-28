@@ -653,7 +653,6 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private OperationParameters makeOperationParameters ( final SessionCommon session, final OperationParameters operationParameters ) throws PermissionDeniedException
     {
-
         UserInformation sessionInformation = session.getUserInformation ();
         if ( sessionInformation == null )
         {
@@ -669,15 +668,28 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
         if ( operationParameters.getUserInformation () != null && operationParameters.getUserInformation ().getName () != null )
         {
-            // try to set proxy user
-            final AuthorizationResult result = authorize ( "SESSION", operationParameters.getUserInformation ().getName (), "PROXY_USER", session.getUserInformation (), null );
-            if ( !result.isGranted () )
-            {
-                // not allowed to use proxy user
-                throw new PermissionDeniedException ( result.getErrorCode (), result.getMessage () );
-            }
+            final String proxyUser = operationParameters.getUserInformation ().getName ();
 
-            userInformation = new UserInformation ( operationParameters.getUserInformation ().getName (), sessionInformation.getRoles () );
+            // check if user differs
+            if ( !proxyUser.equals ( session.getUserInformation () ) )
+            {
+                // try to set proxy user
+                final AuthorizationResult result = authorize ( "SESSION", proxyUser, "PROXY_USER", session.getUserInformation (), null );
+                if ( !result.isGranted () )
+                {
+                    // not allowed to use proxy user
+                    throw new PermissionDeniedException ( result.getErrorCode (), result.getMessage () );
+                }
+
+                userInformation = new UserInformation ( operationParameters.getUserInformation ().getName (), sessionInformation.getRoles () );
+
+            }
+            else
+            {
+                logger.debug ( "Session user and proxy user match ... using session user" );
+                // session is already is proxy user
+                userInformation = sessionInformation;
+            }
         }
         else
         {
