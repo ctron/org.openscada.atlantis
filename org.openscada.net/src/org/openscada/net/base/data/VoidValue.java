@@ -33,6 +33,10 @@ public class VoidValue extends Value
 {
     public final static VoidValue INSTANCE = new VoidValue ();
 
+    protected VoidValue ()
+    {
+    }
+
     @Override
     public int hashCode ()
     {

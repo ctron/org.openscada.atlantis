@@ -123,7 +123,7 @@ public class ItemListHelper
     {
         if ( removed == null )
         {
-            return new VoidValue ();
+            return VoidValue.INSTANCE;
         }
 
         final ListValue result = new ListValue ();
