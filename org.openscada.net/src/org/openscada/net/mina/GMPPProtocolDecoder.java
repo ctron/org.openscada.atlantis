@@ -91,7 +91,7 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
         case VT_DOUBLE:
             return decodeDoubleValueFromStream ( buffer );
         case VT_BOOLEAN:
-            return new BooleanValue ( buffer.get () != 0 );
+            return BooleanValue.valueOf ( buffer.get () != 0 );
         case VT_VOID:
             return VoidValue.INSTANCE;
             // nothing to read

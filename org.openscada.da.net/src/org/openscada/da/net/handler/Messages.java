@@ -89,7 +89,7 @@ public class Messages extends org.openscada.core.net.MessageHelper
         // flag if initial bit is set
         if ( cache )
         {
-            msg.getValues ().put ( "cache-read", new VoidValue () );
+            msg.getValues ().put ( "cache-read", VoidValue.INSTANCE );
         }
 
         // encode message

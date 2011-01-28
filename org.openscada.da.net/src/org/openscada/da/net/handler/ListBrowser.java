@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -46,7 +46,7 @@ import org.openscada.utils.lang.Holder;
 
 public class ListBrowser
 {
-    private static Logger _log = Logger.getLogger ( ListBrowser.class );
+    private static Logger logger = Logger.getLogger ( ListBrowser.class );
 
     public static Message createRequest ( final String[] path )
     {
@@ -145,13 +145,13 @@ public class ListBrowser
 
         if ( !message.getValues ().containsKey ( field ) )
         {
-            _log.warn ( "Required value '" + field + "' missing" );
+            logger.warn ( "Required value '" + field + "' missing" );
             return;
         }
 
         if ( ! ( message.getValues ().get ( field ) instanceof ListValue ) )
         {
-            _log.warn ( "'" + field + "' must be of type 'list'" );
+            logger.warn ( "'" + field + "' must be of type 'list'" );
             return;
         }
 
@@ -161,7 +161,7 @@ public class ListBrowser
         {
             if ( ! ( value instanceof MapValue ) )
             {
-                _log.warn ( "list value is not of type 'map'. Skipping!" );
+                logger.warn ( "list value is not of type 'map'. Skipping!" );
                 continue;
             }
             final MapValue mapValue = (MapValue)value;
@@ -169,29 +169,29 @@ public class ListBrowser
             Entry entry = null;
             if ( !mapValue.containsKey ( "type" ) )
             {
-                _log.warn ( "map misses required value 'type'" );
+                logger.warn ( "map misses required value 'type'" );
                 continue;
             }
             if ( !mapValue.containsKey ( "name" ) )
             {
-                _log.warn ( "map misses required value 'name'" );
+                logger.warn ( "map misses required value 'name'" );
                 continue;
             }
             if ( !mapValue.containsKey ( "attributes" ) )
             {
-                _log.warn ( "map misses required value 'attributes'" );
+                logger.warn ( "map misses required value 'attributes'" );
                 continue;
             }
             if ( ! ( mapValue.get ( "attributes" ) instanceof MapValue ) )
             {
-                _log.warn ( "map entry 'attributes' is not of type MapValue" );
+                logger.warn ( "map entry 'attributes' is not of type MapValue" );
                 continue;
             }
 
             final String type = mapValue.get ( "type" ).toString ();
             final Map<String, Variant> attributes = MessageHelper.mapToAttributes ( (MapValue)mapValue.get ( "attributes" ) );
 
-            _log.debug ( "entry type: '" + type + "'" );
+            logger.debug ( "entry type: '" + type + "'" );
 
             if ( type.equals ( "folder" ) )
             {
@@ -201,12 +201,12 @@ public class ListBrowser
             {
                 if ( !mapValue.containsKey ( "item-id" ) )
                 {
-                    _log.warn ( "map entry is an item but misses 'item-id' " );
+                    logger.warn ( "map entry is an item but misses 'item-id' " );
                     continue;
                 }
                 if ( !mapValue.containsKey ( "io-direction" ) )
                 {
-                    _log.warn ( "map entry is an item but misses 'io-direction' " );
+                    logger.warn ( "map entry is an item but misses 'io-direction' " );
                     continue;
                 }
 
@@ -274,7 +274,7 @@ public class ListBrowser
 
         if ( full )
         {
-            message.getValues ().put ( "full", new VoidValue () );
+            message.getValues ().put ( "full", VoidValue.INSTANCE );
         }
 
         message.getValues ().put ( "path", ValueTools.toStringList ( Arrays.asList ( path ) ) );

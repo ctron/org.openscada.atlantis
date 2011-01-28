@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,7 +23,16 @@ public class BooleanValue extends Value
 {
     public final boolean value;
 
-    public BooleanValue ( final boolean value )
+    public final static BooleanValue TRUE = new BooleanValue ( true );
+
+    public final static BooleanValue FALSE = new BooleanValue ( false );
+
+    public static BooleanValue valueOf ( final boolean value )
+    {
+        return value ? TRUE : FALSE;
+    }
+
+    protected BooleanValue ( final boolean value )
     {
         super ();
         this.value = value;
