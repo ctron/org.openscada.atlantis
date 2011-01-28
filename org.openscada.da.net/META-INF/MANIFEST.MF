@@ -7,7 +7,7 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.da.core.browser;version="0.14",
  org.openscada.net.base.data;version="0.14",
  org.openscada.utils.lang;version="0.13"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.net.handler;version="0.15.0";
   uses:="org.openscada.net.base.data,
    org.openscada.core.net,
