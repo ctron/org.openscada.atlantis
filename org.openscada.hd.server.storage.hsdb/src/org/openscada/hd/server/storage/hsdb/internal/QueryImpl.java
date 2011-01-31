@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.storage.internal;
+package org.openscada.hd.server.storage.hsdb.internal;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -39,8 +39,8 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
-import org.openscada.hd.server.storage.QueryManager;
-import org.openscada.hd.server.storage.StorageHistoricalItemService;
+import org.openscada.hd.server.storage.hsdb.QueryManager;
+import org.openscada.hd.server.storage.hsdb.StorageHistoricalItemService;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.StorageChannelMetaData;
 import org.openscada.hsdb.calculation.CalculationLogicProvider;
@@ -60,7 +60,7 @@ import org.slf4j.LoggerFactory;
  * The class works in direct combination with the class StorageHistoricalItemService.
  * Therefore synchronization is done via the related service object.
  * @see org.openscada.hd.Query
- * @see org.openscada.hd.server.storage.StorageHistoricalItemService
+ * @see org.openscada.hd.server.storage.hsdb.StorageHistoricalItemService
  * @author Ludwig Straub
  */
 public class QueryImpl implements Query, ExtendedStorageChannel

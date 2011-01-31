@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.storage;
+package org.openscada.hd.server.storage.hsdb;
 
 import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OSGi activator for package org.openscada.hd.server.storage.
+ * OSGi activator for package org.openscada.hd.server.storage.hsdb.
  * @author Ludwig Straub
  */
 public class Activator implements BundleActivator

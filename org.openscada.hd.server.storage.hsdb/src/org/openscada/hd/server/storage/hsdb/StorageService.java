@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.storage;
+package org.openscada.hd.server.storage.hsdb;
 
 import java.io.File;
 import java.io.RandomAccessFile;
@@ -36,7 +36,7 @@ import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationListener;
 import org.openscada.ca.ConfigurationState;
 import org.openscada.ca.SelfManagedConfigurationFactory;
-import org.openscada.hd.server.storage.internal.ConfigurationImpl;
+import org.openscada.hd.server.storage.hsdb.internal.ConfigurationImpl;
 import org.openscada.hsdb.backend.BackEndManager;
 import org.openscada.hsdb.backend.file.FileBackEndFactory;
 import org.openscada.hsdb.backend.file.FileBackEndManager;
@@ -68,13 +68,13 @@ public class StorageService implements SelfManagedConfigurationFactory
     private final static Logger logger = LoggerFactory.getLogger ( StorageService.class );
 
     /** System property defining the default root folder of the file fragments that are created by the back end objects. */
-    private final static String FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY = "org.openscada.hd.server.storage.file.root";
+    private final static String FILE_FRAGMENTS_ROOT_FOLDER_SYSTEM_PROPERTY = "org.openscada.hd.server.storage.hsdb.file.root";
 
     /** System property defining the maximum compression level at which connections to a file should be kept open as long as the file might be used. */
-    private final static String MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN = "org.openscada.hd.server.storage.file.keep.open";
+    private final static String MAX_COMPRESSION_LEVEL_TO_KEEP_FILE_OPEN = "org.openscada.hd.server.storage.hsdb.file.keep.open";
 
     /** System property defining the flag specifying whether the service should run in import mode or not. Import mode means that no old data is removed. */
-    private final static String IMPORT_MODE = "org.openscada.hd.server.storage.import";
+    private final static String IMPORT_MODE = "org.openscada.hd.server.storage.hsdb.import";
 
     /** Execute heart beat period in milliseconds. */
     private final static long HEART_BEATS_PERIOD = 1000;

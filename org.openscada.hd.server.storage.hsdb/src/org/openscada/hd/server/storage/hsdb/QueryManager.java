@@ -17,9 +17,9 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.storage;
+package org.openscada.hd.server.storage.hsdb;
 
-import org.openscada.hd.server.storage.internal.QueryImpl;
+import org.openscada.hd.server.storage.hsdb.internal.QueryImpl;
 
 public interface QueryManager
 {

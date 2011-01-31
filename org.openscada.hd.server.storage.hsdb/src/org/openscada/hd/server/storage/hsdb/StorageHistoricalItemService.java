@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.storage;
+package org.openscada.hd.server.storage.hsdb;
 
 import java.util.Calendar;
 import java.util.Collection;
@@ -37,7 +37,7 @@ import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.common.StorageHistoricalItem;
-import org.openscada.hd.server.storage.internal.QueryImpl;
+import org.openscada.hd.server.storage.hsdb.internal.QueryImpl;
 import org.openscada.hsdb.CalculatingStorageChannel;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.backend.AbortNotificator;
