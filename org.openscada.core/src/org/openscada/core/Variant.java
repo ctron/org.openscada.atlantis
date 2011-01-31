@@ -589,17 +589,13 @@ public class Variant implements Serializable, Comparable<Variant>
     {
         if ( ! ( obj instanceof Variant ) )
         {
+            // also catches null case
             return false;
         }
 
         if ( obj == this )
         {
             return true;
-        }
-
-        if ( obj == null )
-        {
-            return false;
         }
 
         final Variant arg0 = (Variant)obj;
