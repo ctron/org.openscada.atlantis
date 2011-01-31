@@ -31,20 +31,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.core.Variant;
-import org.openscada.core.VariantType;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.common.StorageHistoricalItem;
-import org.openscada.hd.server.storage.internal.ConfigurationImpl;
 import org.openscada.hd.server.storage.internal.QueryImpl;
 import org.openscada.hsdb.CalculatingStorageChannel;
 import org.openscada.hsdb.ExtendedStorageChannel;
 import org.openscada.hsdb.backend.AbortNotificator;
 import org.openscada.hsdb.backend.BackEndManager;
 import org.openscada.hsdb.calculation.CalculationMethod;
+import org.openscada.hsdb.configuration.Configuration;
 import org.openscada.hsdb.configuration.Conversions;
 import org.openscada.hsdb.datatypes.BaseValue;
 import org.openscada.hsdb.datatypes.DataType;
@@ -150,9 +149,9 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         this.latestReliableTime = latestReliableTime;
         this.importMode = importMode;
         final Map<String, String> data = configuration.getData ();
-        this.proposedDataAge = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
-        this.acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY ) );
-        this.expectedDataType = DataType.convertShortStringToDataType ( data.get ( ConfigurationImpl.DATA_TYPE_KEY ) );
+        this.proposedDataAge = Conversions.decodeTimeSpan ( data.get ( Configuration.PROPOSED_DATA_AGE_KEY_PREFIX + 0 ) );
+        this.acceptedTimeDelta = Conversions.decodeTimeSpan ( data.get ( Configuration.ACCEPTED_TIME_DELTA_KEY ) );
+        this.expectedDataType = DataType.convertShortStringToDataType ( data.get ( Configuration.DATA_TYPE_KEY ) );
         this.registration = null;
         this.adjustDataTimestamp = false;
     }
@@ -171,6 +170,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      * If the query is not found in the collection then no action is performed.
      * @param query query to be removed
      */
+    @Override
     public synchronized void removeQuery ( final QueryImpl query )
     {
         this.openQueries.remove ( query );
@@ -219,12 +219,14 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#createQuery
      */
+    @Override
     public Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         try
         {
             final QueryImpl query = new QueryImpl ( this, listener, parameters, this.calculationMethods );
             this.createQueryTask.submit ( new Runnable () {
+                @Override
                 public void run ()
                 {
                     try
@@ -253,6 +255,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#getInformation
      */
+    @Override
     public synchronized HistoricalItemInformation getInformation ()
     {
         // prepare data for result
@@ -274,13 +277,15 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
     /**
      * @see org.openscada.hd.server.common.StorageHistoricalItem#updateData
      */
+    @Override
     public void updateData ( final DataItemValue value )
     {
         final long now = System.currentTimeMillis ();
-        logger.debug ( "receiving data ({}) at: {}", value, now);
+        logger.debug ( "receiving data ({}) at: {}", value, now );
         if ( this.dataReceiver != null )
         {
             this.dataReceiver.submit ( new Runnable () {
+                @Override
                 public void run ()
                 {
                     // check if input is valid
@@ -291,16 +296,16 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
                         return;
                     }
                     final Variant variant = value.getValue ();
-                    if ( variant == null || variant.isNull() )
+                    if ( variant == null || variant.isNull () )
                     {
                         createInvalidEntry ( now );
                         return;
                     }
                     final Calendar calendar = value.getTimestamp ();
                     long time = calendar == null ? now : calendar.getTimeInMillis ();
-                    if ( adjustDataTimestamp )
+                    if ( StorageHistoricalItemService.this.adjustDataTimestamp )
                     {
-                        adjustDataTimestamp = false;
+                        StorageHistoricalItemService.this.adjustDataTimestamp = false;
                         time = Math.max ( time, now );
                     }
                     if ( !StorageHistoricalItemService.this.importMode && ( now - StorageHistoricalItemService.this.acceptedTimeDelta > time || now - StorageHistoricalItemService.this.proposedDataAge > time ) )
@@ -459,10 +464,12 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
         this.startUpTask = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( STARTUP_THREAD_ID_PREFIX + configurationId ) );
         this.createQueryTask = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( CREATE_QUERY_THREAD_ID_PREFIX + configurationId ) );
         this.startUpTask.submit ( new Runnable () {
+            @Override
             public void run ()
             {
                 StorageHistoricalItemService.this.startUpTask.shutdown ();
                 StorageHistoricalItemService.this.backEndManager.repairBackEndFragmentsIfRequired ( new AbortNotificator () {
+                    @Override
                     public boolean getAbort ()
                     {
                         synchronized ( StorageHistoricalItemService.this.lockObject )
@@ -612,6 +619,7 @@ public class StorageHistoricalItemService implements StorageHistoricalItem, Reli
      * This method cleans old data.
      * @see org.openscada.hsdb.relict.RelictCleaner#cleanupRelicts
      */
+    @Override
     public synchronized void cleanupRelicts () throws Exception
     {
         if ( !this.starting && this.started )
