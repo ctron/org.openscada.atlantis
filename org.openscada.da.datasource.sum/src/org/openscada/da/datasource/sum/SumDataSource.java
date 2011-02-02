@@ -105,7 +105,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
                     types.put ( key, toks[1] );
                 }
                 logger.info ( "Adding datasource: {} -> {}", key, id );
-                addDataSource ( key, id );
+                addDataSource ( key, id, null );
             }
         }
 

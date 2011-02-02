@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.core.VariantType;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
@@ -48,6 +49,7 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
 
         this.listener = new DataSourceHandlerListener () {
 
+            @Override
             public void handleChange ()
             {
                 AbstractMultiSourceDataSource.this.triggerHandleChange ();
@@ -65,18 +67,37 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
             final String value = entry.getValue ();
             if ( key.startsWith ( "datasource." ) )
             {
-                addDataSource ( key.substring ( "datasource.".length () ), value );
+                final String name = key.substring ( "datasource.".length () );
+                final VariantType type = getType ( parameters.get ( "datasourceType." + name ) );
+                addDataSource ( name, value, type );
             }
+        }
+    }
+
+    protected VariantType getType ( final String type )
+    {
+        if ( type == null || type.isEmpty () )
+        {
+            return null;
+        }
+
+        try
+        {
+            return VariantType.valueOf ( type );
+        }
+        catch ( final IllegalArgumentException e )
+        {
+            throw new IllegalArgumentException ( String.format ( "Datatype '%s' is unknown", type ), e );
         }
     }
 
     protected abstract void handleChange ();
 
-    protected synchronized void addDataSource ( final String datasourceKey, final String datasourceId ) throws InvalidSyntaxException
+    protected synchronized void addDataSource ( final String datasourceKey, final String datasourceId, final VariantType type ) throws InvalidSyntaxException
     {
-        logger.info ( "Adding data source: {} -> {}", new Object[] { datasourceKey, datasourceId } );
+        logger.info ( "Adding data source: {} -> {} ({})", new Object[] { datasourceKey, datasourceId, type } );
 
-        final DataSourceHandler dsHandler = new DataSourceHandler ( this.poolTracker, datasourceId, this.listener );
+        final DataSourceHandler dsHandler = new DataSourceHandler ( this.poolTracker, datasourceId, this.listener, type );
         this.sources.put ( datasourceKey, dsHandler );
     }
 

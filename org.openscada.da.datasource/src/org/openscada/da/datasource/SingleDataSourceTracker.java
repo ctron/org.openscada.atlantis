@@ -36,11 +36,20 @@ public class SingleDataSourceTracker
 
     private final ServiceListener listener;
 
-    private volatile DataSource datasource;
-
+    /**
+     * Create a new single datasource tracker
+     * @param poolTracker the pool tracker to use
+     * @param dataSourceId the id of the datasource to track 
+     * @param listener the listener that gets notified (must not be <code>null</code>)
+     * @throws InvalidSyntaxException
+     */
     public SingleDataSourceTracker ( final ObjectPoolTracker poolTracker, final String dataSourceId, final ServiceListener listener ) throws InvalidSyntaxException
     {
         this.listener = listener;
+        if ( listener == null )
+        {
+            throw new NullPointerException ( "'listener' must not be null" );
+        }
 
         this.tracker = new SingleObjectPoolServiceTracker ( poolTracker, dataSourceId, new SingleObjectPoolServiceTracker.ServiceListener () {
             @Override
@@ -51,18 +60,9 @@ public class SingleDataSourceTracker
         } );
     }
 
-    public DataSource getDatasource ()
-    {
-        return this.datasource;
-    }
-
     protected void setDataSource ( final DataSource service )
     {
-        this.datasource = service;
-        if ( this.listener != null )
-        {
-            this.listener.dataSourceChanged ( service );
-        }
+        this.listener.dataSourceChanged ( service );
     }
 
     public void open ()

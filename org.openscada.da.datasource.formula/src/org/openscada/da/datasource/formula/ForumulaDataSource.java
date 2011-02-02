@@ -19,6 +19,7 @@
 
 package org.openscada.da.datasource.formula;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
@@ -56,6 +57,7 @@ import org.openscada.da.datasource.base.DataSourceHandler;
 import org.openscada.utils.concurrent.AbstractFuture;
 import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.InstantErrorFuture;
+import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
@@ -101,6 +103,8 @@ public class ForumulaDataSource extends AbstractMultiSourceDataSource
     private CompiledScript outputScript;
 
     private boolean precompile;
+
+    private VariantType outputDatasourceType;
 
     public ForumulaDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor )
     {
@@ -223,8 +227,17 @@ public class ForumulaDataSource extends AbstractMultiSourceDataSource
             throw new OperationException ( "Output item not connected" );
         }
 
+        if ( writeValue == null )
+        {
+            return new InstantFuture<WriteResult> ( WriteResult.OK );
+        }
+
         synchronized ( this )
         {
+
+            final Serializable writeValueObject = writeValue.as ( this.outputDatasourceType );
+            logger.debug ( "Converted write value from '{}' to '{}'", writeValue, writeValueObject );
+
             final Map<String, Object> values = new HashMap<String, Object> ( this.sources.size () );
 
             int error = 0;
@@ -262,10 +275,12 @@ public class ForumulaDataSource extends AbstractMultiSourceDataSource
                 this.scriptContext.setAttribute ( entry.getKey (), entry.getValue (), ScriptContext.ENGINE_SCOPE );
             }
 
-            this.scriptContext.setAttribute ( this.writeValueName, writeValue, ScriptContext.ENGINE_SCOPE );
+            this.scriptContext.setAttribute ( this.writeValueName, writeValueObject, ScriptContext.ENGINE_SCOPE );
 
             // execute outputFormula
-            final Variant result = Variant.valueOf ( executeScript ( outputFormula, this.outputScript ) );
+            final Object o = executeScript ( outputFormula, this.outputScript );
+            logger.debug ( "Result of output script: {}", o );
+            final Variant result = Variant.valueOf ( o );
 
             return outputDataSource.startWriteValue ( result, operationParameters );
         }
@@ -284,6 +299,8 @@ public class ForumulaDataSource extends AbstractMultiSourceDataSource
             this.precompile = cfg.getBoolean ( "precompile", true );
             setScript ( cfg );
             setDataSources ( parameters );
+            this.outputDatasourceType = getType ( cfg.getString ( "outputDatasource.type", null ) );
+            setOutputDataSource ( cfg.getString ( "outputDatasource.id", null ) );
             this.writeValueName = cfg.getString ( "writeValueName", "writeValue" );
 
             handleChange ();
@@ -503,7 +520,11 @@ public class ForumulaDataSource extends AbstractMultiSourceDataSource
         builder.setValue ( Variant.NULL );
         builder.setTimestamp ( Calendar.getInstance () );
         builder.setAttribute ( "formula.error", Variant.TRUE );
-        builder.setAttribute ( "formula.error.message", new Variant ( e.getMessage () ) );
+        if ( e != null )
+        {
+            builder.setAttribute ( "formula.error.class", new Variant ( e.getClass ().getName () ) );
+            builder.setAttribute ( "formula.error.message", new Variant ( e.getMessage () ) );
+        }
         updateData ( builder.build () );
     }
 

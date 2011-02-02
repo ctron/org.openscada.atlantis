@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -55,6 +55,7 @@ public abstract class AbstractDataSource implements DataSource
      */
     protected abstract Executor getExecutor ();
 
+    @Override
     public synchronized void addListener ( final DataSourceListener listener )
     {
         if ( this.listeners.add ( listener ) )
@@ -62,6 +63,7 @@ public abstract class AbstractDataSource implements DataSource
             final DataItemValue value = this.value;
             getExecutor ().execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.stateChanged ( value );
@@ -70,6 +72,7 @@ public abstract class AbstractDataSource implements DataSource
         }
     }
 
+    @Override
     public synchronized void removeListener ( final DataSourceListener listener )
     {
         this.listeners.remove ( listener );
@@ -100,6 +103,7 @@ public abstract class AbstractDataSource implements DataSource
         {
             getExecutor ().execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.stateChanged ( finalValue );

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,6 +19,7 @@
 
 package org.openscada.da.datasource.base;
 
+import org.openscada.core.VariantType;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
@@ -42,12 +43,16 @@ public class DataSourceHandler implements DataSourceListener
 
     private DataItemValue value;
 
-    public DataSourceHandler ( final ObjectPoolTracker poolTracker, final String datasourceId, final DataSourceHandlerListener listener ) throws InvalidSyntaxException
+    private final VariantType type;
+
+    public DataSourceHandler ( final ObjectPoolTracker poolTracker, final String datasourceId, final DataSourceHandlerListener listener, final VariantType type ) throws InvalidSyntaxException
     {
         this.listener = listener;
+        this.type = type;
 
         this.tracker = new SingleDataSourceTracker ( poolTracker, datasourceId, new ServiceListener () {
 
+            @Override
             public void dataSourceChanged ( final DataSource dataSource )
             {
                 DataSourceHandler.this.setDataSource ( dataSource );
@@ -106,6 +111,12 @@ public class DataSourceHandler implements DataSourceListener
         return this.value;
     }
 
+    public VariantType getType ()
+    {
+        return this.type;
+    }
+
+    @Override
     public void stateChanged ( final DataItemValue value )
     {
         this.value = value;
