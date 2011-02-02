@@ -36,6 +36,8 @@ public class SingleDataSourceTracker
 
     private final ServiceListener listener;
 
+    private volatile DataSource datasource;
+
     public SingleDataSourceTracker ( final ObjectPoolTracker poolTracker, final String dataSourceId, final ServiceListener listener ) throws InvalidSyntaxException
     {
         this.listener = listener;
@@ -49,8 +51,14 @@ public class SingleDataSourceTracker
         } );
     }
 
+    public DataSource getDatasource ()
+    {
+        return this.datasource;
+    }
+
     protected void setDataSource ( final DataSource service )
     {
+        this.datasource = service;
         if ( this.listener != null )
         {
             this.listener.dataSourceChanged ( service );
