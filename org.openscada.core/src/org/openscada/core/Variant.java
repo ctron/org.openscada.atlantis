@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -66,7 +66,7 @@ public class Variant implements Serializable, Comparable<Variant>
         return new Variant ( value );
     }
 
-    private Object value;
+    private Serializable value;
 
     /**
      * Create a variant of type <code>null</code>
@@ -524,6 +524,92 @@ public class Variant implements Serializable, Comparable<Variant>
         return asBoolean ();
     }
 
+    /**
+     * Convert the variant to a java object of the type specified by the variantType parameter
+     * <p>
+     * The default value must be of the type of the variant type parameter, otherwise
+     * a class cast exception will be thrown. The default value may also be null.
+     * </p>
+     * @see #as(VariantType)
+     * @param variantType the variant type to convert to (may be <code>null</code>)
+     * @param defaultValue the default value in case the conversion fails or the variant is NULL
+     * @return the resulting java object
+     * @since 0.16.0
+     */
+    public Serializable as ( final VariantType variantType, final Serializable defaultValue )
+    {
+        if ( variantType == null )
+        {
+            return getValue ();
+        }
+
+        switch ( variantType )
+        {
+        case BOOLEAN:
+            return asBoolean ( (Boolean)defaultValue );
+        case DOUBLE:
+            return asDouble ( (Double)defaultValue );
+        case INT32:
+            return asInteger ( (Integer)defaultValue );
+        case INT64:
+            return asLong ( (Long)defaultValue );
+        case STRING:
+            return asString ( (String)defaultValue );
+        case NULL:
+            return null;
+        case UNKNOWN:
+            return getValue ();
+        }
+        return getValue ();
+    }
+
+    /**
+     * Convert the variant to a java object of the type specified by the variantType parameter
+     * <p>
+     * The method converts the current variant to a plain java {@link Serializable} of the requested type.
+     * For the list of types than can be expected see the java type field of {@link VariantType}.  
+     * </p>
+     * <p>
+     * There are some special cases for this method:
+     * <ul>
+     * <li>If the parameter variantType is null the java object currently set will be returned without any conversion</li>
+     * <li>If the variant type {@link VariantType#UNKNOWN} is requested the java object currently set will be returned without any conversion</li>
+     * <li>If the {@link VariantType#NULL} is requested always <code>null</code> will be returned
+     * </ul>
+     * </p>
+     * @param variantType the target type
+     * @return the resulting java object
+     * @throws NullValueException in case the variant was of type null and should be converted to some other type
+     * @throws NotConvertableException in case the variant cannot be converted to the target value
+     * @since 0.16.0
+     */
+    public Serializable as ( final VariantType variantType ) throws NullValueException, NotConvertableException
+    {
+        if ( variantType == null )
+        {
+            return getValue ();
+        }
+
+        switch ( variantType )
+        {
+        case BOOLEAN:
+            return asBoolean ();
+        case DOUBLE:
+            return asDouble ();
+        case INT32:
+            return asInteger ();
+        case INT64:
+            return asLong ();
+        case STRING:
+            return asString ();
+        case NULL:
+            return null;
+        case UNKNOWN:
+            return getValue ();
+        }
+        return getValue ();
+    }
+
     public boolean isBoolean ()
     {
         if ( isNull () )
@@ -823,11 +909,12 @@ public class Variant implements Serializable, Comparable<Variant>
      * 
      * @return the internal variant value
      */
-    public Object getValue ()
+    public Serializable getValue ()
     {
         return this.value;
     }
 
+    @Override
     public int compareTo ( final Variant o )
     {
         return comparator.compare ( this, o );
