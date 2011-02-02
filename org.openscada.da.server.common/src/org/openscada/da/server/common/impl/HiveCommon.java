@@ -679,7 +679,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE", operationParameters.getUserInformation (), makeWriteValueContext ( value ) );
+        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE", operationParameters != null ? operationParameters.getUserInformation () : null, makeWriteValueContext ( value ) );
         if ( !result.isGranted () )
         {
             throw new PermissionDeniedException ( result );
