@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -41,6 +41,7 @@ public class SingleDataSourceTracker
         this.listener = listener;
 
         this.tracker = new SingleObjectPoolServiceTracker ( poolTracker, dataSourceId, new SingleObjectPoolServiceTracker.ServiceListener () {
+            @Override
             public void serviceChange ( final Object service, final Dictionary<?, ?> properties )
             {
                 SingleDataSourceTracker.this.setDataSource ( (DataSource)service );
@@ -50,7 +51,10 @@ public class SingleDataSourceTracker
 
     protected void setDataSource ( final DataSource service )
     {
-        this.listener.dataSourceChanged ( service );
+        if ( this.listener != null )
+        {
+            this.listener.dataSourceChanged ( service );
+        }
     }
 
     public void open ()
