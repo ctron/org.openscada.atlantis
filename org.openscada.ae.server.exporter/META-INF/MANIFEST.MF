@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA A&E Server Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.exporter
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.ae.server.exporter;version="0.14.0";uses:="org.openscada.core,org.openscada.utils.lifecycle"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.ae.server.exporter;version="0.16.0";uses:="org.openscada.ae.server,org.openscada.core,org.openscada.utils.lifecycle"
 Import-Package: org.openscada.ae.server,
  org.openscada.ae.server.exporter;version="0.14.0",
  org.openscada.core;version="0.13.0",
