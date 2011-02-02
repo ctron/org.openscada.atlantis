@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA AE Net Exporter Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.exporter.net
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Activator: org.openscada.ae.server.exporter.net.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.log4j,
  org.openscada.core,
  org.osgi.framework;version="1.3.0"
