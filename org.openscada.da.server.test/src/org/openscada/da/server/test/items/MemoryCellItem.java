@@ -78,7 +78,7 @@ public class MemoryCellItem extends DataItemOutput
         {
             num = value.asInteger ();
             updateCells ( num );
-            return new InstantFuture<WriteResult> ( new WriteResult () );
+            return new InstantFuture<WriteResult> ( WriteResult.OK );
         }
         catch ( final Throwable e )
         {
