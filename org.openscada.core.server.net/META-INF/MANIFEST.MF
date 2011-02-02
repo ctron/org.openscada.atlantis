@@ -11,14 +11,14 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.net.base;version="0.15.0",
  org.openscada.net.base.data;version="0.15.0",
  org.openscada.net.mina;version="0.15.0"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
-Export-Package: org.openscada.core.server.net;version="0.15.0";
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.core.server.net;version="0.16.0";
   uses:="org.apache.mina.core.session,
    org.openscada.net.base,
    org.apache.mina.handler.multiton,
    org.openscada.core,
    org.openscada.net.mina"
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA Core Server NET
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH
