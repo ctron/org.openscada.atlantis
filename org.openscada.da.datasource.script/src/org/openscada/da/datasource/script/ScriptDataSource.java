@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 
 public class ScriptDataSource extends AbstractMultiSourceDataSource
 {
-    private static final String DEFAULT_ENGINE_NAME = "JavaScript";
+    private static final String DEFAULT_ENGINE_NAME = System.getProperty ( "org.openscada.da.datasource.script.defaultScriptEngine", "JavaScript" );
 
     final static Logger logger = LoggerFactory.getLogger ( ScriptDataSource.class );
 
