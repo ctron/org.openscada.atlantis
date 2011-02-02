@@ -579,14 +579,14 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
     }
 
-    private static final String OBJECT_TYPE = "DataItem";
+    private static final String DATA_ITEM_OBJECT_TYPE = "DataItem";
 
     @Override
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Session session, final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final AuthorizationResult result = authorize ( itemId, OBJECT_TYPE, "WRITE_ATTRIBUTES", operationParameters.getUserInformation (), makeSetAttributesContext ( attributes ) );
+        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE_ATTRIBUTES", operationParameters.getUserInformation (), makeSetAttributesContext ( attributes ) );
         if ( !result.isGranted () )
         {
             throw new PermissionDeniedException ( result );
@@ -704,7 +704,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final AuthorizationResult result = authorize ( itemId, OBJECT_TYPE, "WRITE", operationParameters.getUserInformation (), makeWriteValueContext ( value ) );
+        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE", operationParameters.getUserInformation (), makeWriteValueContext ( value ) );
         if ( !result.isGranted () )
         {
             throw new PermissionDeniedException ( result );
