@@ -101,51 +101,13 @@ public class HiveImpl extends HiveCommon
     @Override
     protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
     {
-        final UserInformation result = this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
-
-        authorizeSessionPriviliges ( properties, result, sessionResultProperties );
-
-        if ( result != null && result.getRoles () != null )
-        {
-            for ( final String role : result.getRoles () )
-            {
-                sessionResultProperties.put ( "userInformation.roles." + role, "true" );
-            }
-        }
-
-        return result;
-    }
-
-    private void authorizeSessionPriviliges ( final Properties properties, final UserInformation user, final Map<String, String> sessionResultProperties )
-    {
-        for ( final Map.Entry<Object, Object> entry : properties.entrySet () )
-        {
-            if ( entry.getKey () instanceof String && entry.getValue () instanceof String )
-            {
-                final String key = (String)entry.getKey ();
-                final String value = (String)entry.getValue ();
-                if ( key.startsWith ( "session.privilege." ) )
-                {
-                    final String priv = key.substring ( "session.privilege.".length () );
-                    if ( authenticateSessionPrivilege ( user, priv, value ) )
-                    {
-                        sessionResultProperties.put ( key, "true" );
-                    }
-                }
-            }
-        }
+        return this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
     }
 
     @Override
     protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
     {
         return this.authorizationManager.authorize ( objectId, objectType, action, userInformation, context, defaultResult );
-    }
-
-    private boolean authenticateSessionPrivilege ( final UserInformation user, final String key, final String value )
-    {
-        final AuthorizationResult result = authorize ( key, "SESSION", value, user, null );
-        return result.isGranted ();
     }
 
     public synchronized void addItem ( final DataItem item, final Dictionary<?, ?> properties )

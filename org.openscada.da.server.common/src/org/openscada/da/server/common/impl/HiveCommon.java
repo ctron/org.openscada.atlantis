@@ -626,31 +626,6 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         return context;
     }
 
-    protected static final AuthorizationResult DEFAULT_RESULT = AuthorizationResult.create ( org.openscada.sec.StatusCodes.AUTHORIZATION_FAILED, "No authentication provider voted. Rejecting request!" );
-
-    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context )
-    {
-        return authorize ( objectType, objectId, action, userInformation, context, DEFAULT_RESULT );
-    }
-
-    /**
-     * Authorize an operation
-     * <p>
-     * The default implementation grants everything. Override to change according to your needs.
-     * </p>
-     * @param objectType the type of the object the operation takes place
-     * @param objectId the id of the object the operation takes place
-     * @param userInformation the user information
-     * @param context the context information
-     * @param defaultResult the default result that should be returned if no one votes, must not be <code>null</code>
-     * @return the authorization result, never returns <code>null</code>
-     */
-    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
-    {
-        logger.info ( "Requesting authorization - objectType: {}, objectId: {}, action: {}, userInformation: {}, context: {}, defaultResult: {} ... defaulting to GRANTED", new Object[] { objectType, objectId, action, userInformation, context, defaultResult } );
-        return AuthorizationResult.GRANTED;
-    }
-
     private OperationParameters makeOperationParameters ( final SessionCommon session, final OperationParameters operationParameters ) throws PermissionDeniedException
     {
         UserInformation sessionInformation = session.getUserInformation ();

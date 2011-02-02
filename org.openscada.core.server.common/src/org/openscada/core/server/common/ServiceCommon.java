@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,10 +26,17 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.server.Service;
 import org.openscada.sec.AuthenticationException;
+import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ServiceCommon implements Service
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ServiceCommon.class );
+
+    protected static final AuthorizationResult DEFAULT_RESULT = AuthorizationResult.create ( org.openscada.sec.StatusCodes.AUTHORIZATION_FAILED, "No authentication provider voted. Rejecting request!" );
 
     /**
      * Authenticate a user
@@ -74,12 +81,73 @@ public abstract class ServiceCommon implements Service
     {
         try
         {
-            return authenticate ( properties, sessionResultProperties );
+            final UserInformation result = authenticate ( properties, sessionResultProperties );
+
+            authorizeSessionPriviliges ( properties, result, sessionResultProperties );
+
+            if ( result != null && result.getRoles () != null )
+            {
+                for ( final String role : result.getRoles () )
+                {
+                    sessionResultProperties.put ( "userInformation.roles." + role, "true" );
+                }
+            }
+
+            return result;
         }
         catch ( final AuthenticationException e )
         {
             throw new UnableToCreateSessionException ( e );
         }
+    }
+
+    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context )
+    {
+        return authorize ( objectType, objectId, action, userInformation, context, DEFAULT_RESULT );
+    }
+
+    /**
+     * Authorize an operation
+     * <p>
+     * The default implementation grants everything. Override to change according to your needs.
+     * </p>
+     * @param objectType the type of the object the operation takes place
+     * @param objectId the id of the object the operation takes place
+     * @param userInformation the user information
+     * @param context the context information
+     * @param defaultResult the default result that should be returned if no one votes, must not be <code>null</code>
+     * @return the authorization result, never returns <code>null</code>
+     */
+    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
+    {
+        logger.info ( "Requesting authorization - objectType: {}, objectId: {}, action: {}, userInformation: {}, context: {}, defaultResult: {} ... defaulting to GRANTED", new Object[] { objectType, objectId, action, userInformation, context, defaultResult } );
+        return AuthorizationResult.GRANTED;
+    }
+
+    protected void authorizeSessionPriviliges ( final Properties properties, final UserInformation user, final Map<String, String> sessionResultProperties )
+    {
+        for ( final Map.Entry<Object, Object> entry : properties.entrySet () )
+        {
+            if ( entry.getKey () instanceof String && entry.getValue () instanceof String )
+            {
+                final String key = (String)entry.getKey ();
+                final String value = (String)entry.getValue ();
+                if ( key.startsWith ( "session.privilege." ) )
+                {
+                    final String priv = key.substring ( "session.privilege.".length () );
+                    if ( authorizeSessionPrivilege ( user, priv, value ) )
+                    {
+                        sessionResultProperties.put ( key, "true" );
+                    }
+                }
+            }
+        }
+    }
+
+    protected boolean authorizeSessionPrivilege ( final UserInformation user, final String key, final String value )
+    {
+        final AuthorizationResult result = authorize ( "SESSION", key, "PRIV", user, null );
+        return result.isGranted ();
     }
 
 }
