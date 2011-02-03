@@ -19,7 +19,6 @@
 
 package org.openscada.da.server.osgi.exporter.net;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.server.exporter.ExporterInformation;
 import org.openscada.da.core.server.Hive;
@@ -31,10 +30,13 @@ import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator
 {
-    private final static Logger logger = Logger.getLogger ( Activator.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
 
     private ServiceListener listener;
 
@@ -83,6 +85,7 @@ public class Activator implements BundleActivator
     {
         if ( this.currentServiceReference != serviceReference )
         {
+            logger.warn ( "Received stop event for unknown reference - current: {}, event: {}", this.currentServiceReference, serviceReference );
             return;
         }
 

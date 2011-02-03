@@ -2,12 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA DA Net Exporter Plug-in
 Bundle-SymbolicName: org.openscada.da.server.osgi.exporter.net
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Activator: org.openscada.da.server.osgi.exporter.net.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.log4j;version="1.2.6",
- org.openscada.core;version="0.14.0",
+Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.core.net;version="0.14.0",
  org.openscada.core.server.exporter;version="0.15.0",
  org.openscada.core.server.net;version="0.14.0",
@@ -18,4 +17,5 @@ Import-Package: org.apache.log4j;version="1.2.6",
  org.openscada.da.server.net;version="0.14.0",
  org.openscada.utils;version="0.13.0",
  org.openscada.utils.lifecycle;version="0.13.0",
- org.osgi.framework;version="1.3.0"
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.0"
