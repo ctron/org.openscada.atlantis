@@ -83,6 +83,8 @@ public abstract class ServiceCommon implements Service
         {
             final UserInformation result = authenticate ( properties, sessionResultProperties );
 
+            logger.debug ( "Authenticated as {}", result );
+
             authorizeSessionPriviliges ( properties, result, sessionResultProperties );
 
             if ( result != null && result.getRoles () != null )

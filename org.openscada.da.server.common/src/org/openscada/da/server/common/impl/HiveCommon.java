@@ -591,6 +591,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE_ATTRIBUTES", effectiveOperationParameters.getUserInformation (), makeSetAttributesContext ( attributes ) );
         if ( !result.isGranted () )
         {
+            logger.info ( "Write request was rejected: {}", result );
             throw new PermissionDeniedException ( result );
         }
 
@@ -691,8 +692,11 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE", effectiveOperationParameters.getUserInformation (), makeWriteValueContext ( value ) );
         if ( !result.isGranted () )
         {
+            logger.info ( "Write request was rejected: {}", result );
             throw new PermissionDeniedException ( result );
         }
+
+        logger.debug ( "Processing write - granted - itemId: {}", itemId );
 
         final DataItem item = retrieveItem ( itemId );
 
