@@ -639,7 +639,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
         if ( operationParameters == null )
         {
-            logger.debug ( "No operation parameters provided. Creating default." );
+            logger.debug ( "No operation parameters provided. Creating default for user ({}).", sessionInformation );
             return new OperationParameters ( sessionInformation );
         }
 
@@ -658,6 +658,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
                 final AuthorizationResult result = authorize ( "SESSION", proxyUser, "PROXY_USER", session.getUserInformation (), null );
                 if ( !result.isGranted () )
                 {
+                    logger.info ( "Proxy user is not allowed" );
                     // not allowed to use proxy user
                     throw new PermissionDeniedException ( result.getErrorCode (), result.getMessage () );
                 }
