@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -65,30 +65,30 @@ public class AuthorizationHelper extends org.openscada.sec.osgi.AuthorizationHel
     }
 
     @Override
-    public AuthorizationResult authorize ( final String objectId, final String objectType, final String action, final UserInformation userInformation, final Map<String, Object> context )
+    public AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context )
     {
-        return authorize ( objectId, objectType, action, userInformation, context, DEFAULT_RESULT );
+        return authorize ( objectType, objectId, action, userInformation, context, DEFAULT_RESULT );
     }
 
     @Override
-    public AuthorizationResult authorize ( final String objectId, final String objectType, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
+    public AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
     {
         if ( this.logAll )
         {
-            this.eventProcessor.publishEvent ( makeEvent ( objectId, objectType, action, userInformation, null ) );
+            this.eventProcessor.publishEvent ( makeEvent ( objectType, objectId, action, userInformation, null ) );
         }
 
-        final AuthorizationResult result = super.authorize ( objectId, objectType, action, userInformation, context, defaultResult );
+        final AuthorizationResult result = super.authorize ( objectType, objectId, action, userInformation, context, defaultResult );
 
         if ( result != null && !result.isGranted () )
         {
-            this.eventProcessor.publishEvent ( makeEvent ( objectId, objectType, action, userInformation, result ) );
+            this.eventProcessor.publishEvent ( makeEvent ( objectType, objectId, action, userInformation, result ) );
         }
 
         return result;
     }
 
-    private Event makeEvent ( final String objectId, final String objectType, final String action, final UserInformation userInformation, final AuthorizationResult result )
+    private Event makeEvent ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final AuthorizationResult result )
     {
         final EventBuilder builder = Event.create ();
 
