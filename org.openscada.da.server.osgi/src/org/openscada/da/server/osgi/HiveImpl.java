@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.log4j.Logger;
+import org.openscada.ae.sec.AuthorizationHelper;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -41,10 +42,10 @@ import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.osgi.AuthenticationHelper;
-import org.openscada.sec.osgi.AuthorizationHelper;
 import org.openscada.utils.collection.MapBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
+import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 
 public class HiveImpl extends HiveCommon
@@ -63,7 +64,7 @@ public class HiveImpl extends HiveCommon
 
     private final AuthorizationHelper authorizationManager;
 
-    public HiveImpl ( final BundleContext context )
+    public HiveImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         this.context = context;
 
