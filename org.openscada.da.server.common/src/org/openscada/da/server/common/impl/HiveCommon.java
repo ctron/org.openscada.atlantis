@@ -633,11 +633,13 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         UserInformation sessionInformation = session.getUserInformation ();
         if ( sessionInformation == null )
         {
+            logger.debug ( "Session has no user information. Using anonymous" );
             sessionInformation = UserInformation.ANONYMOUS;
         }
 
         if ( operationParameters == null )
         {
+            logger.debug ( "No operation parameters provided. Creating default." );
             return new OperationParameters ( sessionInformation );
         }
 
@@ -648,8 +650,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             final String proxyUser = operationParameters.getUserInformation ().getName ();
 
             // check if user differs
-            if ( !proxyUser.equals ( session.getUserInformation () ) )
+            if ( !proxyUser.equals ( session.getUserInformation ().getName () ) )
             {
+                logger.debug ( "Trying to set proxy user: {}", proxyUser );
+
                 // try to set proxy user
                 final AuthorizationResult result = authorize ( "SESSION", proxyUser, "PROXY_USER", session.getUserInformation (), null );
                 if ( !result.isGranted () )
