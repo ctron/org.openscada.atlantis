@@ -54,12 +54,14 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.context = context;
 
         context.addServiceListener ( this.listener = new ServiceListener () {
 
+            @Override
             public void serviceChanged ( final ServiceEvent event )
             {
                 switch ( event.getType () )
@@ -96,7 +98,7 @@ public class Activator implements BundleActivator
         }
         catch ( final Throwable e )
         {
-            e.printStackTrace ();
+            logger.warn ( "Failed to stop exporter", e );
         }
         finally
         {
@@ -147,6 +149,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         if ( this.exporterHandle != null )
