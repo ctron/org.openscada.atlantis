@@ -579,14 +579,16 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
     }
 
-    private static final String DATA_ITEM_OBJECT_TYPE = "DataItem";
+    private static final String DATA_ITEM_OBJECT_TYPE = "ITEM";
 
     @Override
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Session session, final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE_ATTRIBUTES", operationParameters.getUserInformation (), makeSetAttributesContext ( attributes ) );
+        final OperationParameters effectiveOperationParameters = makeOperationParameters ( sessionCommon, operationParameters );
+
+        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE_ATTRIBUTES", effectiveOperationParameters.getUserInformation (), makeSetAttributesContext ( attributes ) );
         if ( !result.isGranted () )
         {
             throw new PermissionDeniedException ( result );
@@ -606,7 +608,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
 
         // go
-        final NotifyFuture<WriteAttributeResults> future = item.startSetAttributes ( attributes, makeOperationParameters ( sessionCommon, operationParameters ) );
+        final NotifyFuture<WriteAttributeResults> future = item.startSetAttributes ( attributes, effectiveOperationParameters );
         sessionCommon.addFuture ( future );
 
         return future;
@@ -679,7 +681,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE", operationParameters != null ? operationParameters.getUserInformation () : null, makeWriteValueContext ( value ) );
+        final OperationParameters effectiveOperationParameters = makeOperationParameters ( sessionCommon, operationParameters );
+
+        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE", effectiveOperationParameters.getUserInformation (), makeWriteValueContext ( value ) );
         if ( !result.isGranted () )
         {
             throw new PermissionDeniedException ( result );
@@ -699,7 +703,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
 
         // go
-        final NotifyFuture<WriteResult> future = item.startWriteValue ( value, makeOperationParameters ( sessionCommon, operationParameters ) );
+        final NotifyFuture<WriteResult> future = item.startWriteValue ( value, effectiveOperationParameters );
         sessionCommon.addFuture ( future );
         return future;
     }
