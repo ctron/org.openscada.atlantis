@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA A&E Storage Interface Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.storage
 Bundle-Version: 0.14.0.qualifier
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Import-Package: org.openscada.ae
 Export-Package: org.openscada.ae.server.storage;version="0.14.0"

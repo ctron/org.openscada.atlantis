@@ -207,5 +207,5 @@ Import-Package: antlr;version="[2.7.0,3.0.0)",
  org.springframework.osgi.service.importer.support,
  org.springframework.osgi.util,
  org.springframework.transaction.interceptor
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.openscada.ae.server.storage.jdbc.internal.Activator
