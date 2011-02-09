@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -50,6 +50,7 @@ public abstract class AbstractDataSourceSummarizer extends AbstractInputDataSour
         this.executor = executor;
         this.tracker = new AllObjectPoolServiceTracker ( tracker, new ObjectPoolListener () {
 
+            @Override
             public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
             {
                 if ( ! ( service instanceof DataSource ) )
@@ -63,13 +64,20 @@ public abstract class AbstractDataSourceSummarizer extends AbstractInputDataSour
                     return;
                 }
 
+                if ( !isMatch ( (DataSource)service, properties ) )
+                {
+                    return;
+                }
+
                 AbstractDataSourceSummarizer.this.handleAdded ( (DataSource)service, properties );
             }
 
+            @Override
             public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
             {
             }
 
+            @Override
             public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
             {
                 if ( ! ( service instanceof DataSource ) )
@@ -86,6 +94,11 @@ public abstract class AbstractDataSourceSummarizer extends AbstractInputDataSour
                 AbstractDataSourceSummarizer.this.handleRemoved ( (DataSource)service, properties );
             }
         } );
+    }
+
+    protected boolean isMatch ( final DataSource service, final Dictionary<?, ?> properties )
+    {
+        return true;
     }
 
     @Override
@@ -115,13 +128,14 @@ public abstract class AbstractDataSourceSummarizer extends AbstractInputDataSour
             this.source = source;
         }
 
+        @Override
         public synchronized void stateChanged ( final DataItemValue value )
         {
             logger.debug ( "State change: {}", value );
 
             if ( !this.disposed )
             {
-                AbstractDataSourceSummarizer.this.handleStateChange ( this.source, value );
+                handleStateChange ( this.source, value );
             }
         }
 

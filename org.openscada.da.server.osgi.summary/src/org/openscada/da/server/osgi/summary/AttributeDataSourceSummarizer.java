@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.osgi.summary;
 
+import java.util.Dictionary;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -33,6 +34,7 @@ import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.str.StringHelper;
+import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +50,8 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
     private String attributeName;
 
     private boolean onlyMaster;
+
+    private HashSet<String> blacklist;
 
     public AttributeDataSourceSummarizer ( final Executor executor, final ObjectPoolTracker tracker )
     {
@@ -88,6 +92,32 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
                 updateStats ();
             }
         }
+    }
+
+    @Override
+    protected boolean isMatch ( final DataSource source, final Dictionary<?, ?> properties )
+    {
+        final Object pid = properties.get ( Constants.SERVICE_PID );
+
+        if ( ! ( pid instanceof String ) )
+        {
+            logger.debug ( "Rejecting datasource - invalid service.pid - {}", pid );
+            return false;
+        }
+
+        if ( ! ( source instanceof MasterItem ) && this.onlyMaster )
+        {
+            logger.debug ( "Rejecting datasource ({}) - class {} but we require master items ", pid, source.getClass () );
+            return false;
+        }
+
+        if ( this.blacklist.contains ( pid ) )
+        {
+            logger.debug ( "Rejecting datasource ({}) - service.pid is blacklisted", pid );
+            return false;
+        }
+
+        return true;
     }
 
     protected boolean isMatch ( final DataSource source, final DataItemValue value )
@@ -143,6 +173,8 @@ public class AttributeDataSourceSummarizer extends AbstractDataSourceSummarizer
 
         this.attributeName = cfg.getStringChecked ( "attribute", "'attribute' must be set" );
         this.onlyMaster = cfg.getBoolean ( "onlyMaster", false );
+
+        this.blacklist = new HashSet<String> ( cfg.getPrefixed ( "blacklist." ).values () );
 
         open ();
     }
