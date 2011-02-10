@@ -350,6 +350,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                 @Override
                 public void failed ( final Throwable e )
                 {
+                    logger.debug ( "Failed to process write request", e );
+
                     final Message replyMessage = new Message ( Messages.CC_WRITE_OPERATION_RESULT );
                     replyMessage.getValues ().put ( Message.FIELD_ERROR_INFO, new StringValue ( e.getMessage () ) );
                     replyMessage.getValues ().put ( "id", new LongValue ( handle.getId () ) );
