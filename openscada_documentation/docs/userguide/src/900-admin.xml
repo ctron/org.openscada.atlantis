@@ -6,6 +6,215 @@
 	This section describes some administrative tasks of the <trademark>OpenSCADA</trademark> system.
 	</para>
 	
+<!--
+  - CA Administration 
+  -->
+	
+<sect1><title>Administration of <acronym>CA</acronym> based servers</title>
+	<para>
+	The <acronym>CA</acronym> provides a method of configuration for <trademark>OpenSCADA</trademark>
+	servers and is commonly used with <trademark>OSGi</trademark> based applications. <trademark>OSGi</trademark>
+	based applications make use of an extremely modularized service infrastructure and the
+	<acronym>CA</acronym> is the system to configure and manage these service instances.  
+	</para>
+	<para>
+	The <acronym>CA</acronym> can be seen as a database which lives inside each main application container
+	(<abbrev>e.g.</abbrev> <trademark>OSGi</trademark> container) and to which all providers (factories)
+	of services subscribe to. The service factories will receive initial configuration information and
+	following configuration updates from the <abbrev>CA</abbrev> and adapt their provides services to these
+	configuration information. Of course the <abbrev>CA</abbrev> needs to persistently store the
+	configuration data. Depending on the implementation of the <abbrev>CA</abbrev> the data might be stored in
+	a local file system or a database accessed using <acronym>JDBC</acronym>.  
+	</para>
+	<para>
+	At the moment there are two implementation of the <acronym>CA</acronym> in <trademark>OpenSCADA</trademark>
+	Atlantis. One is file based (<trademark>OSGi</trademark> bundle <filename>org.openscada.ca.file</filename>) and one is
+	<acronym>JDBC</acronym> based (<trademark>OSGi</trademark> bundle <filename>org.openscada.ca.jdbc</filename>).
+	<note><para>Only one implementation should be active at one time in one application. Otherwise multiple <acronym>CA</acronym>
+	running instances will cause unspecified behavior.</para></note>
+	</para>
+	<para>
+	Independent of which implementation is active, the <acronym>CA</acronym> provides common interfacing methods to
+	other services. Two services of interest are the servlet configurator and the <acronym>JAX-WS</acronym> WebService interface.
+	Both can be used to configure the <acronym>CA</acronym> from outside the application and will be explained in the following
+	sections.
+	</para>
+	
+	<para>
+	For a list of services to configure using the <acronym>CA</acronym> see <xref linkend="cafactories"/>.
+	</para>
+	
+<sect2><title>Servlet configurator</title>
+	<para>
+	The servlet configurator provides an easy web access for human end users using an <acronym>HTML</acronym> based interface. The
+	user can access the web page using a standard web browser and create, view, update or delete configuration entries.  
+	</para>
+	<note><para>The servlet configurator currently shows the whole configuration at once using one web page. If you have a rather
+	huge configuration this might bring your web browser into trouble rendering such a big web page.</para></note>
+	
+	<sect3><title>Activating the servlet configurator</title>
+	<para>
+	In order to activate the servlet configurator you will need to install and start the following bundles assuming that
+	<trademark>Equinox</trademark> is used as <trademark>OSGi</trademark> container:
+	<itemizedlist>
+		<listitem><para><filename>org.mortbay.jetty.server</filename></para></listitem>
+		<listitem><para><filename>org.eclipse.equinox.http.jetty</filename></para></listitem>
+		<listitem><para><filename>org.openscada.ca.servlet</filename></para></listitem>
+	</itemizedlist>
+	</para>
+	<para>
+	In order to choose a different port for the <acronym>HTTP</acronym> server than port 80 the system property
+	<varname>org.eclipse.equinox.http.jetty.http.port</varname> has to be set to the specific port number that
+	should be used instead (<abbrev>e.g.</abbrev> 8080).
+	</para> 
+	<para>
+	If a different container than <trademark>Equinox</trademark> is used the container specific HTTP registry has to
+	be started and then the bundle <filename>org.openscada.ca.servlet</filename>.
+	</para>
+	</sect3>
+	
+	<sect3><title>Accessing the servlet configurator</title>
+	<para>
+	Navigate to <uri>http://hostname:port/ca</uri> (<abbrev>e.g.</abbrev> <uri>http://localhost:8080/ca</uri>) and
+	a list of all factories and configuration entries will be provided.
+	</para>
+	</sect3>
+	
+</sect2>
+
+<sect2><title>Web service interface</title>
+	<para>
+	The web service interface provides a more machine based access to the <acronym>CA</acronym> system. A web service based
+	on <acronym>JAX-WS</acronym> is provided which uses <acronym>HTTP</acronym> as transport layer but does not provide a
+	human end user interface. Normally an application will access this interface providing its own, custom interface.
+	</para>
+	<para>
+	The <trademark>OpenSCADA</trademark> Administration client provides such an interface and allows the user to view, import
+	and export configuration archives. The basic workflow for mass configuration is that a all configuration fragments
+	(like spreadsheet based IO lists and other sources) are compiled to an
+	<quote> <trademark>OpenSCADA</trademark> Configuration Archive</quote> (<acronym>OSCAR</acronym>). This file contains all
+	informations needed and can be imported to the server using the administration client. During the import process the
+	client will read the <acronym>OSCAR</acronym> file and the current configuration from the server. The difference between
+	these two is calculated and the required actions are then sent to the server for processing.
+	</para>
+	<para>
+	Also can the current configuration of a <acronym>CA</acronym> be exported from a running server into an <acronym>OSCAR</acronym>
+	file for backup, transfer to another server, <abbrev>etc.</abbrev>.
+	</para>
+
+	<sect3><title>Activating the web service interface</title>
+	<para>
+	In order to activate the s web service interface you will need to install and start the following bundles:
+	<itemizedlist>
+		<listitem><para><filename>org.openscada.utils.osgi.jaxws</filename></para></listitem>
+		<listitem><para><filename>org.openscada.ca.servlet.jaxws</filename></para></listitem>
+	</itemizedlist>
+	</para>
+	<para>
+	The communication endpoint to which the service will be bound can be specificed using the system property
+	<varname>org.openscada.utils.osgi.jaxws.baseAddress</varname>. The value must be a parsable <acronym>HTTP</acronym>
+	<acronym>URI</acronym> which can also be the <quote>any interface</quote> (0.0.0.0). The value
+	<uri>http://0.0.0.0:9091</uri> will bind the web service to all network interfaces and <acronym>TCP</acronym>
+	port 9091.
+	</para>
+	</sect3>
+	
+	<sect3><title>Creating a new connection entry</title>
+		<para>
+		In order to get access from the <trademark>OpenSCADA</trademark> Administration Client to the <acronym>CA</acronym>
+		you will need to add a new connection to the list of available connections. This is just another connection like all
+		other connections in the administration client.
+		</para>
+		<para>
+		The <acronym>URI</acronym> of the a <acronym>CA</acronym> connection is <uri>ca:jaxws://hostname:port</uri>
+		(<abbrev>e.g.</abbrev>: <uri>ca:jaxws://localhost:9091</uri>).
+		</para>
+	</sect3>
+	
+	<sect3><title>Importing a configuration archive</title>
+		<para>
+		In the <quote>Connections</quote> view of the <trademark>OpenSCADA</trademark> Administration Client establish
+		a connection to the target <acronym>CA</acronym> connection:
+		
+		<!-- image: connect -->
+		<mediaobject>
+			<imageobject><imagedata fileref="images/900-admin/connect.png" format="PNG" scalefit="1"/></imageobject>
+ 			<caption>Connect to CA</caption>
+		</mediaobject>
+		</para>
+		
+		<para>
+		Once the connection is established use the menu entry <menuchoice><guimenuitem>Import configuration</guimenuitem></menuchoice>
+		from the context menu:
+		
+		<!-- image: import context menu -->
+		<mediaobject>
+			<imageobject><imagedata fileref="images/900-admin/import.png" format="PNG" scalefit="1"/></imageobject>
+ 			<caption>Start import wizard</caption>
+		</mediaobject>	
+		</para>
+		
+		<para>
+		The import wizard will be opened and required the user to select the configuration archive that should be imported. Select
+		the file using the <guibutton>Browse...</guibutton>. When the file is selected it will be loaded automatically. The file
+		location is stored in the preferences and loaded as default value the next time the wizard is opened. In this case the user
+		can use the <guibutton>Load</guibutton> button to simply load the default file. When the file is loaded advance the next
+		wizard page.
+		
+		<!-- image: import wizard dialog - file -->
+		<mediaobject>
+			<imageobject><imagedata fileref="images/900-admin/wizard-local.png" format="PNG" scalefit="1"/></imageobject>
+ 			<caption>Select local data</caption>
+		</mediaobject>
+		</para>
+		
+		<para>
+		The remote data used for the delta generation must be loaded. Normally this data is loaded from the <acronym>CA</acronym>
+		of the server but for testing purposes it might be useful to make a delta using another local file. If you want to import
+		data to the remote server use the button <guibutton>Load from server</guibutton>. After the data was loaded from the server
+		advance to the next wizard page.
+		
+		<!-- image: import wizard dialog - remote -->
+		<mediaobject>
+			<imageobject><imagedata fileref="images/900-admin/wizard-remote.png" format="PNG" scalefit="1"/></imageobject>
+ 			<caption>Select remote data</caption>
+		</mediaobject>
+		</para>
+		
+		<para>
+		In this page the user has the option to select configuration elements that should be ignored when importing the new data.
+		Factories that are selected will simply be ignore from the import process and neither created, updated nor deleted. Select
+		factories that should be ignored by the import process and advance to the next wizard page.
+		
+		<!-- image: import wizard dialog - ignore -->
+		<mediaobject>
+			<imageobject><imagedata fileref="images/900-admin/wizard-ignore.png" format="PNG" scalefit="1"/></imageobject>
+ 			<caption>Select elements to ignore</caption>
+		</mediaobject> 
+		</para>
+		
+		<para>
+		This last page of the wizard will show the delta and the operations that will be performed when the wizard is finished. This
+		is the last chance to cancel the import process since nothing has been commited up to now. Pressing the <guibutton>Finish</guibutton>
+		will start import process.
+		
+		<!-- image: import wizard dialog - finish -->
+		<mediaobject>
+			<imageobject><imagedata fileref="images/900-admin/wizard-delta.png" format="PNG" scalefit="1"/></imageobject>
+ 			<caption>Review changes</caption>
+		</mediaobject>
+		</para>
+		
+	</sect3>
+
+</sect2>
+	
+</sect1>
+
+<!--
+  - OSGi based servers 
+  -->
+	
 <sect1><title><trademark>OSGi</trademark> based servers</title>
 	<para>
 	This section focuses on the administration of <trademark>OSGi</trademark> based server installations.
