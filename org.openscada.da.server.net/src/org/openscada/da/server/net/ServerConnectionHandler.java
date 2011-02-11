@@ -428,6 +428,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
         catch ( final Throwable e )
         {
+            logger.debug ( String.format ( "Failed to write attributes to item: %s", itemId.value ), e );
             this.messenger.sendMessage ( MessageCreator.createFailedMessage ( request, e ) );
         }
     }
