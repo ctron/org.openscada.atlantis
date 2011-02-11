@@ -11,7 +11,7 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.da.server.exporter;version="0.14",
  org.openscada.da.server.net;version="0.14",
  org.openscada.utils.lifecycle;version="0.13.0"
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.exporter;version="0.15.0";
   uses:="org.openscada.da.core.server,
    org.openscada.core,
