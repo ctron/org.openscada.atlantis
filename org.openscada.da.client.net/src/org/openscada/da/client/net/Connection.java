@@ -434,6 +434,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                         }
                         catch ( final OperationException e )
                         {
+                            logger.debug ( "Failed to write attributes", e );
                             if ( callback != null )
                             {
                                 callback.failed ( e.getMessage () );
