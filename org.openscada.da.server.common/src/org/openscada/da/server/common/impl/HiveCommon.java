@@ -651,7 +651,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             final String proxyUser = operationParameters.getUserInformation ().getName ();
 
             // check if user differs
-            if ( !proxyUser.equals ( session.getUserInformation ().getName () ) )
+            if ( !proxyUser.equals ( sessionInformation.getName () ) )
             {
                 logger.debug ( "Trying to set proxy user: {}", proxyUser );
 
