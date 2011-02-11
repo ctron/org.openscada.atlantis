@@ -5,7 +5,7 @@ Bundle-SymbolicName: org.openscada.da.client.connection.service
 Bundle-Version: 0.15.0.qualifier
 Bundle-Activator: org.openscada.da.client.connection.service.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.log4j,
  org.openscada.ca;version="0.14.0",
  org.openscada.core;version="0.14.0",
