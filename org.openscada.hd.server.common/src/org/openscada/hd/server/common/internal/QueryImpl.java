@@ -62,6 +62,7 @@ public class QueryImpl implements Query, QueryListener
         }
     }
 
+    @Override
     public void close ()
     {
         dispose ();
@@ -76,12 +77,14 @@ public class QueryImpl implements Query, QueryListener
         }
     }
 
+    @Override
     public void changeParameters ( final QueryParameters parameters )
     {
         logger.debug ( "changeParameters: parameters: {}", parameters );
         this.query.changeParameters ( parameters );
     }
 
+    @Override
     public void updateParameters ( final QueryParameters parameters, final Set<String> valueTypes )
     {
         logger.debug ( "updateParameters: parameters: {}, valueTypes: {}", new Object[] { parameters, valueTypes } );
@@ -102,18 +105,20 @@ public class QueryImpl implements Query, QueryListener
         this.listener.updateParameters ( parameters, valueTypes );
     }
 
+    @Override
     public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
     {
-        logger.debug ( "updateData: index: {}, values: @{} ({}), valueInformation: @{}", new Object[] { index, values.size (), values.keySet (), valueInformation.length } );
-
         if ( values == null )
         {
             throw new IllegalArgumentException ( "'values' must not be null" );
         }
-        if ( values == null )
+        if ( valueInformation == null )
         {
             throw new IllegalArgumentException ( "'valueInformation' must not be null" );
         }
+
+        logger.debug ( "updateData: index: {}, values: @{} ({}), valueInformation: @{}", new Object[] { index, values.size (), values.keySet (), valueInformation.length } );
+
         synchronized ( this )
         {
             if ( this.queryParameters == null )
@@ -149,6 +154,7 @@ public class QueryImpl implements Query, QueryListener
         this.listener.updateData ( index, values, valueInformation );
     }
 
+    @Override
     public void updateState ( final QueryState state )
     {
         logger.debug ( "updateState: state: {}", new Object[] { state } );
