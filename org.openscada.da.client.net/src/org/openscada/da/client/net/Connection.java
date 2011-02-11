@@ -304,6 +304,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         }
         catch ( final InterruptedException e )
         {
+            logger.debug ( "Interrupted", e );
             throw new OperationException ( e );
         }
         completeWrite ( op );
