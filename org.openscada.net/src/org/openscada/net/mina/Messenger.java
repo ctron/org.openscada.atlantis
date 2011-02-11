@@ -135,7 +135,7 @@ public class Messenger implements MessageListener
     @Override
     protected void finalize () throws Throwable
     {
-        logger.info ( "Finalized" );
+        logger.debug ( "Finalized" );
         if ( this.timer != null )
         {
             this.timer.cancel ();
@@ -170,7 +170,7 @@ public class Messenger implements MessageListener
                     @Override
                     protected void finalize () throws Throwable
                     {
-                        logger.info ( "Finalized timeout job" );
+                        logger.debug ( "Finalized timeout job" );
                         super.finalize ();
                     }
                 };
@@ -277,6 +277,7 @@ public class Messenger implements MessageListener
         return tags;
     }
 
+    @Override
     public void messageReceived ( final Message message )
     {
         this.lastMessge = System.currentTimeMillis ();
@@ -463,6 +464,7 @@ public class Messenger implements MessageListener
 
             isSent = connection.sendMessage ( message, new PrepareSendHandler () {
 
+                @Override
                 public void prepareSend ( final Message message )
                 {
                     registerMessageTag ( message.getSequence (), tag );
@@ -525,7 +527,7 @@ public class Messenger implements MessageListener
             catch ( final Throwable e )
             {
                 // reply to other peer if message processing failed
-                logger.warn ( "Message processing failed: ", e );
+                logger.warn ( "Message processing failed", e );
                 this.connection.sendMessage ( MessageCreator.createFailedMessage ( message, e ), null );
             }
 
