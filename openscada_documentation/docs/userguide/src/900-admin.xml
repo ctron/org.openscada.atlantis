@@ -138,7 +138,7 @@
 		
 		<!-- image: connect -->
 		<mediaobject>
-			<imageobject><imagedata fileref="images/900-admin/connect.png" format="PNG" scalefit="1"/></imageobject>
+			<imageobject><imagedata fileref="images/900-admin/connect.png" format="PNG"/></imageobject>
  			<caption>Connect to CA</caption>
 		</mediaobject>
 		</para>
@@ -149,7 +149,7 @@
 		
 		<!-- image: import context menu -->
 		<mediaobject>
-			<imageobject><imagedata fileref="images/900-admin/import.png" format="PNG" scalefit="1"/></imageobject>
+			<imageobject><imagedata fileref="images/900-admin/import.png" format="PNG"/></imageobject>
  			<caption>Start import wizard</caption>
 		</mediaobject>	
 		</para>
@@ -163,7 +163,7 @@
 		
 		<!-- image: import wizard dialog - file -->
 		<mediaobject>
-			<imageobject><imagedata fileref="images/900-admin/wizard-local.png" format="PNG" scalefit="1"/></imageobject>
+			<imageobject><imagedata fileref="images/900-admin/wizard-local.png" format="PNG"/></imageobject>
  			<caption>Select local data</caption>
 		</mediaobject>
 		</para>
@@ -176,7 +176,7 @@
 		
 		<!-- image: import wizard dialog - remote -->
 		<mediaobject>
-			<imageobject><imagedata fileref="images/900-admin/wizard-remote.png" format="PNG" scalefit="1"/></imageobject>
+			<imageobject><imagedata fileref="images/900-admin/wizard-remote.png" format="PNG"/></imageobject>
  			<caption>Select remote data</caption>
 		</mediaobject>
 		</para>
@@ -188,7 +188,7 @@
 		
 		<!-- image: import wizard dialog - ignore -->
 		<mediaobject>
-			<imageobject><imagedata fileref="images/900-admin/wizard-ignore.png" format="PNG" scalefit="1"/></imageobject>
+			<imageobject><imagedata fileref="images/900-admin/wizard-ignore.png" format="PNG"/></imageobject>
  			<caption>Select elements to ignore</caption>
 		</mediaobject> 
 		</para>
@@ -200,7 +200,7 @@
 		
 		<!-- image: import wizard dialog - finish -->
 		<mediaobject>
-			<imageobject><imagedata fileref="images/900-admin/wizard-delta.png" format="PNG" scalefit="1"/></imageobject>
+			<imageobject><imagedata fileref="images/900-admin/wizard-delta.png" format="PNG"/></imageobject>
  			<caption>Review changes</caption>
 		</mediaobject>
 		</para>
