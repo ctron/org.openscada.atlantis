@@ -178,7 +178,10 @@ public abstract class AbstractDataSourceSummarizer extends AbstractInputDataSour
                 service.removeListener ( listener );
             }
         }
-        listener.dispose ();
+        if ( listener != null )
+        {
+            listener.dispose ();
+        }
     }
 
     /**
