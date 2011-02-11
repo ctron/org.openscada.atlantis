@@ -4,13 +4,13 @@ Bundle-Name: OpenSCADA Core Connection Provider
 Bundle-SymbolicName: org.openscada.core.connection.provider
 Bundle-Version: 0.14.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.core.client;version="0.14.0",
  org.openscada.utils.lang;version="0.14.0",
  org.openscada.utils.osgi;version="0.14.0",
  org.osgi.framework;version="1.5.0",
- org.osgi.util.tracker,
+ org.osgi.util.tracker;version="1.4.0",
  org.slf4j;version="1.5.8"
 Export-Package: org.openscada.core.connection.provider;version="0.14.0";
   uses:="org.openscada.core.client,
