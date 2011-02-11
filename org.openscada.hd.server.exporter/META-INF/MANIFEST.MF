@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA HD Server Base
 Bundle-SymbolicName: org.openscada.hd.server.exporter
 Bundle-Version: 0.14.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core,
  org.openscada.core.server;version="0.14.0",
  org.openscada.hd.server;version="0.14.0",
