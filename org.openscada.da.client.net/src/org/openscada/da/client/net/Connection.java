@@ -683,6 +683,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                         }
                         catch ( final OperationException e )
                         {
+                            logger.debug ( "Failed to browse", e );
                             if ( callback != null )
                             {
                                 callback.failed ( e.getMessage () );
