@@ -91,7 +91,7 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
         @Override
         public void complete ()
         {
-            setResult ( new WriteResult () );
+            setResult ( WriteResult.OK );
         }
 
     }
