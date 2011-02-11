@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA HD Common Historical Item
 Bundle-SymbolicName: org.openscada.hd.server.common.item
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Activator: org.openscada.hd.server.common.item.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-RequiredExecutionEnvironment: J2SE-1.5
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ca,
  org.openscada.core;version="0.14.0",
  org.openscada.da.client;version="0.14.0",
