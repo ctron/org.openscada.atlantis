@@ -34,7 +34,6 @@ import org.openscada.utils.str.StringHelper;
 
 public class CommonSumHandler extends AbstractMasterHandlerImpl
 {
-
     private Pattern pattern;
 
     private String tag;
@@ -65,6 +64,11 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
     @Override
     public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
+        if ( this.tag == null )
+        {
+            return value;
+        }
+
         final Builder builder = new DataItemValue.Builder ( value );
 
         // convert source errors
