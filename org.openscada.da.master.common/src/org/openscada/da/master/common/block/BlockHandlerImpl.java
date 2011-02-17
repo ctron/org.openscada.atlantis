@@ -157,6 +157,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     protected void injectAttributes ( final Builder builder )
     {
+        builder.setAttribute ( getPrefixed ( "blocked" ), Variant.valueOf ( this.active ) );
         builder.setAttribute ( getPrefixed ( "active" ), Variant.valueOf ( this.active ) );
         builder.setAttribute ( getPrefixed ( "note" ), Variant.valueOf ( this.note ) );
         builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( this.user ) );
