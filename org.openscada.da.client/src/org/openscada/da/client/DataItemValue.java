@@ -221,12 +221,13 @@ public class DataItemValue
     }
 
     /**
-     * get the timestamp of the value
+     * get an attribute as timestamp
+     * @param attributeName the attribute to get
      * @return the timestamp or <code>null</code> if the timestamp property is not set
      */
-    public Calendar getTimestamp ()
+    public Calendar getAsTimestamp ( final String attributeName )
     {
-        final Variant value = this.attributes.get ( "timestamp" );
+        final Variant value = this.attributes.get ( attributeName );
         if ( value == null )
         {
             return null;
@@ -247,6 +248,15 @@ public class DataItemValue
             return null;
         }
         return (Calendar)c.clone ();
+    }
+
+    /**
+     * get the timestamp of the value
+     * @return the timestamp or <code>null</code> if the timestamp property is not set
+     */
+    public Calendar getTimestamp ()
+    {
+        return getAsTimestamp ( "timestamp" );
     }
 
     @Override
