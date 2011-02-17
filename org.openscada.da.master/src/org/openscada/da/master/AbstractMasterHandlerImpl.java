@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -55,6 +55,11 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
     private final Map<String, ObjectPoolServiceTracker> trackers = new HashMap<String, ObjectPoolServiceTracker> ();
 
     protected Map<String, Variant> eventAttributes;
+
+    public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker )
+    {
+        this ( poolTracker, Integer.MAX_VALUE );
+    }
 
     public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker, final int defaultPriority )
     {
@@ -126,17 +131,20 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         {
             this.trackers.put ( masterId, new ObjectPoolServiceTracker ( this.poolTracker, masterId, new ObjectPoolListener () {
 
+                @Override
                 public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
                 {
                     addItem ( (MasterItem)service );
                 }
 
+                @Override
                 public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
                 {
                     // TODO Auto-generated method stub
 
                 }
 
+                @Override
                 public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
                 {
                     removeItem ( (MasterItem)service );
@@ -183,6 +191,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         }
     }
 
+    @Override
     public abstract DataItemValue dataUpdate ( Map<String, Object> context, final DataItemValue value );
 
     /**
@@ -192,6 +201,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
      * derived implementations.
      * </p>  
      */
+    @Override
     public WriteRequestResult processWrite ( final WriteRequest request )
     {
         return null;
