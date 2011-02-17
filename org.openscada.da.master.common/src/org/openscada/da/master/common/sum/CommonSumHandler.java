@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,19 +35,17 @@ import org.openscada.utils.str.StringHelper;
 public class CommonSumHandler extends AbstractMasterHandlerImpl
 {
 
-    private final Pattern pattern;
+    private Pattern pattern;
 
-    private final String tag;
+    private String tag;
 
     private String prefix = "osgi.source";
 
     private boolean debug = false;
 
-    public CommonSumHandler ( final ObjectPoolTracker poolTracker, final String tag, final int priority )
+    public CommonSumHandler ( final ObjectPoolTracker poolTracker )
     {
-        super ( poolTracker, priority );
-        this.tag = tag;
-        this.pattern = Pattern.compile ( ".*\\." + this.tag + "$" );
+        super ( poolTracker );
     }
 
     @Override
@@ -57,6 +55,9 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         this.debug = cfg.getBoolean ( "debug", false );
         this.prefix = cfg.getString ( "prefix", "osgi.source" );
+
+        this.tag = cfg.getString ( "tag" );
+        this.pattern = Pattern.compile ( cfg.getString ( "pattern", ".*\\." + Pattern.quote ( this.tag ) + "$" ) );
 
         reprocess ();
     }

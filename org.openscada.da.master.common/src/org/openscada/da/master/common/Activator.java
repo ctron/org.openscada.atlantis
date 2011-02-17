@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,7 +35,6 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class Activator implements BundleActivator
@@ -44,12 +43,6 @@ public class Activator implements BundleActivator
     private EventProcessor eventProcessor;
 
     private CommonSumHandlerFactoryImpl factory1;
-
-    private CommonSumHandlerFactoryImpl factory2;
-
-    private CommonSumHandlerFactoryImpl factory3;
-
-    private CommonSumHandlerFactoryImpl factory4;
 
     private ObjectPoolTracker poolTracker;
 
@@ -67,6 +60,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.eventProcessor = new EventProcessor ( context );
@@ -78,11 +72,13 @@ public class Activator implements BundleActivator
         this.caTracker = new ServiceTracker ( context, ConfigurationAdministrator.class.getName (), null );
         this.caTracker.open ();
 
-        this.factory2 = makeFactory ( context, this.poolTracker, "alarm", 5020 );
-        this.factory3 = makeFactory ( context, this.poolTracker, "manual", 5010 );
-        this.factory1 = makeFactory ( context, this.poolTracker, "error", 5000 );
-        this.factory4 = makeFactory ( context, this.poolTracker, "ackRequired", 5030 );
-
+        {
+            this.factory1 = new CommonSumHandlerFactoryImpl ( context, this.poolTracker );
+            final Dictionary<String, String> properties1 = new Hashtable<String, String> ();
+            properties1.put ( Constants.SERVICE_DESCRIPTION, "An attribute sum handler" );
+            properties1.put ( ConfigurationAdministrator.FACTORY_ID, "da.master.handler.sum" );
+            context.registerService ( ConfigurationFactory.class.getName (), this.factory1, properties1 );
+        }
         {
             this.factory5 = new ScaleHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 500 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
@@ -116,27 +112,14 @@ public class Activator implements BundleActivator
         }
     }
 
-    private static CommonSumHandlerFactoryImpl makeFactory ( final BundleContext context, final ObjectPoolTracker poolTracker, final String tag, final int priority ) throws InvalidSyntaxException
-    {
-        final CommonSumHandlerFactoryImpl factory = new CommonSumHandlerFactoryImpl ( context, poolTracker, tag, priority );
-        final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( Constants.SERVICE_DESCRIPTION, String.format ( "A sum %s handler", tag ) );
-        properties.put ( ConfigurationAdministrator.FACTORY_ID, "da.master.handler.sum." + tag );
-        context.registerService ( ConfigurationFactory.class.getName (), factory, properties );
-        return factory;
-    }
-
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
-
         this.factory1.dispose ();
-        this.factory2.dispose ();
-        this.factory3.dispose ();
-        this.factory4.dispose ();
         this.factory5.dispose ();
         this.factory6.dispose ();
         this.factory7.dispose ();

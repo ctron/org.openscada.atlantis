@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,17 +29,11 @@ import org.osgi.framework.InvalidSyntaxException;
 
 public class CommonSumHandlerFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
 {
-    private final String tag;
-
-    private final int priority;
-
     private final ObjectPoolTracker poolTracker;
 
-    public CommonSumHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final String tag, final int priority ) throws InvalidSyntaxException
+    public CommonSumHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
     {
         super ( context );
-        this.tag = tag;
-        this.priority = priority;
         this.poolTracker = poolTracker;
         this.poolTracker.open ();
     }
@@ -54,7 +48,7 @@ public class CommonSumHandlerFactoryImpl extends AbstractServiceConfigurationFac
     @Override
     protected Entry<AbstractMasterHandlerImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final AbstractMasterHandlerImpl handler = new CommonSumHandler ( this.poolTracker, this.tag, this.priority );
+        final AbstractMasterHandlerImpl handler = new CommonSumHandler ( this.poolTracker );
         handler.update ( parameters );
         return new Entry<AbstractMasterHandlerImpl> ( configurationId, handler );
     }
