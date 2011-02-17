@@ -87,7 +87,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             if ( !testRequest.isEmpty () )
             {
                 // if there is a remaining request
-                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, "Blocked write request: " + this.note, makeString ( testRequest ) );
+                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, String.format ( "Blocked write request: %s", this.note ), makeString ( testRequest ) );
                 return createBlockedResult ();
             }
         }
