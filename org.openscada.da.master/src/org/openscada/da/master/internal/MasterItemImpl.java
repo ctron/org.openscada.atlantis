@@ -144,7 +144,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         @Override
         public int compareTo ( final HandlerEntry o )
         {
-            return this.priority - o.priority;
+            return this.priority < o.priority ? -1 : this.priority == o.priority ? 0 : 1;
         }
 
         @Override
