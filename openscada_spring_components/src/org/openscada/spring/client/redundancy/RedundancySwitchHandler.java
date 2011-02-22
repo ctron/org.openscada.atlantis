@@ -100,7 +100,7 @@ public class RedundancySwitchHandler implements InitializingBean
                     logger.info ( "Master flag changed for " + masterFlagItem.getKey () + " to " + value + " subscription state: " + value.getSubscriptionState () );
                     RedundancySwitchHandler.this.lastConnectionStates.put ( masterFlagItem.getKey (), SubscriptionState.CONNECTED.equals ( value.getSubscriptionState () ) );
                     RedundancySwitchHandler.this.lastMasterFlags.put ( masterFlagItem.getKey (), value.getValue ().asBoolean () );
-                    if ( value.isError () )
+                    if ( hasError ( value ) )
                     {
                         logger.info ( "Master flag " + masterFlagItem.getKey () + " has error" );
                         RedundancySwitchHandler.this.lastConnectionStates.put ( masterFlagItem.getKey (), false );
@@ -154,6 +154,29 @@ public class RedundancySwitchHandler implements InitializingBean
                 }
             };
         } );
+    }
+
+    /**
+     * because we can not safely assume that the error chain is correctly configured,
+     * we have to check for errors manually
+     * 
+     * @param value
+     * @return
+     */
+    private boolean hasError ( final DataItemValue value )
+    {
+        if ( value.isError () )
+        {
+            return true;
+        }
+        for ( Entry<String, Variant> entry : value.getAttributes ().entrySet () )
+        {
+            if ( entry.getKey ().matches ( ".*\\.error" ) )
+            {
+                return true;
+            }
+        }
+        return false;
     }
 
     protected void switchConnection ()
