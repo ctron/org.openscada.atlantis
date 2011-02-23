@@ -328,6 +328,7 @@ public class ProtocolGMPPTest
         performCode ( message, packet );
     }
 
+    @Test
     public void testPerformance () throws Exception
     {
         final Message message = new Message ();
