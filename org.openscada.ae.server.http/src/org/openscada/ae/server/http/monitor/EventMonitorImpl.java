@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.http.monitor;
 
 import java.util.Date;
@@ -27,6 +46,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
         super ( context, executor, eventProcessor, id );
     }
 
+    @Override
     public void update ( final Map<String, String> properties )
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
@@ -60,6 +80,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
         return attributes;
     }
 
+    @Override
     public synchronized Pair<Boolean, Event> evaluate ( final Event event )
     {
         if ( this.matcher != null )
@@ -67,7 +88,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
             if ( this.matcher.matches ( event ) )
             {
                 // FIXME: just for now, the real implementation should set AKN directly
-                SequenceEventDecorator eventDecorator = new SequenceEventDecorator ();
+                final SequenceEventDecorator eventDecorator = new SequenceEventDecorator ();
                 eventDecorator.setSequence ( 1 );
                 this.setFailure ( new Variant (), event.getSourceTimestamp (), eventDecorator );
                 eventDecorator.setSequence ( 2 );
@@ -75,7 +96,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
                 final Event resultEvent = Event.create () //
                 .event ( event ) //
                 .attribute ( Fields.COMMENT, annotateCommentWithSource ( event ) ) //
-                .attribute ( Fields.SOURCE, this.getId () ) //
+                .attribute ( Fields.SOURCE, getId () ) //
                 .attribute ( Fields.MONITOR_TYPE, this.monitorType )//
                 .attribute ( "sequence", 0 )//
                 .build ();
@@ -87,16 +108,16 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
 
     private Variant annotateCommentWithSource ( final Event event )
     {
-        StringBuilder sb = new StringBuilder ();
-        Variant originalComment = event.getField ( Fields.COMMENT );
-        Variant originalSource = event.getField ( Fields.SOURCE );
+        final StringBuilder sb = new StringBuilder ();
+        final Variant originalComment = event.getField ( Fields.COMMENT );
+        final Variant originalSource = event.getField ( Fields.SOURCE );
         boolean commentThere = false;
-        if ( ( originalComment != null ) && originalComment.isString () && ( originalComment.asString ( "" ).length () > 0 ) )
+        if ( originalComment != null && originalComment.isString () && originalComment.asString ( "" ).length () > 0 )
         {
             commentThere = true;
             sb.append ( originalComment.asString ( "" ) );
         }
-        if ( ( originalSource != null ) && originalSource.isString () && ( originalSource.asString ( "" ).length () > 0 ) )
+        if ( originalSource != null && originalSource.isString () && originalSource.asString ( "" ).length () > 0 )
         {
             if ( commentThere )
             {
