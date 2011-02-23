@@ -90,9 +90,9 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
                 // FIXME: just for now, the real implementation should set AKN directly
                 final SequenceEventDecorator eventDecorator = new SequenceEventDecorator ();
                 eventDecorator.setSequence ( 1 );
-                this.setFailure ( new Variant (), event.getSourceTimestamp (), eventDecorator );
+                this.setFailure ( Variant.NULL, event.getSourceTimestamp (), eventDecorator );
                 eventDecorator.setSequence ( 2 );
-                this.setOk ( new Variant (), event.getSourceTimestamp (), eventDecorator );
+                this.setOk ( Variant.NULL, event.getSourceTimestamp (), eventDecorator );
                 final Event resultEvent = Event.create () //
                 .event ( event ) //
                 .attribute ( Fields.COMMENT, annotateCommentWithSource ( event ) ) //
@@ -134,6 +134,6 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
     public void init ()
     {
         super.init ();
-        setOk ( new Variant (), new Date ( System.currentTimeMillis () ) );
+        setOk ( Variant.NULL, new Date () );
     }
 }
