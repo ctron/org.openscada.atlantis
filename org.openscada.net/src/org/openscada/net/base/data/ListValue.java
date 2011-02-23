@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,6 +31,23 @@ public class ListValue extends Value
     public ListValue ()
     {
         this.values = new LinkedList<Value> ();
+    }
+
+    public ListValue ( final int initialCapacity )
+    {
+        this.values = new ArrayList<Value> ( initialCapacity );
+    }
+
+    /**
+     * Create a new list value based on a list of values
+     * <p><em>Note:</em> the provided list not be modified after the
+     * constructor was called</p>
+     * @since 0.16.0
+     * @param values
+     */
+    public ListValue ( final List<Value> values )
+    {
+        this.values = values;
     }
 
     public ListValue ( final Value[] values )
