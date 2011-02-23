@@ -19,8 +19,6 @@
 
 package org.openscada.net.mina;
 
-import java.nio.ByteBuffer;
-import java.nio.CharBuffer;
 import java.nio.charset.CharacterCodingException;
 import java.nio.charset.Charset;
 import java.nio.charset.CharsetDecoder;
@@ -50,21 +48,17 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
 
     private String decodeStringFromStream ( final IoBuffer buffer, final int size )
     {
-        final byte[] data = new byte[size];
-        buffer.get ( data );
-
-        CharBuffer charBuffer;
         try
         {
             synchronized ( this.charDecoder )
             {
-                charBuffer = this.charDecoder.decode ( ByteBuffer.wrap ( data ) );
+                return buffer.getString ( size, this.charDecoder );
             }
-            return charBuffer.toString ();
         }
         catch ( final CharacterCodingException e )
         {
-            return new String ( data );
+            logger.warn ( "Failed to convert string", e );
+            return null;
         }
     }
 
