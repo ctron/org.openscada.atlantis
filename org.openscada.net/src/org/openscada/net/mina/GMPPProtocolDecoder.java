@@ -19,9 +19,11 @@
 
 package org.openscada.net.mina;
 
-import java.nio.charset.CharacterCodingException;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
-import java.nio.charset.CharsetDecoder;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.session.IoSession;
@@ -44,22 +46,16 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
 {
     private final static Logger logger = LoggerFactory.getLogger ( GMPPProtocolDecoder.class );
 
-    private final CharsetDecoder charDecoder = Charset.forName ( "utf-8" ).newDecoder ();
-
     private String decodeStringFromStream ( final IoBuffer buffer, final int size )
     {
-        try
-        {
-            synchronized ( this.charDecoder )
-            {
-                return buffer.getString ( size, this.charDecoder );
-            }
-        }
-        catch ( final CharacterCodingException e )
-        {
-            logger.warn ( "Failed to convert string", e );
-            return null;
-        }
+        final ByteBuffer data = buffer.buf ().slice ();
+        data.limit ( size );
+
+        final String result = Charset.forName ( "utf-8" ).decode ( data ).toString ();
+
+        buffer.skip ( size );
+
+        return result;
     }
 
     private String decodeStringFromStream ( final IoBuffer buffer )
@@ -103,36 +99,38 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
 
     private DoubleValue decodeDoubleValueFromStream ( final IoBuffer buffer )
     {
-        final Double d = Double.longBitsToDouble ( buffer.getLong () );
+        final double d = Double.longBitsToDouble ( buffer.getLong () );
         return new DoubleValue ( d );
     }
 
     private ListValue decodeListValueFromStream ( final IoBuffer buffer )
     {
-        final ListValue listValue = new ListValue ();
-
         final int items = buffer.getInt ();
+
+        final ArrayList<Value> values = new ArrayList<Value> ( items );
+
         for ( int i = 0; i < items; i++ )
         {
-            listValue.getValues ().add ( decodeValueFromStream ( buffer ) );
+            values.add ( decodeValueFromStream ( buffer ) );
         }
 
-        return listValue;
+        return new ListValue ( values );
     }
 
     private MapValue decodeMapValueFromStream ( final IoBuffer buffer )
     {
-        final MapValue mapValue = new MapValue ();
-
         final int items = buffer.getInt ();
+
+        final Map<String, Value> values = new HashMap<String, Value> ( items );
+
         for ( int i = 0; i < items; i++ )
         {
             final Value value = decodeValueFromStream ( buffer );
             final String key = decodeStringFromStream ( buffer );
-            mapValue.getValues ().put ( key, value );
+            values.put ( key, value );
         }
 
-        return mapValue;
+        return new MapValue ( values );
     }
 
     private Message decodeMessageFromStream ( final IoBuffer inputBuffer )
