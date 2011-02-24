@@ -28,8 +28,10 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
 
+import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
@@ -200,6 +202,8 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     private final boolean debug = true;
 
+    private boolean dontOverrideSubscription = false;
+
     public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final ObjectPoolTracker dataSourcePoolTracker ) throws InvalidSyntaxException
     {
         super ( dataSourcePoolTracker );
@@ -220,12 +224,14 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         return this.executor;
     }
 
+    @Override
     public void dispose ()
     {
         synchronized ( this.itemHandler )
         {
             this.itemHandler.clear ();
         }
+        super.dispose ();
     }
 
     @Override
@@ -291,7 +297,16 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         logger.debug ( "state change: {}", value );
         if ( value != null )
         {
-            this.sourceValue = value;
+            if ( value.isConnected () || this.dontOverrideSubscription )
+            {
+                this.sourceValue = value;
+            }
+            else
+            {
+                final Builder builder = new Builder ( value );
+                builder.setSubscriptionState ( SubscriptionState.CONNECTED );
+                this.sourceValue = builder.build ();
+            }
         }
         else
         {
@@ -535,7 +550,11 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     public synchronized void update ( final Map<String, String> properties ) throws InvalidSyntaxException
     {
-        this.dataSourceId = properties.get ( "datasource.id" );
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
+
+        this.dataSourceId = cfg.getString ( "datasource.id" );
+        this.dontOverrideSubscription = cfg.getBoolean ( "dontOverrideSubscription", false );
+
         stateChanged ( null );
 
         setDataSource ( this.dataSourceId );
