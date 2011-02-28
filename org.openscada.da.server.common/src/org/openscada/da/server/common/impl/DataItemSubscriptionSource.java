@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -45,7 +45,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 {
     private DataItem dataItem = null;
 
-    private final Set<DataItemSubscriptionListener> listeners = new HashSet<DataItemSubscriptionListener> ();
+    private final Set<DataItemSubscriptionListener> listeners = new HashSet<DataItemSubscriptionListener> ( 1 );
 
     private boolean bound = false;
 
@@ -81,6 +81,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         final DataItem item = this.dataItem;
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 item.setListener ( DataItemSubscriptionSource.this );
@@ -106,6 +107,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         final DataItem item = this.dataItem;
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 item.setListener ( null );
@@ -113,6 +115,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         } );
     }
 
+    @Override
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
     {
         for ( final SubscriptionInformation listener : listeners )
@@ -126,6 +129,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     ( (DataItemSubscriptionListener)listener.getListener () ).dataChanged ( dataItem, cacheValue, attributes, true );
@@ -139,6 +143,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         }
     }
 
+    @Override
     public synchronized void removeListener ( final Collection<SubscriptionInformation> listeners )
     {
         for ( final SubscriptionInformation listener : listeners )
@@ -152,11 +157,13 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         }
     }
 
+    @Override
     public boolean supportsListener ( final SubscriptionInformation subscriptionInformation )
     {
         return subscriptionInformation.getListener () instanceof DataItemSubscriptionListener;
     }
 
+    @Override
     public synchronized void dataChanged ( final DataItem item, final Variant variant, final Map<String, Variant> attributes, final boolean cache )
     {
         // update attributes
@@ -175,6 +182,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         // send out the events
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 fireDataChange ( item, variant, attributes, cache, listeners );
@@ -185,6 +193,7 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
         {
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     updateStats ( item, variant, attributes, cache );
