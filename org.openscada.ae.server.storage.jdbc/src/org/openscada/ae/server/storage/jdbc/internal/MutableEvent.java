@@ -18,6 +18,8 @@ public class MutableEvent
 {
     private static final int DEFAULT_PRIORITY = 50;
 
+    private static final boolean disableIntern = Boolean.getBoolean ( "org.openscada.ae.server.storage.jdbc.disableIntern" );
+
     public enum Fields
     {
         MONITOR_TYPE ( "monitorType", String.class ),
@@ -96,173 +98,190 @@ public class MutableEvent
 
     public String getMonitorType ()
     {
-        return monitorType;
+        return this.monitorType;
     }
 
-    public void setMonitorType ( String monitorType )
+    public void setMonitorType ( final String monitorType )
     {
         this.monitorType = monitorType;
     }
 
     public String getEventType ()
     {
-        return eventType;
+        return this.eventType;
     }
 
-    public void setEventType ( String eventType )
+    public void setEventType ( final String eventType )
     {
         this.eventType = eventType;
     }
 
     public Variant getValue ()
     {
-        return value;
+        return this.value;
     }
 
-    public void setValue ( Variant value )
+    public void setValue ( final Variant value )
     {
         this.value = value;
     }
 
     public String getMessage ()
     {
-        return message;
+        return this.message;
     }
 
-    public void setMessage ( String message )
+    public void setMessage ( final String message )
     {
         this.message = message;
     }
 
     public String getMessageCode ()
     {
-        return messageCode;
+        return this.messageCode;
     }
 
-    public void setMessageCode ( String messageCode )
+    public void setMessageCode ( final String messageCode )
     {
         this.messageCode = messageCode;
     }
 
     public String getActorName ()
     {
-        return actorName;
+        return this.actorName;
     }
 
-    public void setActorName ( String actorName )
+    public void setActorName ( final String actorName )
     {
         this.actorName = actorName;
     }
 
     public String getActorType ()
     {
-        return actorType;
+        return this.actorType;
     }
 
-    public void setActorType ( String actorType )
+    public void setActorType ( final String actorType )
     {
         this.actorType = actorType;
     }
 
-    public void setAttributes ( Map<String, Variant> attributes )
+    public void setAttributes ( final Map<String, Variant> attributes )
     {
         this.attributes = attributes;
     }
 
     // all other fields
 
-    private Map<String, Variant> attributes = new HashMap<String, Variant> ( 8 );
+    private Map<String, Variant> attributes = new HashMap<String, Variant> ( 16 );
 
     public UUID getId ()
     {
-        return id;
+        return this.id;
     }
 
-    public void setId ( UUID id )
+    public void setId ( final UUID id )
     {
         this.id = id;
     }
 
     public Date getSourceTimestamp ()
     {
-        return sourceTimestamp;
+        return this.sourceTimestamp;
     }
 
-    public void setSourceTimestamp ( Date sourceTimestamp )
+    public void setSourceTimestamp ( final Date sourceTimestamp )
     {
         this.sourceTimestamp = sourceTimestamp;
     }
 
     public Date getEntryTimestamp ()
     {
-        return entryTimestamp;
+        return this.entryTimestamp;
     }
 
-    public void setEntryTimestamp ( Date entryTimestamp )
+    public void setEntryTimestamp ( final Date entryTimestamp )
     {
         this.entryTimestamp = entryTimestamp;
     }
 
     public String getType ()
     {
-        return monitorType;
+        return this.monitorType;
     }
 
-    public void setType ( String type )
+    public void setType ( final String type )
     {
         this.monitorType = type;
     }
 
     public String getSource ()
     {
-        return source;
+        return this.source;
     }
 
-    public void setSource ( String source )
+    public void setSource ( final String source )
     {
         this.source = source;
     }
 
     public Integer getPriority ()
     {
-        return priority;
+        return this.priority;
     }
 
-    public void setPriority ( Integer priority )
+    public void setPriority ( final Integer priority )
     {
         this.priority = priority;
     }
 
     public Map<String, Variant> getAttributes ()
     {
-        return attributes;
+        return this.attributes;
     }
 
-    public static Event toEvent ( MutableEvent m )
+    public static Event toEvent ( final MutableEvent m )
     {
-        Map<String, Variant> attr = new HashMap<String, Variant> ( m.getAttributes () );
+        final Map<String, Variant> attr = new HashMap<String, Variant> ( m.getAttributes () );
         // often used fields
-        attr.put ( "monitorType", new Variant ( m.monitorType ) );
-        attr.put ( "eventType", new Variant ( m.eventType ) );
+        attr.put ( "monitorType", new Variant ( intern ( m.monitorType ) ) );
+        attr.put ( "eventType", new Variant ( intern ( m.eventType ) ) );
         attr.put ( "value", m.value );
         attr.put ( "message", new Variant ( m.message ) );
-        attr.put ( "messageCode", new Variant ( m.messageCode ) );
-        attr.put ( "priority", new Variant ( m.priority ) );
+        attr.put ( "messageCode", new Variant ( intern ( m.messageCode ) ) );
+        attr.put ( "priority", Variant.valueOf ( m.priority ) );
         attr.put ( "source", new Variant ( m.source ) );
-        attr.put ( "actorName", new Variant ( m.actorName ) );
-        attr.put ( "actorType", new Variant ( m.actorType ) );
+        attr.put ( "actorName", new Variant ( intern ( m.actorName ) ) );
+        attr.put ( "actorType", new Variant ( intern ( m.actorType ) ) );
         return Event.create ().id ( m.id ).sourceTimestamp ( m.sourceTimestamp ).entryTimestamp ( m.entryTimestamp ).attributes ( attr ).build ();
     }
 
-    public static MutableEvent fromEvent ( Event e )
+    private static String intern ( final String string )
     {
-        MutableEvent m = new MutableEvent ();
+        if ( disableIntern )
+        {
+            return string;
+        }
+
+        if ( string == null )
+        {
+            return null;
+        }
+        else
+        {
+            return string.intern ();
+        }
+    }
+
+    public static MutableEvent fromEvent ( final Event e )
+    {
+        final MutableEvent m = new MutableEvent ();
         // important fields
         m.setId ( e.getId () );
         m.setSourceTimestamp ( e.getSourceTimestamp () );
         m.setEntryTimestamp ( e.getEntryTimestamp () );
         // often used fields
-        Map<String, Variant> attr = new HashMap<String, Variant> ( e.getAttributes () );
+        final Map<String, Variant> attr = new HashMap<String, Variant> ( e.getAttributes () );
         Variant v;
         v = attr.remove ( Fields.MONITOR_TYPE.getName () );
         m.setMonitorType ( v == null ? "" : v.asString ( "" ) );

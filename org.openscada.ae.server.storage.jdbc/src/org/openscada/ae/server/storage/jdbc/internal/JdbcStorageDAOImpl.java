@@ -23,17 +23,20 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
 
     private int maxLength = 0;
 
+    @Override
     public MutableEvent loadEvent ( final UUID id )
     {
         logger.debug ( "loadEvent: {}", id );
         return (MutableEvent)this.get ( MutableEvent.class, id );
     }
 
+    @Override
     @SuppressWarnings ( "unchecked" )
     public List<MutableEvent> queryEvent ( final String hql, final Object... parameters )
     {
         logger.debug ( "queryEvent: {} ({})", hql, parameters );
         return (List<MutableEvent>)executeWithNativeSession ( new HibernateCallback () {
+            @Override
             public Object doInHibernate ( final Session paramSession ) throws HibernateException, SQLException
             {
                 final Query q = getSession ().createQuery ( hql );
@@ -59,11 +62,13 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
         } );
     }
 
+    @Override
     @SuppressWarnings ( "unchecked" )
     public List<MutableEvent> queryEventSlice ( final String hql, final int first, final int max, final Object... parameters )
     {
         logger.debug ( "queryEvent: {} from {} with {} elements ({})", new Object[] { hql, first, max, parameters } );
         return (List<MutableEvent>)executeWithNativeSession ( new HibernateCallback () {
+            @Override
             public Object doInHibernate ( final Session paramSession ) throws HibernateException, SQLException
             {
                 final Query q = getSession ().createQuery ( hql );
@@ -92,18 +97,19 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
         } );
     }
 
+    @Override
     public void storeEvent ( final MutableEvent event )
     {
         logger.debug ( "storeEvent: {}", MutableEvent.toEvent ( event ) );
-        if ( maxLength > 0 )
+        if ( this.maxLength > 0 )
         {
             clipStrings ( event );
         }
         this.saveOrUpdate ( event );
-        this.flush ();
+        flush ();
     }
 
-    private void clipStrings ( MutableEvent event )
+    private void clipStrings ( final MutableEvent event )
     {
         if ( event.getMonitorType () != null && event.getMonitorType ().length () > 32 )
         {
@@ -133,26 +139,26 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
         {
             event.setActorType ( event.getActorType ().substring ( 0, 32 ) );
         }
-        if ( event.getValue () != null && event.getValue ().isString () && event.getValue ().asString ( "" ).length () > maxLength )
+        if ( event.getValue () != null && event.getValue ().isString () && event.getValue ().asString ( "" ).length () > this.maxLength )
         {
-            event.setValue ( new Variant ( event.getValue ().asString ( "" ).substring ( 0, maxLength ) ) );
+            event.setValue ( new Variant ( event.getValue ().asString ( "" ).substring ( 0, this.maxLength ) ) );
         }
-        for ( String key : event.getAttributes ().keySet () )
+        for ( final String key : event.getAttributes ().keySet () )
         {
-            Variant value = event.getAttributes ().get ( key );
-            if ( value != null && value.isString () && value.asString ( "" ).length () > maxLength )
+            final Variant value = event.getAttributes ().get ( key );
+            if ( value != null && value.isString () && value.asString ( "" ).length () > this.maxLength )
             {
-                event.getAttributes ().put ( key, new Variant ( value.asString ( "" ).substring ( 0, maxLength ) ) );
+                event.getAttributes ().put ( key, new Variant ( value.asString ( "" ).substring ( 0, this.maxLength ) ) );
             }
         }
     }
 
     public int getMaxLength ()
     {
-        return maxLength;
+        return this.maxLength;
     }
 
-    public void setMaxLength ( int maxLength )
+    public void setMaxLength ( final int maxLength )
     {
         this.maxLength = maxLength;
     }

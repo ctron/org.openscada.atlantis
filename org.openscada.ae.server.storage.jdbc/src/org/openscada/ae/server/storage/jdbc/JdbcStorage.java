@@ -24,7 +24,6 @@ import java.util.UUID;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
 
@@ -36,6 +35,7 @@ import org.openscada.ae.server.storage.StoreListener;
 import org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAO;
 import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
 import org.openscada.core.Variant;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.filter.FilterParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,12 +88,7 @@ public class JdbcStorage extends BaseStorage
     public void start () throws Exception
     {
         logger.info ( "jdbcStorageDAO instanciated" );
-        this.storageQueueProcessor = Executors.newSingleThreadExecutor ( new ThreadFactory () {
-            public Thread newThread ( final Runnable r )
-            {
-                return new Thread ( r, "Executor-" + JdbcStorage.class.getCanonicalName () );
-            }
-        } );
+        this.storageQueueProcessor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( getClass ().getCanonicalName () ) );
     }
 
     /**
@@ -124,6 +119,7 @@ public class JdbcStorage extends BaseStorage
     /* (non-Javadoc)
      * @see org.openscada.ae.server.storage.Storage#query(java.lang.String)
      */
+    @Override
     public Query query ( final String filter ) throws Exception
     {
         logger.debug ( "Query requested {}", filter );
@@ -137,12 +133,14 @@ public class JdbcStorage extends BaseStorage
      * 
      * @see org.openscada.ae.server.storage.Storage#store(org.openscada.ae.Event)
      */
+    @Override
     public Event store ( final Event event, final StoreListener listener )
     {
         this.queueSize.incrementAndGet ();
         final Event eventToStore = createEvent ( event );
         logger.debug ( "Save Event to database: " + event );
         this.storageQueueProcessor.submit ( new Callable<Boolean> () {
+            @Override
             public Boolean call ()
             {
                 try
@@ -174,6 +172,7 @@ public class JdbcStorage extends BaseStorage
         final Event event = MutableEvent.toEvent ( eventToUpdate );
         logger.debug ( "Update Event comment in database: " + event );
         this.storageQueueProcessor.submit ( new Callable<Boolean> () {
+            @Override
             public Boolean call ()
             {
                 try
@@ -197,6 +196,7 @@ public class JdbcStorage extends BaseStorage
         return event;
     }
 
+    @Override
     public Event update ( final UUID id, final String comment, final StoreListener listener ) throws Exception
     {
         return updateInternal ( id, new Variant ( comment ), listener );
