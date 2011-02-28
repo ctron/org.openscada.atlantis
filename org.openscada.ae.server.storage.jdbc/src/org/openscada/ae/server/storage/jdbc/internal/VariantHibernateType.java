@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc.internal;
 
 import java.io.Serializable;
@@ -31,21 +50,25 @@ public class VariantHibernateType implements CompositeUserType, Serializable
     {
     }
 
+    @Override
     public Object assemble ( final Serializable cached, final SessionImplementor session, final Object owner ) throws HibernateException
     {
         return cached;
     }
 
+    @Override
     public Object deepCopy ( final Object value ) throws HibernateException
     {
         return new Variant ( (Variant)value );
     }
 
+    @Override
     public Serializable disassemble ( final Object value, final SessionImplementor session ) throws HibernateException
     {
         return (Serializable)value;
     }
 
+    @Override
     public boolean equals ( final Object x, final Object y ) throws HibernateException
     {
         if ( x == y )
@@ -59,16 +82,19 @@ public class VariantHibernateType implements CompositeUserType, Serializable
         return x.equals ( y );
     }
 
+    @Override
     public String[] getPropertyNames ()
     {
         return PROPERTY_NAMES;
     }
 
+    @Override
     public Type[] getPropertyTypes ()
     {
         return PROPERTY_TYPES;
     }
 
+    @Override
     public Object getPropertyValue ( final Object component, final int property ) throws HibernateException
     {
         try
@@ -98,6 +124,7 @@ public class VariantHibernateType implements CompositeUserType, Serializable
         return null;
     }
 
+    @Override
     public int hashCode ( final Object x ) throws HibernateException
     {
         if ( x == null )
@@ -107,11 +134,13 @@ public class VariantHibernateType implements CompositeUserType, Serializable
         return x.hashCode ();
     }
 
+    @Override
     public boolean isMutable ()
     {
         return false;
     }
 
+    @Override
     public Object nullSafeGet ( final ResultSet rs, final String[] names, final SessionImplementor session, final Object owner ) throws HibernateException, SQLException
     {
         final String type = rs.getString ( names[0] );
@@ -177,6 +206,7 @@ public class VariantHibernateType implements CompositeUserType, Serializable
         return new Variant ( str );
     }
 
+    @Override
     public void nullSafeSet ( final PreparedStatement st, final Object value, final int index, final SessionImplementor session ) throws HibernateException, SQLException
     {
         st.setNull ( index + 0, TYPES[0] );
@@ -204,17 +234,20 @@ public class VariantHibernateType implements CompositeUserType, Serializable
         }
     }
 
+    @Override
     public Object replace ( final Object original, final Object target, final SessionImplementor session, final Object owner ) throws HibernateException
     {
         return original;
     }
 
+    @Override
     @SuppressWarnings ( "unchecked" )
     public Class returnedClass ()
     {
         return Variant.class;
     }
 
+    @Override
     public void setPropertyValue ( final Object component, final int property, final Object value ) throws HibernateException
     {
         throw new UnsupportedOperationException ( "Variant is immutable" );

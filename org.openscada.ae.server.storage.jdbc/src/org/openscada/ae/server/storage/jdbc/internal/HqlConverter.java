@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc.internal;
 
 import java.beans.PropertyDescriptor;
@@ -25,7 +44,7 @@ public class HqlConverter
 
     static
     {
-        for ( PropertyDescriptor pd : PropertyUtils.getPropertyDescriptors ( MutableEvent.class ) )
+        for ( final PropertyDescriptor pd : PropertyUtils.getPropertyDescriptors ( MutableEvent.class ) )
         {
             properties.put ( pd.getName (), pd.getPropertyType () );
         }
@@ -61,7 +80,7 @@ public class HqlConverter
 
     public static HqlResult toHql ( final Filter filter ) throws NotSupportedException
     {
-        HqlResult result = new HqlResult ();
+        final HqlResult result = new HqlResult ();
         result.hql = "SELECT M from MutableEvent M left join fetch M.attributes as A";
         if ( filter.isEmpty () )
         {
@@ -69,13 +88,13 @@ public class HqlConverter
         }
         else if ( filter.isExpression () )
         {
-            HqlResult h = toHql ( (FilterExpression)filter );
+            final HqlResult h = toHql ( (FilterExpression)filter );
             result.hql += " WHERE " + h.hql;
             result.parameters = combine ( result.parameters, h.parameters );
         }
         else if ( filter.isAssertion () )
         {
-            HqlResult h = toHql ( (FilterAssertion)filter );
+            final HqlResult h = toHql ( (FilterAssertion)filter );
             result.hql += " WHERE " + h.hql;
             result.parameters = combine ( result.parameters, h.parameters );
         }
@@ -89,10 +108,10 @@ public class HqlConverter
 
     static HqlResult toHql ( final FilterExpression expression ) throws NotSupportedException
     {
-        HqlResult result = new HqlResult ();
+        final HqlResult result = new HqlResult ();
         result.hql = "(";
         int i = 0;
-        for ( Filter term : expression.getFilterSet () )
+        for ( final Filter term : expression.getFilterSet () )
         {
             if ( i > 0 )
             {
@@ -107,13 +126,13 @@ public class HqlConverter
             }
             if ( term.isExpression () )
             {
-                HqlResult r = toHql ( (FilterExpression)term );
+                final HqlResult r = toHql ( (FilterExpression)term );
                 result.hql += r.hql;
                 result.parameters = combine ( result.parameters, r.parameters );
             }
             else if ( term.isAssertion () )
             {
-                HqlResult r = toHql ( (FilterAssertion)term );
+                final HqlResult r = toHql ( (FilterAssertion)term );
                 result.hql += r.hql;
                 result.parameters = combine ( result.parameters, r.parameters );
             }
@@ -171,9 +190,9 @@ public class HqlConverter
 
     static HqlResult toHql ( final String field, final String op, final Object value )
     {
-        HqlResult term = new HqlResult ();
+        final HqlResult term = new HqlResult ();
         term.hql = "(";
-        if ( isField ( field ) && ( properties.get ( field ) != Variant.class ) )
+        if ( isField ( field ) && properties.get ( field ) != Variant.class )
         {
             if ( "presence".equals ( op ) )
             {
@@ -181,9 +200,9 @@ public class HqlConverter
             }
             else
             {
-                if ( ( value != null ) && ( value instanceof Variant ) )
+                if ( value != null && value instanceof Variant )
                 {
-                    PropertyEditor pe = FilterUtils.propertyEditorRegistry.findCustomEditor ( properties.get ( field ) );
+                    final PropertyEditor pe = FilterUtils.propertyEditorRegistry.findCustomEditor ( properties.get ( field ) );
                     pe.setAsText ( new Variant ( value ).asString ( "" ) );
                     term.parameters = new Object[] { pe.getValue () };
                 }
@@ -205,7 +224,7 @@ public class HqlConverter
                 }
             }
         }
-        else if ( isField ( field ) && ( properties.get ( field ) == Variant.class ) )
+        else if ( isField ( field ) && properties.get ( field ) == Variant.class )
         {
             if ( "presence".equals ( op ) )
             {
@@ -253,8 +272,8 @@ public class HqlConverter
         }
         else
         {
-            Variant v = (Variant)value;
-            String strValue = v.asString ( "" );
+            final Variant v = (Variant)value;
+            final String strValue = v.asString ( "" );
             Long longValue = null;
             Double doubleValue = null;
             try
@@ -262,12 +281,12 @@ public class HqlConverter
                 longValue = v.asLong ();
                 doubleValue = v.asDouble ();
             }
-            catch ( NullValueException e )
+            catch ( final NullValueException e )
             {
                 longValue = null;
                 doubleValue = null;
             }
-            catch ( NotConvertableException e )
+            catch ( final NotConvertableException e )
             {
                 longValue = null;
                 doubleValue = null;
@@ -312,7 +331,7 @@ public class HqlConverter
 
     static Object[] combine ( final Object[] a, final Object[] b )
     {
-        List<Object> l = new ArrayList<Object> ();
+        final List<Object> l = new ArrayList<Object> ();
         if ( a != null )
         {
             l.addAll ( Arrays.asList ( a ) );

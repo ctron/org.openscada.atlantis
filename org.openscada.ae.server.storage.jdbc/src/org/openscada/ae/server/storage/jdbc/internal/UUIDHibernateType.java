@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc.internal;
 
 import java.io.Serializable;
@@ -20,11 +39,11 @@ public class UUIDHibernateType implements UserType
 
     private Logger log ()
     {
-        if ( log == null )
+        if ( this.log == null )
         {
-            log = LoggerFactory.getLogger ( getClass () );
+            this.log = LoggerFactory.getLogger ( getClass () );
         }
-        return log;
+        return this.log;
     }
 
     private static final int[] SQL_TYPES = new int[] { Types.CHAR };
@@ -33,31 +52,36 @@ public class UUIDHibernateType implements UserType
     {
     }
 
+    @Override
     public int[] sqlTypes ()
     {
         return SQL_TYPES;
     }
 
+    @Override
     public Class<?> returnedClass ()
     {
         return UUID.class;
     }
 
-    public boolean equals ( Object x, Object y ) throws HibernateException
+    @Override
+    public boolean equals ( final Object x, final Object y ) throws HibernateException
     {
-        return ( x == y ) || ( x != null && y != null && x.equals ( y ) );
+        return x == y || x != null && y != null && x.equals ( y );
     }
 
-    public int hashCode ( Object x ) throws HibernateException
+    @Override
+    public int hashCode ( final Object x ) throws HibernateException
     {
         return x.hashCode ();
     }
 
-    public Object nullSafeGet ( ResultSet rs, String[] names, Object arg2 ) throws HibernateException, SQLException
+    @Override
+    public Object nullSafeGet ( final ResultSet rs, final String[] names, final Object arg2 ) throws HibernateException, SQLException
     {
         try
         {
-            String id = rs.getString ( names[0] );
+            final String id = rs.getString ( names[0] );
             if ( id == null || rs.wasNull () )
             {
                 if ( IS_VALUE_TRACING_ENABLED )
@@ -75,19 +99,20 @@ public class UUIDHibernateType implements UserType
                 return UUID.fromString ( id );
             }
         }
-        catch ( RuntimeException re )
+        catch ( final RuntimeException re )
         {
             log ().info ( "could not read column value from result set: {}; {}", names[0], re.getMessage () );
             throw re;
         }
-        catch ( SQLException se )
+        catch ( final SQLException se )
         {
             log ().info ( "could not read column value from result set: {}; {}", names[0], se.getMessage () );
             throw se;
         }
     }
 
-    public void nullSafeSet ( PreparedStatement st, Object value, int index ) throws HibernateException, SQLException
+    @Override
+    public void nullSafeSet ( final PreparedStatement st, final Object value, final int index ) throws HibernateException, SQLException
     {
         try
         {
@@ -110,39 +135,44 @@ public class UUIDHibernateType implements UserType
                 st.setString ( index, ( (UUID)value ).toString () );
             }
         }
-        catch ( RuntimeException re )
+        catch ( final RuntimeException re )
         {
             log ().info ( "could not bind value '{}' to parameter: {}; {}", new Object[] { value, index, re.getMessage () } );
             throw re;
         }
-        catch ( SQLException se )
+        catch ( final SQLException se )
         {
             log ().info ( "could not bind value '{}' to parameter: {}; {}", new Object[] { value, index, se.getMessage () } );
             throw se;
         }
     }
 
-    public Object deepCopy ( Object value ) throws HibernateException
+    @Override
+    public Object deepCopy ( final Object value ) throws HibernateException
     {
         return value;
     }
 
+    @Override
     public boolean isMutable ()
     {
         return false;
     }
 
-    public Serializable disassemble ( Object value ) throws HibernateException
+    @Override
+    public Serializable disassemble ( final Object value ) throws HibernateException
     {
         return (Serializable)value;
     }
 
-    public Object assemble ( Serializable cached, Object owner ) throws HibernateException
+    @Override
+    public Object assemble ( final Serializable cached, final Object owner ) throws HibernateException
     {
         return cached;
     }
 
-    public Object replace ( Object original, Object target, Object owner ) throws HibernateException
+    @Override
+    public Object replace ( final Object original, final Object target, final Object owner ) throws HibernateException
     {
         return original;
     }
