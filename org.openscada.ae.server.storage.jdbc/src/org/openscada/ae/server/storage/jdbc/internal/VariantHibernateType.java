@@ -241,8 +241,7 @@ public class VariantHibernateType implements CompositeUserType, Serializable
     }
 
     @Override
-    @SuppressWarnings ( "unchecked" )
-    public Class returnedClass ()
+    public Class<?> returnedClass ()
     {
         return Variant.class;
     }
