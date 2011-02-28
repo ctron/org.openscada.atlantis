@@ -126,7 +126,7 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
         for ( int i = 0; i < items; i++ )
         {
             final Value value = decodeValueFromStream ( buffer );
-            final String key = decodeStringFromStream ( buffer );
+            final String key = decodeStringFromStream ( buffer ).intern ();
             values.put ( key, value );
         }
 
