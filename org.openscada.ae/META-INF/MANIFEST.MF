@@ -3,7 +3,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.ae;version="0.15.0";uses:="org.openscada.core",
  org.openscada.ae.client;version="0.15.0";uses:="org.openscada.core.client,org.openscada.core.subscription,org.openscada.ae",
  org.openscada.ae.server;version="0.15.0";uses:="org.openscada.core.server,org.openscada.core.subscription,org.openscada.ae"
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Name: OpenSCADA AE Interface
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.ae
