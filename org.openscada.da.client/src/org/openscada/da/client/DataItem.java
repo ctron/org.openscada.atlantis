@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -48,7 +48,7 @@ public class DataItem extends Observable
     /**
      * The stored item value
      */
-    private DataItemValue value = new DataItemValue ();
+    private volatile DataItemValue value = new DataItemValue ();
 
     /**
      * The listener used to register with the item manager
@@ -70,11 +70,13 @@ public class DataItem extends Observable
         // create the item listener
         this.listener = new ItemUpdateListener () {
 
+            @Override
             public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
             {
                 DataItem.this.performNotifyDataChange ( value, attributes, cache );
             }
 
+            @Override
             public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
             {
                 DataItem.this.performNotifySubscriptionChange ( subscriptionState, subscriptionError );
@@ -149,7 +151,7 @@ public class DataItem extends Observable
         if ( value != null )
         {
             setChanged ();
-            newValue.setValue ( new Variant ( value ) );
+            newValue.setValue ( value );
         }
 
         final DataItemValue oldValue = this.value;
@@ -218,7 +220,7 @@ public class DataItem extends Observable
      */
     public DataItemValue getSnapshotValue ()
     {
-        return new DataItemValue ( this.value );
+        return this.value;
     }
 
     /**
