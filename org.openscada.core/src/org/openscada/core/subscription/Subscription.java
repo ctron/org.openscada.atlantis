@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,7 +26,7 @@ import java.util.Set;
 
 public class Subscription
 {
-    private final Map<SubscriptionInformation, Object> listeners = new HashMap<SubscriptionInformation, Object> ();
+    private final Map<SubscriptionInformation, Object> listeners = new HashMap<SubscriptionInformation, Object> ( 1 );
 
     private SubscriptionSource source = null;
 
@@ -41,7 +41,7 @@ public class Subscription
     /**
      * Check if the subscription is empty or nor.
      * 
-     * A subscription is empty if it neither has a subcription source set nor listeners
+     * A subscription is empty if it neither has a subscription source set nor listeners
      * attached to it.
      * 
      * @return <code>true</code> if the subscription is empty, <code>false</code> otherwise
@@ -78,7 +78,7 @@ public class Subscription
         else
         {
             listener.updateStatus ( this.topic, SubscriptionState.CONNECTED );
-            this.source.addListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
+            this.source.addListener ( Arrays.asList ( subscriptionInformation ) );
         }
     }
 
@@ -92,7 +92,7 @@ public class Subscription
 
             if ( this.source != null )
             {
-                this.source.removeListener ( Arrays.asList ( new SubscriptionInformation[] { subscriptionInformation } ) );
+                this.source.removeListener ( Arrays.asList ( subscriptionInformation ) );
             }
 
             listener.updateStatus ( this.topic, SubscriptionState.DISCONNECTED );
