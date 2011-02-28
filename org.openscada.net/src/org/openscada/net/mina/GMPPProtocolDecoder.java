@@ -46,6 +46,8 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
 {
     private final static Logger logger = LoggerFactory.getLogger ( GMPPProtocolDecoder.class );
 
+    private final static boolean disableIntern = Boolean.getBoolean ( "org.openscada.net.mina.GMPPProtocolDecoder.disableIntern" );
+
     private String decodeStringFromStream ( final IoBuffer buffer, final int size )
     {
         final ByteBuffer data = buffer.buf ().slice ();
@@ -55,7 +57,14 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
 
         buffer.skip ( size );
 
-        return result;
+        if ( !disableIntern )
+        {
+            return result.intern ();
+        }
+        else
+        {
+            return result;
+        }
     }
 
     private String decodeStringFromStream ( final IoBuffer buffer )
@@ -126,7 +135,7 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
         for ( int i = 0; i < items; i++ )
         {
             final Value value = decodeValueFromStream ( buffer );
-            final String key = decodeStringFromStream ( buffer ).intern ();
+            final String key = decodeStringFromStream ( buffer );
             values.put ( key, value );
         }
 
