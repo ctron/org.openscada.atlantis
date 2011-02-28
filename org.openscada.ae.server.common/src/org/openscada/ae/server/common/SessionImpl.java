@@ -27,10 +27,10 @@ import java.util.Set;
 
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
-import org.openscada.ae.server.MonitorListener;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.server.EventListener;
+import org.openscada.ae.server.MonitorListener;
 import org.openscada.ae.server.Session;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.core.subscription.SubscriptionState;
@@ -66,11 +66,13 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
 
         this.eventListener = new EventListener () {
 
+            @Override
             public void dataChanged ( final String poolId, final Event[] addedEvents )
             {
                 SessionImpl.this.eventDataChanged ( poolId, addedEvents );
             }
 
+            @Override
             public void updateStatus ( final Object poolId, final SubscriptionState state )
             {
                 SessionImpl.this.eventStatusChanged ( poolId.toString (), state );
@@ -78,11 +80,13 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         };
         this.monitorListener = new MonitorListener () {
 
+            @Override
             public void dataChanged ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
             {
                 SessionImpl.this.conditionDataChanged ( subscriptionId, addedOrUpdated, removed );
             }
 
+            @Override
             public void updateStatus ( final Object poolId, final SubscriptionState state )
             {
                 SessionImpl.this.conditionStatusChanged ( poolId.toString (), state );
@@ -123,15 +127,27 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         final EventListener listener = this.clientEventListener;
         if ( listener != null )
         {
-            listener.dataChanged ( poolId, addedEvents );
+            listener.dataChanged ( poolId, translateEvents ( addedEvents ) );
         }
     }
 
+    /**
+     * Translate the events into the current session language
+     * @param events the events to translate
+     * @return a new array of translated events
+     */
+    protected Event[] translateEvents ( final Event[] events )
+    {
+        return events;
+    }
+
+    @Override
     public void setConditionListener ( final MonitorListener listener )
     {
         this.clientConditionListener = listener;
     }
 
+    @Override
     public void setEventListener ( final EventListener listener )
     {
         this.clientEventListener = listener;
@@ -167,6 +183,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         return this.eventListener;
     }
 
+    @Override
     public void setBrowserListener ( final BrowserListener listener )
     {
         synchronized ( this.browserCache )
@@ -179,6 +196,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         }
     }
 
+    @Override
     public void dataChanged ( final BrowserEntry[] addedOrUpdated, final String[] removed, final boolean full )
     {
         synchronized ( this.browserCache )
