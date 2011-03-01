@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -60,7 +60,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
         this.objectPoolTracker = dataSourceTracker;
 
-        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "MasterItemFactory" ) );
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "MasterItemFactory" ) );
 
         this.dataSourcePool = new ObjectPoolImpl ();
         this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class.getName () );
@@ -102,6 +102,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
         return null;
     }
 
+    @Override
     public synchronized void dispose ()
     {
         super.dispose ();
