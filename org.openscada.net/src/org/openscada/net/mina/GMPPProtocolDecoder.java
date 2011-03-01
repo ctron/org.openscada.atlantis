@@ -57,13 +57,13 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
 
         buffer.skip ( size );
 
-        if ( !disableIntern )
+        if ( disableIntern )
         {
-            return result.intern ();
+            return result;
         }
         else
         {
-            return result;
+            return result.intern ();
         }
     }
 
