@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,8 +25,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.UUID;
+import java.util.Map.Entry;
 
 import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
@@ -38,7 +38,6 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
     public static class EventComparator implements Comparator<Event>
     {
-        @Override
         public int compare ( final Event o1, final Event o2 )
         {
             final int s = o1.getSourceTimestamp ().compareTo ( o2.getSourceTimestamp () );
@@ -57,13 +56,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
     public static class EventBuilder
     {
-        private UUID id;
-
-        private Date sourceTimestamp;
-
-        private Date entryTimestamp;
-
-        private final Map<String, Variant> attributes = new HashMap<String, Variant> ( 1 );
+        private final Event event = new Event ();
 
         private EventBuilder ()
         {
@@ -71,64 +64,64 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
         public EventBuilder event ( final Event event )
         {
-            this.id = event.getId ();
-            this.sourceTimestamp = event.getSourceTimestamp ();
-            this.entryTimestamp = event.getEntryTimestamp ();
-            this.attributes.putAll ( event.getAttributes () );
+            this.event.id = event.getId ();
+            this.event.sourceTimestamp = event.getSourceTimestamp ();
+            this.event.entryTimestamp = event.getEntryTimestamp ();
+            this.event.attributes.putAll ( event.getAttributes () );
             return this;
         }
 
         public EventBuilder id ( final UUID id )
         {
-            this.id = id;
+            this.event.id = id;
             return this;
         }
 
         public EventBuilder sourceTimestamp ( final Date sourceTimestamp )
         {
-            this.sourceTimestamp = sourceTimestamp;
+            this.event.sourceTimestamp = sourceTimestamp;
             return this;
         }
 
         public EventBuilder entryTimestamp ( final Date entryTimestamp )
         {
-            this.entryTimestamp = entryTimestamp;
+            this.event.entryTimestamp = entryTimestamp;
             return this;
         }
 
         public EventBuilder attributes ( final Map<String, Variant> attributes )
         {
-            this.attributes.putAll ( attributes );
+            this.event.attributes.putAll ( attributes );
             return this;
         }
 
         public EventBuilder attribute ( final String key, final Variant value )
         {
-            this.attributes.put ( key, value );
+            this.event.attributes.put ( key, value );
             return this;
         }
 
         public EventBuilder attribute ( final Fields key, final Variant value )
         {
-            this.attributes.put ( key.getName (), value );
+            this.event.attributes.put ( key.getName (), value );
             return this;
         }
 
         public EventBuilder attribute ( final String key, final Object value )
         {
-            this.attributes.put ( key, new Variant ( value ) );
+            this.event.attributes.put ( key, new Variant ( value ) );
             return this;
         }
 
         public EventBuilder attribute ( final Fields key, final Object value )
         {
-            this.attributes.put ( key.getName (), new Variant ( value ) );
+            this.event.attributes.put ( key.getName (), new Variant ( value ) );
             return this;
         }
 
         public Event build ()
         {
-            return new Event ( this.id, this.sourceTimestamp, this.entryTimestamp, this.attributes );
+            return new Event ( this.event );
         }
     }
 
@@ -190,28 +183,24 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
     public static final EventComparator comparator = new EventComparator ();
 
-    private final UUID id;
+    private UUID id;
 
-    private final Date sourceTimestamp;
+    private Date sourceTimestamp;
 
-    private final Date entryTimestamp;
+    private Date entryTimestamp;
 
-    private final Map<String, Variant> attributes;
-
-    private Event ( final UUID id, final Date sourceTimestamp, final Date entryTimestamp, final Map<String, Variant> attributes )
-    {
-        this.id = id;
-        this.sourceTimestamp = new Date ( sourceTimestamp.getTime () );
-        this.entryTimestamp = new Date ( entryTimestamp.getTime () );
-        this.attributes = new HashMap<String, Variant> ( attributes );
-    }
+    private final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
     private Event ( final Event event )
     {
         this.id = event.getId ();
         this.sourceTimestamp = event.getSourceTimestamp ();
         this.entryTimestamp = event.getEntryTimestamp ();
-        this.attributes = new HashMap<String, Variant> ( event.getAttributes () );
+        this.attributes.putAll ( event.getAttributes () );
+    }
+
+    private Event ()
+    {
     }
 
     public UUID getId ()
@@ -221,12 +210,12 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
     public Date getSourceTimestamp ()
     {
-        return new Date ( this.sourceTimestamp.getTime () );
+        return this.sourceTimestamp;
     }
 
     public Date getEntryTimestamp ()
     {
-        return new Date ( this.entryTimestamp.getTime () );
+        return this.entryTimestamp;
     }
 
     public Map<String, Variant> getAttributes ()
@@ -305,7 +294,6 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
         return sb.toString ();
     }
 
-    @Override
     public int compareTo ( final Event o )
     {
         return comparator.compare ( this, o );
