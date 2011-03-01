@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -58,7 +58,7 @@ public class JdbcStorageDAOTest extends JdbcStorageBaseTest
         // store event without extended attributes
         event = makeMutableEvent ( 1 );
         getJdbcStorageDAO ().storeEvent ( event );
-        List result;
+        List<?> result;
         result = getJdbcTemplate ().queryForList ( "SELECT * FROM " + TABLE_EVENTS );
         assertNotNull ( result.get ( 0 ) );
         final Map<String, Object> row = (Map<String, Object>)result.get ( 0 );
