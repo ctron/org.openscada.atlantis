@@ -31,13 +31,14 @@ import org.openscada.da.server.common.chain.BaseChainItemCommon;
  */
 public class AutoTimestampChainItem extends BaseChainItemCommon
 {
-    private Variant lastValue = new Variant ();
+    private Variant lastValue = Variant.NULL;
 
     public AutoTimestampChainItem ()
     {
         super ( null );
     }
 
+    @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         if ( value == null )
@@ -50,7 +51,7 @@ public class AutoTimestampChainItem extends BaseChainItemCommon
         {
             if ( !attributes.containsKey ( "timestamp" ) )
             {
-                attributes.put ( "timestamp", new Variant ( System.currentTimeMillis () ) );
+                attributes.put ( "timestamp", Variant.valueOf ( System.currentTimeMillis () ) );
             }
             this.lastValue = value;
         }

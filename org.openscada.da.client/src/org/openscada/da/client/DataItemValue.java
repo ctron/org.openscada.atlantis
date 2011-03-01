@@ -381,7 +381,7 @@ public class DataItemValue
 
         public Builder ()
         {
-            this.value = new Variant ();
+            this.value = Variant.NULL;
             this.attributes = new HashMap<String, Variant> ();
             this.subscriptionState = SubscriptionState.DISCONNECTED;
         }
@@ -390,7 +390,7 @@ public class DataItemValue
         {
             if ( sourceValue == null )
             {
-                this.value = new Variant ();
+                this.value = Variant.NULL;
                 this.attributes = new HashMap<String, Variant> ();
                 this.subscriptionState = SubscriptionState.DISCONNECTED;
             }
@@ -468,7 +468,7 @@ public class DataItemValue
             }
             else
             {
-                setAttribute ( "timestamp", new Variant ( timestamp.getTimeInMillis () ) );
+                setAttribute ( "timestamp", Variant.valueOf ( timestamp.getTimeInMillis () ) );
             }
         }
 

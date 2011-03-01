@@ -153,54 +153,54 @@ public class VariantHibernateType implements CompositeUserType, Serializable
         }
         if ( VariantType.NULL.equals ( type ) )
         {
-            return new Variant ( (Object)null );
+            return Variant.NULL;
         }
         if ( VariantType.UNKNOWN.equals ( type ) )
         {
-            return new Variant ( new Object () );
+            return Variant.NULL;
         }
         if ( VariantType.BOOLEAN.equals ( type ) )
         {
             if ( i == null )
             {
-                return new Variant ( (Boolean)null );
+                return Variant.NULL;
             }
             else
             {
-                return new Variant ( !i.equals ( 0L ) );
+                return Variant.valueOf ( !i.equals ( 0L ) );
             }
         }
         if ( VariantType.INT32.equals ( type ) )
         {
             if ( i == null )
             {
-                return new Variant ( (Integer)null );
+                return Variant.NULL;
             }
             else
             {
-                return new Variant ( i.intValue () );
+                return Variant.valueOf ( i.intValue () );
             }
         }
         if ( VariantType.INT64.equals ( type ) )
         {
             if ( i == null )
             {
-                return new Variant ( (Long)null );
+                return Variant.NULL;
             }
             else
             {
-                return new Variant ( i.longValue () );
+                return Variant.valueOf ( i.longValue () );
             }
         }
         if ( VariantType.DOUBLE.equals ( type ) )
         {
             if ( i == null )
             {
-                return new Variant ( (Double)null );
+                return Variant.NULL;
             }
             else
             {
-                return new Variant ( d );
+                return Variant.valueOf ( d );
             }
         }
         return new Variant ( str );

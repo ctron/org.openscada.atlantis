@@ -57,8 +57,8 @@ public class ToggleDataSource extends ScheduledDataSource implements DefaultData
 
     private void setValue ( final Variant variant )
     {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "timestamp", new Variant ( System.currentTimeMillis () + this.timeDiff ) );
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 1 );
+        attributes.put ( "timestamp", Variant.valueOf ( System.currentTimeMillis () + this.timeDiff ) );
         updateData ( new DataItemValue ( variant, attributes, SubscriptionState.CONNECTED ) );
     }
 

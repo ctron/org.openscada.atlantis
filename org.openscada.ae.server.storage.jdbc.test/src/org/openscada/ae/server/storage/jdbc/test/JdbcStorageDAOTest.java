@@ -30,9 +30,9 @@ import java.util.UUID;
 import org.junit.Test;
 import org.openscada.ae.event.FilterUtils;
 import org.openscada.ae.server.storage.jdbc.internal.HqlConverter;
+import org.openscada.ae.server.storage.jdbc.internal.HqlConverter.HqlResult;
 import org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAO;
 import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
-import org.openscada.ae.server.storage.jdbc.internal.HqlConverter.HqlResult;
 import org.openscada.core.Variant;
 import org.openscada.utils.filter.Assertion;
 import org.openscada.utils.filter.Filter;
@@ -150,15 +150,15 @@ public class JdbcStorageDAOTest extends JdbcStorageBaseTest
         assertEquals ( new Variant ( 3.141 ), resultEvents.get ( 0 ).getAttributes ().get ( "bacon" ) );
 
         event = makeMutableEvent ( 4 );
-        event.getAttributes ().put ( "eggs", new Variant ( 42L ) );
+        event.getAttributes ().put ( "eggs", Variant.valueOf ( 42L ) );
         getJdbcStorageDAO ().storeEvent ( event );
-        filter = new FilterAssertion ( "eggs", Assertion.EQUALITY, new Variant ( 42L ) );
+        filter = new FilterAssertion ( "eggs", Assertion.EQUALITY, Variant.valueOf ( 42L ) );
         hqlFilter = HqlConverter.toHql ( filter );
         resultEvents = getJdbcStorageDAO ().queryEvent ( hqlFilter.getHql (), hqlFilter.getParameters () );
         assertNotNull ( resultEvents );
         assertEquals ( 1, resultEvents.size () );
         assertEquals ( makeUUID ( 4 ), resultEvents.get ( 0 ).getId () );
-        assertEquals ( new Variant ( 42L ), resultEvents.get ( 0 ).getAttributes ().get ( "eggs" ) );
+        assertEquals ( Variant.valueOf ( 42L ), resultEvents.get ( 0 ).getAttributes ().get ( "eggs" ) );
 
         filter = new FilterExpression ();
         ( (FilterExpression)filter ).setOperator ( Operator.OR );

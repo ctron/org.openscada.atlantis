@@ -59,7 +59,7 @@ public class RandomLongDataSource extends ScheduledDataSource implements Default
             this.offset += this.r.nextLong () % this.variance;
         }
 
-        setValue ( new Variant ( this.r.nextLong () % this.variance ) );
+        setValue ( Variant.valueOf ( this.r.nextLong () % this.variance ) );
     }
 
     @Override
@@ -74,7 +74,7 @@ public class RandomLongDataSource extends ScheduledDataSource implements Default
     private void setValue ( final Variant variant )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "timestamp", new Variant ( System.currentTimeMillis () + this.timeDiff ) );
+        attributes.put ( "timestamp", Variant.valueOf ( System.currentTimeMillis () + this.timeDiff ) );
         updateData ( new DataItemValue ( variant, attributes, SubscriptionState.CONNECTED ) );
     }
 

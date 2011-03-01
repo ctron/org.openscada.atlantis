@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.spring.client.value;
 
 import org.openscada.core.Variant;
@@ -5,6 +24,7 @@ import org.openscada.da.client.DataItemValue;
 
 public abstract class AbstractBaseValueSource implements ValueSource
 {
+    @Override
     public Value<Variant> getVariantValue () throws ValueSourceException
     {
         final DataItemValue value = getValue ();
@@ -29,6 +49,7 @@ public abstract class AbstractBaseValueSource implements ValueSource
 
     // boolean
 
+    @Override
     public Value<Boolean> getBooleanValue ( final Boolean defaultValue )
     {
         try
@@ -41,6 +62,7 @@ public abstract class AbstractBaseValueSource implements ValueSource
         }
     }
 
+    @Override
     public Value<Boolean> getBooleanValue () throws ValueSourceException
     {
         final Value<Variant> value = getVariantValue ();
@@ -55,11 +77,13 @@ public abstract class AbstractBaseValueSource implements ValueSource
         return new Value<Boolean> ( data, value );
     }
 
+    @Override
     public boolean getBoolean () throws ValueSourceException
     {
         return getBooleanValue ().getValue ();
     }
 
+    @Override
     public Boolean getBoolean ( final Boolean defaultValue )
     {
         return getBooleanValue ( defaultValue ).getValue ();
@@ -67,6 +91,7 @@ public abstract class AbstractBaseValueSource implements ValueSource
 
     // double
 
+    @Override
     public Value<Double> getDoubleValue ( final Double defaultValue )
     {
         try
@@ -79,6 +104,7 @@ public abstract class AbstractBaseValueSource implements ValueSource
         }
     }
 
+    @Override
     public Value<Double> getDoubleValue () throws ValueSourceException
     {
         final Value<Variant> value = getVariantValue ();
@@ -94,11 +120,13 @@ public abstract class AbstractBaseValueSource implements ValueSource
         }
     }
 
+    @Override
     public double getDouble () throws ValueSourceException
     {
         return getDoubleValue ().getValue ();
     }
 
+    @Override
     public Double getDouble ( final Double defaultValue )
     {
         return getDoubleValue ( defaultValue ).getValue ();
@@ -106,6 +134,7 @@ public abstract class AbstractBaseValueSource implements ValueSource
 
     // long
 
+    @Override
     public Value<Long> getLongValue ( final Long defaultValue )
     {
         try
@@ -118,6 +147,7 @@ public abstract class AbstractBaseValueSource implements ValueSource
         }
     }
 
+    @Override
     public Value<Long> getLongValue () throws ValueSourceException
     {
         final Value<Variant> value = getVariantValue ();
@@ -133,11 +163,13 @@ public abstract class AbstractBaseValueSource implements ValueSource
         }
     }
 
+    @Override
     public long getLong () throws ValueSourceException
     {
         return getLongValue ().getValue ();
     }
 
+    @Override
     public Long getLong ( final Long defaultValue )
     {
         return getLongValue ( defaultValue ).getValue ();
@@ -145,6 +177,7 @@ public abstract class AbstractBaseValueSource implements ValueSource
 
     // integer
 
+    @Override
     public Value<Integer> getIntegerValue ( final Integer defaultValue )
     {
         try
@@ -157,6 +190,7 @@ public abstract class AbstractBaseValueSource implements ValueSource
         }
     }
 
+    @Override
     public Value<Integer> getIntegerValue () throws ValueSourceException
     {
         final Value<Variant> value = getVariantValue ();
@@ -172,11 +206,13 @@ public abstract class AbstractBaseValueSource implements ValueSource
         }
     }
 
+    @Override
     public int getInteger () throws ValueSourceException
     {
         return getIntegerValue ().getValue ();
     }
 
+    @Override
     public Integer getInteger ( final Integer defaultValue )
     {
         return getIntegerValue ( defaultValue ).getValue ();

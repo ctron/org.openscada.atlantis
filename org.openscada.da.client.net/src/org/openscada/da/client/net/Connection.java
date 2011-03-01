@@ -200,7 +200,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         if ( cache && value == null )
         {
             // we need a value if we read from cache
-            value = new Variant ();
+            value = Variant.NULL;
         }
         if ( cache && attributes == null )
         {

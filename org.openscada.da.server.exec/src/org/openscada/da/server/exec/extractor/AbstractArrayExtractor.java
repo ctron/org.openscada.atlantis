@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -151,27 +151,27 @@ public abstract class AbstractArrayExtractor extends AbstractBaseExtractor
             switch ( mapping.getType () )
             {
             case BOOLEAN:
-                variant = new Variant ( Boolean.parseBoolean ( value ) );
+                variant = Variant.valueOf ( Boolean.parseBoolean ( value ) );
                 break;
             case DOUBLE:
-                variant = new Variant ( Double.parseDouble ( value ) );
+                variant = Variant.valueOf ( Double.parseDouble ( value ) );
                 break;
             case INTEGER:
-                variant = new Variant ( Integer.parseInt ( value ) );
+                variant = Variant.valueOf ( Integer.parseInt ( value ) );
                 break;
             case LONG:
-                variant = new Variant ( Long.parseLong ( value ) );
+                variant = Variant.valueOf ( Long.parseLong ( value ) );
                 break;
             default:
-                variant = new Variant ( value );
+                variant = Variant.valueOf ( value );
                 break;
             }
         }
         catch ( final Throwable e )
         {
-            attributes.put ( "extractor.conversion.error", new Variant ( true ) );
-            attributes.put ( "extractor.conversion.error.message", new Variant ( e.getMessage () ) );
-            variant = new Variant ();
+            attributes.put ( "extractor.conversion.error", Variant.TRUE );
+            attributes.put ( "extractor.conversion.error.message", Variant.valueOf ( e.getMessage () ) );
+            variant = Variant.NULL;
         }
 
         item.updateData ( variant, attributes, AttributeMode.UPDATE );

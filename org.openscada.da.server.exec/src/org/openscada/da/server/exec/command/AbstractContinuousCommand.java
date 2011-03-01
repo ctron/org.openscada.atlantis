@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -104,6 +104,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
         }
     }
 
+    @Override
     public void start ( final Hive hive, final FolderCommon parentFolder )
     {
         this.itemFactory = new DefaultItemFactory ( hive, parentFolder, this.id, this.id );
@@ -117,6 +118,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
         this.killItem = this.itemFactory.createCommand ( "kill" );
         this.killItem.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 AbstractContinuousCommand.this.killProcess ();
@@ -126,6 +128,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
         // add the shutdown hook
         this.shutdownHook = new Thread ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 AbstractContinuousCommand.this.killProcess ();
@@ -141,6 +144,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
 
     }
 
+    @Override
     public void stop ()
     {
         cancelProcess ();
@@ -170,6 +174,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
         }
     }
 
+    @Override
     public void run ()
     {
         try
@@ -222,7 +227,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
             this.failedItem.updateData ( new Variant ( e.getMessage () ), null, null );
         }
 
-        this.pidItem.updateData ( new Variant (), null, null );
+        this.pidItem.updateData ( Variant.NULL, null, null );
 
     }
 

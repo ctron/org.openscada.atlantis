@@ -365,7 +365,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         {
             final Builder builder = new Builder ( value );
 
-            builder.setAttribute ( "master.debug.handlerCount", new Variant ( handler.size () ) );
+            builder.setAttribute ( "master.debug.handlerCount", Variant.valueOf ( handler.size () ) );
 
             value = builder.build ();
         }

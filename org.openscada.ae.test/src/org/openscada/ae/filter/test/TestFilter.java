@@ -18,13 +18,13 @@ public class TestFilter
     @Test
     public void testFilter () throws Exception
     {
-        EventBuilder eb = Event.create ();
+        final EventBuilder eb = Event.create ();
         eb.id ( new UUID ( 0, 1 ) );
         eb.sourceTimestamp ( this.formatter.parse ( "2010-03-01 09:31:57" ) );
         eb.entryTimestamp ( this.formatter.parse ( "2010-03-01 09:31:58" ) );
         eb.attribute ( Fields.MESSAGE, "Hello World" );
-        eb.attribute ( Fields.VALUE, new Variant ( 1000l ) );
-        Event event = eb.build ();
+        eb.attribute ( Fields.VALUE, Variant.valueOf ( 1000l ) );
+        final Event event = eb.build ();
         System.err.println ( event );
 
         // filtering over id is
@@ -75,14 +75,14 @@ public class TestFilter
 
     private void testFalse ( final Event event, final String filter )
     {
-        boolean result = new EventMatcherImpl ( filter ).matches ( event );
+        final boolean result = new EventMatcherImpl ( filter ).matches ( event );
         Assert.assertFalse ( "Filter test failed: " + filter + " " + event, result );
         System.out.print ( "!" );
     }
 
     private void testTrue ( final Event event, final String filter )
     {
-        boolean result = new EventMatcherImpl ( filter ).matches ( event );
+        final boolean result = new EventMatcherImpl ( filter ).matches ( event );
         Assert.assertTrue ( "Filter test failed: " + filter + " " + event, result );
         System.out.print ( "." );
     }

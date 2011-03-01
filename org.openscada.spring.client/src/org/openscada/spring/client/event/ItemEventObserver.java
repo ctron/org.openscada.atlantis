@@ -69,6 +69,7 @@ public class ItemEventObserver extends AbstractItemEventObserver
         this.suppressAttributeEvents = suppressAttributeEvents;
     }
 
+    @Override
     public void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable subscriptionError )
     {
         log.log ( this.valueLogLevel, String.format ( "Subscription change for item '%s' to '%s'", this.itemName, subscriptionState ) );
@@ -81,13 +82,14 @@ public class ItemEventObserver extends AbstractItemEventObserver
         case DISCONNECTED:
         case GRANTED:
             builder.setAttributes ( new HashMap<String, Variant> () );
-            builder.setValue ( new Variant () );
+            builder.setValue ( Variant.NULL );
             break;
         }
         this.value = builder.build ();
         fireChange ();
     }
 
+    @Override
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         log.log ( this.valueLogLevel, String.format ( "Value change for item '%s' to '%s' (cache: %s)", this.itemName, value, cache ) );
@@ -107,11 +109,11 @@ public class ItemEventObserver extends AbstractItemEventObserver
 
         this.value = builder.build ();
 
-        if ( ( !this.suppressCacheEvents && cache ) || !cache )
+        if ( !this.suppressCacheEvents && cache || !cache )
         {
             final boolean attributesChanged = attributes != null ? !attributes.isEmpty () : false;
 
-            if ( ( value != null ) || ( attributesChanged && !this.suppressAttributeEvents ) )
+            if ( value != null || attributesChanged && !this.suppressAttributeEvents )
             {
                 fireChange ();
             }

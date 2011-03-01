@@ -40,6 +40,6 @@ public class SequenceEventDecorator extends EventDecoratorAdapter
     @Override
     public EventBuilder decorate ( final EventBuilder eventBuilder )
     {
-        return eventBuilder.attribute ( "sequence", new Variant ( this.sequence ) );
+        return eventBuilder.attribute ( "sequence", Variant.valueOf ( this.sequence ) );
     }
 }

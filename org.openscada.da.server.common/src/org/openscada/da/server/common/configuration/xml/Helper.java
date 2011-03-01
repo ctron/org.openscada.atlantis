@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,27 +34,27 @@ public class Helper
     {
         if ( variantType.getBoolean () != null )
         {
-            return new Variant ( variantType.getBoolean ().getBooleanValue () );
+            return Variant.valueOf ( variantType.getBoolean ().getBooleanValue () );
         }
         else if ( variantType.getDouble () != null )
         {
-            return new Variant ( variantType.getDouble ().getDoubleValue () );
+            return Variant.valueOf ( variantType.getDouble ().getDoubleValue () );
         }
         else if ( variantType.getInt32 () != null )
         {
-            return new Variant ( variantType.getInt32 ().getIntValue () );
+            return Variant.valueOf ( variantType.getInt32 ().getIntValue () );
         }
         else if ( variantType.getInt64 () != null )
         {
-            return new Variant ( variantType.getInt64 ().getLongValue () );
+            return Variant.valueOf ( variantType.getInt64 ().getLongValue () );
         }
         else if ( variantType.getString () != null )
         {
-            return new Variant ( variantType.getString () );
+            return Variant.valueOf ( variantType.getString () );
         }
         else if ( variantType.getNull () != null )
         {
-            return new Variant ();
+            return Variant.NULL;
         }
         else
         {

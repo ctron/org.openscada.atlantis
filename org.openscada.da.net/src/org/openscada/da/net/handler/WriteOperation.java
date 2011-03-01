@@ -50,9 +50,8 @@ public class WriteOperation extends Operation
 
         itemName.value = values.get ( "item-name" ).toString ();
 
-        value.value = MessageHelper.valueToVariant ( values.get ( "value" ), new Variant () );
+        value.value = MessageHelper.valueToVariant ( values.get ( "value" ), Variant.NULL );
 
         operationParameters.value = convertOperationParameters ( values.get ( FIELD_OPERATION_PARAMETERS ) );
     }
-
 }

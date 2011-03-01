@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -64,13 +64,13 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
 
     public static final String LOWLOW_ERROR = "org.openscada.da.level.lowlow.error";
 
-    private final VariantBinder highLevel = new VariantBinder ( new Variant () );
+    private final VariantBinder highLevel = new VariantBinder ( Variant.NULL );
 
-    private final VariantBinder lowLevel = new VariantBinder ( new Variant () );
+    private final VariantBinder lowLevel = new VariantBinder ( Variant.NULL );
 
-    private final VariantBinder highHighLevel = new VariantBinder ( new Variant () );
+    private final VariantBinder highHighLevel = new VariantBinder ( Variant.NULL );
 
-    private final VariantBinder lowLowLevel = new VariantBinder ( new Variant () );
+    private final VariantBinder lowLowLevel = new VariantBinder ( Variant.NULL );
 
     private final BooleanBinder highActive = new BooleanBinder ();
 
@@ -97,6 +97,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         setReservedAttributes ( HIGH_ALARM, LOW_ALARM, HIGHHIGH_ALARM, LOWLOW_ALARM );
     }
 
+    @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( HIGH_ALARM, null );

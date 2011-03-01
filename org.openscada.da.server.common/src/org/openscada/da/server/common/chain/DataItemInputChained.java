@@ -40,9 +40,9 @@ import org.openscada.utils.concurrent.NotifyFuture;
 
 public class DataItemInputChained extends DataItemBaseChained
 {
-    protected Variant primaryValue = new Variant ();
+    protected Variant primaryValue = Variant.NULL;
 
-    protected Variant secondaryValue = new Variant ();
+    protected Variant secondaryValue = Variant.NULL;
 
     public DataItemInputChained ( final DataItemInformation dataItemInformation, final Executor executor )
     {

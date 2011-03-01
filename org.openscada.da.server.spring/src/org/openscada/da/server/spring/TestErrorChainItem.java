@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,7 +29,7 @@ import org.openscada.da.server.common.chain.VariantBinder;
 public class TestErrorChainItem extends BaseChainItemCommon
 {
 
-    private final AttributeBinder testErrorFlagBinder = new VariantBinder ( new Variant () );
+    private final AttributeBinder testErrorFlagBinder = new VariantBinder ( Variant.NULL );
 
     public TestErrorChainItem ()
     {
@@ -43,6 +43,7 @@ public class TestErrorChainItem extends BaseChainItemCommon
         return false;
     }
 
+    @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         // do nothing

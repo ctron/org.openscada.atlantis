@@ -139,8 +139,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         if ( entry.isFailed () )
         {
             attributes.put ( "opc.read.error", Variant.TRUE );
-            attributes.put ( "opc.read.error.code", new Variant ( entry.getErrorCode () ) );
-            attributes.put ( "opc.read.error.message", new Variant ( String.format ( "0x%08x: %s", entry.getErrorCode (), errorMessage ) ) );
+            attributes.put ( "opc.read.error.code", Variant.valueOf ( entry.getErrorCode () ) );
+            attributes.put ( "opc.read.error.message", Variant.valueOf ( String.format ( "0x%08x: %s", entry.getErrorCode (), errorMessage ) ) );
 
             attributes.put ( "opc.quality", null );
             attributes.put ( "timestamp", null );
@@ -152,7 +152,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
             this.lastValue = null;
 
-            updateData ( new Variant (), attributes, AttributeMode.UPDATE );
+            updateData ( Variant.NULL, attributes, AttributeMode.UPDATE );
         }
         else
         {
@@ -161,7 +161,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             attributes.put ( "opc.read.error.message", null );
 
             final short quality = state.getQuality ();
-            attributes.put ( "opc.quality", new Variant ( quality ) );
+            attributes.put ( "opc.quality", Variant.valueOf ( quality ) );
 
             attributes.put ( "opc.quality.error", Variant.valueOf ( quality < this.qualityErrorIfLessThen ) );
             attributes.put ( "opc.quality.manual", Variant.valueOf ( quality == 216 ) );
@@ -170,7 +170,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             attributes.put ( "opc.value.type", null );
             try
             {
-                attributes.put ( "opc.value.type", new Variant ( state.getValue ().getType () ) );
+                attributes.put ( "opc.value.type", Variant.valueOf ( state.getValue ().getType () ) );
             }
             catch ( final Throwable e )
             {
@@ -180,9 +180,9 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
             if ( value == null )
             {
-                value = new Variant ();
+                value = Variant.NULL;
                 attributes.put ( "opc.value.conversion.error", Variant.TRUE );
-                attributes.put ( "opc.value.conversion.source", new Variant ( state.getValue ().toString () ) );
+                attributes.put ( "opc.value.conversion.source", Variant.valueOf ( state.getValue ().toString () ) );
             }
             else
             {
@@ -191,8 +191,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
                 if ( !this.ignoreTimestampOnlyChange || this.lastValue == null || !this.lastValue.equals ( value ) )
                 {
-                    attributes.put ( "timestamp", new Variant ( state.getTimestamp ().getTimeInMillis () ) );
-                    attributes.put ( "timestamp.message", new Variant ( String.format ( "%tc", state.getTimestamp () ) ) );
+                    attributes.put ( "timestamp", Variant.valueOf ( state.getTimestamp ().getTimeInMillis () ) );
+                    attributes.put ( "timestamp.message", Variant.valueOf ( String.format ( "%tc", state.getTimestamp () ) ) );
                 }
 
             }
@@ -214,16 +214,16 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         if ( result != null )
         {
-            attributes.put ( "opc.lastWriteError.code", new Variant ( result.getErrorCode () ) );
-            attributes.put ( "opc.lastWriteError.message", new Variant ( String.format ( "0x%08x", result.getErrorCode () ) ) );
+            attributes.put ( "opc.lastWriteError.code", Variant.valueOf ( result.getErrorCode () ) );
+            attributes.put ( "opc.lastWriteError.message", Variant.valueOf ( String.format ( "0x%08x", result.getErrorCode () ) ) );
         }
         else
         {
-            attributes.put ( "opc.lastWriteError.code", new Variant ( -1 ) );
-            attributes.put ( "opc.lastWriteError.message", new Variant ( "unknown error" ) );
+            attributes.put ( "opc.lastWriteError.code", Variant.valueOf ( -1 ) );
+            attributes.put ( "opc.lastWriteError.message", Variant.valueOf ( "unknown error" ) );
         }
-        attributes.put ( "opc.lastWriteError.timestamp", new Variant ( c.getTimeInMillis () ) );
-        attributes.put ( "opc.lastWriteError.timestamp.message", new Variant ( String.format ( "%tc", c ) ) );
+        attributes.put ( "opc.lastWriteError.timestamp", Variant.valueOf ( c.getTimeInMillis () ) );
+        attributes.put ( "opc.lastWriteError.timestamp.message", Variant.valueOf ( String.format ( "%tc", c ) ) );
         updateData ( null, attributes, AttributeMode.UPDATE );
     }
 

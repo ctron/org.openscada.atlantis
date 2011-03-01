@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -46,14 +46,15 @@ public class ManualErrorOverrideChainItem extends BaseChainItemCommon
         }
     }
 
+    @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         final Variant active = attributes.get ( ManualOverrideChainItem.MANUAL_ACTIVE );
         if ( active != null && active.asBoolean () )
         {
             checkAndReplace ( attributes, "error", Variant.FALSE );
-            checkAndReplace ( attributes, "error.count", new Variant ( 0 ) );
-            checkAndReplace ( attributes, "error.items", new Variant ( "" ) );
+            checkAndReplace ( attributes, "error.count", Variant.valueOf ( 0 ) );
+            checkAndReplace ( attributes, "error.items", Variant.valueOf ( "" ) );
         }
 
         return null;

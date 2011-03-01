@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -94,6 +94,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         this._openCommand = getOutput ( "open-command", attributes );
         this._openCommand.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 open ();
@@ -102,6 +103,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         this._closeCommand = getOutput ( "close-command", attributes );
         this._closeCommand.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 close ();
@@ -111,6 +113,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         update ();
     }
 
+    @Override
     public synchronized void close ()
     {
         if ( this._state.equals ( State.CLOSED ) )
@@ -121,6 +124,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         startTransit ( State.CLOSED, State.TRANSIT_CLOSE );
     }
 
+    @Override
     public synchronized void open ()
     {
         if ( this._state.equals ( State.OPENED ) )
@@ -153,6 +157,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         update ();
     }
 
+    @Override
     public synchronized void setErrorState ( final boolean state )
     {
         if ( this._error = state )
@@ -165,9 +170,9 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
 
     protected void setOpenStates ( final boolean open, final boolean close )
     {
-        this._openInput.updateData ( new Variant ( open ), null, null );
-        this._closeInput.updateData ( new Variant ( close ), null, null );
-        this._transitInput.updateData ( new Variant ( isTransit () ), null, null );
+        this._openInput.updateData ( Variant.valueOf ( open ), null, null );
+        this._closeInput.updateData ( Variant.valueOf ( close ), null, null );
+        this._transitInput.updateData ( Variant.valueOf ( isTransit () ), null, null );
     }
 
     protected synchronized void update ()
@@ -182,24 +187,24 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
             {
             case CLOSED:
                 setOpenStates ( false, true );
-                this._percentInput.updateData ( new Variant ( 0.0 ), null, null );
+                this._percentInput.updateData ( Variant.valueOf ( 0.0 ), null, null );
                 break;
             case OPENED:
                 setOpenStates ( true, false );
-                this._percentInput.updateData ( new Variant ( 1.0 ), null, null );
+                this._percentInput.updateData ( Variant.valueOf ( 1.0 ), null, null );
                 break;
             case TRANSIT_CLOSE:
                 setOpenStates ( false, false );
-                this._percentInput.updateData ( new Variant ( ( (double)this._switchRunning / (double)this._switchTime ) ), null, null );
+                this._percentInput.updateData ( Variant.valueOf ( ( (double)this._switchRunning / (double)this._switchTime ) ), null, null );
                 break;
             case TRANSIT_OPEN:
                 setOpenStates ( false, false );
-                this._percentInput.updateData ( new Variant ( 1 - (double)this._switchRunning / (double)this._switchTime ), null, null );
+                this._percentInput.updateData ( Variant.valueOf ( 1 - (double)this._switchRunning / (double)this._switchTime ), null, null );
                 break;
             }
         }
-        this._errorInput.updateData ( new Variant ( this._error ), null, null );
-        this._runtimeInput.updateData ( new Variant ( this._switchRunning ), null, null );
+        this._errorInput.updateData ( Variant.valueOf ( this._error ), null, null );
+        this._runtimeInput.updateData ( Variant.valueOf ( this._switchRunning ), null, null );
 
     }
 
@@ -216,6 +221,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         }
     }
 
+    @Override
     public synchronized void run ()
     {
         final long ts = System.currentTimeMillis ();

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -65,6 +65,7 @@ public class SimpleScale extends BaseModule
         final DataItemCommand startCommand = getOutput ( "start", attributes );
         startCommand.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 startWeight ();
@@ -74,7 +75,7 @@ public class SimpleScale extends BaseModule
         this._valueInput = getInput ( "value", attributes );
         this._errorInput = getInput ( "error", attributes );
         this._activeInput = getInput ( "active", new MapBuilder<String, Variant> ( attributes ).put ( "description", new Variant ( "An indicator if a weight process is active. True means: active, false: not active" ) ).getMap () );
-        this._activeInput.updateData ( new Variant ( false ), null, null );
+        this._activeInput.updateData ( Variant.valueOf ( false ), null, null );
     }
 
     protected synchronized void startWeight ()
@@ -85,6 +86,7 @@ public class SimpleScale extends BaseModule
         }
         this._thread = new Thread ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 performWeight ();
@@ -98,7 +100,7 @@ public class SimpleScale extends BaseModule
         final int delay = this._minDelay + _random.nextInt ( this._maxDelay - this._minDelay );
         logger.debug ( String.format ( "Weight delay: %d", delay ) );
 
-        this._activeInput.updateData ( new Variant ( true ), new MapBuilder<String, Variant> ().put ( "sim.scale.last-delay", new Variant ( delay ) ).getMap (), null );
+        this._activeInput.updateData ( Variant.valueOf ( true ), new MapBuilder<String, Variant> ().put ( "sim.scale.last-delay", new Variant ( delay ) ).getMap (), null );
 
         try
         {
@@ -121,21 +123,21 @@ public class SimpleScale extends BaseModule
             finishWeight ( weight );
         }
 
-        this._activeInput.updateData ( new Variant ( false ), null, null );
+        this._activeInput.updateData ( Variant.valueOf ( false ), null, null );
 
         this._thread = null;
     }
 
     protected void finishWeight ( final int value )
     {
-        this._valueInput.updateData ( new Variant ( value ), null, null );
-        this._errorInput.updateData ( new Variant (), null, null );
+        this._valueInput.updateData ( Variant.valueOf ( value ), null, null );
+        this._errorInput.updateData ( Variant.NULL, null, null );
     }
 
     protected void finishWithError ( final int errorCode )
     {
-        this._valueInput.updateData ( new Variant (), null, null );
-        this._errorInput.updateData ( new Variant ( errorCode ), null, null );
+        this._valueInput.updateData ( Variant.NULL, null, null );
+        this._errorInput.updateData ( Variant.valueOf ( errorCode ), null, null );
     }
 
 }

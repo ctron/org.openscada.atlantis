@@ -34,7 +34,7 @@ import org.openscada.utils.concurrent.NotifyFuture;
 
 public class MemoryDataItem extends DataItemBase
 {
-    private volatile Variant value = new Variant ();
+    private volatile Variant value = Variant.NULL;
 
     private AttributeManager attributes = null;
 

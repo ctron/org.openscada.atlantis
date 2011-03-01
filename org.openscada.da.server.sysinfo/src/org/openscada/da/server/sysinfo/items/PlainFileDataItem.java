@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -39,17 +39,18 @@ public class PlainFileDataItem extends ScheduledDataItem
         this._file = file;
     }
 
+    @Override
     public void run ()
     {
         try
         {
             read ();
-            updateData ( null, new MapBuilder<String, Variant> ().put ( "error-message", new Variant () ).getMap (), AttributeMode.UPDATE );
+            updateData ( null, new MapBuilder<String, Variant> ().put ( "error-message", Variant.NULL ).getMap (), AttributeMode.UPDATE );
         }
         catch ( final Exception e )
         {
             // handle error
-            updateData ( null, new MapBuilder<String, Variant> ().put ( "error-message", new Variant ( e.getMessage () ) ).getMap (), AttributeMode.UPDATE );
+            updateData ( null, new MapBuilder<String, Variant> ().put ( "error-message", Variant.valueOf ( e.getMessage () ) ).getMap (), AttributeMode.UPDATE );
         }
 
     }

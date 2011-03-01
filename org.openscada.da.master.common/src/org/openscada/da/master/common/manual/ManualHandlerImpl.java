@@ -86,7 +86,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         final Variant originalErrorCount = builder.getAttributes ().remove ( "error.count" );
         if ( originalErrorCount != null )
         {
-            builder.setAttribute ( "error.count", new Variant ( 0 ) );
+            builder.setAttribute ( "error.count", Variant.valueOf ( 0 ) );
             builder.setAttribute ( getPrefixed ( "error.count.original" ), originalErrorCount );
         }
 
@@ -105,16 +105,16 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
         if ( user != null )
         {
-            builder.setAttribute ( getPrefixed ( "user" ), new Variant ( user ) );
+            builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( user ) );
         }
         if ( reason != null )
         {
-            builder.setAttribute ( getPrefixed ( "reason" ), new Variant ( reason ) );
+            builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( reason ) );
         }
         if ( timestamp != null )
         {
             final Variant originalTimestamp = builder.getAttributes ().get ( "timestamp" );
-            builder.setAttribute ( "timestamp", new Variant ( timestamp.getTime () ) );
+            builder.setAttribute ( "timestamp", Variant.valueOf ( timestamp.getTime () ) );
             if ( originalTimestamp != null )
             {
                 builder.setAttribute ( getPrefixed ( "timestamp.original" ), originalTimestamp );
@@ -159,8 +159,8 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         builder.setAttribute ( getPrefixed ( null ), this.value.isNull () ? Variant.FALSE : Variant.TRUE );
         builder.setAttribute ( getPrefixed ( "active" ), this.value.isNull () ? Variant.FALSE : Variant.TRUE );
         builder.setAttribute ( getPrefixed ( "value" ), this.value );
-        builder.setAttribute ( getPrefixed ( "reason" ), new Variant ( this.reason ) );
-        builder.setAttribute ( getPrefixed ( "user" ), new Variant ( this.user ) );
+        builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( this.reason ) );
+        builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( this.user ) );
     }
 
     @Override
@@ -170,8 +170,9 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
         final Event.EventBuilder builder = createEventBuilder ();
 
-        builder.entryTimestamp ( new Date () );
-        builder.sourceTimestamp ( new Date () );
+        final Date ts = new Date ();
+        builder.entryTimestamp ( ts );
+        builder.sourceTimestamp ( ts );
         builder.attribute ( Fields.MONITOR_TYPE, "MAN" );
         builder.attribute ( Fields.SOURCE, this.id );
 

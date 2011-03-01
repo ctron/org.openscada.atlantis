@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -65,7 +65,7 @@ public class QualityDataSource extends ScheduledDataSource implements DefaultDat
     protected void setValue ( final Variant variant, final Map<String, Variant> origAttributes )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ( origAttributes );
-        attributes.put ( "timestamp", new Variant ( System.currentTimeMillis () + this.timeDiff ) );
+        attributes.put ( "timestamp", Variant.valueOf ( System.currentTimeMillis () + this.timeDiff ) );
         updateData ( new DataItemValue ( variant, attributes, SubscriptionState.CONNECTED ) );
     }
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -133,6 +133,7 @@ public class SNMPNode
         this.itemRewalkCommand = this.dataItemFactory.createCommand ( "rewalk" );
         this.itemRewalkCommand.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 rewalk ( value );
@@ -144,6 +145,7 @@ public class SNMPNode
 
         // oid group folder
         this._oidGroupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "snmp.oid" ), "\\." ), new NameProvider () {
+            @Override
             public String getName ( final ItemDescriptor descriptor )
             {
                 return "value";
@@ -153,6 +155,7 @@ public class SNMPNode
         this.storage.addChild ( this._oidGroupFolder );
         // mib group folder
         this.mibGroupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "snmp.oid.symbolic" ), "\\." ), new NameProvider () {
+            @Override
             public String getName ( final ItemDescriptor descriptor )
             {
                 return "value";
@@ -171,6 +174,7 @@ public class SNMPNode
 
             this._bulkReaderJob = this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     SNMPNode.this.bulkReader.read ();
@@ -182,7 +186,7 @@ public class SNMPNode
             this._mibFolder = new FolderCommon ();
             this.nodeFolder.add ( "MIB", this._mibFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains entries of all MIBs that are loaded" ) ).getMap () );
 
-            rewalk ( new Variant () );
+            rewalk ( Variant.NULL );
             buildMIBFolders ();
 
         }
@@ -328,22 +332,22 @@ public class SNMPNode
 
             final FolderCommon mibBaseFolder = new FolderCommon ();
             final MapBuilder<String, Variant> attributes = new MapBuilder<String, Variant> ();
-            attributes.put ( "description", new Variant ( "Automatically generated base folder for MIB" ) );
+            attributes.put ( "description", Variant.valueOf ( "Automatically generated base folder for MIB" ) );
 
             final String header = mib.getHeaderComment ();
             if ( header != null )
             {
-                attributes.put ( "snmp.mib.header", new Variant ( header ) );
+                attributes.put ( "snmp.mib.header", Variant.valueOf ( header ) );
             }
 
             final String footer = mib.getFooterComment ();
             if ( footer != null )
             {
-                attributes.put ( "snmp.mib.footer", new Variant ( footer ) );
+                attributes.put ( "snmp.mib.footer", Variant.valueOf ( footer ) );
             }
 
-            attributes.put ( "snmp.mib.root", new Variant ( mib.getRootSymbol ().getValue ().toString () ) );
-            attributes.put ( "snmp.mib.smi.version", new Variant ( mib.getSmiVersion () ) );
+            attributes.put ( "snmp.mib.root", Variant.valueOf ( mib.getRootSymbol ().getValue ().toString () ) );
+            attributes.put ( "snmp.mib.smi.version", Variant.valueOf ( mib.getSmiVersion () ) );
 
             populateMIBFolder ( mib.getRootSymbol (), mibBaseFolder );
 
@@ -378,7 +382,7 @@ public class SNMPNode
             final Set<OID> list = walker.getList ();
 
             // show count
-            this.itemRewalkCount.updateData ( new Variant ( list.size () ), null, null );
+            this.itemRewalkCount.updateData ( Variant.valueOf ( list.size () ), null, null );
 
             for ( final OID oid : list )
             {

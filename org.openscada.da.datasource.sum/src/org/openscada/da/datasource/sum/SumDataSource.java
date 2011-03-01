@@ -134,7 +134,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
     {
         final Builder builder = new Builder ();
         builder.setSubscriptionState ( SubscriptionState.CONNECTED );
-        builder.setValue ( new Variant ( values.size () ) );
+        builder.setValue ( Variant.valueOf ( values.size () ) );
 
         final Map<String, Integer> counts = new HashMap<String, Integer> ();
 

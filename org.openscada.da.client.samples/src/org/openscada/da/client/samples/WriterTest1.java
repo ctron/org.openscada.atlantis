@@ -79,7 +79,7 @@ public class WriterTest1
 
     public static void doWrite ( final Connection connection, final String itemName )
     {
-        final Variant value = new Variant ( random.nextInt () );
+        final Variant value = Variant.valueOf ( random.nextInt () );
         logger.info ( "Start write: " + value );
         final Calendar c = Calendar.getInstance ();
         final Object lock = new Object ();

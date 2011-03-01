@@ -105,8 +105,8 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         builder.setAttribute ( this.tag, Variant.valueOf ( !matches.isEmpty () ) );
         if ( this.debug )
         {
-            builder.setAttribute ( this.tag + ".count", new Variant ( matches.size () ) );
-            builder.setAttribute ( this.tag + ".items", new Variant ( StringHelper.join ( matches, ", " ) ) );
+            builder.setAttribute ( this.tag + ".count", Variant.valueOf ( matches.size () ) );
+            builder.setAttribute ( this.tag + ".items", Variant.valueOf ( StringHelper.join ( matches, ", " ) ) );
         }
 
         return builder.build ();

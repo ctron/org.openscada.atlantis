@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -55,20 +55,20 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
 
     private static final String ATTR_READ_ERROR = "read.error";
 
-    private static Logger _log = Logger.getLogger ( SNMPItem.class );
+    private static Logger logger = Logger.getLogger ( SNMPItem.class );
 
-    private SNMPNode _node = null;
+    private SNMPNode node = null;
 
-    private OID _oid = null;
+    private OID oid = null;
 
     public SNMPItem ( final SNMPNode node, final String id, final OID oid )
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ), DirectExecutor.INSTANCE );
 
-        this._node = node;
-        this._oid = oid;
+        this.node = node;
+        this.oid = oid;
 
-        updateData ( new Variant (), new MapBuilder<String, Variant> ().put ( ATTR_NO_INITIAL_DATA_ERROR, Variant.TRUE ).getMap (), AttributeMode.SET );
+        updateData ( Variant.NULL, new MapBuilder<String, Variant> ().put ( ATTR_NO_INITIAL_DATA_ERROR, Variant.TRUE ).getMap (), AttributeMode.SET );
     }
 
     @Override
@@ -87,23 +87,23 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
 
     public void start ()
     {
-        _log.debug ( "Starting item: " + this._oid );
-        this._node.getBulkReader ().add ( this );
+        logger.debug ( "Starting item: " + this.oid );
+        this.node.getBulkReader ().add ( this );
     }
 
     public void stop ()
     {
-        _log.debug ( "Stopping item: " + this._oid );
+        logger.debug ( "Stopping item: " + this.oid );
 
-        this._node.getBulkReader ().remove ( this );
+        this.node.getBulkReader ().remove ( this );
 
-        updateData ( new Variant (), new HashMap<String, Variant> (), AttributeMode.SET );
+        updateData ( Variant.NULL, new HashMap<String, Variant> (), AttributeMode.SET );
     }
 
     /*
     synchronized private void updateValue ( Variant value )
     {
-        _log.debug ( "Value update: " + value.asString ( "<null>" ) );
+        logger.debug ( "Value update: " + value.asString ( "<null>" ) );
         if ( !_value.equals ( value ) )
         {
             _value = value;
@@ -112,9 +112,10 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
     }
     */
 
+    @Override
     public void run ()
     {
-        _log.debug ( "Updating value" );
+        logger.debug ( "Updating value" );
 
         try
         {
@@ -125,7 +126,7 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
             readFailed ( e );
         }
 
-        _log.debug ( "Update complete" );
+        logger.debug ( "Update complete" );
     }
 
     private Variant convertValue ( final VariableBinding vb ) throws Exception
@@ -141,26 +142,26 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
         }
 
         final Variable v = vb.getVariable ();
-        _log.debug ( "Variable is: " + v );
+        logger.debug ( "Variable is: " + v );
         if ( v instanceof Null )
         {
-            return new Variant ();
+            return Variant.NULL;
         }
         else if ( v instanceof Counter64 )
         {
-            return new Variant ( ( (Counter64)v ).getValue () );
+            return Variant.valueOf ( ( (Counter64)v ).getValue () );
         }
         else if ( v instanceof UnsignedInteger32 )
         {
-            return new Variant ( ( (UnsignedInteger32)v ).getValue () );
+            return Variant.valueOf ( ( (UnsignedInteger32)v ).getValue () );
         }
         else if ( v instanceof Integer32 )
         {
-            return new Variant ( ( (Integer32)v ).getValue () );
+            return Variant.valueOf ( ( (Integer32)v ).getValue () );
         }
         else
         {
-            return new Variant ( v.toString () );
+            return Variant.valueOf ( v.toString () );
         }
     }
 
@@ -181,14 +182,14 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
         }
         catch ( final Exception e )
         {
-            _log.error ( "Item read failed: ", e );
+            logger.error ( "Item read failed: ", e );
             setError ( e );
         }
     }
 
     private void read () throws Exception
     {
-        final ResponseEvent response = this._node.getConnection ().sendGET ( this._oid );
+        final ResponseEvent response = this.node.getConnection ().sendGET ( this.oid );
 
         if ( response == null )
         {
@@ -225,13 +226,13 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
     {
         if ( text != null )
         {
-            _log.info ( "Setting error: " + text );
+            logger.info ( "Setting error: " + text );
         }
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         attributes.put ( ATTR_READ_ERROR, Variant.valueOf ( text != null ) );
-        attributes.put ( "lastReadError.message", new Variant ( text ) );
+        attributes.put ( "lastReadError.message", Variant.valueOf ( text ) );
         attributes.put ( ATTR_NO_INITIAL_DATA_ERROR, null );
 
         updateData ( null, attributes, AttributeMode.UPDATE );
@@ -239,14 +240,16 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
 
     public OID getOID ()
     {
-        return this._oid;
+        return this.oid;
     }
 
+    @Override
     public void suspend ()
     {
         stop ();
     }
 
+    @Override
     public void wakeup ()
     {
         start ();

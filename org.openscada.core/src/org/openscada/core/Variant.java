@@ -42,7 +42,46 @@ public class Variant implements Serializable, Comparable<Variant>
 
     public static final Variant FALSE = new Variant ( false );
 
+    private static final int MAX_PRE_INSTANCES = 256;
+
+    private static final Variant[] preIntInstances = new Variant[MAX_PRE_INSTANCES];
+
+    private static final Variant[] preLongInstances = new Variant[MAX_PRE_INSTANCES];
+
+    static
+    {
+        for ( int i = 0; i < preIntInstances.length; i++ )
+        {
+            preIntInstances[i] = new Variant ( i );
+            preLongInstances[i] = new Variant ( (long)i );
+        }
+    }
+
     private static final VariantComparator comparator = new VariantComparator ();
+
+    public static Variant valueOf ( final long value )
+    {
+        if ( value >= 0 && value < preLongInstances.length )
+        {
+            return preLongInstances[(int)value];
+        }
+        else
+        {
+            return new Variant ( value );
+        }
+    }
+
+    public static Variant valueOf ( final int value )
+    {
+        if ( value >= 0 && value < preIntInstances.length )
+        {
+            return preIntInstances[value];
+        }
+        else
+        {
+            return new Variant ( value );
+        }
+    }
 
     public static Variant valueOf ( final boolean value )
     {
@@ -62,6 +101,14 @@ public class Variant implements Serializable, Comparable<Variant>
         if ( value instanceof Boolean )
         {
             return valueOf ( ( (Boolean)value ).booleanValue () );
+        }
+        if ( value instanceof Long )
+        {
+            return valueOf ( ( (Long)value ).longValue () );
+        }
+        if ( value instanceof Integer )
+        {
+            return valueOf ( ( (Integer)value ).intValue () );
         }
         return new Variant ( value );
     }

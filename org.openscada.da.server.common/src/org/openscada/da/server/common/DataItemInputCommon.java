@@ -30,7 +30,7 @@ import org.openscada.utils.concurrent.NotifyFuture;
 
 public class DataItemInputCommon extends DataItemInput
 {
-    private volatile Variant value = new Variant ();
+    private volatile Variant value = Variant.NULL;
 
     private AttributeManager attributes = null;
 

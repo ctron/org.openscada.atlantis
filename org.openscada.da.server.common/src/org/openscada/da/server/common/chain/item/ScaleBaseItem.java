@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,16 +34,17 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
 
     public static final String SCALE_ERROR = ".error";
 
-    private final VariantBinder _scaleFactor = new VariantBinder ( new Variant () );
+    private final VariantBinder scaleFactor = new VariantBinder ( Variant.NULL );
 
     public ScaleBaseItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
 
-        addBinder ( getFactorName (), this._scaleFactor );
+        addBinder ( getFactorName (), this.scaleFactor );
         setReservedAttributes ( getRawName (), getErrorName () );
     }
 
+    @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         Variant newValue = null;
@@ -52,7 +53,7 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
         attributes.put ( getErrorName (), null );
         try
         {
-            final Variant scaleFactor = this._scaleFactor.getValue ();
+            final Variant scaleFactor = this.scaleFactor.getValue ();
             // only process if we have a scale factor
             if ( !scaleFactor.isNull () )
             {

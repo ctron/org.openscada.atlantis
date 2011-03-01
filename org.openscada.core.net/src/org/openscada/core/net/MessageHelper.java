@@ -93,7 +93,7 @@ public class MessageHelper
 
         if ( value instanceof StringValue )
         {
-            return new Variant ( ( (StringValue)value ).getValue () );
+            return Variant.valueOf ( ( (StringValue)value ).getValue () );
         }
         else if ( value instanceof BooleanValue )
         {
@@ -101,15 +101,15 @@ public class MessageHelper
         }
         else if ( value instanceof DoubleValue )
         {
-            return new Variant ( ( (DoubleValue)value ).getValue () );
+            return Variant.valueOf ( ( (DoubleValue)value ).getValue () );
         }
         else if ( value instanceof LongValue )
         {
-            return new Variant ( ( (LongValue)value ).getValue () );
+            return Variant.valueOf ( ( (LongValue)value ).getValue () );
         }
         else if ( value instanceof IntegerValue )
         {
-            return new Variant ( ( (IntegerValue)value ).getValue () );
+            return Variant.valueOf ( ( (IntegerValue)value ).getValue () );
         }
         else if ( value instanceof VoidValue )
         {

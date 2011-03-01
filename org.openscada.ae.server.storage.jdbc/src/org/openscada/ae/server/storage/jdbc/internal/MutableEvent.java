@@ -101,7 +101,7 @@ public class MutableEvent
 
     private String eventType = "";
 
-    private Variant value = new Variant ();
+    private Variant value = Variant.NULL;
 
     private String message = "";
 

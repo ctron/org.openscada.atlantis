@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -76,6 +76,7 @@ public abstract class ScalarVariable implements Variable
         this.itemPool = itemPool;
     }
 
+    @Override
     public void handleError ( final int errorCode )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
@@ -86,11 +87,12 @@ public abstract class ScalarVariable implements Variable
         }
 
         attributes.put ( "device.error", Variant.TRUE );
-        attributes.put ( "device.error.code", new Variant ( errorCode ) );
+        attributes.put ( "device.error.code", Variant.valueOf ( errorCode ) );
 
-        this.item.updateData ( new Variant (), attributes, AttributeMode.SET );
+        this.item.updateData ( Variant.NULL, attributes, AttributeMode.SET );
     }
 
+    @Override
     public void handleDisconnect ()
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
@@ -102,9 +104,10 @@ public abstract class ScalarVariable implements Variable
 
         attributes.put ( "communcation.error", Variant.TRUE );
 
-        this.item.updateData ( new Variant (), attributes, AttributeMode.SET );
+        this.item.updateData ( Variant.NULL, attributes, AttributeMode.SET );
     }
 
+    @Override
     public void handleFailure ( final Throwable e )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
@@ -117,9 +120,10 @@ public abstract class ScalarVariable implements Variable
         attributes.put ( "generic.error", Variant.TRUE );
         attributes.put ( "generic.error.message", new Variant ( e.getMessage () ) );
 
-        this.item.updateData ( new Variant (), attributes, AttributeMode.SET );
+        this.item.updateData ( Variant.NULL, attributes, AttributeMode.SET );
     }
 
+    @Override
     public void start ( final String parentName, final BundleContext context, final DaveDevice device, final DaveRequestBlock block, final int offset )
     {
         this.device = device;
@@ -161,6 +165,7 @@ public abstract class ScalarVariable implements Variable
         return new InstantErrorFuture<WriteResult> ( new IllegalStateException ( "Operation not implemented" ) );
     }
 
+    @Override
     public void stop ( final BundleContext context )
     {
         for ( final Attribute attr : this.attributes )
@@ -179,6 +184,7 @@ public abstract class ScalarVariable implements Variable
 
     protected abstract Variant extractValue ( IoBuffer data, Map<String, Variant> attributes );
 
+    @Override
     public void handleData ( final IoBuffer data, final Variant timestamp )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();

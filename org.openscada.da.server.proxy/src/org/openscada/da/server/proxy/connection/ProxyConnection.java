@@ -200,7 +200,7 @@ public class ProxyConnection implements LifecycleAware
     {
         // mark start of switch
         final long start = System.currentTimeMillis ();
-        this.switchStarted.updateData ( new Variant ( start ), null, AttributeMode.UPDATE );
+        this.switchStarted.updateData ( Variant.valueOf ( start ), null, AttributeMode.UPDATE );
         this.switchInProgress.updateData ( Variant.TRUE, null, AttributeMode.UPDATE );
 
         try
@@ -214,8 +214,8 @@ public class ProxyConnection implements LifecycleAware
             // mark end of switch
             this.switchInProgress.updateData ( Variant.FALSE, null, AttributeMode.UPDATE );
             final long end = System.currentTimeMillis ();
-            this.switchEnded.updateData ( new Variant ( end ), null, AttributeMode.UPDATE );
-            this.switchDuration.updateData ( new Variant ( end - start ), null, AttributeMode.UPDATE );
+            this.switchEnded.updateData ( Variant.valueOf ( end ), null, AttributeMode.UPDATE );
+            this.switchDuration.updateData ( Variant.valueOf ( end - start ), null, AttributeMode.UPDATE );
         }
     }
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -51,7 +51,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 
     private final String _sumIgnoreName;
 
-    private final StringBinder _ignoreBinder;
+    private final StringBinder ignoreBinder;
 
     public SummarizeChainItem ( final HiveServiceRegistry serviceRegistry, final String baseName )
     {
@@ -64,8 +64,8 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 
         setReservedAttributes ( this._sumStateName, this._sumCountName, this._sumListName );
 
-        this._ignoreBinder = new StringBinder ();
-        addBinder ( this._sumIgnoreName, this._ignoreBinder );
+        this.ignoreBinder = new StringBinder ();
+        addBinder ( this._sumIgnoreName, this.ignoreBinder );
     }
 
     /**
@@ -77,6 +77,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
      */
     protected abstract boolean matches ( Variant value, String attributeName, Variant attributeValue );
 
+    @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( this._sumStateName, null );
@@ -113,8 +114,8 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
         }
 
         attributes.put ( this._sumStateName, Variant.valueOf ( count > 0 ) );
-        attributes.put ( this._sumCountName, new Variant ( count ) );
-        attributes.put ( this._sumListName, new Variant ( StringHelper.join ( items, ", " ) ) );
+        attributes.put ( this._sumCountName, Variant.valueOf ( count ) );
+        attributes.put ( this._sumListName, Variant.valueOf ( StringHelper.join ( items, ", " ) ) );
 
         addAttributes ( attributes );
 
@@ -124,7 +125,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
 
     protected Set<String> getIgnoreItems ()
     {
-        final String txt = this._ignoreBinder.getValue ();
+        final String txt = this.ignoreBinder.getValue ();
         if ( txt != null )
         {
             return new HashSet<String> ( Arrays.asList ( txt.split ( ",\\s" ) ) );

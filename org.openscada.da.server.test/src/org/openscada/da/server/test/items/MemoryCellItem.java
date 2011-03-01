@@ -88,7 +88,7 @@ public class MemoryCellItem extends DataItemOutput
 
     private void setSizeAttribute ( final int num )
     {
-        this.attributes.update ( "size", new Variant ( num ) );
+        this.attributes.update ( "size", Variant.valueOf ( num ) );
     }
 
     private void updateCells ( int num )

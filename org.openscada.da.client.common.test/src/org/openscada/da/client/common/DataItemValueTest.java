@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -52,10 +52,10 @@ public class DataItemValueTest
     public void test3 ()
     {
         final Builder div1 = new Builder ();
-        div1.setValue ( new Variant ( 1 ) );
+        div1.setValue ( Variant.valueOf ( 1 ) );
 
         final Builder div2 = new Builder ();
-        div2.setValue ( new Variant ( 1 ) );
+        div2.setValue ( Variant.valueOf ( 1 ) );
 
         Assert.assertEquals ( div1.build (), div2.build () );
         Assert.assertEquals ( div2.build (), div1.build () );
@@ -65,11 +65,11 @@ public class DataItemValueTest
     public void test4 ()
     {
         final Builder div1 = new Builder ();
-        div1.setValue ( new Variant ( 1 ) );
+        div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
 
         final Builder div2 = new Builder ();
-        div2.setValue ( new Variant ( 1 ) );
+        div2.setValue ( Variant.valueOf ( 1 ) );
         div2.setSubscriptionState ( SubscriptionState.CONNECTED );
 
         Assert.assertEquals ( div1.build (), div2.build () );
@@ -80,12 +80,12 @@ public class DataItemValueTest
     public void test5 ()
     {
         final Builder div1 = new Builder ();
-        div1.setValue ( new Variant ( 1 ) );
+        div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
         div1.setAttribute ( "foo", new Variant ( "bar" ) );
 
         final Builder div2 = new Builder ();
-        div2.setValue ( new Variant ( 1 ) );
+        div2.setValue ( Variant.valueOf ( 1 ) );
         div2.setSubscriptionState ( SubscriptionState.CONNECTED );
         div2.setAttribute ( "foo", new Variant ( "bar" ) );
 
@@ -97,12 +97,12 @@ public class DataItemValueTest
     public void testFalse1 ()
     {
         final Builder div1 = new Builder ();
-        div1.setValue ( new Variant ( 1 ) );
+        div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
         div1.setAttribute ( "foo", new Variant ( "bar" ) );
 
         final Builder div2 = new Builder ();
-        div2.setValue ( new Variant ( 1 ) );
+        div2.setValue ( Variant.valueOf ( 1 ) );
         div2.setSubscriptionState ( SubscriptionState.CONNECTED );
         div2.setAttribute ( "bar", new Variant ( "foo" ) );
 
@@ -114,12 +114,12 @@ public class DataItemValueTest
     public void testFalse2 ()
     {
         final Builder div1 = new Builder ();
-        div1.setValue ( new Variant ( 1 ) );
+        div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
         div1.setAttribute ( "foo", new Variant ( "bar" ) );
 
         final Builder div2 = new Builder ();
-        div2.setValue ( new Variant ( 1 ) );
+        div2.setValue ( Variant.valueOf ( 1 ) );
         div2.setSubscriptionState ( SubscriptionState.DISCONNECTED );
         div2.setAttribute ( "foo", new Variant ( "bar" ) );
 
@@ -131,7 +131,7 @@ public class DataItemValueTest
     public void testFalse3 ()
     {
         final Builder div1 = new Builder ();
-        div1.setValue ( new Variant ( 1 ) );
+        div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
         div1.setAttribute ( "foo", new Variant ( "bar" ) );
 
@@ -147,12 +147,12 @@ public class DataItemValueTest
     public void testFalse4 ()
     {
         final Builder div1 = new Builder ();
-        div1.setValue ( new Variant ( 1 ) );
+        div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
         div1.setAttribute ( "foo", new Variant ( "bar" ) );
 
         final Builder div2 = new Builder ();
-        div2.setValue ( new Variant ( 1 ) );
+        div2.setValue ( Variant.valueOf ( 1 ) );
         div2.setSubscriptionState ( SubscriptionState.CONNECTED );
         div2.setAttribute ( "foo", new Variant ( "bar" ) );
 

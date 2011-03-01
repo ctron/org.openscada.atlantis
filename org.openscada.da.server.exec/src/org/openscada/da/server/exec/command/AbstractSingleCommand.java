@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -64,7 +64,7 @@ public class AbstractSingleCommand
 
     protected void execute ( final ProcessBuilder processBuilder, final ProcessListener listener )
     {
-        this.runningItem.updateData ( new Variant ( true ), null, null );
+        this.runningItem.updateData ( Variant.TRUE, null, null );
 
         final ExecutionResult result;
         try
@@ -73,8 +73,8 @@ public class AbstractSingleCommand
         }
         finally
         {
-            this.runningItem.updateData ( new Variant ( false ), null, null );
-            this.execItem.updateData ( new Variant (), new HashMap<String, Variant> (), AttributeMode.SET );
+            this.runningItem.updateData ( Variant.FALSE, null, null );
+            this.execItem.updateData ( Variant.NULL, new HashMap<String, Variant> (), AttributeMode.SET );
         }
 
         updateStatus ( result );

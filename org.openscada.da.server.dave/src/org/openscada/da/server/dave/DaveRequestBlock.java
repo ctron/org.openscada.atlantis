@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -83,7 +83,7 @@ public class DaveRequestBlock
             this.avgDiffItem = itemFactory.createInput ( "avgDiff", null );
 
             this.sizeItem = itemFactory.createInput ( "size", null );
-            this.sizeItem.updateData ( new Variant ( request.getCount () ), null, null );
+            this.sizeItem.updateData ( Variant.valueOf ( request.getCount () ), null, null );
 
             this.lastUpdate = System.currentTimeMillis ();
             this.diffBuffer = new CircularFifoBuffer ( 20 );
@@ -109,8 +109,8 @@ public class DaveRequestBlock
         {
             final long diff = now - this.lastUpdate;
             this.lastUpdate = now;
-            this.lastUpdateItem.updateData ( new Variant ( this.lastUpdate ), null, null );
-            this.lastTimeDiffItem.updateData ( new Variant ( diff ), null, null );
+            this.lastUpdateItem.updateData ( Variant.valueOf ( this.lastUpdate ), null, null );
+            this.lastTimeDiffItem.updateData ( Variant.valueOf ( diff ), null, null );
 
             this.diffBuffer.add ( diff );
 
@@ -128,7 +128,7 @@ public class DaveRequestBlock
                 sum += ( (Number)o ).longValue ();
             }
             final double avgDiff = (double)sum / (double)this.diffBuffer.size ();
-            this.avgDiffItem.updateData ( new Variant ( avgDiff ), null, null );
+            this.avgDiffItem.updateData ( Variant.valueOf ( avgDiff ), null, null );
         }
     }
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -53,11 +53,11 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
 
     public static final String MANUAL_REASON = MANUAL_BASE + ".reason";
 
-    private final VariantBinder manualValue = new VariantBinder ( new Variant () );
+    private final VariantBinder manualValue = new VariantBinder ( Variant.NULL );
 
-    private final VariantBinder manualReason = new VariantBinder ( new Variant () );
+    private final VariantBinder manualReason = new VariantBinder ( Variant.NULL );
 
-    private final VariantBinder manualUser = new VariantBinder ( new Variant () );
+    private final VariantBinder manualUser = new VariantBinder ( Variant.NULL );
 
     private Calendar manualTimestamp;
 
@@ -131,11 +131,12 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
         // if we got a timestamp, store it
         if ( this.manualTimestamp != null )
         {
-            attributes.put ( MANUAL_TIMESTAMP, new Variant ( this.manualTimestamp.getTimeInMillis () ) );
+            attributes.put ( MANUAL_TIMESTAMP, Variant.valueOf ( this.manualTimestamp.getTimeInMillis () ) );
         }
         super.performWriteBinders ( attributes );
     }
 
+    @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( MANUAL_ACTIVE, null );
@@ -150,7 +151,7 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
             attributes.put ( ORIGINAL_VALUE, new Variant ( value ) );
             newValue = this.manualValue.getValue ();
             attributes.put ( MANUAL_ACTIVE, Variant.TRUE );
-            attributes.put ( MANUAL_TIMESTAMP, new Variant ( this.manualTimestamp.getTimeInMillis () ) );
+            attributes.put ( MANUAL_TIMESTAMP, Variant.valueOf ( this.manualTimestamp.getTimeInMillis () ) );
 
             // if we have an original timestamp, replace it
             final Variant originalTimestamp = attributes.get ( "timestamp" );
@@ -158,7 +159,7 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
             {
                 attributes.put ( ORIGINAL_TIMESTAMP, new Variant ( originalTimestamp ) );
             }
-            attributes.put ( "timestamp", new Variant ( this.manualTimestamp.getTimeInMillis () ) );
+            attributes.put ( "timestamp", Variant.valueOf ( this.manualTimestamp.getTimeInMillis () ) );
         }
         addAttributes ( attributes );
 

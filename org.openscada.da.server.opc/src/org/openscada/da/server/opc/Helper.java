@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -52,47 +52,47 @@ public class Helper
             case JIVariant.VT_NULL:
                 return Variant.NULL;
             case JIVariant.VT_I1:
-                return new Variant ( ( (Character)variant.getObject () ).charValue () );
+                return Variant.valueOf ( ( (Character)variant.getObject () ).charValue () );
             case JIVariant.VT_I2:
-                return new Variant ( variant.getObjectAsShort () );
+                return Variant.valueOf ( variant.getObjectAsShort () );
             case JIVariant.VT_I4:
-                return new Variant ( variant.getObjectAsInt () );
+                return Variant.valueOf ( variant.getObjectAsInt () );
             case JIVariant.VT_INT:
-                return new Variant ( variant.getObjectAsInt () );
+                return Variant.valueOf ( variant.getObjectAsInt () );
             case JIVariant.VT_I8:
-                return new Variant ( variant.getObjectAsLong () );
+                return Variant.valueOf ( variant.getObjectAsLong () );
             case JIVariant.VT_R4:
-                return new Variant ( variant.getObjectAsFloat () );
+                return Variant.valueOf ( variant.getObjectAsFloat () );
             case JIVariant.VT_R8:
-                return new Variant ( variant.getObjectAsDouble () );
+                return Variant.valueOf ( variant.getObjectAsDouble () );
             case JIVariant.VT_BSTR:
             {
                 final JIString str = variant.getObjectAsString ();
                 if ( str != null )
                 {
-                    return new Variant ( str.getString () );
+                    return Variant.valueOf ( str.getString () );
                 }
                 else
                 {
-                    return new Variant ( "" );
+                    return Variant.valueOf ( "" );
                 }
             }
             case JIVariant.VT_UI1:
-                return new Variant ( variant.getObjectAsUnsigned ().getValue ().byteValue () );
+                return Variant.valueOf ( variant.getObjectAsUnsigned ().getValue ().byteValue () );
             case JIVariant.VT_UI2:
-                return new Variant ( variant.getObjectAsUnsigned ().getValue ().shortValue () );
+                return Variant.valueOf ( variant.getObjectAsUnsigned ().getValue ().shortValue () );
             case JIVariant.VT_UI4:
-                return new Variant ( variant.getObjectAsUnsigned ().getValue ().intValue () );
+                return Variant.valueOf ( variant.getObjectAsUnsigned ().getValue ().intValue () );
             case JIVariant.VT_UINT:
-                return new Variant ( variant.getObjectAsUnsigned ().getValue ().intValue () );
+                return Variant.valueOf ( variant.getObjectAsUnsigned ().getValue ().intValue () );
             case JIVariant.VT_VARIANT:
                 return theirs2ours ( variant.getObjectAsVariant () );
             case JIVariant.VT_DATE:
-                return new Variant ( variant.getObjectAsDate ().getTime () );
+                return Variant.valueOf ( variant.getObjectAsDate ().getTime () );
             case JIVariant.VT_CY:
             {
                 final JICurrency c = (JICurrency)variant.getObject ();
-                return new Variant ( ( (long)c.getUnits () << 32L | c.getFractionalUnits () ) / 10000L );
+                return Variant.valueOf ( ( (long)c.getUnits () << 32L | c.getFractionalUnits () ) / 10000L );
             }
             default:
                 return null;
@@ -165,42 +165,42 @@ public class Helper
 
     public static Map<String, Variant> convertToAttributes ( final KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
     {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 4 );
         if ( entry.getErrorCode () != 0 )
         {
             attributes.put ( "opc.add.error", Variant.TRUE );
-            attributes.put ( "opc.add.code", new Variant ( entry.getErrorCode () ) );
-            attributes.put ( "opc.add.message", new Variant ( String.format ( "0x%08x", entry.getErrorCode () ) ) );
+            attributes.put ( "opc.add.code", Variant.valueOf ( entry.getErrorCode () ) );
+            attributes.put ( "opc.add.message", Variant.valueOf ( String.format ( "0x%08x", entry.getErrorCode () ) ) );
         }
         return attributes;
     }
 
     public static Map<String, Variant> convertToAttributes ( final OPCITEMDEF def )
     {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "opc.itemId", new Variant ( def.getItemID () ) );
-        attributes.put ( "opc.clientHandle", new Variant ( def.getClientHandle () ) );
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 4 );
+        attributes.put ( "opc.itemId", Variant.valueOf ( def.getItemID () ) );
+        attributes.put ( "opc.clientHandle", Variant.valueOf ( def.getClientHandle () ) );
         if ( def.getAccessPath () != null )
         {
-            attributes.put ( "opc.accessPath", new Variant ( def.getAccessPath () ) );
+            attributes.put ( "opc.accessPath", Variant.valueOf ( def.getAccessPath () ) );
         }
         return attributes;
     }
 
     public static Map<String, Variant> convertToAttributes ( final OPCITEMRESULT result )
     {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 4 );
 
-        attributes.put ( "opc.serverHandle", new Variant ( result.getServerHandle () ) );
-        attributes.put ( "opc.dataType", new Variant ( result.getCanonicalDataType () ) );
-        attributes.put ( "opc.accessRights", new Variant ( result.getAccessRights () ) );
-        attributes.put ( "opc.accessRights.string", new Variant ( convertToAccessSet ( result.getAccessRights () ).toString () ) );
+        attributes.put ( "opc.serverHandle", Variant.valueOf ( result.getServerHandle () ) );
+        attributes.put ( "opc.dataType", Variant.valueOf ( result.getCanonicalDataType () ) );
+        attributes.put ( "opc.accessRights", Variant.valueOf ( result.getAccessRights () ) );
+        attributes.put ( "opc.accessRights.string", Variant.valueOf ( convertToAccessSet ( result.getAccessRights () ).toString () ) );
         return attributes;
     }
 
     public static Map<String, Variant> clearAttributes ()
     {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 16 );
 
         attributes.put ( "opc.serverHandle", null );
         attributes.put ( "opc.dataType", null );

@@ -41,6 +41,7 @@ public class WatchDogServiceImpl implements WatchDogService, InitializingBean
 
     private final long startTimestamp = System.currentTimeMillis ();
 
+    @Override
     public void tick ()
     {
         for ( final ValueCommand command : this.commands )
@@ -65,9 +66,10 @@ public class WatchDogServiceImpl implements WatchDogService, InitializingBean
     {
         long ts = System.currentTimeMillis () - this.startTimestamp;
         ts = ts / 1000;
-        return new Variant ( (int)ts );
+        return Variant.valueOf ( (int)ts );
     }
 
+    @Override
     public void afterPropertiesSet () throws Exception
     {
         Assert.notNull ( this.commands, "'commands' must be set" );
