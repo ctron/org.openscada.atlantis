@@ -70,11 +70,11 @@ import org.slf4j.LoggerFactory;
  * @author Jens Reimann
  *
  */
-public class ForumulaDataSource extends AbstractMultiSourceDataSource
+public class FormulaDataSource extends AbstractMultiSourceDataSource
 {
     private static final String DEFAULT_ENGINE_NAME = System.getProperty ( "org.openscada.da.datasource.formula.defaultScriptEngine", "JavaScript" );
 
-    final static Logger logger = LoggerFactory.getLogger ( ForumulaDataSource.class );
+    final static Logger logger = LoggerFactory.getLogger ( FormulaDataSource.class );
 
     private final ScheduledExecutorService executor;
 
@@ -106,7 +106,7 @@ public class ForumulaDataSource extends AbstractMultiSourceDataSource
 
     private VariantType outputDatasourceType;
 
-    public ForumulaDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor )
+    public FormulaDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor )
     {
         super ( poolTracker );
 
@@ -359,7 +359,7 @@ public class ForumulaDataSource extends AbstractMultiSourceDataSource
         }
 
         // trigger init scripts
-        final Queue<InitCode> init = new PriorityQueue<ForumulaDataSource.InitCode> ();
+        final Queue<InitCode> init = new PriorityQueue<FormulaDataSource.InitCode> ();
         for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "init." ).entrySet () )
         {
             init.add ( new InitCode ( Integer.valueOf ( entry.getKey () ), entry.getValue () ) );
@@ -436,7 +436,7 @@ public class ForumulaDataSource extends AbstractMultiSourceDataSource
         }
         catch ( final Throwable e )
         {
-            logger.warn ( "Failed to evaluate", e );
+            logger.info ( "Failed to evaluate", e );
             logger.debug ( "Failed script: {}", this.inputFormula );
             setError ( e );
         }

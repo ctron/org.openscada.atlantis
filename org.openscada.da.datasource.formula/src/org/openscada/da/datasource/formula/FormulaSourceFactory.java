@@ -35,7 +35,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class FormulaSourceFactory extends AbstractServiceConfigurationFactory<ForumulaDataSource>
+public class FormulaSourceFactory extends AbstractServiceConfigurationFactory<FormulaDataSource>
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( FormulaSourceFactory.class );
@@ -70,9 +70,9 @@ public class FormulaSourceFactory extends AbstractServiceConfigurationFactory<Fo
     }
 
     @Override
-    protected Entry<ForumulaDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<FormulaDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final ForumulaDataSource source = new ForumulaDataSource ( context, this.poolTracker, this.executor );
+        final FormulaDataSource source = new FormulaDataSource ( context, this.poolTracker, this.executor );
         source.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
@@ -80,11 +80,11 @@ public class FormulaSourceFactory extends AbstractServiceConfigurationFactory<Fo
 
         this.objectPool.addService ( configurationId, source, properties );
 
-        return new Entry<ForumulaDataSource> ( configurationId, source );
+        return new Entry<FormulaDataSource> ( configurationId, source );
     }
 
     @Override
-    protected void disposeService ( final String id, final ForumulaDataSource service )
+    protected void disposeService ( final String id, final FormulaDataSource service )
     {
         logger.info ( "Disposing: {}", id );
 
@@ -94,7 +94,7 @@ public class FormulaSourceFactory extends AbstractServiceConfigurationFactory<Fo
     }
 
     @Override
-    protected Entry<ForumulaDataSource> updateService ( final String configurationId, final Entry<ForumulaDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<FormulaDataSource> updateService ( final String configurationId, final Entry<FormulaDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;
