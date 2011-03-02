@@ -50,7 +50,7 @@ public class MessageHelper
      */
     public static Map<String, Variant> mapToAttributes ( final MapValue mapValue )
     {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( mapValue.getValues ().size () );
 
         for ( final Map.Entry<String, Value> entry : mapValue.getValues ().entrySet () )
         {
@@ -61,7 +61,7 @@ public class MessageHelper
 
             if ( value != null )
             {
-                attributes.put ( new String ( entry.getKey () ), value );
+                attributes.put ( entry.getKey (), value );
             }
         }
 
@@ -70,14 +70,14 @@ public class MessageHelper
 
     public static MapValue attributesToMap ( final Map<String, Variant> attributes )
     {
-        final MapValue mapValue = new MapValue ();
+        final MapValue mapValue = new MapValue ( attributes.size () );
 
         for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
             final Value value = variantToValue ( entry.getValue () );
             if ( value != null )
             {
-                mapValue.put ( new String ( entry.getKey () ), value );
+                mapValue.put ( entry.getKey (), value );
             }
         }
 
