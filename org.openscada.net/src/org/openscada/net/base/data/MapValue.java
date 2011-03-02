@@ -31,6 +31,11 @@ public class MapValue extends Value
         this.values = new HashMap<String, Value> ();
     }
 
+    public MapValue ( final int initialCapacity )
+    {
+        this.values = new HashMap<String, Value> ( initialCapacity );
+    }
+
     public MapValue ( final Map<String, Value> values )
     {
         this.values = values;
