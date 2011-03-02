@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,9 +19,11 @@
 
 package org.openscada.ae.server.net;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -29,17 +31,17 @@ import java.util.Set;
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryState;
 import org.openscada.ae.UnknownQueryException;
 import org.openscada.ae.net.BrowserMessageHelper;
-import org.openscada.ae.net.MonitorMessageHelper;
 import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
-import org.openscada.ae.server.MonitorListener;
+import org.openscada.ae.net.MonitorMessageHelper;
 import org.openscada.ae.server.EventListener;
+import org.openscada.ae.server.MonitorListener;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
 import org.openscada.core.ConnectionInformation;
@@ -63,6 +65,8 @@ import org.openscada.utils.concurrent.task.ResultFutureHandler;
 import org.openscada.utils.concurrent.task.TaskHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Lists;
 
 public class ServerConnectionHandler extends AbstractServerConnectionHandler implements BrowserListener
 {
@@ -98,6 +102,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( MessageHelper.CC_CREATE_SESSION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 createSession ( message );
@@ -106,6 +111,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( MessageHelper.CC_CLOSE_SESSION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 closeSession ();
@@ -114,6 +120,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_SUBSCRIBE_EVENT_POOL, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 subscribeEventPool ( message );
@@ -122,6 +129,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_UNSUBSCRIBE_EVENT_POOL, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 unsubscribeEventPool ( message );
@@ -130,6 +138,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_SUBSCRIBE_CONDITIONS, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 subscribeMonitors ( message );
@@ -138,6 +147,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_UNSUBSCRIBE_CONDITIONS, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 unsubscribeMonitors ( message );
@@ -146,6 +156,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_CONDITION_AKN, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 acknowledge ( message );
@@ -154,6 +165,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_QUERY_CREATE, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ServerConnectionHandler.this.queryCreate ( message );
@@ -162,6 +174,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_QUERY_CLOSE, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ServerConnectionHandler.this.queryClose ( message );
@@ -170,6 +183,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_QUERY_LOAD_MORE, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ServerConnectionHandler.this.queryLoadMore ( message );
@@ -464,7 +478,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         // client version does not match server version
         if ( !clientVersion.equals ( VERSION ) )
         {
-            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "protocol version mismatch: client '" + clientVersion + "' server: '" + VERSION + "'" ) );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, String.format ( "protocol version mismatch: client '%s' server: '%s'", clientVersion, VERSION ) ) );
             return;
         }
 
@@ -488,11 +502,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         // hook up session
         this.session.setEventListener ( this.eventListener = new EventListener () {
 
+            @Override
             public void dataChanged ( final String poolId, final Event[] addedEvents )
             {
                 ServerConnectionHandler.this.dataChangedEvents ( poolId, addedEvents );
             }
 
+            @Override
             public void updateStatus ( final Object topic, final SubscriptionState state )
             {
                 ServerConnectionHandler.this.statusChangedEvents ( topic.toString (), state );
@@ -500,11 +516,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         } );
         this.session.setConditionListener ( this.monitorListener = new MonitorListener () {
 
+            @Override
             public void dataChanged ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
             {
                 dataChangedConditions ( subscriptionId, addedOrUpdated, removed );
             }
 
+            @Override
             public void updateStatus ( final Object topic, final SubscriptionState state )
             {
                 statusChangedConditions ( topic.toString (), state );
@@ -566,12 +584,22 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public void dataChangedEvents ( final String poolId, final Event[] addedEvents )
     {
-        final Message message = new Message ( Messages.CC_EVENT_POOL_DATA );
+        final List<Event> list = Arrays.asList ( addedEvents );
 
-        message.getValues ().put ( MESSAGE_QUERY_ID, new StringValue ( poolId ) );
-        message.getValues ().put ( "events", EventMessageHelper.toValue ( addedEvents ) );
+        for ( final List<Event> chunk : Lists.partition ( list, getChunkSize () ) )
+        {
+            final Message message = new Message ( Messages.CC_EVENT_POOL_DATA );
 
-        this.messenger.sendMessage ( message );
+            message.getValues ().put ( MESSAGE_QUERY_ID, new StringValue ( poolId ) );
+            message.getValues ().put ( "events", EventMessageHelper.toValue ( chunk ) );
+
+            this.messenger.sendMessage ( message );
+        }
+    }
+
+    private int getChunkSize ()
+    {
+        return Integer.getInteger ( "org.openscada.ae.server.net.ServerConnectionHandler.chunkSize", 200 );
     }
 
     public void statusChangedEvents ( final String poolId, final SubscriptionState status )
@@ -605,6 +633,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.messenger.sendMessage ( message );
     }
 
+    @Override
     public void dataChanged ( final BrowserEntry[] addedOrUpdated, final String[] removed, final boolean full )
     {
         final Message message = new Message ( Messages.CC_BROWSER_UPDATE );
@@ -622,10 +651,16 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     public void sendQueryData ( final QueryImpl queryImpl, final Event[] events )
     {
         // TODO: check if query is still active
-        final Message message = new Message ( Messages.CC_QUERY_DATA );
-        message.getValues ().put ( "data", EventMessageHelper.toValue ( events ) );
-        message.getValues ().put ( MESSAGE_QUERY_ID, new LongValue ( queryImpl.getQueryId () ) );
-        this.messenger.sendMessage ( message );
+
+        final List<Event> list = Arrays.asList ( events );
+
+        for ( final List<Event> chunk : Lists.partition ( list, getChunkSize () ) )
+        {
+            final Message message = new Message ( Messages.CC_QUERY_DATA );
+            message.getValues ().put ( "data", EventMessageHelper.toValue ( chunk ) );
+            message.getValues ().put ( MESSAGE_QUERY_ID, new LongValue ( queryImpl.getQueryId () ) );
+            this.messenger.sendMessage ( message );
+        }
     }
 
     public void sendQueryState ( final QueryImpl queryImpl, final QueryState state )

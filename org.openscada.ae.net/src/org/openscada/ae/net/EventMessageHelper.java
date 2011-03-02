@@ -20,6 +20,7 @@
 package org.openscada.ae.net;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -94,14 +95,14 @@ public class EventMessageHelper
         }
     }
 
-    public static Value toValue ( final Event[] addedEvents )
+    public static Value toValue ( final Collection<Event> addedEvents )
     {
         if ( addedEvents == null )
         {
             return VoidValue.INSTANCE;
         }
 
-        final ListValue result = new ListValue ();
+        final ListValue result = new ListValue ( addedEvents.size () );
         for ( final Event event : addedEvents )
         {
             result.add ( toValue ( event ) );
@@ -111,7 +112,7 @@ public class EventMessageHelper
 
     public static Value toValue ( final Event event )
     {
-        final MapValue value = new MapValue ();
+        final MapValue value = new MapValue ( 5 );
 
         value.put ( "id.high", new LongValue ( event.getId ().getMostSignificantBits () ) );
         value.put ( "id.low", new LongValue ( event.getId ().getLeastSignificantBits () ) );
