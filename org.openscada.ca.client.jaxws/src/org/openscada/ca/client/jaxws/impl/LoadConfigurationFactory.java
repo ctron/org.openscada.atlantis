@@ -26,7 +26,6 @@ import org.openscada.ca.client.jaxws.RemoteConfigurationClient;
 
 public class LoadConfigurationFactory implements Callable<ConfigurationInformation>
 {
-
     private final RemoteConfigurationClient port;
 
     private final String factoryId;
@@ -40,6 +39,7 @@ public class LoadConfigurationFactory implements Callable<ConfigurationInformati
         this.port = port;
     }
 
+    @Override
     public ConfigurationInformation call () throws Exception
     {
         final ConfigurationInformation result = this.port.getPort ().getConfiguration ( this.factoryId, this.configurationId );
