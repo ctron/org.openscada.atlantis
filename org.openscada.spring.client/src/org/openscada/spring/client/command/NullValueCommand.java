@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,8 +19,9 @@
 
 package org.openscada.spring.client.command;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a null value command which simply discards the write request
@@ -29,11 +30,13 @@ import org.openscada.core.Variant;
  */
 public class NullValueCommand implements ValueCommand
 {
-    private static Logger logger = Logger.getLogger ( NullValueCommand.class );
 
+    private final static Logger logger = LoggerFactory.getLogger ( NullValueCommand.class );
+
+    @Override
     public void command ( final Variant value ) throws Exception
     {
-        logger.debug ( "Discarding write request: " + value );
+        logger.debug ( "Discarding write request: {}", value );
     }
 
 }

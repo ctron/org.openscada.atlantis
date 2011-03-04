@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,13 +21,15 @@ package org.openscada.spring.client.event;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ValueEventObserver extends AbstractItemEventObserver
 {
-    private static Logger log = Logger.getLogger ( ValueEventObserver.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ValueEventObserver.class );
 
     protected ValueEventListener listener;
 
@@ -38,16 +40,18 @@ public class ValueEventObserver extends AbstractItemEventObserver
      */
     protected boolean ignoreCache = true;
 
+    @Override
     public void notifySubscriptionChange ( final SubscriptionState state, final Throwable e )
     {
         // NO OP
     }
 
+    @Override
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         final ValueEventListener listener = this.listener;
 
-        log.info ( String.format ( "Cache: %s, Ignore: %s", cache, this.ignoreCache ) );
+        logger.info ( "Cache: {}, Ignore: {}", cache, this.ignoreCache );
         // if we have a listener
         if ( listener != null && value != null )
         {

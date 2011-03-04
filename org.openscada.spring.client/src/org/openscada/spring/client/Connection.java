@@ -21,7 +21,6 @@ package org.openscada.spring.client;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
@@ -35,6 +34,8 @@ import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
@@ -59,9 +60,9 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
      */
     private static final long DEFAULT_RECONNECT_DELAY = 10000;
 
-    private static Logger log = Logger.getLogger ( Connection.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Connection.class );
 
-    private static Logger logWrite = Logger.getLogger ( Connection.class.getName () + ".write" );
+    private final static Logger logWrite = LoggerFactory.getLogger ( Connection.class.getName () + ".write" );
 
     private String className;
 
@@ -116,7 +117,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
     {
         if ( this.className != null && this.className.length () > 0 )
         {
-            log.info ( "Pre-Loading class: " + this.className );
+            logger.info ( "Pre-Loading class: {}", this.className );
             Class.forName ( this.className );
         }
 
@@ -242,26 +243,26 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
             throw new NoConnectionException ();
         }
 
-        logWrite.info ( String.format ( "Writing: %s to %s", value, itemName ) );
+        logWrite.info ( "Writing: {} to {}", value, itemName );
 
         connection.write ( itemName, value, operationParameters, new WriteOperationCallback () {
 
             @Override
             public void complete ()
             {
-                log.debug ( String.format ( "Write operation to %s (%s) completed", itemName, value ) );
+                logger.debug ( "Write operation to {} ({}) completed", itemName, value );
             }
 
             @Override
             public void error ( final Throwable arg0 )
             {
-                log.warn ( String.format ( "Write operation to %s (%s) failed", itemName, value ), arg0 );
+                logger.warn ( String.format ( "Write operation to %s (%s) failed", itemName, value ), arg0 );
             }
 
             @Override
             public void failed ( final String arg0 )
             {
-                log.warn ( String.format ( "Write operation to %s (%s) failed: %s", itemName, value, arg0 ) );
+                logger.warn ( String.format ( "Write operation to %s (%s) failed: %s", itemName, value, arg0 ) );
             }
         } );
     }
@@ -279,26 +280,26 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
             throw new NoConnectionException ();
         }
 
-        logWrite.info ( String.format ( "Writing: %s to %s", attributes, itemName ) );
+        logWrite.info ( "Writing: {} to {}", attributes, itemName );
 
         connection.writeAttributes ( itemName, attributes, operationParameters, new WriteAttributeOperationCallback () {
 
             @Override
             public void complete ( final WriteAttributeResults writeAttributeResults )
             {
-                log.debug ( String.format ( "Write attributes operation to %s (%s) completed", itemName, attributes ) );
+                logger.debug ( String.format ( "Write attributes operation to %s (%s) completed", itemName, attributes ) );
             }
 
             @Override
             public void error ( final Throwable throwable )
             {
-                log.warn ( String.format ( "Write attributes operation to %s (%s) failed", itemName, attributes ), throwable );
+                logger.warn ( String.format ( "Write attributes operation to %s (%s) failed", itemName, attributes ), throwable );
             }
 
             @Override
             public void failed ( final String reason )
             {
-                log.warn ( String.format ( "Write operation to %s (%s) failed: %s", itemName, attributes, reason ) );
+                logger.warn ( String.format ( "Write operation to %s (%s) failed: %s", itemName, attributes, reason ) );
             }
         } );
     }
@@ -329,11 +330,11 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
         final String message = String.format ( "Connection %s changes status: %s", this.connectionInformation.toMaskedString (), state );
         if ( error != null )
         {
-            log.info ( message, error );
+            logger.info ( message, error );
         }
         else
         {
-            log.info ( message );
+            logger.info ( message );
         }
     }
 

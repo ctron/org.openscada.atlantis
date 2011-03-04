@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,11 +19,11 @@
 
 package org.openscada.spring.client.event;
 
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -34,7 +34,8 @@ import org.springframework.util.Assert;
  */
 public class ValueEventPropertyAdapter implements ValueEventListener, InitializingBean
 {
-    private static Logger log = Logger.getLogger ( ValueEventPropertyAdapter.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ValueEventPropertyAdapter.class );
 
     /**
      * The target object
@@ -51,23 +52,16 @@ public class ValueEventPropertyAdapter implements ValueEventListener, Initializi
      */
     protected String methodName;
 
+    @Override
     public void valueEvent ( final String topic, final Variant value )
     {
         try
         {
             this.method.invoke ( this.target, value );
         }
-        catch ( final IllegalArgumentException e )
+        catch ( final Exception e )
         {
-            log.error ( "Failed to call target method", e );
-        }
-        catch ( final IllegalAccessException e )
-        {
-            log.error ( "Failed to call target method", e );
-        }
-        catch ( final InvocationTargetException e )
-        {
-            log.error ( "Failed to call target method", e );
+            logger.error ( "Failed to call target method", e );
         }
     }
 
@@ -107,6 +101,7 @@ public class ValueEventPropertyAdapter implements ValueEventListener, Initializi
         }
     }
 
+    @Override
     public void afterPropertiesSet () throws Exception
     {
         Assert.notNull ( this.target, "'target' must not be null" );

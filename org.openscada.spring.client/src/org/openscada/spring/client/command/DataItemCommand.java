@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,11 +19,12 @@
 
 package org.openscada.spring.client.command;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.spring.client.Connection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -34,7 +35,8 @@ import org.springframework.util.Assert;
  */
 public class DataItemCommand implements ValueCommand, InitializingBean
 {
-    private static Logger logger = Logger.getLogger ( DataItemCommand.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( DataItemCommand.class );
 
     /**
      * The connection on which to write
@@ -46,9 +48,10 @@ public class DataItemCommand implements ValueCommand, InitializingBean
      */
     private String itemName;
 
+    @Override
     public void command ( final Variant value ) throws NoConnectionException, OperationException
     {
-        logger.debug ( String.format ( "Writing %s to connection", value.asString ( "<null>" ) ) );
+        logger.debug ( "Writing {} to connection", value.asString ( "<null>" ) );
         this.connection.writeItem ( this.itemName, value );
     }
 
@@ -63,6 +66,7 @@ public class DataItemCommand implements ValueCommand, InitializingBean
         this.connection = connection;
     }
 
+    @Override
     public void afterPropertiesSet () throws Exception
     {
         Assert.notNull ( this.connection, "'connection' must not be null" );

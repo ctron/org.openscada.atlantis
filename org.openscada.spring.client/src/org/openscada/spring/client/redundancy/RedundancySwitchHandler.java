@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,7 +30,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.NullValueException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
@@ -40,6 +39,8 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.spring.client.Connection;
 import org.openscada.spring.client.event.ItemEventAdapter;
 import org.openscada.spring.client.event.ItemEventListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -49,9 +50,10 @@ import org.springframework.util.Assert;
  */
 public class RedundancySwitchHandler implements InitializingBean
 {
-    private static final String USER_ATTRIBUTE = "org.openscada.da.redundancy.user";
 
-    private static Logger logger = Logger.getLogger ( RedundancySwitchHandler.class );
+    private final static Logger logger = LoggerFactory.getLogger ( RedundancySwitchHandler.class );
+
+    private static final String USER_ATTRIBUTE = "org.openscada.da.redundancy.user";
 
     protected final Map<String, Boolean> lastConnectionStates = new ConcurrentHashMap<String, Boolean> ();
 
@@ -73,6 +75,7 @@ public class RedundancySwitchHandler implements InitializingBean
 
     protected AtomicBoolean automatic = new AtomicBoolean ( true );
 
+    @Override
     public void afterPropertiesSet () throws Exception
     {
         Assert.notNull ( this.redundancySwitcherConnection, "'redundancySwitcherConnection' must not be null" );
@@ -89,20 +92,21 @@ public class RedundancySwitchHandler implements InitializingBean
         {
             masterFlagItem.getValue ().attachTarget ( new ItemEventListener () {
 
+                @Override
                 public void itemEvent ( final String topic, final DataItemValue value )
                 {
                     if ( value == null )
                     {
-                        logger.info ( "Master flag changed for " + masterFlagItem.getKey () + " to " + value );
+                        logger.info ( "Master flag changed for {} to {}", masterFlagItem.getKey (), value );
                         RedundancySwitchHandler.this.lastMasterFlags.put ( masterFlagItem.getKey (), false );
                         return;
                     }
-                    logger.info ( "Master flag changed for " + masterFlagItem.getKey () + " to " + value + " subscription state: " + value.getSubscriptionState () );
+                    logger.info ( "Master flag changed for {} to {} subscription state: {}", new Object[] { masterFlagItem.getKey (), value, value.getSubscriptionState () } );
                     RedundancySwitchHandler.this.lastConnectionStates.put ( masterFlagItem.getKey (), SubscriptionState.CONNECTED.equals ( value.getSubscriptionState () ) );
                     RedundancySwitchHandler.this.lastMasterFlags.put ( masterFlagItem.getKey (), value.getValue ().asBoolean () );
                     if ( value.isError () )
                     {
-                        logger.info ( "Master flag " + masterFlagItem.getKey () + " has error" );
+                        logger.info ( "Master flag {} has error", masterFlagItem.getKey () );
                         RedundancySwitchHandler.this.lastConnectionStates.put ( masterFlagItem.getKey (), false );
                         RedundancySwitchHandler.this.lastMasterFlags.put ( masterFlagItem.getKey (), false );
                     }
@@ -116,11 +120,12 @@ public class RedundancySwitchHandler implements InitializingBean
         {
             connectedFlagItem.getValue ().attachTarget ( new ItemEventListener () {
 
+                @Override
                 public void itemEvent ( final String topic, final DataItemValue value )
                 {
                     if ( value == null )
                     {
-                        logger.info ( "Connected flag changed for " + connectedFlagItem.getKey () + " to " + value );
+                        logger.info ( "Connected flag changed for {} to {}", connectedFlagItem.getKey (), value );
                         RedundancySwitchHandler.this.lastMasterFlags.put ( connectedFlagItem.getKey (), false );
                         RedundancySwitchHandler.this.lastConnectionStates.put ( connectedFlagItem.getKey (), false );
                     }
@@ -141,9 +146,10 @@ public class RedundancySwitchHandler implements InitializingBean
         }
 
         this.redundancySwitcherItem.attachTarget ( new ItemEventListener () {
+            @Override
             public void itemEvent ( final String topic, final DataItemValue value )
             {
-                logger.info ( "Current redundant connection changed to " + value );
+                logger.info ( "Current redundant connection changed to {}", value );
                 try
                 {
                     RedundancySwitchHandler.this.currentConnection.set ( value.getValue ().asString () );

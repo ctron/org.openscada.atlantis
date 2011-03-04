@@ -19,9 +19,10 @@
 
 package org.openscada.spring.client.state;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.spring.client.DataItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -32,7 +33,8 @@ import org.springframework.util.Assert;
  */
 public class DataItemSource implements StateSource, InitializingBean
 {
-    private static Logger logger = Logger.getLogger ( DataItemSource.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( DataItemSource.class );
 
     private DataItem dataItem;
 
@@ -59,7 +61,7 @@ public class DataItemSource implements StateSource, InitializingBean
     {
         final DataItemValue value = this.dataItem.getSnapshotValue ();
 
-        logger.debug ( "Got current state value: " + value );
+        logger.debug ( "Got current state value: {}", value );
 
         if ( value == null )
         {

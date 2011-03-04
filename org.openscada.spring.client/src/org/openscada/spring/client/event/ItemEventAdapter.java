@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,8 +22,9 @@ package org.openscada.spring.client.event;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.client.DataItemValue;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
@@ -32,7 +33,7 @@ import org.springframework.util.Assert;
 public class ItemEventAdapter implements ItemEventListener, InitializingBean
 {
 
-    private static Logger log = Logger.getLogger ( ItemEventAdapter.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ItemEventAdapter.class );
 
     protected List<ItemEventListener> target = new CopyOnWriteArrayList<ItemEventListener> ();
 
@@ -48,19 +49,21 @@ public class ItemEventAdapter implements ItemEventListener, InitializingBean
         return "ItemEventAdapter#" + this.alias;
     }
 
+    @Override
     public void itemEvent ( final String topic, final DataItemValue value )
     {
         if ( this.logAsInfo )
         {
-            log.info ( String.format ( "Value change for topic: '%s' -> %s", topic, value.toString () ) );
+            logger.info ( String.format ( "Value change for topic: '%s' -> %s", topic, value.toString () ) );
         }
         else
         {
-            log.debug ( String.format ( "Value change for topic: '%s' -> %s", topic, value.toString () ) );
+            logger.debug ( String.format ( "Value change for topic: '%s' -> %s", topic, value.toString () ) );
         }
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 notifyChangeEvent ( topic, value );
@@ -117,6 +120,7 @@ public class ItemEventAdapter implements ItemEventListener, InitializingBean
         this.executor = executor == null ? new SyncTaskExecutor () : executor;
     }
 
+    @Override
     public void afterPropertiesSet () throws Exception
     {
         Assert.notNull ( this.executor, "'executor' must be set" );

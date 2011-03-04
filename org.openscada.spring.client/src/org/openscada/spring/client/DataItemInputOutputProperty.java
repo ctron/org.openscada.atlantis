@@ -25,7 +25,6 @@ import java.util.concurrent.Executor;
 
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.beanutils.PropertyUtils;
-import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
@@ -38,6 +37,8 @@ import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.utils.concurrent.DirectExecutor;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.util.Assert;
 
@@ -47,7 +48,8 @@ import org.springframework.util.Assert;
  */
 public class DataItemInputOutputProperty extends DataItemInputOutputChained implements InitializingBean
 {
-    private static Logger logger = Logger.getLogger ( DataItemInputOutputProperty.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( DataItemInputOutputProperty.class );
 
     private Object bean;
 
@@ -128,8 +130,8 @@ public class DataItemInputOutputProperty extends DataItemInputOutputChained impl
         }
         catch ( final Throwable throwable )
         {
-            logger.info ( "value could not be set for property " + this.property + " to " + value );
-            logger.info ( throwable.getMessage () );
+            logger.info ( "value could not be set for property {} to {}", this.property, value );
+            logger.info ( "error", throwable );
         }
     }
 
