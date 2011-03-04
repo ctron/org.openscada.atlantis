@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,7 +29,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.service.IoConnector;
@@ -49,10 +48,13 @@ import org.openscada.net.mina.IoSessionSender;
 import org.openscada.net.mina.Messenger;
 import org.openscada.net.mina.SocketImpl;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class ConnectionBase implements Connection, IoHandler
 {
-    private static Logger logger = Logger.getLogger ( ConnectionBase.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionBase.class );
 
     private final Set<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArraySet<ConnectionStateListener> ();
 
@@ -94,7 +96,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         if ( this.connectionState == state )
         {
-            logger.info ( "We already are in state: " + state );
+            logger.info ( "We already are in state: {}", state );
             return;
         }
 
@@ -237,6 +239,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     /**
      * request a disconnect
      */
+    @Override
     public void disconnect ()
     {
         logger.info ( "Requested disconnect" );
@@ -244,6 +247,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         switchState ( ConnectionState.CLOSING, null, null );
     }
 
+    @Override
     public ConnectionInformation getConnectionInformation ()
     {
         return this.connectionInformation;
@@ -288,16 +292,19 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
+    @Override
     public void addConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         this.connectionStateListeners.add ( connectionStateListener );
     }
 
+    @Override
     public void removeConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         this.connectionStateListeners.remove ( connectionStateListener );
     }
 
+    @Override
     public ConnectionState getState ()
     {
         return this.connectionState;
@@ -359,6 +366,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         return this.session != null;
     }
 
+    @Override
     public synchronized void connect ()
     {
         switch ( this.connectionState )
@@ -380,6 +388,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         this.lookupExecutor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 doLookup ();
@@ -389,7 +398,12 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     protected void resolvedRemoteAddress ( final SocketAddress address, final Throwable e )
     {
-        logger.info ( String.format ( "Completed resolving remote address: %s", address ), e );
+        logger.debug ( "Completed resolving remote address: {}", address );
+        if ( e != null )
+        {
+            logger.warn ( "Failed to resolve", e );
+        }
+
         if ( this.connectionState != ConnectionState.LOOKUP )
         {
             return;
@@ -425,6 +439,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         this.connectingFuture.addListener ( new IoFutureListener<ConnectFuture> () {
 
+            @Override
             public void operationComplete ( final ConnectFuture future )
             {
                 try
@@ -500,6 +515,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
             final Runnable r = new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     logger.debug ( "Dispose connector..." );
@@ -570,11 +586,13 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
     }
 
+    @Override
     public void exceptionCaught ( final IoSession session, final Throwable cause ) throws Exception
     {
         logger.error ( "Connection exception", cause );
     }
 
+    @Override
     public void messageReceived ( final IoSession session, final Object message ) throws Exception
     {
         if ( session == this.session )
@@ -587,19 +605,22 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
+    @Override
     public void messageSent ( final IoSession session, final Object message ) throws Exception
     {
     }
 
+    @Override
     public void sessionClosed ( final IoSession session ) throws Exception
     {
-        logger.info ( "Session closed: " + session );
+        logger.info ( "Session closed: {}", session );
         switchState ( ConnectionState.CLOSED, null, null );
     }
 
+    @Override
     public void sessionCreated ( final IoSession session ) throws Exception
     {
-        logger.info ( "Session created: " + session );
+        logger.info ( "Session created: {}", session );
 
         session.getConfig ().setReaderIdleTime ( getPingPeriod () / 1000 );
 
@@ -628,9 +649,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
+    @Override
     public void sessionIdle ( final IoSession session, final IdleStatus status ) throws Exception
     {
-        logger.debug ( "Session idle: " + status + " - " + session );
+        logger.debug ( "Session idle: {} - {}", status, session );
 
         if ( session != this.session )
         {
@@ -640,9 +662,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
         this.pingService.sendPing ();
     }
 
+    @Override
     public synchronized void sessionOpened ( final IoSession session ) throws Exception
     {
-        logger.info ( "Session opened: " + session );
+        logger.info ( "Session opened: {}", session );
 
         if ( session == this.session )
         {
@@ -734,6 +757,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         this.lookupExecutor.shutdown ();
     }
 
+    @Override
     public Map<String, String> getSessionProperties ()
     {
         final Map<String, String> properties = this.properties;

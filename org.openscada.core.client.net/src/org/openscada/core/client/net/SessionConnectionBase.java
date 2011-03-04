@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,17 +21,18 @@ package org.openscada.core.client.net;
 
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class SessionConnectionBase extends ConnectionBase
 {
-    public static final String SESSION_CLIENT_VERSION = "client-version";
+    private final static Logger logger = LoggerFactory.getLogger ( SessionConnectionBase.class );
 
-    private static Logger logger = Logger.getLogger ( SessionConnectionBase.class );
+    public static final String SESSION_CLIENT_VERSION = "client-version";
 
     private final ConnectionInformation connectionInformation;
 
@@ -71,11 +72,13 @@ public abstract class SessionConnectionBase extends ConnectionBase
 
         this.messenger.sendMessage ( MessageHelper.createSession ( props ), new MessageStateListener () {
 
+            @Override
             public void messageReply ( final Message message )
             {
                 processSessionReply ( message );
             }
 
+            @Override
             public void messageTimedOut ()
             {
                 disconnected ( new OperationTimedOutException ().fillInStackTrace () );
