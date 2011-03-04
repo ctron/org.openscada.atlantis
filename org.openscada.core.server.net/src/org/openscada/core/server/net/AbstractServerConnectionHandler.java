@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +19,6 @@
 
 package org.openscada.core.server.net;
 
-import org.apache.log4j.Logger;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
@@ -28,13 +27,15 @@ import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.IoSessionSender;
 import org.openscada.net.mina.Messenger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractServerConnectionHandler implements SingleSessionIoHandler
 {
 
-    private static final int DEFAULT_TIMEOUT = 10000;
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractServerConnectionHandler.class );
 
-    private static Logger logger = Logger.getLogger ( AbstractServerConnectionHandler.class );
+    private static final int DEFAULT_TIMEOUT = 10000;
 
     protected IoSession ioSession;
 
@@ -59,11 +60,13 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         this.messenger.connected ( new IoSessionSender ( this.ioSession ) );
     }
 
+    @Override
     public void exceptionCaught ( final Throwable cause ) throws Exception
     {
         logger.warn ( "Something failed", cause );
     }
 
+    @Override
     public void messageReceived ( final Object message ) throws Exception
     {
         if ( message instanceof Message )
@@ -72,10 +75,12 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         }
     }
 
+    @Override
     public void messageSent ( final Object message ) throws Exception
     {
     }
 
+    @Override
     public void sessionClosed () throws Exception
     {
         cleanUp ();
@@ -91,15 +96,18 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         }
     }
 
+    @Override
     public void sessionCreated () throws Exception
     {
     }
 
+    @Override
     public void sessionIdle ( final IdleStatus status ) throws Exception
     {
         this.pingService.sendPing ();
     }
 
+    @Override
     public void sessionOpened () throws Exception
     {
     }
