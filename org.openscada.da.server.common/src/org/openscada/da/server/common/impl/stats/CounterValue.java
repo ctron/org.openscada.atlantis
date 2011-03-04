@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,11 +19,13 @@
 
 package org.openscada.da.server.common.impl.stats;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CounterValue implements Tickable
 {
-    private static Logger log = Logger.getLogger ( CounterValue.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( CounterValue.class );
 
     private long total = 0;
 
@@ -37,9 +39,10 @@ public class CounterValue implements Tickable
     {
         this.total += value;
         this.lastTickValue = this.lastTickValue + Math.abs ( value );
-        log.debug ( String.format ( "Adding: %s, LastTickValue: %s", value, this.lastTickValue ) );
+        logger.debug ( "Adding: {}, LastTickValue: {}", value, this.lastTickValue );
     }
 
+    @Override
     public synchronized void tick ()
     {
         // get now
@@ -63,7 +66,7 @@ public class CounterValue implements Tickable
 
         // calculate the average
         final double avg = (double)lastTickValue / (double)diff;
-        log.debug ( String.format ( "LastTickValue: %s, Diff: %s, Avg: %s", lastTickValue, diff, avg ) );
+        logger.debug ( "LastTickValue: {}, Diff: {}, Avg: {}", new Object[] { lastTickValue, diff, avg } );
         this.output.setTickValue ( avg, this.total );
     }
 

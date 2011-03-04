@@ -31,7 +31,6 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
@@ -45,10 +44,13 @@ import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.utils.lang.Disposable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ObjectExporter implements PropertyChangeListener, Disposable
 {
-    private static Logger logger = Logger.getLogger ( ObjectExporter.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ObjectExporter.class );
 
     private final FolderItemFactory factory;
 

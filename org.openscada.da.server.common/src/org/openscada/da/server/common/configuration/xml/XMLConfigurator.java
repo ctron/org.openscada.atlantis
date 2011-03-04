@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,7 +29,6 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
@@ -60,11 +59,13 @@ import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.utils.str.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 public class XMLConfigurator implements Configurator
 {
-    private static Logger _log = Logger.getLogger ( XMLConfigurator.class );
+    private final static Logger logger = LoggerFactory.getLogger ( XMLConfigurator.class );
 
     private FactoriesType _factoriesPart = null;
 
@@ -366,7 +367,7 @@ public class XMLConfigurator implements Configurator
         if ( item.getFactory () != null )
         {
             // explicit instatiation
-            _log.debug ( String.format ( "Trying to create item %s using provided item factory", item.getId () ) );
+            logger.debug ( "Trying to create item {} using provided item factory", item.getId () );
 
             if ( hive.lookupItem ( item.getId () ) != null )
             {
@@ -380,7 +381,7 @@ public class XMLConfigurator implements Configurator
         else
         {
             // try using hive::retrieveItem
-            _log.debug ( String.format ( "Trying to retrieve the item %s from the hive", item.getId () ) );
+            logger.debug ( "Trying to retrieve the item {} from the hive", item.getId () );
 
             dataItem = hive.retrieveItem ( request );
             if ( dataItem == null )
@@ -523,7 +524,7 @@ public class XMLConfigurator implements Configurator
             throw new ConfigurationError ( String.format ( "Infinite template recursion on template %s: path is: %s", id, StringHelper.join ( templateStack, "->" ) ) );
         }
 
-        _log.debug ( "Expanding template: " + id );
+        logger.debug ( "Expanding template: {}", id );
 
         templateStack.push ( id );
 

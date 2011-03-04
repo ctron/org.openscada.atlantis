@@ -27,12 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.StringBinder;
 import org.openscada.utils.str.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A chain item that sums up attribute entries that match a specific condition.
@@ -41,15 +42,16 @@ import org.openscada.utils.str.StringHelper;
  */
 public abstract class SummarizeChainItem extends BaseChainItemCommon
 {
-    private static Logger logger = Logger.getLogger ( SummarizeChainItem.class );
 
-    private final String _sumStateName;
+    private final static Logger logger = LoggerFactory.getLogger ( SummarizeChainItem.class );
 
-    private final String _sumCountName;
+    private final String sumStateName;
 
-    private final String _sumListName;
+    private final String sumCountName;
 
-    private final String _sumIgnoreName;
+    private final String sumListName;
+
+    private final String sumIgnoreName;
 
     private final StringBinder ignoreBinder;
 
@@ -57,15 +59,15 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
     {
         super ( serviceRegistry );
 
-        this._sumStateName = baseName;
-        this._sumCountName = baseName + ".count";
-        this._sumListName = baseName + ".items";
-        this._sumIgnoreName = baseName + ".ignore";
+        this.sumStateName = baseName;
+        this.sumCountName = baseName + ".count";
+        this.sumListName = baseName + ".items";
+        this.sumIgnoreName = baseName + ".ignore";
 
-        setReservedAttributes ( this._sumStateName, this._sumCountName, this._sumListName );
+        setReservedAttributes ( this.sumStateName, this.sumCountName, this.sumListName );
 
         this.ignoreBinder = new StringBinder ();
-        addBinder ( this._sumIgnoreName, this.ignoreBinder );
+        addBinder ( this.sumIgnoreName, this.ignoreBinder );
     }
 
     /**
@@ -80,9 +82,9 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
     @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
-        attributes.put ( this._sumStateName, null );
-        attributes.put ( this._sumCountName, null );
-        attributes.put ( this._sumListName, null );
+        attributes.put ( this.sumStateName, null );
+        attributes.put ( this.sumCountName, null );
+        attributes.put ( this.sumListName, null );
 
         long count = 0;
         final List<String> items = new LinkedList<String> ();
@@ -93,7 +95,7 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
             final String attributeName = entry.getKey ();
 
             // ignore our own entries
-            if ( !attributeName.equals ( this._sumStateName ) && !attributeName.equals ( this._sumCountName ) && !attributeName.equals ( this._sumListName ) && !ignoreItems.contains ( attributeName ) )
+            if ( !attributeName.equals ( this.sumStateName ) && !attributeName.equals ( this.sumCountName ) && !attributeName.equals ( this.sumListName ) && !ignoreItems.contains ( attributeName ) )
             {
                 try
                 {
@@ -113,9 +115,9 @@ public abstract class SummarizeChainItem extends BaseChainItemCommon
             }
         }
 
-        attributes.put ( this._sumStateName, Variant.valueOf ( count > 0 ) );
-        attributes.put ( this._sumCountName, Variant.valueOf ( count ) );
-        attributes.put ( this._sumListName, Variant.valueOf ( StringHelper.join ( items, ", " ) ) );
+        attributes.put ( this.sumStateName, Variant.valueOf ( count > 0 ) );
+        attributes.put ( this.sumCountName, Variant.valueOf ( count ) );
+        attributes.put ( this.sumListName, Variant.valueOf ( StringHelper.join ( items, ", " ) ) );
 
         addAttributes ( attributes );
 

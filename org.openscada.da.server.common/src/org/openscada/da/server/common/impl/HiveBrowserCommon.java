@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,7 +26,6 @@ import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
@@ -37,10 +36,13 @@ import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderListener;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, SessionListener
 {
-    private static Logger logger = Logger.getLogger ( HiveBrowserCommon.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( HiveBrowserCommon.class );
 
     private HiveCommon hive = null;
 
@@ -64,9 +66,10 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
         this.operationService.shutdown ();
     }
 
+    @Override
     public NotifyFuture<Entry[]> startBrowse ( final Session session, final Location location ) throws InvalidSessionException
     {
-        logger.debug ( "List request for: " + location.toString () );
+        logger.debug ( "List request for: {}", location );
 
         final SessionCommon sessionCommon = this.hive.validateSession ( session );
 
@@ -79,6 +82,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
         return future;
     }
 
+    @Override
     public void subscribe ( final Session session, final Location location ) throws NoSuchFolderException, InvalidSessionException
     {
         this.hive.validateSession ( session );
@@ -93,7 +97,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
 
         synchronized ( this.subscriberMap )
         {
-            logger.debug ( "Adding path: " + location.toString () );
+            logger.debug ( "Adding path: {}", location );
 
             final SessionCommon sessionCommon = (SessionCommon)session;
             final Object tag = new Object ();
@@ -118,6 +122,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
 
     }
 
+    @Override
     public void unsubscribe ( final Session session, final Location location ) throws NoSuchFolderException, InvalidSessionException
     {
         this.hive.validateSession ( session );
@@ -148,6 +153,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
         }
     }
 
+    @Override
     public void changed ( final Object tag, final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
         final SessionCommon session = this.subscriberMap.get ( tag );
@@ -164,13 +170,15 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
         }
     }
 
+    @Override
     public void create ( final SessionCommon session )
     {
     }
 
+    @Override
     public void destroy ( final SessionCommon session )
     {
-        logger.debug ( String.format ( "Session destroy: %d entries", session.getData ().getPaths ().size () ) );
+        logger.debug ( "Session destroy: {} entries", session.getData ().getPaths ().size () );
 
         Map<Object, Location> entries;
 
@@ -183,7 +191,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
         {
             try
             {
-                logger.debug ( "Unsubscribe path: " + entry.getValue ().toString () );
+                logger.debug ( "Unsubscribe path: {}", entry.getValue () );
                 unsubscribePath ( session, entry.getValue () );
             }
             catch ( final NoSuchFolderException e )

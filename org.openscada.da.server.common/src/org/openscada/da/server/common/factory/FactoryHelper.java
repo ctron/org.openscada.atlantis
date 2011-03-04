@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,15 +23,17 @@ import java.lang.reflect.Constructor;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.ChainItem;
 import org.openscada.da.server.common.chain.ChainProcessEntry;
 import org.openscada.da.server.common.configuration.ConfigurationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FactoryHelper
 {
-    private static Logger log = Logger.getLogger ( FactoryHelper.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( FactoryHelper.class );
 
     static public ChainItem createChainItem ( final HiveServiceRegistry serviceRegistry, final Class<?> clazz ) throws ConfigurationError
     {
@@ -45,7 +47,7 @@ public class FactoryHelper
             }
             catch ( final Throwable e )
             {
-                log.debug ( "Failed to load ctor for HiveServiceRegistry" );
+                logger.debug ( "Failed to load ctor for HiveServiceRegistry" );
             }
 
             if ( ctor != null )

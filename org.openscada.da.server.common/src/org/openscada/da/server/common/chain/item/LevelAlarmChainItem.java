@@ -21,16 +21,18 @@ package org.openscada.da.server.common.chain.item;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.BooleanBinder;
 import org.openscada.da.server.common.chain.VariantBinder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LevelAlarmChainItem extends BaseChainItemCommon
 {
-    private static Logger logger = Logger.getLogger ( LevelAlarmChainItem.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( LevelAlarmChainItem.class );
 
     public static final String HIGH_ACTIVE = "org.openscada.da.level.high.active";
 

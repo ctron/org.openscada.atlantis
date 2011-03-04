@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,7 +21,6 @@ package org.openscada.da.server.common.chain.item;
 
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.HiveServiceRegistry;
 
@@ -32,10 +31,7 @@ import org.openscada.da.server.common.HiveServiceRegistry;
  */
 public class SumPatternAttributesChainItem extends SummarizeChainItem
 {
-    @SuppressWarnings ( "unused" )
-    private static Logger _log = Logger.getLogger ( SumPatternAttributesChainItem.class );
-
-    private final Pattern _pattern;
+    private final Pattern pattern;
 
     public SumPatternAttributesChainItem ( final HiveServiceRegistry serviceRegistry, final String baseName, final String pattern )
     {
@@ -46,13 +42,13 @@ public class SumPatternAttributesChainItem extends SummarizeChainItem
     {
         super ( serviceRegistry, baseName );
 
-        this._pattern = pattern;
+        this.pattern = pattern;
     }
 
     @Override
     protected boolean matches ( final Variant value, final String attributeName, final Variant attributeValue )
     {
-        return this._pattern.matcher ( attributeName ).matches ();
+        return this.pattern.matcher ( attributeName ).matches ();
     }
 
 }

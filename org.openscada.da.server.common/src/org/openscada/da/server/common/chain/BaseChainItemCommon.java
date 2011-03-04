@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
@@ -33,10 +32,13 @@ import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.HiveService;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.storage.ChainStorageService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseChainItemCommon implements ChainItem
 {
-    private static Logger log = Logger.getLogger ( BaseChainItemCommon.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( BaseChainItemCommon.class );
 
     protected HiveServiceRegistry serviceRegistry;
 
@@ -54,6 +56,7 @@ public abstract class BaseChainItemCommon implements ChainItem
     /**
      * called when the chain item is assigned to a new data item
      */
+    @Override
     public void dataItemChanged ( final DataItem item )
     {
         this.itemId = item.getInformation ().getName ();
@@ -84,12 +87,13 @@ public abstract class BaseChainItemCommon implements ChainItem
                 }
                 catch ( final Exception e )
                 {
-                    log.error ( String.format ( "Failed to apply binder value to %s item %s, value %s", entry.getKey (), this.itemId, entry.getValue () ) );
+                    logger.error ( String.format ( "Failed to apply binder value to %s item %s, value %s", entry.getKey (), this.itemId, entry.getValue () ) );
                 }
             }
         }
     }
 
+    @Override
     public WriteAttributeResults setAttributes ( final Map<String, Variant> attributes )
     {
         final WriteAttributeResults writeAttributeResults = new WriteAttributeResults ();
@@ -174,7 +178,7 @@ public abstract class BaseChainItemCommon implements ChainItem
                 }
                 catch ( final Exception e )
                 {
-                    log.warn ( "Failed to set stored binder value" );
+                    logger.warn ( "Failed to set stored binder value" );
                 }
             }
         }
@@ -229,6 +233,7 @@ public abstract class BaseChainItemCommon implements ChainItem
         }
     }
 
+    @Override
     public boolean isPersistent ()
     {
         return this.serviceRegistry != null;

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
@@ -35,16 +34,13 @@ import org.openscada.utils.collection.MapBuilder;
 
 public class GroupSubFolder implements Folder
 {
-    @SuppressWarnings ( "unused" )
-    private static Logger _log = Logger.getLogger ( GroupSubFolder.class );
+    private GroupSubFolder parent = null;
 
-    private GroupSubFolder _parent = null;
+    private NameProvider nameProvider = null;
 
-    private NameProvider _nameProvider = null;
+    private final FolderCommon folder = new FolderCommon ();
 
-    private final FolderCommon _folder = new FolderCommon ();
-
-    private final Map<String, GroupSubFolder> _subFolders = new HashMap<String, GroupSubFolder> ();
+    private final Map<String, GroupSubFolder> subFolders = new HashMap<String, GroupSubFolder> ();
 
     public GroupSubFolder ( final NameProvider nameProvider )
     {
@@ -53,8 +49,8 @@ public class GroupSubFolder implements Folder
 
     private GroupSubFolder ( final GroupSubFolder parent, final NameProvider nameProvider )
     {
-        this._parent = parent;
-        this._nameProvider = nameProvider;
+        this.parent = parent;
+        this.nameProvider = nameProvider;
     }
 
     public GroupSubFolder add ( final Stack<String> path, final ItemDescriptor descriptor )
@@ -73,96 +69,101 @@ public class GroupSubFolder implements Folder
 
     private boolean insertItem ( final ItemDescriptor descriptor )
     {
-        final String name = this._nameProvider.getName ( descriptor );
+        final String name = this.nameProvider.getName ( descriptor );
 
         if ( name == null )
         {
             return false;
         }
 
-        this._folder.add ( name, descriptor.getItem (), descriptor.getAttributes () );
+        this.folder.add ( name, descriptor.getItem (), descriptor.getAttributes () );
 
         return true;
     }
 
     private GroupSubFolder getSubFolder ( final String name )
     {
-        if ( !this._subFolders.containsKey ( name ) )
+        if ( !this.subFolders.containsKey ( name ) )
         {
-            final GroupSubFolder folder = new GroupSubFolder ( this, this._nameProvider );
-            this._subFolders.put ( name, folder );
+            final GroupSubFolder folder = new GroupSubFolder ( this, this.nameProvider );
+            this.subFolders.put ( name, folder );
             final MapBuilder<String, Variant> builder = new MapBuilder<String, Variant> ();
-            this._folder.add ( name, folder, builder.getMap () );
+            this.folder.add ( name, folder, builder.getMap () );
         }
-        return this._subFolders.get ( name );
+        return this.subFolders.get ( name );
     }
 
     public void remove ( final ItemDescriptor descriptor )
     {
         final DataItem item = descriptor.getItem ();
 
-        if ( !this._folder.remove ( item ) )
+        if ( !this.folder.remove ( item ) )
         {
             return;
         }
 
-        if ( this._folder.size () <= 0 )
+        if ( this.folder.size () <= 0 )
         {
-            if ( this._parent != null )
+            if ( this.parent != null )
             {
-                this._parent.removeSubFolder ( this );
+                this.parent.removeSubFolder ( this );
             }
         }
     }
 
     private void removeSubFolder ( final GroupSubFolder subFolder )
     {
-        final String folderName = this._folder.findEntry ( subFolder );
+        final String folderName = this.folder.findEntry ( subFolder );
         if ( folderName == null )
         {
             return;
         }
 
         subFolder.clearSubscribers ();
-        this._folder.remove ( folderName );
-        this._subFolders.remove ( folderName );
+        this.folder.remove ( folderName );
+        this.subFolders.remove ( folderName );
 
-        if ( this._folder.size () <= 0 )
+        if ( this.folder.size () <= 0 )
         {
-            if ( this._parent != null )
+            if ( this.parent != null )
             {
-                this._parent.removeSubFolder ( this );
+                this.parent.removeSubFolder ( this );
             }
         }
     }
 
+    @Override
     synchronized public Entry[] list ( final Stack<String> path ) throws NoSuchFolderException
     {
-        return this._folder.list ( path );
+        return this.folder.list ( path );
     }
 
+    @Override
     synchronized public void subscribe ( final Stack<String> path, final FolderListener listener, final Object tag ) throws NoSuchFolderException
     {
-        this._folder.subscribe ( path, listener, tag );
+        this.folder.subscribe ( path, listener, tag );
     }
 
+    @Override
     synchronized public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
-        this._folder.unsubscribe ( path, tag );
+        this.folder.unsubscribe ( path, tag );
     }
 
     public void clearSubscribers ()
     {
-        this._folder.clearListeners ();
+        this.folder.clearListeners ();
     }
 
+    @Override
     public void added ()
     {
-        this._folder.added ();
+        this.folder.added ();
     }
 
+    @Override
     public void removed ()
     {
-        this._folder.removed ();
+        this.folder.removed ();
     }
 }

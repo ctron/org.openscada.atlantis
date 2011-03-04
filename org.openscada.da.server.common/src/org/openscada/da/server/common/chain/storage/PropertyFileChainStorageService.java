@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,13 +30,15 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PropertyFileChainStorageService implements ChainStorageService
 {
-    private static Logger log = Logger.getLogger ( PropertyFileChainStorageService.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( PropertyFileChainStorageService.class );
 
     private final File storageRoot;
 
@@ -59,7 +61,7 @@ public class PropertyFileChainStorageService implements ChainStorageService
         }
         catch ( final UnsupportedEncodingException e )
         {
-            log.warn ( "Failed to convert to filename", e );
+            logger.warn ( "Failed to convert to filename", e );
         }
 
         return new File ( this.storageRoot, itemFileName );
@@ -82,6 +84,7 @@ public class PropertyFileChainStorageService implements ChainStorageService
         return p;
     }
 
+    @Override
     public Map<String, Variant> loadValues ( final String itemId, final Set<String> valueNames )
     {
         final File itemFile = getItemFile ( itemId );
@@ -112,7 +115,7 @@ public class PropertyFileChainStorageService implements ChainStorageService
                     }
                     catch ( final Throwable e )
                     {
-                        log.warn ( String.format ( "Failed to convert '%s' for item '%s'", value, itemId ), e );
+                        logger.warn ( String.format ( "Failed to convert '%s' for item '%s'", value, itemId ), e );
                     }
                 }
             }
@@ -121,11 +124,12 @@ public class PropertyFileChainStorageService implements ChainStorageService
         }
         catch ( final Throwable e )
         {
-            log.warn ( String.format ( "Failed to load properties from file '%s'", itemFile ), e );
+            logger.warn ( String.format ( "Failed to load properties from file '%s'", itemFile ), e );
             return new HashMap<String, Variant> ();
         }
     }
 
+    @Override
     public void storeValues ( final String itemId, final Map<String, Variant> values )
     {
         final File file = getItemFile ( itemId );
@@ -139,7 +143,7 @@ public class PropertyFileChainStorageService implements ChainStorageService
             }
             catch ( final Throwable e )
             {
-                log.debug ( "Unable to find initial properties", e );
+                logger.debug ( "Unable to find initial properties", e );
             }
 
             final VariantEditor ed = new VariantEditor ();
@@ -162,14 +166,16 @@ public class PropertyFileChainStorageService implements ChainStorageService
         }
         catch ( final IOException e )
         {
-            log.error ( "Failed to store values", e );
+            logger.error ( "Failed to store values", e );
         }
     }
 
+    @Override
     public void dispose ()
     {
     }
 
+    @Override
     public void init ()
     {
     }

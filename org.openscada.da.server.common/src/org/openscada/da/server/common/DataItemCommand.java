@@ -26,7 +26,6 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executor;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.OperationParameters;
@@ -35,11 +34,13 @@ import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DataItemCommand extends DataItemOutput
 {
 
-    private static Logger logger = Logger.getLogger ( DataItemCommand.class );
+    private final static Logger logger = LoggerFactory.getLogger ( DataItemCommand.class );
 
     /**
      * The listener interface
