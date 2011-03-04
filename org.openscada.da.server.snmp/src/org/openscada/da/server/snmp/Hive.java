@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,7 +24,6 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
@@ -32,11 +31,13 @@ import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.snmp.utils.MIBManager;
 import org.openscada.da.snmp.configuration.ConfigurationDocument;
 import org.openscada.da.snmp.configuration.ConfigurationDocument.Configuration.Connection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
-    private static Logger logger = Logger.getLogger ( Hive.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Hive.class );
 
     private final Map<String, SNMPNode> nodeMap = new HashMap<String, SNMPNode> ();
 
@@ -54,6 +55,7 @@ public class Hive extends HiveCommon
 
         new Thread ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 configure ();
@@ -73,6 +75,7 @@ public class Hive extends HiveCommon
 
         new Thread ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 configure ( node );
@@ -133,7 +136,7 @@ public class Hive extends HiveCommon
 
     protected void configure ( final Connection connection )
     {
-        logger.debug ( String.format ( "New Connection: %1$s - %2$s", connection.getName (), connection.getAddress () ) );
+        logger.debug ( "New Connection: {} - {}", connection.getName (), connection.getAddress () );
         ConnectionInformation ci;
 
         switch ( connection.getVersion () )

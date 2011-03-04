@@ -33,7 +33,6 @@ import net.percederberg.mibble.Mib;
 import net.percederberg.mibble.MibValueSymbol;
 import net.percederberg.mibble.value.ObjectIdentifierValue;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -57,9 +56,6 @@ import org.snmp4j.smi.OID;
 
 public class SNMPNode
 {
-    @SuppressWarnings ( "unused" )
-    private static Logger _log = Logger.getLogger ( SNMPNode.class );
-
     private HiveCommon hive = null;
 
     private FolderCommon rootFolder = null;

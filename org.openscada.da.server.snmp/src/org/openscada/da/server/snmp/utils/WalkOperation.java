@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,8 +22,9 @@ package org.openscada.da.server.snmp.utils;
 import java.io.IOException;
 import java.util.Vector;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.snmp.SNMPNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snmp4j.PDU;
 import org.snmp4j.Target;
 import org.snmp4j.event.ResponseEvent;
@@ -33,19 +34,19 @@ import org.snmp4j.smi.VariableBinding;
 
 public abstract class WalkOperation
 {
-    private static Logger _log = Logger.getLogger ( WalkOperation.class );
+    private final static Logger logger = LoggerFactory.getLogger ( WalkOperation.class );
 
-    private SNMPNode _node = null;
+    private SNMPNode node = null;
 
-    private OID _oid = null;
+    private OID oid = null;
 
-    private boolean _useBulkGet = false;
+    private boolean useBulkGet = false;
 
     public WalkOperation ( final SNMPNode node, final OID oid, final boolean useBulkGet )
     {
-        this._node = node;
-        this._oid = oid;
-        this._useBulkGet = useBulkGet;
+        this.node = node;
+        this.oid = oid;
+        this.useBulkGet = useBulkGet;
     }
 
     protected abstract void handleOID ( OID oid );
@@ -60,7 +61,7 @@ public abstract class WalkOperation
 
         if ( responseEvent.getError () != null )
         {
-            _log.warn ( "Listing failed", responseEvent.getError () );
+            logger.warn ( "Listing failed", responseEvent.getError () );
             return null;
         }
 
@@ -72,7 +73,7 @@ public abstract class WalkOperation
         final PDU response = responseEvent.getResponse ();
         if ( response.getErrorStatus () != 0 )
         {
-            _log.warn ( String.format ( "Error in reply: %1$d", response.getErrorStatus () ) );
+            logger.warn ( String.format ( "Error in reply: %1$d", response.getErrorStatus () ) );
             return null;
         }
 
@@ -88,19 +89,19 @@ public abstract class WalkOperation
         {
             if ( vb.isException () )
             {
-                _log.info ( "Binding Exception: " + vb.toString () );
+                logger.info ( "Binding Exception: {}", vb );
                 return null;
             }
             if ( vb.getVariable ().isException () )
             {
-                _log.info ( "Variable Exception: " + vb.getVariable ().toString () );
+                logger.info ( "Variable Exception: {}", vb.getVariable () );
                 return null;
             }
 
             final OID oid = vb.getOid ();
-            if ( !oid.startsWith ( this._oid ) )
+            if ( !oid.startsWith ( this.oid ) )
             {
-                _log.info ( "OID has not same root" );
+                logger.info ( "OID has not same root" );
                 return null;
             }
 
@@ -114,22 +115,22 @@ public abstract class WalkOperation
 
     public void run ()
     {
-        _log.debug ( "Starting walk operation for subtree: " + this._oid );
+        logger.debug ( "Starting walk operation for subtree: {}", this.oid );
 
-        final Target target = this._node.getConnection ().createTarget ();
-        final PDU request = this._node.getConnection ().createPDU ( target, this._useBulkGet ? PDU.GETBULK : PDU.GETNEXT );
+        final Target target = this.node.getConnection ().createTarget ();
+        final PDU request = this.node.getConnection ().createPDU ( target, this.useBulkGet ? PDU.GETBULK : PDU.GETNEXT );
 
-        if ( this._useBulkGet )
+        if ( this.useBulkGet )
         {
             request.setNonRepeaters ( 0 );
             request.setMaxRepetitions ( 10 );
         }
 
-        OID currentOID = this._oid;
+        OID currentOID = this.oid;
         boolean endOfList = false;
 
         // add dummy entry .. will be set later
-        request.add ( new VariableBinding ( new OID ( this._oid ) ) );
+        request.add ( new VariableBinding ( new OID ( this.oid ) ) );
 
         while ( !endOfList )
         {
@@ -139,7 +140,7 @@ public abstract class WalkOperation
             try
             {
                 //_log.info ( "Requesting: " + request.get ( 0 ).getOid () );
-                responseEvent = this._node.getConnection ().send ( target, request );
+                responseEvent = this.node.getConnection ().send ( target, request );
                 currentOID = processResponse ( responseEvent );
                 endOfList = currentOID == null;
             }

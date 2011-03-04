@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,13 +19,15 @@
 
 package org.openscada.da.server.snmp.utils;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.snmp.SNMPNode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snmp4j.smi.OID;
 
 public class DumpOIDWalker extends WalkOperation
 {
-    private static Logger _log = Logger.getLogger ( DumpOIDWalker.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( DumpOIDWalker.class );
 
     public DumpOIDWalker ( final SNMPNode node, final OID oid, final boolean useBulkGet )
     {
@@ -35,7 +37,7 @@ public class DumpOIDWalker extends WalkOperation
     @Override
     protected void handleOID ( final OID oid )
     {
-        _log.info ( "OID found: " + oid.toString () );
+        logger.info ( "OID found: {}", oid );
     }
 
 }

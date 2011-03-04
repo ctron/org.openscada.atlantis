@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.common.AttributeMode;
@@ -34,6 +33,8 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.snmp.SNMPNode;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.concurrent.DirectExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snmp4j.PDU;
 import org.snmp4j.event.ResponseEvent;
 import org.snmp4j.smi.Counter64;
@@ -51,11 +52,11 @@ import org.snmp4j.smi.VariableBinding;
  */
 public class SNMPItem extends DataItemInputChained implements Runnable, SuspendableDataItem
 {
+    private final static Logger logger = LoggerFactory.getLogger ( SNMPItem.class );
+
     private static final String ATTR_NO_INITIAL_DATA_ERROR = "noInitialData.error";
 
     private static final String ATTR_READ_ERROR = "read.error";
-
-    private static Logger logger = Logger.getLogger ( SNMPItem.class );
 
     private SNMPNode node = null;
 
@@ -87,13 +88,13 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
 
     public void start ()
     {
-        logger.debug ( "Starting item: " + this.oid );
+        logger.debug ( "Starting item: {}", this.oid );
         this.node.getBulkReader ().add ( this );
     }
 
     public void stop ()
     {
-        logger.debug ( "Stopping item: " + this.oid );
+        logger.debug ( "Stopping item: {}", this.oid );
 
         this.node.getBulkReader ().remove ( this );
 
@@ -142,7 +143,7 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
         }
 
         final Variable v = vb.getVariable ();
-        logger.debug ( "Variable is: " + v );
+        logger.debug ( "Variable is: {}", v );
         if ( v instanceof Null )
         {
             return Variant.NULL;
@@ -182,7 +183,7 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
         }
         catch ( final Exception e )
         {
-            logger.error ( "Item read failed: ", e );
+            logger.error ( "Item read failed", e );
             setError ( e );
         }
     }
@@ -226,7 +227,7 @@ public class SNMPItem extends DataItemInputChained implements Runnable, Suspenda
     {
         if ( text != null )
         {
-            logger.info ( "Setting error: " + text );
+            logger.info ( "Setting error: {}", text );
         }
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();

@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
 Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
- org.apache.log4j;version="1.2.0",
  org.apache.xmlbeans;version="2.4",
  org.apache.xmlbeans.impl.values;version="2.4",
  org.apache.xmlbeans.xml.stream;version="2.4",
@@ -21,7 +20,8 @@ Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.openscada.utils.collection;version="0.13",
  org.openscada.utils.concurrent;version="0.13",
  org.openscada.utils.exec;version="0.15.0",
- org.openscada.utils.str;version="0.13"
+ org.openscada.utils.str;version="0.13",
+ org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.snmp;version="0.16.0";
   uses:="org.openscada.da.snmp.configuration,
@@ -49,7 +49,7 @@ Export-Package: org.openscada.da.server.snmp;version="0.16.0";
    org.openscada.da.server.snmp.items,
    org.openscada.da.server.snmp,
    org.snmp4j.smi"
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA DA SNMP Server
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-ManifestVersion: 2

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,30 +31,31 @@ import net.percederberg.mibble.MibLoaderException;
 import net.percederberg.mibble.MibValueSymbol;
 import net.percederberg.mibble.snmp.SnmpObjectType;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.snmp.configuration.MibsType;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.str.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snmp4j.smi.OID;
 
 public class MIBManager
 {
-    private static Logger _log = Logger.getLogger ( MIBManager.class );
+    private final static Logger logger = LoggerFactory.getLogger ( MIBManager.class );
 
-    private final MibLoader _loader = new MibLoader ();
+    private final MibLoader loader = new MibLoader ();
 
-    private final Collection<Mib> _mibs = new LinkedList<Mib> ();
+    private final Collection<Mib> mibs = new LinkedList<Mib> ();
 
     public MIBManager ( final MibsType mibs )
     {
-        _log.debug ( "Loading MIBs..." );
+        logger.debug ( "Loading MIBs..." );
 
         if ( mibs.getMibDirList () != null )
         {
             for ( final String dir : mibs.getMibDirList () )
             {
-                this._loader.addDir ( new File ( dir ) );
+                this.loader.addDir ( new File ( dir ) );
             }
         }
 
@@ -62,7 +63,7 @@ public class MIBManager
         {
             for ( final String dir : mibs.getRecursiveMibDirList () )
             {
-                this._loader.addAllDirs ( new File ( dir ) );
+                this.loader.addAllDirs ( new File ( dir ) );
             }
         }
 
@@ -72,16 +73,16 @@ public class MIBManager
             {
                 try
                 {
-                    _log.debug ( "Loading '" + mib + "'" );
-                    this._mibs.add ( this._loader.load ( mib ) );
+                    logger.debug ( "Loading '{}'", mib );
+                    this.mibs.add ( this.loader.load ( mib ) );
                 }
                 catch ( final IOException e )
                 {
-                    _log.warn ( String.format ( "Failed to load mib '%s'", mib ), e );
+                    logger.warn ( String.format ( "Failed to load mib '%s'", mib ), e );
                 }
                 catch ( final MibLoaderException e )
                 {
-                    _log.warn ( String.format ( "Failed to load mib '%s'", mib ), e );
+                    logger.warn ( String.format ( "Failed to load mib '%s'", mib ), e );
                 }
             }
         }
@@ -93,14 +94,14 @@ public class MIBManager
      */
     public Collection<Mib> getAllMIBs ()
     {
-        return this._mibs;
+        return this.mibs;
     }
 
     private MibValueSymbol findBestMVS ( final OID oid )
     {
         int bestLen = 0;
         MibValueSymbol bestMVS = null;
-        for ( final Mib mib : this._mibs )
+        for ( final Mib mib : this.mibs )
         {
             final MibValueSymbol mvs = mib.getSymbolByOid ( oid.toString () );
 
