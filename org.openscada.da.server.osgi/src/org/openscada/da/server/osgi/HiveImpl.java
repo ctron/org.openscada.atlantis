@@ -108,7 +108,7 @@ public class HiveImpl extends HiveCommon
     @Override
     protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
     {
-        return this.authorizationManager.authorize ( objectId, objectType, action, userInformation, context, defaultResult );
+        return this.authorizationManager.authorize ( objectType, objectId, action, userInformation, context, defaultResult );
     }
 
     public synchronized void addItem ( final DataItem item, final Dictionary<?, ?> properties )

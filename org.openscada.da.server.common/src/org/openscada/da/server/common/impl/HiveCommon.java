@@ -588,7 +588,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
         final OperationParameters effectiveOperationParameters = makeOperationParameters ( sessionCommon, operationParameters );
 
-        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE_ATTRIBUTES", effectiveOperationParameters.getUserInformation (), makeSetAttributesContext ( attributes ) );
+        final AuthorizationResult result = authorize ( DATA_ITEM_OBJECT_TYPE, itemId, "WRITE_ATTRIBUTES", effectiveOperationParameters.getUserInformation (), makeSetAttributesContext ( attributes ) );
         if ( !result.isGranted () )
         {
             logger.info ( "Write request was rejected: {}", result );
@@ -689,7 +689,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
         final OperationParameters effectiveOperationParameters = makeOperationParameters ( sessionCommon, operationParameters );
 
-        final AuthorizationResult result = authorize ( itemId, DATA_ITEM_OBJECT_TYPE, "WRITE", effectiveOperationParameters.getUserInformation (), makeWriteValueContext ( value ) );
+        final AuthorizationResult result = authorize ( DATA_ITEM_OBJECT_TYPE, itemId, "WRITE", effectiveOperationParameters.getUserInformation (), makeWriteValueContext ( value ) );
         if ( !result.isGranted () )
         {
             logger.info ( "Write request was rejected: {}", result );
