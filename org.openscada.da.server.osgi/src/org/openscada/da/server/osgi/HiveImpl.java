@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.apache.log4j.Logger;
 import org.openscada.ae.sec.AuthorizationHelper;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.Variant;
@@ -47,10 +46,13 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HiveImpl extends HiveCommon
 {
-    private final static Logger logger = Logger.getLogger ( HiveImpl.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( HiveImpl.class );
 
     private FolderCommon rootFolder;
 
@@ -158,12 +160,12 @@ public class HiveImpl extends HiveCommon
         this.storage.added ( descriptor );
 
         this.items.put ( serviceReference, descriptor );
-        logger.info ( String.format ( "Exporting %s as %s", serviceReference, item.getInformation ().getName () ) );
+        logger.info ( "Exporting {} as {}", serviceReference, item.getInformation ().getName () );
     }
 
     public synchronized void removeItem ( final ServiceReference serviceReference )
     {
-        logger.info ( String.format ( "Removing %s", serviceReference ) );
+        logger.info ( "Removing {}", serviceReference );
 
         this.context.ungetService ( serviceReference );
 
