@@ -22,16 +22,18 @@ package org.openscada.da.server.stock.items;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInputCommon;
 import org.openscada.da.server.common.ItemListener;
 import org.openscada.da.server.stock.domain.StockQuote;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StockQuoteItem extends DataItemInputCommon implements StockQuoteListener
 {
-    private static Logger logger = Logger.getLogger ( StockQuoteItem.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( StockQuoteItem.class );
 
     private String symbol = null;
 

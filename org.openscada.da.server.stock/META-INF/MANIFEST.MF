@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
-Import-Package: org.apache.log4j;version="1.2",
- org.apache.xmlbeans;version="2.4.0",
+Import-Package: org.apache.xmlbeans;version="2.4.0",
  org.openscada.core;version="0.14",
  org.openscada.core.server;version="0.14.0",
  org.openscada.core.server.common;version="0.15.0",
@@ -17,13 +16,14 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.da.server.stock.items;version="0.14",
  org.openscada.sec;version="0.1.0",
  org.openscada.utils.collection;version="0.13",
- org.openscada.utils.str;version="0.13"
+ org.openscada.utils.str;version="0.13",
+ org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.stock;version="0.16.0";uses:="org.openscada.da.server.common.configuration,org.openscada.da.server.common.impl",
  org.openscada.da.server.stock.business;version="0.16.0",
  org.openscada.da.server.stock.domain;version="0.16.0",
  org.openscada.da.server.stock.items;version="0.16.0";uses:="org.openscada.da.server.common,org.openscada.da.server.stock.domain,org.openscada.da.server.stock.business"
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA DA Stock Server
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH
