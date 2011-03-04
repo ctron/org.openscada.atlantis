@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
-Import-Package: org.apache.log4j;version="1.2",
- org.apache.mina.core.filterchain;version="2.0",
+Import-Package: org.apache.mina.core.filterchain;version="2.0",
  org.apache.mina.filter.codec;version="2.0",
  org.apache.mina.filter.compression;version="2.0",
  org.apache.mina.filter.logging;version="2.0",
@@ -9,7 +8,8 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.core.net;version="0.15.0",
  org.openscada.net.base.data;version="0.15.0",
  org.openscada.net.mina;version="0.15.0",
- org.openscada.net.utils;version="0.15.0"
+ org.openscada.net.utils;version="0.15.0",
+ org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.core.net;version="0.16.0";
   uses:="javax.net.ssl,
@@ -23,7 +23,7 @@ Export-Package: org.openscada.core.net;version="0.16.0";
    org.openscada.net.mina,
    org.openscada.net.base.data,
    org.openscada.net.utils"
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA Core Net
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
