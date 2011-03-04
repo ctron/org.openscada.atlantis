@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,7 +30,8 @@ import jxl.NumberCell;
 import jxl.Sheet;
 import jxl.Workbook;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>Reads item definitions from given Excel file.</p>
@@ -67,7 +68,8 @@ import org.apache.log4j.Logger;
  */
 public class ExcelFile extends BaseFile
 {
-    private static Logger logger = Logger.getLogger ( ExcelFile.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ExcelFile.class );
 
     /**
      * @see org.openscada.da.server.simulator.BaseFile#BaseFile(File, File, Integer)

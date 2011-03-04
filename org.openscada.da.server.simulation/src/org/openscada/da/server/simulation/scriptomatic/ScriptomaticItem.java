@@ -32,17 +32,18 @@ import java.util.concurrent.TimeUnit;
 import javax.script.Bindings;
 import javax.script.ScriptException;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScriptomaticItem extends DataItemInputOutputChained
 {
-    private final static Logger logger = Logger.getLogger ( ScriptomaticItem.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ScriptomaticItem.class );
 
     private final ScriptomaticContext context;
 
