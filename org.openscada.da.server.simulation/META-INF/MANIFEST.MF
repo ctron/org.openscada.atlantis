@@ -55,7 +55,7 @@ Export-Package: org.openscada.da.server.simulation.filesource;version="0.16.0.qu
    org.openscada.da.simulation.configuration,
    org.apache.xmlbeans,
    javax.xml.namespace"
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA DA Simulation Server
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-ManifestVersion: 2
