@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
-Import-Package: org.apache.log4j;version="1.2",
- org.apache.xmlbeans;version="2.4",
+Import-Package: org.apache.xmlbeans;version="2.4",
  org.openscada.core;version="0.14",
  org.openscada.core.server;version="0.14.0",
  org.openscada.core.server.common;version="0.15.0",
@@ -25,10 +24,11 @@ Import-Package: org.apache.log4j;version="1.2",
  org.openscada.da.server.test.utils;version="0.14",
  org.openscada.sec;version="0.1.0",
  org.openscada.utils.collection;version="0.13",
- org.openscada.utils.concurrent;version="0.13"
+ org.openscada.utils.concurrent;version="0.13",
+ org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.test;version="0.16.0";uses:="org.openscada.da.server.common.configuration,org.openscada.da.server.common.impl,org.openscada.da.server.test.items",
- org.openscada.da.server.test.items;version="0.16.0";
+Export-Package: org.openscada.da.server.test;version="0.17.0";uses:="org.openscada.da.server.common.configuration,org.openscada.da.server.common.impl,org.openscada.da.server.test.items",
+ org.openscada.da.server.test.items;version="0.17.0";
   uses:="org.openscada.da.server.browser.common,
    org.openscada.da.server.common,
    org.openscada.da.server.common.impl,
@@ -38,9 +38,9 @@ Export-Package: org.openscada.da.server.test;version="0.16.0";uses:="org.opensca
    org.openscada.da.core,
    org.openscada.da.server.common.chain,
    org.openscada.core",
- org.openscada.da.server.test.model;version="0.16.0",
- org.openscada.da.server.test.utils;version="0.16.0"
-Bundle-Version: 0.16.0.qualifier
+ org.openscada.da.server.test.model;version="0.17.0",
+ org.openscada.da.server.test.utils;version="0.17.0"
+Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA-DA-Server-Test
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH

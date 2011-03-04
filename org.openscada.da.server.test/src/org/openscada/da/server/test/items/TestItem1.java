@@ -22,7 +22,6 @@ package org.openscada.da.server.test.items;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.OperationParameters;
@@ -33,10 +32,13 @@ import org.openscada.da.server.common.DataItemOutput;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TestItem1 extends DataItemOutput
 {
-    private static Logger logger = Logger.getLogger ( TestItem1.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( TestItem1.class );
 
     public TestItem1 ( final String name )
     {
@@ -56,7 +58,7 @@ public class TestItem1 extends DataItemOutput
 
         for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
         {
-            logger.info ( String.format ( "Attribute: '%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
+            logger.info ( "Attribute: '{}' => '{}'", entry.getKey (), entry.getValue () );
             if ( entry.getKey ().startsWith ( "error" ) )
             {
                 results.put ( entry.getKey (), new WriteAttributeResult ( new Exception ( "Testing error" ) ) );
@@ -73,7 +75,7 @@ public class TestItem1 extends DataItemOutput
     @Override
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
-        logger.debug ( "set value: " + value.toString () );
+        logger.debug ( "set value: {}", value.toString () );
 
         String data;
         try
