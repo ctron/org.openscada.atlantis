@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,14 +24,16 @@ import java.io.IOException;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Controller
 {
-    private static Logger log = Logger.getLogger ( Controller.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Controller.class );
 
     private final List<HiveExport> hives = new LinkedList<HiveExport> ();
 
@@ -108,20 +110,20 @@ public class Controller
                 {
                     try
                     {
-                        log.debug ( String.format ( "Adding export: %s", export.getUri () ) );
+                        logger.debug ( "Adding export: {}", export.getUri () );
 
                         hiveExport.addExport ( export.getUri () );
                     }
                     catch ( final ConfigurationError e )
                     {
-                        log.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getRef (), export.getUri () ) );
+                        logger.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getRef (), export.getUri () ) );
                     }
                 }
                 this.hives.add ( hiveExport );
             }
             catch ( final Throwable e )
             {
-                log.error ( String.format ( "Failed to create hive instance '%s' using factory '%s'", ref, hive.getFactory () ), e );
+                logger.error ( String.format ( "Failed to create hive instance '%s' using factory '%s'", ref, hive.getFactory () ), e );
             }
         }
     }

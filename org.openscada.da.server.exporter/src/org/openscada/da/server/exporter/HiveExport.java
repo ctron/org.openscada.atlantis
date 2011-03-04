@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,14 +23,16 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HiveExport
 {
-    private static Logger log = Logger.getLogger ( HiveExport.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( HiveExport.class );
 
     private Hive hive = null;
 
@@ -44,7 +46,7 @@ public class HiveExport
 
     public synchronized void start () throws Exception
     {
-        log.info ( String.format ( "Starting hive: %s", this.hive ) );
+        logger.info ( "Starting hive: {}", this.hive );
 
         this.hive.start ();
 
@@ -56,14 +58,14 @@ public class HiveExport
             }
             catch ( final Exception e )
             {
-                log.error ( "Failed to start export", e );
+                logger.error ( "Failed to start export", e );
             }
         }
     }
 
     public synchronized void stop () throws Exception
     {
-        log.info ( String.format ( "Stopping hive: %s", this.hive ) );
+        logger.info ( "Stopping hive: {}", this.hive );
 
         for ( final Export export : this.exports )
         {
@@ -73,7 +75,7 @@ public class HiveExport
             }
             catch ( final Exception e )
             {
-                log.error ( "Failed to stop export", e );
+                logger.error ( "Failed to stop export", e );
             }
         }
 
@@ -82,7 +84,7 @@ public class HiveExport
 
     public Export addExport ( final String endpointUri ) throws ConfigurationError
     {
-        log.info ( String.format ( "Adding export: %s", endpointUri ) );
+        logger.info ( "Adding export: {}", endpointUri );
 
         final ConnectionInformation ci = ConnectionInformation.fromURI ( endpointUri );
         final Export export = findExport ( ci );
@@ -93,7 +95,7 @@ public class HiveExport
         }
         else
         {
-            log.info ( String.format ( "No exporter found for endpoint: %s", endpointUri ) );
+            logger.info ( "No exporter found for endpoint: {}", endpointUri );
             throw new ConfigurationError ( String.format ( "No exporter found for endpoint: %s", endpointUri ) );
         }
 
@@ -102,7 +104,7 @@ public class HiveExport
 
     protected Export findExport ( final ConnectionInformation ci ) throws ConfigurationError
     {
-        log.info ( String.format ( "Requested export to: %s", ci ) );
+        logger.info ( "Requested export to: {}", ci );
 
         if ( !ci.getInterface ().equalsIgnoreCase ( "da" ) )
         {
@@ -113,14 +115,8 @@ public class HiveExport
         {
             if ( ci.getDriver ().equalsIgnoreCase ( "net" ) || ci.getDriver ().equalsIgnoreCase ( "gmpp" ) )
             {
-                log.debug ( "Create new 'net' exporter" );
+                logger.debug ( "Create new 'net' exporter" );
                 return new NetExport ( this.hive, ci );
-            }
-            else if ( ci.getDriver ().equalsIgnoreCase ( "ice" ) )
-            {
-                log.debug ( "Create new 'ice' exporter" );
-                // return new IceExport ( this.hive, ci );
-                return null;
             }
             else
             {

@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
 Import-Package: javax.xml.stream;version="1.0.1",
- org.apache.log4j;version="1.2",
  org.apache.xmlbeans;version="2.4",
  org.apache.xmlbeans.impl.values;version="2.4",
  org.apache.xmlbeans.xml.stream;version="2.4",
@@ -10,14 +9,15 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.da.server.common.configuration;version="0.14",
  org.openscada.da.server.exporter;version="0.14",
  org.openscada.da.server.net;version="0.14",
- org.openscada.utils.lifecycle;version="0.13.0"
+ org.openscada.utils.lifecycle;version="0.13.0",
+ org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.exporter;version="0.15.0";
   uses:="org.openscada.da.core.server,
    org.openscada.core,
    org.w3c.dom,
    org.openscada.utils.lifecycle"
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA DA Server Exporter
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: TH4 SYSTEMS GmbH

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +19,8 @@
 
 package org.openscada.da.server.exporter;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The server exporter application starts a {@link Controller} with a specified configuration
@@ -29,7 +30,8 @@ import org.apache.log4j.Logger;
  */
 public class Application
 {
-    private static Logger _log = Logger.getLogger ( Application.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Application.class );
 
     public static void main ( final String[] args ) throws Exception
     {
@@ -41,12 +43,12 @@ public class Application
             configurationFile = args[0];
         }
 
-        _log.info ( "Loading configuration file: " + configurationFile );
+        logger.info ( "Loading configuration file: {}", configurationFile );
 
         final Controller controller = new Controller ( configurationFile );
         controller.start ();
 
-        _log.info ( "Exporter running..." );
+        logger.info ( "Exporter running..." );
 
         // Loop forever
         while ( true )
@@ -57,7 +59,7 @@ public class Application
             }
             catch ( final InterruptedException e )
             {
-                _log.warn ( "Failed to sleep", e );
+                logger.warn ( "Failed to sleep", e );
             }
         }
     }

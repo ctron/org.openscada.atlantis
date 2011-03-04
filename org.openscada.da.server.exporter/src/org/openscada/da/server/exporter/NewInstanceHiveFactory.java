@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,8 +22,9 @@ package org.openscada.da.server.exporter;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.core.server.Hive;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 /**
@@ -33,8 +34,10 @@ import org.w3c.dom.Node;
  */
 public class NewInstanceHiveFactory implements HiveFactory
 {
-    private static Logger logger = Logger.getLogger ( NewInstanceHiveFactory.class );
 
+    private final static Logger logger = LoggerFactory.getLogger ( NewInstanceHiveFactory.class );
+
+    @Override
     public Hive createHive ( final String reference, final HiveConfigurationType configuration ) throws ConfigurationException
     {
         Node subNode = null;

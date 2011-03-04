@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,14 +19,16 @@
 
 package org.openscada.da.server.exporter;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.net.Exporter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NetExport implements Export
 {
-    private static Logger logger = Logger.getLogger ( NetExport.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( NetExport.class );
 
     private Hive hive = null;
 
@@ -46,6 +48,7 @@ public class NetExport implements Export
         this.exporter = new Exporter ( this.hive, this.connectionInformation );
     }
 
+    @Override
     public synchronized void start () throws Exception
     {
         if ( this.exporter == null )
@@ -53,16 +56,18 @@ public class NetExport implements Export
             return;
         }
 
-        logger.info ( String.format ( "Starting exporter (%s) on port %s", this.hive, this.connectionInformation ) );
+        logger.info ( "Starting exporter ({}) on port {}", this.hive, this.connectionInformation );
 
         this.exporter.start ();
     }
 
+    @Override
     public void stop () throws Exception
     {
         this.exporter.stop ();
     }
 
+    @Override
     public ConnectionInformation getConnectionInformation ()
     {
         return this.connectionInformation;
