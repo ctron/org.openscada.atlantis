@@ -30,11 +30,12 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.browser.common.query.ItemStorage;
 import org.openscada.da.server.spring.Loader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.core.io.Resource;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
@@ -46,7 +47,8 @@ import au.com.bytecode.opencsv.bean.ColumnPositionMappingStrategy;
 
 public class CSVLoader extends Loader implements InitializingBean
 {
-    private static Logger logger = Logger.getLogger ( CSVLoader.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( CSVLoader.class );
 
     private Resource resource;
 
