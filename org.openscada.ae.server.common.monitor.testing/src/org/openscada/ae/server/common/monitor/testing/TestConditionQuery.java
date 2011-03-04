@@ -21,6 +21,7 @@ package org.openscada.ae.server.common.monitor.testing;
 
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
@@ -35,8 +36,9 @@ public class TestConditionQuery extends MonitorQuery
 
     private static final Random r = new Random ();
 
-    public TestConditionQuery ()
+    public TestConditionQuery ( final Executor executor )
     {
+        super ( executor );
         this.scheduler = new ScheduledThreadPoolExecutor ( 1 );
         this.scheduler.scheduleAtFixedRate ( new Runnable () {
 

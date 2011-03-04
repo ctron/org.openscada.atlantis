@@ -21,6 +21,8 @@ package org.openscada.ae.server.common.monitor.testing;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.osgi.framework.BundleActivator;
@@ -37,14 +39,20 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration handle;
 
+    private ExecutorService executor;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.context = context;
-        this.service = new TestConditionQuery ();
+
+        this.executor = Executors.newSingleThreadExecutor ();
+
+        this.service = new TestConditionQuery ( this.executor );
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, "test" );
         this.handle = this.context.registerService ( MonitorQuery.class.getName (), this.service, properties );
@@ -54,10 +62,13 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.handle.unregister ();
         this.service.stop ();
+
+        this.executor.shutdown ();
     }
 
 }
