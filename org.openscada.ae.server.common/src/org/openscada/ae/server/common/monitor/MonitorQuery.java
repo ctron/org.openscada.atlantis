@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import org.openscada.ae.MonitorStatusInformation;
 import org.slf4j.Logger;
@@ -37,8 +38,11 @@ public class MonitorQuery
 
     private final Map<String, MonitorStatusInformation> cachedData;
 
-    public MonitorQuery ()
+    private final Executor executor;
+
+    public MonitorQuery ( final Executor executor )
     {
+        this.executor = executor;
         this.cachedData = new HashMap<String, MonitorStatusInformation> ();
         this.listeners = new HashSet<MonitorQueryListener> ();
     }
@@ -71,14 +75,21 @@ public class MonitorQuery
     {
         for ( final MonitorQueryListener listener : this.listeners )
         {
-            try
-            {
-                listener.dataChanged ( addedOrUpdated, removed );
-            }
-            catch ( final Exception e )
-            {
-                logger.warn ( "Failed to notify", e );
-            }
+            this.executor.execute ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    try
+                    {
+                        listener.dataChanged ( addedOrUpdated, removed );
+                    }
+                    catch ( final Exception e )
+                    {
+                        logger.warn ( "Failed to notify", e );
+                    }
+                }
+            } );
         }
     }
 

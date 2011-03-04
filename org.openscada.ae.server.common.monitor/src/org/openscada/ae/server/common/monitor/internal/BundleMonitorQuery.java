@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executor;
 
 import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
@@ -55,19 +56,23 @@ public class BundleMonitorQuery extends MonitorQuery implements MonitorListener
 
     private Filter filter = Filter.EMPTY;
 
-    public BundleMonitorQuery ( final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
+    public BundleMonitorQuery ( final Executor executor, final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
     {
+        super ( executor );
         this.tracker = new AllObjectPoolServiceTracker ( poolTracker, new ObjectPoolListener () {
 
+            @Override
             public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
             {
                 BundleMonitorQuery.this.handleRemoved ( (MonitorService)service );
             }
 
+            @Override
             public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
             {
             }
 
+            @Override
             public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
             {
                 BundleMonitorQuery.this.handleAdded ( (MonitorService)service );
@@ -144,6 +149,7 @@ public class BundleMonitorQuery extends MonitorQuery implements MonitorListener
         return BeanMatcher.matches ( this.filter, status, true, null );
     }
 
+    @Override
     public synchronized void dispose ()
     {
         super.dispose ();
@@ -156,12 +162,10 @@ public class BundleMonitorQuery extends MonitorQuery implements MonitorListener
         this.tracker.close ();
     }
 
+    @Override
     public synchronized void statusChanged ( final MonitorStatusInformation status )
     {
-        if ( logger.isDebugEnabled () )
-        {
-            logger.debug ( "Status changed: " + status );
-        }
+        logger.debug ( "Status changed: {}", status );
 
         this.cachedData.put ( status.getId (), status );
 

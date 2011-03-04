@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,6 +22,7 @@ package org.openscada.ae.server.common.monitor.internal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.concurrent.Executor;
 
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
@@ -35,16 +36,19 @@ public class QueryServiceFactory extends AbstractServiceConfigurationFactory<Bun
 
     private final ObjectPoolTracker poolTracker;
 
-    public QueryServiceFactory ( final BundleContext context, final ObjectPoolTracker poolTracker )
+    private final Executor executor;
+
+    public QueryServiceFactory ( final Executor executor, final BundleContext context, final ObjectPoolTracker poolTracker )
     {
         super ( context );
+        this.executor = executor;
         this.poolTracker = poolTracker;
     }
 
     @Override
     protected Entry<BundleMonitorQuery> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final BundleMonitorQuery query = new BundleMonitorQuery ( context, this.poolTracker );
+        final BundleMonitorQuery query = new BundleMonitorQuery ( this.executor, context, this.poolTracker );
         query.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();

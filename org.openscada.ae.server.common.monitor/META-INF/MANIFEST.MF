@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Monitor Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.common.monitor
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.16.0.qualifier
 Bundle-Activator: org.openscada.ae.server.common.monitor.internal.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -12,6 +12,7 @@ Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.ca;version="0.15.0",
  org.openscada.ca.common;version="0.14.0",
  org.openscada.ca.common.factory;version="0.14.0",
+ org.openscada.utils.concurrent;version="0.16.0",
  org.openscada.utils.filter;version="0.15.0",
  org.openscada.utils.filter.bean;version="0.15.0",
  org.openscada.utils.osgi.ca.factory;version="0.15.0",
