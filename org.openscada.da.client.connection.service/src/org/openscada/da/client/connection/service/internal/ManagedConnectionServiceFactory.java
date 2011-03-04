@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,18 +24,19 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.core.ConnectionInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManagedConnectionServiceFactory implements ConfigurationFactory
 {
     public static final String CONNECTION_URI = "connection.uri";
 
-    private final static Logger logger = Logger.getLogger ( ManagedConnectionServiceFactory.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ManagedConnectionServiceFactory.class );
 
     private final Map<String, ConnectionManager> connections = new HashMap<String, ConnectionManager> ();
 
@@ -48,9 +49,10 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
         this.context = context;
     }
 
+    @Override
     public void delete ( final String pid )
     {
-        logger.info ( "Request to delete: " + pid ); //$NON-NLS-1$
+        logger.info ( "Request to delete: {}", pid ); //$NON-NLS-1$
 
         ServiceRegistration reg;
         ConnectionManager connection;
@@ -70,9 +72,10 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
         }
     }
 
+    @Override
     public void update ( final String pid, final Map<String, String> properties )
     {
-        logger.info ( String.format ( "Update request: %s (%s)", pid, properties ) ); //$NON-NLS-1$
+        logger.info ( "Update request: {} ({})", pid, properties ); //$NON-NLS-1$
 
         final String uri = properties.get ( CONNECTION_URI );
 

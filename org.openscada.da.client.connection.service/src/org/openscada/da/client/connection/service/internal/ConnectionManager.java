@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.DriverFactory;
 import org.openscada.da.client.Connection;
@@ -38,10 +37,13 @@ import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionManager implements SingleServiceListener
 {
-    private final static Logger logger = Logger.getLogger ( ConnectionManager.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionManager.class );
 
     private final ConnectionInformation connectionInformation;
 
@@ -109,9 +111,10 @@ public class ConnectionManager implements SingleServiceListener
         // FIXME: implement
     }
 
+    @Override
     public void serviceChange ( final ServiceReference reference, final Object factory )
     {
-        logger.info ( "Service changed: " + reference + "/" + factory );
+        logger.info ( "Service changed: {}/{}", reference, factory );
         disposeConnection ();
         this.factory = (DriverFactory)factory;
 
@@ -137,7 +140,7 @@ public class ConnectionManager implements SingleServiceListener
             properties.put ( Constants.SERVICE_PID, this.connectionId );
             properties.put ( DriverFactory.INTERFACE_NAME, this.connectionInformation.getInterface () );
             properties.put ( DriverFactory.DRIVER_NAME, this.connectionInformation.getDriver () );
-            logger.info ( "Registered new connection service: " + properties );
+            logger.info ( "Registered new connection service: {}", properties );
             this.serviceReg = this.context.registerService ( new String[] { ConnectionService.class.getName (), org.openscada.core.connection.provider.ConnectionService.class.getName () }, this.connection, properties );
         }
     }
