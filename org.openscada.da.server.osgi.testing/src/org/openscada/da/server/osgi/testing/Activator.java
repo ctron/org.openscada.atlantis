@@ -23,15 +23,17 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.common.DataItem;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator
 {
-    private final static Logger logger = Logger.getLogger ( Activator.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
 
     private DataItemTest1 service;
 
@@ -43,6 +45,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.executor = new ScheduledThreadPoolExecutor ( 1 );
@@ -56,6 +59,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         logger.info ( "Stopping test server" );
