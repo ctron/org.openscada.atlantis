@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +19,6 @@
 
 package org.openscada.ae.server.exporter.net;
 
-import org.apache.log4j.Logger;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.net.Exporter;
 import org.openscada.core.ConnectionInformation;
@@ -29,10 +28,12 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
 import org.osgi.framework.ServiceReference;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator
 {
-    private final static Logger logger = Logger.getLogger ( Activator.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
 
     private ServiceListener listener;
 
@@ -50,12 +51,14 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.context = context;
 
         context.addServiceListener ( this.listener = new ServiceListener () {
 
+            @Override
             public void serviceChanged ( final ServiceEvent event )
             {
                 switch ( event.getType () )
@@ -110,7 +113,7 @@ public class Activator implements BundleActivator
         {
             try
             {
-                logger.info ( "Exporting: " + serviceReference );
+                logger.info ( "Exporting: {}", serviceReference );
                 this.currentService = (Service)o;
                 this.exporter = new Exporter ( this.currentService, this.connectionInformation );
                 this.exporter.start ();
@@ -134,6 +137,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         context.removeServiceListener ( this.listener );
