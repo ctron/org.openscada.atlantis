@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.log4j.Logger;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.dataitem.monitor.internal.bit.BooleanAlarmMonitor;
@@ -51,10 +50,12 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator
 {
-    private final static Logger logger = Logger.getLogger ( Activator.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
 
     private static Activator instance;
 
@@ -76,6 +77,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         logger.info ( "Starting up..." );
@@ -163,6 +165,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         Activator.instance = null;
