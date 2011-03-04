@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.da.core.IODirection;
@@ -43,10 +42,13 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.ValueTools;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.utils.lang.Holder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ListBrowser
 {
-    private static Logger logger = Logger.getLogger ( ListBrowser.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ListBrowser.class );
 
     public static Message createRequest ( final String[] path )
     {
@@ -145,13 +147,13 @@ public class ListBrowser
 
         if ( !message.getValues ().containsKey ( field ) )
         {
-            logger.warn ( "Required value '" + field + "' missing" );
+            logger.warn ( "Required value '{}' missing", field );
             return;
         }
 
         if ( ! ( message.getValues ().get ( field ) instanceof ListValue ) )
         {
-            logger.warn ( "'" + field + "' must be of type 'list'" );
+            logger.warn ( "'{}' must be of type 'list'", field );
             return;
         }
 
@@ -191,7 +193,7 @@ public class ListBrowser
             final String type = mapValue.get ( "type" ).toString ();
             final Map<String, Variant> attributes = MessageHelper.mapToAttributes ( (MapValue)mapValue.get ( "attributes" ) );
 
-            logger.debug ( "entry type: '" + type + "'" );
+            logger.debug ( "entry type: '{}'" );
 
             if ( type.equals ( "folder" ) )
             {
