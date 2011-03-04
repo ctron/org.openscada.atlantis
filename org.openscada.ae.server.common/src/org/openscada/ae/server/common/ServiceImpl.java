@@ -103,6 +103,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         this.authorizationHelper = new AuthorizationHelper ( context );
     }
 
+    @Override
     public void acknowledge ( final Session session, final String conditionId, final Date aknTimestamp ) throws InvalidSessionException
     {
         final SessionImpl sessionImpl = validateSession ( session );
@@ -111,7 +112,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
 
         final UserInformation userInformation = sessionImpl.getUserInformation ();
 
-        final AuthorizationResult result = this.authorizationHelper.authorize ( conditionId, "MONITOR", "AKN", userInformation, null );
+        final AuthorizationResult result = this.authorizationHelper.authorize ( "MONITOR", conditionId, "AKN", userInformation, null );
         if ( !result.isGranted () )
         {
             return;
@@ -191,6 +192,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
+    @Override
     public Query createQuery ( final Session session, final String queryType, final String queryData, final QueryListener listener ) throws InvalidSessionException
     {
         // validate the session
@@ -213,6 +215,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
+    @Override
     public void subscribeConditionQuery ( final Session session, final String queryId ) throws InvalidSessionException, UnknownQueryException
     {
         final SessionImpl sessionImpl = validateSession ( session );
@@ -229,6 +232,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
+    @Override
     public void unsubscribeConditionQuery ( final Session session, final String queryId ) throws InvalidSessionException
     {
         final SessionImpl sessionImpl = validateSession ( session );
@@ -237,6 +241,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         this.conditionSubscriptions.unsubscribe ( queryId, sessionImpl.getConditionListener () );
     }
 
+    @Override
     public void subscribeEventQuery ( final Session session, final String queryId ) throws InvalidSessionException, UnknownQueryException
     {
         final SessionImpl sessionImpl = validateSession ( session );
@@ -253,6 +258,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
+    @Override
     public void unsubscribeEventQuery ( final Session session, final String queryId ) throws InvalidSessionException
     {
         final SessionImpl sessionImpl = validateSession ( session );
@@ -261,6 +267,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         this.eventSubscriptions.unsubscribe ( queryId, sessionImpl.getEventListener () );
     }
 
+    @Override
     public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
     {
         SessionImpl sessionImpl = null;
@@ -282,6 +289,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
+    @Override
     public synchronized org.openscada.core.server.Session createSession ( final Properties properties ) throws UnableToCreateSessionException
     {
         if ( this.eventExecutor == null )
@@ -302,6 +310,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
             // notify current data if we have some
             this.eventExecutor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     session.dataChanged ( browserCache, null, true );
@@ -312,6 +321,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         return session;
     }
 
+    @Override
     public synchronized void start () throws Exception
     {
         logger.info ( "Staring new service" );
@@ -326,6 +336,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         {
             this.context.addServiceListener ( this.conditionServiceListener = new ServiceListener () {
 
+                @Override
                 public void serviceChanged ( final ServiceEvent event )
                 {
                     ServiceImpl.this.serviceChanged ( event );
@@ -346,6 +357,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         {
             this.context.addServiceListener ( this.eventServiceListener = new ServiceListener () {
 
+                @Override
                 public void serviceChanged ( final ServiceEvent event )
                 {
                     ServiceImpl.this.serviceChanged ( event );
@@ -364,6 +376,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         this.aknTracker.open ( true );
     }
 
+    @Override
     public synchronized void stop () throws Exception
     {
         logger.info ( "Stopping service" );
@@ -405,6 +418,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         return (SessionImpl)session;
     }
 
+    @Override
     public synchronized void serviceChanged ( final ServiceEvent event )
     {
         logger.debug ( "Service changed: {}", event );
