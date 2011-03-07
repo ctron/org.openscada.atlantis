@@ -46,7 +46,7 @@ public class ItemEventObserver extends AbstractItemEventObserver
     private boolean suppressCacheEvents = true;
 
     /**
-     * a flag which indicates if attribute events should be supressed or not
+     * a flag which indicates if attribute events should be suppressed or not
      */
     private boolean suppressAttributeEvents = true;
 
