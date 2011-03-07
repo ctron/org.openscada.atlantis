@@ -32,7 +32,6 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
@@ -62,6 +61,8 @@ import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.da.server.proxy.utils.ProxyUtils;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.lifecycle.LifecycleAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
@@ -70,6 +71,8 @@ import org.openscada.utils.lifecycle.LifecycleAware;
 public class ProxyGroup implements LifecycleAware
 {
     private static final String FOLDER_NAME_REGISTERED_ITEMS = "registeredItems";
+
+    private final static Logger logger = LoggerFactory.getLogger ( ProxyGroup.ThreadFactoryImplementation.class );
 
     private final static class ThreadFactoryImplementation implements ThreadFactory
     {
@@ -96,8 +99,6 @@ public class ProxyGroup implements LifecycleAware
             r.run ();
         }
     };
-
-    private static Logger logger = Logger.getLogger ( ProxyGroup.class );
 
     private final Set<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArraySet<ConnectionStateListener> ();
 
@@ -213,7 +214,7 @@ public class ProxyGroup implements LifecycleAware
         {
             throw new IllegalArgumentException ( "connection with id " + proxySubConnectionId + " already exists!" );
         }
-        logger.info ( String.format ( "Adding new connection: %s -> %s", id, connection.getConnectionInformation () ) );
+        logger.info ( "Adding new connection: {} -> {}", id, connection.getConnectionInformation () );
         final ProxySubConnection proxySubConnection = new ProxySubConnection ( connection, this.prefix, proxySubConnectionId, prefix, this.hive, connectionFolder );
         this.subConnections.put ( proxySubConnectionId, proxySubConnection );
 
@@ -368,7 +369,7 @@ public class ProxyGroup implements LifecycleAware
     {
         final String itemId = item.getInformation ().getName ();
         final FactoryTemplate ft = this.hive.findFactoryTemplate ( itemId );
-        logger.debug ( String.format ( "Find template for item '%s' : %s", itemId, ft ) );
+        logger.debug ( "Find template for item '{}' : {}", itemId, ft );
         if ( ft != null )
         {
             try
@@ -413,12 +414,12 @@ public class ProxyGroup implements LifecycleAware
      */
     public void switchTo ( final ProxySubConnectionId newConnectionId )
     {
-        logger.warn ( String.format ( "Switching from '%s' to '%s'", this.currentConnection, newConnectionId ) );
+        logger.warn ( "Switching from '{}' to '{}'", this.currentConnection, newConnectionId );
 
         boolean locked = false;
         try
         {
-            locked = this.switchLock.tryLock ( Integer.getInteger ( "org.openscada.da.server.proxy.switchLockTimeout", 1000 ), TimeUnit.MILLISECONDS );
+            locked = this.switchLock.tryLock ( Integer.getInteger ( "org.openscada.da.server.proxy.switchLockTimeout", 2000 ), TimeUnit.MILLISECONDS );
         }
         catch ( final InterruptedException e )
         {
@@ -428,7 +429,7 @@ public class ProxyGroup implements LifecycleAware
 
         if ( !locked )
         {
-            logger.warn ( String.format ( "Failed switching from '%s' to '%s'. Switching is still in progress!", this.currentConnection, newConnectionId ) );
+            logger.warn ( "Failed switching from '{]' to '{}'. Switching is still in progress!", this.currentConnection, newConnectionId );
             return;
         }
 

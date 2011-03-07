@@ -21,7 +21,6 @@ package org.openscada.da.server.proxy.connection;
 
 import java.util.HashMap;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
@@ -40,6 +39,8 @@ import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.lifecycle.LifecycleAware;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
@@ -47,7 +48,8 @@ import org.openscada.utils.lifecycle.LifecycleAware;
  */
 public class ProxyConnection implements LifecycleAware
 {
-    private static Logger logger = Logger.getLogger ( ProxyConnection.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ProxyConnection.class );
 
     /**
      * item name for items which are only relevant for proxy server

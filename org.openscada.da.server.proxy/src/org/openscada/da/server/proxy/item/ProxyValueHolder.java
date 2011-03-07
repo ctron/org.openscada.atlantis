@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,7 +22,6 @@ package org.openscada.da.server.proxy.item;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.core.utils.AttributesHelper;
@@ -31,6 +30,8 @@ import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
@@ -38,7 +39,8 @@ import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
  */
 public class ProxyValueHolder extends ProxyItemSupport
 {
-    private static Logger logger = Logger.getLogger ( ProxyValueHolder.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ProxyValueHolder.class );
 
     protected final Map<ProxySubConnectionId, DataItemValue.Builder> values = new HashMap<ProxySubConnectionId, DataItemValue.Builder> ();
 
@@ -155,10 +157,7 @@ public class ProxyValueHolder extends ProxyItemSupport
         DataItemValue.Builder div = this.values.get ( id );
         if ( div == null )
         {
-            if ( logger.isDebugEnabled () )
-            {
-                logger.debug ( String.format ( "Creating item value for %s on connection %s", this.proxyItemId, id.getName () ) );
-            }
+            logger.debug ( "Creating item value for {} on connection {}", this.proxyItemId, id.getName () );
 
             // if the value holder is not set up to know .. create one
             this.values.put ( id, div = new DataItemValue.Builder () );

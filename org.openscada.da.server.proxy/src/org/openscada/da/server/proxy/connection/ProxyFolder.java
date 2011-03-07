@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,7 +26,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.Location;
@@ -38,6 +37,8 @@ import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.FolderListener;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
@@ -45,7 +46,8 @@ import org.openscada.da.server.common.DataItemInformationBase;
  */
 public class ProxyFolder implements Folder, org.openscada.da.client.FolderListener
 {
-    private final static Logger logger = Logger.getLogger ( ProxyFolder.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( ProxyFolder.class );
 
     private final FolderCommon folder = new FolderCommon ();
 
@@ -69,16 +71,19 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
         this.proxyGroup = proxyGroup;
     }
 
+    @Override
     public void added ()
     {
         this.folder.added ();
     }
 
+    @Override
     public Entry[] list ( final Stack<String> path ) throws NoSuchFolderException
     {
         return this.folder.list ( path );
     }
 
+    @Override
     public void removed ()
     {
         checkDisconnect ( true );
@@ -99,12 +104,13 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
             }
 
             this.initialized = false;
-            logger.info ( String.format ( "Disconnect folder for location: %s", this.location ) );
+            logger.info ( "Disconnect folder for location: {}", this.location );
         }
         this.folderManager.removeFolderListener ( this, this.location );
         this.folder.clear ();
     }
 
+    @Override
     public void subscribe ( final Stack<String> path, final FolderListener listener, final Object tag ) throws NoSuchFolderException
     {
         connect ();
@@ -124,6 +130,7 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
         this.folderManager.addFolderListener ( this, this.location );
     }
 
+    @Override
     public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
         this.folder.unsubscribe ( path, tag );
@@ -132,6 +139,7 @@ public class ProxyFolder implements Folder, org.openscada.da.client.FolderListen
         checkDisconnect ( false );
     }
 
+    @Override
     public void folderChanged ( final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
         try

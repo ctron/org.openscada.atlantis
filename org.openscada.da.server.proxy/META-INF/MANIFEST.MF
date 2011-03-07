@@ -1,6 +1,5 @@
 Manifest-Version: 1.0
 Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
- org.apache.log4j;version="1.2",
  org.apache.xmlbeans;version="2.4",
  org.apache.xmlbeans.impl.values;version="2.4",
  org.apache.xmlbeans.xml.stream;version="2.4",
@@ -34,7 +33,8 @@ Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.openscada.sec;version="0.1.0",
  org.openscada.utils.collection;version="0.13",
  org.openscada.utils.concurrent;version="0.13",
- org.openscada.utils.lifecycle;version="0.13"
+ org.openscada.utils.lifecycle;version="0.13",
+ org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.proxy;version="0.16.0";
   uses:="org.openscada.da.server.proxy.connection,
@@ -66,7 +66,7 @@ Export-Package: org.openscada.da.server.proxy;version="0.16.0";
    org.openscada.da.client,
    org.openscada.core",
  org.openscada.da.server.proxy.utils;version="0.16.0"
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA DA Proxy Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: TH4 SYSTEMS GmbH
