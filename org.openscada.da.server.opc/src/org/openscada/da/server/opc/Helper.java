@@ -23,7 +23,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JICurrency;
 import org.jinterop.dcom.core.JIString;
@@ -34,10 +33,13 @@ import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.lib.da.browser.Access;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Helper
 {
-    private static Logger logger = Logger.getLogger ( Helper.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Helper.class );
 
     public static Variant theirs2ours ( final JIVariant variant )
     {

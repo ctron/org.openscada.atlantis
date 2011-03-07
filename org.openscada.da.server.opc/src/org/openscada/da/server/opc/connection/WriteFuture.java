@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,7 +21,6 @@ package org.openscada.da.server.opc.connection;
 
 import java.util.concurrent.Future;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.OperationException;
 import org.openscada.da.core.WriteResult;
 import org.openscada.opc.dcom.common.Result;
@@ -29,6 +28,8 @@ import org.openscada.opc.dcom.da.WriteRequest;
 import org.openscada.utils.concurrent.AbstractFuture;
 import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A write future wrapper for OPC write futures
@@ -42,7 +43,8 @@ import org.openscada.utils.concurrent.NotifyFuture;
  */
 public class WriteFuture extends AbstractFuture<WriteResult>
 {
-    private final static Logger logger = Logger.getLogger ( WriteFuture.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( WriteFuture.class );
 
     private final NotifyFuture<Result<WriteRequest>> opcFuture;
 
@@ -55,6 +57,7 @@ public class WriteFuture extends AbstractFuture<WriteResult>
         this.opcFuture = opcFuture;
         this.opcFuture.addListener ( new FutureListener<Result<WriteRequest>> () {
 
+            @Override
             public void complete ( final Future<Result<WriteRequest>> future )
             {
                 handleComplete ();

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,11 +19,12 @@
 
 package org.openscada.da.server.opc.job.impl;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.opc.connection.OPCModel;
 import org.openscada.da.server.opc.job.JobResult;
 import org.openscada.da.server.opc.job.ThreadJob;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This job queries the server status
@@ -34,7 +35,7 @@ public class ServerStatusJob extends ThreadJob implements JobResult<OPCSERVERSTA
 {
     public static final long DEFAULT_TIMEOUT = 5000L;
 
-    private static Logger log = Logger.getLogger ( ServerStatusJob.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ServerStatusJob.class );
 
     private final OPCModel model;
 
@@ -49,7 +50,7 @@ public class ServerStatusJob extends ThreadJob implements JobResult<OPCSERVERSTA
     @Override
     protected void perform () throws Exception
     {
-        log.debug ( "Request server status" );
+        logger.debug ( "Request server status" );
         this.status = this.model.getServer ().getStatus ();
     }
 
@@ -58,6 +59,7 @@ public class ServerStatusJob extends ThreadJob implements JobResult<OPCSERVERSTA
         return this.status;
     }
 
+    @Override
     public OPCSERVERSTATUS getResult ()
     {
         return getStatus ();

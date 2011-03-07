@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,7 +28,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.opc.job.Worker;
 import org.openscada.da.server.opc.job.impl.AttachGroupJob;
 import org.openscada.da.server.opc.job.impl.DetachGroupJob;
@@ -42,10 +41,13 @@ import org.openscada.opc.dcom.da.OPCDATASOURCE;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
 import org.openscada.utils.concurrent.FutureTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
 {
-    private static Logger logger = Logger.getLogger ( OPCAsync2IoManager.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( OPCAsync2IoManager.class );
 
     private EventHandler eventHandler;
 
@@ -77,6 +79,7 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
                 final DetachGroupJob job = new DetachGroupJob ( this.model.getConnectJobTimeout (), eventHandler );
                 this.worker.execute ( job, new Runnable () {
 
+                    @Override
                     public void run ()
                     {
                         logger.info ( "Group detached" );
@@ -91,16 +94,15 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
         super.handleDisconnected ();
     }
 
+    @Override
     public void cancelComplete ( final int transactionId, final int serverGroupHandle )
     {
     }
 
+    @Override
     public void dataChange ( final int transactionId, final int serverGroupHandle, final int masterQuality, final int masterErrorCode, final KeyedResultSet<Integer, ValueData> result )
     {
-        if ( logger.isInfoEnabled () )
-        {
-            logger.info ( String.format ( "dataChange - transactionId: %s, serverGroupHandle: %s, masterQuality: %s, masterErrorCode: %s, changes: %s", transactionId, serverGroupHandle, masterQuality, masterErrorCode, result.size () ) );
-        }
+        logger.info ( "dataChange - transactionId: {}, serverGroupHandle: {}, masterQuality: {}, masterErrorCode: {}, changes: {}", new Object[] { transactionId, serverGroupHandle, masterQuality, masterErrorCode, result.size () } );
         if ( !this.connected )
         {
             logger.warn ( "Incoming data change although disconnected" );
@@ -115,6 +117,7 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
         // submit a job to the main thread which picks up the data 
         this.controller.submitJob ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 try
@@ -130,14 +133,17 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
 
     }
 
+    @Override
     public void readComplete ( final int transactionId, final int serverGroupHandle, final int masterQuality, final int masterErrorCode, final KeyedResultSet<Integer, ValueData> result )
     {
     }
 
+    @Override
     public void writeComplete ( final int transactionId, final int serverGroupHandle, final int masterErrorCode, final ResultSet<Integer> result )
     {
     }
 
+    @Override
     protected void performRead ( final Set<String> readSet, final OPCDATASOURCE dataSource ) throws InvocationTargetException
     {
         // nothing to do
@@ -167,10 +173,12 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
         }
     }
 
+    @Override
     protected FutureTask<Result<WriteRequest>> newWriteFuture ( final OPCWriteRequest request )
     {
         return new FutureTask<Result<WriteRequest>> ( new Callable<Result<WriteRequest>> () {
 
+            @Override
             public Result<WriteRequest> call () throws Exception
             {
 
@@ -193,6 +201,7 @@ public class OPCAsync2IoManager extends OPCIoManager implements IOPCDataCallback
         } );
     }
 
+    @Override
     protected void performWriteRequests ( final Collection<FutureTask<Result<WriteRequest>>> requests ) throws InvocationTargetException
     {
         for ( final FutureTask<Result<WriteRequest>> task : requests )

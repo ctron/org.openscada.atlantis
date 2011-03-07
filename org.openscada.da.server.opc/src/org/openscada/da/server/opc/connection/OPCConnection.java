@@ -27,7 +27,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
@@ -45,10 +44,13 @@ import org.openscada.da.server.opc.browser.OPCRootTreeFolder;
 import org.openscada.da.server.opc.preload.ItemSource;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.utils.collection.MapBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OPCConnection implements PropertyChangeListener
 {
-    private static Logger logger = Logger.getLogger ( OPCConnection.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( OPCConnection.class );
 
     private Hive hive;
 
@@ -146,8 +148,8 @@ public class OPCConnection implements PropertyChangeListener
         this.itemFactory = new FolderItemFactory ( this.hive, this.rootFolder, getDeviceTag (), getDeviceTag () );
         this.connectionItemFactory = this.itemFactory.createSubFolderFactory ( "connection" );
 
-        logger.info ( "User: " + this.connectionSetup.getConnectionInformation ().getUser () );
-        logger.info ( "Domain: " + this.connectionSetup.getConnectionInformation ().getDomain () );
+        logger.info ( "User: {}", this.connectionSetup.getConnectionInformation ().getUser () );
+        logger.info ( "Domain: {} ", this.connectionSetup.getConnectionInformation ().getDomain () );
 
         this.serverStateItem = this.connectionItemFactory.createInput ( "serverState" );
 

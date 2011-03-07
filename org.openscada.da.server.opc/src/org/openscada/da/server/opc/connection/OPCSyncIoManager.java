@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.opc.job.Worker;
 import org.openscada.da.server.opc.job.impl.SyncReadJob;
 import org.openscada.da.server.opc.job.impl.SyncWriteJob;
@@ -38,10 +37,13 @@ import org.openscada.opc.dcom.da.OPCITEMSTATE;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
 import org.openscada.utils.concurrent.FutureTask;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OPCSyncIoManager extends OPCIoManager
 {
-    private static Logger logger = Logger.getLogger ( OPCSyncIoManager.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( OPCSyncIoManager.class );
 
     public OPCSyncIoManager ( final Worker worker, final OPCModel model, final OPCController controller )
     {
@@ -92,10 +94,12 @@ public class OPCSyncIoManager extends OPCIoManager
         handleReadResult ( valueResult, true );
     }
 
+    @Override
     protected FutureTask<Result<WriteRequest>> newWriteFuture ( final OPCWriteRequest request )
     {
         return new FutureTask<Result<WriteRequest>> ( new Callable<Result<WriteRequest>> () {
 
+            @Override
             public Result<WriteRequest> call () throws Exception
             {
 
@@ -118,6 +122,7 @@ public class OPCSyncIoManager extends OPCIoManager
         } );
     }
 
+    @Override
     protected void performWriteRequests ( final Collection<FutureTask<Result<WriteRequest>>> requests ) throws InvocationTargetException
     {
         for ( final FutureTask<Result<WriteRequest>> task : requests )

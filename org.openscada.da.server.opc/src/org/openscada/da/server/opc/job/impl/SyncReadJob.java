@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,13 +19,14 @@
 
 package org.openscada.da.server.opc.job.impl;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.opc.connection.OPCModel;
 import org.openscada.da.server.opc.job.JobResult;
 import org.openscada.da.server.opc.job.ThreadJob;
 import org.openscada.opc.dcom.common.KeyedResultSet;
 import org.openscada.opc.dcom.da.OPCDATASOURCE;
 import org.openscada.opc.dcom.da.OPCITEMSTATE;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This job performs a sync read operation
@@ -36,7 +37,7 @@ public class SyncReadJob extends ThreadJob implements JobResult<KeyedResultSet<I
 {
     public static final long DEFAULT_TIMEOUT = 5000L;
 
-    private static Logger log = Logger.getLogger ( SyncReadJob.class );
+    private final static Logger logger = LoggerFactory.getLogger ( SyncReadJob.class );
 
     private final OPCModel model;
 
@@ -57,10 +58,11 @@ public class SyncReadJob extends ThreadJob implements JobResult<KeyedResultSet<I
     @Override
     protected void perform () throws Exception
     {
-        log.debug ( "Request server status" );
+        logger.debug ( "Sync read job" );
         this.result = this.model.getSyncIo ().read ( this.dataSource, this.clientHandles );
     }
 
+    @Override
     public KeyedResultSet<Integer, OPCITEMSTATE> getResult ()
     {
         return this.result;

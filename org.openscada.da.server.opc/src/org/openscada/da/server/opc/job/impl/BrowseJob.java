@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,7 +24,6 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.da.core.IODirection;
@@ -39,10 +38,13 @@ import org.openscada.opc.dcom.da.OPCBROWSETYPE;
 import org.openscada.opc.dcom.da.impl.OPCBrowseServerAddressSpace;
 import org.openscada.opc.lib.da.browser.Access;
 import org.openscada.utils.str.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BrowseJob extends ThreadJob implements JobResult<BrowseResult>
 {
-    private static Logger logger = Logger.getLogger ( BrowseJob.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( BrowseJob.class );
 
     private final OPCModel model;
 
@@ -94,10 +96,7 @@ public class BrowseJob extends ThreadJob implements JobResult<BrowseResult>
 
         // result
         this.result = result;
-        if ( logger.isInfoEnabled () )
-        {
-            logger.info ( String.format ( "Completed (Leaves: %s, Branches: %s)", result.getLeaves ().size (), result.getBranches ().size () ) );
-        }
+        logger.info ( "Completed (Leaves: {}, Branches: {})", result.getLeaves ().size (), result.getBranches ().size () );
     }
 
     private void processLeaves ( final BrowseResult result, final OPCBrowseServerAddressSpace browser, final Collection<String> readLeaves, final Collection<String> writeLeaves ) throws JIException
@@ -140,6 +139,7 @@ public class BrowseJob extends ThreadJob implements JobResult<BrowseResult>
         result.setLeaves ( leavesResult.values () );
     }
 
+    @Override
     public BrowseResult getResult ()
     {
         return this.result;

@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -49,12 +48,15 @@ import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.utils.beans.AbstractPropertyChange;
 import org.openscada.utils.collection.MapBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OPCItemManager extends AbstractPropertyChange implements IOListener
 {
-    private static final String PROP_REGISTERED_ITEM_COUNT = "registeredItemCount";
 
-    private static Logger logger = Logger.getLogger ( OPCItemManager.class );
+    private final static Logger logger = LoggerFactory.getLogger ( OPCItemManager.class );
+
+    private static final String PROP_REGISTERED_ITEM_COUNT = "registeredItemCount";
 
     private final Map<String, OPCItem> itemMap = new HashMap<String, OPCItem> ();
 
@@ -225,7 +227,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
     {
         final String itemId = item.getInformation ().getName ();
         final FactoryTemplate ft = this.hive.findFactoryTemplate ( itemId );
-        logger.debug ( String.format ( "Find template for item '%s' : %s", itemId, ft ) );
+        logger.debug ( "Find template for item '{}' : {}", itemId, ft );
         if ( ft != null )
         {
             try
@@ -303,7 +305,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
 
     private void unregisterItem ( final String itemId )
     {
-        logger.info ( "Unregistering item: " + itemId );
+        logger.info ( "Unregistering item: {}", itemId );
 
         final OPCItem item;
         synchronized ( this )

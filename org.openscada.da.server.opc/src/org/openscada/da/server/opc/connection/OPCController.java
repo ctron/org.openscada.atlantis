@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,7 +26,6 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JISession;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc.Hive;
@@ -39,10 +38,13 @@ import org.openscada.opc.dcom.da.OPCDATASOURCE;
 import org.openscada.opc.dcom.da.OPCGroupState;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.opc.lib.common.ConnectionInformation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OPCController implements Runnable
 {
-    private static Logger logger = Logger.getLogger ( OPCController.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( OPCController.class );
 
     private static final long LOOP_DELAY_MIN = 50;
 
@@ -112,6 +114,7 @@ public class OPCController implements Runnable
     /**
      * The controller main loop
      */
+    @Override
     public void run ()
     {
         while ( this.running )
@@ -119,7 +122,7 @@ public class OPCController implements Runnable
 
             try
             {
-                final Runnable runnable = this.jobQueue.poll ( this.getModel ().getLoopDelay (), TimeUnit.MILLISECONDS );
+                final Runnable runnable = this.jobQueue.poll ( getModel ().getLoopDelay (), TimeUnit.MILLISECONDS );
 
                 if ( !this.running )
                 {
@@ -155,10 +158,7 @@ public class OPCController implements Runnable
 
     protected void setControllerState ( final ControllerState state )
     {
-        if ( logger.isDebugEnabled () )
-        {
-            logger.debug ( String.format ( "Controller state: %s", state ) );
-        }
+        logger.debug ( "Controller state: {}", state );
         this.model.setControllerState ( state );
     }
 
@@ -252,6 +252,7 @@ public class OPCController implements Runnable
         {
             this.worker.execute ( job, new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     model.setSession ( job.getSession () );
@@ -291,6 +292,7 @@ public class OPCController implements Runnable
         logger.info ( "Destroying DCOM session..." );
         final Thread destructor = new Thread ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 OPCController.this.model.addDisposerRunning ( Thread.currentThread () );
@@ -307,7 +309,7 @@ public class OPCController implements Runnable
                 }
                 finally
                 {
-                    logger.info ( String.format ( "Session destruction took %s ms", System.currentTimeMillis () - ts ) );
+                    logger.info ( "Session destruction took {} ms", System.currentTimeMillis () - ts );
                     OPCController.this.model.removeDisposerRunning ( Thread.currentThread () );
                 }
             }

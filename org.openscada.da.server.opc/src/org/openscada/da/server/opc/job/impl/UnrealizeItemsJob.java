@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,12 +19,12 @@
 
 package org.openscada.da.server.opc.job.impl;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.opc.job.JobResult;
 import org.openscada.da.server.opc.job.ThreadJob;
 import org.openscada.opc.dcom.common.ResultSet;
 import org.openscada.opc.dcom.da.impl.OPCItemMgt;
-import org.openscada.utils.str.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This job removes items from an opc group
@@ -35,7 +35,7 @@ public class UnrealizeItemsJob extends ThreadJob implements JobResult<ResultSet<
 {
     public static final long DEFAULT_TIMEOUT = 5000L;
 
-    private static Logger log = Logger.getLogger ( UnrealizeItemsJob.class );
+    private final static Logger logger = LoggerFactory.getLogger ( UnrealizeItemsJob.class );
 
     private final OPCItemMgt itemMgt;
 
@@ -53,14 +53,11 @@ public class UnrealizeItemsJob extends ThreadJob implements JobResult<ResultSet<
     @Override
     protected void perform () throws Exception
     {
-
-        if ( log.isInfoEnabled () )
-        {
-            log.info ( String.format ( "UnRealizing items: %s", StringHelper.join ( this.serverHandles, ", " ) ) );
-        }
+        logger.info ( "UnRealizing items: {}", new Object[] { this.serverHandles } );
         this.result = this.itemMgt.remove ( this.serverHandles );
     }
 
+    @Override
     public ResultSet<Integer> getResult ()
     {
         return this.result;

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,7 +24,6 @@ import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
-import org.apache.log4j.Logger;
 import org.apache.xmlbeans.XmlException;
 import org.jinterop.dcom.common.JISystem;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -36,11 +35,14 @@ import org.openscada.da.server.opc.configuration.XMLConfigurator;
 import org.openscada.da.server.opc.connection.ConnectionSetup;
 import org.openscada.da.server.opc.connection.OPCConnection;
 import org.openscada.da.server.opc.preload.ItemSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
-    private static Logger logger = Logger.getLogger ( Hive.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Hive.class );
 
     private final Collection<OPCConnection> connections = new CopyOnWriteArrayList<OPCConnection> ();
 
@@ -74,13 +76,13 @@ public class Hive extends HiveCommon
 
     private void initJInterop ()
     {
-        logger.warn ( String.format ( "rpc.socketTimeout = %s", System.getProperty ( "rpc.socketTimeout" ) ) );
+        logger.warn ( "rpc.socketTimeout = {}", System.getProperty ( "rpc.socketTimeout" ) );
         if ( !Boolean.getBoolean ( "dcom.debug" ) )
         {
             java.util.logging.Logger.getLogger ( "org.jinterop" ).setLevel ( Level.WARNING );
         }
         JISystem.setJavaCoClassAutoCollection ( !Boolean.getBoolean ( "dcom.disableAutoCollection" ) );
-        logger.info ( "DCOM auto collection: " + JISystem.isJavaCoClassAutoCollectionSet () );
+        logger.info ( "DCOM auto collection: {}", JISystem.isJavaCoClassAutoCollectionSet () );
     }
 
     public void addConnection ( final ConnectionSetup setup, final boolean connect, final Collection<ItemSource> itemSources )

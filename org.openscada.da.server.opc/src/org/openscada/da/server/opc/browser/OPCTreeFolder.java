@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,7 +25,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
@@ -35,10 +34,13 @@ import org.openscada.da.server.browser.common.FolderListener;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.opc.connection.OPCController;
 import org.openscada.utils.str.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OPCTreeFolder implements org.openscada.da.server.browser.common.Folder, BrowseRequestListener
 {
-    private static Logger logger = Logger.getLogger ( OPCTreeFolder.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( OPCTreeFolder.class );
 
     protected FolderCommon folderImpl = new FolderCommon ();
 
@@ -54,21 +56,25 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
         this.path = path;
     }
 
+    @Override
     public void added ()
     {
         this.folderImpl.added ();
     }
 
+    @Override
     public Entry[] list ( final Stack<String> path ) throws NoSuchFolderException
     {
         return this.folderImpl.list ( path );
     }
 
+    @Override
     public void removed ()
     {
         this.folderImpl.removed ();
     }
 
+    @Override
     public void subscribe ( final Stack<String> path, final FolderListener listener, final Object tag ) throws NoSuchFolderException
     {
         checkRefresh ();
@@ -83,10 +89,7 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
             {
                 return;
             }
-            if ( logger.isInfoEnabled () )
-            {
-                logger.info ( String.format ( "Need to refresh folder (%s)", getPath () ) );
-            }
+            logger.info ( "Need to refresh folder ({})", getPath () );
             this.refreshed = true;
         }
         refresh ();
@@ -97,6 +100,7 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
         this.controller.getBrowserManager ().addBrowseRequest ( new BrowseRequest ( this.path ), this );
     }
 
+    @Override
     public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
         try
@@ -115,13 +119,14 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
         {
             if ( !this.folderImpl.hasSubscribers () && this.refreshed )
             {
-                logger.info ( String.format ( "No more subscribers. Clearing folder. (%s)", getPath () ) );
+                logger.info ( "No more subscribers. Clearing folder. ({})", getPath () );
                 this.refreshed = false;
                 this.folderImpl.clear ();
             }
         }
     }
 
+    @Override
     public void browseComplete ( final BrowseResult result )
     {
         final Map<String, Folder> folders = new HashMap<String, Folder> ();
@@ -147,6 +152,7 @@ public class OPCTreeFolder implements org.openscada.da.server.browser.common.Fol
         this.folderImpl.add ( folders, items );
     }
 
+    @Override
     public void browseError ( final Throwable error )
     {
         logger.info ( "Failed to browse", error );

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,10 +19,11 @@
 
 package org.openscada.da.server.opc.connection;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemFactoryRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A data item factory which creates items bases on the
@@ -32,7 +33,8 @@ import org.openscada.da.server.common.factory.DataItemFactoryRequest;
  */
 public class OPCConnectionDataItemFactory implements DataItemFactory
 {
-    private static Logger logger = Logger.getLogger ( OPCConnectionDataItemFactory.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( OPCConnectionDataItemFactory.class );
 
     private final OPCConnection connection;
 
@@ -41,15 +43,17 @@ public class OPCConnectionDataItemFactory implements DataItemFactory
         this.connection = connection;
     }
 
+    @Override
     public boolean canCreate ( final DataItemFactoryRequest request )
     {
         final String itemId = request.getId ();
         return itemId.startsWith ( this.connection.getItemPrefix () + "." );
     }
 
+    @Override
     public DataItem create ( final DataItemFactoryRequest request )
     {
-        logger.info ( "Requested: " + request.getId () );
+        logger.info ( "Requested: {}", request.getId () );
 
         final String itemId = request.getId ();
         final String opcItemId = itemId.substring ( this.connection.getItemPrefix ().length () + 1 );

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,13 +19,14 @@
 
 package org.openscada.da.server.opc.job.impl;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.opc.connection.OPCModel;
 import org.openscada.da.server.opc.job.JobResult;
 import org.openscada.da.server.opc.job.ThreadJob;
 import org.openscada.opc.dcom.common.ResultSet;
 import org.openscada.opc.dcom.da.WriteRequest;
 import org.openscada.opc.dcom.da.impl.OPCSyncIO;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This method performs a sync write operation
@@ -36,7 +37,7 @@ public class SyncWriteJob extends ThreadJob implements JobResult<ResultSet<Write
 {
     public static final long DEFAULT_TIMEOUT = 5000L;
 
-    private static Logger log = Logger.getLogger ( SyncWriteJob.class );
+    private final static Logger logger = LoggerFactory.getLogger ( SyncWriteJob.class );
 
     private final OPCModel model;
 
@@ -54,7 +55,7 @@ public class SyncWriteJob extends ThreadJob implements JobResult<ResultSet<Write
     @Override
     protected void perform () throws Exception
     {
-        log.debug ( "Perform sync write" );
+        logger.debug ( "Perform sync write" );
 
         final OPCSyncIO syncIo = this.model.getSyncIo ();
         if ( syncIo != null )
@@ -63,6 +64,7 @@ public class SyncWriteJob extends ThreadJob implements JobResult<ResultSet<Write
         }
     }
 
+    @Override
     public ResultSet<WriteRequest> getResult ()
     {
         return this.result;

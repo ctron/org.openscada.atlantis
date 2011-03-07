@@ -33,7 +33,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.Variant;
 import org.openscada.da.server.opc.Helper;
@@ -55,9 +54,13 @@ import org.openscada.utils.beans.AbstractPropertyChange;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class OPCIoManager extends AbstractPropertyChange
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( OPCIoManager.class );
 
     private static final String PROP_SERVER_HANDLE_COUNT = "serverHandleCount";
 
@@ -70,8 +73,6 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     private int writeRequestMax = 0;
 
     private final AtomicLong writeRequestTotal = new AtomicLong ();
-
-    private static Logger logger = Logger.getLogger ( OPCIoManager.class );
 
     /**
      * The request queue
@@ -334,7 +335,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
                 if ( entry.isFailed () )
                 {
-                    logger.info ( String.format ( "Revoking client handle %d for item %s", entry.getKey ().getClientHandle (), itemId ) );
+                    logger.info ( "Revoking client handle {} for item {}", entry.getKey ().getClientHandle (), itemId );
                     this.clientHandleMap.remove ( itemId );
                     this.clientHandleMapRev.remove ( entry.getKey ().getClientHandle () );
                 }
@@ -546,7 +547,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
             if ( itemId == null )
             {
-                logger.info ( String.format ( "Got read reply for invalid item - server handle: '%s'", entry.getKey () ) );
+                logger.info ( "Got read reply for invalid item - server handle: '{}'", entry.getKey () );
                 continue;
             }
 
@@ -578,7 +579,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         if ( !this.model.isConnected () )
         {
             // discard write request
-            logger.warn ( String.format ( "OPC is not connected" ) );
+            logger.warn ( "OPC is not connected" );
             return new InstantErrorFuture<Result<WriteRequest>> ( new RuntimeException ( "OPC is not connected" ).fillInStackTrace () );
         }
 
@@ -589,7 +590,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         final JIVariant variant = Helper.ours2theirs ( value );
         if ( variant == null )
         {
-            logger.warn ( String.format ( "Failed to convert %s to variant", value ) );
+            logger.warn ( "Failed to convert {} to variant", value );
             return new InstantErrorFuture<Result<WriteRequest>> ( new RuntimeException ( String.format ( "Failed to convert %s to variant", value ) ).fillInStackTrace () );
         }
 

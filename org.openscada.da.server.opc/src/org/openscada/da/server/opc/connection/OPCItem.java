@@ -23,7 +23,6 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
@@ -48,10 +47,13 @@ import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.concurrent.DirectExecutor;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OPCItem extends DataItemInputOutputChained implements SuspendableDataItem
 {
-    private static Logger logger = Logger.getLogger ( OPCItem.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( OPCItem.class );
 
     private volatile boolean suspended = true;
 
@@ -82,13 +84,13 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     {
         if ( !getInformation ().getIODirection ().contains ( IODirection.OUTPUT ) )
         {
-            logger.warn ( String.format ( "Failed to write to read-only item (%s)", this.opcItemId ) );
+            logger.warn ( "Failed to write to read-only item ({})", this.opcItemId );
             return new InstantErrorFuture<WriteResult> ( new InvalidOperationException ().fillInStackTrace () );
         }
 
         // check if the conversion works ... will be performed again by the addWriteRequest call
         final JIVariant variant = Helper.ours2theirs ( value );
-        logger.debug ( String.format ( "Converting write request from %s to %s", value, variant ) );
+        logger.debug ( "Converting write request from {} to {}", value, variant );
         if ( variant == null )
         {
             // unable to convert write request
@@ -108,7 +110,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     @Override
     public void suspend ()
     {
-        logger.info ( "Suspend item: " + getInformation ().getName () );
+        logger.info ( "Suspend item: {}", getInformation ().getName () );
 
         this.suspended = true;
         this.controller.getIoManager ().suspendItem ( this.opcItemId );
@@ -118,7 +120,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     @Override
     public void wakeup ()
     {
-        logger.info ( "Wakeup item: " + getInformation ().getName () );
+        logger.info ( "Wakeup item: {}", getInformation ().getName () );
 
         this.suspended = false;
         this.controller.getIoManager ().wakeupItem ( this.opcItemId );

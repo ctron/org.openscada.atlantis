@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,7 +21,8 @@ package org.openscada.da.server.opc.job;
 
 import java.lang.reflect.InvocationTargetException;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The worker take control of a work unit and executes it including guarding it runtime.
@@ -30,7 +31,8 @@ import org.apache.log4j.Logger;
  */
 public class Worker implements GuardianHandler
 {
-    private static Logger log = Logger.getLogger ( Worker.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( Worker.class );
 
     private volatile WorkUnit currentWorkUnit;
 
@@ -51,17 +53,20 @@ public class Worker implements GuardianHandler
             this.jobResult = jobResult;
         }
 
+        @Override
         public void handleFailure ( final Throwable e )
         {
             this.error = e;
         }
 
+        @Override
         public void handleInterrupted ()
         {
             this.error = new InterruptedException ( "Job got interrupted" );
             this.error.fillInStackTrace ();
         }
 
+        @Override
         public void handleSuccess ()
         {
             // FIXME: isn't there a check for null necessary?
@@ -92,17 +97,20 @@ public class Worker implements GuardianHandler
             this.runnable = runnable;
         }
 
+        @Override
         public void handleFailure ( final Throwable e )
         {
             this.error = e;
         }
 
+        @Override
         public void handleInterrupted ()
         {
             this.error = new InterruptedException ( "Job got interrupted" );
             this.error.fillInStackTrace ();
         }
 
+        @Override
         public void handleSuccess ()
         {
             this.runnable.run ();
@@ -127,9 +135,9 @@ public class Worker implements GuardianHandler
 
             try
             {
-                log.info ( "Waiting for guardian..." );
+                logger.info ( "Waiting for guardian..." );
                 this.guardian.wait ();
-                log.info ( "Guardian is up..." );
+                logger.info ( "Guardian is up..." );
             }
             catch ( final InterruptedException e )
             {
@@ -205,22 +213,22 @@ public class Worker implements GuardianHandler
     {
         try
         {
-            log.debug ( "Start guardian" );
+            logger.debug ( "Start guardian" );
             this.guardian.startJob ( this.currentWorkUnit.getJob (), this );
-            log.debug ( "Run job" );
+            logger.debug ( "Run job" );
             this.currentWorkUnit.getJob ().run ();
-            log.debug ( "Run job finished" );
+            logger.debug ( "Run job finished" );
         }
         catch ( final Throwable e )
         {
-            log.warn ( "Job failed", e );
+            logger.warn ( "Job failed", e );
             return e;
         }
         finally
         {
-            log.debug ( "Notify guardian that job is complete" );
+            logger.debug ( "Notify guardian that job is complete" );
             this.guardian.jobCompleted ();
-            log.debug ( "guardian knows now" );
+            logger.debug ( "guardian knows now" );
         }
         return null;
     }
@@ -229,13 +237,13 @@ public class Worker implements GuardianHandler
     {
         try
         {
-            log.debug ( "Starting new job" );
+            logger.debug ( "Starting new job" );
             performCancelable ();
-            log.debug ( "Job completed" );
+            logger.debug ( "Job completed" );
         }
         catch ( final Throwable e )
         {
-            log.warn ( "Failed to process", e );
+            logger.warn ( "Failed to process", e );
         }
 
         // now trigger the result handlers
@@ -259,6 +267,7 @@ public class Worker implements GuardianHandler
         this.currentWorkUnit = null;
     }
 
+    @Override
     public void performCancel ()
     {
         final WorkUnit workUnit = this.currentWorkUnit;

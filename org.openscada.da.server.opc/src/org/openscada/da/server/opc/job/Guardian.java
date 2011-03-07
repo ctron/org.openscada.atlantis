@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +19,8 @@
 
 package org.openscada.da.server.opc.job;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The guardian takes a job and guards it execution time. If the job takes too long
@@ -35,7 +36,7 @@ import org.apache.log4j.Logger;
 public class Guardian implements Runnable
 {
 
-    private static Logger log = Logger.getLogger ( Guardian.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Guardian.class );
 
     private volatile boolean running = true;
 
@@ -45,6 +46,7 @@ public class Guardian implements Runnable
 
     private boolean completed = false;
 
+    @Override
     public synchronized void run ()
     {
         signalInitialized ();
@@ -57,51 +59,51 @@ public class Guardian implements Runnable
             }
             catch ( final Throwable e )
             {
-                log.warn ( "Failed to wait for job", e );
+                logger.warn ( "Failed to wait for job", e );
             }
             finally
             {
                 cleanUp ();
             }
         }
-        log.info ( "Guardian is shut down" );
+        logger.info ( "Guardian is shut down" );
     }
 
     private synchronized void doLoop () throws InterruptedException
     {
         // wait for a job
         this.wait ();
-        log.debug ( "Woke up" );
+        logger.debug ( "Woke up" );
 
         if ( this.currentJob == null )
         {
-            log.info ( "Woke up without a job" );
+            logger.info ( "Woke up without a job" );
             return;
         }
 
         // acknowledge
-        this.notifyAll ();
+        notifyAll ();
 
         // and wait again .. until the timeout is arrived or the job is completed
 
         final long timeout = this.currentJob.getTimeout ();
 
         final long start = System.currentTimeMillis ();
-        log.debug ( String.format ( "Job timeout: %d", timeout ) );
+        logger.debug ( "Job timeout: {}", timeout );
 
         while ( !this.completed && System.currentTimeMillis () - start < timeout )
         {
             this.wait ( 10 );
         }
 
-        log.debug ( String.format ( "Stopped waiting: completed: %s, diff: %d", this.completed, System.currentTimeMillis () - start ) );
+        logger.debug ( "Stopped waiting: completed: {}, diff: {}", this.completed, System.currentTimeMillis () - start );
 
         if ( !this.completed )
         {
             cancel ();
         }
 
-        this.notifyAll ();
+        notifyAll ();
     }
 
     public synchronized void startJob ( final Job job, final GuardianHandler handler )
@@ -113,12 +115,12 @@ public class Guardian implements Runnable
 
         if ( this.currentJob == null )
         {
-            log.debug ( "Starting new job" );
+            logger.debug ( "Starting new job" );
             this.currentJob = job;
             this.handler = handler;
             this.completed = false;
 
-            this.notifyAll ();
+            notifyAll ();
         }
         else
         {
@@ -128,12 +130,12 @@ public class Guardian implements Runnable
 
     public synchronized void jobCompleted ()
     {
-        log.debug ( "current job completed" );
+        logger.debug ( "current job completed" );
         if ( this.currentJob != null )
         {
-            log.debug ( "mark job as complete" );
+            logger.debug ( "mark job as complete" );
             this.completed = true;
-            this.notifyAll ();
+            notifyAll ();
 
             // wait until the guardian got our request
             try
@@ -142,12 +144,12 @@ public class Guardian implements Runnable
             }
             catch ( final InterruptedException e )
             {
-                log.error ( "Failed to wait for guardian completion" );
+                logger.error ( "Failed to wait for guardian completion" );
             }
         }
         else
         {
-            log.debug ( "There is no job active .. maybe guardian already knows that the job is completed since he canceled it" );
+            logger.debug ( "There is no job active .. maybe guardian already knows that the job is completed since he canceled it" );
         }
     }
 
@@ -159,7 +161,7 @@ public class Guardian implements Runnable
         }
         catch ( final Throwable e )
         {
-            log.error ( "Failed to cancel operation", e );
+            logger.error ( "Failed to cancel operation", e );
         }
     }
 
@@ -174,8 +176,8 @@ public class Guardian implements Runnable
      */
     private void signalInitialized ()
     {
-        log.debug ( "Signalize that we are up" );
-        this.notifyAll ();
+        logger.debug ( "Signalize that we are up" );
+        notifyAll ();
     }
 
     /**
@@ -184,9 +186,9 @@ public class Guardian implements Runnable
      */
     public synchronized void shutdown ()
     {
-        log.info ( "Shutting down guardian" );
+        logger.info ( "Shutting down guardian" );
         this.running = false;
-        this.notifyAll ();
+        notifyAll ();
     }
 
 }

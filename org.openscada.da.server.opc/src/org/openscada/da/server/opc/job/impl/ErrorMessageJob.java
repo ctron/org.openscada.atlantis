@@ -19,10 +19,11 @@
 
 package org.openscada.da.server.opc.job.impl;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.server.opc.connection.OPCModel;
 import org.openscada.da.server.opc.job.JobResult;
 import org.openscada.da.server.opc.job.ThreadJob;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This job resolves an error string
@@ -33,7 +34,7 @@ public class ErrorMessageJob extends ThreadJob implements JobResult<String>
 {
     public static final long DEFAULT_TIMEOUT = 1000L;
 
-    private static Logger log = Logger.getLogger ( ErrorMessageJob.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ErrorMessageJob.class );
 
     private final OPCModel model;
 
@@ -51,10 +52,11 @@ public class ErrorMessageJob extends ThreadJob implements JobResult<String>
     @Override
     protected void perform () throws Exception
     {
-        log.debug ( "Request error message" );
+        logger.debug ( "Request error message: {}", this.errorCode );
         this.result = this.model.getCommon ().getErrorString ( this.errorCode, 0 );
     }
 
+    @Override
     public String getResult ()
     {
         return this.result;

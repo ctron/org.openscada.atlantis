@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,7 +24,6 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -32,10 +31,13 @@ import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc.configuration.ItemDescription;
 import org.openscada.da.server.opc.connection.OPCItemManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractItemSource implements ItemSource
 {
-    private static Logger logger = Logger.getLogger ( AbstractItemSource.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractItemSource.class );
 
     protected FolderItemFactory factory;
 
@@ -50,11 +52,13 @@ public abstract class AbstractItemSource implements ItemSource
         this.id = id;
     }
 
+    @Override
     public String getId ()
     {
         return this.id;
     }
 
+    @Override
     public void activate ( final FolderItemFactory factory, final OPCItemManager itemManager )
     {
         this.factory = factory;
@@ -63,6 +67,7 @@ public abstract class AbstractItemSource implements ItemSource
         this.itemManager = itemManager;
     }
 
+    @Override
     public void deactivate ()
     {
         this.itemManager = null;

@@ -24,7 +24,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.da.opc.configuration.InitialItemType;
 import org.openscada.da.opc.configuration.InitialItemsType;
@@ -35,10 +34,13 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc.configuration.ItemDescription;
 import org.openscada.da.server.opc.connection.OPCItemManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractXMLItemSource extends AbstractItemSource
 {
-    private static Logger logger = Logger.getLogger ( AbstractXMLItemSource.class );
+
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractXMLItemSource.class );
 
     private boolean active = false;
 
@@ -63,6 +65,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
 
         this.reloadCommandItem.addListener ( this.reloadListener = new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 AbstractXMLItemSource.this.reload ();
@@ -114,11 +117,11 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
     {
         final Set<ItemDescription> items = new HashSet<ItemDescription> ();
 
-        logger.debug ( "Number of items: " + initialItems.getItemList ().size () );
+        logger.debug ( "Number of items: {}", initialItems.getItemList ().size () );
 
         for ( final InitialItemType item : initialItems.getItemList () )
         {
-            logger.debug ( "Found new item: " + item.getId () );
+            logger.debug ( "Found new item: {}", item.getId () );
 
             final ItemDescription newItem = new ItemDescription ( item.getId (), item.getDescription (), item.getAccessPath () );
 
