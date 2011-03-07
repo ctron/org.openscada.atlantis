@@ -25,11 +25,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.MonitorStatus;
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
+import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.StateInformation.State;
 import org.openscada.core.Variant;
@@ -179,7 +179,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setFailure ( final Variant value, final Date timestamp, final EventDecorator eventDecorator )
     {
-        if ( ( this.information.getState () != null ) && ( this.information.getState () == State.FAILED ) )
+        if ( this.information.getState () != null && this.information.getState () == State.FAILED )
         {
             // no change
             return;
@@ -201,7 +201,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setOk ( final Variant value, Date timestamp, final EventDecorator eventDecorator )
     {
-        if ( ( this.information.getState () != null ) && ( this.information.getState () == State.OK ) )
+        if ( this.information.getState () != null && this.information.getState () == State.OK )
         {
             // no change
             return;
@@ -227,7 +227,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setUnsafe ( final EventDecorator eventDecorator )
     {
-        if ( ( this.information.getState () != null ) && ( this.information.getState () == State.UNSAFE ) )
+        if ( this.information.getState () != null && this.information.getState () == State.UNSAFE )
         {
             // no change
             return;
@@ -250,7 +250,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     public synchronized void setActive ( final boolean state, final EventDecorator eventDecorator )
     {
-        if ( ( this.information.getActive () != null ) && ( this.information.getActive () == state ) )
+        if ( this.information.getActive () != null && this.information.getActive () == state )
         {
             // no change
             return;
@@ -262,6 +262,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         applyAndSendStatus ( newInformation );
     }
 
+    @Override
     public synchronized void setActive ( final boolean state )
     {
         setActive ( state, EventDecoratorAdapter.getDummyDecorator () );
@@ -279,10 +280,11 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         newInformation.setLastAckUser ( getUserName ( userInformation ) );
         newInformation.setTimestamp ( aknTimestamp );
 
-        publishEvent ( eventDecorator.decorate ( createEvent ( aknTimestamp, userInformation, "AKN", null ) ) );
+        publishEvent ( eventDecorator.decorate ( createEvent ( null, userInformation, "AKN", null ) ) );
         applyAndSendStatus ( newInformation );
     }
 
+    @Override
     public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
     {
         akn ( userInformation, aknTimestamp, EventDecoratorAdapter.getDummyDecorator () );
@@ -290,7 +292,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     public synchronized void setRequireAkn ( final boolean state, final EventDecorator eventDecorator )
     {
-        if ( ( this.information.getRequireAck () != null ) && ( this.information.getRequireAck () == state ) )
+        if ( this.information.getRequireAck () != null && this.information.getRequireAck () == state )
         {
             // no change
             return;
@@ -299,7 +301,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setRequireAck ( state );
 
-        publishEvent ( eventDecorator.decorate ( createEvent ( new Date (), null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change require acknowledge state" ) ) );
+        publishEvent ( eventDecorator.decorate ( createEvent ( null, null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change require acknowledge state" ) ) );
         applyAndSendStatus ( newInformation );
     }
 
@@ -334,7 +336,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             builder.sourceTimestamp ( now );
         }
 
-        if ( ( userInformation != null ) && ( userInformation.getName () != null ) )
+        if ( userInformation != null && userInformation.getName () != null )
         {
             builder.attribute ( Fields.ACTOR_NAME, userInformation.getName () );
             builder.attribute ( Fields.ACTOR_TYPE, "USER" );
@@ -417,7 +419,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final MonitorStatus oldState = oldConditionState.getStatus ();
         final MonitorStatus newState = newConditionState.getStatus ();
 
-        if ( ( oldConditionState != newConditionState ) && ( oldState != MonitorStatus.INIT ) && ( newState != MonitorStatus.INIT ) )
+        if ( oldConditionState != newConditionState && oldState != MonitorStatus.INIT && newState != MonitorStatus.INIT )
         {
             publishEvent ( eventDecorator.decorate ( createEvent ( newConditionState.getStatusTimestamp (), null, newConditionState.getStatus ().toString (), newConditionState.getValue () ) ) );
         }
@@ -425,7 +427,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private static MonitorStatus generateStatus ( final StateInformation information )
     {
-        if ( ( information.getActive () == null ) || ( information.getRequireAck () == null ) )
+        if ( information.getActive () == null || information.getRequireAck () == null )
         {
             return MonitorStatus.INIT;
         }
@@ -433,7 +435,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         {
             return MonitorStatus.INACTIVE;
         }
-        else if ( ( information.getValue () == null ) || ( information.getState () == State.UNSAFE ) )
+        else if ( information.getValue () == null || information.getState () == State.UNSAFE )
         {
             return MonitorStatus.UNSAFE;
         }
