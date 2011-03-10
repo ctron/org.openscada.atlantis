@@ -379,6 +379,8 @@ public class RedundancySwitchHandler implements InitializingBean
     }
 
     /**
+     * item name of openscada item which triggers switch
+     * 
      * @param redundancySwitcherItemId
      */
     public void setRedundancySwitcherItemId ( final String redundancySwitcherItemId )
