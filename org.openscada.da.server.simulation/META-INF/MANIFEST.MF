@@ -43,12 +43,6 @@ Export-Package: org.openscada.da.server.simulation.filesource;version="0.16.0.qu
    org.openscada.da.core,
    javax.script",
  org.openscada.da.server.simulation.scriptomatic.configuration;version="0.16.0.qualifier";uses:="org.openscada.utils.statuscodes,org.openscada.da.server.simulation.scriptomatic",
- org.openscada.da.simulation.components;version="0.16.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
- org.openscada.da.simulation.components.impl;version="0.16.0.qualifier";
-  uses:="org.apache.xmlbeans.impl.values,
-   org.apache.xmlbeans,
-   javax.xml.namespace,
-   org.openscada.da.simulation.components",
  org.openscada.da.simulation.configuration;version="0.16.0.qualifier";uses:="org.apache.xmlbeans.xml.stream,org.apache.xmlbeans,javax.xml.stream",
  org.openscada.da.simulation.configuration.impl;version="0.16.0.qualifier";
   uses:="org.apache.xmlbeans.impl.values,
