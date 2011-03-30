@@ -36,10 +36,19 @@ public class Variant implements Serializable, Comparable<Variant>
 
     private static final long serialVersionUID = 5391870904474545783L;
 
+    /**
+     * A default NULL instance
+     */
     public static final Variant NULL = new Variant ();
 
+    /**
+     * A default BOOL#true instance
+     */
     public static final Variant TRUE = new Variant ( true );
 
+    /**
+     * A default BOOL#false instance
+     */
     public static final Variant FALSE = new Variant ( false );
 
     private static final int MAX_PRE_INSTANCES = 256;
@@ -126,8 +135,9 @@ public class Variant implements Serializable, Comparable<Variant>
 
     /**
      * Create a variant of type <code>null</code>
-     * 
+     * @deprecated Use {@link #NULL} instead
      */
+    @Deprecated
     public Variant ()
     {
     }
@@ -137,32 +147,54 @@ public class Variant implements Serializable, Comparable<Variant>
      * 
      * @param object
      *            the object to convert
+     * @deprecated Use {@link Variant#valueOf(Object)} instead
      */
+    @Deprecated
     public Variant ( final Object object )
     {
         setValue ( object );
     }
 
+    /**
+     * @deprecated Use {@link Variant#valueOf(Object)} instead
+     */
+    @Deprecated
     public Variant ( final boolean value )
     {
         setValue ( value );
     }
 
+    /**
+     * @deprecated Use {@link Variant#valueOf(Object)} instead
+     */
+    @Deprecated
     public Variant ( final double value )
     {
         setValue ( value );
     }
 
+    /**
+     * @deprecated Use {@link Variant#valueOf(Object)} instead
+     */
+    @Deprecated
     public Variant ( final int value )
     {
         setValue ( value );
     }
 
+    /**
+     * @deprecated Use {@link Variant#valueOf(Object)} instead
+     */
+    @Deprecated
     public Variant ( final long value )
     {
         setValue ( value );
     }
 
+    /**
+     * @deprecated Use {@link Variant#valueOf(Object)} instead
+     */
+    @Deprecated
     public Variant ( final String value )
     {
         setValue ( value );
@@ -173,7 +205,9 @@ public class Variant implements Serializable, Comparable<Variant>
      * 
      * @param arg0
      *            the value to clone
+     * @deprecated Use {@link Variant#valueOf(Object)} instead
      */
+    @Deprecated
     public Variant ( final Variant arg0 )
     {
         this ( arg0 != null ? arg0.value : null );
