@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,8 +25,8 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
+import java.util.UUID;
 
 import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
@@ -38,6 +38,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
     public static class EventComparator implements Comparator<Event>
     {
+        @Override
         public int compare ( final Event o1, final Event o2 )
         {
             final int s = o1.getSourceTimestamp ().compareTo ( o2.getSourceTimestamp () );
@@ -109,13 +110,13 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
         public EventBuilder attribute ( final String key, final Object value )
         {
-            this.event.attributes.put ( key, new Variant ( value ) );
+            this.event.attributes.put ( key, Variant.valueOf ( value ) );
             return this;
         }
 
         public EventBuilder attribute ( final Fields key, final Object value )
         {
-            this.event.attributes.put ( key.getName (), new Variant ( value ) );
+            this.event.attributes.put ( key.getName (), Variant.valueOf ( value ) );
             return this;
         }
 
@@ -294,6 +295,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
         return sb.toString ();
     }
 
+    @Override
     public int compareTo ( final Event o )
     {
         return comparator.compare ( this, o );
