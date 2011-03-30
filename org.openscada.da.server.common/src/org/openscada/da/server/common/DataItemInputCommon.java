@@ -83,7 +83,7 @@ public class DataItemInputCommon extends DataItemInput
     {
         if ( !this.value.equals ( value ) )
         {
-            this.value = new Variant ( value );
+            this.value = value;
         }
         else
         {
