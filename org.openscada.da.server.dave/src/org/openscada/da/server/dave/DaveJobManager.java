@@ -36,8 +36,8 @@ import org.apache.mina.core.session.IoSession;
 import org.openscada.protocols.dave.DaveMessage;
 import org.openscada.protocols.dave.DaveReadRequest;
 import org.openscada.protocols.dave.DaveReadResult;
-import org.openscada.protocols.dave.DaveWriteRequest;
 import org.openscada.protocols.dave.DaveReadResult.Result;
+import org.openscada.protocols.dave.DaveWriteRequest;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,6 +74,7 @@ public class DaveJobManager
             this.block = block;
         }
 
+        @Override
         public void handleMessage ( final DaveMessage message )
         {
             logger.debug ( "Result: {}", message );
@@ -92,6 +93,7 @@ public class DaveJobManager
             }
         }
 
+        @Override
         public void start ( final IoSession session )
         {
             logger.debug ( "Start request: " + this.block.getRequest () );
@@ -112,11 +114,13 @@ public class DaveJobManager
             this.request = request;
         }
 
+        @Override
         public void start ( final IoSession session )
         {
             session.write ( this.request );
         }
 
+        @Override
         public void handleMessage ( final DaveMessage message )
         {
             // TODO: no-op for now
@@ -159,6 +163,7 @@ public class DaveJobManager
             logger.info ( "Starting timer" );
             this.job = this.executor.scheduleWithFixedDelay ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     DaveJobManager.this.tick ();
@@ -197,6 +202,7 @@ public class DaveJobManager
     {
         if ( this.currentJob != null )
         {
+            logger.debug ( "Ticked with current job" );
             return;
         }
 
@@ -233,6 +239,7 @@ public class DaveJobManager
 
         Collections.sort ( blocks, new Comparator<DaveRequestBlock> () {
 
+            @Override
             public int compare ( final DaveRequestBlock o1, final DaveRequestBlock o2 )
             {
                 final long l1 = o1.updatePriority ( now );

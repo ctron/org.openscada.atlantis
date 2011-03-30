@@ -181,6 +181,8 @@ public class DaveDevice implements IoHandler
 
     public void update ( final Map<String, String> properties ) throws Exception
     {
+        logger.info ( "Applying configuration: {}", properties );
+
         this.host = properties.get ( "host" );
         this.port = Short.valueOf ( properties.get ( "port" ) );
         this.rack = Integer.valueOf ( properties.get ( "rack" ) );
@@ -189,11 +191,11 @@ public class DaveDevice implements IoHandler
         this.name = properties.get ( "name" );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "host", new Variant ( this.host ) );
-        attributes.put ( "port", new Variant ( this.port ) );
-        attributes.put ( "rack", new Variant ( this.rack ) );
-        attributes.put ( "slot", new Variant ( this.slot ) );
-        attributes.put ( "name", new Variant ( this.name ) );
+        attributes.put ( "host", Variant.valueOf ( this.host ) );
+        attributes.put ( "port", Variant.valueOf ( this.port ) );
+        attributes.put ( "rack", Variant.valueOf ( this.rack ) );
+        attributes.put ( "slot", Variant.valueOf ( this.slot ) );
+        attributes.put ( "name", Variant.valueOf ( this.name ) );
         this.configItem.updateData ( Variant.TRUE, attributes, AttributeMode.SET );
 
         synchronized ( this )
@@ -236,6 +238,7 @@ public class DaveDevice implements IoHandler
         final ConnectFuture future = this.connector.connect ( new InetSocketAddress ( this.host, this.port ) );
         future.addListener ( new IoFutureListener<IoFuture> () {
 
+            @Override
             public void operationComplete ( final IoFuture future )
             {
                 try
@@ -289,6 +292,7 @@ public class DaveDevice implements IoHandler
         setSession ( null );
         this.executor.schedule ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 connect ();
@@ -317,6 +321,7 @@ public class DaveDevice implements IoHandler
         }
     }
 
+    @Override
     public synchronized void exceptionCaught ( final IoSession session, final Throwable error ) throws Exception
     {
         logger.warn ( "Exception caught", error );
@@ -327,6 +332,7 @@ public class DaveDevice implements IoHandler
         }
     }
 
+    @Override
     public synchronized void messageReceived ( final IoSession session, final Object message ) throws Exception
     {
         logger.debug ( "Message received: {}", message );
@@ -349,6 +355,7 @@ public class DaveDevice implements IoHandler
         }
     }
 
+    @Override
     public synchronized void messageSent ( final IoSession session, final Object message ) throws Exception
     {
         logger.debug ( "Message sent: {}", message );
@@ -364,6 +371,7 @@ public class DaveDevice implements IoHandler
         }
     }
 
+    @Override
     public synchronized void sessionClosed ( final IoSession session ) throws Exception
     {
         logger.warn ( "Connection lost: {}", session );
@@ -375,6 +383,7 @@ public class DaveDevice implements IoHandler
         disconnected ();
     }
 
+    @Override
     public synchronized void sessionCreated ( final IoSession session ) throws Exception
     {
         logger.info ( "Session created: {}", session );
@@ -383,6 +392,7 @@ public class DaveDevice implements IoHandler
         session.getConfig ().setReaderIdleTime ( this.readTimeout / 1000 );
     }
 
+    @Override
     public synchronized void sessionIdle ( final IoSession session, final IdleStatus status ) throws Exception
     {
         logger.warn ( "Got idle: {} / {}", status, session );
@@ -392,6 +402,7 @@ public class DaveDevice implements IoHandler
         disconnect ();
     }
 
+    @Override
     public synchronized void sessionOpened ( final IoSession session ) throws Exception
     {
         logger.info ( "Session opened: {}", session );
