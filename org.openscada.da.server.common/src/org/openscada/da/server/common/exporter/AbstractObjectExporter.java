@@ -56,14 +56,28 @@ public abstract class AbstractObjectExporter implements Disposable
 
     protected final Map<String, DataItem> items = new HashMap<String, DataItem> ();
 
+    private final boolean readOnly;
+
     public AbstractObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder )
     {
-        this.factory = new FolderItemFactory ( hive, rootFolder, localId, localId );
+        this ( localId, hive, rootFolder, false );
     }
 
     public AbstractObjectExporter ( final String localId, final FolderItemFactory rootFactory )
     {
+        this ( localId, rootFactory, false );
+    }
+
+    public AbstractObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly )
+    {
+        this.factory = new FolderItemFactory ( hive, rootFolder, localId, localId );
+        this.readOnly = readOnly;
+    }
+
+    public AbstractObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly )
+    {
         this.factory = rootFactory.createSubFolderFactory ( localId );
+        this.readOnly = readOnly;
     }
 
     @Override
@@ -169,7 +183,7 @@ public abstract class AbstractObjectExporter implements Disposable
 
     private DataItem createItem ( final PropertyDescriptor pd )
     {
-        final boolean writeable = pd.getWriteMethod () != null;
+        final boolean writeable = !this.readOnly && pd.getWriteMethod () != null;
         final boolean readable = pd.getReadMethod () != null;
 
         if ( writeable && readable )

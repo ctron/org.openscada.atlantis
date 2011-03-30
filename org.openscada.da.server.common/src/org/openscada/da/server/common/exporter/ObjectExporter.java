@@ -51,6 +51,16 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
         super ( localId, hive, rootFolder );
     }
 
+    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly )
+    {
+        super ( localId, rootFactory, readOnly );
+    }
+
+    public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly )
+    {
+        super ( localId, hive, rootFolder, readOnly );
+    }
+
     /**
      * attach a new target. the old target will get detached.
      * @param target the new target

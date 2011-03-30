@@ -42,6 +42,20 @@ public class StaticObjectExporter<T> extends AbstractObjectExporter
         createDataItems ( modelClazz );
     }
 
+    public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz, final boolean readOnly )
+    {
+        super ( localId, rootFactory, readOnly );
+
+        createDataItems ( modelClazz );
+    }
+
+    public StaticObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final Class<T> modelClazz, final boolean readOnly )
+    {
+        super ( localId, hive, rootFolder, readOnly );
+
+        createDataItems ( modelClazz );
+    }
+
     public synchronized void setTarget ( final T target )
     {
         this.target = target;
