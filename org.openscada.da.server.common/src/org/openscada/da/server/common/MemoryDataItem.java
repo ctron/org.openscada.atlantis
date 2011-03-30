@@ -60,7 +60,7 @@ public class MemoryDataItem extends DataItemBase
     {
         if ( !this.value.equals ( value ) )
         {
-            this.value = new Variant ( value );
+            this.value = value;
             notifyData ( value, null );
         }
 
