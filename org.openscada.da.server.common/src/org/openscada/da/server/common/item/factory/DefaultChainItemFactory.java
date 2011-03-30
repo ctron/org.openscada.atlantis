@@ -52,6 +52,13 @@ public class DefaultChainItemFactory extends FolderItemFactory
         super ( parentFactory, hive, parentFolder, baseId, folderName );
     }
 
+    /**
+     * Create a new sub factory
+     * <p>
+     * Sub-factories get disposed when the parent factory is disposed
+     * </p>
+     * @param name the name of the sub-factory, this will be the folder name and added to the item id as local part
+     */
     @Override
     public DefaultChainItemFactory createSubFolderFactory ( final String name )
     {
