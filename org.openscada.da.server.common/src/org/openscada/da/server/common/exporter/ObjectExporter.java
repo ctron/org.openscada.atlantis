@@ -19,75 +19,36 @@
 
 package org.openscada.da.server.common.exporter;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
-import java.beans.PropertyEditor;
-import java.beans.PropertyEditorManager;
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.DataItemCommand;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.utils.lang.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ObjectExporter implements PropertyChangeListener, Disposable
+public class ObjectExporter extends AbstractObjectExporter implements PropertyChangeListener, Disposable
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( ObjectExporter.class );
-
-    private final FolderItemFactory factory;
-
-    private final String localId;
 
     private Object target;
 
     private boolean bound;
 
-    private final Map<String, DataItem> items = new HashMap<String, DataItem> ();
+    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory )
+    {
+        super ( localId, rootFactory );
+    }
 
     public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder )
     {
-        this.localId = localId;
-        this.factory = createItemFactory ( hive, rootFolder );
-    }
-
-    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory )
-    {
-        this.localId = localId;
-        this.factory = rootFactory.createSubFolderFactory ( localId );
-    }
-
-    @Override
-    public void dispose ()
-    {
-        this.factory.dispose ();
-    }
-
-    public String getLocalId ()
-    {
-        return this.localId;
-    }
-
-    protected FolderItemFactory createItemFactory ( final HiveCommon hive, final FolderCommon rootFolder )
-    {
-        return new FolderItemFactory ( hive, rootFolder, this.localId, this.localId );
+        super ( localId, hive, rootFolder );
     }
 
     /**
@@ -115,166 +76,21 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
             logger.info ( "Failed to add property listener", e );
         }
 
-        createDataItems ();
+        createDataItems ( target.getClass () );
     }
 
-    /**
-     * create data items from the properties
-     */
-    private void createDataItems ()
+    @Override
+    protected void initAttribute ( final PropertyDescriptor pd )
     {
-        try
-        {
-            final BeanInfo bi = Introspector.getBeanInfo ( this.target.getClass () );
-            for ( final PropertyDescriptor pd : bi.getPropertyDescriptors () )
-            {
-                final DataItem item = createItem ( pd );
-                this.items.put ( pd.getName (), item );
-                initAttribute ( pd );
-            }
-        }
-        catch ( final IntrospectionException e )
-        {
-            logger.info ( "Failed to read initial item", e );
-        }
+        super.initAttribute ( pd );
+
     }
 
-    /**
-     * read the initial value of the property
-     * @param pd
-     */
-    private void initAttribute ( final PropertyDescriptor pd )
+    @Override
+    protected void fillAttributes ( final PropertyDescriptor pd, final Map<String, Variant> attributes )
     {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "property.writeable", Variant.valueOf ( pd.getWriteMethod () != null ) );
-        attributes.put ( "property.readable", Variant.valueOf ( pd.getReadMethod () != null ) );
-        attributes.put ( "property.bound", Variant.valueOf ( pd.isBound () ) );
-        attributes.put ( "property.expert", Variant.valueOf ( pd.isExpert () ) );
-        attributes.put ( "property.constrained", Variant.valueOf ( pd.isConstrained () ) );
-        attributes.put ( "property.label", Variant.valueOf ( pd.getDisplayName () ) );
-        attributes.put ( "property.type", Variant.valueOf ( pd.getPropertyType ().getName () ) );
-        attributes.put ( "description", Variant.valueOf ( pd.getShortDescription () ) );
+        super.fillAttributes ( pd, attributes );
         attributes.put ( "exporter.bound", Variant.valueOf ( this.bound ) );
-
-        final Method m = pd.getReadMethod ();
-        if ( m != null )
-        {
-            try
-            {
-                updateAttribute ( pd.getName (), m.invoke ( this.target ), null, attributes );
-            }
-            catch ( final Throwable e )
-            {
-                updateAttribute ( pd.getName (), null, e, attributes );
-            }
-        }
-    }
-
-    private DataItem createItem ( final PropertyDescriptor pd )
-    {
-        final boolean writeable = pd.getWriteMethod () != null;
-        final boolean readable = pd.getReadMethod () != null;
-
-        if ( writeable && readable )
-        {
-            return this.factory.createInputOutput ( pd.getName (), new WriteHandler () {
-
-                @Override
-                public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
-                {
-                    ObjectExporter.this.writeAttribute ( pd, value );
-                }
-            } );
-        }
-        else if ( readable )
-        {
-            return this.factory.createInput ( pd.getName () );
-        }
-        else if ( writeable )
-        {
-            final DataItemCommand item = this.factory.createCommand ( pd.getName () );
-            item.addListener ( new DataItemCommand.Listener () {
-
-                @Override
-                public void command ( final Variant value ) throws Exception
-                {
-                    ObjectExporter.this.writeAttribute ( pd, value );
-                }
-            } );
-            return item;
-        }
-        return null;
-    }
-
-    protected void writeAttribute ( final PropertyDescriptor pd, final Variant value ) throws Exception
-    {
-        final Method m = pd.getWriteMethod ();
-        if ( m == null )
-        {
-            throw new RuntimeException ( "Failed to write since write method cannot be found" );
-        }
-
-        final Object target = this.target;
-
-        final Class<?> targetType = pd.getPropertyType ();
-        final Object o = convertWriteType ( targetType, value );
-
-        if ( o != null )
-        {
-            // try the direct approach
-            m.invoke ( target, o );
-        }
-        else
-        {
-            // try a "by string" approach
-            final PropertyEditor pe = PropertyEditorManager.findEditor ( targetType );
-            pe.setAsText ( value.asString () );
-        }
-
-    }
-
-    /**
-     * Convert the value to the target type if possible.
-     * @param targetType The expected target type
-     * @param value the source value
-     * @return an instance of the source value in the target type (if possible)
-     * or <code>null</code> otherwise 
-     * @throws NotConvertableException 
-     * @throws NullValueException 
-     */
-    private Object convertWriteType ( final Class<?> targetType, final Variant value ) throws NullValueException, NotConvertableException
-    {
-        if ( targetType.isAssignableFrom ( Variant.class ) )
-        {
-            return value;
-        }
-        if ( value == null || value.isNull () )
-        {
-            return null;
-        }
-
-        if ( targetType.isAssignableFrom ( Long.class ) || targetType.isAssignableFrom ( long.class ) )
-        {
-            return value.asLong ();
-        }
-        if ( targetType.isAssignableFrom ( Integer.class ) || targetType.isAssignableFrom ( int.class ) )
-        {
-            return value.asInteger ();
-        }
-        if ( targetType.isAssignableFrom ( Double.class ) || targetType.isAssignableFrom ( double.class ) )
-        {
-            return value.asDouble ();
-        }
-        if ( targetType.isAssignableFrom ( Boolean.class ) || targetType.isAssignableFrom ( boolean.class ) )
-        {
-            return value.asBoolean ();
-        }
-        if ( targetType.isAssignableFrom ( String.class ) )
-        {
-            return value.asString ();
-        }
-
-        return null;
     }
 
     /**
@@ -300,6 +116,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
             }
         }
 
+        this.items.clear ();
         this.factory.disposeAllItems ();
         this.target = null;
         this.bound = false;
@@ -329,36 +146,10 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
         updateAttribute ( evt.getPropertyName (), evt.getNewValue (), null, null );
     }
 
-    private void updateAttribute ( final String propertyName, final Object newValue, final Throwable e, final Map<String, Variant> additionalAttributes )
+    @Override
+    protected Object getTarget ()
     {
-        final DataItem item = this.items.get ( propertyName );
-        if ( item == null )
-        {
-            return;
-        }
-
-        if ( item instanceof DataItemInputChained )
-        {
-            final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-
-            if ( additionalAttributes != null )
-            {
-                attributes.putAll ( additionalAttributes );
-            }
-
-            if ( e != null )
-            {
-                attributes.put ( "value.error", Variant.TRUE );
-                attributes.put ( "value.error.message", Variant.valueOf ( e.getMessage () ) );
-            }
-            else
-            {
-                attributes.put ( "value.error", null );
-                attributes.put ( "value.error.message", null );
-            }
-
-            final DataItemInputChained inputItem = (DataItemInputChained)item;
-            inputItem.updateData ( Variant.valueOf ( newValue ), attributes, AttributeMode.UPDATE );
-        }
+        return this.target;
     }
+
 }
