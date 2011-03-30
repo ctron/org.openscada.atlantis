@@ -196,7 +196,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setFailure ( final Variant value, final Date timestamp )
     {
-        setFailure ( value, timestamp, EventDecoratorAdapter.getDummyDecorator () );
+        setFailure ( value, timestamp, EventDecoratorAdapter.getNullDecorator () );
     }
 
     protected synchronized void setOk ( final Variant value, Date timestamp, final EventDecorator eventDecorator )
@@ -222,7 +222,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setOk ( final Variant value, final Date timestamp )
     {
-        setOk ( value, timestamp, EventDecoratorAdapter.getDummyDecorator () );
+        setOk ( value, timestamp, EventDecoratorAdapter.getNullDecorator () );
     }
 
     protected synchronized void setUnsafe ( final EventDecorator eventDecorator )
@@ -245,7 +245,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setUnsafe ()
     {
-        setUnsafe ( EventDecoratorAdapter.getDummyDecorator () );
+        setUnsafe ( EventDecoratorAdapter.getNullDecorator () );
     }
 
     public synchronized void setActive ( final boolean state, final EventDecorator eventDecorator )
@@ -265,7 +265,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     @Override
     public synchronized void setActive ( final boolean state )
     {
-        setActive ( state, EventDecoratorAdapter.getDummyDecorator () );
+        setActive ( state, EventDecoratorAdapter.getNullDecorator () );
     }
 
     public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp, final EventDecorator eventDecorator )
@@ -287,7 +287,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     @Override
     public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
     {
-        akn ( userInformation, aknTimestamp, EventDecoratorAdapter.getDummyDecorator () );
+        akn ( userInformation, aknTimestamp, EventDecoratorAdapter.getNullDecorator () );
     }
 
     public synchronized void setRequireAkn ( final boolean state, final EventDecorator eventDecorator )
@@ -307,7 +307,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     public synchronized void setRequireAkn ( final boolean state )
     {
-        setRequireAkn ( state, EventDecoratorAdapter.getDummyDecorator () );
+        setRequireAkn ( state, EventDecoratorAdapter.getNullDecorator () );
     }
 
     private String getUserName ( final UserInformation userInformation )
@@ -411,7 +411,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private synchronized void applyAndSendStatus ( final StateInformation newInformation )
     {
-        applyAndSendStatus ( newInformation, EventDecoratorAdapter.getDummyDecorator () );
+        applyAndSendStatus ( newInformation, EventDecoratorAdapter.getNullDecorator () );
     }
 
     private synchronized void sendStatusWhenChanged ( final MonitorStatusInformation oldConditionState, final MonitorStatusInformation newConditionState, final EventDecorator eventDecorator )

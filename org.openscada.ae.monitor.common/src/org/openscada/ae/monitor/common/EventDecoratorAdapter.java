@@ -23,11 +23,11 @@ import org.openscada.ae.Event.EventBuilder;
 
 public class EventDecoratorAdapter implements EventDecorator
 {
-    private static final EventDecorator dummyDecorator = new EventDecoratorAdapter ();
+    private static final EventDecorator NULL_DECORATOR = new EventDecoratorAdapter ();
 
-    public static EventDecorator getDummyDecorator ()
+    public static EventDecorator getNullDecorator ()
     {
-        return dummyDecorator;
+        return NULL_DECORATOR;
     }
 
     @Override
