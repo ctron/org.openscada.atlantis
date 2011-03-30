@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -17,29 +17,13 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae.server.http.monitor;
+package org.openscada.ae.monitor.common;
 
-import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.monitor.common.EventDecoratorAdapter;
+import java.util.Map;
+
 import org.openscada.core.Variant;
 
-public class SequenceEventDecorator extends EventDecoratorAdapter
+public interface MonitorDecorator extends EventDecorator
 {
-    private volatile int sequence = 0;
-
-    public void setSequence ( final int sequence )
-    {
-        this.sequence = sequence;
-    }
-
-    public int getSequence ()
-    {
-        return this.sequence;
-    }
-
-    @Override
-    public EventBuilder decorate ( final EventBuilder eventBuilder )
-    {
-        return eventBuilder.attribute ( "sequence", Variant.valueOf ( this.sequence ) );
-    }
+    public void decorateMonitorStatus ( Map<String, Variant> attributes );
 }

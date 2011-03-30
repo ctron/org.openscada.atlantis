@@ -34,7 +34,6 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.StateInformation.State;
 import org.openscada.core.Variant;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.collection.MapBuilder;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -135,7 +134,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             this.information = newInformation;
 
             // re-apply the current state
-            applyState ( this.information );
+            applyState ( this.information, MonitorDecoratorAdapter.getNullDecorator () );
         }
     }
 
@@ -174,10 +173,10 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         // FIXME: implement
         this.initSent = false;
         this.initialInformation = null;
-        applyState ( this.information );
+        applyState ( this.information, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
-    protected synchronized void setFailure ( final Variant value, final Date timestamp, final EventDecorator eventDecorator )
+    protected synchronized void setFailure ( final Variant value, final Date timestamp, final MonitorDecorator eventDecorator )
     {
         if ( this.information.getState () != null && this.information.getState () == State.FAILED )
         {
@@ -196,10 +195,10 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setFailure ( final Variant value, final Date timestamp )
     {
-        setFailure ( value, timestamp, EventDecoratorAdapter.getNullDecorator () );
+        setFailure ( value, timestamp, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
-    protected synchronized void setOk ( final Variant value, Date timestamp, final EventDecorator eventDecorator )
+    protected synchronized void setOk ( final Variant value, Date timestamp, final MonitorDecorator eventDecorator )
     {
         if ( this.information.getState () != null && this.information.getState () == State.OK )
         {
@@ -222,10 +221,10 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setOk ( final Variant value, final Date timestamp )
     {
-        setOk ( value, timestamp, EventDecoratorAdapter.getNullDecorator () );
+        setOk ( value, timestamp, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
-    protected synchronized void setUnsafe ( final EventDecorator eventDecorator )
+    protected synchronized void setUnsafe ( final MonitorDecorator eventDecorator )
     {
         if ( this.information.getState () != null && this.information.getState () == State.UNSAFE )
         {
@@ -245,10 +244,10 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void setUnsafe ()
     {
-        setUnsafe ( EventDecoratorAdapter.getNullDecorator () );
+        setUnsafe ( MonitorDecoratorAdapter.getNullDecorator () );
     }
 
-    public synchronized void setActive ( final boolean state, final EventDecorator eventDecorator )
+    public synchronized void setActive ( final boolean state, final MonitorDecorator eventDecorator )
     {
         if ( this.information.getActive () != null && this.information.getActive () == state )
         {
@@ -265,10 +264,10 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     @Override
     public synchronized void setActive ( final boolean state )
     {
-        setActive ( state, EventDecoratorAdapter.getNullDecorator () );
+        setActive ( state, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
-    public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp, final EventDecorator eventDecorator )
+    public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp, final MonitorDecorator eventDecorator )
     {
         if ( !ackPending ( this.information ) )
         {
@@ -287,10 +286,10 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     @Override
     public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
     {
-        akn ( userInformation, aknTimestamp, EventDecoratorAdapter.getNullDecorator () );
+        akn ( userInformation, aknTimestamp, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
-    public synchronized void setRequireAkn ( final boolean state, final EventDecorator eventDecorator )
+    public synchronized void setRequireAkn ( final boolean state, final MonitorDecorator eventDecorator )
     {
         if ( this.information.getRequireAck () != null && this.information.getRequireAck () == state )
         {
@@ -307,7 +306,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     public synchronized void setRequireAkn ( final boolean state )
     {
-        setRequireAkn ( state, EventDecoratorAdapter.getNullDecorator () );
+        setRequireAkn ( state, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
     private String getUserName ( final UserInformation userInformation )
@@ -356,7 +355,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         return this.initialInformation != null;
     }
 
-    private synchronized void applyState ( final StateInformation information )
+    private synchronized void applyState ( final StateInformation information, final MonitorDecorator monitorDecorator )
     {
         final MonitorStatusInformation csi;
 
@@ -368,9 +367,10 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         {
             // if we are initialized we send out our current status
             this.initSent = false;
-            final MapBuilder<String, Variant> mapBuilder = new MapBuilder<String, Variant> ();
-            buildMonitorAttributes ( mapBuilder );
-            csi = new MonitorStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser (), mapBuilder.getMap () );
+            final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+            buildMonitorAttributes ( attributes );
+            monitorDecorator.decorateMonitorStatus ( attributes );
+            csi = new MonitorStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser (), attributes );
             storeData ( this.information );
         }
         else
@@ -396,32 +396,36 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     }
 
-    protected void buildMonitorAttributes ( final MapBuilder<String, Variant> builder )
+    /**
+     * Add monitor attributes to attribute list of new monitor state
+     * @param attributes the attributes that will be provided to the new monitor state
+     */
+    protected void buildMonitorAttributes ( final Map<String, Variant> attributes )
     {
-        builder.putAll ( this.eventInformationAttributes );
+        attributes.putAll ( this.eventInformationAttributes );
     }
 
-    private synchronized void applyAndSendStatus ( final StateInformation newInformation, final EventDecorator eventDecorator )
+    private synchronized void applyAndSendStatus ( final StateInformation newInformation, final MonitorDecorator monitorDecorator )
     {
         final MonitorStatusInformation oldConditionState = this.currentState;
-        applyState ( newInformation );
+        applyState ( newInformation, monitorDecorator );
         final MonitorStatusInformation newConditionState = this.currentState;
-        sendStatusWhenChanged ( oldConditionState, newConditionState, eventDecorator );
+        sendStatusWhenChanged ( oldConditionState, newConditionState, monitorDecorator );
     }
 
     private synchronized void applyAndSendStatus ( final StateInformation newInformation )
     {
-        applyAndSendStatus ( newInformation, EventDecoratorAdapter.getNullDecorator () );
+        applyAndSendStatus ( newInformation, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
-    private synchronized void sendStatusWhenChanged ( final MonitorStatusInformation oldConditionState, final MonitorStatusInformation newConditionState, final EventDecorator eventDecorator )
+    private synchronized void sendStatusWhenChanged ( final MonitorStatusInformation oldConditionState, final MonitorStatusInformation newConditionState, final MonitorDecorator monitorDecorator )
     {
         final MonitorStatus oldState = oldConditionState.getStatus ();
         final MonitorStatus newState = newConditionState.getStatus ();
 
         if ( oldConditionState != newConditionState && oldState != MonitorStatus.INIT && newState != MonitorStatus.INIT )
         {
-            publishEvent ( eventDecorator.decorate ( createEvent ( newConditionState.getStatusTimestamp (), null, newConditionState.getStatus ().toString (), newConditionState.getValue () ) ) );
+            publishEvent ( monitorDecorator.decorate ( createEvent ( newConditionState.getStatusTimestamp (), null, newConditionState.getStatus ().toString (), newConditionState.getValue () ) ) );
         }
     }
 

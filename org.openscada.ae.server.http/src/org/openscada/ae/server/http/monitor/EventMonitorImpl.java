@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -74,7 +74,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
 
         for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "info." ).entrySet () )
         {
-            attributes.put ( entry.getKey (), new Variant ( entry.getValue () ) );
+            attributes.put ( entry.getKey (), Variant.valueOf ( entry.getValue () ) );
         }
 
         return attributes;
@@ -87,12 +87,10 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
         {
             if ( this.matcher.matches ( event ) )
             {
+                final Variant message = makeMessage ( event );
                 // FIXME: just for now, the real implementation should set AKN directly
-                final SequenceEventDecorator eventDecorator = new SequenceEventDecorator ();
-                eventDecorator.setSequence ( 1 );
-                setFailure ( Variant.NULL, event.getSourceTimestamp (), eventDecorator );
-                eventDecorator.setSequence ( 2 );
-                setOk ( Variant.NULL, event.getSourceTimestamp (), eventDecorator );
+                setFailure ( Variant.NULL, event.getSourceTimestamp (), new EventMonitorDecorator ( 1, message ) );
+                setOk ( Variant.NULL, event.getSourceTimestamp (), new EventMonitorDecorator ( 2, message ) );
                 final Event resultEvent = Event.create () //
                 .event ( event ) //
                 .attribute ( Fields.COMMENT, annotateCommentWithSource ( event ) ) //
@@ -104,6 +102,11 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
             }
         }
         return new Pair<Boolean, Event> ( false, event );
+    }
+
+    private Variant makeMessage ( final Event event )
+    {
+        return event.getAttributes ().get ( Event.Fields.MESSAGE );
     }
 
     private Variant annotateCommentWithSource ( final Event event )
@@ -127,7 +130,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
             sb.append ( originalSource.asString ( "" ) );
         }
 
-        return new Variant ( sb.toString () );
+        return Variant.valueOf ( sb.toString () );
     }
 
     @Override

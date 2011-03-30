@@ -19,13 +19,16 @@
 
 package org.openscada.ae.monitor.common;
 
+import java.util.Map;
+
 import org.openscada.ae.Event.EventBuilder;
+import org.openscada.core.Variant;
 
-public class EventDecoratorAdapter implements EventDecorator
+public class MonitorDecoratorAdapter implements MonitorDecorator
 {
-    private static final EventDecorator NULL_DECORATOR = new EventDecoratorAdapter ();
+    private static final MonitorDecorator NULL_DECORATOR = new MonitorDecoratorAdapter ();
 
-    public static EventDecorator getNullDecorator ()
+    public static final MonitorDecorator getNullDecorator ()
     {
         return NULL_DECORATOR;
     }
@@ -34,5 +37,10 @@ public class EventDecoratorAdapter implements EventDecorator
     public EventBuilder decorate ( final EventBuilder eventBuilder )
     {
         return eventBuilder;
+    }
+
+    @Override
+    public void decorateMonitorStatus ( final Map<String, Variant> attributes )
+    {
     }
 }
