@@ -59,7 +59,7 @@ public abstract class NegateBaseItem extends BaseChainItemCommon
         }
         catch ( final Exception e )
         {
-            attributes.put ( getErrorName (), new Variant ( e.getMessage () ) );
+            attributes.put ( getErrorName (), Variant.valueOf ( e.getMessage () ) );
         }
 
         addAttributes ( attributes );

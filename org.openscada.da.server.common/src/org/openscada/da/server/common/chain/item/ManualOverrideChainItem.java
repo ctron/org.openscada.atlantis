@@ -148,7 +148,7 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
 
         if ( !this.manualValue.getValue ().isNull () )
         {
-            attributes.put ( ORIGINAL_VALUE, new Variant ( value ) );
+            attributes.put ( ORIGINAL_VALUE, Variant.valueOf ( value ) );
             newValue = this.manualValue.getValue ();
             attributes.put ( MANUAL_ACTIVE, Variant.TRUE );
             attributes.put ( MANUAL_TIMESTAMP, Variant.valueOf ( this.manualTimestamp.getTimeInMillis () ) );
@@ -157,7 +157,7 @@ public class ManualOverrideChainItem extends BaseChainItemCommon
             final Variant originalTimestamp = attributes.get ( "timestamp" );
             if ( originalTimestamp != null )
             {
-                attributes.put ( ORIGINAL_TIMESTAMP, new Variant ( originalTimestamp ) );
+                attributes.put ( ORIGINAL_TIMESTAMP, Variant.valueOf ( originalTimestamp ) );
             }
             attributes.put ( "timestamp", Variant.valueOf ( this.manualTimestamp.getTimeInMillis () ) );
         }

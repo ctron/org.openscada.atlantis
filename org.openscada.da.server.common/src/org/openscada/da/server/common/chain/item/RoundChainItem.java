@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -61,6 +61,7 @@ public class RoundChainItem extends BaseChainItemCommon
         setReservedAttributes ( ORIGINAL_VALUE, ROUND_ACTIVE, ROUND_ERROR );
     }
 
+    @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )
     {
         attributes.put ( ROUND_ACTIVE, null );
@@ -68,7 +69,7 @@ public class RoundChainItem extends BaseChainItemCommon
         attributes.put ( ROUND_ERROR, null );
         attributes.put ( ROUND_TYPE, null );
 
-        final Variant originalValue = new Variant ( value );
+        final Variant originalValue = value;
 
         // check and get the rounding type
         final RoundType type = checkRoundType ( attributes );
@@ -98,7 +99,7 @@ public class RoundChainItem extends BaseChainItemCommon
             newValue = performRound ( type, doubleValue, value, attributes );
             attributes.put ( ROUND_ACTIVE, Variant.valueOf ( true ) );
             attributes.put ( ORIGINAL_VALUE, originalValue );
-            attributes.put ( ROUND_TYPE, new Variant ( type.toString () ) );
+            attributes.put ( ROUND_TYPE, Variant.valueOf ( type.toString () ) );
         }
         else if ( type == RoundType.NONE )
         {
@@ -116,11 +117,11 @@ public class RoundChainItem extends BaseChainItemCommon
         case NONE:
             return null;
         case CEIL:
-            return new Variant ( Math.ceil ( doubleValue ) );
+            return Variant.valueOf ( Math.ceil ( doubleValue ) );
         case FLOOR:
-            return new Variant ( Math.floor ( doubleValue ) );
+            return Variant.valueOf ( Math.floor ( doubleValue ) );
         case ROUND:
-            return new Variant ( (double)Math.round ( doubleValue ) );
+            return Variant.valueOf ( (double)Math.round ( doubleValue ) );
         }
 
         return null;
@@ -144,7 +145,7 @@ public class RoundChainItem extends BaseChainItemCommon
         }
         catch ( final Throwable e )
         {
-            attributes.put ( ROUND_ERROR, new Variant ( e.getMessage () ) );
+            attributes.put ( ROUND_ERROR, Variant.valueOf ( e.getMessage () ) );
         }
         return RoundType.NONE;
     }

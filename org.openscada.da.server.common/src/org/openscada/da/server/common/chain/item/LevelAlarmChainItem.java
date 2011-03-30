@@ -124,7 +124,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         catch ( final Throwable e )
         {
             logger.info ( "Failed to evaluate high level alarm", e );
-            attributes.put ( HIGH_ERROR, new Variant ( e.getMessage () ) );
+            attributes.put ( HIGH_ERROR, Variant.valueOf ( e.getMessage () ) );
         }
 
         // low alarm
@@ -138,7 +138,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         catch ( final Throwable e )
         {
             logger.info ( "Failed to evaluate low level alarm", e );
-            attributes.put ( LOW_ERROR, new Variant ( e.getMessage () ) );
+            attributes.put ( LOW_ERROR, Variant.valueOf ( e.getMessage () ) );
         }
 
         // high high alarm
@@ -153,7 +153,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         catch ( final Throwable e )
         {
             logger.info ( "Failed to evaluate high high level alarm", e );
-            attributes.put ( HIGHHIGH_ERROR, new Variant ( e.getMessage () ) );
+            attributes.put ( HIGHHIGH_ERROR, Variant.valueOf ( e.getMessage () ) );
         }
 
         // low low alarm
@@ -167,7 +167,7 @@ public class LevelAlarmChainItem extends BaseChainItemCommon
         catch ( final Throwable e )
         {
             logger.info ( "Failed to evaluate low low level alarm", e );
-            attributes.put ( LOWLOW_ERROR, new Variant ( e.getMessage () ) );
+            attributes.put ( LOWLOW_ERROR, Variant.valueOf ( e.getMessage () ) );
         }
 
         // add our attributes

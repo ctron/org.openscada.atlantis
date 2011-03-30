@@ -57,13 +57,13 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
             // only process if we have a scale factor
             if ( !scaleFactor.isNull () )
             {
-                attributes.put ( getRawName (), new Variant ( value ) );
-                newValue = new Variant ( value.asDouble () * scaleFactor.asDouble () );
+                attributes.put ( getRawName (), Variant.valueOf ( value ) );
+                newValue = Variant.valueOf ( value.asDouble () * scaleFactor.asDouble () );
             }
         }
         catch ( final Exception e )
         {
-            attributes.put ( getErrorName (), new Variant ( e.getMessage () ) );
+            attributes.put ( getErrorName (), Variant.valueOf ( e.getMessage () ) );
         }
 
         addAttributes ( attributes );
