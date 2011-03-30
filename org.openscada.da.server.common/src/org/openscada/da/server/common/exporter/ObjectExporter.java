@@ -151,9 +151,9 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
         attributes.put ( "property.bound", Variant.valueOf ( pd.isBound () ) );
         attributes.put ( "property.expert", Variant.valueOf ( pd.isExpert () ) );
         attributes.put ( "property.constrained", Variant.valueOf ( pd.isConstrained () ) );
-        attributes.put ( "property.label", new Variant ( pd.getDisplayName () ) );
-        attributes.put ( "property.type", new Variant ( pd.getPropertyType ().getName () ) );
-        attributes.put ( "description", new Variant ( pd.getShortDescription () ) );
+        attributes.put ( "property.label", Variant.valueOf ( pd.getDisplayName () ) );
+        attributes.put ( "property.type", Variant.valueOf ( pd.getPropertyType ().getName () ) );
+        attributes.put ( "description", Variant.valueOf ( pd.getShortDescription () ) );
         attributes.put ( "exporter.bound", Variant.valueOf ( this.bound ) );
 
         final Method m = pd.getReadMethod ();
@@ -349,7 +349,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
             if ( e != null )
             {
                 attributes.put ( "value.error", Variant.TRUE );
-                attributes.put ( "value.error.message", new Variant ( e.getMessage () ) );
+                attributes.put ( "value.error.message", Variant.valueOf ( e.getMessage () ) );
             }
             else
             {
@@ -358,7 +358,7 @@ public class ObjectExporter implements PropertyChangeListener, Disposable
             }
 
             final DataItemInputChained inputItem = (DataItemInputChained)item;
-            inputItem.updateData ( new Variant ( newValue ), attributes, AttributeMode.UPDATE );
+            inputItem.updateData ( Variant.valueOf ( newValue ), attributes, AttributeMode.UPDATE );
         }
     }
 }
