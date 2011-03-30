@@ -99,7 +99,6 @@ public class MemoryDataItem extends DataItemBase
         }
 
         return new InstantFuture<WriteAttributeResults> ( writeAttributeResults );
-
     }
 
 }
