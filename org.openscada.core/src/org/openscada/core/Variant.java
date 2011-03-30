@@ -83,6 +83,11 @@ public class Variant implements Serializable, Comparable<Variant>
         }
     }
 
+    public static Variant valueOf ( final double value )
+    {
+        return new Variant ( value );
+    }
+
     public static Variant valueOf ( final boolean value )
     {
         return value ? TRUE : FALSE;
@@ -109,6 +114,10 @@ public class Variant implements Serializable, Comparable<Variant>
         if ( value instanceof Integer )
         {
             return valueOf ( ( (Integer)value ).intValue () );
+        }
+        if ( value instanceof Double )
+        {
+            return valueOf ( ( (Double)value ).doubleValue () );
         }
         return new Variant ( value );
     }
