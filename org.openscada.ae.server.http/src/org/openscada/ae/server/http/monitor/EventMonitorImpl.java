@@ -106,7 +106,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
 
     private Variant makeMessage ( final Event event )
     {
-        return event.getAttributes ().get ( Event.Fields.MESSAGE );
+        return event.getAttributes ().get ( Event.Fields.MESSAGE.getName () );
     }
 
     private Variant annotateCommentWithSource ( final Event event )
