@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -43,10 +44,12 @@ import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
+import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
 import org.openscada.da.datasource.base.DataSourceHandler;
+import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -78,6 +81,8 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private ScheduledFuture<?> timer;
 
+    private String writeCommand;
+
     public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor )
     {
         super ( poolTracker );
@@ -105,16 +110,110 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         return this.executor;
     }
 
+    protected Object performWrite ( final String command, final Variant value, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws Exception
+    {
+        this.scriptContext.setAttribute ( "value", value, ScriptContext.ENGINE_SCOPE );
+        this.scriptContext.setAttribute ( "attributes", attributes, ScriptContext.ENGINE_SCOPE );
+        this.scriptContext.setAttribute ( "parameters", operationParameters, ScriptContext.ENGINE_SCOPE );
+
+        return performScript ( command, this.scriptContext );
+    }
+
     @Override
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
-        return new InstantErrorFuture<WriteAttributeResults> ( new OperationException ( "Not supported" ) );
+        final String writeCommand = this.writeCommand;
+        if ( writeCommand == null )
+        {
+            return new InstantErrorFuture<WriteAttributeResults> ( new OperationException ( "Not supported" ) );
+        }
+
+        final FutureTask<WriteAttributeResults> task = new FutureTask<WriteAttributeResults> ( new Callable<WriteAttributeResults> () {
+            @Override
+            public WriteAttributeResults call () throws Exception
+            {
+                return convertAttributeResult ( attributes, performWrite ( writeCommand, null, attributes, operationParameters ) );
+            }
+        } );
+        this.executor.execute ( task );
+        return task;
+    }
+
+    protected WriteAttributeResults convertAttributeResult ( final Map<String, Variant> attributes, final Object result )
+    {
+        if ( result == null )
+        {
+            final WriteAttributeResults r = new WriteAttributeResults ();
+
+            // mark all as ok
+            for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
+            {
+                r.put ( entry.getKey (), WriteAttributeResult.OK );
+            }
+            return r;
+        }
+        if ( result instanceof WriteAttributeResults )
+        {
+            return (WriteAttributeResults)result;
+        }
+        if ( result instanceof Map<?, ?> )
+        {
+            final WriteAttributeResults r = new WriteAttributeResults ();
+
+            final Map<?, ?> map = (Map<?, ?>)result;
+            for ( final Map.Entry<?, ?> entry : map.entrySet () )
+            {
+                if ( entry.getKey () instanceof String && entry.getValue () instanceof WriteAttributeResult )
+                {
+                    r.put ( (String)entry.getKey (), (WriteAttributeResult)entry.getValue () );
+                }
+            }
+            return r;
+        }
+
+        // else ...
+
+        final WriteAttributeResults r = new WriteAttributeResults ();
+
+        // mark all as ok
+        for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
+        {
+            r.put ( entry.getKey (), new WriteAttributeResult ( new OperationException ( String.format ( "Write attribute result error: %s", result ) ) ) );
+        }
+        return r;
+    }
+
+    protected WriteResult convertValueResult ( final Object result )
+    {
+        if ( result == null )
+        {
+            return WriteResult.OK;
+        }
+        if ( result instanceof WriteResult )
+        {
+            return (WriteResult)result;
+        }
+        return new WriteResult ( new OperationException ( String.format ( "Write error: %s", result ) ) );
     }
 
     @Override
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
-        return new InstantErrorFuture<WriteResult> ( new OperationException ( "Not supported" ) );
+        final String writeCommand = this.writeCommand;
+        if ( writeCommand == null )
+        {
+            return new InstantErrorFuture<WriteResult> ( new OperationException ( "Not supported" ) );
+        }
+
+        final FutureTask<WriteResult> task = new FutureTask<WriteResult> ( new Callable<WriteResult> () {
+            @Override
+            public WriteResult call () throws Exception
+            {
+                return convertValueResult ( performWrite ( writeCommand, value, null, operationParameters ) );
+            }
+        } );
+        this.executor.execute ( task );
+        return task;
     }
 
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
@@ -200,6 +299,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
         this.updateCommand = cfg.getString ( "updateCommand" );
         this.timerCommand = cfg.getString ( "timerCommand" );
+        this.writeCommand = cfg.getString ( "writeCommand" );
     }
 
     protected synchronized void handleTimer ()
@@ -215,7 +315,6 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
     @Override
     protected synchronized void handleChange ()
     {
-
         // calcuate
         // gather all data
         final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ();
@@ -230,6 +329,20 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         executeScript ( this.updateCommand );
     }
 
+    protected Object performScript ( final String command, final ScriptContext scriptContext ) throws Exception
+    {
+        final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
+        try
+        {
+            Thread.currentThread ().setContextClassLoader ( this.classLoader );
+            return this.scriptEngine.eval ( command, scriptContext );
+        }
+        finally
+        {
+            Thread.currentThread ().setContextClassLoader ( currentClassLoader );
+        }
+    }
+
     protected void executeScript ( final String command )
     {
         if ( command == null )
@@ -237,22 +350,15 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
             return;
         }
 
-        final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
-
         try
         {
-            Thread.currentThread ().setContextClassLoader ( this.classLoader );
-            setResult ( this.scriptEngine.eval ( command, this.scriptContext ) );
+            setResult ( performScript ( command, this.scriptContext ) );
         }
         catch ( final Throwable e )
         {
             logger.warn ( "Failed to evaluate", e );
             logger.debug ( "Failed script: {}", command );
             setError ( e );
-        }
-        finally
-        {
-            Thread.currentThread ().setContextClassLoader ( currentClassLoader );
         }
     }
 
@@ -262,7 +368,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         builder.setValue ( Variant.NULL );
         builder.setTimestamp ( Calendar.getInstance () );
         builder.setAttribute ( "script.error", Variant.TRUE );
-        builder.setAttribute ( "script.error.message", new Variant ( e.getMessage () ) );
+        builder.setAttribute ( "script.error.message", Variant.valueOf ( e.getMessage () ) );
         updateData ( builder.build () );
     }
 
