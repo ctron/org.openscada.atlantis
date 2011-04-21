@@ -19,6 +19,11 @@
 
 package org.openscada.da.server.common.exporter;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
+import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
@@ -27,6 +32,8 @@ public class StaticObjectExporter<T> extends AbstractObjectExporter
 {
 
     private T target;
+
+    private HashMap<String, Variant> additionalAttributes;
 
     public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz )
     {
@@ -44,22 +51,72 @@ public class StaticObjectExporter<T> extends AbstractObjectExporter
 
     public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz, final boolean readOnly )
     {
-        super ( localId, rootFactory, readOnly );
+        this ( localId, rootFactory, modelClazz, readOnly, false );
+    }
+
+    public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz, final boolean readOnly, final boolean nullIsError )
+    {
+        super ( localId, rootFactory, readOnly, nullIsError );
 
         createDataItems ( modelClazz );
     }
 
     public StaticObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final Class<T> modelClazz, final boolean readOnly )
     {
-        super ( localId, hive, rootFolder, readOnly );
+        this ( localId, hive, rootFolder, modelClazz, readOnly, false );
+    }
+
+    public StaticObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final Class<T> modelClazz, final boolean readOnly, final boolean nullIsError )
+    {
+        super ( localId, hive, rootFolder, readOnly, nullIsError );
 
         createDataItems ( modelClazz );
+    }
+
+    public synchronized void setTarget ( final T target, final Map<String, Variant> attributes )
+    {
+        this.target = target;
+        applyAttributes ( attributes );
+        updateItemsFromTarget ();
     }
 
     public synchronized void setTarget ( final T target )
     {
         this.target = target;
         updateItemsFromTarget ();
+    }
+
+    public synchronized void setAttributes ( final Map<String, Variant> attributes )
+    {
+        applyAttributes ( attributes );
+
+        // refresh
+        updateItemsFromTarget ();
+    }
+
+    private void applyAttributes ( final Map<String, Variant> attributes )
+    {
+        if ( attributes == null )
+        {
+            this.additionalAttributes = null;
+        }
+        else
+        {
+            this.additionalAttributes = new HashMap<String, Variant> ( attributes );
+        }
+    }
+
+    @Override
+    protected Map<String, Variant> getAdditionalAttributes ()
+    {
+        if ( this.additionalAttributes == null )
+        {
+            return null;
+        }
+        else
+        {
+            return Collections.unmodifiableMap ( this.additionalAttributes );
+        }
     }
 
     @Override

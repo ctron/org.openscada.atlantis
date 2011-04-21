@@ -23,6 +23,7 @@ import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.beans.PropertyDescriptor;
 import java.lang.reflect.Method;
+import java.util.Collections;
 import java.util.Map;
 
 import org.openscada.core.Variant;
@@ -41,6 +42,8 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
 
     private boolean bound;
 
+    private Map<String, Variant> additionalAttributes;
+
     public ObjectExporter ( final String localId, final FolderItemFactory rootFactory )
     {
         super ( localId, rootFactory );
@@ -53,12 +56,22 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
 
     public ObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly )
     {
-        super ( localId, rootFactory, readOnly );
+        this ( localId, rootFactory, readOnly, false );
+    }
+
+    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly, final boolean nullIsError )
+    {
+        super ( localId, rootFactory, readOnly, nullIsError );
     }
 
     public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly )
     {
-        super ( localId, hive, rootFolder, readOnly );
+        this ( localId, hive, rootFolder, readOnly, false );
+    }
+
+    public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly, final boolean nullIsError )
+    {
+        super ( localId, hive, rootFolder, readOnly, nullIsError );
     }
 
     /**
@@ -89,11 +102,24 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
         createDataItems ( target.getClass () );
     }
 
-    @Override
-    protected void initAttribute ( final PropertyDescriptor pd )
+    public synchronized void setAttributes ( final Map<String, Variant> additionalAttributes )
     {
-        super.initAttribute ( pd );
+        if ( additionalAttributes != null )
+        {
+            this.additionalAttributes = Collections.unmodifiableMap ( additionalAttributes );
+        }
+        else
+        {
+            this.additionalAttributes = null;
+        }
 
+        updateItemsFromTarget ();
+    }
+
+    @Override
+    protected Map<String, Variant> getAdditionalAttributes ()
+    {
+        return this.additionalAttributes;
     }
 
     @Override

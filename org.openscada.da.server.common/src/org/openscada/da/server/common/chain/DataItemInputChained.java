@@ -76,7 +76,7 @@ public class DataItemInputChained extends DataItemBaseChained
         // handle value change
         if ( value != null && !this.primaryValue.equals ( value ) )
         {
-            this.primaryValue = new Variant ( value );
+            this.primaryValue = Variant.valueOf ( value );
             changed = true;
         }
 
@@ -109,7 +109,7 @@ public class DataItemInputChained extends DataItemBaseChained
     @Override
     protected void process ()
     {
-        Variant newSecondaryValue = new Variant ( this.primaryValue );
+        Variant newSecondaryValue = Variant.valueOf ( this.primaryValue );
         final Map<String, Variant> newAttributes = new HashMap<String, Variant> ( this.primaryAttributes );
 
         for ( final ChainProcessEntry entry : getChainCopy () )
@@ -127,7 +127,7 @@ public class DataItemInputChained extends DataItemBaseChained
         Variant newValue = null;
         if ( !this.secondaryValue.equals ( newSecondaryValue ) )
         {
-            newValue = this.secondaryValue = new Variant ( newSecondaryValue );
+            newValue = this.secondaryValue = Variant.valueOf ( newSecondaryValue );
         }
 
         this.secondaryAttributes.set ( newValue, newAttributes );

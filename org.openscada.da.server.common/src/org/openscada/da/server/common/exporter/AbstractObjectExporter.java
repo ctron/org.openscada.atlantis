@@ -58,26 +58,30 @@ public abstract class AbstractObjectExporter implements Disposable
 
     private final boolean readOnly;
 
+    private final boolean nullIsError;
+
     public AbstractObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder )
     {
-        this ( localId, hive, rootFolder, false );
+        this ( localId, hive, rootFolder, false, false );
     }
 
     public AbstractObjectExporter ( final String localId, final FolderItemFactory rootFactory )
     {
-        this ( localId, rootFactory, false );
+        this ( localId, rootFactory, false, false );
     }
 
-    public AbstractObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly )
+    public AbstractObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly, final boolean nullIsError )
     {
         this.factory = new FolderItemFactory ( hive, rootFolder, localId, localId );
         this.readOnly = readOnly;
+        this.nullIsError = nullIsError;
     }
 
-    public AbstractObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly )
+    public AbstractObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly, final boolean nullIsError )
     {
         this.factory = rootFactory.createSubFolderFactory ( localId );
         this.readOnly = readOnly;
+        this.nullIsError = nullIsError;
     }
 
     @Override
@@ -132,9 +136,14 @@ public abstract class AbstractObjectExporter implements Disposable
         {
             if ( !updatedAttributes.contains ( key ) )
             {
-                updateAttribute ( key, null, null, null );
+                updateAttribute ( key, null, null, getAdditionalAttributes () );
             }
         }
+    }
+
+    protected Map<String, Variant> getAdditionalAttributes ()
+    {
+        return null;
     }
 
     /**
@@ -145,6 +154,12 @@ public abstract class AbstractObjectExporter implements Disposable
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         fillAttributes ( pd, attributes );
+
+        final Map<String, Variant> additionalAttributes = getAdditionalAttributes ();
+        if ( additionalAttributes != null )
+        {
+            attributes.putAll ( additionalAttributes );
+        }
 
         final Object target = getTarget ();
 
@@ -239,14 +254,14 @@ public abstract class AbstractObjectExporter implements Disposable
                 attributes.put ( "value.error", Variant.TRUE );
                 attributes.put ( "value.error.message", Variant.valueOf ( e.getMessage () ) );
             }
-            else
+
+            if ( this.nullIsError && newValue == null )
             {
-                attributes.put ( "value.error", null );
-                attributes.put ( "value.error.message", null );
+                attributes.put ( "null.error", Variant.TRUE );
             }
 
             final DataItemInputChained inputItem = (DataItemInputChained)item;
-            inputItem.updateData ( Variant.valueOf ( newValue ), attributes, AttributeMode.UPDATE );
+            inputItem.updateData ( Variant.valueOf ( newValue ), attributes, AttributeMode.SET );
         }
     }
 
