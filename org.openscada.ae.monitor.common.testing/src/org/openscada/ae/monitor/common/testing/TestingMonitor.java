@@ -45,6 +45,7 @@ public class TestingMonitor extends AbstractStateMachineMonitorService implement
         super ( context, executor, eventProcessor, sourceName );
         this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 TestingMonitor.this.tick ();
@@ -56,11 +57,11 @@ public class TestingMonitor extends AbstractStateMachineMonitorService implement
     {
         if ( this.r.nextBoolean () )
         {
-            setOk ( new Variant ( true ), new Date () );
+            setOk ( Variant.valueOf ( true ), new Date () );
         }
         else
         {
-            setFailure ( new Variant ( false ), new Date () );
+            setFailure ( Variant.valueOf ( false ), new Date () );
         }
     }
 
@@ -69,6 +70,7 @@ public class TestingMonitor extends AbstractStateMachineMonitorService implement
         this.scheduler.shutdown ();
     }
 
+    @Override
     public boolean acknowledge ( final String conditionId, final UserInformation aknUser, final Date aknTimestamp )
     {
         if ( getId ().equals ( conditionId ) )
