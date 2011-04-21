@@ -263,15 +263,15 @@ public class MutableEvent
     {
         final Map<String, Variant> attr = new HashMap<String, Variant> ( m.getAttributes () );
         // often used fields
-        attr.put ( "monitorType", new Variant ( intern ( m.monitorType ) ) );
-        attr.put ( "eventType", new Variant ( intern ( m.eventType ) ) );
+        attr.put ( "monitorType", Variant.valueOf ( intern ( m.monitorType ) ) );
+        attr.put ( "eventType", Variant.valueOf ( intern ( m.eventType ) ) );
         attr.put ( "value", m.value );
-        attr.put ( "message", new Variant ( m.message ) );
-        attr.put ( "messageCode", new Variant ( intern ( m.messageCode ) ) );
+        attr.put ( "message", Variant.valueOf ( m.message ) );
+        attr.put ( "messageCode", Variant.valueOf ( intern ( m.messageCode ) ) );
         attr.put ( "priority", Variant.valueOf ( m.priority ) );
-        attr.put ( "source", new Variant ( m.source ) );
-        attr.put ( "actorName", new Variant ( intern ( m.actorName ) ) );
-        attr.put ( "actorType", new Variant ( intern ( m.actorType ) ) );
+        attr.put ( "source", Variant.valueOf ( m.source ) );
+        attr.put ( "actorName", Variant.valueOf ( intern ( m.actorName ) ) );
+        attr.put ( "actorType", Variant.valueOf ( intern ( m.actorType ) ) );
         return Event.create ().id ( m.id ).sourceTimestamp ( m.sourceTimestamp ).entryTimestamp ( m.entryTimestamp ).attributes ( attr ).build ();
     }
 

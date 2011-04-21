@@ -59,7 +59,7 @@ public class VariantHibernateType implements CompositeUserType, Serializable
     @Override
     public Object deepCopy ( final Object value ) throws HibernateException
     {
-        return new Variant ( (Variant)value );
+        return Variant.valueOf ( value );
     }
 
     @Override
@@ -203,7 +203,7 @@ public class VariantHibernateType implements CompositeUserType, Serializable
                 return Variant.valueOf ( d );
             }
         }
-        return new Variant ( str );
+        return Variant.valueOf ( str );
     }
 
     @Override

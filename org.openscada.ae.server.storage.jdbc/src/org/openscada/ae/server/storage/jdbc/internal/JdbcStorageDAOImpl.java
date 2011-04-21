@@ -160,14 +160,14 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
         }
         if ( event.getValue () != null && event.getValue ().isString () && event.getValue ().asString ( "" ).length () > this.maxLength )
         {
-            event.setValue ( new Variant ( event.getValue ().asString ( "" ).substring ( 0, this.maxLength ) ) );
+            event.setValue ( Variant.valueOf ( event.getValue ().asString ( "" ).substring ( 0, this.maxLength ) ) );
         }
         for ( final String key : event.getAttributes ().keySet () )
         {
             final Variant value = event.getAttributes ().get ( key );
             if ( value != null && value.isString () && value.asString ( "" ).length () > this.maxLength )
             {
-                event.getAttributes ().put ( key, new Variant ( value.asString ( "" ).substring ( 0, this.maxLength ) ) );
+                event.getAttributes ().put ( key, Variant.valueOf ( value.asString ( "" ).substring ( 0, this.maxLength ) ) );
             }
         }
     }

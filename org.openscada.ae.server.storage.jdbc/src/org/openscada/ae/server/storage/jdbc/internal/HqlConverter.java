@@ -203,7 +203,7 @@ public class HqlConverter
                 if ( value != null && value instanceof Variant )
                 {
                     final PropertyEditor pe = FilterUtils.propertyEditorRegistry.findCustomEditor ( properties.get ( field ) );
-                    pe.setAsText ( new Variant ( value ).asString ( "" ) );
+                    pe.setAsText ( Variant.valueOf ( value ).asString ( "" ) );
                     term.parameters = new Object[] { pe.getValue () };
                 }
                 else
@@ -241,7 +241,7 @@ public class HqlConverter
                     }
                     else
                     {
-                        term.parameters = new Object[] { new Variant ( value ).asString ( "" ) };
+                        term.parameters = new Object[] { Variant.valueOf ( value ).asString ( "" ) };
                     }
                 }
                 else if ( "approximate".equals ( op ) )
@@ -253,7 +253,7 @@ public class HqlConverter
                     }
                     else
                     {
-                        term.parameters = new Object[] { new Variant ( value ).asString ( "" ) };
+                        term.parameters = new Object[] { Variant.valueOf ( value ).asString ( "" ) };
                     }
                 }
                 else
@@ -264,7 +264,7 @@ public class HqlConverter
                     }
                     else
                     {
-                        term.parameters = new Object[] { new Variant ( value ).asString ( null ), new Variant ( value ).asLong ( null ), new Variant ( value ).asDouble ( null ) };
+                        term.parameters = new Object[] { Variant.valueOf ( value ).asString ( null ), Variant.valueOf ( value ).asLong ( null ), Variant.valueOf ( value ).asDouble ( null ) };
                     }
                     term.hql += "(M." + field + ".string " + op + " ?) OR (M." + field + ".integer " + op + " ?) OR (M." + field + ".double " + op + " ?))";
                 }

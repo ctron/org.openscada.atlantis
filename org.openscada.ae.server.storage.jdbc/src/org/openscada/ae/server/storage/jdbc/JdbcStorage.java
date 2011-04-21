@@ -199,6 +199,6 @@ public class JdbcStorage extends BaseStorage
     @Override
     public Event update ( final UUID id, final String comment, final StoreListener listener ) throws Exception
     {
-        return updateInternal ( id, new Variant ( comment ), listener );
+        return updateInternal ( id, Variant.valueOf ( comment ), listener );
     }
 }
