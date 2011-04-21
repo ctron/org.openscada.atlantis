@@ -94,7 +94,7 @@ public class VariantBeanHelper
             final Method m = pd.getReadMethod ();
             if ( m != null )
             {
-                result.put ( pd.getName (), new Variant ( m.invoke ( source ) ) );
+                result.put ( pd.getName (), Variant.valueOf ( m.invoke ( source ) ) );
             }
         }
         return result;
@@ -121,7 +121,7 @@ public class VariantBeanHelper
             {
                 try
                 {
-                    result.put ( pd.getName (), new Variant ( m.invoke ( source ) ) );
+                    result.put ( pd.getName (), Variant.valueOf ( m.invoke ( source ) ) );
                 }
                 catch ( final Exception e )
                 {
