@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -76,7 +76,7 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
         final boolean newReference = Boolean.parseBoolean ( properties.get ( "reference" ) );
         if ( isDifferent ( this.reference, newReference ) )
         {
-            final EventBuilder builder = EventHelper.newConfigurationEvent ( this.getId (), "Change reference value", Variant.valueOf ( newReference ), new Date () );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Change reference value", Variant.valueOf ( newReference ), new Date () );
             injectEventAttributes ( builder );
             publishEvent ( builder );
             this.reference = newReference;
@@ -113,11 +113,11 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
         }
         else if ( this.value == this.reference )
         {
-            setOk ( new Variant ( this.value ), this.timestamp );
+            setOk ( Variant.valueOf ( this.value ), this.timestamp );
         }
         else
         {
-            setFailure ( new Variant ( this.value ), this.timestamp );
+            setFailure ( Variant.valueOf ( this.value ), this.timestamp );
         }
     }
 }

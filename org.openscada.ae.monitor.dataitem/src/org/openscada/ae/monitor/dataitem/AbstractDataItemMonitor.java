@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,9 +27,9 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.Event;
+import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractStateMachineMonitorService;
 import org.openscada.ca.ConfigurationDataHelper;
@@ -100,6 +100,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         this.defaultMonitorType = defaultMonitorType;
     }
 
+    @Override
     public void dispose ()
     {
         disconnect ();
@@ -111,12 +112,13 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
         for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "info." ).entrySet () )
         {
-            attributes.put ( entry.getKey (), new Variant ( entry.getValue () ) );
+            attributes.put ( entry.getKey (), Variant.valueOf ( entry.getValue () ) );
         }
 
         return attributes;
     }
 
+    @Override
     public synchronized void update ( final Map<String, String> properties ) throws Exception
     {
         disconnect ();
@@ -172,6 +174,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
         this.tracker = new SingleObjectPoolServiceTracker ( this.poolTracker, this.masterId, new ServiceListener () {
 
+            @Override
             public void serviceChange ( final Object service, final Dictionary<?, ?> properties )
             {
                 AbstractDataItemMonitor.this.setMasterItem ( (MasterItem)service );
@@ -198,11 +201,13 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         {
             this.masterItem.addHandler ( this.handler = new MasterItemHandler () {
 
+                @Override
                 public WriteRequestResult processWrite ( final WriteRequest request )
                 {
                     return AbstractDataItemMonitor.this.handleProcessWrite ( request );
                 }
 
+                @Override
                 public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
                 {
                     logger.debug ( "Handle data update: {}", value );
@@ -292,7 +297,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         builder.setAttribute ( this.prefix + ".requireAck", Variant.valueOf ( this.requireAkn ) );
 
         builder.setAttribute ( this.prefix + ".ackRequired", Variant.valueOf ( this.akn ) );
-        builder.setAttribute ( this.prefix + ".state", new Variant ( this.state.toString () ) );
+        builder.setAttribute ( this.prefix + ".state", Variant.valueOf ( this.state.toString () ) );
 
         builder.setAttribute ( this.prefix + ".unsafe", Variant.valueOf ( this.unsafe ) );
 

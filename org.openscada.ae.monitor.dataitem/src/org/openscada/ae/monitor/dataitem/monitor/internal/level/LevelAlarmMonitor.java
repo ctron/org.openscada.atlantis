@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -97,7 +97,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             this.limit = newLimit;
             if ( !isInitialUpdate () )
             {
-                final EventBuilder builder = EventHelper.newConfigurationEvent ( this.getId (), "Change preset", Variant.valueOf ( newLimit ), new Date () );
+                final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Change preset", Variant.valueOf ( newLimit ), new Date () );
                 injectEventAttributes ( builder );
                 publishEvent ( builder );
             }
@@ -121,13 +121,13 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
         if ( active )
         {
-            builder.setAttribute ( this.prefix + ".preset", new Variant ( this.limit ) );
+            builder.setAttribute ( this.prefix + ".preset", Variant.valueOf ( this.limit ) );
         }
         builder.setAttribute ( this.prefix + ".active", active ? Variant.TRUE : Variant.FALSE );
 
         if ( this.cap && this.failure )
         {
-            builder.setAttribute ( this.prefix + ".original.value", new Variant ( this.value ) );
+            builder.setAttribute ( this.prefix + ".original.value", Variant.valueOf ( this.value ) );
         }
     }
 
@@ -177,16 +177,16 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
         else if ( !LevelHelper.isFailure ( this.value.doubleValue (), this.limit, this.lowerOk, this.includedOk ) )
         {
             this.failure = false;
-            setOk ( new Variant ( this.value ), this.timestamp );
+            setOk ( Variant.valueOf ( this.value ), this.timestamp );
         }
         else
         {
             this.failure = true;
             if ( this.cap && isActive () )
             {
-                builder.setValue ( new Variant ( this.limit ) );
+                builder.setValue ( Variant.valueOf ( this.limit ) );
             }
-            setFailure ( new Variant ( this.value ), this.timestamp );
+            setFailure ( Variant.valueOf ( this.value ), this.timestamp );
         }
     }
 

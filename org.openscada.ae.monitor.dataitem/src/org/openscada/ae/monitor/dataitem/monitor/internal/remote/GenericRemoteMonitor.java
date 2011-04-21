@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.MonitorStatus;
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
+import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
@@ -94,6 +94,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
         this.listener = new DataListener () {
 
+            @Override
             public void nodeChanged ( final DataNode node )
             {
                 GenericRemoteMonitor.this.nodeChanged ( node );
@@ -102,6 +103,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
         this.tracker = new SingleServiceTracker ( context, DataStore.class.getName (), new SingleServiceListener () {
 
+            @Override
             public void serviceChange ( final ServiceReference reference, final Object service )
             {
                 GenericRemoteMonitor.this.setStore ( (DataStore)service );
@@ -177,6 +179,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         super.dispose ();
     }
 
+    @Override
     public String getId ()
     {
         return this.id;
@@ -240,6 +243,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         final ArrayList<MonitorListener> listnersClone = new ArrayList<MonitorListener> ( this.listeners );
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 for ( final MonitorListener listener : listnersClone )
@@ -367,7 +371,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     protected Builder injectState ( final Builder builder )
     {
-        builder.setAttribute ( this.id + ".state", new Variant ( this.state.toString () ) );
+        builder.setAttribute ( this.id + ".state", Variant.valueOf ( this.state.toString () ) );
 
         boolean alarm = false;
         switch ( this.state )
@@ -382,6 +386,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         return builder;
     }
 
+    @Override
     public synchronized void addStatusListener ( final MonitorListener listener )
     {
         if ( this.listeners.add ( listener ) )
@@ -389,6 +394,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
             final MonitorStatusInformation state = createStatus ();
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.statusChanged ( state );
@@ -397,17 +403,20 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         }
     }
 
+    @Override
     public synchronized void removeStatusListener ( final MonitorListener listener )
     {
         this.listeners.remove ( listener );
     }
 
+    @Override
     protected void reprocess ()
     {
         if ( !getMasterItems ().isEmpty () )
         {
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     logger.debug ( "Reprocessing {} master items", getMasterItems ().size () );

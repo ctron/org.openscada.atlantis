@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -93,7 +93,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         final Collection<Variant> newReferenceList = parseValues ( cfg.getString ( "referenceList", "" ) );
         if ( isDifferent ( this.referenceList, newReferenceList ) )
         {
-            final EventBuilder builder = EventHelper.newConfigurationEvent ( this.getId (), "Change reference value list", Variant.valueOf ( newReferenceList ), new Date () );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Change reference value list", Variant.valueOf ( newReferenceList ), new Date () );
             injectEventAttributes ( builder );
             publishEvent ( builder );
             this.referenceList = newReferenceList;
@@ -103,7 +103,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         final boolean listIsAlarm = cfg.getBoolean ( "listIsAlarm", true );
         if ( isDifferent ( this.listIsAlarm, listIsAlarm ) )
         {
-            final EventBuilder builder = EventHelper.newConfigurationEvent ( this.getId (), "Items in reference list are alarm", Variant.valueOf ( listIsAlarm ), new Date () );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Items in reference list are alarm", Variant.valueOf ( listIsAlarm ), new Date () );
             injectEventAttributes ( builder );
             publishEvent ( builder );
 
@@ -181,11 +181,11 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         }
         else if ( isOk ( this.value ) )
         {
-            setOk ( new Variant ( this.value ), this.timestamp );
+            setOk ( Variant.valueOf ( this.value ), this.timestamp );
         }
         else
         {
-            setFailure ( new Variant ( this.value ), this.timestamp );
+            setFailure ( Variant.valueOf ( this.value ), this.timestamp );
         }
     }
 
