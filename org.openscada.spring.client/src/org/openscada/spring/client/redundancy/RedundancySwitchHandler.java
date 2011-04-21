@@ -162,7 +162,6 @@ public class RedundancySwitchHandler implements InitializingBean
         } );
     }
 
-
     /**
      * because we can not safely assume that the error chain is correctly configured,
      * we have to check for errors manually
@@ -176,7 +175,7 @@ public class RedundancySwitchHandler implements InitializingBean
         {
             return true;
         }
-        for ( Entry<String, Variant> entry : value.getAttributes ().entrySet () )
+        for ( final Entry<String, Variant> entry : value.getAttributes ().entrySet () )
         {
             if ( entry.getKey ().matches ( ".*\\.error" ) )
             {
@@ -185,7 +184,7 @@ public class RedundancySwitchHandler implements InitializingBean
         }
         return false;
     }
-    
+
     protected void switchConnection ()
     {
         // automatic switch is not wanted, therefore don't switch automatically
@@ -282,9 +281,9 @@ public class RedundancySwitchHandler implements InitializingBean
     {
         logger.info ( "switching to new Master " + connectionId );
         final Map<String, Variant> userAttribute = new HashMap<String, Variant> ();
-        userAttribute.put ( USER_ATTRIBUTE, new Variant ( "automatic" ) );
+        userAttribute.put ( USER_ATTRIBUTE, Variant.valueOf ( "automatic" ) );
         this.redundancySwitcherConnection.writeAttributes ( this.redundancySwitcherItemId, userAttribute );
-        this.redundancySwitcherConnection.writeItem ( this.redundancySwitcherItemId, new Variant ( connectionId ) );
+        this.redundancySwitcherConnection.writeItem ( this.redundancySwitcherItemId, Variant.valueOf ( connectionId ) );
         this.lastSwitchOccured.set ( System.currentTimeMillis () );
     }
 
