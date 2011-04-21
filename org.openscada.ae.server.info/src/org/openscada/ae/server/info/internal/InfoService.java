@@ -22,8 +22,8 @@ package org.openscada.ae.server.info.internal;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Map.Entry;
+import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -97,6 +97,7 @@ public class InfoService
         }
         this.alertActiveItem = new DataInputOutputSource ( executor );
         this.alertActiveItem.setWriteHandler ( new WriteHandler () {
+            @Override
             public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
                 setValue ( InfoService.this.alertActiveItem, value.asBoolean ( false ) );
@@ -104,17 +105,20 @@ public class InfoService
         } );
         this.alertDisabledItem = new DataInputOutputSource ( executor );
         this.alertDisabledItem.setWriteHandler ( new WriteHandler () {
+            @Override
             public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
-                setAlertDisabled ( new Variant ( value ).asBoolean ( false ) );
+                setAlertDisabled ( Variant.valueOf ( value ).asBoolean ( false ) );
             }
         } );
 
         // listener for single monitor
         final MonitorListener ml = new MonitorListener () {
+            @Override
             public void statusChanged ( final MonitorStatusInformation status )
             {
                 executor.execute ( new Runnable () {
+                    @Override
                     public void run ()
                     {
                         handleStatusChanged ( status );
@@ -125,16 +129,19 @@ public class InfoService
 
         // listener for all monitors of a pool
         final ObjectPoolListener objectPoolListener = new ObjectPoolListener () {
+            @Override
             public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
             {
                 ( (MonitorService)service ).addStatusListener ( ml );
             }
 
+            @Override
             public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
             {
                 ( (MonitorService)service ).removeStatusListener ( ml );
             }
 
+            @Override
             public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
             {
                 ( (MonitorService)service ).removeStatusListener ( ml );
@@ -144,16 +151,19 @@ public class InfoService
 
         // listener for all monitor pools
         monitorPoolTracker.addListener ( new ObjectPoolServiceListener () {
+            @Override
             public void poolAdded ( final ObjectPool objectPool, final int priority )
             {
                 objectPool.addListener ( objectPoolListener );
             }
 
+            @Override
             public void poolRemoved ( final ObjectPool objectPool )
             {
                 objectPool.removeListener ( objectPoolListener );
             }
 
+            @Override
             public void poolModified ( final ObjectPool objectPool, final int newPriority )
             {
                 objectPool.removeListener ( objectPoolListener );
@@ -178,6 +188,7 @@ public class InfoService
     public void update ( final Map<String, String> parameters )
     {
         this.executor.execute ( new Runnable () {
+            @Override
             public void run ()
             {
                 handleUpdate ( parameters );
@@ -192,6 +203,7 @@ public class InfoService
     public void dispose ()
     {
         this.executor.execute ( new Runnable () {
+            @Override
             public void run ()
             {
                 unregisterItems ( InfoService.this.prefix );
@@ -354,7 +366,7 @@ public class InfoService
     private void setValue ( final DataInputSource item, final Object value )
     {
         final Builder div = new DataItemValue.Builder ();
-        div.setValue ( new Variant ( value ) );
+        div.setValue ( Variant.valueOf ( value ) );
         item.setValue ( div.build () );
     }
 
