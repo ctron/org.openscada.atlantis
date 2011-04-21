@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -93,6 +93,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
         }
     }
 
+    @Override
     public void delete ( final String configurationId ) throws Exception
     {
         final ItemWrapper item;
@@ -112,6 +113,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
         item.getItem ().stop ();
     }
 
+    @Override
     public void update ( final String configurationId, final Map<String, String> properties ) throws Exception
     {
         logger.info ( "Update call for {} -> {}", new Object[] { configurationId, properties } );
@@ -147,10 +149,10 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
         serviceProperties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( Constants.SERVICE_DESCRIPTION, new Variant ( "A historical item implementation" ) );
-        attributes.put ( Constants.SERVICE_VENDOR, new Variant ( "TH4 SYSTEMS GmbH" ) );
+        attributes.put ( Constants.SERVICE_DESCRIPTION, Variant.valueOf ( "A historical item implementation" ) );
+        attributes.put ( Constants.SERVICE_VENDOR, Variant.valueOf ( "TH4 SYSTEMS GmbH" ) );
         attributes.put ( Constants.SERVICE_PID, Variant.valueOf ( configurationId ) );
-        attributes.put ( "master.id", new Variant ( masterId ) );
+        attributes.put ( "master.id", Variant.valueOf ( masterId ) );
 
         final HistoricalItemImpl item = new HistoricalItemImpl ( configurationId, attributes, masterId, this.context );
 
