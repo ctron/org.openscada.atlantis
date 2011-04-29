@@ -200,6 +200,19 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
         setConnectionInformation ( ConnectionInformation.fromURI ( connectionString ) );
     }
 
+    public String getConnectionStringMasked ()
+    {
+        final ConnectionInformation connectionInformation = this.connectionInformation;
+        if ( connectionInformation != null )
+        {
+            return connectionInformation.toMaskedString ();
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     /**
      * Get the item manager of this connection
      * @return the item manager
