@@ -28,9 +28,14 @@ import org.openscada.core.VariantEditor;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class WriterController
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( WriterController.class );
+
     private final ObjectPoolTracker tracker;
 
     private volatile Map<String, SingleObjectPoolServiceTracker> trackers = Collections.emptyMap ();
@@ -52,6 +57,8 @@ public class WriterController
             final SingleObjectPoolServiceTracker objectTracker = new SingleObjectPoolServiceTracker ( this.tracker, dataSourceId, null );
             objectTracker.open ();
             newTrackers.put ( name, objectTracker );
+
+            logger.debug ( "Added {} as {}", dataSourceId, name );
         }
 
         // swap
