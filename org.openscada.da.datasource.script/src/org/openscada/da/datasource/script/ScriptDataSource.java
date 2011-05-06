@@ -19,12 +19,9 @@
 
 package org.openscada.da.datasource.script;
 
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Map;
-import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledExecutorService;
@@ -243,8 +240,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private void setWriteItems ( final ConfigurationDataHelper cfg )
     {
-        final Set<String> dataSourceIds = new HashSet<String> ( Arrays.asList ( cfg.getString ( "writeSources", "" ).split ( "[, \t\n\r]+" ) ) );
-        this.writer.setWriteItems ( dataSourceIds );
+        this.writer.setWriteItems ( cfg.getPrefixed ( "writeSource." ) );
     }
 
     private void startTimer ( final int period )

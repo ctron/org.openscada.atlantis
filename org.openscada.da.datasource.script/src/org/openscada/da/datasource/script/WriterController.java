@@ -22,7 +22,6 @@ package org.openscada.da.datasource.script;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
 
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
@@ -41,15 +40,18 @@ public class WriterController
         this.tracker = tracker;
     }
 
-    public void setWriteItems ( final Set<String> datasources )
+    public void setWriteItems ( final Map<String, String> datasources )
     {
         // create new tracker map
         final Map<String, SingleObjectPoolServiceTracker> newTrackers = new HashMap<String, SingleObjectPoolServiceTracker> ( 1 );
-        for ( final String dataSourceId : datasources )
+        for ( final Map.Entry<String, String> entry : datasources.entrySet () )
         {
+            final String name = entry.getKey ();
+            final String dataSourceId = entry.getValue ();
+
             final SingleObjectPoolServiceTracker objectTracker = new SingleObjectPoolServiceTracker ( this.tracker, dataSourceId, null );
             objectTracker.open ();
-            newTrackers.put ( dataSourceId, objectTracker );
+            newTrackers.put ( name, objectTracker );
         }
 
         // swap
@@ -63,22 +65,22 @@ public class WriterController
         }
     }
 
-    public void write ( final String dataSourceId, final Object value ) throws Exception
+    public void write ( final String dataSourceName, final Object value ) throws Exception
     {
-        final SingleObjectPoolServiceTracker objectTracker = this.trackers.get ( dataSourceId );
+        final SingleObjectPoolServiceTracker objectTracker = this.trackers.get ( dataSourceName );
         if ( objectTracker == null )
         {
-            throw new IllegalArgumentException ( String.format ( "Data source '%s' is not configured", dataSourceId ) );
+            throw new IllegalArgumentException ( String.format ( "Data source '%s' is not configured", dataSourceName ) );
         }
 
         final Object o = objectTracker.getCurrentService ();
         if ( o == null )
         {
-            throw new IllegalStateException ( String.format ( "Data source '%s' was not found", dataSourceId ) );
+            throw new IllegalStateException ( String.format ( "Data source '%s' was not found", dataSourceName ) );
         }
         if ( ! ( o instanceof DataSource ) )
         {
-            throw new IllegalStateException ( String.format ( "Data source '%s' is not a data source", dataSourceId ) );
+            throw new IllegalStateException ( String.format ( "Data source '%s' is not a data source", dataSourceName ) );
         }
 
         ( (DataSource)o ).startWriteValue ( Variant.valueOf ( value ), null );
