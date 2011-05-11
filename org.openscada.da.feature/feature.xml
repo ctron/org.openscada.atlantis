@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.da"
       label="OpenSCADA DA"
-      version="0.16.0.qualifier"
+      version="0.17.0.qualifier"
       provider-name="TH4 SYSTEMS GmbH">
 
    <description>
@@ -483,5 +483,11 @@ Library.
          install-size="0"
          version="0.0.0"
          unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.server.arduino"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
 
 </feature>
