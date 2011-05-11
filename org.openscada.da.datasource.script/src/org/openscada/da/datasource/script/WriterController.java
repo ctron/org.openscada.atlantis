@@ -74,6 +74,8 @@ public class WriterController
 
     public void write ( final String dataSourceName, final Object value ) throws Exception
     {
+        logger.debug ( "Write request - name: {}, value: {}", dataSourceName, value );
+
         final SingleObjectPoolServiceTracker objectTracker = this.trackers.get ( dataSourceName );
         if ( objectTracker == null )
         {
