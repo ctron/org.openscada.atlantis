@@ -74,7 +74,7 @@ public class ArduinoDevice
             }
 
             @Override
-            public void dataChange ( final Variant[] data )
+            public void dataChange ( final Object[] data )
             {
                 handleData ( data );
             }
@@ -92,11 +92,11 @@ public class ArduinoDevice
         this.deviceStateItem.updateData ( Variant.valueOf ( deviceState.toString () ), null, null );
     }
 
-    protected void handleData ( final Variant[] data )
+    protected void handleData ( final Object[] data )
     {
         for ( int i = 0; i < data.length; i++ )
         {
-            this.items[i].updateData ( data[i], null, null );
+            this.items[i].updateData ( Variant.valueOf ( data[i] ), null, null );
         }
     }
 
