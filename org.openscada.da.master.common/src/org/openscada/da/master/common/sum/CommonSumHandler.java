@@ -78,7 +78,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
 
         if ( this.debug )
         {
-            builder.setAttribute ( this.prefix + ".before", new Variant ( StringHelper.join ( contextSet, "," ) ) );
+            builder.setAttribute ( this.prefix + ".before", Variant.valueOf ( StringHelper.join ( contextSet, "," ) ) );
         }
 
         // sum up
@@ -99,7 +99,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
 
         if ( this.debug )
         {
-            builder.setAttribute ( this.prefix + ".after", new Variant ( StringHelper.join ( contextSet, "," ) ) );
+            builder.setAttribute ( this.prefix + ".after", Variant.valueOf ( StringHelper.join ( contextSet, "," ) ) );
         }
 
         builder.setAttribute ( this.tag, Variant.valueOf ( !matches.isEmpty () ) );

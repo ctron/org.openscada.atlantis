@@ -93,7 +93,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         final Variant originalErrorItems = builder.getAttributes ().remove ( "error.items" );
         if ( originalErrorItems != null )
         {
-            builder.setAttribute ( "error.items", new Variant ( "" ) );
+            builder.setAttribute ( "error.items", Variant.valueOf ( "" ) );
             builder.setAttribute ( getPrefixed ( "error.items.original" ), originalErrorItems );
         }
 

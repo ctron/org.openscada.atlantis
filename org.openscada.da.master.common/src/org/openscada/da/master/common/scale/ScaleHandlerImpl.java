@@ -71,7 +71,7 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
         }
         else
         {
-            return new Variant ( value.asDouble ( null ) * this.factor + this.offset );
+            return Variant.valueOf ( value.asDouble ( null ) * this.factor + this.offset );
         }
     }
 
@@ -91,8 +91,8 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
     protected void injectAttributes ( final Builder builder )
     {
         builder.setAttribute ( getPrefixed ( "active" ), this.active ? Variant.TRUE : Variant.FALSE );
-        builder.setAttribute ( getPrefixed ( "factor" ), new Variant ( this.factor ) );
-        builder.setAttribute ( getPrefixed ( "offset" ), new Variant ( this.offset ) );
+        builder.setAttribute ( getPrefixed ( "factor" ), Variant.valueOf ( this.factor ) );
+        builder.setAttribute ( getPrefixed ( "offset" ), Variant.valueOf ( this.offset ) );
     }
 
     @Override

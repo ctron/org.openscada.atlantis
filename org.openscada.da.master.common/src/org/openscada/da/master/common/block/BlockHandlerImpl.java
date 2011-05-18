@@ -87,7 +87,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             if ( !testRequest.isEmpty () )
             {
                 // if there is a remaining request
-                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, String.format ( "Blocked write request: %s", this.note ), makeString ( testRequest ) );
+                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, String.format ( Messages.getString("BlockHandlerImpl.WriteError"), this.note ), makeString ( testRequest ) ); //$NON-NLS-1$
                 return createBlockedResult ();
             }
         }
@@ -108,10 +108,10 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             {
                 if ( sb.length () > 0 )
                 {
-                    sb.append ( ", " );
+                    sb.append ( ", " ); //$NON-NLS-1$
                 }
                 sb.append ( entry.getKey () );
-                sb.append ( "->" );
+                sb.append ( "->" ); //$NON-NLS-1$
                 sb.append ( entry.getValue () );
             }
         }
@@ -120,7 +120,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     private WriteRequestResult createBlockedResult ()
     {
-        return new WriteRequestResult ( new OperationException ( "Unable to write to blocked item" ) );
+        return new WriteRequestResult ( new OperationException ( Messages.getString("BlockHandlerImpl.OperationException") ) ); //$NON-NLS-1$
     }
 
     @Override
@@ -129,10 +129,10 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
         super.update ( parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.note = updateValue ( cfg.getString ( "note", null ), this.note );
-        this.active = updateValue ( cfg.getBoolean ( "active", false ), this.active );
-        this.user = updateValue ( cfg.getString ( "user", null ), this.user );
-        this.timestamp = cfg.getLong ( "timestamp" );
+        this.note = updateValue ( cfg.getString ( "note", null ), this.note ); //$NON-NLS-1$
+        this.active = updateValue ( cfg.getBoolean ( "active", false ), this.active ); //$NON-NLS-1$
+        this.user = updateValue ( cfg.getString ( "user", null ), this.user ); //$NON-NLS-1$
+        this.timestamp = cfg.getLong ( "timestamp" ); //$NON-NLS-1$
 
         reprocess ();
     }
@@ -151,17 +151,17 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             }
         }
 
-        publishEvent ( null, "Update configuration", newValue );
+        publishEvent ( null, Messages.getString("BlockHandlerImpl.UpdateConfiguration"), newValue ); //$NON-NLS-1$
         return newValue;
     }
 
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( getPrefixed ( "blocked" ), Variant.valueOf ( this.active ) );
-        builder.setAttribute ( getPrefixed ( "active" ), Variant.valueOf ( this.active ) );
-        builder.setAttribute ( getPrefixed ( "note" ), Variant.valueOf ( this.note ) );
-        builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( this.user ) );
-        builder.setAttribute ( getPrefixed ( "timestamp" ), Variant.valueOf ( this.timestamp ) );
+        builder.setAttribute ( getPrefixed ( "blocked" ), Variant.valueOf ( this.active ) ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "active" ), Variant.valueOf ( this.active ) ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "note" ), Variant.valueOf ( this.note ) ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( this.user ) ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "timestamp" ), Variant.valueOf ( this.timestamp ) ); //$NON-NLS-1$
     }
 
     @Override
@@ -169,26 +169,26 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     {
         final Map<String, String> data = new HashMap<String, String> ();
 
-        final Variant active = attributes.get ( "active" );
-        final Variant factor = attributes.get ( "note" );
+        final Variant active = attributes.get ( "active" ); //$NON-NLS-1$
+        final Variant factor = attributes.get ( "note" ); //$NON-NLS-1$
 
         if ( active != null && !active.isNull () )
         {
-            data.put ( "active", active.asString () );
+            data.put ( "active", active.asString () ); //$NON-NLS-1$
         }
         if ( factor != null && !factor.isNull () )
         {
-            data.put ( "note", factor.asString () );
+            data.put ( "note", factor.asString () ); //$NON-NLS-1$
         }
         if ( operationParameters != null && operationParameters.getUserInformation () != null )
         {
             final String name = operationParameters.getUserInformation ().getName ();
             if ( name != null )
             {
-                data.put ( "user", name );
+                data.put ( "user", name ); //$NON-NLS-1$
             }
         }
-        data.put ( "timestamp", "" + System.currentTimeMillis () );
+        data.put ( "timestamp", "" + System.currentTimeMillis () ); //$NON-NLS-1$ //$NON-NLS-2$
 
         return updateConfiguration ( data, attributes, false );
     }
@@ -204,7 +204,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
         if ( user != null && user.getName () != null )
         {
-            builder.attribute ( Fields.ACTOR_TYPE, "USER" );
+            builder.attribute ( Fields.ACTOR_TYPE, "USER" ); //$NON-NLS-1$
             builder.attribute ( Fields.ACTOR_NAME, user.getName () );
         }
 

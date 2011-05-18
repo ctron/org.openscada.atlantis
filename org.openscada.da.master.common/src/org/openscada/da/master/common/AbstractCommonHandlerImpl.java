@@ -73,7 +73,7 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
         {
             final Builder builder = new Builder ( value );
             builder.setAttribute ( getPrefixed ( "error" ), Variant.TRUE );
-            builder.setAttribute ( getPrefixed ( "error.message" ), new Variant ( e.getMessage () ) );
+            builder.setAttribute ( getPrefixed ( "error.message" ), Variant.valueOf ( e.getMessage () ) );
             return builder.build ();
         }
     }
