@@ -35,6 +35,12 @@ import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.configuration.ConfigurableFolder;
 
+/**
+ * A common folder implementation which can be used to easily implement
+ * folders.
+ * @author Jens Reimann
+ *
+ */
 public class FolderCommon implements Folder, ConfigurableFolder
 {
 
@@ -42,6 +48,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
 
     private final Map<Object, FolderListener> listeners = new HashMap<Object, FolderListener> ();
 
+    @Override
     public Entry[] list ( final Stack<String> path ) throws NoSuchFolderException
     {
         if ( path.isEmpty () )
@@ -150,6 +157,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
     /* (non-Javadoc)
      * @see org.openscada.da.server.browser.common.ConfigurableFolder#add(java.lang.String, org.openscada.da.server.browser.common.Folder, java.util.Map)
      */
+    @Override
     public boolean add ( final String name, final Folder folder, final Map<String, Variant> attributes )
     {
         synchronized ( this )
@@ -174,6 +182,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
         return add ( name, dataItem.getInformation (), attributes );
     }
 
+    @Override
     public boolean add ( final String name, final DataItemInformation itemInformation, final Map<String, Variant> attributes )
     {
         if ( itemInformation == null || itemInformation.getName () == null )
@@ -287,6 +296,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
         return false;
     }
 
+    @Override
     public void subscribe ( final Stack<String> path, final FolderListener listener, final Object tag ) throws NoSuchFolderException
     {
         if ( path.isEmpty () )
@@ -299,6 +309,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
         }
     }
 
+    @Override
     public void unsubscribe ( final Stack<String> path, final Object tag ) throws NoSuchFolderException
     {
         if ( path.isEmpty () )
@@ -375,11 +386,13 @@ public class FolderCommon implements Folder, ConfigurableFolder
         return this.entryMap.size ();
     }
 
+    @Override
     public void added ()
     {
 
     }
 
+    @Override
     public void removed ()
     {
         clearListeners ();
