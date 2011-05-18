@@ -50,8 +50,6 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
 
     public static final String FACTORY_ID = "ae.monitor.da.listAlarm";
 
-    private final static Pattern splitPattern = Pattern.compile ( "[, \t\n\r]+" );
-
     private Collection<Variant> referenceList;
 
     private boolean listIsAlarm;
@@ -90,7 +88,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
         // parameter - "referenceList"
-        final Collection<Variant> newReferenceList = parseValues ( cfg.getString ( "referenceList", "" ) );
+        final Collection<Variant> newReferenceList = parseValues ( cfg.getString ( "referenceList", "" ), cfg.getString ( "splitPattern", "[, \t\n\r]+" ) );
         if ( isDifferent ( this.referenceList, newReferenceList ) )
         {
             final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Change reference value list", Variant.valueOf ( newReferenceList ), new Date () );
@@ -113,12 +111,14 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         reprocess ();
     }
 
-    protected Collection<Variant> parseValues ( final String data )
+    protected Collection<Variant> parseValues ( final String data, final String splitPatternString )
     {
         if ( data == null )
         {
             return Collections.emptyList ();
         }
+
+        final Pattern splitPattern = Pattern.compile ( splitPatternString );
 
         final Collection<Variant> result = new LinkedList<Variant> ();
         final String toks[] = splitPattern.split ( data );
