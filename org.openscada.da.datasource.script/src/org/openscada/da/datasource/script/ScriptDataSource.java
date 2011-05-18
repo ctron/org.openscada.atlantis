@@ -66,9 +66,9 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private SimpleScriptContext scriptContext;
 
-    private String updateCommand;
+    private ScriptExecutor updateCommand;
 
-    private String timerCommand;
+    private ScriptExecutor timerCommand;
 
     private ScriptEngine scriptEngine;
 
@@ -78,7 +78,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private ScheduledFuture<?> timer;
 
-    private String writeCommand;
+    private ScriptExecutor writeCommand;
 
     public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor )
     {
@@ -107,7 +107,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         return this.executor;
     }
 
-    protected Object performWrite ( final String command, final Variant value, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws Exception
+    protected Object performWrite ( final ScriptExecutor command, final Variant value, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws Exception
     {
         this.scriptContext.setAttribute ( "value", value, ScriptContext.ENGINE_SCOPE );
         this.scriptContext.setAttribute ( "attributes", attributes, ScriptContext.ENGINE_SCOPE );
@@ -119,7 +119,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
     @Override
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
-        final String writeCommand = this.writeCommand;
+        final ScriptExecutor writeCommand = this.writeCommand;
         if ( writeCommand == null )
         {
             return new InstantErrorFuture<WriteAttributeResults> ( new OperationException ( "Not supported" ) );
@@ -196,7 +196,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
     @Override
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
-        final String writeCommand = this.writeCommand;
+        final ScriptExecutor writeCommand = this.writeCommand;
         if ( writeCommand == null )
         {
             return new InstantErrorFuture<WriteResult> ( new OperationException ( "Not supported" ) );
@@ -293,9 +293,19 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
             this.scriptEngine.eval ( initScript, this.scriptContext );
         }
 
-        this.updateCommand = cfg.getString ( "updateCommand" );
-        this.timerCommand = cfg.getString ( "timerCommand" );
-        this.writeCommand = cfg.getString ( "writeCommand" );
+        this.updateCommand = makeScript ( cfg.getString ( "updateCommand" ) );
+        this.timerCommand = makeScript ( cfg.getString ( "timerCommand" ) );
+        this.writeCommand = makeScript ( cfg.getString ( "writeCommand" ) );
+    }
+
+    private ScriptExecutor makeScript ( final String string ) throws ScriptException
+    {
+        if ( string == null || string.isEmpty () )
+        {
+            return null;
+        }
+
+        return new ScriptExecutor ( this.scriptEngine, string, this.classLoader );
     }
 
     protected synchronized void handleTimer ()
@@ -325,21 +335,12 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         executeScript ( this.updateCommand );
     }
 
-    protected Object performScript ( final String command, final ScriptContext scriptContext ) throws Exception
+    protected Object performScript ( final ScriptExecutor command, final ScriptContext scriptContext ) throws Exception
     {
-        final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
-        try
-        {
-            Thread.currentThread ().setContextClassLoader ( this.classLoader );
-            return this.scriptEngine.eval ( command, scriptContext );
-        }
-        finally
-        {
-            Thread.currentThread ().setContextClassLoader ( currentClassLoader );
-        }
+        return command.execute ( scriptContext );
     }
 
-    protected void executeScript ( final String command )
+    protected void executeScript ( final ScriptExecutor command )
     {
         if ( command == null )
         {
