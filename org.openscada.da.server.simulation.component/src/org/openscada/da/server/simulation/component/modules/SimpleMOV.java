@@ -43,33 +43,33 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
 
     protected final static int MOV_RUNTIME = 10 * 1000;
 
-    private final long _switchTime = MOV_RUNTIME;
+    private final long switchTime = MOV_RUNTIME;
 
-    private long _lastTick = 0;
+    private long lastTick = 0;
 
-    private long _switchRunning = 0;
+    private long switchRunning = 0;
 
-    private State _switchTarget = null;
+    private State switchTarget = null;
 
-    private boolean _error = false;
+    private boolean error = false;
 
-    private State _state = State.CLOSED;
+    private State state = State.CLOSED;
 
-    private DataItemInputChained _openInput = null;
+    private DataItemInputChained openInput = null;
 
-    private DataItemInputChained _closeInput = null;
+    private DataItemInputChained closeInput = null;
 
-    private DataItemInputChained _transitInput = null;
+    private DataItemInputChained transitInput = null;
 
-    private DataItemInputChained _errorInput = null;
+    private DataItemInputChained errorInput = null;
 
-    private DataItemInputChained _runtimeInput = null;
+    private DataItemInputChained runtimeInput = null;
 
-    private DataItemInputChained _percentInput = null;
+    private DataItemInputChained percentInput = null;
 
-    private DataItemCommand _openCommand = null;
+    private DataItemCommand openCommand = null;
 
-    private DataItemCommand _closeCommand = null;
+    private DataItemCommand closeCommand = null;
 
     private ScheduledExecutorService executor = null;
 
@@ -80,19 +80,19 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
         this.executor = hive.getExecutor ();
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "tag", new Variant ( "mov." + id ) );
-        this._openInput = getInput ( "open-signal", attributes );
-        this._closeInput = getInput ( "close-signal", attributes );
-        this._transitInput = getInput ( "transit-signal", attributes );
-        this._errorInput = getInput ( "error-signal", attributes );
-        this._runtimeInput = getInput ( "runtime-value", attributes );
-        this._percentInput = getInput ( "percent-value", attributes );
+        attributes.put ( "tag", Variant.valueOf ( "mov." + id ) );
+        this.openInput = getInput ( "open-signal", attributes );
+        this.closeInput = getInput ( "close-signal", attributes );
+        this.transitInput = getInput ( "transit-signal", attributes );
+        this.errorInput = getInput ( "error-signal", attributes );
+        this.runtimeInput = getInput ( "runtime-value", attributes );
+        this.percentInput = getInput ( "percent-value", attributes );
 
-        this._lastTick = System.currentTimeMillis ();
+        this.lastTick = System.currentTimeMillis ();
         this.executor.scheduleAtFixedRate ( this, 0, JOB_PERIOD, TimeUnit.MILLISECONDS );
 
-        this._openCommand = getOutput ( "open-command", attributes );
-        this._openCommand.addListener ( new DataItemCommand.Listener () {
+        this.openCommand = getOutput ( "open-command", attributes );
+        this.openCommand.addListener ( new DataItemCommand.Listener () {
 
             @Override
             public void command ( final Variant value )
@@ -100,8 +100,8 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
                 open ();
             }
         } );
-        this._closeCommand = getOutput ( "close-command", attributes );
-        this._closeCommand.addListener ( new DataItemCommand.Listener () {
+        this.closeCommand = getOutput ( "close-command", attributes );
+        this.closeCommand.addListener ( new DataItemCommand.Listener () {
 
             @Override
             public void command ( final Variant value )
@@ -116,7 +116,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
     @Override
     public synchronized void close ()
     {
-        if ( this._state.equals ( State.CLOSED ) )
+        if ( this.state.equals ( State.CLOSED ) )
         {
             return;
         }
@@ -127,7 +127,7 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
     @Override
     public synchronized void open ()
     {
-        if ( this._state.equals ( State.OPENED ) )
+        if ( this.state.equals ( State.OPENED ) )
         {
             return;
         }
@@ -137,22 +137,22 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
 
     public synchronized void startTransit ( final State target, final State currentState )
     {
-        if ( this._switchTarget != null && this._switchTarget.equals ( target ) )
+        if ( this.switchTarget != null && this.switchTarget.equals ( target ) )
         {
             return;
         }
 
-        if ( this._switchRunning > 0 )
+        if ( this.switchRunning > 0 )
         {
-            this._switchRunning = this._switchTime - this._switchRunning;
+            this.switchRunning = this.switchTime - this.switchRunning;
         }
         else
         {
-            this._switchRunning = this._switchTime;
+            this.switchRunning = this.switchTime;
         }
 
-        this._switchTarget = target;
-        this._state = currentState;
+        this.switchTarget = target;
+        this.state = currentState;
 
         update ();
     }
@@ -160,57 +160,57 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
     @Override
     public synchronized void setErrorState ( final boolean state )
     {
-        if ( this._error = state )
+        if ( this.error = state )
         {
             return;
         }
 
-        this._error = state;
+        this.error = state;
     }
 
     protected void setOpenStates ( final boolean open, final boolean close )
     {
-        this._openInput.updateData ( Variant.valueOf ( open ), null, null );
-        this._closeInput.updateData ( Variant.valueOf ( close ), null, null );
-        this._transitInput.updateData ( Variant.valueOf ( isTransit () ), null, null );
+        this.openInput.updateData ( Variant.valueOf ( open ), null, null );
+        this.closeInput.updateData ( Variant.valueOf ( close ), null, null );
+        this.transitInput.updateData ( Variant.valueOf ( isTransit () ), null, null );
     }
 
     protected synchronized void update ()
     {
-        if ( this._error )
+        if ( this.error )
         {
             setOpenStates ( true, true );
         }
         else
         {
-            switch ( this._state )
+            switch ( this.state )
             {
             case CLOSED:
                 setOpenStates ( false, true );
-                this._percentInput.updateData ( Variant.valueOf ( 0.0 ), null, null );
+                this.percentInput.updateData ( Variant.valueOf ( 0.0 ), null, null );
                 break;
             case OPENED:
                 setOpenStates ( true, false );
-                this._percentInput.updateData ( Variant.valueOf ( 1.0 ), null, null );
+                this.percentInput.updateData ( Variant.valueOf ( 1.0 ), null, null );
                 break;
             case TRANSIT_CLOSE:
                 setOpenStates ( false, false );
-                this._percentInput.updateData ( Variant.valueOf ( ( (double)this._switchRunning / (double)this._switchTime ) ), null, null );
+                this.percentInput.updateData ( Variant.valueOf ( ( (double)this.switchRunning / (double)this.switchTime ) ), null, null );
                 break;
             case TRANSIT_OPEN:
                 setOpenStates ( false, false );
-                this._percentInput.updateData ( Variant.valueOf ( 1 - (double)this._switchRunning / (double)this._switchTime ), null, null );
+                this.percentInput.updateData ( Variant.valueOf ( 1 - (double)this.switchRunning / (double)this.switchTime ), null, null );
                 break;
             }
         }
-        this._errorInput.updateData ( Variant.valueOf ( this._error ), null, null );
-        this._runtimeInput.updateData ( Variant.valueOf ( this._switchRunning ), null, null );
+        this.errorInput.updateData ( Variant.valueOf ( this.error ), null, null );
+        this.runtimeInput.updateData ( Variant.valueOf ( this.switchRunning ), null, null );
 
     }
 
     public boolean isTransit ()
     {
-        switch ( this._state )
+        switch ( this.state )
         {
         case TRANSIT_OPEN:
             return true;
@@ -225,25 +225,25 @@ public class SimpleMOV extends BaseModule implements MOV, Runnable
     public synchronized void run ()
     {
         final long ts = System.currentTimeMillis ();
-        final long diff = ts - this._lastTick;
-        this._lastTick = ts;
+        final long diff = ts - this.lastTick;
+        this.lastTick = ts;
 
-        this._switchRunning -= diff;
+        this.switchRunning -= diff;
 
-        if ( this._switchRunning < 0 )
+        if ( this.switchRunning < 0 )
         {
-            this._switchRunning = 0;
+            this.switchRunning = 0;
         }
 
-        if ( this._switchTarget == null )
+        if ( this.switchTarget == null )
         {
             return;
         }
 
-        if ( this._switchRunning == 0 )
+        if ( this.switchRunning == 0 )
         {
-            this._state = this._switchTarget;
-            this._switchTarget = null;
+            this.state = this.switchTarget;
+            this.switchTarget = null;
         }
 
         update ();

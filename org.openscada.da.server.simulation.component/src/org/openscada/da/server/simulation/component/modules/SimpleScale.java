@@ -35,32 +35,32 @@ public class SimpleScale extends BaseModule
 {
     private final static Logger logger = LoggerFactory.getLogger ( SimpleScale.class );
 
-    private Thread _thread = null;
+    private Thread thread = null;
 
-    private final int _minDelay = 2 * 1000;
+    private final int minDelay = 2 * 1000;
 
-    private final int _maxDelay = 10 * 1000;
+    private final int maxDelay = 10 * 1000;
 
-    private final int _minWeight = 10000;
+    private final int minWeight = 10000;
 
-    private final int _maxWeight = 30000;
+    private final int maxWeight = 30000;
 
-    private final double _errorRatio = 0.10;
+    private final double errorRatio = 0.10;
 
-    private final DataItemInputChained _valueInput;
+    private final DataItemInputChained valueInput;
 
-    private final DataItemInputChained _errorInput;
+    private final DataItemInputChained errorInput;
 
-    private final DataItemInputChained _activeInput;
+    private final DataItemInputChained activeInput;
 
-    private static Random _random = new Random ();
+    private static final Random random = new Random ();
 
     public SimpleScale ( final Hive hive, final String id )
     {
         super ( hive, "scale." + id );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "tag", new Variant ( "scale." + id ) );
+        attributes.put ( "tag", Variant.valueOf ( "scale." + id ) );
 
         final DataItemCommand startCommand = getOutput ( "start", attributes );
         startCommand.addListener ( new DataItemCommand.Listener () {
@@ -72,19 +72,19 @@ public class SimpleScale extends BaseModule
             }
         } );
 
-        this._valueInput = getInput ( "value", attributes );
-        this._errorInput = getInput ( "error", attributes );
-        this._activeInput = getInput ( "active", new MapBuilder<String, Variant> ( attributes ).put ( "description", new Variant ( "An indicator if a weight process is active. True means: active, false: not active" ) ).getMap () );
-        this._activeInput.updateData ( Variant.valueOf ( false ), null, null );
+        this.valueInput = getInput ( "value", attributes );
+        this.errorInput = getInput ( "error", attributes );
+        this.activeInput = getInput ( "active", new MapBuilder<String, Variant> ( attributes ).put ( "description", Variant.valueOf ( "An indicator if a weight process is active. True means: active, false: not active" ) ).getMap () );
+        this.activeInput.updateData ( Variant.valueOf ( false ), null, null );
     }
 
     protected synchronized void startWeight ()
     {
-        if ( this._thread != null )
+        if ( this.thread != null )
         {
             return;
         }
-        this._thread = new Thread ( new Runnable () {
+        this.thread = new Thread ( new Runnable () {
 
             @Override
             public void run ()
@@ -92,15 +92,15 @@ public class SimpleScale extends BaseModule
                 performWeight ();
             }
         } );
-        this._thread.start ();
+        this.thread.start ();
     }
 
     protected void performWeight ()
     {
-        final int delay = this._minDelay + _random.nextInt ( this._maxDelay - this._minDelay );
+        final int delay = this.minDelay + random.nextInt ( this.maxDelay - this.minDelay );
         logger.debug ( String.format ( "Weight delay: %d", delay ) );
 
-        this._activeInput.updateData ( Variant.valueOf ( true ), new MapBuilder<String, Variant> ().put ( "sim.scale.last-delay", new Variant ( delay ) ).getMap (), null );
+        this.activeInput.updateData ( Variant.TRUE, new MapBuilder<String, Variant> ().put ( "sim.scale.last-delay", Variant.valueOf ( delay ) ).getMap (), null );
 
         try
         {
@@ -110,34 +110,34 @@ public class SimpleScale extends BaseModule
         {
         }
 
-        final boolean error = _random.nextDouble () < this._errorRatio;
+        final boolean error = random.nextDouble () < this.errorRatio;
 
         if ( error )
         {
-            final int errorCode = _random.nextInt ( 255 );
+            final int errorCode = random.nextInt ( 255 );
             finishWithError ( errorCode );
         }
         else
         {
-            final int weight = this._minWeight + _random.nextInt ( this._maxWeight - this._minWeight );
+            final int weight = this.minWeight + random.nextInt ( this.maxWeight - this.minWeight );
             finishWeight ( weight );
         }
 
-        this._activeInput.updateData ( Variant.valueOf ( false ), null, null );
+        this.activeInput.updateData ( Variant.valueOf ( false ), null, null );
 
-        this._thread = null;
+        this.thread = null;
     }
 
     protected void finishWeight ( final int value )
     {
-        this._valueInput.updateData ( Variant.valueOf ( value ), null, null );
-        this._errorInput.updateData ( Variant.NULL, null, null );
+        this.valueInput.updateData ( Variant.valueOf ( value ), null, null );
+        this.errorInput.updateData ( Variant.NULL, null, null );
     }
 
     protected void finishWithError ( final int errorCode )
     {
-        this._valueInput.updateData ( Variant.NULL, null, null );
-        this._errorInput.updateData ( Variant.valueOf ( errorCode ), null, null );
+        this.valueInput.updateData ( Variant.NULL, null, null );
+        this.errorInput.updateData ( Variant.valueOf ( errorCode ), null, null );
     }
 
 }
