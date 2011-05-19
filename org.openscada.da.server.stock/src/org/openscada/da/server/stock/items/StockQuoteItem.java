@@ -80,7 +80,7 @@ public class StockQuoteItem extends DataItemInputCommon implements StockQuoteLis
 
         if ( stockQuote.getValue () != null )
         {
-            value = new Variant ( stockQuote.getValue () );
+            value = Variant.valueOf ( stockQuote.getValue () );
             attributes.put ( "stock.error", null );
         }
         else

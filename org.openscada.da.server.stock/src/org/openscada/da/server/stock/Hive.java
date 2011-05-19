@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -43,11 +43,11 @@ public class Hive extends HiveCommon
 
     private static final int UPDATE_PERIOD = 30 * 1000;
 
-    private final ScheduledExecutorService _scheduler = Executors.newSingleThreadScheduledExecutor ();
+    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor ();
 
-    private FolderCommon _symbolsFolder = null;
+    private FolderCommon symbolsFolder = null;
 
-    private UpdateManager _updateManager = null;
+    private UpdateManager updateManager = null;
 
     public Hive () throws ConfigurationError, IOException, XmlException
     {
@@ -65,8 +65,8 @@ public class Hive extends HiveCommon
         setRootFolder ( rootFolder );
 
         // create and register test folder
-        this._symbolsFolder = new FolderCommon ();
-        rootFolder.add ( "symbols", this._symbolsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This folder contains the items by stock symbol" ) ).getMap () );
+        this.symbolsFolder = new FolderCommon ();
+        rootFolder.add ( "symbols", this.symbolsFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This folder contains the items by stock symbol" ) ).getMap () );
         if ( configurator == null )
         {
             xmlConfigure ();
@@ -76,14 +76,15 @@ public class Hive extends HiveCommon
             configurator.configure ( this );
         }
 
-        this._updateManager = new UpdateManager ();
-        this._updateManager.setStockQuoteService ( new YahooStockQuoteService () );
+        this.updateManager = new UpdateManager ();
+        this.updateManager.setStockQuoteService ( new YahooStockQuoteService () );
 
-        this._scheduler.scheduleAtFixedRate ( new Runnable () {
+        this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
+            @Override
             public void run ()
             {
-                Hive.this._updateManager.update ();
+                Hive.this.updateManager.update ();
             }
         }, UPDATE_PERIOD, UPDATE_PERIOD, TimeUnit.MILLISECONDS );
 
@@ -94,7 +95,7 @@ public class Hive extends HiveCommon
     @Override
     public void stop () throws Exception
     {
-        this._scheduler.shutdown ();
+        this.scheduler.shutdown ();
         super.stop ();
     }
 
@@ -115,9 +116,9 @@ public class Hive extends HiveCommon
 
     public void addSymbol ( final String symbol )
     {
-        final StockQuoteItem newItem = new StockQuoteItem ( symbol, this._updateManager );
+        final StockQuoteItem newItem = new StockQuoteItem ( symbol, this.updateManager );
         registerItem ( newItem );
-        this._symbolsFolder.add ( symbol, newItem, new MapBuilder<String, Variant> ().getMap () );
+        this.symbolsFolder.add ( symbol, newItem, new MapBuilder<String, Variant> ().getMap () );
     }
 
 }
