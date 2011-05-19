@@ -31,12 +31,12 @@ import org.openscada.utils.collection.MapBuilder;
 public class PlainFileDataItem extends ScheduledDataItem
 {
 
-    private final File _file;
+    private final File file;
 
     public PlainFileDataItem ( final String name, final File file, final ScheduledExecutorService scheduler, final int period )
     {
         super ( name, scheduler, period );
-        this._file = file;
+        this.file = file;
     }
 
     @Override
@@ -57,8 +57,8 @@ public class PlainFileDataItem extends ScheduledDataItem
 
     private void read () throws IOException
     {
-        final String[] data = FileUtils.readFile ( this._file );
-        updateData ( new Variant ( data[0] ), null, null );
+        final String[] data = FileUtils.readFile ( this.file );
+        updateData ( Variant.valueOf ( data[0] ), null, null );
     }
 
 }

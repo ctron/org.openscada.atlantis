@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -54,13 +54,13 @@ public class Hive extends HiveCommon
     {
         DataItem item;
         registerItem ( item = new TimeDataItem ( "time", this.scheduler ) );
-        this.rootFolder.add ( "time", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Time since the epoc in milliseconds!" ) ).getMap () );
+        this.rootFolder.add ( "time", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Time since the epoc in milliseconds!" ) ).getMap () );
 
         registerItem ( item = new PlainFileDataItem ( "hostname", new File ( "/proc/sys/kernel/hostname" ), this.scheduler, 1000 * 10 ) );
-        this.rootFolder.add ( "hostname", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Hostname of the computer the server is running on." ) ).getMap () );
+        this.rootFolder.add ( "hostname", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Hostname of the computer the server is running on." ) ).getMap () );
 
         this.loadFolder = new FolderCommon ();
-        this.rootFolder.add ( "loadavg", this.loadFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Load avarage information" ) ).getMap () );
+        this.rootFolder.add ( "loadavg", this.loadFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Load avarage information" ) ).getMap () );
     }
 
     @Override

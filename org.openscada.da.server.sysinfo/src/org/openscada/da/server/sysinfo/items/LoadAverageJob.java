@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -33,33 +33,34 @@ import org.openscada.utils.collection.MapBuilder;
 public class LoadAverageJob implements Runnable
 {
 
-    private final File _file = new File ( "/proc/loadavg" );
+    private final File file = new File ( "/proc/loadavg" );
 
-    private final DataItemInputCommon _avg1 = new DataItemInputCommon ( "loadavg1" );
+    private final DataItemInputCommon avg1 = new DataItemInputCommon ( "loadavg1" );
 
-    private final DataItemInputCommon _avg5 = new DataItemInputCommon ( "loadavg5" );
+    private final DataItemInputCommon avg5 = new DataItemInputCommon ( "loadavg5" );
 
-    private final DataItemInputCommon _avg15 = new DataItemInputCommon ( "loadavg15" );
+    private final DataItemInputCommon avg15 = new DataItemInputCommon ( "loadavg15" );
 
-    private Hive _hive = null;
+    private Hive hive = null;
 
-    private FolderCommon _folder = null;
+    private FolderCommon folder = null;
 
     public LoadAverageJob ( final Hive hive, final FolderCommon folder )
     {
-        this._hive = hive;
-        this._folder = folder;
+        this.hive = hive;
+        this.folder = folder;
 
-        this._hive.registerItem ( this._avg1 );
-        this._folder.add ( "1", this._avg1, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "The 1 minute load avarage" ) ).getMap () );
+        this.hive.registerItem ( this.avg1 );
+        this.folder.add ( "1", this.avg1, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "The 1 minute load avarage" ) ).getMap () );
 
-        this._hive.registerItem ( this._avg5 );
-        this._folder.add ( "5", this._avg5, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "The 5 minute load avarage" ) ).getMap () );
+        this.hive.registerItem ( this.avg5 );
+        this.folder.add ( "5", this.avg5, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "The 5 minute load avarage" ) ).getMap () );
 
-        this._hive.registerItem ( this._avg15 );
-        this._folder.add ( "15", this._avg15, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "The 15 minute load avarage" ) ).getMap () );
+        this.hive.registerItem ( this.avg15 );
+        this.folder.add ( "15", this.avg15, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "The 15 minute load avarage" ) ).getMap () );
     }
 
+    @Override
     public void run ()
     {
         try
@@ -74,12 +75,12 @@ public class LoadAverageJob implements Runnable
 
     private void read () throws IOException
     {
-        final String[] data = FileUtils.readFile ( this._file );
+        final String[] data = FileUtils.readFile ( this.file );
 
         final StringTokenizer tok = new StringTokenizer ( data[0] );
 
-        this._avg1.updateData ( new Variant ( Double.parseDouble ( tok.nextToken () ) ), null, null );
-        this._avg5.updateData ( new Variant ( Double.parseDouble ( tok.nextToken () ) ), null, null );
-        this._avg15.updateData ( new Variant ( Double.parseDouble ( tok.nextToken () ) ), null, null );
+        this.avg1.updateData ( Variant.valueOf ( Double.parseDouble ( tok.nextToken () ) ), null, null );
+        this.avg5.updateData ( Variant.valueOf ( Double.parseDouble ( tok.nextToken () ) ), null, null );
+        this.avg15.updateData ( Variant.valueOf ( Double.parseDouble ( tok.nextToken () ) ), null, null );
     }
 }
