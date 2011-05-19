@@ -125,20 +125,20 @@ public class MIBManager
         final MibValueSymbol mvs = findBestMVS ( oid );
         if ( mvs == null )
         {
-            attributes.put ( "snmp.oid.symbolic", new Variant ( oid.toString () ) );
+            attributes.put ( "snmp.oid.symbolic", Variant.valueOf ( oid.toString () ) );
             return;
         }
 
         if ( mvs != null )
         {
-            attributes.put ( "snmp.mib.description", new Variant ( mvs.toString () ) );
+            attributes.put ( "snmp.mib.description", Variant.valueOf ( mvs.toString () ) );
             if ( mvs.getType () instanceof SnmpObjectType )
             {
                 final SnmpObjectType snmpObjectType = (SnmpObjectType)mvs.getType ();
-                attributes.put ( "unit", new Variant ( snmpObjectType.getUnits () ) );
+                attributes.put ( "unit", Variant.valueOf ( snmpObjectType.getUnits () ) );
                 if ( snmpObjectType.getStatus () != null )
                 {
-                    attributes.put ( "snmp.mib.status", new Variant ( snmpObjectType.getStatus ().toString () ) );
+                    attributes.put ( "snmp.mib.status", Variant.valueOf ( snmpObjectType.getStatus ().toString () ) );
                 }
             }
         }
@@ -160,7 +160,7 @@ public class MIBManager
         }
 
         final String symbolicName = StringHelper.join ( symbolic, "." );
-        attributes.put ( "snmp.oid.symbolic", new Variant ( symbolicName ) );
+        attributes.put ( "snmp.oid.symbolic", Variant.valueOf ( symbolicName ) );
 
     }
 }

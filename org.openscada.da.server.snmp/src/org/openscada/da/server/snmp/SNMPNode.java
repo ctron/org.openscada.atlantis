@@ -147,7 +147,7 @@ public class SNMPNode
                 return "value";
             }
         } );
-        this.nodeFolder.add ( "numeric", this._oidGroupFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Auto grouping by OID" ) ).getMap () );
+        this.nodeFolder.add ( "numeric", this._oidGroupFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Auto grouping by OID" ) ).getMap () );
         this.storage.addChild ( this._oidGroupFolder );
         // mib group folder
         this.mibGroupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "snmp.oid.symbolic" ), "\\." ), new NameProvider () {
@@ -157,11 +157,11 @@ public class SNMPNode
                 return "value";
             }
         } );
-        this.nodeFolder.add ( "symbolic", this.mibGroupFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Auto grouping by symbolic OID" ) ).getMap () );
+        this.nodeFolder.add ( "symbolic", this.mibGroupFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Auto grouping by symbolic OID" ) ).getMap () );
         this.storage.addChild ( this.mibGroupFolder );
 
         // connection info item
-        this.connectionInfoItem.updateData ( new Variant ( "INITIALIZING" ), null, AttributeMode.UPDATE );
+        this.connectionInfoItem.updateData ( Variant.valueOf ( "INITIALIZING" ), null, AttributeMode.UPDATE );
         try
         {
             this.connection = new Connection ( this.connectionInformation );
@@ -177,10 +177,10 @@ public class SNMPNode
                 }
             }, 1000, 1000, TimeUnit.MILLISECONDS );
 
-            this.connectionInfoItem.updateData ( new Variant ( "CONFIGURED" ), new MapBuilder<String, Variant> ().put ( "address", new Variant ( this.connectionInformation.getAddress () ) ).getMap (), AttributeMode.UPDATE );
+            this.connectionInfoItem.updateData ( Variant.valueOf ( "CONFIGURED" ), new MapBuilder<String, Variant> ().put ( "address", Variant.valueOf ( this.connectionInformation.getAddress () ) ).getMap (), AttributeMode.UPDATE );
 
             this._mibFolder = new FolderCommon ();
-            this.nodeFolder.add ( "MIB", this._mibFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains entries of all MIBs that are loaded" ) ).getMap () );
+            this.nodeFolder.add ( "MIB", this._mibFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Contains entries of all MIBs that are loaded" ) ).getMap () );
 
             rewalk ( Variant.NULL );
             buildMIBFolders ();
@@ -188,7 +188,7 @@ public class SNMPNode
         }
         catch ( final IOException e )
         {
-            this.connectionInfoItem.updateData ( new Variant ( "ERROR" ), new MapBuilder<String, Variant> ().put ( "error", new Variant ( e.getMessage () ) ).getMap (), AttributeMode.UPDATE );
+            this.connectionInfoItem.updateData ( Variant.valueOf ( "ERROR" ), new MapBuilder<String, Variant> ().put ( "error", Variant.valueOf ( e.getMessage () ) ).getMap (), AttributeMode.UPDATE );
             this.connection = null;
         }
     }
@@ -254,7 +254,7 @@ public class SNMPNode
         final SNMPItem item = new SNMPItem ( this, id, oid );
 
         final MapBuilder<String, Variant> builder = new MapBuilder<String, Variant> ();
-        builder.put ( "snmp.oid", new Variant ( oid.toString () ) );
+        builder.put ( "snmp.oid", Variant.valueOf ( oid.toString () ) );
 
         this.mibManager.fillAttributes ( oid, builder );
 
@@ -296,14 +296,14 @@ public class SNMPNode
 
             if ( child.getComment () != null )
             {
-                attributes.put ( "snmp.mib.comment", new Variant ( child.getComment () ) );
+                attributes.put ( "snmp.mib.comment", Variant.valueOf ( child.getComment () ) );
             }
 
             final FolderCommon folder = new FolderCommon ();
 
             if ( child.getValue () instanceof ObjectIdentifierValue )
             {
-                attributes.put ( "snmp.oid", new Variant ( child.getValue ().toString () ) );
+                attributes.put ( "snmp.oid", Variant.valueOf ( child.getValue ().toString () ) );
 
                 // no need to add an item since the instance number is missing anyway
                 // SNMPItem item = getSNMPItem ( new OID ( child.getValue ().toString () ) );

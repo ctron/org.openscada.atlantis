@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
 Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.apache.xmlbeans;version="2.4",
  org.apache.xmlbeans.impl.values;version="2.4",
@@ -23,7 +24,7 @@ Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.openscada.utils.str;version="0.13",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.snmp;version="0.16.0";
+Export-Package: org.openscada.da.server.snmp;version="0.17.0";
   uses:="org.openscada.da.snmp.configuration,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common,
@@ -38,12 +39,12 @@ Export-Package: org.openscada.da.server.snmp;version="0.16.0";
    org.openscada.da.server.common.chain,
    org.openscada.core,
    org.snmp4j",
- org.openscada.da.server.snmp.items;version="0.16.0";
+ org.openscada.da.server.snmp.items;version="0.17.0";
   uses:="org.openscada.da.server.common.chain,
    org.openscada.da.server.common,
    org.openscada.da.server.snmp,
    org.snmp4j.smi",
- org.openscada.da.server.snmp.utils;version="0.16.0";
+ org.openscada.da.server.snmp.utils;version="0.17.0";
   uses:="org.openscada.utils.collection,
    org.openscada.da.snmp.configuration,
    org.openscada.da.server.snmp.items,
@@ -52,7 +53,6 @@ Export-Package: org.openscada.da.server.snmp;version="0.16.0";
 Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA DA SNMP Server
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.snmp
 Bundle-ClassPath: lib/grammatica-bin-1.4.jar,
  lib/mibble-mibs-2.7.jar,
