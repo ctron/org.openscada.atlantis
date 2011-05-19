@@ -88,7 +88,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         this.allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "opc.itemId" ), "\\.", 0, 1 ), new PatternNameProvider ( new AttributeNameProvider ( "opc.itemId" ), Pattern.compile ( ".*\\.(.*?)$" ), 1 ) );
         this.allItemsStorage.addChild ( this.allItemsFolder );
 
-        this.parentItemFactory.getFolder ().add ( "registeredItems", this.allItemsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains all items that are registered with the OPC server" ) ).getMap () );
+        this.parentItemFactory.getFolder ().add ( "registeredItems", this.allItemsFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Contains all items that are registered with the OPC server" ) ).getMap () );
     }
 
     public int getRegisteredItemCount ()
@@ -205,7 +205,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
 
         // fill the browser map
         final Map<String, Variant> browserMap = new HashMap<String, Variant> ();
-        browserMap.put ( "opc.itemId", new Variant ( opcItemId ) );
+        browserMap.put ( "opc.itemId", Variant.valueOf ( opcItemId ) );
         if ( additionalBrowserAttributes != null )
         {
             browserMap.putAll ( additionalBrowserAttributes );

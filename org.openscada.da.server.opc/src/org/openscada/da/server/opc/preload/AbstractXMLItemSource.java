@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -138,9 +138,9 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "error", Variant.TRUE );
-        attributes.put ( "error.message", new Variant ( e.getMessage () ) );
+        attributes.put ( "error.message", Variant.valueOf ( e.getMessage () ) );
 
-        this.stateItem.updateData ( new Variant ( "ERROR" ), attributes, AttributeMode.UPDATE );
+        this.stateItem.updateData ( Variant.valueOf ( "ERROR" ), attributes, AttributeMode.UPDATE );
     }
 
     private void setSuccessState ( final String state )
@@ -149,7 +149,7 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
         attributes.put ( "error", null );
         attributes.put ( "error.message", null );
 
-        this.stateItem.updateData ( new Variant ( state ), attributes, AttributeMode.UPDATE );
+        this.stateItem.updateData ( Variant.valueOf ( state ), attributes, AttributeMode.UPDATE );
     }
 
 }

@@ -76,7 +76,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         this.ignoreTimestampOnlyChange = controller.getModel ().isIgnoreTimestampOnlyChange ();
         this.qualityErrorIfLessThen = controller.getModel ().getQualityErrorIfLessThen ();
 
-        updateData ( null, new MapBuilder<String, Variant> ().put ( "opc.connection.error", Variant.TRUE ).put ( "opc.itemId", new Variant ( opcItemId ) ).getMap (), AttributeMode.SET );
+        updateData ( null, new MapBuilder<String, Variant> ().put ( "opc.connection.error", Variant.TRUE ).put ( "opc.itemId", Variant.valueOf ( opcItemId ) ).getMap (), AttributeMode.SET );
     }
 
     @Override
