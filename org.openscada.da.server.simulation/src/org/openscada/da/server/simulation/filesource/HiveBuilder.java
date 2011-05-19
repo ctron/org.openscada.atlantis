@@ -200,7 +200,7 @@ public class HiveBuilder
             if ( Direction.IN.equals ( itemDefinition.getDirection () ) )
             {
                 final DataItemInputChained item = factory.createInput ( itemDefinition.getName () );
-                item.updateData ( new Variant ( itemDefinition.getDefaultValue () ), itemDefinition.getAttributes (), AttributeMode.SET );
+                item.updateData ( Variant.valueOf ( itemDefinition.getDefaultValue () ), itemDefinition.getAttributes (), AttributeMode.SET );
                 hive.getScriptEngine ().put ( "item", item );
                 hive.getScriptEngine ().eval ( "registerItem(server, item, " + itemDefinition.getCallback () + ");" );
             }
@@ -214,7 +214,7 @@ public class HiveBuilder
             else if ( Direction.INOUT.equals ( itemDefinition.getDirection () ) )
             {
                 final WriteHandlerItem item = factory.createInputOutput ( itemDefinition.getName (), null );
-                item.updateData ( new Variant ( itemDefinition.getDefaultValue () ), itemDefinition.getAttributes (), AttributeMode.SET );
+                item.updateData ( Variant.valueOf ( itemDefinition.getDefaultValue () ), itemDefinition.getAttributes (), AttributeMode.SET );
                 hive.getScriptEngine ().put ( "item", item );
                 final int i = ( (Double)hive.getScriptEngine ().eval ( "registerItem(server, item, " + itemDefinition.getCallback () + ", " + itemDefinition.getWriteHandler () + ");" ) ).intValue ();
                 item.setWriteHandler ( new WriteHandler () {

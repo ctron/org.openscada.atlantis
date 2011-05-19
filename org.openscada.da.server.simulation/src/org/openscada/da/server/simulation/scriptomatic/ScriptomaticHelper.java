@@ -47,21 +47,21 @@ public class ScriptomaticHelper
 
     public void updateDataLong ( final ScriptomaticItem item, final Long value )
     {
-        updateData ( item, new Variant ( value ) );
+        updateData ( item, Variant.valueOf ( value ) );
     }
 
     public void updateDataBoolean ( final ScriptomaticItem item, final boolean value )
     {
-        updateData ( item, new Variant ( value ) );
+        updateData ( item, Variant.valueOf ( value ) );
     }
 
     public void updateDataString ( final ScriptomaticItem item, final String value )
     {
-        updateData ( item, new Variant ( value ) );
+        updateData ( item, Variant.valueOf ( value ) );
     }
 
     public void updateDataDouble ( final ScriptomaticItem item, final Double value )
     {
-        updateData ( item, new Variant ( value ) );
+        updateData ( item, Variant.valueOf ( value ) );
     }
 }

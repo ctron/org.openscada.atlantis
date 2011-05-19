@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
 Import-Package: jxl,
  org.apache.xmlbeans;version="2.4.0",
  org.jdom,
@@ -52,5 +53,4 @@ Export-Package: org.openscada.da.server.simulation.filesource;version="0.16.0.qu
 Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA DA Simulation Server
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.simulation
