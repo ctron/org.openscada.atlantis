@@ -160,7 +160,7 @@ public class Query
         final String field = result.getMetaData ().getColumnName ( i + 1 );
         try
         {
-            setValue ( field, new Variant ( result.getObject ( i + 1 ) ) );
+            setValue ( field, Variant.valueOf ( result.getObject ( i + 1 ) ) );
         }
         catch ( final Throwable e )
         {
@@ -199,7 +199,7 @@ public class Query
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "jdbc.error", Variant.TRUE );
-        attributes.put ( "jdbc.error.message", new Variant ( e.getMessage () ) );
+        attributes.put ( "jdbc.error.message", Variant.valueOf ( e.getMessage () ) );
 
         getItem ( key ).updateData ( null, attributes, AttributeMode.UPDATE );
     }
