@@ -135,7 +135,7 @@ public class HiveImpl extends HiveCommon
         final Object description = properties.get ( Constants.SERVICE_DESCRIPTION );
         if ( description != null )
         {
-            attributes.put ( "description", new Variant ( description ) );
+            attributes.put ( "description", Variant.valueOf ( description ) );
         }
     }
 
