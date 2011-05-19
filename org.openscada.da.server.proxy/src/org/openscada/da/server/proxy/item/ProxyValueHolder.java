@@ -114,7 +114,7 @@ public class ProxyValueHolder extends ProxyItemSupport
 
             if ( value != null && !div.getValue ().equals ( value ) )
             {
-                div.setValue ( new Variant ( value ) );
+                div.setValue ( value );
                 changed = true;
             }
             if ( attributes != null )

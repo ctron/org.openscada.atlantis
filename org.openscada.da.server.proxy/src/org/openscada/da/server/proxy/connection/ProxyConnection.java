@@ -143,11 +143,11 @@ public class ProxyConnection implements LifecycleAware
         final HashMap<String, Variant> availableConnections = new HashMap<String, Variant> ();
         for ( final ProxySubConnection subConnection : this.group.getSubConnections ().values () )
         {
-            availableConnections.put ( "available.connection." + subConnection.getId (), new Variant ( subConnection.getPrefix ().getName () ) );
+            availableConnections.put ( "available.connection." + subConnection.getId (), Variant.valueOf ( subConnection.getPrefix ().getName () ) );
         }
         this.connectionFolder.add ( "active", this.activeConnectionItem, availableConnections );
 
-        this.activeConnectionItem.updateData ( new Variant ( this.group.getCurrentConnection ().toString () ), availableConnections, AttributeMode.SET );
+        this.activeConnectionItem.updateData ( Variant.valueOf ( this.group.getCurrentConnection ().toString () ), availableConnections, AttributeMode.SET );
 
         this.connectItem = new DataItemCommand ( itemName ( "connect" ), this.hive.getOperationService () );
         this.connectItem.addListener ( new DataItemCommand.Listener () {
@@ -209,7 +209,7 @@ public class ProxyConnection implements LifecycleAware
         {
             // perform switch
             this.group.switchTo ( id );
-            this.activeConnectionItem.updateData ( new Variant ( id ), null, null );
+            this.activeConnectionItem.updateData ( Variant.valueOf ( id ), null, null );
         }
         finally
         {

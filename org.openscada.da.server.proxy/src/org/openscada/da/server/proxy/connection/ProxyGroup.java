@@ -151,7 +151,7 @@ public class ProxyGroup implements LifecycleAware
 
         this.registeredItemsStorage = new InvisibleStorage ();
         this.registeredItemsFolder = new GroupFolder ( new SplitGroupProvider ( new IDNameProvider (), Pattern.quote ( this.hive.getSeparator () ) ), new PatternNameProvider ( new IDNameProvider (), Pattern.compile ( "^.*" + Pattern.quote ( this.hive.getSeparator () ) + "(.*?)$" ), 1 ) );
-        this.connectionFolder.add ( FOLDER_NAME_REGISTERED_ITEMS, this.registeredItemsFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "The folder which contains all realized items" ) ).getMap () );
+        this.connectionFolder.add ( FOLDER_NAME_REGISTERED_ITEMS, this.registeredItemsFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "The folder which contains all realized items" ) ).getMap () );
         this.registeredItemsStorage.addChild ( this.registeredItemsFolder );
     }
 

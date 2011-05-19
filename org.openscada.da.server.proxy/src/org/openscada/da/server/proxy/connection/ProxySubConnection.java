@@ -86,6 +86,7 @@ public class ProxySubConnection implements ConnectionStateListener
         this.connectItem = this.itemFactory.createCommand ( "connect" );
         this.connectItem.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value ) throws Exception
             {
                 ProxySubConnection.this.connect ();
@@ -95,6 +96,7 @@ public class ProxySubConnection implements ConnectionStateListener
         this.disconnectItem = this.itemFactory.createCommand ( "disconnect" );
         this.disconnectItem.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value ) throws Exception
             {
                 ProxySubConnection.this.disconnect ();
@@ -161,8 +163,9 @@ public class ProxySubConnection implements ConnectionStateListener
         this.itemFactory.dispose ();
     }
 
+    @Override
     public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
     {
-        this.stateItem.updateData ( new Variant ( state.toString () ), null, null );
+        this.stateItem.updateData ( Variant.valueOf ( state.toString () ), null, null );
     }
 }
