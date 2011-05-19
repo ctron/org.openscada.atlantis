@@ -149,15 +149,15 @@ public class CSVLoader extends Loader implements InitializingBean
         }
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "description", new Variant ( entry.getDescription () ) );
-        attributes.put ( "loader.csv.source", new Variant ( sourceName ) );
-        attributes.put ( "initialValue", new Variant ( entry.getInitialValue () ) );
+        attributes.put ( "description", Variant.valueOf ( entry.getDescription () ) );
+        attributes.put ( "loader.csv.source", Variant.valueOf ( sourceName ) );
+        attributes.put ( "initialValue", Variant.valueOf ( entry.getInitialValue () ) );
 
         final CSVDataItem item = new CSVDataItem ( this.hive, this.itemPrefix + entry.getId (), io );
         injectItem ( item, attributes );
 
         // create and inject the controller item
-        attributes.put ( "loader.csv.controllerFor", new Variant ( this.itemPrefix + entry.getId () ) );
+        attributes.put ( "loader.csv.controllerFor", Variant.valueOf ( this.itemPrefix + entry.getId () ) );
         final CSVControllerDataItem controllerItem = new CSVControllerDataItem ( item, this.executor );
         Loader.injectItem ( this.hive, this._controllerStorages, controllerItem, attributes );
 

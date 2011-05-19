@@ -81,8 +81,8 @@ public class DataItemInputOutputProperty extends DataItemInputOutputChained impl
         Assert.isTrue ( PropertyUtils.isReadable ( this.bean, this.property ) );
         Assert.isTrue ( PropertyUtils.isWriteable ( this.bean, this.property ) );
         final Object value = PropertyUtils.getProperty ( this.bean, this.property );
-        updateData ( new Variant ( value ), new HashMap<String, Variant> (), AttributeMode.SET );
-        notifyData ( new Variant ( value ), new HashMap<String, Variant> (), true );
+        updateData ( Variant.valueOf ( value ), new HashMap<String, Variant> (), AttributeMode.SET );
+        notifyData ( Variant.valueOf ( value ), new HashMap<String, Variant> (), true );
     }
 
     @Override
