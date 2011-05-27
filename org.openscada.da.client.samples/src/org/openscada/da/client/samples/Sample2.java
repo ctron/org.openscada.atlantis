@@ -49,12 +49,12 @@ public class Sample2 extends SampleBase
     public void run () throws NoConnectionException, OperationException
     {
         // set the main value
-        this.connection.write ( "test-1", new Variant ( "Hello World" ), null );
+        this.connection.write ( "test-1", Variant.valueOf ( "Hello World" ), null );
 
         // set some attributes
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "hello", new Variant ( "world" ) );
-        attributes.put ( "foo", new Variant ( "bar" ) );
+        attributes.put ( "hello", Variant.valueOf ( "world" ) );
+        attributes.put ( "foo", Variant.valueOf ( "bar" ) );
         this.connection.writeAttributes ( "test-1", attributes, null );
     }
 

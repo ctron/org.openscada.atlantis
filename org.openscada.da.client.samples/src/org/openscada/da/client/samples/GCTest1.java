@@ -29,21 +29,21 @@ import org.openscada.da.client.net.Connection;
 
 public class GCTest1 extends SampleBase implements ItemUpdateListener
 {
-    private ItemManager _itemManager;
+    private ItemManager itemManager;
 
-    private String _itemName = "time";
+    private String itemName = "time";
 
     public GCTest1 ( final String uri, final String className, final String itemName ) throws Exception
     {
         super ( uri, className );
-        this._itemName = itemName;
+        this.itemName = itemName;
     }
 
     @Override
     public void connect () throws Exception
     {
         super.connect ();
-        this._itemManager = new ItemManager ( this.connection );
+        this.itemManager = new ItemManager ( this.connection );
     }
 
     public void subscribe ()
@@ -52,13 +52,13 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
         // since we subscribe with "initial=true" we will get the current value
         // before any other event. Setting to "false" would ignore the current
         // value of this item and wait for the first change.
-        this._itemManager.addItemUpdateListener ( this._itemName, this );
+        this.itemManager.addItemUpdateListener ( this.itemName, this );
     }
 
     public void unsubscribe ()
     {
         // now remove the update listener
-        this._itemManager.removeItemUpdateListener ( this._itemName, this );
+        this.itemManager.removeItemUpdateListener ( this.itemName, this );
     }
 
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
