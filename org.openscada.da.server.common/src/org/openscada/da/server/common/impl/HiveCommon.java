@@ -100,7 +100,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private final Set<DataItemValidator> itemValidators = new CopyOnWriteArraySet<DataItemValidator> ();
 
-    private ValidationStrategy validatonStrategy = ValidationStrategy.FULL_CHECK;
+    private ValidationStrategy validatonStrategy = ValidationStrategy.GRANT_ALL;
 
     private HiveCommonStatisticsGenerator statisticsGenerator;
 

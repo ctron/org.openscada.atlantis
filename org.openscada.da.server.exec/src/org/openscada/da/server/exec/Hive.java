@@ -90,7 +90,7 @@ public class Hive extends HiveCommon
 
         setRootFolder ( this.rootFolder );
         this.triggerFolder = new FolderCommon ();
-        this.rootFolder.add ( TRIGGER_FOLDER_NAME, this.triggerFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Contains all triggers" ) ).getMap () );
+        this.rootFolder.add ( TRIGGER_FOLDER_NAME, this.triggerFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Contains all triggers" ) ).getMap () );
 
         new XmlConfigurator ( document ).configure ( this );
 
