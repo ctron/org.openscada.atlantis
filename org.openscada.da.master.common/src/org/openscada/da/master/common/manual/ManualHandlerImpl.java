@@ -77,47 +77,47 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         final String reason = this.reason;
         final Date timestamp = this.timestamp;
 
-        final Variant originalError = builder.getAttributes ().remove ( "error" );
-        builder.setAttribute ( getPrefixed ( "error.original" ), originalError );
-        builder.setAttribute ( "error", Variant.FALSE );
+        final Variant originalError = builder.getAttributes ().remove ( "error" ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "error.original" ), originalError ); //$NON-NLS-1$
+        builder.setAttribute ( "error", Variant.FALSE ); //$NON-NLS-1$
         builder.setSubscriptionState ( SubscriptionState.CONNECTED );
         builder.setSubscriptionError ( null );
 
-        final Variant originalErrorCount = builder.getAttributes ().remove ( "error.count" );
+        final Variant originalErrorCount = builder.getAttributes ().remove ( "error.count" ); //$NON-NLS-1$
         if ( originalErrorCount != null )
         {
-            builder.setAttribute ( "error.count", Variant.valueOf ( 0 ) );
-            builder.setAttribute ( getPrefixed ( "error.count.original" ), originalErrorCount );
+            builder.setAttribute ( "error.count", Variant.valueOf ( 0 ) ); //$NON-NLS-1$
+            builder.setAttribute ( getPrefixed ( "error.count.original" ), originalErrorCount ); //$NON-NLS-1$
         }
 
-        final Variant originalErrorItems = builder.getAttributes ().remove ( "error.items" );
+        final Variant originalErrorItems = builder.getAttributes ().remove ( "error.items" ); //$NON-NLS-1$
         if ( originalErrorItems != null )
         {
-            builder.setAttribute ( "error.items", Variant.valueOf ( "" ) );
-            builder.setAttribute ( getPrefixed ( "error.items.original" ), originalErrorItems );
+            builder.setAttribute ( "error.items", Variant.valueOf ( "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+            builder.setAttribute ( getPrefixed ( "error.items.original" ), originalErrorItems ); //$NON-NLS-1$
         }
 
-        builder.setAttribute ( getPrefixed ( "value.original" ), value.getValue () );
-        builder.setAttribute ( getPrefixed ( "active" ), Variant.TRUE );
+        builder.setAttribute ( getPrefixed ( "value.original" ), value.getValue () ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "active" ), Variant.TRUE ); //$NON-NLS-1$
         builder.setAttribute ( getPrefixed ( null ), Variant.TRUE );
 
         builder.setValue ( this.value );
 
         if ( user != null )
         {
-            builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( user ) );
+            builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( user ) ); //$NON-NLS-1$
         }
         if ( reason != null )
         {
-            builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( reason ) );
+            builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( reason ) ); //$NON-NLS-1$
         }
         if ( timestamp != null )
         {
-            final Variant originalTimestamp = builder.getAttributes ().get ( "timestamp" );
-            builder.setAttribute ( "timestamp", Variant.valueOf ( timestamp.getTime () ) );
+            final Variant originalTimestamp = builder.getAttributes ().get ( "timestamp" ); //$NON-NLS-1$
+            builder.setAttribute ( "timestamp", Variant.valueOf ( timestamp.getTime () ) ); //$NON-NLS-1$
             if ( originalTimestamp != null )
             {
-                builder.setAttribute ( getPrefixed ( "timestamp.original" ), originalTimestamp );
+                builder.setAttribute ( getPrefixed ( "timestamp.original" ), originalTimestamp ); //$NON-NLS-1$
             }
         }
 
@@ -133,7 +133,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
-        final String str = cfg.getString ( "value" );
+        final String str = cfg.getString ( "value" ); //$NON-NLS-1$
         if ( str != null )
         {
             ve.setAsText ( str );
@@ -147,9 +147,9 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         {
             this.value = Variant.NULL;
         }
-        this.user = cfg.getString ( "user" );
-        this.reason = cfg.getString ( "reason" );
-        this.timestamp = new Date ( cfg.getLong ( "timestamp", System.currentTimeMillis () ) );
+        this.user = cfg.getString ( "user" ); //$NON-NLS-1$
+        this.reason = cfg.getString ( "reason" ); //$NON-NLS-1$
+        this.timestamp = new Date ( cfg.getLong ( "timestamp", System.currentTimeMillis () ) ); //$NON-NLS-1$
 
         reprocess ();
     }
@@ -157,10 +157,10 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
     protected void injectAttributes ( final Builder builder )
     {
         builder.setAttribute ( getPrefixed ( null ), this.value.isNull () ? Variant.FALSE : Variant.TRUE );
-        builder.setAttribute ( getPrefixed ( "active" ), this.value.isNull () ? Variant.FALSE : Variant.TRUE );
-        builder.setAttribute ( getPrefixed ( "value" ), this.value );
-        builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( this.reason ) );
-        builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( this.user ) );
+        builder.setAttribute ( getPrefixed ( "active" ), this.value.isNull () ? Variant.FALSE : Variant.TRUE ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "value" ), this.value ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( this.reason ) ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( this.user ) ); //$NON-NLS-1$
     }
 
     @Override
@@ -173,60 +173,60 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         final Date ts = new Date ();
         builder.entryTimestamp ( ts );
         builder.sourceTimestamp ( ts );
-        builder.attribute ( Fields.MONITOR_TYPE, "MAN" );
+        builder.attribute ( Fields.MONITOR_TYPE, "MAN" ); //$NON-NLS-1$
         builder.attribute ( Fields.SOURCE, this.id );
 
-        final Variant value = attributes.get ( "value" );
+        final Variant value = attributes.get ( "value" ); //$NON-NLS-1$
         if ( value != null )
         {
             if ( value == null || value.isNull () )
             {
-                builder.attribute ( Fields.MESSAGE, "Resetting manual value" );
-                builder.attribute ( Fields.MESSAGE_CODE, "MAN-RESET" );
-                builder.attribute ( Fields.EVENT_TYPE, "-" );
+                builder.attribute ( Fields.MESSAGE, Messages.getString("ManualHandlerImpl.Reset.Message") ); //$NON-NLS-1$
+                builder.attribute ( Fields.MESSAGE_CODE, "MAN-RESET" ); //$NON-NLS-1$
+                builder.attribute ( Fields.EVENT_TYPE, Messages.getString("ManualHandlerImpl.Reset.Type") ); //$NON-NLS-1$
             }
             else
             {
-                builder.attribute ( Fields.MESSAGE, "Setting manual value" );
-                builder.attribute ( Fields.MESSAGE_CODE, "MAN-SET" );
-                builder.attribute ( Fields.EVENT_TYPE, "+" );
+                builder.attribute ( Fields.MESSAGE, Messages.getString("ManualHandlerImpl.Set.Message") ); //$NON-NLS-1$
+                builder.attribute ( Fields.MESSAGE_CODE, "MAN-SET" ); //$NON-NLS-1$
+                builder.attribute ( Fields.EVENT_TYPE, Messages.getString("ManualHandlerImpl.Set.Type") ); //$NON-NLS-1$
             }
 
-            data.put ( "value", value.toString () );
+            data.put ( "value", value.toString () ); //$NON-NLS-1$
             builder.attribute ( Fields.VALUE, value );
         }
 
         if ( operationParameters != null && operationParameters.getUserInformation () != null && operationParameters.getUserInformation ().getName () != null )
         {
             final String name = operationParameters.getUserInformation ().getName ();
-            data.put ( "user", name );
+            data.put ( "user", name ); //$NON-NLS-1$
             builder.attribute ( Fields.ACTOR_NAME, name );
-            builder.attribute ( Fields.ACTOR_TYPE, "USER" );
+            builder.attribute ( Fields.ACTOR_TYPE, "USER" ); 
         }
         else
         {
-            data.put ( "user", "" );
+            data.put ( "user", "" ); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         if ( value != null )
         {
             // clear user, reason and timestamp if we have a value
 
-            data.put ( "reason", "" );
-            data.put ( "timestamp", "" + System.currentTimeMillis () );
+            data.put ( "reason", "" ); //$NON-NLS-1$ //$NON-NLS-2$
+            data.put ( "timestamp", "" + System.currentTimeMillis () ); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        final Variant reason = attributes.get ( "reason" );
+        final Variant reason = attributes.get ( "reason" ); //$NON-NLS-1$
         if ( reason != null && !reason.isNull () )
         {
-            data.put ( "reason", reason.toString () );
+            data.put ( "reason", reason.toString () ); //$NON-NLS-1$
             builder.attribute ( Fields.COMMENT, reason );
         }
 
-        final Variant timestamp = attributes.get ( "timestamp" );
+        final Variant timestamp = attributes.get ( "timestamp" ); //$NON-NLS-1$
         if ( timestamp != null && !timestamp.isNull () )
         {
-            data.put ( "timestamp", "" + timestamp.asLong ( System.currentTimeMillis () ) );
+            data.put ( "timestamp", "" + timestamp.asLong ( System.currentTimeMillis () ) ); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         this.eventProcessor.publishEvent ( builder.build () );

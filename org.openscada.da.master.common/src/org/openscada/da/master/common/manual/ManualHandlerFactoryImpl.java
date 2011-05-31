@@ -31,7 +31,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class ManualHandlerFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
 {
-    public static final String FACTORY_ID = "org.openscada.da.manual";
+    public static final String FACTORY_ID = "org.openscada.da.manual"; //$NON-NLS-1$
 
     private final int priority;
 
