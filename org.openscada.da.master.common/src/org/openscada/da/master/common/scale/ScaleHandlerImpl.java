@@ -51,7 +51,7 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
         final Builder builder = new Builder ( value );
 
         injectAttributes ( builder );
-        builder.setAttribute ( getPrefixed ( "raw" ), value.getValue () );
+        builder.setAttribute ( getPrefixed ( "raw" ), value.getValue () ); //$NON-NLS-1$
 
         final Variant val = value.getValue ();
         if ( val == null || val.isNull () )
@@ -81,18 +81,18 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
         super.update ( parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.factor = cfg.getDouble ( "factor", 1 );
-        this.offset = cfg.getDouble ( "offset", 0 );
-        this.active = cfg.getBoolean ( "active", false );
+        this.factor = cfg.getDouble ( "factor", 1 ); //$NON-NLS-1$
+        this.offset = cfg.getDouble ( "offset", 0 ); //$NON-NLS-1$
+        this.active = cfg.getBoolean ( "active", false ); //$NON-NLS-1$
 
         reprocess ();
     }
 
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( getPrefixed ( "active" ), this.active ? Variant.TRUE : Variant.FALSE );
-        builder.setAttribute ( getPrefixed ( "factor" ), Variant.valueOf ( this.factor ) );
-        builder.setAttribute ( getPrefixed ( "offset" ), Variant.valueOf ( this.offset ) );
+        builder.setAttribute ( getPrefixed ( "active" ), this.active ? Variant.TRUE : Variant.FALSE ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "factor" ), Variant.valueOf ( this.factor ) ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "offset" ), Variant.valueOf ( this.offset ) ); //$NON-NLS-1$
     }
 
     @Override
@@ -100,21 +100,21 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
     {
         final Map<String, String> data = new HashMap<String, String> ();
 
-        final Variant active = attributes.get ( "active" );
-        final Variant factor = attributes.get ( "factor" );
-        final Variant offset = attributes.get ( "offset" );
+        final Variant active = attributes.get ( "active" ); //$NON-NLS-1$
+        final Variant factor = attributes.get ( "factor" ); //$NON-NLS-1$
+        final Variant offset = attributes.get ( "offset" ); //$NON-NLS-1$
 
         if ( active != null && !active.isNull () )
         {
-            data.put ( "active", active.asString () );
+            data.put ( "active", active.asString () ); //$NON-NLS-1$
         }
         if ( factor != null && !factor.isNull () )
         {
-            data.put ( "factor", factor.asString () );
+            data.put ( "factor", factor.asString () ); //$NON-NLS-1$
         }
         if ( offset != null && !offset.isNull () )
         {
-            data.put ( "offset", offset.asString () );
+            data.put ( "offset", offset.asString () ); //$NON-NLS-1$
         }
 
         return updateConfiguration ( data, attributes, false );

@@ -50,7 +50,7 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
 
         if ( this.active )
         {
-            builder.setAttribute ( getPrefixed ( "raw" ), value.getValue () );
+            builder.setAttribute ( getPrefixed ( "raw" ), value.getValue () ); //$NON-NLS-1$
         }
 
         final Variant val = value.getValue ();
@@ -81,14 +81,14 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
         super.update ( parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.active = cfg.getBoolean ( "active", false );
+        this.active = cfg.getBoolean ( "active", false ); //$NON-NLS-1$
 
         reprocess ();
     }
 
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( getPrefixed ( "active" ), this.active ? Variant.TRUE : Variant.FALSE );
+        builder.setAttribute ( getPrefixed ( "active" ), this.active ? Variant.TRUE : Variant.FALSE ); //$NON-NLS-1$
     }
 
     @Override
@@ -96,11 +96,11 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
     {
         final Map<String, String> data = new HashMap<String, String> ();
 
-        final Variant active = attributes.get ( "active" );
+        final Variant active = attributes.get ( "active" ); //$NON-NLS-1$
 
         if ( active != null && !active.isNull () )
         {
-            data.put ( "active", active.asString () );
+            data.put ( "active", active.asString () ); //$NON-NLS-1$
         }
 
         return updateConfiguration ( data, attributes, false );

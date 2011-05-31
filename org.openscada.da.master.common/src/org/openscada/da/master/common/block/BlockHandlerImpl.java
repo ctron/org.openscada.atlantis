@@ -87,7 +87,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             if ( !testRequest.isEmpty () )
             {
                 // if there is a remaining request
-                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, String.format ( Messages.getString("BlockHandlerImpl.WriteError"), this.note ), makeString ( testRequest ) ); //$NON-NLS-1$
+                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, String.format ( Messages.getString ( "BlockHandlerImpl.WriteError" ), this.note ), makeString ( testRequest ) ); //$NON-NLS-1$
                 return createBlockedResult ();
             }
         }
@@ -120,7 +120,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     private WriteRequestResult createBlockedResult ()
     {
-        return new WriteRequestResult ( new OperationException ( Messages.getString("BlockHandlerImpl.OperationException") ) ); //$NON-NLS-1$
+        return new WriteRequestResult ( new OperationException ( Messages.getString ( "BlockHandlerImpl.OperationException" ) ) ); //$NON-NLS-1$
     }
 
     @Override
@@ -151,7 +151,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             }
         }
 
-        publishEvent ( null, Messages.getString("BlockHandlerImpl.UpdateConfiguration"), newValue ); //$NON-NLS-1$
+        publishEvent ( null, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration" ), newValue ); //$NON-NLS-1$
         return newValue;
     }
 
