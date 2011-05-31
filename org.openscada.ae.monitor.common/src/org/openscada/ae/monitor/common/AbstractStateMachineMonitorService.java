@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -423,7 +423,13 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final MonitorStatus oldState = oldConditionState.getStatus ();
         final MonitorStatus newState = newConditionState.getStatus ();
 
-        if ( oldConditionState != newConditionState && oldState != MonitorStatus.INIT && newState != MonitorStatus.INIT )
+        /*
+         * Suppress events if:
+         * a) the state did not change
+         * b) the state is still INIT
+         * b) the state is INACTIVE, active changes are reported separately 
+         */
+        if ( oldConditionState != newConditionState && oldState != MonitorStatus.INIT && newState != MonitorStatus.INIT && newState != MonitorStatus.INACTIVE )
         {
             publishEvent ( monitorDecorator.decorate ( createEvent ( newConditionState.getStatusTimestamp (), null, newConditionState.getStatus ().toString (), newConditionState.getValue () ) ) );
         }
