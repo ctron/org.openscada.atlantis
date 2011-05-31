@@ -21,7 +21,6 @@ package org.openscada.core;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openscada.core.Variant;
 
 public class VariantTest
 {
@@ -50,6 +49,7 @@ public class VariantTest
         }
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareNullSame () throws Exception
     {
@@ -58,6 +58,7 @@ public class VariantTest
         compareVariant ( nullValue, nullValue, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareNullDifferent () throws Exception
     {
@@ -68,6 +69,7 @@ public class VariantTest
 
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareIntEqual () throws Exception
     {
@@ -77,6 +79,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareIntDifferent () throws Exception
     {
@@ -86,6 +89,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareLongEqual () throws Exception
     {
@@ -95,6 +99,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareLongDifferent () throws Exception
     {
@@ -104,6 +109,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareStringEqual () throws Exception
     {
@@ -113,6 +119,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareStringDifferent () throws Exception
     {
@@ -122,6 +129,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareIntVSLongEqual () throws Exception
     {
@@ -131,6 +139,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareIntVSLongDifferent () throws Exception
     {
@@ -140,6 +149,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareIntVSDoubleEqual () throws Exception
     {
@@ -149,6 +159,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareIntVSDoubleDifferent () throws Exception
     {
@@ -158,6 +169,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareStringVSDoubleEqual () throws Exception
     {
@@ -167,6 +179,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareStringVSDoubleDifferent () throws Exception
     {
@@ -176,6 +189,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareStringVSBooleanEqual () throws Exception
     {
@@ -205,6 +219,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareStringVSBooleanDifferent () throws Exception
     {
@@ -229,6 +244,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareBooleanVSBooleanEqual () throws Exception
     {
@@ -238,6 +254,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareBooleanVSBooleanDifferent () throws Exception
     {
@@ -247,6 +264,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareBooleanVSNullEqual1 () throws Exception
     {
@@ -256,6 +274,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareBooleanVSNullEqual2 () throws Exception
     {
@@ -265,6 +284,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareNullVSNullEqual () throws Exception
     {
@@ -274,6 +294,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareBooleanVSLongEqual () throws Exception
     {
@@ -283,6 +304,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareBooleanVSLongDifferent () throws Exception
     {
@@ -292,6 +314,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareBooleanVSDoubleEqual () throws Exception
     {
@@ -306,6 +329,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareBooleanVSDoubleDifferent () throws Exception
     {
@@ -320,6 +344,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareIntegerVSDoubleEqual () throws Exception
     {
@@ -329,6 +354,7 @@ public class VariantTest
         compareVariant ( v1, v2, true );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testVariantCompareIntegerVSDoubleDifferent () throws Exception
     {
@@ -338,6 +364,7 @@ public class VariantTest
         compareVariant ( v1, v2, false );
     }
 
+    @SuppressWarnings ( "deprecation" )
     @Test
     public void testNumberIssue ()
     {
