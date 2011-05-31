@@ -17,12 +17,12 @@ public class FilterTest
     @Test
     public void testFilter () throws Exception
     {
-        MemoryStorage m = new MemoryStorage ();
+        final MemoryStorage m = new MemoryStorage ();
         m.store ( Event.create ().build () );
         Assert.assertEquals ( 1, m.getEvents ().size () );
         m.store ( Event.create ().build () );
         Assert.assertEquals ( 2, m.getEvents ().size () );
-        Event event = new ArrayList<Event> ( m.getEvents () ).get ( 0 );
+        final Event event = new ArrayList<Event> ( m.getEvents () ).get ( 0 );
         Assert.assertNotNull ( event.getId () );
         Assert.assertNotNull ( event.getEntryTimestamp () );
         Query q = m.query ( "" );
@@ -31,11 +31,11 @@ public class FilterTest
         Assert.assertEquals ( 1, events.size () );
         events = q.getNext ( 100 );
         Assert.assertEquals ( 1, events.size () );
-        m.store ( Event.create ().attribute ( "hop", new Variant ( "top" ) ).build () );
-        m.store ( Event.create ().attribute ( "foo", new Variant ( "bar" ) ).build () );
-        m.store ( Event.create ().attribute ( "foo", new Variant ( "zap" ) ).build () );
+        m.store ( Event.create ().attribute ( "hop", Variant.valueOf ( "top" ) ).build () );
+        m.store ( Event.create ().attribute ( "foo", Variant.valueOf ( "bar" ) ).build () );
+        m.store ( Event.create ().attribute ( "foo", Variant.valueOf ( "zap" ) ).build () );
         q = m.query ( "(|(foo=bar)(foo=zap)(hop=top))" );
-        List<Event> r = new ArrayList<Event> ( q.getNext ( 1000 ) );
+        final List<Event> r = new ArrayList<Event> ( q.getNext ( 1000 ) );
         System.out.println ( r.size () );
         Assert.assertEquals ( 3, r.size () );
     }
