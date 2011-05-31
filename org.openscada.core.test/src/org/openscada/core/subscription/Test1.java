@@ -27,8 +27,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openscada.core.subscription.SubscriptionManager;
-import org.openscada.core.subscription.SubscriptionState;
 
 public class Test1
 {
@@ -130,7 +128,7 @@ public class Test1
      * Test the method {@link SubscriptionManager#getAllGrantedTopics()}
      * @throws Exception
      */
-    @SuppressWarnings ( "unchecked" )
+    @SuppressWarnings ( { "unchecked", "rawtypes" } )
     @Test
     public void test5 () throws Exception
     {
@@ -139,10 +137,10 @@ public class Test1
         this.manager.subscribe ( "1", recorder );
         this.manager.subscribe ( "2", recorder );
 
-        final List<Object> topics = new LinkedList<Object> ();
+        final List<String> topics = new LinkedList<String> ();
         topics.add ( "1" );
         topics.add ( "2" );
-        Collections.sort ( (List)topics );
+        Collections.sort ( topics );
 
         final List<Object> actualTopics = this.manager.getAllGrantedTopics ();
         Collections.sort ( (List)actualTopics );
