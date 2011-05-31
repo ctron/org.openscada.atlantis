@@ -55,6 +55,16 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
     private boolean logAttributes;
 
+    private String typeWriteValue;
+
+    private String typeWriteAttributes;
+
+    private String typeValue;
+
+    private String typeAttributes;
+
+    private String typeSubscription;
+
     public MasterItemLogger ( final BundleContext context, final ObjectPoolTracker poolTracker, final int priority ) throws InvalidSyntaxException
     {
         super ( poolTracker, priority );
@@ -92,7 +102,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
             final EventBuilder builder = createEvent ( null );
 
             builder.attribute ( Event.Fields.VALUE, diff.getSubscriptionState () );
-            builder.attribute ( Event.Fields.EVENT_TYPE, "SUBSCRIPTION" );
+            builder.attribute ( Event.Fields.EVENT_TYPE, this.typeSubscription );
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
@@ -101,7 +111,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
             final EventBuilder builder = createEvent ( null );
 
             builder.attribute ( Event.Fields.VALUE, diff.getValue () );
-            builder.attribute ( Event.Fields.EVENT_TYPE, "VALUE" );
+            builder.attribute ( Event.Fields.EVENT_TYPE, this.typeValue );
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
@@ -110,7 +120,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
             final EventBuilder builder = createEvent ( null );
 
             builder.attribute ( Event.Fields.VALUE, formatAttributes ( diff.getAttributes () ) );
-            builder.attribute ( Event.Fields.EVENT_TYPE, "ATTRIBUTES" );
+            builder.attribute ( Event.Fields.EVENT_TYPE, this.typeAttributes );
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
@@ -127,6 +137,12 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
         this.logValue = cfg.getBoolean ( "logValue", false );
         this.logAttributes = cfg.getBoolean ( "logAttributes", false );
 
+        this.typeWriteValue = cfg.getString ( "type.write.value", "WRITE" );
+        this.typeWriteAttributes = cfg.getString ( "type.write.attributes", "WRITE_ATTRIBUTES" );
+        this.typeValue = cfg.getString ( "type.change.value", "VALUE" );
+        this.typeAttributes = cfg.getString ( "type.change.attributes", "ATTRIBUTES" );
+        this.typeSubscription = cfg.getString ( "type.change.subscription", "SUBSCRIPTION" );
+
         super.update ( parameters );
 
         this.source = source;
@@ -141,7 +157,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
             final EventBuilder builder = createEvent ( request );
 
             builder.attribute ( Event.Fields.VALUE, request.getValue () );
-            builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE" );
+            builder.attribute ( Event.Fields.EVENT_TYPE, this.typeWriteValue );
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
@@ -150,7 +166,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
             final EventBuilder builder = createEvent ( request );
 
             builder.attribute ( Event.Fields.VALUE, formatAttributes ( request.getAttributes () ) );
-            builder.attribute ( Event.Fields.EVENT_TYPE, "WRITE_ATTRIBUTES" );
+            builder.attribute ( Event.Fields.EVENT_TYPE, this.typeWriteAttributes );
 
             this.eventProcessor.publishEvent ( builder.build () );
         }
