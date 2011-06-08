@@ -312,7 +312,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         {
             final Builder builder = new Builder ();
             builder.setAttribute ( "master.source.error", Variant.TRUE );
-            builder.setAttribute ( "master.datasource.id", new Variant ( this.dataSourceId ) );
+            builder.setAttribute ( "master.datasource.id", Variant.valueOf ( this.dataSourceId ) );
             this.sourceValue = builder.build ();
         }
 
