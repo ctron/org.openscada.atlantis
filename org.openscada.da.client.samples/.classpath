@@ -7,6 +7,6 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.openscada.da.client"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.openscada.core.client"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.openscada.da.core.common"/>
-	<classpathentry kind="lib" path="/builder_external/builder/lib/com.springsource.org.apache.log4j-1.2.16.jar"/>
+	<classpathentry kind="lib" path="/builder_external/builder/lib/com.springsource.org.apache.log4j-1.2.15.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
