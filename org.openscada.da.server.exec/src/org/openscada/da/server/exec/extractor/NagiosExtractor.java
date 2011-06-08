@@ -50,8 +50,8 @@ public class NagiosExtractor extends AbstractReturnCodeExtractor
 
         if ( rc == 0 )
         {
-            this.errorItem.updateData ( new Variant ( rc >= 2 ), null, null );
-            this.warningItem.updateData ( new Variant ( rc >= 1 ), null, null );
+            this.errorItem.updateData ( Variant.valueOf ( rc >= 2 ), null, null );
+            this.warningItem.updateData ( Variant.valueOf ( rc >= 1 ), null, null );
         }
     }
 

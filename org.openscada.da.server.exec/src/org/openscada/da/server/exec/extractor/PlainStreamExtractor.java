@@ -47,8 +47,8 @@ public class PlainStreamExtractor extends AbstractBaseExtractor
     protected void doProcess ( final ExecutionResult result )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        final Variant value = new Variant ( result.getOutput () );
-        attributes.put ( "exec.error", new Variant ( false ) );
+        final Variant value = Variant.valueOf ( result.getOutput () );
+        attributes.put ( "exec.error", Variant.FALSE );
         attributes.put ( "exec.error.message", null );
         fillNoError ( attributes );
 

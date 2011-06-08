@@ -38,9 +38,10 @@ public class SimpleReturnCodeExtractor extends AbstractReturnCodeExtractor
         super ( id );
     }
 
+    @Override
     protected void handleReturnCode ( final int rc )
     {
-        this.failedItem.updateData ( new Variant ( rc < 0 ), null, null );
+        this.failedItem.updateData ( Variant.valueOf ( rc < 0 ), null, null );
     }
 
     @Override

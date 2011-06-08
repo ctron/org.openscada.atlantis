@@ -66,6 +66,7 @@ public abstract class AbstractBaseExtractor implements Extractor
         return item;
     }
 
+    @Override
     public void process ( final ExecutionResult result )
     {
         if ( result.getExecutionError () != null )
@@ -94,10 +95,10 @@ public abstract class AbstractBaseExtractor implements Extractor
         logger.info ( "Setting error", executionError );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( which + ".error", new Variant ( true ) );
+        attributes.put ( which + ".error", Variant.valueOf ( true ) );
         if ( executionError != null )
         {
-            attributes.put ( which + ".error.message", new Variant ( executionError.getMessage () ) );
+            attributes.put ( which + ".error.message", Variant.valueOf ( executionError.getMessage () ) );
         }
 
         for ( final DataItemInputChained item : this.inputs )
@@ -129,6 +130,7 @@ public abstract class AbstractBaseExtractor implements Extractor
      */
     protected abstract void doProcess ( ExecutionResult result ) throws Exception;
 
+    @Override
     public void register ( final Hive hive, final FolderItemFactory folderItemFactory )
     {
         this.hive = hive;
@@ -136,6 +138,7 @@ public abstract class AbstractBaseExtractor implements Extractor
         folderItemFactory.addSubFactory ( this.itemFactory );
     }
 
+    @Override
     public void unregister ()
     {
         this.inputs.clear ();
