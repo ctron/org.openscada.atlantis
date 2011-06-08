@@ -522,8 +522,8 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
         builder.setAttribute ( "formula.error", Variant.TRUE );
         if ( e != null )
         {
-            builder.setAttribute ( "formula.error.class", new Variant ( e.getClass ().getName () ) );
-            builder.setAttribute ( "formula.error.message", new Variant ( e.getMessage () ) );
+            builder.setAttribute ( "formula.error.class", Variant.valueOf ( e.getClass ().getName () ) );
+            builder.setAttribute ( "formula.error.message", Variant.valueOf ( e.getMessage () ) );
         }
         updateData ( builder.build () );
     }
