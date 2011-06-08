@@ -132,7 +132,7 @@ public class SimpleObjectExporter<T>
         if ( e != null )
         {
             attributes.put ( "invocation.error", Variant.TRUE );
-            attributes.put ( "invocation.error.message", new Variant ( e.getMessage () ) );
+            attributes.put ( "invocation.error.message", Variant.valueOf ( e.getMessage () ) );
         }
         else
         {
@@ -144,8 +144,8 @@ public class SimpleObjectExporter<T>
 
     private void fillAttributes ( final PropertyDescriptor pd, final Map<String, Variant> attributes )
     {
-        attributes.put ( "property.name", new Variant ( pd.getName () ) );
-        attributes.put ( "property.type", new Variant ( pd.getPropertyType ().getName () ) );
+        attributes.put ( "property.name", Variant.valueOf ( pd.getName () ) );
+        attributes.put ( "property.type", Variant.valueOf ( pd.getPropertyType ().getName () ) );
     }
 
     private void setItemValue ( final PropertyDescriptor pd, final DataItemInputChained item, final Object data, final Long timestamp )
@@ -159,7 +159,7 @@ public class SimpleObjectExporter<T>
             attributes.put ( "timestamp", Variant.valueOf ( timestamp ) );
         }
 
-        item.updateData ( new Variant ( data ), attributes, AttributeMode.SET );
+        item.updateData ( Variant.valueOf ( data ), attributes, AttributeMode.SET );
     }
 
     private void createFields ()
@@ -188,11 +188,11 @@ public class SimpleObjectExporter<T>
         final Map<String, Variant> properties = new HashMap<String, Variant> ();
         if ( pd.getShortDescription () != null )
         {
-            properties.put ( "description", new Variant ( pd.getShortDescription () ) );
+            properties.put ( "description", Variant.valueOf ( pd.getShortDescription () ) );
         }
         else
         {
-            properties.put ( "description", new Variant ( "Field: " + pd.getName () ) );
+            properties.put ( "description", Variant.valueOf ( "Field: " + pd.getName () ) );
         }
 
         final DataItemInputChained item = this.factory.createInput ( this.prefix + "." + name, properties );
