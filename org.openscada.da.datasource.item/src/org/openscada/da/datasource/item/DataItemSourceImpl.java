@@ -243,11 +243,11 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
         if ( this.debug )
         {
             newValue.setAttribute ( "source.hasConnection", this.connection != null ? Variant.TRUE : Variant.FALSE );
-            newValue.setAttribute ( "source.item.subscriptionState", new Variant ( newValue.getSubscriptionState ().toString () ) );
+            newValue.setAttribute ( "source.item.subscriptionState", Variant.valueOf ( newValue.getSubscriptionState ().toString () ) );
         }
 
-        newValue.setAttribute ( "source.itemId", new Variant ( this.itemId ) );
-        newValue.setAttribute ( "source.connectionId", new Variant ( this.connectionId ) );
+        newValue.setAttribute ( "source.itemId", Variant.valueOf ( this.itemId ) );
+        newValue.setAttribute ( "source.connectionId", Variant.valueOf ( this.connectionId ) );
 
         newValue.setAttribute ( "source.error", newValue.getSubscriptionState () != SubscriptionState.CONNECTED ? Variant.TRUE : Variant.FALSE );
     }
