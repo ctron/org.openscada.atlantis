@@ -44,14 +44,14 @@ public class QualityDataSource extends ScheduledDataSource implements DefaultDat
     {
         final long time = System.currentTimeMillis ();
 
-        final Variant value = new Variant ( this.value );
+        final Variant value = Variant.valueOf ( this.value );
 
         final boolean good = time / this.timespan % 2 == 0;
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "error", new Variant ( good ) );
+        attributes.put ( "error", Variant.valueOf ( good ) );
 
-        setValue ( new Variant ( value ), attributes );
+        setValue ( Variant.valueOf ( value ), attributes );
     }
 
     @Override
