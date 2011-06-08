@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -47,10 +47,11 @@ public class FloatAttribute extends AbstractAttribute implements Attribute
         this.enableTimestamp = enableTimestamp;
     }
 
+    @Override
     public void handleData ( final IoBuffer data, final Map<String, Variant> attributes, final Variant timestamp )
     {
         final float f = data.getFloat ( toAddress ( this.index ) );
-        attributes.put ( this.name, new Variant ( f ) );
+        attributes.put ( this.name, Variant.valueOf ( f ) );
 
         if ( !Float.valueOf ( f ).equals ( this.lastValue ) )
         {
@@ -64,12 +65,14 @@ public class FloatAttribute extends AbstractAttribute implements Attribute
         }
     }
 
+    @Override
     public void handleError ( final Map<String, Variant> attributes )
     {
         this.lastValue = null;
         this.lastTimestamp = null;
     }
 
+    @Override
     public void handleWrite ( final Variant value )
     {
         final DaveDevice device = this.device;

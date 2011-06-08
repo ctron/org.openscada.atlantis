@@ -118,7 +118,7 @@ public abstract class ScalarVariable implements Variable
         }
 
         attributes.put ( "generic.error", Variant.TRUE );
-        attributes.put ( "generic.error.message", new Variant ( e.getMessage () ) );
+        attributes.put ( "generic.error.message", Variant.valueOf ( e.getMessage () ) );
 
         this.item.updateData ( Variant.NULL, attributes, AttributeMode.SET );
     }
