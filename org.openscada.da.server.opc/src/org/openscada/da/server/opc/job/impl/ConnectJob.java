@@ -100,7 +100,7 @@ public class ConnectJob extends ThreadJob
             this.session = JISession.createSession ( this.connectionInformation.getDomain (), this.connectionInformation.getUser (), this.connectionInformation.getPassword () );
             this.session.setGlobalSocketTimeout ( (int)this.globalSocketTimeout );
             // session.setBindingSelector ( selector );
-            this.comServer = new JIComServer ( JIProgId.valueOf ( this.connectionInformation.getClsid () ), this.connectionInformation.getHost (), this.session );
+            this.comServer = new JIComServer ( JIProgId.valueOf ( this.connectionInformation.getProgId () ), this.connectionInformation.getHost (), this.session );
         }
         else
         {
