@@ -92,9 +92,12 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     private Boolean initialUpdate;
 
+    private final Executor executor;
+
     public AbstractDataItemMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
         super ( context, executor, eventProcessor, id );
+        this.executor = executor;
         this.poolTracker = poolTracker;
         this.prefix = prefix;
         this.defaultMonitorType = defaultMonitorType;
@@ -134,13 +137,14 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        this.masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, "'" + MasterItem.MASTER_ID + "' must be set" );
+        this.masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) );
         this.handlerPriority = cfg.getInteger ( "handlerPriority", getDefaultPriority () );
         this.monitorType = cfg.getString ( "monitorType", this.defaultMonitorType );
 
         setEventInformationAttributes ( convertAttributes ( cfg ) );
         setActive ( cfg.getBoolean ( "active", true ) );
         setRequireAkn ( cfg.getBoolean ( "requireAck", false ) );
+
         connect ();
     }
 
@@ -186,7 +190,20 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     protected void setMasterItem ( final MasterItem masterItem )
     {
-        logger.info ( "Setting master item:{}", masterItem );
+        logger.info ( "Setting master item: {}", masterItem );
+
+        this.executor.execute ( new Runnable () {
+            @Override
+            public void run ()
+            {
+                performSet ( masterItem );
+            }
+        } );
+    }
+
+    protected synchronized void performSet ( final MasterItem masterItem )
+    {
+        logger.info ( "Perform set item: {}", masterItem );
 
         disconnectItem ();
         connectItem ( masterItem );
