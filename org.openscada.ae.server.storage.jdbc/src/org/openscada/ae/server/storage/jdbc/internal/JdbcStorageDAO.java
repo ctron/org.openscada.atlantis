@@ -31,4 +31,6 @@ public interface JdbcStorageDAO
     public List<MutableEvent> queryEvent ( final String hql, final Object... parameters );
 
     public List<MutableEvent> queryEventSlice ( final String hql, final int first, final int max, final Object... parameters );
+
+    public String getInstance ();
 }

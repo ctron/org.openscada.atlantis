@@ -13,6 +13,9 @@
 			<column name="ID" length="36" sql-type="CHAR(36)" not-null="true" />
 			<generator class="assigned" />
 		</id>
+		<property name="instance">
+			<column name="INSTANCE_ID" length="32" not-null="true" default="default" />
+		</property>
 		<property name="sourceTimestamp">
 			<column name="SOURCE_TIMESTAMP" not-null="true" index="idx_org_openscada_ae_server_storage_1" />
 		</property>

@@ -91,6 +91,8 @@ public class MutableEvent
 
     private UUID id;
 
+    private String instance = "default";
+
     private Date sourceTimestamp;
 
     private Date entryTimestamp;
@@ -114,6 +116,16 @@ public class MutableEvent
     private String actorName = "";
 
     private String actorType = "";
+
+    public String getInstance ()
+    {
+        return instance;
+    }
+
+    public void setInstance ( String instance )
+    {
+        this.instance = instance;
+    }
 
     public String getMonitorType ()
     {
