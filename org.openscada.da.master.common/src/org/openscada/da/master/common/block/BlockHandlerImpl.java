@@ -190,7 +190,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
         }
         data.put ( "timestamp", "" + System.currentTimeMillis () ); //$NON-NLS-1$ //$NON-NLS-2$
 
-        return updateConfiguration ( data, attributes, false );
+        return updateConfiguration ( data, attributes, false, operationParameters );
     }
 
     protected void publishEvent ( final UserInformation user, final String message, final Object value )

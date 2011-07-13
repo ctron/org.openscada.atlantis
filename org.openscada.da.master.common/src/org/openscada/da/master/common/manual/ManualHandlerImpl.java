@@ -181,15 +181,15 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         {
             if ( value == null || value.isNull () )
             {
-                builder.attribute ( Fields.MESSAGE, Messages.getString("ManualHandlerImpl.Reset.Message") ); //$NON-NLS-1$
+                builder.attribute ( Fields.MESSAGE, Messages.getString ( "ManualHandlerImpl.Reset.Message" ) ); //$NON-NLS-1$
                 builder.attribute ( Fields.MESSAGE_CODE, "MAN-RESET" ); //$NON-NLS-1$
-                builder.attribute ( Fields.EVENT_TYPE, Messages.getString("ManualHandlerImpl.Reset.Type") ); //$NON-NLS-1$
+                builder.attribute ( Fields.EVENT_TYPE, Messages.getString ( "ManualHandlerImpl.Reset.Type" ) ); //$NON-NLS-1$
             }
             else
             {
-                builder.attribute ( Fields.MESSAGE, Messages.getString("ManualHandlerImpl.Set.Message") ); //$NON-NLS-1$
+                builder.attribute ( Fields.MESSAGE, Messages.getString ( "ManualHandlerImpl.Set.Message" ) ); //$NON-NLS-1$
                 builder.attribute ( Fields.MESSAGE_CODE, "MAN-SET" ); //$NON-NLS-1$
-                builder.attribute ( Fields.EVENT_TYPE, Messages.getString("ManualHandlerImpl.Set.Type") ); //$NON-NLS-1$
+                builder.attribute ( Fields.EVENT_TYPE, Messages.getString ( "ManualHandlerImpl.Set.Type" ) ); //$NON-NLS-1$
             }
 
             data.put ( "value", value.toString () ); //$NON-NLS-1$
@@ -201,7 +201,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
             final String name = operationParameters.getUserInformation ().getName ();
             data.put ( "user", name ); //$NON-NLS-1$
             builder.attribute ( Fields.ACTOR_NAME, name );
-            builder.attribute ( Fields.ACTOR_TYPE, "USER" ); 
+            builder.attribute ( Fields.ACTOR_TYPE, "USER" );
         }
         else
         {
@@ -231,6 +231,6 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
         this.eventProcessor.publishEvent ( builder.build () );
 
-        return updateConfiguration ( data, attributes, false );
+        return updateConfiguration ( data, attributes, false, operationParameters );
     }
 }
