@@ -86,18 +86,12 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
 
         synchronized ( this )
         {
-            final ConnectionManager manager = this.connections.get ( pid );
-            if ( manager == null )
-            {
-                // create
-                final ConnectionManager newManager = new ConnectionManager ( this.context, pid, ConnectionInformation.fromURI ( uri ) );
-                publishConnection ( pid, newManager );
-            }
-            else
-            {
-                // update
-                manager.update ( ConnectionInformation.fromURI ( uri ) );
-            }
+            // delete first
+            delete ( pid );
+
+            // create
+            final ConnectionManager newManager = new ConnectionManager ( this.context, pid, ConnectionInformation.fromURI ( uri ) );
+            publishConnection ( pid, newManager );
         }
     }
 
