@@ -56,8 +56,6 @@ public class OPCConnection implements PropertyChangeListener
 
     private final ConnectionSetup connectionSetup;
 
-    private final long socketTimeout = 5000L;
-
     private OPCController controller;
 
     private final FolderCommon rootFolder;
@@ -379,11 +377,6 @@ public class OPCConnection implements PropertyChangeListener
 
         stop ();
         this.hive = null;
-    }
-
-    public long getSocketTimeout ()
-    {
-        return this.socketTimeout;
     }
 
     @Override
