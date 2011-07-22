@@ -29,6 +29,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.sec.UserInformationPrincipal;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -130,9 +131,9 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
      * @return the attribute result of the written attributes
      * @throws Exception if anything goes wrong
      */
-    protected abstract WriteAttributeResults handleUpdate ( final Map<String, Variant> attributes, OperationParameters operationParameters ) throws Exception;
+    protected abstract WriteAttributeResults handleUpdate ( final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws Exception;
 
-    protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet ) throws OperationException
+    protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet, final OperationParameters operationParameters ) throws OperationException
     {
         final WriteAttributeResults result = new WriteAttributeResults ();
 
@@ -163,7 +164,8 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
             }
 
             final ConfigurationAdministrator admin = (ConfigurationAdministrator)service;
-            admin.updateConfiguration ( this.factoryId, this.configurationId, data, fullSet );
+
+            admin.updateConfiguration ( UserInformationPrincipal.create ( operationParameters.getUserInformation () ), this.factoryId, this.configurationId, data, fullSet );
 
             return result;
         }

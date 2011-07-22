@@ -36,12 +36,14 @@ import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
+import org.openscada.sec.UserInformationPrincipal;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
@@ -342,7 +344,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         final Map<String, Variant> attributes = new HashMap<String, Variant> ( request.getAttributes () );
         final WriteAttributeResults result = new WriteAttributeResults ();
 
-        simpleHandleAttributes ( attributes, result );
+        simpleHandleAttributes ( attributes, result, request.getOperationParameters () );
 
         // remove result keys from request
         for ( final String attr : result.keySet () )
@@ -353,7 +355,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         return new WriteRequestResult ( request.getValue (), attributes, result );
     }
 
-    protected void simpleHandleAttributes ( final Map<String, Variant> attributes, final WriteAttributeResults result )
+    protected void simpleHandleAttributes ( final Map<String, Variant> attributes, final WriteAttributeResults result, final OperationParameters operationParameters )
     {
         final Map<String, String> configUpdate = new HashMap<String, String> ();
 
@@ -361,11 +363,11 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
         if ( !configUpdate.isEmpty () )
         {
-            updateConfiguration ( configUpdate );
+            updateConfiguration ( configUpdate, operationParameters );
         }
     }
 
-    private void updateConfiguration ( final Map<String, String> configUpdate )
+    private void updateConfiguration ( final Map<String, String> configUpdate, final OperationParameters operationParameters )
     {
         logger.info ( "Request to update configuration: {}", configUpdate );
 
@@ -378,7 +380,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         {
             try
             {
-                Activator.getConfigAdmin ().updateConfiguration ( factoryId, configurationId, configUpdate, false );
+                Activator.getConfigAdmin ().updateConfiguration ( UserInformationPrincipal.create ( operationParameters.getUserInformation () ), factoryId, configurationId, configUpdate, false );
             }
             catch ( final Exception e )
             {

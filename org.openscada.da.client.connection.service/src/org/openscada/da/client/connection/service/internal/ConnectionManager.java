@@ -106,11 +106,6 @@ public class ConnectionManager implements SingleServiceListener
         disposeConnection ();
     }
 
-    public void update ( final ConnectionInformation connectionInformation )
-    {
-        // FIXME: implement
-    }
-
     @Override
     public void serviceChange ( final ServiceReference reference, final Object factory )
     {
