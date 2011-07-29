@@ -78,10 +78,10 @@ public class HqlConverter
         }
     }
 
-    public static HqlResult toHql ( final String instance, final Filter filter ) throws NotSupportedException
+    public static HqlResult toHql ( final Filter filter ) throws NotSupportedException
     {
         final HqlResult result = new HqlResult ();
-        result.hql = String.format ( "SELECT M from MutableEvent M left join fetch M.attributes as A WHERE M.instance = '%s'", instance );
+        result.hql = "SELECT M from MutableEvent M left join fetch M.attributes as A";
         if ( filter.isEmpty () )
         {
             // pass
@@ -89,13 +89,13 @@ public class HqlConverter
         else if ( filter.isExpression () )
         {
             final HqlResult h = toHql ( (FilterExpression)filter );
-            result.hql += " AND " + h.hql;
+            result.hql += " WHERE " + h.hql;
             result.parameters = combine ( result.parameters, h.parameters );
         }
         else if ( filter.isAssertion () )
         {
             final HqlResult h = toHql ( (FilterAssertion)filter );
-            result.hql += " AND " + h.hql;
+            result.hql += " WHERE " + h.hql;
             result.parameters = combine ( result.parameters, h.parameters );
         }
         else

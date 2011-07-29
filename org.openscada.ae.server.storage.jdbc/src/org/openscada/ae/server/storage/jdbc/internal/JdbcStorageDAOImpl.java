@@ -42,8 +42,6 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
 
     private int maxLength = 0;
 
-    private String instance;
-
     @Override
     public MutableEvent loadEvent ( final UUID id )
     {
@@ -126,7 +124,6 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
         {
             clipStrings ( event );
         }
-        event.setInstance ( instance );
         this.saveOrUpdate ( event );
         flush ();
     }
@@ -183,16 +180,5 @@ public class JdbcStorageDAOImpl extends HibernateTemplate implements JdbcStorage
     public void setMaxLength ( final int maxLength )
     {
         this.maxLength = maxLength;
-    }
-
-    @Override
-    public String getInstance ()
-    {
-        return instance;
-    }
-
-    public void setInstance ( String instance )
-    {
-        this.instance = instance;
     }
 }

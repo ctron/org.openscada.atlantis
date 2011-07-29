@@ -62,7 +62,7 @@ public class JdbcQuery implements Query
         this.jdbcStorageDAO = jdbcStorageDAO;
         this.filter = filter;
         FilterUtils.toVariant ( this.filter );
-        this.hqlResult = HqlConverter.toHql ( jdbcStorageDAO.getInstance (), filter );
+        this.hqlResult = HqlConverter.toHql ( filter );
     }
 
     /* (non-Javadoc)
