@@ -59,6 +59,8 @@ public class QueryImpl implements Query
 
     private boolean initLoad = true;
 
+    private volatile Future<?> initialLoadJob;
+
     private volatile Future<?> loadJob;
 
     @SuppressWarnings ( "unused" )
@@ -117,23 +119,29 @@ public class QueryImpl implements Query
 
     private void loadInitial ()
     {
-        try
-        {
-            this.query = this.storage.query ( this.queryData );
-        }
-        catch ( final Exception e )
-        {
-            logger.warn ( "Failed to query storage", e );
-        }
+        initialLoadJob = loadExecutor.submit ( new Runnable () {
+            @Override
+            public void run ()
+            {
+                try
+                {
+                    query = storage.query ( queryData );
+                }
+                catch ( final Exception e )
+                {
+                    logger.warn ( "Failed to query storage", e );
+                }
 
-        if ( this.query == null )
-        {
-            dispose ();
-        }
-        else
-        {
-            startLoad ( 100 );
-        }
+                if ( query == null )
+                {
+                    dispose ();
+                }
+                else
+                {
+                    startLoad ( Integer.getInteger ( "org.openscada.ae.server.common.loadinitial", 500 ) );
+                }
+            }
+        } );
     }
 
     private synchronized void startLoad ( final int count )
@@ -243,6 +251,12 @@ public class QueryImpl implements Query
             }
 
             this.disposed = true;
+
+            if ( this.initialLoadJob != null )
+            {
+                this.initialLoadJob.cancel ( true );
+                this.initialLoadJob = null;
+            }
 
             if ( this.loadJob != null )
             {
