@@ -50,7 +50,7 @@ public class EventPoolImpl implements EventListener, EventQuery
 {
     private final static Logger logger = LoggerFactory.getLogger ( EventPoolImpl.class );
 
-    private final static int daysToRetrieve = 90;
+    private final static int daysToRetrieve = Integer.getInteger ( "org.openscada.ae.common.event.pool.daysToRetrieve", 90 );
 
     private final static int chunkSize = Integer.getInteger ( "org.openscada.ae.common.event.pool.chunkSize", 100 );
 
@@ -79,6 +79,7 @@ public class EventPoolImpl implements EventListener, EventQuery
         this.filter = filter;
         this.matcher = new EventMatcherImpl ( filter );
         this.events = new BoundedPriorityQueueSet<Event> ( poolSize, new Comparator<Event> () {
+            @Override
             public int compare ( final Event o1, final Event o2 )
             {
                 return Event.comparator.compare ( o2, o1 );
@@ -92,27 +93,13 @@ public class EventPoolImpl implements EventListener, EventQuery
         // add to event manager
         this.eventManager.addEventListener ( this );
 
-        // load initial set from storage, but restrict it to *daysToRetrieve* days
-        final Calendar cal = new GregorianCalendar ();
-        cal.add ( Calendar.DAY_OF_YEAR, -daysToRetrieve );
-        final Query query = this.storage.query ( "(&" + this.filter + "(sourceTimestamp>=" + isoDateFormat.format ( cal.getTime () ) + "))" );
-        try
-        {
-            final Collection<Event> result = query.getNext ( this.events.getCapacity () );
-            logger.debug ( "Loaded {} entries from storage", result.size () );
-            this.events.addAll ( result );
-
-            final UnmodifiableIterator<List<Event>> it = Iterators.partition ( this.events.iterator (), chunkSize );
-            while ( it.hasNext () )
+        this.executor.execute ( new Runnable () {
+            @Override
+            public void run ()
             {
-                final List<org.openscada.ae.Event> chunk = it.next ();
-                notifyEvent ( chunk.toArray ( new Event[chunk.size ()] ) );
+                loadFromStorage ();
             }
-        }
-        finally
-        {
-            query.dispose ();
-        }
+        } );
     }
 
     public synchronized void stop ()
@@ -120,6 +107,63 @@ public class EventPoolImpl implements EventListener, EventQuery
         this.eventManager.removeEventListener ( this );
     }
 
+    private void loadFromStorage ()
+    {
+        // load initial set from storage, but restrict it to *daysToRetrieve* days
+        try
+        {
+            long t = System.currentTimeMillis ();
+            // retrieve data per day, to restrict database load
+            for ( int daysBack = 1; daysBack <= daysToRetrieve; daysBack++ )
+            {
+                Calendar calStart = new GregorianCalendar ();
+                Calendar calEnd = new GregorianCalendar ();
+                calStart.setTimeInMillis ( t );
+                calStart.add ( Calendar.DAY_OF_YEAR, -daysBack );
+                calEnd.setTimeInMillis ( t );
+                calEnd.add ( Calendar.DAY_OF_YEAR, ( ( -daysBack ) + 1 ) );
+                StringBuilder filter = new StringBuilder ();
+                filter.append ( "(&" );
+                filter.append ( this.filter );
+                filter.append ( "(sourceTimestamp>=" + isoDateFormat.format ( calStart.getTime () ) + ")" );
+                if ( daysBack > 1 )
+                {
+                    filter.append ( "(sourceTimestamp<" + isoDateFormat.format ( calEnd.getTime () ) + ")" );
+                }
+                filter.append ( ")" );
+                logger.debug ( "load events from filter: " + filter );
+                final Query query = this.storage.query ( filter.toString () );
+                try
+                {
+                    final Collection<Event> result = query.getNext ( this.events.getCapacity () );
+                    logger.debug ( "Loaded {} entries from storage", result.size () );
+                    this.events.addAll ( result );
+
+                    final UnmodifiableIterator<List<Event>> it = Iterators.partition ( this.events.iterator (), chunkSize );
+                    while ( it.hasNext () )
+                    {
+                        final List<org.openscada.ae.Event> chunk = it.next ();
+                        notifyEvent ( chunk.toArray ( new Event[chunk.size ()] ) );
+                    }
+                }
+                finally
+                {
+                    query.dispose ();
+                }
+                if ( events.size () >= events.getCapacity () )
+                {
+                    return;
+                }
+            }
+            logger.debug ( "load of events complete" );
+        }
+        catch ( Exception e )
+        {
+            logger.error ( "loadFromStorage failed", e );
+        }
+    }
+
+    @Override
     public synchronized void handleEvent ( final Event[] events )
     {
         final Set<Event> toNotify = new HashSet<Event> ();
@@ -142,6 +186,7 @@ public class EventPoolImpl implements EventListener, EventQuery
         final EventListener[] listeners = this.listeners.toArray ( new EventListener[this.listeners.size ()] );
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 for ( final EventListener listener : listeners )
@@ -152,6 +197,7 @@ public class EventPoolImpl implements EventListener, EventQuery
         } );
     }
 
+    @Override
     public synchronized void addListener ( final EventListener eventListener )
     {
         this.listeners.add ( eventListener );
@@ -162,6 +208,7 @@ public class EventPoolImpl implements EventListener, EventQuery
             final List<org.openscada.ae.Event> chunk = it.next ();
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     eventListener.handleEvent ( chunk.toArray ( new Event[chunk.size ()] ) );
@@ -171,11 +218,13 @@ public class EventPoolImpl implements EventListener, EventQuery
 
     }
 
+    @Override
     public synchronized void removeListener ( final EventListener eventListener )
     {
         this.listeners.remove ( eventListener );
     }
 
+    @Override
     public int getCapacity ()
     {
         return this.events.getCapacity ();
