@@ -66,8 +66,6 @@ public class StorageImpl implements StorageHistoricalItem
 
     private final static Logger logger = LoggerFactory.getLogger ( StorageImpl.class );
 
-    private final BundleContext context;
-
     private final String id;
 
     private final DataStoreAccesor nativeLevel;
@@ -128,8 +126,6 @@ public class StorageImpl implements StorageHistoricalItem
 
     public StorageImpl ( final File file, final BundleContext context, final DataFilePool pool, final ExecutorService queryExecutor, final ScheduledExecutorService updateExecutor ) throws Exception
     {
-        this.context = context;
-
         this.file = file;
 
         final Properties p = new Properties ();
