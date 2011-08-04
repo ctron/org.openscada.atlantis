@@ -721,10 +721,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     protected void finalize () throws Throwable
     {
         logger.info ( "Finalized" );
-        if ( !this.lookupExecutor.isShutdown () )
-        {
-            this.lookupExecutor.shutdown ();
-        }
+        this.lookupExecutor.shutdown ();
         super.finalize ();
     }
 
