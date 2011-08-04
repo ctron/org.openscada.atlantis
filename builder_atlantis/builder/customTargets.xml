@@ -175,6 +175,7 @@
 	<openscada.builder.copyPlugin id="org.openscada.hd.exporter.http.server"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.hds"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.common"/>
   	
   	<!-- OpenSCADA AE -->
   	
