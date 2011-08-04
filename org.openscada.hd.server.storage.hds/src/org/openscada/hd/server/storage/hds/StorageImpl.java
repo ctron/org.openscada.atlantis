@@ -49,6 +49,8 @@ import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.common.StorageHistoricalItem;
+import org.openscada.hd.server.storage.common.QueryImpl;
+import org.openscada.hd.server.storage.common.ValueSourceManager;
 import org.openscada.hds.DataFilePool;
 import org.openscada.hds.DataStoreAccesor;
 import org.openscada.hds.DataStoreListener;

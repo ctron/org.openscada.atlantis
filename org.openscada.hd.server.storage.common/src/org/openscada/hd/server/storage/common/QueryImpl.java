@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.storage.hds;
+package org.openscada.hd.server.storage.common;
 
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
@@ -26,7 +26,6 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
-import org.openscada.hd.server.storage.common.QueryBuffer;
 import org.openscada.hds.ValueVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
