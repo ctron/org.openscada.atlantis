@@ -162,7 +162,6 @@ public class StorageImpl implements StorageHistoricalItem
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( Constants.SERVICE_PID, this.id );
         this.handle = context.registerService ( StorageHistoricalItem.class.getName (), this, properties );
-
     }
 
     protected void handleStoreChanged ( final Date start, final Date end )
