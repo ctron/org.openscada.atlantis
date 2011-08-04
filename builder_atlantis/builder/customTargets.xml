@@ -202,6 +202,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc2"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.http"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.info"/>
   	
