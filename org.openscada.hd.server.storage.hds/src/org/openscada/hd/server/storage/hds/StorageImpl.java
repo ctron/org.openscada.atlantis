@@ -61,7 +61,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StorageImpl implements StorageHistoricalItem
+public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( StorageImpl.class );
@@ -446,6 +446,7 @@ public class StorageImpl implements StorageHistoricalItem
         }
     }
 
+    @Override
     public void queryClosed ( final QueryImpl query )
     {
         this.readLock.lock ();
@@ -459,6 +460,7 @@ public class StorageImpl implements StorageHistoricalItem
         }
     }
 
+    @Override
     public void visit ( final QueryParameters parameters, final ValueVisitor visitor )
     {
         this.nativeLevel.visit ( visitor, parameters.getStartTimestamp ().getTime (), parameters.getEndTimestamp ().getTime () );

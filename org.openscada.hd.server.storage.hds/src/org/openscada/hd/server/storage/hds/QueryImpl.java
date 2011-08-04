@@ -35,7 +35,7 @@ public class QueryImpl implements Query
 
     private final static Logger logger = LoggerFactory.getLogger ( QueryImpl.class );
 
-    private final StorageImpl storage;
+    private final ValueSourceManager storage;
 
     private final ExecutorService executor;
 
@@ -86,7 +86,7 @@ public class QueryImpl implements Query
 
     private final AtomicReference<LoadState> state = new AtomicReference<LoadState> ();
 
-    public QueryImpl ( final StorageImpl storage, final ExecutorService executor, final QueryParameters parameters, final QueryListener listener, final boolean updateData )
+    public QueryImpl ( final ValueSourceManager storage, final ExecutorService executor, final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         this.storage = storage;
         this.executor = executor;
