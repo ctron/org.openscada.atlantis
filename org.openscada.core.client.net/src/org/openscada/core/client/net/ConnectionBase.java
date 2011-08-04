@@ -58,7 +58,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private final Set<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArraySet<ConnectionStateListener> ();
 
-    private ConnectionState connectionState = ConnectionState.CLOSED;
+    private volatile ConnectionState connectionState = ConnectionState.CLOSED;
 
     private static final int DEFAULT_TIMEOUT = 10000;
 
