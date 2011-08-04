@@ -418,13 +418,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
             }
             else
             {
-                Throwable e1 = e;
-                if ( e1 == null )
-                {
-                    e1 = new RuntimeException ( String.format ( "Unable to resolve: %s", address ) );
-                }
                 // lookup failed
-                switchState ( ConnectionState.CLOSED, e1, null );
+                switchState ( ConnectionState.CLOSED, e, null );
             }
         }
 
