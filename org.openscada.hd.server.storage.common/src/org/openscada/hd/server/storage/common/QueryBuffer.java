@@ -435,8 +435,6 @@ public class QueryBuffer
             }
         }
 
-        final Entry nextEntry = findNextEntry ( endIndex );
-
         notifyData ( startIndex, endIndex );
     }
 
