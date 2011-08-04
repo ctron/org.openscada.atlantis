@@ -62,7 +62,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private static final int DEFAULT_TIMEOUT = 10000;
 
-    protected IoSession session;
+    protected volatile IoSession session;
 
     protected final Messenger messenger;
 
@@ -609,7 +609,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
     public void sessionClosed ( final IoSession session ) throws Exception
     {
         logger.info ( "Session closed: {}", session );
-        switchState ( ConnectionState.CLOSED, null, null );
+        if ( session == this.session )
+        {
+            switchState ( ConnectionState.CLOSED, null, null );
+        }
     }
 
     @Override
