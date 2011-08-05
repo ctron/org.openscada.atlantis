@@ -189,7 +189,7 @@ public class QueryBuffer extends QueryDataBuffer
     public synchronized void changeParameters ( final QueryParameters parameters )
     {
         this.parameters = parameters;
-        notifyStateUpdate ( this.state );
+        notifyStateUpdate ( QueryState.LOADING );
         notifyParameterUpdate ( parameters, new HashSet<String> ( Arrays.asList ( "AVG", "MIN", "MAX" ) ) );
 
         // clear
