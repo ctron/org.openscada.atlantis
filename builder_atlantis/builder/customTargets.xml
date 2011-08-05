@@ -180,9 +180,6 @@
   	
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.importer.hsdb"/>
   	
-  	
-  	
-  	
   	<!-- OpenSCADA AE -->
   	
   	<openscada.builder.copyFeature id="org.openscada.ae"/>

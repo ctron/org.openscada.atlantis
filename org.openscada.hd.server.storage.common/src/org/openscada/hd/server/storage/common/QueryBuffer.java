@@ -19,14 +19,9 @@
 
 package org.openscada.hd.server.storage.common;
 
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Map;
 import java.util.SortedSet;
 import java.util.TreeSet;
 import java.util.concurrent.Executor;
@@ -34,21 +29,15 @@ import java.util.concurrent.Executor;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QueryBuffer
+public class QueryBuffer extends QueryDataBuffer
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( QueryBuffer.class );
 
-    private final QueryListener listener;
-
     private QueryParameters parameters;
-
-    private final Executor executor;
 
     private static class Entry implements Comparable<Entry>
     {
@@ -140,35 +129,16 @@ public class QueryBuffer
         }
     }
 
-    private static class Data
+    protected static class Data extends QueryDataBuffer.Data
     {
+
         private final TreeSet<Entry> entries = new TreeSet<QueryBuffer.Entry> ();
-
-        private final Date start;
-
-        private final Date end;
-
-        private boolean changed;
-
-        private double average = Double.NaN;
-
-        private double quality = Double.NaN;
-
-        private double manual = Double.NaN;
-
-        private double min = Double.NaN;
-
-        private double max = Double.NaN;
 
         private long entryCount;
 
         public Data ( final Date start, final Date end )
         {
-            this.start = start;
-            this.end = end;
-
-            // defaulting to true since we need at least one transmission
-            this.changed = true;
+            super ( start, end );
         }
 
         public void add ( final Entry entry )
@@ -184,6 +154,7 @@ public class QueryBuffer
             }
         }
 
+        @Override
         public long getEntryCount ()
         {
             return this.entryCount;
@@ -194,87 +165,6 @@ public class QueryBuffer
             return this.entries;
         }
 
-        public Date getStart ()
-        {
-            return this.start;
-        }
-
-        public Date getEnd ()
-        {
-            return this.end;
-        }
-
-        public boolean isChanged ()
-        {
-            return this.changed;
-        }
-
-        public void resetChanged ()
-        {
-            this.changed = false;
-        }
-
-        public void setAverage ( final double average )
-        {
-            if ( Double.compare ( this.average, average ) != 0 )
-            {
-                this.changed = true;
-                this.average = average;
-            }
-        }
-
-        public void setQuality ( final double error )
-        {
-            if ( Double.compare ( this.quality, error ) != 0 )
-            {
-                this.changed = true;
-                this.quality = error;
-            }
-        }
-
-        public void setManual ( final double manual )
-        {
-            if ( Double.compare ( this.manual, manual ) != 0 )
-            {
-                this.changed = true;
-                this.manual = manual;
-            }
-        }
-
-        public double getAverage ()
-        {
-            return this.average;
-        }
-
-        public double getQuality ()
-        {
-            return this.quality;
-        }
-
-        public double getManual ()
-        {
-            return this.manual;
-        }
-
-        public void setMax ( final double max )
-        {
-            this.max = max;
-        }
-
-        public void setMin ( final double min )
-        {
-            this.min = min;
-        }
-
-        public double getMin ()
-        {
-            return this.min;
-        }
-
-        public double getMax ()
-        {
-            return this.max;
-        }
     }
 
     private Entry firstEntry;
@@ -283,41 +173,39 @@ public class QueryBuffer
 
     private Data[] data;
 
-    private QueryState state;
-
     private final boolean useNaNs = Boolean.getBoolean ( "org.openscada.hd.server.storage.hds.useNaNs" );
 
     public QueryBuffer ( final QueryListener listener, final Executor executor )
     {
-        this.listener = listener;
-        this.executor = executor;
+        super ( listener, executor );
+    }
+
+    @Override
+    protected org.openscada.hd.server.storage.common.QueryDataBuffer.Data[] getData ()
+    {
+        return this.data;
     }
 
     public synchronized void changeParameters ( final QueryParameters parameters )
     {
         this.parameters = parameters;
-        this.listener.updateState ( QueryState.LOADING );
-        this.listener.updateParameters ( parameters, new HashSet<String> ( Arrays.asList ( "AVG", "MIN", "MAX" ) ) );
+        notifyStateUpdate ( this.state );
+        notifyParameterUpdate ( parameters, new HashSet<String> ( Arrays.asList ( "AVG", "MIN", "MAX" ) ) );
 
         // clear
         this.entries.clear ();
         this.firstEntry = null;
         this.data = new Data[parameters.getEntries ()];
 
-        final long start = parameters.getStartTimestamp ().getTimeInMillis ();
-        final long end = parameters.getEndTimestamp ().getTimeInMillis ();
+        fillDataCells ( this.data, parameters.getStartTimestamp (), parameters.getEndTimestamp (), new DataFactory () {
 
-        // create data buffer
-        final double period = (double) ( end - start ) / (double)this.data.length;
-        double counter = 0;
-        for ( int i = 0; i < this.data.length; i++ )
-        {
-            final long startTix = (long) ( start + counter );
-            final long endTix = (long) ( start + ( counter + period ) );
-            logger.trace ( "Init index {} with {} -> {}", new Object[] { i, startTix, endTix } );
-            this.data[i] = new Data ( new Date ( startTix ), new Date ( endTix ) );
-            counter += period;
-        }
+            @Override
+            public QueryDataBuffer.Data create ( final Date start, final Date end )
+            {
+                return new Data ( start, end );
+            }
+        } );
+
     }
 
     public synchronized void insertData ( final double value, final Date timestamp, final boolean error, final boolean manual )
@@ -438,72 +326,6 @@ public class QueryBuffer
         notifyData ( startIndex, endIndex );
     }
 
-    private void notifyData ( final int startIndex, final int endIndex )
-    {
-        final Collection<ValueInformation> information = new ArrayList<ValueInformation> ();
-        final Map<String, Collection<Value>> values = new HashMap<String, Collection<Value>> ();
-        values.put ( "AVG", new ArrayList<Value> () );
-        values.put ( "MIN", new ArrayList<Value> () );
-        values.put ( "MAX", new ArrayList<Value> () );
-
-        int lastIndex = startIndex;
-        for ( int i = startIndex; i < endIndex; i++ )
-        {
-            if ( this.data[i].isChanged () )
-            {
-                this.data[i].resetChanged ();
-
-                final double quality = Double.isNaN ( this.data[i].getQuality () ) ? 0.0 : this.data[i].getQuality ();
-                final double manual = Double.isNaN ( this.data[i].getManual () ) ? 0.0 : this.data[i].getManual ();
-
-                information.add ( new ValueInformation ( convert ( this.data[i].getStart () ), convert ( this.data[i].getEnd () ), quality, manual, this.data[i].getEntryCount () ) );
-                values.get ( "AVG" ).add ( new Value ( this.data[i].getAverage () ) );
-                values.get ( "MIN" ).add ( new Value ( this.data[i].getMin () ) );
-                values.get ( "MAX" ).add ( new Value ( this.data[i].getMax () ) );
-                // add
-            }
-            else
-            {
-                // send
-                if ( !information.isEmpty () )
-                {
-                    notifyData ( lastIndex, convert ( values ), information.toArray ( new ValueInformation[information.size ()] ) );
-                    information.clear ();
-                    values.get ( "AVG" ).clear ();
-                    values.get ( "MIN" ).clear ();
-                    values.get ( "MAX" ).clear ();
-                }
-                // clear
-                lastIndex = i;
-            }
-        }
-
-        // send last
-        if ( !information.isEmpty () )
-        {
-            notifyData ( lastIndex, convert ( values ), information.toArray ( new ValueInformation[information.size ()] ) );
-        }
-    }
-
-    private Calendar convert ( final Date date )
-    {
-        final Calendar c = Calendar.getInstance ();
-        c.setTime ( date );
-        return c;
-    }
-
-    private Map<String, Value[]> convert ( final Map<String, Collection<Value>> values )
-    {
-        final Map<String, Value[]> result = new HashMap<String, Value[]> ();
-
-        for ( final Map.Entry<String, Collection<Value>> entry : values.entrySet () )
-        {
-            result.put ( entry.getKey (), entry.getValue ().toArray ( new Value[entry.getValue ().size ()] ) );
-        }
-
-        return result;
-    }
-
     protected Entry findPreviousEntry ( final int i )
     {
         if ( i <= 0 )
@@ -578,44 +400,4 @@ public class QueryBuffer
         complete ();
     }
 
-    protected synchronized void notifyData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
-    {
-        if ( this.listener == null )
-        {
-            return;
-        }
-
-        logger.debug ( "Sending data - index: {}, values#: {}, informations#: {}", new Object[] { index, values.size (), valueInformation.length } );
-
-        this.executor.execute ( new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                QueryBuffer.this.listener.updateData ( index, values, valueInformation );
-            }
-        } );
-    }
-
-    protected synchronized void notifyStateUpdate ( final QueryState state )
-    {
-        logger.debug ( "Change state to {}", state );
-
-        this.state = state;
-
-        if ( this.listener == null )
-        {
-            return;
-        }
-
-        this.executor.execute ( new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                QueryBuffer.this.listener.updateState ( state );
-            }
-        } );
-
-    }
 }
