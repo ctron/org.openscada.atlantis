@@ -504,7 +504,7 @@ public class QueryBuffer
         return result;
     }
 
-    private Entry findPreviousEntry ( final int i )
+    protected Entry findPreviousEntry ( final int i )
     {
         if ( i <= 0 )
         {
@@ -523,7 +523,7 @@ public class QueryBuffer
         }
     }
 
-    private Entry findNextEntry ( final int i )
+    protected Entry findNextEntry ( final int i )
     {
         if ( i + 1 >= this.parameters.getEntries () )
         {
