@@ -13,5 +13,5 @@ Import-Package: org.openscada.core;version="0.17.0",
  org.openscada.hds;version="0.1.0",
  org.openscada.utils.concurrent;version="0.16.0",
  org.openscada.utils.lang;version="0.16.0",
- org.osgi.framework;version="1.3.0",
+ org.osgi.framework;version="1.6.0",
  org.slf4j;version="1.5.0"

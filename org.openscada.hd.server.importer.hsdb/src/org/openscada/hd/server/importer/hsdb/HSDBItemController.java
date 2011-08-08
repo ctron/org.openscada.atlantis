@@ -38,7 +38,7 @@ public class HSDBItemController
 
     private final HSDBHistoricalItem item;
 
-    private final ServiceRegistration handle;
+    private final ServiceRegistration<HistoricalItem> handle;
 
     public HSDBItemController ( final String id, final ExecutorService executor, final BundleContext context, final HSDBValueSource source )
     {
@@ -52,7 +52,7 @@ public class HSDBItemController
         final Dictionary<String, Object> serviceProperties = new Hashtable<String, Object> ();
         serviceProperties.put ( Constants.SERVICE_PID, id );
         serviceProperties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
-        this.handle = context.registerService ( HistoricalItem.class.getName (), this.item, serviceProperties );
+        this.handle = context.registerService ( HistoricalItem.class, this.item, serviceProperties );
     }
 
     public void dispose ()
