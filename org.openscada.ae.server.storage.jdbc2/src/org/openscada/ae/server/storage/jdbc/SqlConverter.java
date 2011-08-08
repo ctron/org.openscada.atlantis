@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc;
 
 import java.io.Serializable;
@@ -48,17 +67,17 @@ public class SqlConverter
         fieldToColumn.put ( Fields.ACTOR_TYPE.getName (), "E.ACTOR_TYPE" );
     }
 
-    public static SqlCondition toSql ( String schema, Filter filter ) throws NotSupportedException
+    public static SqlCondition toSql ( final String schema, final Filter filter ) throws NotSupportedException
     {
-        AtomicInteger j = new AtomicInteger ( 0 );
-        SqlCondition condition = new SqlCondition ();
+        final AtomicInteger j = new AtomicInteger ( 0 );
+        final SqlCondition condition = new SqlCondition ();
         if ( filter.isEmpty () )
         {
             // pass
         }
         else if ( filter.isExpression () )
         {
-            SqlCondition expression = toSql ( schema, (FilterExpression)filter, j );
+            final SqlCondition expression = toSql ( schema, (FilterExpression)filter, j );
             condition.condition += " AND " + expression.condition;
             condition.joins.addAll ( expression.joins );
             condition.joinParameters.addAll ( expression.joinParameters );
@@ -66,7 +85,7 @@ public class SqlConverter
         }
         else if ( filter.isAssertion () )
         {
-            SqlCondition assertion = toSql ( schema, (FilterAssertion)filter, j );
+            final SqlCondition assertion = toSql ( schema, (FilterAssertion)filter, j );
             condition.condition += " AND " + assertion.condition;
             condition.joins.addAll ( assertion.joins );
             condition.joinParameters.addAll ( assertion.joinParameters );
@@ -79,7 +98,7 @@ public class SqlConverter
         return condition;
     }
 
-    private static SqlCondition toSql ( String schema, FilterAssertion assertion, AtomicInteger j ) throws NotSupportedException
+    private static SqlCondition toSql ( final String schema, final FilterAssertion assertion, final AtomicInteger j ) throws NotSupportedException
     {
         SqlCondition result = null;
         if ( assertion.getAssertion () == Assertion.EQUALITY )
@@ -121,10 +140,10 @@ public class SqlConverter
         return result;
     }
 
-    private static SqlCondition toSql ( String schema, String attribute, String op, Object value, AtomicInteger j )
+    private static SqlCondition toSql ( final String schema, final String attribute, final String op, final Object value, final AtomicInteger j )
     {
-        SqlCondition condition = new SqlCondition ();
-        Variant v = toVariant ( value );
+        final SqlCondition condition = new SqlCondition ();
+        final Variant v = toVariant ( value );
         if ( fixedAttributes.contains ( attribute ) || inlinedAttributes.contains ( attribute ) )
         {
             if ( "value".equals ( attribute ) )
@@ -178,7 +197,7 @@ public class SqlConverter
                     {
                         param = new Timestamp ( isoDateFormat.parse ( v.asString ( "" ) ).getTime () );
                     }
-                    catch ( ParseException e )
+                    catch ( final ParseException e )
                     {
                         param = e.getMessage ();
                     }
@@ -241,7 +260,7 @@ public class SqlConverter
         }
         else
         {
-            int k = j.get ();
+            final int k = j.get ();
             condition.joins.add ( "LEFT JOIN %1$sOPENSCADA_AE_EVENTS_ATTR field_" + k + " ON (E.ID = field_" + k + ".ID AND field_" + k + ".KEY = ?)" );
             condition.joinParameters.add ( attribute );
             if ( "approximate".equals ( op ) )
@@ -296,13 +315,13 @@ public class SqlConverter
         }
         if ( value instanceof String && ( (String)value ).contains ( "#" ) )
         {
-            VariantEditor ed = new VariantEditor ();
+            final VariantEditor ed = new VariantEditor ();
             try
             {
                 ed.setAsText ( (String)value );
                 return (Variant)ed.getValue ();
             }
-            catch ( IllegalArgumentException e )
+            catch ( final IllegalArgumentException e )
             {
                 // pass
             }
@@ -310,12 +329,12 @@ public class SqlConverter
         return Variant.valueOf ( value );
     }
 
-    private static String getColumn ( String attribute )
+    private static String getColumn ( final String attribute )
     {
         return fieldToColumn.get ( attribute );
     }
 
-    static SqlCondition toSql ( String schema, FilterExpression expression, AtomicInteger j ) throws NotSupportedException
+    static SqlCondition toSql ( final String schema, final FilterExpression expression, final AtomicInteger j ) throws NotSupportedException
     {
         final SqlCondition result = new SqlCondition ();
         result.condition = "(";

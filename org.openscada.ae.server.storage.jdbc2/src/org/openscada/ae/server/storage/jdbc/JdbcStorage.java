@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc;
 
 import java.util.List;
@@ -28,7 +47,7 @@ public class JdbcStorage extends BaseStorage
 
     private StorageDao jdbcStorageDao;
 
-    private List<JdbcQuery> openQueries = new CopyOnWriteArrayList<JdbcQuery> ();
+    private final List<JdbcQuery> openQueries = new CopyOnWriteArrayList<JdbcQuery> ();
 
     @Override
     public Event store ( final Event event, final StoreListener listener )
@@ -42,7 +61,7 @@ public class JdbcStorage extends BaseStorage
             {
                 try
                 {
-                    jdbcStorageDao.storeEvent ( eventToStore );
+                    JdbcStorage.this.jdbcStorageDao.storeEvent ( eventToStore );
                     JdbcStorage.this.queueSize.decrementAndGet ();
                     if ( listener != null )
                     {
@@ -61,10 +80,10 @@ public class JdbcStorage extends BaseStorage
     }
 
     @Override
-    public Query query ( String filter ) throws Exception
+    public Query query ( final String filter ) throws Exception
     {
         logger.debug ( "Query requested {}", filter );
-        return new JdbcQuery ( jdbcStorageDao, new FilterParser ( filter ).getFilter (), executor, openQueries );
+        return new JdbcQuery ( this.jdbcStorageDao, new FilterParser ( filter ).getFilter (), this.executor, this.openQueries );
     }
 
     @Override
@@ -72,14 +91,14 @@ public class JdbcStorage extends BaseStorage
     {
         this.queueSize.incrementAndGet ();
         logger.debug ( "Update of comment on event {} with comment '{}'", id, comment );
-        final Event event = Event.create ().event ( jdbcStorageDao.loadEvent ( id ) ).attribute ( Fields.COMMENT, comment ).build ();
+        final Event event = Event.create ().event ( this.jdbcStorageDao.loadEvent ( id ) ).attribute ( Fields.COMMENT, comment ).build ();
         this.executor.submit ( new Runnable () {
             @Override
             public void run ()
             {
                 try
                 {
-                    jdbcStorageDao.updateComment ( id, comment );
+                    JdbcStorage.this.jdbcStorageDao.updateComment ( id, comment );
                     logger.debug ( "Comment saved to database - remaining queue: {}, event: {}", JdbcStorage.this.queueSize.get (), event );
                     JdbcStorage.this.queueSize.decrementAndGet ();
                     if ( listener != null )
@@ -134,7 +153,7 @@ public class JdbcStorage extends BaseStorage
         logger.info ( "jdbcStorageDAO destroyed" );
     }
 
-    public void setJdbcStorageDao ( StorageDao jdbcStorageDao )
+    public void setJdbcStorageDao ( final StorageDao jdbcStorageDao )
     {
         this.jdbcStorageDao = jdbcStorageDao;
     }

@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc;
 
 import java.lang.ref.WeakReference;
@@ -34,15 +53,15 @@ public class JdbcQuery implements Query
 
     ScheduledFuture<Boolean> future;
 
-    public JdbcQuery ( StorageDao jdbcStorageDao, Filter filter, ScheduledExecutorService executor, List<JdbcQuery> openQueries ) throws SQLException, NotSupportedException
+    public JdbcQuery ( final StorageDao jdbcStorageDao, final Filter filter, final ScheduledExecutorService executor, final List<JdbcQuery> openQueries ) throws SQLException, NotSupportedException
     {
         openQueries.add ( this );
         this.openQueries = new WeakReference<List<JdbcQuery>> ( openQueries );
         this.jdbcStorageDao = jdbcStorageDao;
-        resultSet = jdbcStorageDao.queryEvents ( filter );
-        statement = resultSet.getStatement ();
-        hasMore = resultSet.next ();
-        future = executor.schedule ( new Callable<Boolean> () {
+        this.resultSet = jdbcStorageDao.queryEvents ( filter );
+        this.statement = this.resultSet.getStatement ();
+        this.hasMore = this.resultSet.next ();
+        this.future = executor.schedule ( new Callable<Boolean> () {
             @Override
             public Boolean call ()
             {
@@ -56,20 +75,20 @@ public class JdbcQuery implements Query
     @Override
     public boolean hasMore ()
     {
-        return hasMore;
+        return this.hasMore;
     }
 
     @Override
-    public Collection<Event> getNext ( long count ) throws Exception
+    public Collection<Event> getNext ( final long count ) throws Exception
     {
-        List<Event> result = new ArrayList<Event> ();
-        if ( hasMore )
+        final List<Event> result = new ArrayList<Event> ();
+        if ( this.hasMore )
         {
-            if ( resultSet.isClosed () )
+            if ( this.resultSet.isClosed () )
             {
                 throw new RuntimeException ( "ResultSet is closed (probably due to a timeout), please create a new query" );
             }
-            hasMore = jdbcStorageDao.toEventList ( resultSet, result, false, count );
+            this.hasMore = this.jdbcStorageDao.toEventList ( this.resultSet, result, false, count );
         }
         return result;
     }
@@ -78,39 +97,39 @@ public class JdbcQuery implements Query
     public void dispose ()
     {
         this.hasMore = false;
-        if ( resultSet != null )
+        if ( this.resultSet != null )
         {
             try
             {
-                if ( resultSet != null && !resultSet.isClosed () )
+                if ( this.resultSet != null && !this.resultSet.isClosed () )
                 {
-                    resultSet.close ();
+                    this.resultSet.close ();
                 }
             }
-            catch ( SQLException e )
+            catch ( final SQLException e )
             {
                 logger.warn ( "error on closing database resources", e );
             }
             try
             {
-                if ( statement != null && !statement.isClosed () )
+                if ( this.statement != null && !this.statement.isClosed () )
                 {
-                    statement.close ();
+                    this.statement.close ();
                 }
             }
-            catch ( SQLException e )
+            catch ( final SQLException e )
             {
                 logger.warn ( "error on closing database resources", e );
             }
         }
-        List<JdbcQuery> openQueries = this.openQueries.get ();
+        final List<JdbcQuery> openQueries = this.openQueries.get ();
         if ( openQueries != null )
         {
             openQueries.remove ( this );
         }
-        if ( future != null )
+        if ( this.future != null )
         {
-            future.cancel ( false );
+            this.future.cancel ( false );
         }
     }
 }

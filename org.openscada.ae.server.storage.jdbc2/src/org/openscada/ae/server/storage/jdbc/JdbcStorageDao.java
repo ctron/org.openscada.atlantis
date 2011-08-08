@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc;
 
 import java.io.Serializable;
@@ -65,22 +84,22 @@ public class JdbcStorageDao implements StorageDao
      * @see org.openscada.ae.server.storage.jdbc.StorageDao#storeEvent(org.openscada.ae.Event)
      */
     @Override
-    public void storeEvent ( Event event ) throws Exception
+    public void storeEvent ( final Event event ) throws Exception
     {
-        Connection con = this.connection;
+        final Connection con = this.connection;
         Statement stm1 = null;
         Statement stm2 = null;
         {
-            PreparedStatement stm = con.prepareStatement ( String.format ( insertEventSql, schema ) );
+            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertEventSql, this.schema ) );
             stm.setString ( 1, event.getId ().toString () );
-            stm.setString ( 2, instance );
+            stm.setString ( 2, this.instance );
             stm.setTimestamp ( 3, new java.sql.Timestamp ( event.getSourceTimestamp ().getTime () ) );
             stm.setTimestamp ( 4, new java.sql.Timestamp ( event.getEntryTimestamp ().getTime () ) );
             stm.setString ( 5, clip ( 32, Variant.valueOf ( event.getField ( Fields.MONITOR_TYPE ) ).asString ( "" ) ) );
             stm.setString ( 6, clip ( 32, Variant.valueOf ( event.getField ( Fields.EVENT_TYPE ) ).asString ( "" ) ) );
             stm.setString ( 7, clip ( 32, Variant.valueOf ( event.getField ( Fields.VALUE ) ).getType ().name () ) );
-            stm.setString ( 8, clip ( maxLength, Variant.valueOf ( event.getField ( Fields.VALUE ) ).asString ( "" ) ) );
-            Long longValue = Variant.valueOf ( event.getField ( Fields.VALUE ) ).asLong ( null );
+            stm.setString ( 8, clip ( this.maxLength, Variant.valueOf ( event.getField ( Fields.VALUE ) ).asString ( "" ) ) );
+            final Long longValue = Variant.valueOf ( event.getField ( Fields.VALUE ) ).asLong ( null );
             if ( longValue == null )
             {
                 stm.setNull ( 9, Types.BIGINT );
@@ -89,7 +108,7 @@ public class JdbcStorageDao implements StorageDao
             {
                 stm.setLong ( 9, longValue );
             }
-            Double doubleValue = Variant.valueOf ( event.getField ( Fields.VALUE ) ).asDouble ( null );
+            final Double doubleValue = Variant.valueOf ( event.getField ( Fields.VALUE ) ).asDouble ( null );
             if ( doubleValue == null )
             {
                 stm.setNull ( 10, Types.DOUBLE );
@@ -98,7 +117,7 @@ public class JdbcStorageDao implements StorageDao
             {
                 stm.setDouble ( 10, longValue );
             }
-            stm.setString ( 11, clip ( maxLength, Variant.valueOf ( event.getField ( Fields.MESSAGE ) ).asString ( "" ) ) );
+            stm.setString ( 11, clip ( this.maxLength, Variant.valueOf ( event.getField ( Fields.MESSAGE ) ).asString ( "" ) ) );
             stm.setString ( 12, clip ( 255, Variant.valueOf ( event.getField ( Fields.MESSAGE_CODE ) ).asString ( "" ) ) );
             stm.setInt ( 13, Variant.valueOf ( event.getField ( Fields.PRIORITY ) ).asInteger ( 50 ) );
             stm.setString ( 14, clip ( 255, Variant.valueOf ( event.getField ( Fields.SOURCE ) ).asString ( "" ) ) );
@@ -109,9 +128,9 @@ public class JdbcStorageDao implements StorageDao
             stm1 = stm;
         }
         {
-            PreparedStatement stm = con.prepareStatement ( String.format ( insertAttributesSql, schema ) );
+            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertAttributesSql, this.schema ) );
             boolean hasAttr = false;
-            for ( String attr : event.getAttributes ().keySet () )
+            for ( final String attr : event.getAttributes ().keySet () )
             {
                 if ( SqlConverter.inlinedAttributes.contains ( attr ) )
                 {
@@ -120,8 +139,8 @@ public class JdbcStorageDao implements StorageDao
                 stm.setString ( 1, event.getId ().toString () );
                 stm.setString ( 2, attr );
                 stm.setString ( 3, clip ( 32, event.getAttributes ().get ( attr ).getType ().name () ) );
-                stm.setString ( 4, clip ( maxLength, event.getAttributes ().get ( attr ).asString ( "" ) ) );
-                Long longValue = Variant.valueOf ( event.getAttributes ().get ( attr ) ).asLong ( null );
+                stm.setString ( 4, clip ( this.maxLength, event.getAttributes ().get ( attr ).asString ( "" ) ) );
+                final Long longValue = Variant.valueOf ( event.getAttributes ().get ( attr ) ).asLong ( null );
                 if ( longValue == null )
                 {
                     stm.setNull ( 5, Types.BIGINT );
@@ -130,7 +149,7 @@ public class JdbcStorageDao implements StorageDao
                 {
                     stm.setLong ( 5, longValue );
                 }
-                Double doubleValue = Variant.valueOf ( event.getAttributes ().get ( attr ) ).asDouble ( null );
+                final Double doubleValue = Variant.valueOf ( event.getAttributes ().get ( attr ) ).asDouble ( null );
                 if ( doubleValue == null )
                 {
                     stm.setNull ( 6, Types.DOUBLE );
@@ -157,22 +176,22 @@ public class JdbcStorageDao implements StorageDao
      * @see org.openscada.ae.server.storage.jdbc.StorageDao#updateComment(java.util.UUID, java.lang.String)
      */
     @Override
-    public void updateComment ( UUID id, String comment ) throws Exception
+    public void updateComment ( final UUID id, final String comment ) throws Exception
     {
-        Connection con = this.connection;
+        final Connection con = this.connection;
         con.setAutoCommit ( false );
         {
-            PreparedStatement stm = con.prepareStatement ( String.format ( deleteAttributesSql, schema ) );
+            final PreparedStatement stm = con.prepareStatement ( String.format ( this.deleteAttributesSql, this.schema ) );
             stm.setString ( 1, id.toString () );
             stm.setString ( 2, Event.Fields.COMMENT.getName () );
             stm.addBatch ();
         }
         {
-            PreparedStatement stm = con.prepareStatement ( String.format ( insertAttributesSql, schema ) );
+            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertAttributesSql, this.schema ) );
             stm.setString ( 1, id.toString () );
             stm.setString ( 2, Event.Fields.COMMENT.getName () );
             stm.setString ( 3, VariantType.STRING.name () );
-            stm.setString ( 4, clip ( maxLength, comment ) );
+            stm.setString ( 4, clip ( this.maxLength, comment ) );
             stm.setLong ( 5, (Long)null );
             stm.setDouble ( 6, (Double)null );
             stm.addBatch ();
@@ -180,7 +199,7 @@ public class JdbcStorageDao implements StorageDao
         con.commit ();
     }
 
-    private String clip ( int i, String string )
+    private String clip ( final int i, final String string )
     {
         if ( string == null )
         {
@@ -197,16 +216,16 @@ public class JdbcStorageDao implements StorageDao
      * @see org.openscada.ae.server.storage.jdbc.StorageDao#loadEvent(java.util.UUID)
      */
     @Override
-    public Event loadEvent ( UUID id ) throws SQLException
+    public Event loadEvent ( final UUID id ) throws SQLException
     {
-        Connection con = this.connection;
-        String sql = selectEventSql + whereSql + " AND E.ID = ? " + defaultOrder;
-        PreparedStatement stm = con.prepareStatement ( String.format ( sql, schema ), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
-        stm.setString ( 1, instance );
+        final Connection con = this.connection;
+        final String sql = this.selectEventSql + this.whereSql + " AND E.ID = ? " + this.defaultOrder;
+        final PreparedStatement stm = con.prepareStatement ( String.format ( sql, this.schema ), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
+        stm.setString ( 1, this.instance );
         stm.setString ( 2, id.toString () );
-        ResultSet result = stm.executeQuery ();
-        List<Event> events = new ArrayList<Event> ();
-        boolean hasMore = toEventList ( result, events, true, 1 );
+        final ResultSet result = stm.executeQuery ();
+        final List<Event> events = new ArrayList<Event> ();
+        final boolean hasMore = toEventList ( result, events, true, 1 );
         if ( hasMore )
         {
             logger.warn ( "more distinct records found for id {}, this shouldn't happen at all", id );
@@ -222,30 +241,30 @@ public class JdbcStorageDao implements StorageDao
      * @see org.openscada.ae.server.storage.jdbc.StorageDao#queryEvents(org.openscada.utils.filter.Filter)
      */
     @Override
-    public ResultSet queryEvents ( Filter filter ) throws SQLException, NotSupportedException
+    public ResultSet queryEvents ( final Filter filter ) throws SQLException, NotSupportedException
     {
-        Connection con = this.connection;
-        SqlCondition condition = SqlConverter.toSql ( schema, filter );
-        String sql = selectEventSql + StringHelper.join ( condition.joins, " " ) + whereSql;
+        final Connection con = this.connection;
+        final SqlCondition condition = SqlConverter.toSql ( this.schema, filter );
+        String sql = this.selectEventSql + StringHelper.join ( condition.joins, " " ) + this.whereSql;
         sql += condition.condition;
-        sql += defaultOrder;
-        String querySql = String.format ( sql, schema );
+        sql += this.defaultOrder;
+        final String querySql = String.format ( sql, this.schema );
         logger.debug ( "executing query: " + querySql + " with parameters " + condition.joinParameters + " / " + condition.parameters );
-        PreparedStatement stm = con.prepareStatement ( querySql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
+        final PreparedStatement stm = con.prepareStatement ( querySql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
         int i = 0;
-        for ( String parameter : condition.joinParameters )
+        for ( final String parameter : condition.joinParameters )
         {
             i += 1;
             stm.setString ( i, parameter );
         }
         i += 1;
-        stm.setString ( i, instance );
-        for ( Serializable parameter : condition.parameters )
+        stm.setString ( i, this.instance );
+        for ( final Serializable parameter : condition.parameters )
         {
             i += 1;
             stm.setObject ( i, parameter );
         }
-        ResultSet rs = stm.executeQuery ();
+        final ResultSet rs = stm.executeQuery ();
         logger.debug ( "query completed, returning resultset" );
         return rs;
     }
@@ -254,7 +273,7 @@ public class JdbcStorageDao implements StorageDao
      * @see org.openscada.ae.server.storage.jdbc.StorageDao#toEventList(java.sql.ResultSet, java.util.Collection, boolean, long)
      */
     @Override
-    public boolean toEventList ( ResultSet rs, Collection<Event> events, boolean isBeforeFirst, long count ) throws SQLException
+    public boolean toEventList ( final ResultSet rs, final Collection<Event> events, final boolean isBeforeFirst, final long count ) throws SQLException
     {
         UUID lastId = null;
         EventBuilder eb = Event.create ();
@@ -270,7 +289,7 @@ public class JdbcStorageDao implements StorageDao
                     break;
                 }
             }
-            UUID id = UUID.fromString ( rs.getString ( 1 ) );
+            final UUID id = UUID.fromString ( rs.getString ( 1 ) );
             if ( lastId != null && !id.equals ( lastId ) )
             {
                 events.add ( eb.build () );
@@ -288,18 +307,18 @@ public class JdbcStorageDao implements StorageDao
             }
             // base event
             eb.id ( id );
-            Date sourceTimestamp = new Date ( rs.getTimestamp ( 3 ).getTime () );
-            Date entryTimestamp = new Date ( rs.getTimestamp ( 4 ).getTime () );
-            String monitorType = rs.getString ( 5 );
-            String eventType = rs.getString ( 6 );
+            final Date sourceTimestamp = new Date ( rs.getTimestamp ( 3 ).getTime () );
+            final Date entryTimestamp = new Date ( rs.getTimestamp ( 4 ).getTime () );
+            final String monitorType = rs.getString ( 5 );
+            final String eventType = rs.getString ( 6 );
             String valueType = rs.getString ( 7 );
             String valueString = rs.getString ( 8 );
-            String message = rs.getString ( 11 );
-            String messageCode = rs.getString ( 12 );
-            Integer priority = rs.getInt ( 13 );
-            String source = rs.getString ( 14 );
-            String actor = rs.getString ( 15 );
-            String actorType = rs.getString ( 16 );
+            final String message = rs.getString ( 11 );
+            final String messageCode = rs.getString ( 12 );
+            final Integer priority = rs.getInt ( 13 );
+            final String source = rs.getString ( 14 );
+            final String actor = rs.getString ( 15 );
+            final String actorType = rs.getString ( 16 );
 
             eb.sourceTimestamp ( sourceTimestamp );
             eb.entryTimestamp ( entryTimestamp );
@@ -307,7 +326,7 @@ public class JdbcStorageDao implements StorageDao
             eb.attribute ( Fields.EVENT_TYPE, eventType );
             if ( valueType != null && valueString != null )
             {
-                VariantEditor ed = new VariantEditor ();
+                final VariantEditor ed = new VariantEditor ();
                 ed.setAsText ( valueType + "#" + valueString );
                 eb.attribute ( Fields.VALUE, ed.getValue () );
             }
@@ -319,14 +338,14 @@ public class JdbcStorageDao implements StorageDao
             eb.attribute ( Fields.ACTOR_TYPE, actorType );
 
             // other attributes
-            String field = rs.getString ( 17 );
+            final String field = rs.getString ( 17 );
             valueType = rs.getString ( 18 );
             valueString = rs.getString ( 19 );
             if ( field != null )
             {
                 if ( valueType != null && valueString != null )
                 {
-                    VariantEditor ed = new VariantEditor ();
+                    final VariantEditor ed = new VariantEditor ();
                     ed.setAsText ( valueType + "#" + valueString );
                     eb.attribute ( field, ed.getValue () );
                 }
@@ -346,22 +365,22 @@ public class JdbcStorageDao implements StorageDao
         return hasMore;
     }
 
-    public void setConnection ( Connection connection )
+    public void setConnection ( final Connection connection )
     {
         this.connection = connection;
     }
 
-    public void setSchema ( String schema )
+    public void setSchema ( final String schema )
     {
         this.schema = schema;
     }
 
-    public void setMaxLength ( int maxLength )
+    public void setMaxLength ( final int maxLength )
     {
         this.maxLength = maxLength;
     }
 
-    public void setInstance ( String instance )
+    public void setInstance ( final String instance )
     {
         this.instance = instance;
     }
