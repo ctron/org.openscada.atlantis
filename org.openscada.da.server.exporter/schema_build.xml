@@ -9,9 +9,7 @@
 		 <classpath id="xmlbeanspath">
             <pathelement location="${xmlbeans.root}/xbean.jar"/>
             <pathelement location="${xmlbeans.root}/jsr173_1.0_api.jar"/>
-		 	
-		 	<!-- FIXME: duplicate entry for the moment --> 
-		 	<pathelement location="${source.root}/openscada_da_server_common/schemabin"/>
+
 		 	<pathelement location="../org.openscada.da.server.common/schemabin"/>
          </classpath>
 	</taskdef>
