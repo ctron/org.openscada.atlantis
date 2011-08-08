@@ -80,6 +80,10 @@ public class HSDBValueSource extends AbstractValueSource
         }
     }
 
+    private final Date startTimestamp;
+
+    private final Date endTimestamp;
+
     public HSDBValueSource ( final BundleContext context, final File root, final String name ) throws FileNotFoundException, IOException
     {
         this.root = root;
@@ -87,15 +91,32 @@ public class HSDBValueSource extends AbstractValueSource
         final Properties p = new Properties ();
         p.load ( new FileInputStream ( new File ( root, name + ".va_ctrl" ) ) );
         final int numEntries = Integer.parseInt ( p.getProperty ( "hsdb.manager.knownFragmentsCount" ) );
+
+        Date startTimestamp = null;
+
+        Date endTimestamp = null;
+
         this.entries = new LinkedList<FileEntry> ();
         for ( int i = 0; i < numEntries; i++ )
         {
             final FileEntry file = makeFile ( p, i );
             if ( file != null )
             {
+                if ( startTimestamp == null || startTimestamp.after ( file.getStartTimestamp () ) )
+                {
+                    startTimestamp = file.getStartTimestamp ();
+                }
+                if ( endTimestamp == null || endTimestamp.before ( file.getEndTimestamp () ) )
+                {
+                    endTimestamp = file.getStartTimestamp ();
+                }
                 this.entries.add ( file );
             }
         }
+
+        this.startTimestamp = startTimestamp;
+        this.endTimestamp = endTimestamp;
+
     }
 
     private FileEntry makeFile ( final Properties p, final int i )
@@ -116,6 +137,16 @@ public class HSDBValueSource extends AbstractValueSource
         }
 
         return new FileEntry ( new Date ( start ), new Date ( end ), file );
+    }
+
+    public Date getStartTimestamp ()
+    {
+        return this.startTimestamp;
+    }
+
+    public Date getEndTimestamp ()
+    {
+        return this.endTimestamp;
     }
 
     @Override

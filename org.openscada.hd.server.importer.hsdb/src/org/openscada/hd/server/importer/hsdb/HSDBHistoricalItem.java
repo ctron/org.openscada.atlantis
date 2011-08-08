@@ -30,7 +30,6 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.storage.common.QueryImpl;
 import org.openscada.hd.server.storage.common.ValueSourceManager;
-import org.openscada.hds.ValueSource;
 import org.openscada.hds.ValueVisitor;
 
 public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
@@ -39,11 +38,11 @@ public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
 
     private final ExecutorService executor;
 
-    private final ValueSource source;
+    private final HSDBValueSource source;
 
     private Set<QueryImpl> queries = new HashSet<QueryImpl> ();
 
-    public HSDBHistoricalItem ( final ExecutorService executor, final ValueSource source, final HistoricalItemInformation information )
+    public HSDBHistoricalItem ( final ExecutorService executor, final HSDBValueSource source, final HistoricalItemInformation information )
     {
         this.executor = executor;
         this.information = information;
@@ -53,7 +52,7 @@ public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
     @Override
     public Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
-        final QueryImpl query = new QueryImpl ( this, this.executor, parameters, listener, updateData );
+        final QueryImpl query = new QueryImpl ( this, this.executor, parameters, listener, updateData, this.source.getStartTimestamp (), this.source.getEndTimestamp () );
         synchronized ( this )
         {
             if ( this.queries == null )

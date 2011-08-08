@@ -312,7 +312,7 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
                 return null;
             }
 
-            final QueryImpl query = new QueryImpl ( this, this.queryExecutor, parameters, listener, updateData );
+            final QueryImpl query = new QueryImpl ( this, this.queryExecutor, parameters, listener, updateData, null, null );
 
             this.queries.add ( query );
 
