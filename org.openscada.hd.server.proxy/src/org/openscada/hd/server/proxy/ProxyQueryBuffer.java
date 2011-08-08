@@ -57,7 +57,7 @@ public class ProxyQueryBuffer extends QueryDataBuffer
 
     public ProxyQueryBuffer ( final QueryListener listener, final QueryParameters parameters, final Executor executor )
     {
-        super ( listener, executor );
+        super ( listener, executor, null, null );
         setParameters ( parameters );
     }
 

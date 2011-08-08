@@ -169,13 +169,19 @@ public abstract class QueryDataBuffer
 
     protected QueryState state;
 
+    private final Date fixedStartDate;
+
+    private final Date fixedEndDate;
+
     protected abstract Data[] getData ();
 
-    public QueryDataBuffer ( final QueryListener listener, final Executor executor )
+    public QueryDataBuffer ( final QueryListener listener, final Executor executor, final Date fixedStartDate, final Date fixedEndDate )
     {
         super ();
         this.listener = listener;
         this.executor = executor;
+        this.fixedStartDate = fixedStartDate;
+        this.fixedEndDate = fixedEndDate;
     }
 
     protected static void fillDataCells ( final QueryDataBuffer.Data[] data, final Calendar start, final Calendar end, final DataFactory dataFactory )
@@ -278,14 +284,27 @@ public abstract class QueryDataBuffer
             {
                 data[i].resetChanged ();
 
-                final double quality = Double.isNaN ( data[i].getQuality () ) ? 0.0 : data[i].getQuality ();
-                final double manual = Double.isNaN ( data[i].getManual () ) ? 0.0 : data[i].getManual ();
+                // check of we are outside the fixed valid range
+                if ( this.fixedStartDate != null && data[i].getEnd ().before ( this.fixedStartDate ) || this.fixedEndDate != null && data[i].getStart ().after ( this.fixedEndDate ) )
+                {
+                    // we are outside
+                    information.add ( new ValueInformation ( convert ( data[i].getStart () ), convert ( data[i].getEnd () ), 0.0, 0.0, 0 ) );
+                    values.get ( "AVG" ).add ( Value.NaN );
+                    values.get ( "MIN" ).add ( Value.NaN );
+                    values.get ( "MAX" ).add ( Value.NaN );
+                }
+                else
+                {
+                    // we are inside
+                    final double quality = Double.isNaN ( data[i].getQuality () ) ? 0.0 : data[i].getQuality ();
+                    final double manual = Double.isNaN ( data[i].getManual () ) ? 0.0 : data[i].getManual ();
 
-                // add
-                information.add ( new ValueInformation ( convert ( data[i].getStart () ), convert ( data[i].getEnd () ), quality, manual, data[i].getEntryCount () ) );
-                values.get ( "AVG" ).add ( new Value ( data[i].getAverage () ) );
-                values.get ( "MIN" ).add ( new Value ( data[i].getMin () ) );
-                values.get ( "MAX" ).add ( new Value ( data[i].getMax () ) );
+                    // add
+                    information.add ( new ValueInformation ( convert ( data[i].getStart () ), convert ( data[i].getEnd () ), quality, manual, data[i].getEntryCount () ) );
+                    values.get ( "AVG" ).add ( new Value ( data[i].getAverage () ) );
+                    values.get ( "MIN" ).add ( new Value ( data[i].getMin () ) );
+                    values.get ( "MAX" ).add ( new Value ( data[i].getMax () ) );
+                }
             }
             else
             {

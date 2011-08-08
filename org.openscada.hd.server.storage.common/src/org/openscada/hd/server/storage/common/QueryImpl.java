@@ -86,14 +86,24 @@ public class QueryImpl implements Query
 
     private final AtomicReference<LoadState> state = new AtomicReference<LoadState> ();
 
-    public QueryImpl ( final ValueSourceManager storage, final ExecutorService executor, final QueryParameters parameters, final QueryListener listener, final boolean updateData )
+    /**
+     * Create a new common query
+     * @param storage the value source manager
+     * @param executor a single threaded executor for posting events
+     * @param parameters the initial query parameters
+     * @param listener the query listener, must not be <code>null</code>
+     * @param updateData request data updates
+     * @param fixedStartDate an optional fixed start date before which all query data is invalid
+     * @param fixedEndDate an optional fixed end date after which all query data is invalid
+     */
+    public QueryImpl ( final ValueSourceManager storage, final ExecutorService executor, final QueryParameters parameters, final QueryListener listener, final boolean updateData, final Date fixedStartDate, final Date fixedEndDate )
     {
         this.storage = storage;
         this.executor = executor;
         this.listener = listener;
         this.updateData = updateData;
 
-        this.buffer = new QueryBuffer ( this.listener, executor );
+        this.buffer = new QueryBuffer ( this.listener, executor, fixedStartDate, fixedEndDate );
 
         this.state.set ( new LoadState ( false, false, parameters ) );
 
@@ -196,6 +206,8 @@ public class QueryImpl implements Query
 
     private void startLoad ()
     {
+        logger.info ( "Starting load" );
+
         this.executor.submit ( new Runnable () {
             @Override
             public void run ()
@@ -207,6 +219,8 @@ public class QueryImpl implements Query
 
     protected void performLoad ()
     {
+        logger.debug ( "Performing load" );
+
         LoadState expect;
         LoadState update;
 
@@ -246,6 +260,7 @@ public class QueryImpl implements Query
 
             if ( this.state.get ().isClosed () )
             {
+                logger.info ( "Query closed. Bye" );
                 // query is close ... quick goodbye
                 return;
             }
@@ -263,10 +278,12 @@ public class QueryImpl implements Query
         finally
         {
             endLoading ();
+            logger.debug ( "Loading ended" );
         }
 
         if ( needStart )
         {
+            logger.debug ( "Triggering loading restart" );
             // we are done here but need another round for the changed parameters
             startLoad ();
         }

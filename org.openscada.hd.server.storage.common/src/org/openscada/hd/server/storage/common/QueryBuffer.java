@@ -175,9 +175,11 @@ public class QueryBuffer extends QueryDataBuffer
 
     private final boolean useNaNs = Boolean.getBoolean ( "org.openscada.hd.server.storage.hds.useNaNs" );
 
-    public QueryBuffer ( final QueryListener listener, final Executor executor )
+    private final boolean renderWhileLoading = Boolean.getBoolean ( "org.openscada.hd.server.storage.hds.renderWhileLoading" );
+
+    public QueryBuffer ( final QueryListener listener, final Executor executor, final Date fixedStartDate, final Date fixedEndDate )
     {
-        super ( listener, executor );
+        super ( listener, executor, fixedStartDate, fixedEndDate );
     }
 
     @Override
@@ -241,7 +243,7 @@ public class QueryBuffer extends QueryDataBuffer
             {
                 this.data[i].add ( entry );
 
-                if ( this.state == QueryState.LOADING )
+                if ( this.renderWhileLoading && this.state == QueryState.LOADING )
                 {
                     render ( i, i + 1 );
                 }
