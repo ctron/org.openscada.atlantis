@@ -94,7 +94,7 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
 
     private final ScheduledExecutorService updateExecutor;
 
-    private final ServiceRegistration handle;
+    private final ServiceRegistration<StorageHistoricalItem> handle;
 
     private final ScheduledFuture<?> heartbeatJob;
 
@@ -159,7 +159,7 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( Constants.SERVICE_PID, this.id );
-        this.handle = context.registerService ( StorageHistoricalItem.class.getName (), this, properties );
+        this.handle = context.registerService ( StorageHistoricalItem.class, this, properties );
     }
 
     protected void handleStoreChanged ( final Date start, final Date end )
