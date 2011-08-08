@@ -4,6 +4,7 @@
 
 	<property name="xmlbeans.root" location="../builder_atlantis/common/lib/xmlbeans"/>
 	<property name="source.root" location=".."/>
+	<property name="target.folder" location="schemabin"/>
 	
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
 		 <classpath id="xmlbeanspath">
@@ -17,14 +18,14 @@
 	</taskdef>
 
 	<target name="clean">
-		<delete failonerror="false" dir="schemabin"/>
+		<delete failonerror="false" dir="${target.folder}"/>
 	</target>
 	
 	<target name="main" depends="clean">
 		<xmlbean
 			failonerror="true"
 			download="false"
-			classgendir="schemabin"
+			classgendir="${target.folder}"
 			javasource="1.5"
 			verbose="true"
             classpathref="xmlbeanspath"
