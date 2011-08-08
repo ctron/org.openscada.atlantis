@@ -238,6 +238,11 @@ public abstract class QueryDataBuffer
     {
         logger.debug ( "Change state to {}", state );
 
+        if ( this.state == state )
+        {
+            return;
+        }
+
         this.state = state;
 
         if ( this.listener == null )
