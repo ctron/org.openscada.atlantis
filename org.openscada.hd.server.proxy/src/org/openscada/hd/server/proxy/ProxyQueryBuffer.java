@@ -3,7 +3,7 @@ package org.openscada.hd.server.proxy;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.concurrent.Executor;
 
@@ -55,9 +55,10 @@ public class ProxyQueryBuffer extends QueryDataBuffer
 
     private QueryParameters parameters;
 
-    public ProxyQueryBuffer ( final QueryListener listener, final Executor executor )
+    public ProxyQueryBuffer ( final QueryListener listener, final QueryParameters parameters, final Executor executor )
     {
         super ( listener, executor );
+        setParameters ( parameters );
     }
 
     @Override
@@ -83,7 +84,7 @@ public class ProxyQueryBuffer extends QueryDataBuffer
         }
 
         final Data[] data = new Data[this.data.length];
-        fillDataCells ( this.data, this.parameters.getStartTimestamp (), this.parameters.getEndTimestamp (), new DataFactory () {
+        fillDataCells ( data, this.parameters.getStartTimestamp (), this.parameters.getEndTimestamp (), new DataFactory () {
 
             @Override
             public QueryDataBuffer.Data create ( final Date start, final Date end )
@@ -95,7 +96,17 @@ public class ProxyQueryBuffer extends QueryDataBuffer
         for ( final QueryDataHolder holder : holders )
         {
             final ValueInformation[] information = holder.getValueInformation ();
+            if ( information == null )
+            {
+                continue;
+            }
+
             final HashMap<String, Value[]> values = holder.getValues ();
+            if ( values == null )
+            {
+                continue;
+            }
+
             if ( information.length != data.length )
             {
                 continue;
@@ -118,7 +129,7 @@ public class ProxyQueryBuffer extends QueryDataBuffer
             }
 
             // merge by quality
-            for ( int i = 0; i < information.length; i++ )
+            for ( int i = 0; i < Math.min ( data.length, information.length ); i++ )
             {
 
                 if ( avg[i] == null || max[i] == null || min[i] == null || information[i] == null )
@@ -150,6 +161,21 @@ public class ProxyQueryBuffer extends QueryDataBuffer
         }
 
         notifyData ( 0, this.data.length );
+
+        notifyStateUpdate ( updateState ( holders ) );
+    }
+
+    private QueryState updateState ( final List<? extends QueryDataHolder> holders )
+    {
+        for ( final QueryDataHolder holder : holders )
+        {
+            if ( holder.getState () == QueryState.LOADING )
+            {
+                return QueryState.LOADING;
+            }
+        }
+
+        return QueryState.COMPLETE;
     }
 
     public synchronized void changeParameters ( final QueryParameters parameters )
@@ -159,7 +185,12 @@ public class ProxyQueryBuffer extends QueryDataBuffer
             return;
         }
 
-        notifyParameterUpdate ( parameters, new HashSet<String> ( Arrays.asList ( "AVG", "MIN", "MAX" ) ) );
+        setParameters ( parameters );
+        notifyData ( 0, this.data.length );
+    }
+
+    private void setParameters ( final QueryParameters parameters )
+    {
         this.parameters = parameters;
         this.data = new Data[parameters.getEntries ()];
 
@@ -172,7 +203,6 @@ public class ProxyQueryBuffer extends QueryDataBuffer
             }
         } );
 
-        notifyData ( 0, this.data.length );
-
+        notifyParameterUpdate ( parameters, new LinkedHashSet<String> ( Arrays.asList ( "AVG", "MIN", "MAX" ) ) );
     }
 }

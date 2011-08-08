@@ -18,6 +18,7 @@ import org.openscada.hd.Value;
 import org.openscada.hd.ValueInformation;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.proxy.ProxyHistoricalItem.ItemListener;
+import org.openscada.hd.server.proxy.ProxyValueSource.ServiceEntry;
 
 public class QueryImpl implements Query, ItemListener
 {
@@ -30,7 +31,7 @@ public class QueryImpl implements Query, ItemListener
 
     private final Executor executor;
 
-    private final Set<HistoricalItem> items = new HashSet<HistoricalItem> ();
+    private final Set<ServiceEntry> items = new HashSet<ServiceEntry> ();
 
     private final Map<HistoricalItem, QueryEntry> queries = new HashMap<HistoricalItem, QueryEntry> ();
 
@@ -44,6 +45,7 @@ public class QueryImpl implements Query, ItemListener
 
         private QueryState state;
 
+        @SuppressWarnings ( "unused" )
         private Set<String> valueTypes;
 
         private QueryParameters parameters;
@@ -153,7 +155,7 @@ public class QueryImpl implements Query, ItemListener
         this.updateData = updateData;
         this.executor = executor;
 
-        this.queryBuffer = new ProxyQueryBuffer ( listener, executor );
+        this.queryBuffer = new ProxyQueryBuffer ( listener, parameters, executor );
 
         item.addListener ( this );
     }
@@ -170,7 +172,7 @@ public class QueryImpl implements Query, ItemListener
     }
 
     @Override
-    public void changeParameters ( final QueryParameters parameters )
+    public synchronized void changeParameters ( final QueryParameters parameters )
     {
         this.executor.execute ( new Runnable () {
 
@@ -193,7 +195,7 @@ public class QueryImpl implements Query, ItemListener
     }
 
     @Override
-    public synchronized void listenersChanges ( final Collection<HistoricalItem> added, final Collection<HistoricalItem> removed )
+    public synchronized void listenersChanges ( final Collection<ServiceEntry> added, final Collection<ServiceEntry> removed )
     {
         this.executor.execute ( new Runnable () {
 
@@ -205,24 +207,23 @@ public class QueryImpl implements Query, ItemListener
         } );
     }
 
-    private synchronized void performChange ( final Collection<HistoricalItem> added, final Collection<HistoricalItem> removed )
+    private synchronized void performChange ( final Collection<ServiceEntry> added, final Collection<ServiceEntry> removed )
     {
-        for ( final HistoricalItem item : added )
+        for ( final ServiceEntry item : added )
         {
             if ( this.items.add ( item ) )
             {
-                // FIXME: add priority
-                final QueryEntry entry = new QueryEntry ( this, 0 );
-                final Query query = item.createQuery ( this.parameters, entry, this.updateData );
+                final QueryEntry entry = new QueryEntry ( this, item.getPriority () );
+                final Query query = item.getItem ().createQuery ( this.parameters, entry, this.updateData );
                 entry.setQuery ( query );
-                this.queries.put ( item, entry );
+                this.queries.put ( item.getItem (), entry );
             }
         }
-        for ( final HistoricalItem item : removed )
+        for ( final ServiceEntry item : removed )
         {
             if ( this.items.remove ( item ) )
             {
-                final QueryEntry query = this.queries.remove ( item );
+                final QueryEntry query = this.queries.remove ( item.getItem () );
                 if ( query != null )
                 {
                     query.getQuery ().close ();

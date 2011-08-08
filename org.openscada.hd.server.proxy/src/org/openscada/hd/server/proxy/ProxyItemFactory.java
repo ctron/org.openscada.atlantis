@@ -8,6 +8,7 @@ import java.util.concurrent.Executor;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
 public class ProxyItemFactory extends AbstractServiceConfigurationFactory<ProxyHistoricalItem>
@@ -27,7 +28,11 @@ public class ProxyItemFactory extends AbstractServiceConfigurationFactory<ProxyH
         final ProxyHistoricalItem service = new ProxyHistoricalItem ( context, this.executor, configurationId, parameters );
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-        final ServiceRegistration handle = context.registerService ( HistoricalItem.class.getName (), service, properties );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "A proxy to historical items" );
+        properties.put ( Constants.SERVICE_PID, configurationId );
+        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+
+        final ServiceRegistration<HistoricalItem> handle = context.registerService ( HistoricalItem.class, service, properties );
         return new Entry<ProxyHistoricalItem> ( configurationId, service, handle );
     }
 

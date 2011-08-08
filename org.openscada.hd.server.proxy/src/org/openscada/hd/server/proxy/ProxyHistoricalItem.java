@@ -18,6 +18,7 @@ import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.common.HistoricalItem;
+import org.openscada.hd.server.proxy.ProxyValueSource.ServiceEntry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 
@@ -31,11 +32,11 @@ public class ProxyHistoricalItem implements HistoricalItem
 
     private Set<QueryImpl> queries = new HashSet<QueryImpl> ();
 
-    private final Set<HistoricalItem> items = new HashSet<HistoricalItem> ();
+    private final Set<ServiceEntry> items = new HashSet<ServiceEntry> ();
 
     public interface ItemListener
     {
-        public void listenersChanges ( Collection<HistoricalItem> added, Collection<HistoricalItem> removed );
+        public void listenersChanges ( Collection<ServiceEntry> added, Collection<ServiceEntry> removed );
     }
 
     private final Set<ItemListener> listeners = new HashSet<ProxyHistoricalItem.ItemListener> ();
@@ -53,17 +54,19 @@ public class ProxyHistoricalItem implements HistoricalItem
         final String items = cfg.getStringChecked ( "items", "'items' must be one or more historical items" );
         final String splitter = cfg.getString ( "splitter", "[ ,]+" );
 
+        int i = 0;
         for ( final String item : items.split ( splitter ) )
         {
             try
             {
-                createItem ( item );
+                createItem ( item, i );
             }
             catch ( final Exception e )
             {
                 disposeItems ();
                 throw new RuntimeException ( "Failed to create item", e );
             }
+            i++;
         }
     }
 
@@ -76,9 +79,9 @@ public class ProxyHistoricalItem implements HistoricalItem
         this.sources.clear ();
     }
 
-    private void createItem ( final String item ) throws InvalidSyntaxException
+    private void createItem ( final String item, final int priority ) throws InvalidSyntaxException
     {
-        final ProxyValueSource source = new ProxyValueSource ( this.context, item, this );
+        final ProxyValueSource source = new ProxyValueSource ( this.context, item, this, priority );
         this.sources.add ( source );
     }
 
@@ -124,13 +127,13 @@ public class ProxyHistoricalItem implements HistoricalItem
     {
         if ( this.listeners.add ( listener ) )
         {
-            final Collection<HistoricalItem> items = new HashSet<HistoricalItem> ( this.items );
+            final Collection<ServiceEntry> items = new HashSet<ServiceEntry> ( this.items );
             this.executor.execute ( new Runnable () {
 
                 @Override
                 public void run ()
                 {
-                    listener.listenersChanges ( items, Collections.<HistoricalItem> emptyList () );
+                    listener.listenersChanges ( items, Collections.<ServiceEntry> emptyList () );
                 }
             } );
         }
@@ -141,23 +144,23 @@ public class ProxyHistoricalItem implements HistoricalItem
         this.listeners.remove ( listener );
     }
 
-    public synchronized void removeSource ( final HistoricalItem service )
+    public synchronized void removeSource ( final ServiceEntry service )
     {
         if ( this.items.remove ( service ) )
         {
-            notifySources ( Collections.<HistoricalItem> emptyList (), Arrays.asList ( service ) );
+            notifySources ( Collections.<ServiceEntry> emptyList (), Arrays.asList ( service ) );
         }
     }
 
-    public synchronized void addSource ( final HistoricalItem service )
+    public synchronized void addSource ( final ServiceEntry service )
     {
         if ( this.items.add ( service ) )
         {
-            notifySources ( Arrays.asList ( service ), Collections.<HistoricalItem> emptyList () );
+            notifySources ( Arrays.asList ( service ), Collections.<ServiceEntry> emptyList () );
         }
     }
 
-    private void notifySources ( final List<HistoricalItem> added, final List<HistoricalItem> removed )
+    private void notifySources ( final List<ServiceEntry> added, final List<ServiceEntry> removed )
     {
         for ( final ItemListener listener : this.listeners )
         {
