@@ -19,7 +19,8 @@
 
 package org.openscada.hd.exporter.http.server;
 
-import java.util.Properties;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.openscada.hd.exporter.http.HttpExporter;
 import org.openscada.hd.exporter.http.server.internal.JsonServlet;
@@ -40,6 +41,7 @@ public class Activator implements BundleActivator
     private static final String SERVLET_PATH = "/org.openscada.hd";
 
     private final SingleServiceListener httpServiceListener = new SingleServiceListener () {
+        @Override
         public void serviceChange ( final ServiceReference reference, final Object service )
         {
             final HttpService httpService = (HttpService)service;
@@ -63,6 +65,7 @@ public class Activator implements BundleActivator
     };
 
     private final SingleServiceListener exporterServiceListener = new SingleServiceListener () {
+        @Override
         public void serviceChange ( final ServiceReference reference, final Object service )
         {
             final HttpExporter exporter = (HttpExporter)service;
@@ -71,6 +74,7 @@ public class Activator implements BundleActivator
     };
 
     private final SingleServiceListener localHdServerServiceListener = new SingleServiceListener () {
+        @Override
         public void serviceChange ( final ServiceReference reference, final Object service )
         {
             if ( Activator.this.localHdServerServiceRegistration != null )
@@ -80,7 +84,7 @@ public class Activator implements BundleActivator
             final Service hdService = (Service)service;
             if ( hdService != null )
             {
-                final Properties props = new Properties ();
+                final Dictionary<String, Object> props = new Hashtable<String, Object> ();
                 props.put ( Constants.SERVICE_RANKING, 20 );
                 try
                 {
@@ -112,6 +116,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         Activator.context = context;
@@ -133,7 +138,7 @@ public class Activator implements BundleActivator
     private void registerRemoteExporter ( final BundleContext context )
     {
         // TODO: create clientConnection
-        final Properties props = new Properties ();
+        final Dictionary<String, Object> props = new Hashtable<String, Object> ();
         props.put ( Constants.SERVICE_RANKING, 10 );
         context.registerService ( HttpExporter.class.getName (), new RemoteHttpExporter (), props );
     }
@@ -142,6 +147,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.httpServiceTracker.close ();
