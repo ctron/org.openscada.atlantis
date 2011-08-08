@@ -28,12 +28,13 @@
 			classgendir="${target.folder}"
 			javasource="1.5"
 			verbose="true"
-            classpathref="xmlbeanspath"
 			>
 			<fileset dir="schema">
 				<include name="*.xsd"/>
 				<include name=".xsdconfig"/>
 			</fileset>
+			<classpath refid="xmlbeanspath"/>
+			<classpath refid="@dot.classpath"/>
         </xmlbean>
         <delete file="xmltypes.jar"/>
   	</target>

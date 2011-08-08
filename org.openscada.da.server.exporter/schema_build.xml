@@ -27,9 +27,10 @@
 			classgendir="${target.folder}"
 			javasource="1.5"
 			verbose="true"
-            classpathref="xmlbeanspath"
 			>
 			<fileset dir="schema" includes="*.xsd"/>
+			<classpath refid="xmlbeanspath"/>
+			<classpath refid="@dot.classpath"/>
         </xmlbean>
   	</target>
   
