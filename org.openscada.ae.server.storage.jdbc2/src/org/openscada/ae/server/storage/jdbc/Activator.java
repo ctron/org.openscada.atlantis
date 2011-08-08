@@ -3,6 +3,7 @@ package org.openscada.ae.server.storage.jdbc;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.openscada.ae.server.storage.Storage;
@@ -21,7 +22,7 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration jdbcStorageHandle;
 
-    private int maxLength = 4000;
+    private final int maxLength = 4000;
 
     static BundleContext getContext ()
     {
@@ -32,63 +33,66 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
-    public void start ( BundleContext bundleContext ) throws Exception
+    @Override
+    public void start ( final BundleContext bundleContext ) throws Exception
     {
         Activator.context = bundleContext;
         this.connection = createConnection ();
-        jdbcStorage = createJdbcStorage ( connection );
-        jdbcStorage.start ();
+        this.jdbcStorage = createJdbcStorage ( this.connection );
+        this.jdbcStorage.start ();
 
-        Hashtable<Object, Object> properties = new Hashtable<Object, Object> ();
+        final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "JDBC implementation for org.openscada.ae.server.storage.Storage" );
-        jdbcStorageHandle = context.registerService ( new String[] { JdbcStorage.class.getName (), Storage.class.getName () }, jdbcStorage, properties );
+        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        this.jdbcStorageHandle = context.registerService ( new String[] { JdbcStorage.class.getName (), Storage.class.getName () }, this.jdbcStorage, properties );
     }
 
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
-    public void stop ( BundleContext bundleContext ) throws Exception
+    @Override
+    public void stop ( final BundleContext bundleContext ) throws Exception
     {
-        if ( jdbcStorageHandle != null )
+        if ( this.jdbcStorageHandle != null )
         {
-            jdbcStorageHandle.unregister ();
-            jdbcStorageHandle = null;
+            this.jdbcStorageHandle.unregister ();
+            this.jdbcStorageHandle = null;
         }
-        if ( jdbcStorage != null )
+        if ( this.jdbcStorage != null )
         {
-            jdbcStorage.stop ();
-            jdbcStorage = null;
+            this.jdbcStorage.stop ();
+            this.jdbcStorage = null;
         }
-        if ( connection != null )
+        if ( this.connection != null )
         {
-            connection.close ();
-            connection = null;
+            this.connection.close ();
+            this.connection = null;
         }
         Activator.context = null;
     }
 
     private Connection createConnection () throws SQLException, ClassNotFoundException
     {
-        String driver = System.getProperty ( "org.openscada.ae.server.storage.jdbc.driver", "" );
-        String url = System.getProperty ( "org.openscada.ae.server.storage.jdbc.url", "" );
-        String user = System.getProperty ( "org.openscada.ae.server.storage.jdbc.username", "" );
-        String password = System.getProperty ( "org.openscada.ae.server.storage.jdbc.password", "" );
+        final String driver = System.getProperty ( "org.openscada.ae.server.storage.jdbc.driver", "" );
+        final String url = System.getProperty ( "org.openscada.ae.server.storage.jdbc.url", "" );
+        final String user = System.getProperty ( "org.openscada.ae.server.storage.jdbc.username", "" );
+        final String password = System.getProperty ( "org.openscada.ae.server.storage.jdbc.password", "" );
 
         Class.forName ( driver );
-        Connection connection = DriverManager.getConnection ( url, user, password );
+        final Connection connection = DriverManager.getConnection ( url, user, password );
         connection.setAutoCommit ( false );
         return connection;
     }
 
-    private JdbcStorage createJdbcStorage ( Connection connection )
+    private JdbcStorage createJdbcStorage ( final Connection connection )
     {
-        JdbcStorage jdbcStorage = new JdbcStorage ();
+        final JdbcStorage jdbcStorage = new JdbcStorage ();
         StorageDao storageDao;
         if ( "legacy".equals ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "" ) ) )
         {
-            LegacyJdbcStorageDao jdbcStorageDao = new LegacyJdbcStorageDao ();
-            jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", maxLength ) );
+            final LegacyJdbcStorageDao jdbcStorageDao = new LegacyJdbcStorageDao ();
+            jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
             if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
             {
                 jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
@@ -98,9 +102,9 @@ public class Activator implements BundleActivator
         }
         else
         {
-            JdbcStorageDao jdbcStorageDao = new JdbcStorageDao ();
+            final JdbcStorageDao jdbcStorageDao = new JdbcStorageDao ();
             jdbcStorageDao.setInstance ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "default" ) );
-            jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", maxLength ) );
+            jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
             if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
             {
                 jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
