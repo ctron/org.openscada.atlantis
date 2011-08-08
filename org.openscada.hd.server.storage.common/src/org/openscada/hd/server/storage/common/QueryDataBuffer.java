@@ -276,11 +276,11 @@ public abstract class QueryDataBuffer
                 final double quality = Double.isNaN ( data[i].getQuality () ) ? 0.0 : data[i].getQuality ();
                 final double manual = Double.isNaN ( data[i].getManual () ) ? 0.0 : data[i].getManual ();
 
+                // add
                 information.add ( new ValueInformation ( convert ( data[i].getStart () ), convert ( data[i].getEnd () ), quality, manual, data[i].getEntryCount () ) );
                 values.get ( "AVG" ).add ( new Value ( data[i].getAverage () ) );
                 values.get ( "MIN" ).add ( new Value ( data[i].getMin () ) );
                 values.get ( "MAX" ).add ( new Value ( data[i].getMax () ) );
-                // add
             }
             else
             {
@@ -294,7 +294,7 @@ public abstract class QueryDataBuffer
                     values.get ( "MAX" ).clear ();
                 }
                 // clear
-                lastIndex = i;
+                lastIndex = i + 1;
             }
         }
 
