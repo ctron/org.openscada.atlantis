@@ -181,7 +181,7 @@ public class QueryBuffer extends QueryDataBuffer
     }
 
     @Override
-    protected org.openscada.hd.server.storage.common.QueryDataBuffer.Data[] getData ()
+    protected QueryDataBuffer.Data[] getData ()
     {
         return this.data;
     }
@@ -208,6 +208,9 @@ public class QueryBuffer extends QueryDataBuffer
 
     }
 
+    /**
+     * Insert data when loading 
+     */
     public synchronized void insertData ( final double value, final Date timestamp, final boolean error, final boolean manual )
     {
         final Entry entry = new Entry ( value, timestamp, error, manual );
@@ -394,6 +397,9 @@ public class QueryBuffer extends QueryDataBuffer
         notifyStateUpdate ( QueryState.DISCONNECTED );
     }
 
+    /**
+     * Update data after loading has completed
+     */
     public synchronized void updateData ( final double value, final Date timestamp, final boolean error, final boolean manual )
     {
         insertData ( value, timestamp, error, manual );
