@@ -144,19 +144,19 @@ public class ProxyHistoricalItem implements HistoricalItem
         this.listeners.remove ( listener );
     }
 
-    public synchronized void removeSource ( final ServiceEntry service )
-    {
-        if ( this.items.remove ( service ) )
-        {
-            notifySources ( Collections.<ServiceEntry> emptyList (), Arrays.asList ( service ) );
-        }
-    }
-
     public synchronized void addSource ( final ServiceEntry service )
     {
         if ( this.items.add ( service ) )
         {
             notifySources ( Arrays.asList ( service ), Collections.<ServiceEntry> emptyList () );
+        }
+    }
+
+    public synchronized void removeSource ( final ServiceEntry service )
+    {
+        if ( this.items.remove ( service ) )
+        {
+            notifySources ( Collections.<ServiceEntry> emptyList (), Arrays.asList ( service ) );
         }
     }
 

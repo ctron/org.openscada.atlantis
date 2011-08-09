@@ -124,7 +124,7 @@ public class HSDBValueSource extends AbstractValueSource
         final String level = p.getProperty ( "hsdb.manager.knownFragment.compressionLevel." + i );
         if ( !"0".equals ( level ) )
         {
-            logger.warn ( "Ignoring compression levels" );
+            logger.info ( "Ignoring compression levels ({})", level );
             return null;
         }
 
