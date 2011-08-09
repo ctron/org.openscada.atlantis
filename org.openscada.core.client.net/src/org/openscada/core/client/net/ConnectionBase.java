@@ -371,6 +371,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         switch ( this.connectionState )
         {
+        case BOUND:
         case LOOKUP:
         case CONNECTING:
         case CONNECTED:
