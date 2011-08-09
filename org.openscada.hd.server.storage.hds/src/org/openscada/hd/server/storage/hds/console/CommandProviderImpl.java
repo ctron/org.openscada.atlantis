@@ -48,7 +48,8 @@ public class CommandProviderImpl implements CommandProvider
         pw.println ( "\taddHDStorage <id> <timeSlice in ms> <numSlices>" );
         pw.println ( "\tremoveHDStorage <id> [-force]" );
         pw.println ( "\tremoveHDStorageByFile <file> [-force]" );
-        pw.println ( "\tlistHDStorage" );
+        pw.println ( "\tlistHDStorages" );
+        pw.println ( "\tpurgeHDStorages" );
 
         pw.close ();
 
@@ -118,7 +119,12 @@ public class CommandProviderImpl implements CommandProvider
         }
     }
 
-    public void _listHDStorage ( final CommandInterpreter intr )
+    public void _purgeHDStorages ( final CommandInterpreter intr )
+    {
+        this.manager.purgeAll ();
+    }
+
+    public void _listHDStorages ( final CommandInterpreter intr )
     {
         intr.println ( "ID\t\tLocation" );
         intr.println ( "============================================" );
