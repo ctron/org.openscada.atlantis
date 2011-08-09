@@ -205,7 +205,7 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
             {
                 try
                 {
-                    StorageImpl.this.nativeLevel.insertHeartbeat ( now );
+                    handleHearbeat ( now );
                 }
                 catch ( final Exception e )
                 {
@@ -466,5 +466,17 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
     public void visit ( final QueryParameters parameters, final ValueVisitor visitor )
     {
         this.nativeLevel.visit ( visitor, parameters.getStartTimestamp ().getTime (), parameters.getEndTimestamp ().getTime () );
+    }
+
+    public void purge ()
+    {
+        logger.info ( "Purging native level" );
+        this.nativeLevel.purge ();
+    }
+
+    private void handleHearbeat ( final Date now ) throws Exception
+    {
+        this.nativeLevel.insertHeartbeat ( now );
+        purge ();
     }
 }

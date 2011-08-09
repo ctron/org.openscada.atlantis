@@ -261,6 +261,22 @@ public class StorageManager
         }
     }
 
+    public void purgeAll ()
+    {
+        this.lock.lock ();
+        try
+        {
+            for ( final StorageImpl storage : this.storages.values () )
+            {
+                storage.purge ();
+            }
+        }
+        finally
+        {
+            this.lock.unlock ();
+        }
+    }
+
     protected void loadStorage ( final File file ) throws Exception
     {
         this.lock.lock ();
