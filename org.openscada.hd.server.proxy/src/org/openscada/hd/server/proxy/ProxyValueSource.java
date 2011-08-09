@@ -1,3 +1,22 @@
+/*
+ * This file is part of the openSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * openSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * openSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with openSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.hd.server.proxy;
 
 import org.openscada.hd.server.common.HistoricalItem;
@@ -10,13 +29,9 @@ import org.osgi.framework.ServiceReference;
 
 public class ProxyValueSource
 {
-    private final BundleContext context;
+    private final SingleServiceTracker<HistoricalItem> tracker;
 
-    private final String id;
-
-    private final SingleServiceTracker tracker;
-
-    private final SingleServiceListener listener;
+    private final SingleServiceListener<HistoricalItem> listener;
 
     private ServiceEntry service;
 
@@ -90,21 +105,20 @@ public class ProxyValueSource
 
     public ProxyValueSource ( final BundleContext context, final String id, final ProxyHistoricalItem item, final int priority ) throws InvalidSyntaxException
     {
-        this.context = context;
-        this.id = id;
+
         this.item = item;
         this.priority = priority;
 
-        this.listener = new SingleServiceListener () {
+        this.listener = new SingleServiceListener<HistoricalItem> () {
 
             @Override
-            public void serviceChange ( final ServiceReference reference, final Object service )
+            public void serviceChange ( final ServiceReference<HistoricalItem> reference, final HistoricalItem service )
             {
-                setService ( (HistoricalItem)service );
+                setService ( service );
             }
         };
 
-        this.tracker = new SingleServiceTracker ( context, FilterUtil.createClassAndPidFilter ( HistoricalItem.class.getName (), id ), this.listener );
+        this.tracker = new SingleServiceTracker<HistoricalItem> ( context, FilterUtil.createClassAndPidFilter ( HistoricalItem.class.getName (), id ), this.listener );
         this.tracker.open ();
     }
 
