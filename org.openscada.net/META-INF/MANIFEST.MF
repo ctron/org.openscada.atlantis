@@ -1,14 +1,15 @@
 Manifest-Version: 1.0
-Import-Package: org.apache.mina.core.buffer;version="2.0",
- org.apache.mina.core.future;version="2.0",
- org.apache.mina.core.service;version="2.0",
- org.apache.mina.core.session;version="2.0",
- org.apache.mina.filter.codec;version="2.0",
- org.apache.mina.transport.socket.apr;version="2.0",
- org.apache.mina.transport.socket.nio;version="2.0",
- org.apache.mina.transport.vmpipe;version="2.0",
- org.openscada.utils.exec;version="0.13",
- org.openscada.utils.lang,
+Import-Package: org.apache.mina.core.buffer;version="2.0.0",
+ org.apache.mina.core.future;version="2.0.0",
+ org.apache.mina.core.service;version="2.0.0",
+ org.apache.mina.core.session;version="2.0.0",
+ org.apache.mina.filter.codec;version="2.0.0",
+ org.apache.mina.transport.socket.apr;version="2.0.0",
+ org.apache.mina.transport.socket.nio;version="2.0.0",
+ org.apache.mina.transport.vmpipe;version="2.0.0",
+ org.openscada.utils.concurrent;version="0.16.0",
+ org.openscada.utils.exec;version="0.13.0",
+ org.openscada.utils.lang;version="0.15.0",
  org.openscada.utils.statuscodes;version="0.15.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -24,7 +25,7 @@ Export-Package: org.openscada.net.base;version="0.16.0";uses:="org.openscada.net
    org.apache.mina.core.service,
    org.apache.mina.filter.codec",
  org.openscada.net.utils;version="0.16.0";uses:="org.openscada.net.base.data"
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA Net
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
