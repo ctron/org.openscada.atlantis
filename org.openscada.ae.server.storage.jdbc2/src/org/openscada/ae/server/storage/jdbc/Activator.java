@@ -19,9 +19,6 @@
 
 package org.openscada.ae.server.storage.jdbc;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -37,7 +34,7 @@ public class Activator implements BundleActivator
 
     private JdbcStorage jdbcStorage;
 
-    private Connection connection;
+    private ConnectionCreator connectionCreator;
 
     private ServiceRegistration jdbcStorageHandle;
 
@@ -56,8 +53,9 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext bundleContext ) throws Exception
     {
         Activator.context = bundleContext;
-        this.connection = createConnection ();
-        this.jdbcStorage = createJdbcStorage ( this.connection );
+        this.connectionCreator = new ConnectionCreator ();
+        this.connectionCreator.init ();
+        this.jdbcStorage = createJdbcStorage ( this.connectionCreator );
         this.jdbcStorage.start ();
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
@@ -83,28 +81,10 @@ public class Activator implements BundleActivator
             this.jdbcStorage.stop ();
             this.jdbcStorage = null;
         }
-        if ( this.connection != null )
-        {
-            this.connection.close ();
-            this.connection = null;
-        }
         Activator.context = null;
     }
 
-    private Connection createConnection () throws SQLException, ClassNotFoundException
-    {
-        final String driver = System.getProperty ( "org.openscada.ae.server.storage.jdbc.driver", "" );
-        final String url = System.getProperty ( "org.openscada.ae.server.storage.jdbc.url", "" );
-        final String user = System.getProperty ( "org.openscada.ae.server.storage.jdbc.username", "" );
-        final String password = System.getProperty ( "org.openscada.ae.server.storage.jdbc.password", "" );
-
-        Class.forName ( driver );
-        final Connection connection = DriverManager.getConnection ( url, user, password );
-        connection.setAutoCommit ( false );
-        return connection;
-    }
-
-    private JdbcStorage createJdbcStorage ( final Connection connection )
+    private JdbcStorage createJdbcStorage ( final ConnectionCreator connectionCreator )
     {
         final JdbcStorage jdbcStorage = new JdbcStorage ();
         StorageDao storageDao;
@@ -116,7 +96,7 @@ public class Activator implements BundleActivator
             {
                 jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
             }
-            jdbcStorageDao.setConnection ( connection );
+            jdbcStorageDao.setConnectionCreator ( connectionCreator );
             storageDao = jdbcStorageDao;
         }
         else
@@ -128,7 +108,7 @@ public class Activator implements BundleActivator
             {
                 jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
             }
-            jdbcStorageDao.setConnection ( connection );
+            jdbcStorageDao.setConnectionCreator ( connectionCreator );
             storageDao = jdbcStorageDao;
         }
         jdbcStorage.setJdbcStorageDao ( storageDao );

@@ -71,6 +71,7 @@ public class JdbcStorage extends BaseStorage
                 }
                 catch ( final Exception e )
                 {
+                    JdbcStorage.this.queueSize.decrementAndGet ();
                     logger.error ( "Exception occured ({}) while saving Event to database: {}", e, event );
                     logger.info ( "Exception was", e );
                 }
