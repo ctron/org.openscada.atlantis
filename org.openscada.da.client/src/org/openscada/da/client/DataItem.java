@@ -48,7 +48,7 @@ public class DataItem extends Observable
     /**
      * The stored item value
      */
-    private volatile DataItemValue value = new DataItemValue ();
+    private volatile DataItemValue value = DataItemValue.DISCONNECTED;
 
     /**
      * The listener used to register with the item manager
