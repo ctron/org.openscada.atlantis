@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -50,7 +50,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.profiler.Profiler;
 
-public class ServiceImpl extends ServiceCommon implements Service, ServiceTrackerCustomizer
+public class ServiceImpl extends ServiceCommon implements Service, ServiceTrackerCustomizer<HistoricalItem, HistoricalItem>
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ServiceImpl.class );
@@ -61,7 +61,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
 
     private final BundleContext context;
 
-    private final ServiceTracker tracker;
+    private final ServiceTracker<HistoricalItem, HistoricalItem> tracker;
 
     private final Map<String, HistoricalItem> items = new HashMap<String, HistoricalItem> ();
 
@@ -70,9 +70,10 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
     public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         this.context = context;
-        this.tracker = new ServiceTracker ( this.context, HistoricalItem.class.getName (), this );
+        this.tracker = new ServiceTracker<HistoricalItem, HistoricalItem> ( this.context, HistoricalItem.class, this );
     }
 
+    @Override
     public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
     {
         SessionImpl sessionImpl = null;
@@ -97,6 +98,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
         }
     }
 
+    @Override
     public org.openscada.core.server.Session createSession ( final Properties properties ) throws UnableToCreateSessionException
     {
         final Map<String, String> sessionResultProperties = new HashMap<String, String> ();
@@ -120,12 +122,14 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
         return session;
     }
 
+    @Override
     public void start () throws Exception
     {
         logger.info ( "Staring new service" );
         this.tracker.open ();
     }
 
+    @Override
     public void stop () throws Exception
     {
         logger.info ( "Stopping service" );
@@ -157,6 +161,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
 
     public static final String CREATE_QUERY_PROFILER = "CREATE_QUERY";
 
+    @Override
     public Query createQuery ( final Session session, final String itemId, final QueryParameters parameters, final QueryListener listener, final boolean updateData ) throws InvalidSessionException, InvalidItemException
     {
         final Profiler p = new Profiler ( "createQuery" );
@@ -216,7 +221,8 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
         }
     }
 
-    public Object addingService ( final ServiceReference reference )
+    @Override
+    public HistoricalItem addingService ( final ServiceReference<HistoricalItem> reference )
     {
         logger.info ( "Adding service: {}", reference );
 
@@ -227,7 +233,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
             return null;
         }
 
-        final HistoricalItem item = (HistoricalItem)this.context.getService ( reference );
+        final HistoricalItem item = this.context.getService ( reference );
         final HistoricalItemInformation info = item.getInformation ();
 
         if ( !itemId.equals ( info.getId () ) )
@@ -254,11 +260,13 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
         }
     }
 
-    public void modifiedService ( final ServiceReference reference, final Object service )
+    @Override
+    public void modifiedService ( final ServiceReference<HistoricalItem> reference, final HistoricalItem service )
     {
     }
 
-    public void removedService ( final ServiceReference reference, final Object service )
+    @Override
+    public void removedService ( final ServiceReference<HistoricalItem> reference, final HistoricalItem service )
     {
         final String itemId = (String)reference.getProperty ( Constants.SERVICE_PID );
 

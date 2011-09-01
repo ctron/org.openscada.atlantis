@@ -47,11 +47,8 @@
 	<!-- ================================= 
           target: publish              
          ================================= -->
-    <target name="publish" depends="" description="Publish artifacts">
+    <target name="publish" depends="" description="Publish artifacts" unless="skipPublish">
     	<openscada.publish.repository id="org.openscada.atlantis.sdk" project="atlantis"/>
-    	<!--
-    	<openscada.publish.convertRepos targetpath="${publish.maven.root}" makesnapshot="${bob.maven.makeSnapshot}"/>
-    	-->
     </target>
 	
 </project>

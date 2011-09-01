@@ -170,9 +170,15 @@
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter"/>
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.net"/>
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.hsdb"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.hds"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.proxy"/>
+  	
 	<openscada.builder.copyPlugin id="org.openscada.hd.exporter.http"/>
 	<openscada.builder.copyPlugin id="org.openscada.hd.exporter.http.server"/>
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.importer.hsdb"/>
   	
   	<!-- OpenSCADA AE -->
   	
@@ -200,6 +206,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc2"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.http"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.info"/>
   	

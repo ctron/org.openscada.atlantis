@@ -36,7 +36,7 @@ public class ItemEventObserver extends AbstractItemEventObserver
 
     private final static Logger logger = LoggerFactory.getLogger ( ItemEventObserver.class );
 
-    private DataItemValue value = new DataItemValue ();
+    private DataItemValue value = DataItemValue.DISCONNECTED;
 
     private ItemEventListener listener = null;
 

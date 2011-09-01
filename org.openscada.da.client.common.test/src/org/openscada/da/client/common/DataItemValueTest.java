@@ -31,8 +31,8 @@ public class DataItemValueTest
     @Test
     public void test1 ()
     {
-        final DataItemValue div1 = new DataItemValue ();
-        final DataItemValue div2 = new DataItemValue ();
+        final DataItemValue div1 = DataItemValue.DISCONNECTED;
+        final DataItemValue div2 = DataItemValue.DISCONNECTED;
 
         Assert.assertEquals ( div1, div2 );
         Assert.assertEquals ( div2, div1 );

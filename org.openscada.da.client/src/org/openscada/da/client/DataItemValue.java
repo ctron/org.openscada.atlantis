@@ -43,6 +43,17 @@ public class DataItemValue
 
     private final Throwable subscriptionError;
 
+    /**
+     * A default instance that means <q>disconnected</q>
+     * @since 0.17.0
+     */
+    public static final DataItemValue DISCONNECTED = new DataItemValue ();
+
+    /**
+     * Construct a new disconnected instance
+     * @deprecated use {@link #DISCONNECTED} instead
+     */
+    @Deprecated
     public DataItemValue ()
     {
         super ();

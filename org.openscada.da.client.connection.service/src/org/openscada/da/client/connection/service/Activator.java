@@ -44,11 +44,12 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.context = context;
         this.service = new ManagedConnectionServiceFactory ( context );
-        final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+        final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, FACTORY_ID );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "An OpenSCADA DA Connection Service Factory" );
@@ -59,6 +60,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.handle.unregister ();

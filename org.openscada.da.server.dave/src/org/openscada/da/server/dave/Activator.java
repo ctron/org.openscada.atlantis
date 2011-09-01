@@ -62,6 +62,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.itemPool = new ObjectPoolImpl ();
@@ -73,13 +74,13 @@ public class Activator implements BundleActivator
         this.service = new ConfigurationFactoryImpl ( context );
 
         {
-            final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.dave.device" );
             context.registerService ( ConfigurationFactory.class.getName (), this.service, properties );
         }
 
         {
-            final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.dave.block" );
             this.blockFactory = new BeanConfigurationFactory ( context, BlockConfiguration.class );
             context.registerService ( ConfigurationFactory.class.getName (), this.blockFactory, properties );
@@ -87,7 +88,7 @@ public class Activator implements BundleActivator
 
         {
             Activator.variableManager = new VariableManagerImpl ( this.executor, this.itemPool );
-            final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.dave.types" );
             context.registerService ( ConfigurationFactory.class.getName (), Activator.variableManager, properties );
         }
@@ -97,6 +98,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.itemPoolHandle.unregister ();

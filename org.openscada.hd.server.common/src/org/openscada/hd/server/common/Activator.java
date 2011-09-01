@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +19,7 @@
 
 package org.openscada.hd.server.common;
 
+import java.util.Dictionary;
 import java.util.Hashtable;
 
 import org.openscada.hd.server.Service;
@@ -39,27 +40,29 @@ public class Activator implements BundleActivator
 {
     private ServiceImpl service;
 
-    private ServiceRegistration serviceRegistration;
+    private ServiceRegistration<Service> serviceRegistration;
 
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.service = new ServiceImpl ( context );
         this.service.start ();
 
-        final Hashtable<String, String> properties = new Hashtable<String, String> ();
+        final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
-        properties.put ( Constants.SERVICE_DESCRIPTION, "An OpenSCADA HD service implementation" );
-        this.serviceRegistration = context.registerService ( Service.class.getName (), this.service, properties );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "An openSCADA HD service implementation" );
+        this.serviceRegistration = context.registerService ( Service.class, this.service, properties );
     }
 
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.serviceRegistration.unregister ();

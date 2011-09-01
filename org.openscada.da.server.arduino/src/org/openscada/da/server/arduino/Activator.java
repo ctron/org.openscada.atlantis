@@ -53,7 +53,7 @@ public class Activator implements BundleActivator
         this.service = new ConfigurationFactoryImpl ( context, this.itemPool, this.executor );
 
         {
-            final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.arduino.device" );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Arduino OpenSCADA Device" );
             context.registerService ( ConfigurationFactory.class.getName (), this.service, properties );

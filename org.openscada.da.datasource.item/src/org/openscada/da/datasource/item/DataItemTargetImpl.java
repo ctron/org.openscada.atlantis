@@ -49,7 +49,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 {
     private final static Logger logger = LoggerFactory.getLogger ( DataItemTargetImpl.class );
 
-    private DataItemValue currentValue = new DataItemValue ();
+    private DataItemValue currentValue = DataItemValue.DISCONNECTED;
 
     private final SingleDataSourceTracker tracker;
 
@@ -187,7 +187,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
         {
             if ( this.currentValue == null )
             {
-                this.currentValue = new DataItemValue ();
+                this.currentValue = DataItemValue.DISCONNECTED;
             }
 
             final Map<String, Variant> target = new HashMap<String, Variant> ( this.currentValue.getAttributes () );

@@ -90,7 +90,7 @@ public class Activator implements BundleActivator
         this.configAdminTracker = new ServiceTracker ( context, ConfigurationAdministrator.class.getName (), null );
         this.configAdminTracker.open ();
 
-        Dictionary<Object, Object> properties;
+        Dictionary<String, Object> properties;
 
         this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
         this.poolTracker.open ();
@@ -101,7 +101,7 @@ public class Activator implements BundleActivator
         // monitor service
         {
             final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, 4000 );
-            properties = new Hashtable<Object, Object> ();
+            properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BooleanAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Boolean alarms" );
             context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
@@ -111,7 +111,7 @@ public class Activator implements BundleActivator
         // remote attribute monitor service
         {
             final RemoteAttributeMonitorFactoryImpl factory = new RemoteAttributeMonitorFactoryImpl ( context, this.monitorServicePool, this.executor, this.poolTracker, this.eventProcessor );
-            properties = new Hashtable<Object, Object> ();
+            properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, RemoteBooleanAttributeAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Remote Boolean attribute alarms" );
             context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
@@ -121,7 +121,7 @@ public class Activator implements BundleActivator
         // remote value monitor service
         {
             final RemoteValueMonitorFactoryImpl factory = new RemoteValueMonitorFactoryImpl ( context, this.monitorServicePool, this.executor, this.poolTracker, this.eventProcessor );
-            properties = new Hashtable<Object, Object> ();
+            properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, RemoteBooleanValueAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Remote Boolean value alarms" );
             context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
@@ -131,7 +131,7 @@ public class Activator implements BundleActivator
         // list based alarm monitor
         {
             final ListAlarmMonitorFactoryImpl factory = new ListAlarmMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, 4000 );
-            properties = new Hashtable<Object, Object> ();
+            properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ListAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Reference list alarm monitor" );
             context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
@@ -152,9 +152,9 @@ public class Activator implements BundleActivator
 
     private void makeLevelFactory ( final BundleContext context, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
-        Dictionary<Object, Object> properties;
+        Dictionary<String, Object> properties;
         final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, type, defaultMonitorType, lowerOk, includedOk, priority, cap );
-        properties = new Hashtable<Object, Object> ();
+        properties = new Hashtable<String, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, LevelMonitorFactoryImpl.FACTORY_PREFIX + "." + type );
         properties.put ( Constants.SERVICE_DESCRIPTION, type + " Alarms" );
         context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );

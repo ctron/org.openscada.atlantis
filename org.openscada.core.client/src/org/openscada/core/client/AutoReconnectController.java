@@ -106,7 +106,7 @@ public class AutoReconnectController implements ConnectionStateListener
         logger.debug ( "Finalized" );
         if ( this.executor != null )
         {
-            this.executor.shutdownNow ();
+            this.executor.shutdown ();
         }
         super.finalize ();
     }
@@ -142,6 +142,7 @@ public class AutoReconnectController implements ConnectionStateListener
         triggerUpdate ( this.connection.getState () );
     }
 
+    @Override
     public void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )
     {
         logger.info ( String.format ( "State change: %s", state ), error );
@@ -157,6 +158,7 @@ public class AutoReconnectController implements ConnectionStateListener
             this.checkScheduled = true;
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     performUpdate ( state );
@@ -184,6 +186,7 @@ public class AutoReconnectController implements ConnectionStateListener
             logger.info ( String.format ( "Delaying next check by %s milliseconds", delay ) );
             this.executor.schedule ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     performCheckNow ();

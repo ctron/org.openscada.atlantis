@@ -41,7 +41,7 @@ public abstract class AbstractDataSource implements DataSource
 {
     public final static Logger logger = LoggerFactory.getLogger ( AbstractDataSource.class );
 
-    private DataItemValue value = new DataItemValue ();
+    private DataItemValue value = DataItemValue.DISCONNECTED;
 
     private final Set<DataSourceListener> listeners = new HashSet<DataSourceListener> ( 1 );
 

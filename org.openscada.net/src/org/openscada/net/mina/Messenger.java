@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,13 +26,16 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +44,7 @@ public class Messenger implements MessageListener
 
     private final static Logger logger = LoggerFactory.getLogger ( Messenger.class );
 
-    private TimerTask timeoutJob = null;
+    private ScheduledFuture<?> timeoutJob;
 
     private static class MessageTag
     {
@@ -115,7 +118,7 @@ public class Messenger implements MessageListener
 
     private MessageSender connection;
 
-    private Timer timer;
+    private ScheduledExecutorService timer;
 
     private final long sessionTimeout;
 
@@ -138,7 +141,7 @@ public class Messenger implements MessageListener
         logger.debug ( "Finalized" );
         if ( this.timer != null )
         {
-            this.timer.cancel ();
+            this.timer.shutdown ();
         }
         super.finalize ();
     }
@@ -158,8 +161,8 @@ public class Messenger implements MessageListener
                 this.connection = connection;
                 tags = cleanTagList ();
 
-                this.timer = new Timer ( "MessengerTimer/" + connection, true );
-                this.timeoutJob = new TimerTask () {
+                this.timer = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "MessengerTimer/" + connection, true ) );
+                final Runnable runnable = new Runnable () {
 
                     @Override
                     public void run ()
@@ -174,7 +177,7 @@ public class Messenger implements MessageListener
                         super.finalize ();
                     }
                 };
-                this.timer.scheduleAtFixedRate ( this.timeoutJob, this.sessionTimeout, this.timeoutJobPeriod );
+                this.timeoutJob = this.timer.scheduleAtFixedRate ( runnable, this.sessionTimeout, this.timeoutJobPeriod, TimeUnit.MILLISECONDS );
             }
         }
 
@@ -198,12 +201,12 @@ public class Messenger implements MessageListener
             final Collection<MessageTag> tags = cleanTagList ();
             if ( this.timeoutJob != null )
             {
-                this.timeoutJob.cancel ();
+                this.timeoutJob.cancel ( false );
                 this.timeoutJob = null;
             }
             if ( this.timer != null )
             {
-                this.timer.cancel ();
+                this.timer.shutdown ();
                 this.timer = null;
             }
             return tags;

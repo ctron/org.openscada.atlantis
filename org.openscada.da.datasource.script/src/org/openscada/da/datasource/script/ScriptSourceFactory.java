@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,6 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -46,7 +47,7 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
 
     private final ObjectPoolImpl objectPool;
 
-    private final ServiceRegistration poolRegistration;
+    private final ServiceRegistration<ObjectPool> poolRegistration;
 
     public ScriptSourceFactory ( final BundleContext context, final ScheduledExecutorService executor ) throws InvalidSyntaxException
     {

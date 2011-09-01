@@ -58,11 +58,11 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private final Set<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArraySet<ConnectionStateListener> ();
 
-    private ConnectionState connectionState = ConnectionState.CLOSED;
+    private volatile ConnectionState connectionState = ConnectionState.CLOSED;
 
     private static final int DEFAULT_TIMEOUT = 10000;
 
-    protected IoSession session;
+    protected volatile IoSession session;
 
     protected final Messenger messenger;
 
@@ -371,6 +371,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         switch ( this.connectionState )
         {
+        case BOUND:
         case LOOKUP:
         case CONNECTING:
         case CONNECTED:
@@ -418,13 +419,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
             }
             else
             {
-                Throwable e1 = e;
-                if ( e1 == null )
-                {
-                    e1 = new RuntimeException ( String.format ( "Unable to resolve: %s", address ) );
-                }
                 // lookup failed
-                switchState ( ConnectionState.CLOSED, e1, null );
+                switchState ( ConnectionState.CLOSED, e, null );
             }
         }
 
@@ -614,7 +610,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
     public void sessionClosed ( final IoSession session ) throws Exception
     {
         logger.info ( "Session closed: {}", session );
-        switchState ( ConnectionState.CLOSED, null, null );
+        if ( session == this.session )
+        {
+            switchState ( ConnectionState.CLOSED, null, null );
+        }
     }
 
     @Override
@@ -726,10 +725,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     protected void finalize () throws Throwable
     {
         logger.info ( "Finalized" );
-        if ( !this.lookupExecutor.isShutdown () )
-        {
-            this.lookupExecutor.shutdown ();
-        }
+        this.lookupExecutor.shutdown ();
         super.finalize ();
     }
 

@@ -51,7 +51,7 @@ public class Activator implements BundleActivator
         this.executor = new ScheduledThreadPoolExecutor ( 1 );
         this.service = new DataItemTest1 ( "test", this.executor );
 
-        final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+        final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         this.handle = context.registerService ( DataItem.class.getName (), this.service, properties );
     }
 
