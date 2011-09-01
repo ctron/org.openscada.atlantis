@@ -36,7 +36,7 @@ public class Activator implements BundleActivator
 
     private ConnectionCreator connectionCreator;
 
-    private ServiceRegistration jdbcStorageHandle;
+    private ServiceRegistration<?> jdbcStorageHandle;
 
     private final int maxLength = 4000;
 
