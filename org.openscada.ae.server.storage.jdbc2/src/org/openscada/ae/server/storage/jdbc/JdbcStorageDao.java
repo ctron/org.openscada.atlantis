@@ -37,13 +37,12 @@ import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
-import org.openscada.core.VariantType;
 import org.openscada.utils.filter.Filter;
 import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JdbcStorageDao extends BaseStorageDao implements StorageDao
+public class JdbcStorageDao extends BaseStorageDao
 {
     private static final Logger logger = LoggerFactory.getLogger ( JdbcStorageDao.class );
 
@@ -78,7 +77,7 @@ public class JdbcStorageDao extends BaseStorageDao implements StorageDao
     @Override
     public void storeEvent ( final Event event ) throws Exception
     {
-        final Connection con = this.getConnectionCreator ().createConnection ();
+        final Connection con = createConnection ();
         Statement stm1 = null;
         Statement stm2 = null;
         {
@@ -166,53 +165,12 @@ public class JdbcStorageDao extends BaseStorageDao implements StorageDao
     }
 
     /* (non-Javadoc)
-     * @see org.openscada.ae.server.storage.jdbc.StorageDao#updateComment(java.util.UUID, java.lang.String)
-     */
-    @Override
-    public void updateComment ( final UUID id, final String comment ) throws Exception
-    {
-        final Connection con = this.getConnectionCreator ().createConnection ();
-        con.setAutoCommit ( false );
-        {
-            final PreparedStatement stm = con.prepareStatement ( String.format ( this.deleteAttributesSql, this.getSchema () ) );
-            stm.setString ( 1, id.toString () );
-            stm.setString ( 2, Event.Fields.COMMENT.getName () );
-            stm.addBatch ();
-        }
-        {
-            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertAttributesSql, this.getSchema () ) );
-            stm.setString ( 1, id.toString () );
-            stm.setString ( 2, Event.Fields.COMMENT.getName () );
-            stm.setString ( 3, VariantType.STRING.name () );
-            stm.setString ( 4, clip ( this.getMaxLength (), comment ) );
-            stm.setLong ( 5, (Long)null );
-            stm.setDouble ( 6, (Double)null );
-            stm.addBatch ();
-        }
-        con.commit ();
-        closeConnection ( con );
-    }
-
-    private String clip ( final int i, final String string )
-    {
-        if ( string == null )
-        {
-            return null;
-        }
-        if ( i < 1 || string.length () <= i )
-        {
-            return string;
-        }
-        return string.substring ( 0, i );
-    }
-
-    /* (non-Javadoc)
      * @see org.openscada.ae.server.storage.jdbc.StorageDao#loadEvent(java.util.UUID)
      */
     @Override
     public Event loadEvent ( final UUID id ) throws SQLException
     {
-        final Connection con = this.getConnectionCreator ().createConnection ();
+        final Connection con = createConnection ();
         final String sql = this.selectEventSql + this.whereSql + " AND E.ID = ? " + this.defaultOrder;
         final PreparedStatement stm = con.prepareStatement ( String.format ( sql, this.getSchema () ), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
         stm.setString ( 1, this.getInstance () );
@@ -239,7 +197,7 @@ public class JdbcStorageDao extends BaseStorageDao implements StorageDao
     @Override
     public ResultSet queryEvents ( final Filter filter ) throws SQLException, NotSupportedException
     {
-        final Connection con = this.getConnectionCreator ().createConnection ();
+        final Connection con = createConnection ();
         final SqlCondition condition = SqlConverter.toSql ( this.getSchema (), filter );
         String sql = this.selectEventSql + StringHelper.join ( condition.joins, " " ) + this.whereSql;
         sql += condition.condition;
@@ -359,5 +317,17 @@ public class JdbcStorageDao extends BaseStorageDao implements StorageDao
             }
         }
         return hasMore;
+    }
+
+    @Override
+    protected String getDeleteAttributesSql ()
+    {
+        return deleteAttributesSql;
+    }
+
+    @Override
+    protected String getInsertAttributesSql ()
+    {
+        return insertAttributesSql;
     }
 }
