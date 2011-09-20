@@ -19,12 +19,15 @@
 
 package org.openscada.ae.server.storage.jdbc;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openscada.ae.Event;
@@ -32,6 +35,7 @@ import org.openscada.ae.Event.Fields;
 import org.openscada.ae.server.storage.BaseStorage;
 import org.openscada.ae.server.storage.Query;
 import org.openscada.ae.server.storage.StoreListener;
+import org.openscada.utils.collection.BoundedPriorityQueueSet;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.filter.FilterParser;
 import org.slf4j.Logger;
@@ -48,6 +52,8 @@ public class JdbcStorage extends BaseStorage
     private StorageDao jdbcStorageDao;
 
     private final List<JdbcQuery> openQueries = new CopyOnWriteArrayList<JdbcQuery> ();
+
+    private final BoundedPriorityQueueSet<Event> errorQueue = new BoundedPriorityQueueSet<Event> ( 1000 );
 
     @Override
     public Event store ( final Event event, final StoreListener listener )
@@ -71,12 +77,50 @@ public class JdbcStorage extends BaseStorage
                 }
                 catch ( final Exception e )
                 {
+                    JdbcStorage.this.queueSize.decrementAndGet ();
+                    errorQueue.offer ( eventToStore );
                     logger.error ( "Exception occured ({}) while saving Event to database: {}", e, event );
                     logger.info ( "Exception was", e );
                 }
             }
         } );
         return eventToStore;
+    }
+
+    private void drainErrorQueue ()
+    {
+        final int size = errorQueue.size ();
+        final Set<Event> eventsNotSaved = new HashSet<Event> ();
+        for ( int i = 0; i < size; i++ )
+        {
+            final int ii = i;
+            final Event event = errorQueue.poll ();
+            if ( event != null )
+            {
+                this.executor.submit ( new Runnable () {
+                    @Override
+                    public void run ()
+                    {
+                        try
+                        {
+                            JdbcStorage.this.jdbcStorageDao.storeEvent ( event );
+                            logger.debug ( "Event saved to database which could not be saved before - remaining in queue: {}, event: {}", size - ii, event );
+                        }
+                        catch ( final Exception e )
+                        {
+                            eventsNotSaved.add ( event );
+                            logger.error ( "Exception occured ({}) while saving Event to database: {}", e, event );
+                            logger.info ( "Exception was", e );
+                        }
+                    }
+                } );
+            }
+        }
+        // add to queue again
+        for ( Event event : eventsNotSaved )
+        {
+            errorQueue.offer ( event );
+        }
     }
 
     @Override
@@ -108,6 +152,7 @@ public class JdbcStorage extends BaseStorage
                 }
                 catch ( final Exception e )
                 {
+                    JdbcStorage.this.queueSize.decrementAndGet ();
                     logger.error ( "Exception occured ({}) while saving Comment to database: {}", e, event );
                     logger.info ( "Exception was", e );
                 }
@@ -126,6 +171,14 @@ public class JdbcStorage extends BaseStorage
     {
         logger.info ( "jdbcStorageDAO instanciated" );
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( getClass ().getCanonicalName () ) );
+        // try to store events which could not be stored before
+        executor.scheduleAtFixedRate ( new Runnable () {
+            @Override
+            public void run ()
+            {
+                drainErrorQueue ();
+            }
+        }, 10000, 10000, TimeUnit.SECONDS );
     }
 
     /**

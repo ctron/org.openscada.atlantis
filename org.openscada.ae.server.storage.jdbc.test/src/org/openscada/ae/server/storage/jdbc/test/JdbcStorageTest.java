@@ -47,7 +47,7 @@ public class JdbcStorageTest extends JdbcStorageBaseTest
         assertNotNull ( list );
         assertEquals ( 1, list.size () );
         assertEquals ( result.getId (), list.get ( 0 ).getId () );
-        assertEquals ( new Variant ( 5 ), list.get ( 0 ).getAttributes ().get ( Event.Fields.PRIORITY.getName () ) );
+        assertEquals ( Variant.valueOf ( 5 ), list.get ( 0 ).getAttributes ().get ( Event.Fields.PRIORITY.getName () ) );
     }
 
     @Test
