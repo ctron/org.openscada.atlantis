@@ -43,7 +43,6 @@ import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.ServiceRegistration;
 
 public abstract class ScalarVariable implements Variable
 {
@@ -54,8 +53,6 @@ public abstract class ScalarVariable implements Variable
     private final Executor executor;
 
     protected DaveDataitem item;
-
-    private ServiceRegistration handle;
 
     private final Attribute[] attributes;
 
@@ -175,11 +172,6 @@ public abstract class ScalarVariable implements Variable
 
         this.itemPool.removeService ( this.item.getInformation ().getName (), this.item );
 
-        if ( this.handle != null )
-        {
-            this.handle.unregister ();
-            this.handle = null;
-        }
     }
 
     protected abstract Variant extractValue ( IoBuffer data, Map<String, Variant> attributes );
