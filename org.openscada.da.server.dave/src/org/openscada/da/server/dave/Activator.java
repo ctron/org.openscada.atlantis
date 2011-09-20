@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,6 +32,7 @@ import org.openscada.da.server.dave.data.VariableManagerImpl;
 import org.openscada.da.server.dave.factory.ConfigurationFactoryImpl;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.BeanConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -51,7 +52,7 @@ public class Activator implements BundleActivator
 
     private ObjectPoolImpl itemPool;
 
-    private ServiceRegistration itemPoolHandle;
+    private ServiceRegistration<ObjectPool> itemPoolHandle;
 
     public static VariableManager getVariableManager ()
     {
