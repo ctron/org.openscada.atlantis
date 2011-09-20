@@ -110,7 +110,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
         this.itemFactory = new DefaultItemFactory ( hive, parentFolder, this.id, this.id );
 
         this.stateItem = this.itemFactory.createInput ( "state" );
-        this.stateItem.updateData ( new Variant ( this.state.toString () ), null, null );
+        this.stateItem.updateData ( Variant.valueOf ( this.state.toString () ), null, null );
         this.failedItem = this.itemFactory.createInput ( "lastFailure" );
 
         this.pidItem = this.itemFactory.createInput ( "pid" );
@@ -224,7 +224,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
         setCurrentState ( State.DIED );
         if ( e != null )
         {
-            this.failedItem.updateData ( new Variant ( e.getMessage () ), null, null );
+            this.failedItem.updateData ( Variant.valueOf ( e.getMessage () ), null, null );
         }
 
         this.pidItem.updateData ( Variant.NULL, null, null );
@@ -254,7 +254,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
 
             setCurrentState ( State.STARTED );
 
-            this.pidItem.updateData ( new Variant ( process.toString () ), null, null );
+            this.pidItem.updateData ( Variant.valueOf ( process.toString () ), null, null );
 
             // Starting the stream reader
             processStarted ( process );
@@ -366,6 +366,6 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
     public void setCurrentState ( final State state )
     {
         this.state = state;
-        this.stateItem.updateData ( new Variant ( state.toString () ), null, null );
+        this.stateItem.updateData ( Variant.valueOf ( state.toString () ), null, null );
     }
 }

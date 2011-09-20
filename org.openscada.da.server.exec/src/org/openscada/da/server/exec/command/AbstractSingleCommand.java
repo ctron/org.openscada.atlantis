@@ -87,14 +87,14 @@ public class AbstractSingleCommand
 
     private void updateStatus ( final ExecutionResult result )
     {
-        this.exitCodeItem.updateData ( new Variant ( result.getExitValue () ), null, null );
+        this.exitCodeItem.updateData ( Variant.valueOf ( result.getExitValue () ), null, null );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        attributes.put ( "exec.runtime", new Variant ( result.getRuntime () ) );
-        attributes.put ( "exec.exitCode", new Variant ( result.getExitValue () ) );
-        attributes.put ( "exec.standardOutput", new Variant ( result.getOutput () ) );
-        attributes.put ( "exec.errorOutput", new Variant ( result.getErrorOutput () ) );
-        this.execItem.updateData ( new Variant ( result.toString () ), attributes, AttributeMode.SET );
+        attributes.put ( "exec.runtime", Variant.valueOf ( result.getRuntime () ) );
+        attributes.put ( "exec.exitCode", Variant.valueOf ( result.getExitValue () ) );
+        attributes.put ( "exec.standardOutput", Variant.valueOf ( result.getOutput () ) );
+        attributes.put ( "exec.errorOutput", Variant.valueOf ( result.getErrorOutput () ) );
+        this.execItem.updateData ( Variant.valueOf ( result.toString () ), attributes, AttributeMode.SET );
     }
 
     public void register ( final Hive hive, final FolderCommon parentFolder )
