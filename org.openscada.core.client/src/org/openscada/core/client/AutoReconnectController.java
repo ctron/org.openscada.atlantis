@@ -1,19 +1,19 @@
 /*
- * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * This file is part of the openSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
- * OpenSCADA is free software: you can redistribute it and/or modify
+ * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
  *
- * OpenSCADA is distributed in the hope that it will be useful,
+ * openSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  *
  * You should have received a copy of the GNU Lesser General Public License
- * version 3 along with OpenSCADA. If not, see
+ * version 3 along with openSCADA. If not, see
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * <p>
  * Note that if you do not hold an instance to the auto reconnect controller it will be garbage collected
  * and the connection state will no longer be monitored.
- * @since 0.12
+ * @since 0.12.0
  * @author Jens Reimann
  *
  */
@@ -57,7 +57,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
     private final long reconnectDelay;
 
-    private final ScheduledThreadPoolExecutor executor;
+    private ScheduledThreadPoolExecutor executor;
 
     private long lastTimestamp;
 
@@ -100,6 +100,46 @@ public class AutoReconnectController implements ConnectionStateListener
         this.connection.addConnectionStateListener ( this );
     }
 
+    /**
+     * Dispose controller forcibly
+     * <p>
+     * This will also close the connection
+     * </p>
+     */
+    public void dispose ()
+    {
+        dispose ( true );
+    }
+
+    /**
+     * Dispose controller forcibly
+     * @param disconnect if <code>true</code> the connection will also be disconnected
+     */
+    public void dispose ( final boolean disconnect )
+    {
+        logger.debug ( "Disposing - disconnect: {}", disconnect );
+
+        final ScheduledThreadPoolExecutor executor = this.executor;
+
+        synchronized ( this )
+        {
+            if ( this.executor != null )
+            {
+                if ( disconnect )
+                {
+                    disconnect ();
+                }
+                this.executor = null;
+            }
+        }
+
+        if ( executor != null )
+        {
+            // shutdown outside of sync lock
+            executor.shutdown ();
+        }
+    }
+
     @Override
     protected void finalize () throws Throwable
     {
@@ -107,6 +147,7 @@ public class AutoReconnectController implements ConnectionStateListener
         if ( this.executor != null )
         {
             this.executor.shutdown ();
+            this.executor = null;
         }
         super.finalize ();
     }
