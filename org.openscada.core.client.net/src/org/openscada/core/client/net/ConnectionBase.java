@@ -276,6 +276,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
                     // only dispose when connection is closed
                     disposeConnector ();
+                    this.session = null;
                 }
                 else
                 {
@@ -283,7 +284,6 @@ public abstract class ConnectionBase implements Connection, IoHandler
                     setState ( ConnectionState.CLOSING, reason );
                     doClose = true;
                 }
-                this.session = null;
             }
 
         }
