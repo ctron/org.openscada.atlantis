@@ -273,6 +273,9 @@ public abstract class ConnectionBase implements Connection, IoHandler
                 {
                     logger.debug ( "Connection is not connected. Switch to CLOSED" );
                     setState ( ConnectionState.CLOSED, reason );
+
+                    // only dispose when connection is closed
+                    disposeConnector ();
                 }
                 else
                 {
@@ -283,7 +286,6 @@ public abstract class ConnectionBase implements Connection, IoHandler
                 this.session = null;
             }
 
-            disposeConnector ();
         }
 
         if ( session != null && doClose )
