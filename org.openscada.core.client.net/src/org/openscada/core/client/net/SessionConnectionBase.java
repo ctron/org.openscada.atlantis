@@ -32,7 +32,7 @@ public abstract class SessionConnectionBase extends ConnectionBase
 {
     private final static Logger logger = LoggerFactory.getLogger ( SessionConnectionBase.class );
 
-    public static final String SESSION_CLIENT_VERSION = "client-version";
+    public static final String SESSION_CLIENT_VERSION = "client-version"; //$NON-NLS-1$
 
     private final ConnectionInformation connectionInformation;
 
@@ -89,21 +89,21 @@ public abstract class SessionConnectionBase extends ConnectionBase
 
     protected void processSessionReply ( final Message message )
     {
-        logger.debug ( "Got session reply!" );
+        logger.debug ( "Got session reply!" ); //$NON-NLS-1$
 
         if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
         {
             final String errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
-            disconnected ( new DisconnectReason ( "Failed to create session: " + errorInfo ) );
+            disconnected ( new DisconnectReason ( String.format ( Messages.getString ( "SessionConnectionBase.Error" ), errorInfo ) ).fillInStackTrace () ); //$NON-NLS-1$
         }
         else if ( message.getCommandCode () != Message.CC_ACK )
         {
-            disconnected ( new DisconnectReason ( "Received an invalid reply when requesting session" ) );
+            disconnected ( new DisconnectReason ( Messages.getString ( "SessionConnectionBase.InvalidReply" ) ).fillInStackTrace () ); //$NON-NLS-1$
         }
         else
         {
             final Properties properties = new Properties ();
-            MessageHelper.getProperties ( properties, message.getValues ().get ( "properties" ) );
+            MessageHelper.getProperties ( properties, message.getValues ().get ( "properties" ) ); //$NON-NLS-1$
             setBound ( properties );
         }
     }
