@@ -24,7 +24,7 @@ Export-Package: org.openscada.core.client.net;version="0.17.0";
    org.openscada.core,
    org.openscada.net.mina"
 Bundle-Version: 0.17.0.qualifier
-Bundle-Name: OpenSCADA Core Client NET
+Bundle-Name: openSCADA Core Client NET
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH
