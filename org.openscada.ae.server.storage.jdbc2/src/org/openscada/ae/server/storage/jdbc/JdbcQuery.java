@@ -51,7 +51,7 @@ public class JdbcQuery implements Query
 
     private WeakReference<List<JdbcQuery>> openQueries;
 
-    ScheduledFuture<Boolean> future;
+    private ScheduledFuture<Boolean> future;
 
     public JdbcQuery ( final StorageDao jdbcStorageDao, final Filter filter, final ScheduledExecutorService executor, final List<JdbcQuery> openQueries ) throws SQLException, NotSupportedException
     {
