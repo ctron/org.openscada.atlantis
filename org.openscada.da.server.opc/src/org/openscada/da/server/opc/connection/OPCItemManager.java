@@ -216,7 +216,6 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
 
         // return new item
         return item;
-
     }
 
     /**
@@ -321,6 +320,6 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         }
         item.itemUnrealized ();
 
-        this.allItemsStorage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
+        this.allItemsStorage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> ( 1 ) ) );
     }
 }
