@@ -155,7 +155,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         switch ( state )
         {
         case CLOSING:
-            requestClose ();
+            requestClose ( error );
             break;
         case CLOSED:
             performClosed ( error );
@@ -169,7 +169,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         switch ( state )
         {
         case CLOSING:
-            requestClose ();
+            requestClose ( error );
             break;
         case CLOSED:
             performClosed ( error );
@@ -195,9 +195,9 @@ public abstract class ConnectionBase implements Connection, IoHandler
         this.properties = null;
     }
 
-    private void requestClose ()
+    private void requestClose ( final Throwable error )
     {
-        setState ( ConnectionState.CLOSING, null );
+        setState ( ConnectionState.CLOSING, error );
 
         // we can already disconnect the messenger
         this.messenger.disconnected ();
