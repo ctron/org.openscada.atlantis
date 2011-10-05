@@ -247,13 +247,23 @@ public abstract class ConnectionBase implements Connection, IoHandler
         switchState ( ConnectionState.CLOSING, null, null );
     }
 
+    /**
+     * request a disconnect
+     */
+    protected void disconnect ( final Throwable error )
+    {
+        logger.info ( "Requested disconnect" );
+
+        switchState ( ConnectionState.CLOSING, error, null );
+    }
+
     @Override
     public ConnectionInformation getConnectionInformation ()
     {
         return this.connectionInformation;
     }
 
-    protected void disconnected ( final Throwable reason )
+    private void disconnected ( final Throwable reason )
     {
         IoSession session;
 
@@ -646,7 +656,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
         else
         {
-            logger.error ( "Created a new session with an existing one!" );
+            logger.error ( "Created a new session with an existing one! (existing: {})", this.session );
         }
     }
 

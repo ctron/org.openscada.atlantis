@@ -81,7 +81,7 @@ public abstract class SessionConnectionBase extends ConnectionBase
             @Override
             public void messageTimedOut ()
             {
-                disconnected ( new OperationTimedOutException ().fillInStackTrace () );
+                disconnect ( new OperationTimedOutException ().fillInStackTrace () );
             }
         }, getMessageTimeout () );
 
@@ -94,11 +94,11 @@ public abstract class SessionConnectionBase extends ConnectionBase
         if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
         {
             final String errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
-            disconnected ( new DisconnectReason ( String.format ( Messages.getString ( "SessionConnectionBase.Error" ), errorInfo ) ).fillInStackTrace () ); //$NON-NLS-1$
+            disconnect ( new DisconnectReason ( String.format ( Messages.getString ( "SessionConnectionBase.Error" ), errorInfo ) ).fillInStackTrace () ); //$NON-NLS-1$
         }
         else if ( message.getCommandCode () != Message.CC_ACK )
         {
-            disconnected ( new DisconnectReason ( Messages.getString ( "SessionConnectionBase.InvalidReply" ) ).fillInStackTrace () ); //$NON-NLS-1$
+            disconnect ( new DisconnectReason ( Messages.getString ( "SessionConnectionBase.InvalidReply" ) ).fillInStackTrace () ); //$NON-NLS-1$
         }
         else
         {
