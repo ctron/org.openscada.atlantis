@@ -119,7 +119,6 @@ public class OPCController implements Runnable
     {
         while ( this.running )
         {
-
             try
             {
                 final Runnable runnable = this.jobQueue.poll ( getModel ().getLoopDelay (), TimeUnit.MILLISECONDS );
