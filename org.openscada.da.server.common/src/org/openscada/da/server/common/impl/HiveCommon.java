@@ -1,19 +1,19 @@
 /*
- * This file is part of the OpenSCADA project
+ * This file is part of the openSCADA project
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
- * OpenSCADA is free software: you can redistribute it and/or modify
+ * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
  *
- * OpenSCADA is distributed in the hope that it will be useful,
+ * openSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  *
  * You should have received a copy of the GNU Lesser General Public License
- * version 3 along with OpenSCADA. If not, see
+ * version 3 along with openSCADA. If not, see
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
@@ -100,7 +100,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private final Set<DataItemValidator> itemValidators = new CopyOnWriteArraySet<DataItemValidator> ();
 
-    private ValidationStrategy validatonStrategy = ValidationStrategy.GRANT_ALL;
+    private ValidationStrategy validationStrategy = ValidationStrategy.GRANT_ALL;
 
     private HiveCommonStatisticsGenerator statisticsGenerator;
 
@@ -373,11 +373,12 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         synchronized ( this.itemMap )
         {
             final String id = item.getInformation ().getName ();
+            final DataItemInformationBase information = new DataItemInformationBase ( item.getInformation () );
 
-            if ( !this.itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
+            if ( !this.itemMap.containsKey ( information ) )
             {
                 // first add internally ...
-                this.itemMap.put ( new DataItemInformationBase ( item.getInformation () ), item );
+                this.itemMap.put ( information, item );
 
                 if ( this.statisticsGenerator != null )
                 {
@@ -418,10 +419,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     {
         synchronized ( this.itemMap )
         {
-            final String id = item.getInformation ().getName ();
-            if ( this.itemMap.containsKey ( new DataItemInformationBase ( item.getInformation () ) ) )
+            final DataItemInformationBase information = new DataItemInformationBase ( item.getInformation () );
+            if ( this.itemMap.containsKey ( information ) )
             {
-                this.itemMap.remove ( new DataItemInformationBase ( item.getInformation () ) );
+                this.itemMap.remove ( information );
                 if ( this.statisticsGenerator != null )
                 {
                     this.statisticsGenerator.itemUnregistered ( item );
@@ -429,20 +430,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             }
 
             // remove the source from the manager
-            this.itemSubscriptionManager.setSource ( id, null );
-        }
-    }
-
-    /**
-     * Get an item from the list of registered items.
-     * @param itemId the item to find
-     * @return the data item or <code>null</code> if no item with that ID is registered
-     */
-    protected DataItem findRegisteredDataItem ( final String itemId )
-    {
-        synchronized ( this.itemMap )
-        {
-            return this.itemMap.get ( itemId );
+            this.itemSubscriptionManager.setSource ( item.getInformation ().getName (), null );
         }
     }
 
@@ -477,7 +465,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     @Override
     public boolean validateItem ( final String id )
     {
-        if ( this.validatonStrategy == ValidationStrategy.GRANT_ALL )
+        if ( this.validationStrategy == ValidationStrategy.GRANT_ALL )
         {
             return true;
         }
@@ -822,14 +810,14 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         this.itemValidators.remove ( dataItemValidator );
     }
 
-    protected ValidationStrategy getValidatonStrategy ()
+    protected ValidationStrategy getValidationStrategy ()
     {
-        return this.validatonStrategy;
+        return this.validationStrategy;
     }
 
     protected void setValidatonStrategy ( final ValidationStrategy validatonStrategy )
     {
-        this.validatonStrategy = validatonStrategy;
+        this.validationStrategy = validatonStrategy;
     }
 
     public boolean isAutoEnableStats ()

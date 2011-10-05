@@ -76,6 +76,7 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
         }
     }
 
+    @Override
     public void afterPropertiesSet () throws Exception
     {
         setup ();
@@ -83,9 +84,10 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
 
     public DataItem findDataItem ( final String itemId )
     {
-        return findRegisteredDataItem ( itemId );
+        return lookupItem ( itemId );
     }
 
+    @Override
     public void setApplicationContext ( final ApplicationContext ctx ) throws BeansException
     {
         this.ctx = ctx;
