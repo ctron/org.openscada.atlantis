@@ -10,12 +10,12 @@
 	<components:connections>
 		<!-- M+F OPC Server -->
 		<components:configuration domain=""
-			host="192.168.130.129" user="jens" password="test12"
+			host="1.2.3.4" user="jens" password="test12"
 			access="sync"
 			refresh="250"
 			connected="true"
 			alias="MFX01"
-			enabled="true"
+			enabled="false"
 			reconnectDelay="20000"
 			>
 			<components:clsid>AEDE6AB0-95F9-11d4-BF93-0050BAC23960</components:clsid>
@@ -23,12 +23,12 @@
 		
 		<!-- M+F OPC Server -->
 		<components:configuration domain=""
-			host="192.168.130.129" user="jens" password="test12"
+			host="1.2.3.4" user="jens" password="test12"
 			access="sync"
 			refresh="250"
 			connected="true"
 			alias="MFX02"
-			enabled="true"
+			enabled="false"
 			reconnectDelay="20000"
 			>
 			<components:clsid>AEDE6AB0-95F9-11d4-BF93-0050BAC23960</components:clsid>
@@ -36,7 +36,7 @@
 		
 		<!-- Matrikon OPC Simulation Server -->
 		<components:configuration domain=""
-			host="192.168.1.107" user="jens" password="test12"
+			host="1.2.3.4" user="jens" password="test12"
 			access="sync"
 			refresh="250"
 			connected="true"
@@ -46,492 +46,18 @@
 			<components:clsid>
 				F8582CF2-88FB-11D0-B850-00C0F0104305
 			</components:clsid>
+			<!-- 
 			<components:initialItemResource>items_TEST1.xml</components:initialItemResource>
+			-->
 		</components:configuration>
-
+		
 		<!-- Softing OPC Demo Server -->
 		<components:configuration connected="false" domain="localhost"
-			host="172.16.15.128" access="sync" user="jens" password="test12" enabled="false">
+			host="1.2.3.4" access="sync" user="jens" password="test12" enabled="false">
 			<components:clsid>
 				2E565242-B238-11D3-842D-0008C779D775
 			</components:clsid>
 		</components:configuration>
-		
-		
-<!-- ABB 800XA OPC Server -->
-<opc:configuration
-    password="ABBSrv000" host="10.63.240.210"
-    user="800xAService" domain="SCS800xASV" 
-    access="sync"
-    enabled="false"
-    tree-browser="false"
-    flat-browser="false"
-    refresh="500"
-    alias="ABBOPC07"
-    >
-    <opc:clsid>56ac0c8e-a857-4196-958b-d8aceb5f2c16</opc:clsid>
-    
-    <!-- watchdog for reading -->
-    <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001B:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002B:YI1/SIG</opc:initialItem>
-    
-    <!-- Handshake -->
-	<opc:initialItem>LadeSpur07:630_07_OrderState</opc:initialItem>
-	<opc:initialItem>LadeSpur07:630_07_ResultRequest</opc:initialItem>
-    
-    <!-- Compartment status -->
-	<opc:initialItem>LadeSpur07:630_07_1_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur07:630_07_2_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur07:630_07_3_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur07:630_07_4_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur07:630_07_5_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur07:630_07_6_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur07:630_07_7_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur07:630_07_8_ResultRequest</opc:initialItem>
-    
-    <!-- handshake errors -->
-    <opc:initialItem>LadeSpur07:630_07_VIMS_ERROR</opc:initialItem>
-    <opc:initialItem>LadeSpur07:630_07_PM_ERROR</opc:initialItem>
-    
-    <!-- PM items from SPS -->    
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07OS:XI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07RR:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07RRK1:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07RRK2:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07RRK3:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07RRK4:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07RRK5:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07RRK6:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07RRK7:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07RRK8:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07VERR:XI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630VI07PERR:YI1/SIG</opc:initialItem>
-
-	<!-- meter error state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630ML0710R:I13/SIG</opc:initialItem>
-    
-    <!-- not aus -->
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS07/630UZ0700:O1/SIG</opc:initialItem>
-
-    <!-- current temperature -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630TI0711:Y1/SIG</opc:initialItem>
-
-    <!-- current volume -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630FQ0711:Y/SIG</opc:initialItem>
-
-    <!-- current load id -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630FY0712:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630FY0712_1:YI1/SIG</opc:initialItem>
-
-    <!-- flow state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630FC0711:ALLY/SIG</opc:initialItem>
-	
-    <!-- additive flow state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630FC0713:ALLY/SIG</opc:initialItem>
-	
-    <!-- current corrected volume -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630ML0710D:Y1/SIG</opc:initialItem>
-	
-	<!-- current additive volume -->	
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630FQ0713:Y/SIG</opc:initialItem>
-
-	<!-- lock -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630US0700:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630US0700S:O1/SIG</opc:initialItem>
-    <!-- 10-pin plug state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630GO0702CO:O1/SIG</opc:initialItem>
-
-	<!-- meter lock -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630US0710:O1/SIG</opc:initialItem>
-
-    <!-- meter lock state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS07/630US0710S:O1/SIG</opc:initialItem>
-    
-</opc:configuration>
-
-<!-- == LSP 16 == -->
-
-<!-- ABB 800XA OPC Server -->
-<opc:configuration user="800xAService"
-        domain="SCS800xASV" password="ABBSrv000" host="10.63.240.210"
-        access="sync"
-        enabled="false"
-        tree-browser="false"
-        flat-browser="false"
-        refresh="500"
-        alias="ABBOPC16"
-        >
-
-    <opc:clsid>56ac0c8e-a857-4196-958b-d8aceb5f2c16</opc:clsid>
-    
-    <!-- watchdog for reading -->
-    <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001B:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002B:YI1/SIG</opc:initialItem>
-    
-    <!-- Handshake -->
-	<opc:initialItem>LadeSpur16:630_16_OrderState</opc:initialItem>
-	<opc:initialItem>LadeSpur16:630_16_ResultRequest</opc:initialItem>
-    
-    <!-- Compartment status -->
-	<opc:initialItem>LadeSpur16:630_16_1_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur16:630_16_2_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur16:630_16_3_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur16:630_16_4_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur16:630_16_5_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur16:630_16_6_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur16:630_16_7_ResultRequest</opc:initialItem>
-	<opc:initialItem>LadeSpur16:630_16_8_ResultRequest</opc:initialItem>
-    
-    <!-- handshake errors -->
-    <opc:initialItem>LadeSpur16:630_16_VIMS_ERROR</opc:initialItem>
-    <opc:initialItem>LadeSpur16:630_16_PM_ERROR</opc:initialItem>
-    
-    <!-- PM items from SPS -->    
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16OS:XI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RR:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK1:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK2:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK3:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK4:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK5:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK6:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK7:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK8:YI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16VERR:XI1/SIG</opc:initialItem>
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16PERR:YI1/SIG</opc:initialItem>
-
-	<!-- meter error state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1610R:I13/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1620R:I13/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1630R:I13/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1640R:I13/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1650R:I13/SIG</opc:initialItem>
-    
-    <!-- not aus -->
-    <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630UZ1600:O1/SIG</opc:initialItem>
-
-    <!-- current temperature -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1611:Y1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1621:Y1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1631:Y1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1641:Y1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1651:Y1/SIG</opc:initialItem>
-
-    <!-- current volume -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1611:Y/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1621:Y/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1631:Y/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1641:Y/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1651:Y/SIG</opc:initialItem>
-
-    <!-- current load id -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1612:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1612_1:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1622:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1622_1:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1632:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1632_1:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1642:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1642_1:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1652:YI1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1652_1:YI1/SIG</opc:initialItem>
-
-    <!-- flow state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1611:ALLY/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1621:ALLY/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1631:ALLY/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1641:ALLY/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1651:ALLY/SIG</opc:initialItem>
-	
-    <!-- additive flow state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1613:ALLY/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1623:ALLY/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1633:ALLY/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1643:ALLY/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1653:ALLY/SIG</opc:initialItem>
-	
-    <!-- current corrected volume -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1610D:Y1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1620D:Y1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1630D:Y1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1640D:Y1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1650D:Y1/SIG</opc:initialItem>
-	
-	<!-- current additive volume -->	
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1613:Y/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1623:Y/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1633:Y/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1643:Y/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1653:Y/SIG</opc:initialItem>
-
-	<!-- lock -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1600:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1600S:O1/SIG</opc:initialItem>
-    <!-- 10-pin plug state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630GO1602CO:O1/SIG</opc:initialItem>
-
-	<!-- meter lock -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1610:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1620:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1630:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1640:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1650:O1/SIG</opc:initialItem>
-
-    <!-- meter lock state -->
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1610S:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1620S:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1630S:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1640S:O1/SIG</opc:initialItem>
-	<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1650S:O1/SIG</opc:initialItem>
-</opc:configuration>
-
-<!-- == global connection /virtual == -->
-<!-- ABB 800XA OPC Server -->
-<opc:configuration user="800xAService"
-        domain="SCS800xASV" password="ABBSrv000" host="10.63.240.210"
-        access="sync"
-        enabled="false"
-        tree-browser="false"
-        flat-browser="false"
-        refresh="500"
-        alias="ABBOPC"
-        >
-
-		<opc:clsid>56ac0c8e-a857-4196-958b-d8aceb5f2c16</opc:clsid>
-        
-        <!-- == Global == -->
-        
-        <!-- schranke -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630HS0001:O1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630HS0002:O1/SIG</opc:initialItem>
-        
-		<!-- watchdog items -->
-        <!-- PS1100 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001A:YI1/SIG</opc:initialItem>
-        <!-- PS1200 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002A:YI1/SIG</opc:initialItem>
-                
-        <!-- AP01 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630AP0001A:YI1/SIG</opc:initialItem>
-        <!-- AP02 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630AP0002A:YI1/SIG</opc:initialItem>
-                        
-        <!-- VIMS Rechner 1 zu AP01 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001B:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 1 zu AP02 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001C:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 1 zu virt. Adr. -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001D:YI1/SIG</opc:initialItem>
-                        
-        <!-- VIMS Rechner 2 zu AP01 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002B:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 2 zu AP02 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002C:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 2 zu virt. Adr. -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002D:YI1/SIG</opc:initialItem>
-        
-        <!-- == Local == -->
-        <!-- Local items are kept here until all parts use the new scheme -->
-
-        <!-- Handshake -->
-		<opc:initialItem>LadeSpur16:630_16_OrderState</opc:initialItem>
-		<opc:initialItem>LadeSpur16:630_16_ResultRequest</opc:initialItem>
-        
-        <!-- Compartment status -->
-		<opc:initialItem>LadeSpur16:630_16_1_ResultRequest</opc:initialItem>
-		<opc:initialItem>LadeSpur16:630_16_2_ResultRequest</opc:initialItem>
-		<opc:initialItem>LadeSpur16:630_16_3_ResultRequest</opc:initialItem>
-		<opc:initialItem>LadeSpur16:630_16_4_ResultRequest</opc:initialItem>
-		<opc:initialItem>LadeSpur16:630_16_5_ResultRequest</opc:initialItem>
-		<opc:initialItem>LadeSpur16:630_16_6_ResultRequest</opc:initialItem>
-		<opc:initialItem>LadeSpur16:630_16_7_ResultRequest</opc:initialItem>
-		<opc:initialItem>LadeSpur16:630_16_8_ResultRequest</opc:initialItem>
-        
-        <!-- handshake errors -->
-        <opc:initialItem>LadeSpur16:630_16_VIMS_ERROR</opc:initialItem>
-        <opc:initialItem>LadeSpur16:630_16_PM_ERROR</opc:initialItem>
-        
-        <!-- PM items from SPS -->    
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16OS:XI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RR:YI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK1:YI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK2:YI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK3:YI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK4:YI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK5:YI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK6:YI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK7:YI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16RRK8:YI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16VERR:XI1/SIG</opc:initialItem>
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630VI16PERR:YI1/SIG</opc:initialItem>
-
-		<!-- meter error state -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1610R:I13/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1620R:I13/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1630R:I13/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1640R:I13/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1650R:I13/SIG</opc:initialItem>
-        
-        <!-- not aus -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/LS16/630UZ1600:O1/SIG</opc:initialItem>
-
-        <!-- current temperature -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1611:Y1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1621:Y1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1631:Y1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1641:Y1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630TI1651:Y1/SIG</opc:initialItem>
-
-        <!-- current volume -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1611:Y/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1621:Y/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1631:Y/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1641:Y/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1651:Y/SIG</opc:initialItem>
-
-        <!-- current load id -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1612:YI1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1612_1:YI1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1622:YI1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1622_1:YI1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1632:YI1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1632_1:YI1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1642:YI1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1642_1:YI1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1652:YI1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FY1652_1:YI1/SIG</opc:initialItem>
-
-        <!-- flow state -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1611:ALLY/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1621:ALLY/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1631:ALLY/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1641:ALLY/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1651:ALLY/SIG</opc:initialItem>
-		
-        <!-- additive flow state -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1613:ALLY/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1623:ALLY/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1633:ALLY/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1643:ALLY/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FC1653:ALLY/SIG</opc:initialItem>
-		
-        <!-- current corrected volume -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1610D:Y1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1620D:Y1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1630D:Y1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1640D:Y1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630ML1650D:Y1/SIG</opc:initialItem>
-		
-		<!-- current additive volume -->	
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1613:Y/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1623:Y/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1633:Y/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1643:Y/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630FQ1653:Y/SIG</opc:initialItem>
-
-		<!-- lock -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1600:O1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1600S:O1/SIG</opc:initialItem>
-        <!-- 10-pin plug state -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630GO1602CO:O1/SIG</opc:initialItem>
-
-		<!-- meter lock -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1610:O1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1620:O1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1630:O1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1640:O1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1650:O1/SIG</opc:initialItem>
-
-        <!-- meter lock state -->
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1610S:O1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1620S:O1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1630S:O1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1640S:O1/SIG</opc:initialItem>
-		<opc:initialItem>Root/Melody Navigation/RootArea/LS16/630US1650S:O1/SIG</opc:initialItem>
-        
-        
-                                </opc:configuration>
-                                
-<!-- == global connection / link A == -->
-<!-- ABB 800XA OPC Server -->
-<opc:configuration user="800xAService"
-        domain="SCS800xASV" password="ABBSrv000" host="10.63.240.211"
-        access="sync"
-        enabled="false"
-        tree-browser="false"
-        flat-browser="false"
-        refresh="500"
-        alias="ABBOPC_A"
-        >
-
-		<opc:clsid>56ac0c8e-a857-4196-958b-d8aceb5f2c16</opc:clsid>
-        
-		<!-- watchdog items -->
-        <!-- PS1100 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001A:YI1/SIG</opc:initialItem>
-        <!-- PS1200 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002A:YI1/SIG</opc:initialItem>
-                
-        <!-- AP01 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630AP0001A:YI1/SIG</opc:initialItem>
-        <!-- AP02 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630AP0002A:YI1/SIG</opc:initialItem>
-                        
-        <!-- VIMS Rechner 1 zu AP01 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001B:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 1 zu AP02 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001C:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 1 zu virt. Adr. -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001D:YI1/SIG</opc:initialItem>
-                        
-        <!-- VIMS Rechner 2 zu AP01 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002B:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 2 zu AP02 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002C:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 2 zu virt. Adr. -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002D:YI1/SIG</opc:initialItem>
-</opc:configuration>
-
-<!-- == global connection / link B == -->
-<!-- ABB 800XA OPC Server -->
-<opc:configuration user="800xAService"
-        domain="SCS800xASV" password="ABBSrv000" host="10.63.240.212"
-        access="sync"
-        enabled="false"
-        tree-browser="false"
-        flat-browser="false"
-        refresh="500"
-        alias="ABBOPC_B"
-        >
-
-        <opc:clsid>56ac0c8e-a857-4196-958b-d8aceb5f2c16</opc:clsid>
-		<!-- watchdog items -->
-        <!-- PS1100 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001A:YI1/SIG</opc:initialItem>
-        <!-- PS1200 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002A:YI1/SIG</opc:initialItem>
-                
-        <!-- AP01 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630AP0001A:YI1/SIG</opc:initialItem>
-        <!-- AP02 zu VIMS -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630AP0002A:YI1/SIG</opc:initialItem>
-                        
-        <!-- VIMS Rechner 1 zu AP01 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001B:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 1 zu AP02 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001C:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 1 zu virt. Adr. -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0001D:YI1/SIG</opc:initialItem>
-                        
-        <!-- VIMS Rechner 2 zu AP01 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002B:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 2 zu AP02 -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002C:YI1/SIG</opc:initialItem>
-        <!-- VIMS Rechner 2 zu virt. Adr. -->
-        <opc:initialItem>Root/Melody Navigation/RootArea/INA/630GO0002D:YI1/SIG</opc:initialItem>
-</opc:configuration>
-		
-		
 		
 	</components:connections>
 	<components:item-templates>
@@ -546,6 +72,5 @@
             </chain:chain>
         </template>
     </components:item-templates>
-
 
 </components:root>
