@@ -450,12 +450,14 @@ public abstract class ConnectionBase implements Connection, IoHandler
             @Override
             public void operationComplete ( final ConnectFuture future )
             {
+                logger.debug ( "Connect operation complete" );
                 try
                 {
                     future.getSession ();
                 }
                 catch ( final Throwable e )
                 {
+                    logger.debug ( "Operation failed", e );
                     ConnectionBase.this.connectFailed ( future, e );
                 }
             }
