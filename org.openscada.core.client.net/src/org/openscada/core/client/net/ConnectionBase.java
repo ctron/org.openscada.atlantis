@@ -209,12 +209,16 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         switch ( state )
         {
+        case CLOSING:
+            requestClose ( error );
+            break;
         case CONNECTED:
             onConnectionEstablished ();
             setState ( ConnectionState.CONNECTED, null );
             break;
         case CLOSED:
-            setState ( ConnectionState.CLOSED, error );
+            performClosed ( error );
+            onConnectionClosed ();
             break;
         }
     }
@@ -450,12 +454,14 @@ public abstract class ConnectionBase implements Connection, IoHandler
             @Override
             public void operationComplete ( final ConnectFuture future )
             {
+                logger.debug ( "Connect operation complete" );
                 try
                 {
                     future.getSession ();
                 }
                 catch ( final Throwable e )
                 {
+                    logger.debug ( "Operation failed", e );
                     ConnectionBase.this.connectFailed ( future, e );
                 }
             }
