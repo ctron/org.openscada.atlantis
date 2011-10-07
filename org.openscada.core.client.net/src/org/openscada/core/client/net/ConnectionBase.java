@@ -209,12 +209,16 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         switch ( state )
         {
+        case CLOSING:
+            requestClose ();
+            break;
         case CONNECTED:
             onConnectionEstablished ();
             setState ( ConnectionState.CONNECTED, null );
             break;
         case CLOSED:
-            setState ( ConnectionState.CLOSED, error );
+            performClosed ( error );
+            onConnectionClosed ();
             break;
         }
     }
