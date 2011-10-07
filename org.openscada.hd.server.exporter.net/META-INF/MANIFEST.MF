@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: OpenSCADA HD NET Server Exporter
 Bundle-SymbolicName: org.openscada.hd.server.exporter.net
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Activator: org.openscada.hd.server.exporter.net.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -11,4 +11,4 @@ Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.hd.server;version="0.14.0",
  org.openscada.hd.server.net,
  org.osgi.framework;version="1.3.0",
- org.slf4j;version="[1.5.0,1.6.0)"
+ org.slf4j;version="[1.5.0,2.0.0)"

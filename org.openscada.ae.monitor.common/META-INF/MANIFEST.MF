@@ -17,7 +17,7 @@ Import-Package: org.openscada.ae;version="0.14.0",
  org.openscada.utils.lang;version="0.15.0",
  org.osgi.framework;version="1.3.0",
  org.osgi.util.tracker;version="1.4.2",
- org.slf4j;version="[1.5.8,1.6.0)"
+ org.slf4j;version="[1.5.8,2.0.0)"
 Export-Package: org.openscada.ae.monitor.common;version="0.15.0";
   uses:="org.osgi.framework,
    org.openscada.ae.monitor.common.handler,
