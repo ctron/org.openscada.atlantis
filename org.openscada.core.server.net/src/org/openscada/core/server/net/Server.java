@@ -20,6 +20,7 @@
 package org.openscada.core.server.net;
 
 import java.io.IOException;
+import java.net.InetSocketAddress;
 
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandler;
@@ -67,7 +68,14 @@ public class Server
         }
 
         // bind
-        acceptor.bind ( socketImpl.doLookup ( host, this.connectionInformation.getSecondaryTarget () ) );
+        if ( host != null )
+        {
+            acceptor.bind ( socketImpl.doLookup ( host, this.connectionInformation.getSecondaryTarget () ) );
+        }
+        else
+        {
+            acceptor.bind ( new InetSocketAddress ( this.connectionInformation.getSecondaryTarget () ) );
+        }
 
         return acceptor;
     }
@@ -76,7 +84,6 @@ public class Server
     {
         if ( this.acceptor != null )
         {
-            this.acceptor.unbind ();
             this.acceptor.dispose ();
             this.acceptor = null;
         }
