@@ -39,18 +39,6 @@ public class Exporter extends ExporterBase
         super ( hive, connectionInformation );
     }
 
-    @Deprecated
-    public Exporter ( final Class<?> hiveClass, final ConnectionInformation connectionInformation ) throws Exception
-    {
-        super ( hiveClass, connectionInformation );
-    }
-
-    @Deprecated
-    public Exporter ( final String hiveClassName, final ConnectionInformation connectionInformation ) throws Exception
-    {
-        super ( hiveClassName, connectionInformation );
-    }
-
     private void createServer () throws IOException
     {
         this.server = new Server ( this.connectionInformation );
@@ -61,6 +49,7 @@ public class Exporter extends ExporterBase
     {
         return new SingleSessionIoHandlerDelegate ( new SingleSessionIoHandlerFactory () {
 
+            @Override
             public SingleSessionIoHandler getHandler ( final IoSession session ) throws Exception
             {
                 return new ServerConnectionHandler ( Exporter.this.hive, session, Exporter.this.connectionInformation );
@@ -68,11 +57,13 @@ public class Exporter extends ExporterBase
         } );
     }
 
+    @Override
     public void start () throws Exception
     {
         createServer ();
     }
 
+    @Override
     public void stop () throws Exception
     {
         destroyServer ();
