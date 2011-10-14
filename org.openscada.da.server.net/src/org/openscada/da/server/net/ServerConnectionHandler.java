@@ -190,7 +190,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         // client version does not match server version
         if ( !clientVersion.equals ( VERSION ) )
         {
-            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "protocol version mismatch: client '" + clientVersion + "' server: '" + VERSION + "'" ) );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, String.format ( "protocol version mismatch: client '%s' server: '%s'", clientVersion, VERSION ) ) );
             return;
         }
 
