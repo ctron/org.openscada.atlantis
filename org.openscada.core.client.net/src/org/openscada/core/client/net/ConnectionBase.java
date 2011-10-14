@@ -87,8 +87,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
         super ();
         this.connectionInformation = connectionInformation;
 
+        // the lookup executor has at max one thread and kills this if idle for one minute
         this.lookupExecutor = new ThreadPoolExecutor ( 0, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable> (), new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation.toMaskedString () ) );
-        // this.lookupExecutor = new ScheduledThreadPoolExecutor ( 0, new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation.toMaskedString () ) );
 
         this.messenger = new Messenger ( getMessageTimeout () );
 
@@ -126,6 +126,11 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
+    /**
+     * Handle when we are in state LOOKUP
+     * @param state the target state
+     */
+
     private void handleSwitchLookup ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
@@ -136,11 +141,13 @@ public abstract class ConnectionBase implements Connection, IoHandler
         case CLOSING:
             performClosed ( error );
             break;
-        case CONNECTING:
-            performConnect ();
-            break;
         }
     }
+
+    /**
+     * Handle when we are in state CLOSING
+     * @param state the target state
+     */
 
     private void handleSwitchClosing ( final ConnectionState state, final Throwable error )
     {
@@ -152,6 +159,11 @@ public abstract class ConnectionBase implements Connection, IoHandler
             break;
         }
     }
+
+    /**
+     * Handle when we are in state BOUND
+     * @param state the target state
+     */
 
     private void handleSwitchBound ( final ConnectionState state, final Throwable error )
     {
@@ -166,6 +178,11 @@ public abstract class ConnectionBase implements Connection, IoHandler
             break;
         }
     }
+
+    /**
+     * Handle when we are in state CONNECTED
+     * @param state the target state
+     */
 
     private void handleSwitchConnected ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
     {
@@ -186,6 +203,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
+    /**
+     * We are closed.
+     * @param error that causes the close
+     */
     private void performClosed ( final Throwable error )
     {
         logger.info ( "Performing close stuff" );
@@ -198,6 +219,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
         this.properties = null;
     }
 
+    /**
+     * We want to be closed
+     * @param error
+     */
     private void requestClose ( final Throwable error )
     {
         setState ( ConnectionState.CLOSING, error );
@@ -208,6 +233,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
         this.session.close ( true );
     }
 
+    /**
+     * Handle when we are in state CONNECTING
+     * @param state the target state
+     */
     private void handleSwitchConnecting ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
@@ -226,6 +255,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
+    /**
+     * Handle when we are in state CLOSED
+     * @param state the target state
+     */
     private void handleSwitchClosed ( final ConnectionState state )
     {
         switch ( state )
@@ -249,13 +282,12 @@ public abstract class ConnectionBase implements Connection, IoHandler
     @Override
     public void disconnect ()
     {
-        logger.info ( "Requested disconnect" );
-
-        switchState ( ConnectionState.CLOSING, null, null );
+        disconnect ( null );
     }
 
     /**
      * request a disconnect
+     * @param error optionally the error that caused the request to close
      */
     protected void disconnect ( final Throwable error )
     {
@@ -268,47 +300,6 @@ public abstract class ConnectionBase implements Connection, IoHandler
     public ConnectionInformation getConnectionInformation ()
     {
         return this.connectionInformation;
-    }
-
-    private void disconnected ( final Throwable reason )
-    {
-        IoSession session;
-
-        boolean doClose = false;
-
-        synchronized ( this )
-        {
-            // disconnect the messenger here
-            this.messenger.disconnected ();
-
-            session = this.session;
-            if ( session != null )
-            {
-                logger.info ( "Session disconnected", reason );
-
-                if ( !session.isConnected () )
-                {
-                    logger.debug ( "Connection is not connected. Switch to CLOSED" );
-                    setState ( ConnectionState.CLOSED, reason );
-
-                    // only dispose when connection is closed
-                    disposeConnector ();
-                    this.session = null;
-                }
-                else
-                {
-                    logger.debug ( "Connection still connected. Close it first!" );
-                    setState ( ConnectionState.CLOSING, reason );
-                    doClose = true;
-                }
-            }
-
-        }
-
-        if ( session != null && doClose )
-        {
-            session.close ( true );
-        }
     }
 
     @Override
@@ -430,6 +421,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
         synchronized ( this )
         {
+            if ( this.connectionState != ConnectionState.LOOKUP )
+            {
+                return;
+            }
             if ( e == null )
             {
                 // lookup successful ... re-trigger connecting
@@ -547,9 +542,9 @@ public abstract class ConnectionBase implements Connection, IoHandler
     /**
      * Cancel an open connection ... for debug purposes only
      */
-    public void cancelConnection ()
+    public synchronized void cancelConnection ()
     {
-        disconnected ( new Exception ( "cancelled" ) );
+        this.session.close ( true );
     }
 
     protected void onConnectionClosed ()
@@ -604,7 +599,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         logger.error ( "Connection exception", cause );
         if ( session == this.session )
         {
-            disconnected ( cause );
+            performClosed ( cause );
         }
     }
 
