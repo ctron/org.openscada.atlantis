@@ -27,7 +27,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.IoFutureListener;
@@ -85,7 +87,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
         super ();
         this.connectionInformation = connectionInformation;
 
-        this.lookupExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation.toMaskedString () ) );
+        this.lookupExecutor = new ThreadPoolExecutor ( 0, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable> (), new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation.toMaskedString () ) );
+        // this.lookupExecutor = new ScheduledThreadPoolExecutor ( 0, new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation.toMaskedString () ) );
 
         this.messenger = new Messenger ( getMessageTimeout () );
 
@@ -541,11 +544,6 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
-    protected void connectionFailed ( final Throwable e )
-    {
-        disconnected ( e );
-    }
-
     /**
      * Cancel an open connection ... for debug purposes only
      */
@@ -601,9 +599,13 @@ public abstract class ConnectionBase implements Connection, IoHandler
     }
 
     @Override
-    public void exceptionCaught ( final IoSession session, final Throwable cause ) throws Exception
+    public synchronized void exceptionCaught ( final IoSession session, final Throwable cause ) throws Exception
     {
         logger.error ( "Connection exception", cause );
+        if ( session == this.session )
+        {
+            disconnected ( cause );
+        }
     }
 
     @Override
