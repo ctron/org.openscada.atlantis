@@ -66,21 +66,9 @@ public class Messenger implements MessageListener
             this.listener = listener;
         }
 
-        @SuppressWarnings ( "unused" )
-        public long getTimestamp ()
-        {
-            return this.timestamp;
-        }
-
         public void setTimestamp ( final long timestamp )
         {
             this.timestamp = timestamp;
-        }
-
-        @SuppressWarnings ( "unused" )
-        public long getTimeout ()
-        {
-            return this.timeout;
         }
 
         public void setTimeout ( final long timeout )
@@ -242,7 +230,7 @@ public class Messenger implements MessageListener
 
     private final Map<Integer, MessageListener> listeners = new HashMap<Integer, MessageListener> ();
 
-    private long lastMessge;
+    private volatile long lastMessge;
 
     public void setHandler ( final int commandCode, final MessageListener handler )
     {
