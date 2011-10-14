@@ -70,7 +70,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private final ConnectionInformation connectionInformation;
 
-    private IoConnector connector;
+    private final IoConnector connector;
 
     private final PingService pingService;
 
@@ -93,6 +93,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
         this.messenger = new Messenger ( getMessageTimeout () );
 
         this.pingService = new PingService ( this.messenger );
+
+        this.connector = createConnector ();
     }
 
     protected synchronized void switchState ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
@@ -135,11 +137,14 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         switch ( state )
         {
+        case CONNECTING:
+            performConnect ();
+            break;
         case CLOSED:
-            performClosed ( error );
+            requestClose ( error );
             break;
         case CLOSING:
-            performClosed ( error );
+            requestClose ( error );
             break;
         }
     }
@@ -154,7 +159,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         switch ( state )
         {
         case CLOSED:
-            performClosed ( error );
+            requestClose ( error );
             onConnectionClosed ();
             break;
         }
@@ -173,7 +178,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             requestClose ( error );
             break;
         case CLOSED:
-            performClosed ( error );
+            requestClose ( error );
             onConnectionClosed ();
             break;
         }
@@ -192,7 +197,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             requestClose ( error );
             break;
         case CLOSED:
-            performClosed ( error );
+            requestClose ( error );
             onConnectionClosed ();
             break;
         case BOUND:
@@ -204,33 +209,18 @@ public abstract class ConnectionBase implements Connection, IoHandler
     }
 
     /**
-     * We are closed.
-     * @param error that causes the close
-     */
-    private void performClosed ( final Throwable error )
-    {
-        logger.info ( "Performing close stuff" );
-        setState ( ConnectionState.CLOSED, error );
-        this.messenger.disconnected ();
-        disposeConnector ();
-
-        this.session = null;
-        this.connectingFuture = null;
-        this.properties = null;
-    }
-
-    /**
-     * We want to be closed
+     * We want to be closed ... maybe we already are
      * @param error
      */
     private void requestClose ( final Throwable error )
     {
-        setState ( ConnectionState.CLOSING, error );
-
-        // we can already disconnect the messenger
+        logger.debug ( "Performing close stuff" );
+        setState ( ConnectionState.CLOSED, error );
         this.messenger.disconnected ();
 
-        this.session.close ( true );
+        this.session = null;
+        this.connectingFuture = null;
+        this.properties = null;
     }
 
     /**
@@ -249,7 +239,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
             setState ( ConnectionState.CONNECTED, null );
             break;
         case CLOSED:
-            performClosed ( error );
+            requestClose ( error );
             onConnectionClosed ();
             break;
         }
@@ -417,12 +407,14 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         if ( this.connectionState != ConnectionState.LOOKUP )
         {
+            logger.info ( "Connection state {} is not LOOKUP", this.connectionState );
             return;
         }
         synchronized ( this )
         {
             if ( this.connectionState != ConnectionState.LOOKUP )
             {
+                logger.info ( "Connection state {} is not LOOKUP for the second time", this.connectionState );
                 return;
             }
             if ( e == null )
@@ -444,7 +436,6 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         setState ( ConnectionState.CONNECTING, null );
 
-        this.connector = createConnector ();
         this.connectingFuture = this.connector.connect ( this.remoteAddress );
 
         this.connectingFuture.addListener ( new IoFutureListener<ConnectFuture> () {
@@ -460,7 +451,13 @@ public abstract class ConnectionBase implements Connection, IoHandler
                 catch ( final Throwable e )
                 {
                     logger.debug ( "Operation failed", e );
-                    ConnectionBase.this.connectFailed ( future, e );
+                    ConnectionBase.this.lookupExecutor.execute ( new Runnable () {
+                        @Override
+                        public void run ()
+                        {
+                            ConnectionBase.this.connectFailed ( future, e );
+                        };
+                    } );
                 }
             }
         } );
@@ -482,7 +479,6 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         if ( future == this.connectingFuture )
         {
-            disposeConnector ();
             this.connectingFuture = null;
 
             switchState ( ConnectionState.CLOSED, e, null );
@@ -505,38 +501,6 @@ public abstract class ConnectionBase implements Connection, IoHandler
         setupConnector ( this.connectionInformation, connector );
 
         return connector;
-    }
-
-    /**
-     * Dispose the socket connector
-     */
-    private void disposeConnector ()
-    {
-        final IoConnector connector;
-
-        synchronized ( this )
-        {
-            connector = this.connector;
-            this.connector = null;
-        }
-
-        // the connector must be disposed in a separate thread, since
-        // the call might take some seconds to complete
-
-        if ( connector != null )
-        {
-            final Runnable r = new Runnable () {
-
-                @Override
-                public void run ()
-                {
-                    logger.debug ( "Dispose connector..." );
-                    connector.dispose ();
-                    logger.debug ( "Dispose connector...done" );
-                }
-            };
-            this.lookupExecutor.execute ( r );
-        }
     }
 
     /**
@@ -599,7 +563,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         logger.error ( "Connection exception", cause );
         if ( session == this.session )
         {
-            performClosed ( cause );
+            requestClose ( cause );
         }
     }
 
@@ -622,7 +586,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     }
 
     @Override
-    public void sessionClosed ( final IoSession session ) throws Exception
+    public synchronized void sessionClosed ( final IoSession session ) throws Exception
     {
         logger.info ( "Session closed: {}", session );
         if ( session == this.session )
@@ -749,12 +713,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
      */
     private void doLookup ()
     {
-        final SocketImpl socketImpl = SocketImpl.fromName ( getSocketImpl () );
-
-        SocketAddress address = null;
         try
         {
-            address = socketImpl.doLookup ( ConnectionBase.this.connectionInformation.getTarget (), ConnectionBase.this.connectionInformation.getSecondaryTarget () );
+            final SocketImpl socketImpl = SocketImpl.fromName ( getSocketImpl () );
+            final SocketAddress address = socketImpl.doLookup ( ConnectionBase.this.connectionInformation.getTarget (), ConnectionBase.this.connectionInformation.getSecondaryTarget () );
             ConnectionBase.this.resolvedRemoteAddress ( address, null );
         }
         catch ( final Throwable e )
