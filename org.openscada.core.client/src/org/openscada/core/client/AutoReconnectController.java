@@ -19,7 +19,8 @@
 
 package org.openscada.core.client;
 
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -57,7 +58,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
     private final long reconnectDelay;
 
-    private ScheduledThreadPoolExecutor executor;
+    private ScheduledExecutorService executor;
 
     private long lastTimestamp;
 
@@ -95,7 +96,7 @@ public class AutoReconnectController implements ConnectionStateListener
         }
 
         final ThreadFactory threadFactory = new NamedThreadFactory ( "AutoReconnect/" + connection.getConnectionInformation ().toMaskedString () );
-        this.executor = new ScheduledThreadPoolExecutor ( 1, threadFactory );
+        this.executor = Executors.newSingleThreadScheduledExecutor ( threadFactory );
 
         this.connection.addConnectionStateListener ( this );
     }
@@ -119,10 +120,11 @@ public class AutoReconnectController implements ConnectionStateListener
     {
         logger.debug ( "Disposing - disconnect: {}", disconnect );
 
-        final ScheduledThreadPoolExecutor executor = this.executor;
+        final ScheduledExecutorService executor;
 
         synchronized ( this )
         {
+            executor = this.executor;
             if ( this.executor != null )
             {
                 if ( disconnect )
