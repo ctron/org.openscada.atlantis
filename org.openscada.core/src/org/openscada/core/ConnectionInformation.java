@@ -470,7 +470,7 @@ public class ConnectionInformation implements Cloneable
      */
     public String toMaskedString ( final String mask )
     {
-        final ConnectionInformation connectionInformation = this.clone ();
+        final ConnectionInformation connectionInformation = clone ();
         final String password = connectionInformation.getPassword ();
         if ( password != null )
         {
