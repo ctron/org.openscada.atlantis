@@ -1,27 +1,28 @@
 Manifest-Version: 1.0
-Import-Package: org.apache.mina.core.session;version="2.0",
- org.apache.mina.handler.multiton;version="2.0",
- org.openscada.core;version="0.14",
- org.openscada.core.net,
- org.openscada.core.server;version="0.14",
- org.openscada.core.server.net;version="0.14",
- org.openscada.core.subscription;version="0.14",
- org.openscada.da.core;version="0.14",
- org.openscada.da.core.browser;version="0.14",
- org.openscada.da.core.server;version="0.14",
- org.openscada.da.core.server.browser;version="0.14",
- org.openscada.da.net.handler;version="0.14",
- org.openscada.da.server.common.impl;version="0.14",
- org.openscada.net.base;version="0.14",
- org.openscada.net.base.data;version="0.14",
- org.openscada.net.mina;version="0.14",
- org.openscada.net.utils;version="0.14",
+Import-Package: org.apache.mina.core.session;version="2.0.0",
+ org.apache.mina.handler.multiton;version="2.0.0",
+ org.openscada.core;version="0.14.0",
+ org.openscada.core.net;version="0.14.0",
+ org.openscada.core.server;version="0.14.0",
+ org.openscada.core.server.net;version="0.14.0",
+ org.openscada.core.subscription;version="0.14.0",
+ org.openscada.da.core;version="0.14.0",
+ org.openscada.da.core.browser;version="0.14.0",
+ org.openscada.da.core.server;version="0.14.0",
+ org.openscada.da.core.server.browser;version="0.14.0",
+ org.openscada.da.net.handler;version="0.14.0",
+ org.openscada.da.server.common.impl;version="0.14.0",
+ org.openscada.net.base;version="0.14.0",
+ org.openscada.net.base.data;version="0.14.0",
+ org.openscada.net.mina;version="0.14.0",
+ org.openscada.net.utils;version="0.14.0",
  org.openscada.sec;version="0.1.0",
- org.openscada.utils.concurrent;version="0.13",
- org.openscada.utils.concurrent.task;version="0.13",
- org.openscada.utils.lang;version="0.13",
+ org.openscada.utils.concurrent;version="0.16.0",
+ org.openscada.utils.concurrent.task;version="0.16.0",
+ org.openscada.utils.exec;version="0.17.0",
+ org.openscada.utils.lang;version="0.13.0",
  org.openscada.utils.lifecycle;version="0.13.1",
- org.slf4j;version="1.5.0"
+ org.slf4j;version="[1.5.0,2.0.0)"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.net;version="0.16.0";
   uses:="org.apache.mina.core.session,
@@ -32,8 +33,8 @@ Export-Package: org.openscada.da.server.net;version="0.16.0";
    org.openscada.core,
    org.openscada.da.core,
    org.openscada.core.subscription"
-Bundle-Version: 0.16.0.qualifier
-Bundle-Name: OpenSCADA DA Server Exporter Net
+Bundle-Version: 0.17.0.qualifier
+Bundle-Name: openSCADA DA Server Exporter Net
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH
