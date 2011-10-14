@@ -215,12 +215,18 @@ public abstract class ConnectionBase implements Connection, IoHandler
     private void requestClose ( final Throwable error )
     {
         logger.debug ( "Performing close stuff" );
-        setState ( ConnectionState.CLOSED, error );
         this.messenger.disconnected ();
+
+        if ( this.session != null )
+        {
+            this.session.close ( true );
+        }
 
         this.session = null;
         this.connectingFuture = null;
         this.properties = null;
+
+        setState ( ConnectionState.CLOSED, error );
     }
 
     /**
