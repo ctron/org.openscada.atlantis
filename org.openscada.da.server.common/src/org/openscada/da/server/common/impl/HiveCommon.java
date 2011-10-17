@@ -652,7 +652,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
                     throw new PermissionDeniedException ( result.getErrorCode (), result.getMessage () );
                 }
 
-                userInformation = new UserInformation ( operationParameters.getUserInformation ().getName (), sessionInformation.getRoles () );
+                userInformation = new UserInformation ( operationParameters.getUserInformation ().getName (), operationParameters.getUserInformation ().getPassword (), sessionInformation.getRoles () );
 
             }
             else
