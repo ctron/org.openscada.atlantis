@@ -195,6 +195,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
         case CLOSING:
             requestClose ( error );
+            onConnectionClosed ();
             break;
         case CLOSED:
             requestClose ( error );
@@ -442,31 +443,39 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         setState ( ConnectionState.CONNECTING, null );
 
-        this.connectingFuture = this.connector.connect ( this.remoteAddress );
+        try
+        {
+            this.connectingFuture = this.connector.connect ( this.remoteAddress );
 
-        this.connectingFuture.addListener ( new IoFutureListener<ConnectFuture> () {
+            this.connectingFuture.addListener ( new IoFutureListener<ConnectFuture> () {
 
-            @Override
-            public void operationComplete ( final ConnectFuture future )
-            {
-                logger.debug ( "Connect operation complete" );
-                try
+                @Override
+                public void operationComplete ( final ConnectFuture future )
                 {
-                    future.getSession ();
+                    logger.debug ( "Connect operation complete" );
+                    try
+                    {
+                        future.getSession ();
+                    }
+                    catch ( final Throwable e )
+                    {
+                        logger.debug ( "Operation failed", e );
+                        ConnectionBase.this.lookupExecutor.execute ( new Runnable () {
+                            @Override
+                            public void run ()
+                            {
+                                ConnectionBase.this.connectFailed ( future, e );
+                            };
+                        } );
+                    }
                 }
-                catch ( final Throwable e )
-                {
-                    logger.debug ( "Operation failed", e );
-                    ConnectionBase.this.lookupExecutor.execute ( new Runnable () {
-                        @Override
-                        public void run ()
-                        {
-                            ConnectionBase.this.connectFailed ( future, e );
-                        };
-                    } );
-                }
-            }
-        } );
+            } );
+        }
+        catch ( final Exception e )
+        {
+            logger.warn ( "Failed to create future", e );
+            connectFailed ( this.connectingFuture, e );
+        }
     }
 
     /**
@@ -512,7 +521,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     /**
      * Cancel an open connection ... for debug purposes only
      */
-    public synchronized void cancelConnection ()
+    public void cancelConnection ()
     {
         this.session.close ( true );
     }
@@ -602,7 +611,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     }
 
     @Override
-    public void sessionCreated ( final IoSession session ) throws Exception
+    public synchronized void sessionCreated ( final IoSession session ) throws Exception
     {
         logger.info ( "Session created: {}", session );
 
