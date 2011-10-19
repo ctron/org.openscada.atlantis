@@ -216,18 +216,23 @@ public abstract class ConnectionBase implements Connection, IoHandler
     private void requestClose ( final Throwable error )
     {
         logger.debug ( "Performing close stuff" );
-        this.messenger.disconnected ();
-
-        if ( this.session != null )
+        try
         {
-            this.session.close ( true );
+            this.messenger.disconnected ();
+
+            if ( this.session != null )
+            {
+                this.session.close ( true );
+            }
+
+            this.session = null;
+            this.connectingFuture = null;
+            this.properties = null;
         }
-
-        this.session = null;
-        this.connectingFuture = null;
-        this.properties = null;
-
-        setState ( ConnectionState.CLOSED, error );
+        finally
+        {
+            setState ( ConnectionState.CLOSED, error );
+        }
     }
 
     /**
@@ -242,8 +247,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
             requestClose ( error );
             break;
         case CONNECTED:
-            onConnectionEstablished ();
             setState ( ConnectionState.CONNECTED, null );
+            onConnectionEstablished ();
             break;
         case CLOSED:
             requestClose ( error );
