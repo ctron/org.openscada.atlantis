@@ -429,9 +429,9 @@ public class Messenger implements MessageListener
             return;
         }
 
-        synchronized ( Messenger.this.tagList )
+        synchronized ( this.tagList )
         {
-            Messenger.this.tagList.put ( sequence, messageTag );
+            this.tagList.put ( sequence, messageTag );
         }
     }
 
