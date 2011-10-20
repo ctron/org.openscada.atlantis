@@ -165,7 +165,7 @@ public class Messenger implements MessageListener
                         super.finalize ();
                     }
                 };
-                this.timeoutJob = this.timer.scheduleAtFixedRate ( runnable, this.sessionTimeout, this.timeoutJobPeriod, TimeUnit.MILLISECONDS );
+                this.timeoutJob = this.timer.scheduleWithFixedDelay ( runnable, this.sessionTimeout, this.timeoutJobPeriod, TimeUnit.MILLISECONDS );
             }
         }
 
