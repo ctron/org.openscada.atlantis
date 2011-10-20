@@ -99,6 +99,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     protected synchronized void switchState ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
     {
+        logger.debug ( "Requesting state switch {} -> {}", this.connectionState, state );
         if ( this.connectionState == state )
         {
             logger.info ( "We already are in state: {}", state );
