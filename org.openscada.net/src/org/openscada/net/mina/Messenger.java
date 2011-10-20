@@ -403,8 +403,9 @@ public class Messenger implements MessageListener
                 }
 
                 logger.warn ( "Closing connection due to receive timeout: {} (timeout: {})", timeDiff, this.sessionTimeout );
+                // we close the connection and wait for "disconnected" to get called from outside
                 this.connection.close ();
-                this.connection = null;
+
                 tags = performDisconnect ();
             }
             fireTimeouts ( tags );
