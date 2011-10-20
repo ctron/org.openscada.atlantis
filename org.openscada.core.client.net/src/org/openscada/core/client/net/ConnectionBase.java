@@ -176,6 +176,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
         case CLOSING:
             requestClose ( error );
+            onConnectionClosed ();
             break;
         case CLOSED:
             requestClose ( error );
@@ -381,8 +382,11 @@ public abstract class ConnectionBase implements Connection, IoHandler
     @Override
     public synchronized void connect ()
     {
+        logger.debug ( "Requesting connect in state {}", this.connectionState );
+
         switch ( this.connectionState )
         {
+        case CLOSING:
         case BOUND:
         case LOOKUP:
         case CONNECTING:
