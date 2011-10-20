@@ -37,6 +37,7 @@ public class IoSessionSender implements MessageSender
         this.session = session;
     }
 
+    @Override
     public synchronized boolean sendMessage ( final Message message, final PrepareSendHandler handler )
     {
         message.setSequence ( nextSequence () );
@@ -62,6 +63,7 @@ public class IoSessionSender implements MessageSender
         return seq;
     }
 
+    @Override
     public void close ()
     {
         this.session.close ( true );
