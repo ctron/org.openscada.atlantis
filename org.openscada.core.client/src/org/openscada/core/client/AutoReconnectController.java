@@ -66,6 +66,8 @@ public class AutoReconnectController implements ConnectionStateListener
 
     private boolean checkScheduled;
 
+    private long lastStateChange;
+
     /**
      * Create a new reconnect controller for the provided connection using the default reconnect delay
      * @param connection the connection to manage
@@ -99,6 +101,47 @@ public class AutoReconnectController implements ConnectionStateListener
         this.executor = Executors.newSingleThreadScheduledExecutor ( threadFactory );
 
         this.connection.addConnectionStateListener ( this );
+
+        if ( !Boolean.getBoolean ( "org.openscada.core.client.AutoReconnectController.disableZombieMode" ) )
+        {
+            this.executor.scheduleWithFixedDelay ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    checkDead ();
+                }
+            }, reconnectDelay, reconnectDelay, TimeUnit.MILLISECONDS );
+        }
+    }
+
+    protected void checkDead ()
+    {
+        synchronized ( this )
+        {
+            // Check if we are lying dead in the water
+            if ( this.lastStateChange == 0 )
+            {
+                return;
+            }
+
+            if ( this.state != ConnectionState.CONNECTING )
+            {
+                // no need to do anything
+                return;
+            }
+
+            if ( System.currentTimeMillis () - this.lastStateChange < this.reconnectDelay * 3 )
+            {
+                // too early for considering dead
+                return;
+            }
+
+        }
+
+        // dead - kill the zombie - outside the lock to avoid deadlocks
+        logger.error ( "Found zombie : {} {}", new Object[] { this.state, this.lastStateChange } );
+        this.connection.disconnect ();
     }
 
     /**
@@ -195,6 +238,7 @@ public class AutoReconnectController implements ConnectionStateListener
     private synchronized void triggerUpdate ( final ConnectionState state )
     {
         this.state = state;
+        this.lastStateChange = System.currentTimeMillis ();
 
         if ( !this.checkScheduled )
         {
