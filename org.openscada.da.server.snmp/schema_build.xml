@@ -11,17 +11,21 @@
             <pathelement location="${xmlbeans.root}/xbean.jar"/>
             <pathelement location="${xmlbeans.root}/jsr173_1.0_api.jar"/>
 		 	
-		 	<!-- FIXME: duplicate entry for the moment --> 
-		 	<pathelement location="${source.root}/org.openscada.da.server.common/schemabin"/>
 		 	<pathelement location="../org.openscada.da.server.common/schemabin"/>
          </classpath>
 	</taskdef>
 
+	<!-- ================================= 
+          target: clean
+         ================================= -->
 	<target name="clean">
 		<delete failonerror="false" dir="${target.folder}"/>
 	</target>
 	
-	<target name="main" depends="clean">
+	<!-- ================================= 
+          target: eclipse.main
+         ================================= -->
+	<target name="eclipse.main" depends="clean">
 		<xmlbean
 			failonerror="true"
 			download="false"
@@ -29,10 +33,22 @@
 			javasource="1.5"
 			verbose="true"
 			>
-			<fileset dir="schema" includes="*.xsd"/>
+			<fileset dir="schema">
+				<include name="*.xsd"/>
+				<include name=".xsdconfig"/>
+			</fileset>
 			<classpath refid="xmlbeanspath"/>
 			<classpath refid="@dot.classpath"/>
         </xmlbean>
   	</target>
+	
+	<!-- ================================= 
+          target: main
+         ================================= -->
+    <target name="main">
+        <antcall inheritall="true" inheritrefs="true" target="eclipse.main">
+        	<reference refid="xmlbeanspath" torefid="@dot.classpath" />
+    	</antcall>
+    </target>
   
 </project>

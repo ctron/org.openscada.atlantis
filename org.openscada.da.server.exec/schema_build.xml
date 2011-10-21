@@ -15,11 +15,17 @@
          </classpath>
 	</taskdef>
 
+	<!-- ================================= 
+          target: clean
+         ================================= -->
 	<target name="clean">
 		<delete failonerror="false" dir="${target.folder}"/>
 	</target>
 	
-	<target name="main" depends="clean">
+	<!-- ================================= 
+          target: eclipse.main
+         ================================= -->
+	<target name="eclipse.main" depends="clean">
 		<xmlbean
 			failonerror="true"
 			download="false"
@@ -34,7 +40,15 @@
 			<classpath refid="xmlbeanspath"/>
 			<classpath refid="@dot.classpath"/>
         </xmlbean>
-        <delete file="xmltypes.jar"/>
   	</target>
+	
+	<!-- ================================= 
+          target: main
+         ================================= -->
+    <target name="main">
+        <antcall inheritall="true" inheritrefs="true" target="eclipse.main">
+        	<reference refid="xmlbeanspath" torefid="@dot.classpath" />
+    	</antcall>
+    </target>
   
 </project>
