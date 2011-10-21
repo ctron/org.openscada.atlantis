@@ -40,7 +40,7 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
 
     private final Map<String, ConnectionManager> connections = new HashMap<String, ConnectionManager> ();
 
-    private final Map<String, ServiceRegistration> connectionsRegs = new HashMap<String, ServiceRegistration> ();
+    private final Map<String, ServiceRegistration<ConnectionManager>> connectionsRegs = new HashMap<String, ServiceRegistration<ConnectionManager>> ();
 
     private final BundleContext context;
 
@@ -54,7 +54,7 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
     {
         logger.info ( "Request to delete: {}", pid ); //$NON-NLS-1$
 
-        ServiceRegistration reg;
+        ServiceRegistration<ConnectionManager> reg;
         ConnectionManager connection;
         synchronized ( this )
         {
@@ -99,7 +99,7 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
     {
         final Dictionary<String, String> regProperties = new Hashtable<String, String> ();
         regProperties.put ( Constants.SERVICE_PID, pid );
-        final ServiceRegistration reg = this.context.registerService ( ConnectionManager.class.getName (), manager, regProperties );
+        final ServiceRegistration<ConnectionManager> reg = this.context.registerService ( ConnectionManager.class, manager, regProperties );
         this.connectionsRegs.put ( pid, reg );
 
         this.connections.put ( pid, manager );
@@ -107,18 +107,18 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
 
     public void dispose ()
     {
-        Map<String, ServiceRegistration> connectionsRegs;
+        Map<String, ServiceRegistration<ConnectionManager>> connectionsRegs;
         Map<String, ConnectionManager> connections;
 
         synchronized ( this )
         {
-            connectionsRegs = new HashMap<String, ServiceRegistration> ( this.connectionsRegs );
+            connectionsRegs = new HashMap<String, ServiceRegistration<ConnectionManager>> ( this.connectionsRegs );
             connections = new HashMap<String, ConnectionManager> ( this.connections );
             this.connectionsRegs.clear ();
             this.connections.clear ();
         }
 
-        for ( final ServiceRegistration reg : connectionsRegs.values () )
+        for ( final ServiceRegistration<ConnectionManager> reg : connectionsRegs.values () )
         {
             reg.unregister ();
         }
