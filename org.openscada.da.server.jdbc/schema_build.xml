@@ -12,6 +12,7 @@
             <pathelement location="${xmlbeans.root}/jsr173_1.0_api.jar"/>
 		 	
 		 	<pathelement location="../org.openscada.da.server.common/schemabin"/>
+		 	<pathelement location="../org.openscada.da.server.common/@dot"/>
          </classpath>
 	</taskdef>
 
