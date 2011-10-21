@@ -4,7 +4,7 @@
 	xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:exec="http://openscada.org/DA/Exec/Configuration">
 
-    <import schemaLocation="XX/../../org.openscada.da.server.common/schema/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
+    <import schemaLocation="../../org.openscada.da.server.common/schema/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
 	
     <element name="root" type="exec:RootType"></element>
     
