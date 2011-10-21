@@ -385,18 +385,9 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         logger.debug ( "Requesting connect in state {}", this.connectionState );
 
-        switch ( this.connectionState )
+        if ( this.connectionState == ConnectionState.CLOSED )
         {
-        case CLOSING:
-        case BOUND:
-        case LOOKUP:
-        case CONNECTING:
-        case CONNECTED:
-            // no-op
-            break;
-        default:
             switchState ( ConnectionState.CONNECTING, null, null );
-            break;
         }
     }
 

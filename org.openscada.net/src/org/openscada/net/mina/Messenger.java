@@ -19,7 +19,6 @@
 
 package org.openscada.net.mina;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -165,7 +164,7 @@ public class Messenger implements MessageListener
                         super.finalize ();
                     }
                 };
-                this.timeoutJob = this.timer.scheduleAtFixedRate ( runnable, this.sessionTimeout, this.timeoutJobPeriod, TimeUnit.MILLISECONDS );
+                this.timeoutJob = this.timer.scheduleWithFixedDelay ( runnable, this.sessionTimeout, this.timeoutJobPeriod, TimeUnit.MILLISECONDS );
             }
         }
 
@@ -348,7 +347,7 @@ public class Messenger implements MessageListener
 
     private void processTimeOuts ()
     {
-        final List<MessageTag> removeBag = new ArrayList<MessageTag> ();
+        final List<MessageTag> removeBag = new LinkedList<MessageTag> ();
 
         // check for session timeout
         checkSessionTimeout ();
@@ -429,9 +428,9 @@ public class Messenger implements MessageListener
             return;
         }
 
-        synchronized ( Messenger.this.tagList )
+        synchronized ( this.tagList )
         {
-            Messenger.this.tagList.put ( sequence, messageTag );
+            this.tagList.put ( sequence, messageTag );
         }
     }
 

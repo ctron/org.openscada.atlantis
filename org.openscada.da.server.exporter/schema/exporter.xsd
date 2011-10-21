@@ -35,7 +35,7 @@
     			<documentation>
     				The reference to the hive to export. By default the
     				class factory is used so this is a class name to
-    				instatiate and export.
+    				instantiate and export.
     			</documentation>
     		</annotation>
     	</attribute>
@@ -44,7 +44,7 @@
     			<documentation>
     				A factory class which should be used to create the
     				referenced hive. If omitted this is the default
-    				object instatiation factory.
+    				object instantiation factory.
     			</documentation>
     		</annotation></attribute>
     </complexType>
