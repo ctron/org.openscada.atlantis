@@ -3,7 +3,8 @@
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:proxy="http://openscada.org/DA/Proxy/Configuration" xmlns:hive="http://openscada.org/DA/Hive">
 
-	<import namespace="http://openscada.org/DA/Hive" schemaLocation="da_server_common/Hive.xsd"></import>
+	<import schemaLocation="../../org.openscada.da.server.common/schema/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
+	
 	<annotation></annotation>
 	<element name="root" type="proxy:RootType"></element>
 
