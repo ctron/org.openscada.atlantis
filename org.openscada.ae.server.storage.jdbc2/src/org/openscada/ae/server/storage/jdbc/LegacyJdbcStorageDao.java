@@ -187,6 +187,7 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
     @Override
     public ResultSet queryEvents ( final Filter filter ) throws SQLException, NotSupportedException
     {
+        long start = System.currentTimeMillis ();
         final Connection con = createConnection ();
         final SqlCondition condition = SqlConverter.toSql ( this.getSchema (), filter );
         String sql = this.selectEventSql + StringHelper.join ( condition.joins, " " ) + this.whereSql;
@@ -209,7 +210,8 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
             stm.setObject ( i, parameter );
         }
         final ResultSet rs = stm.executeQuery ();
-        logger.debug ( "query completed, returning resultset" );
+        long stop = System.currentTimeMillis ();
+        logger.debug ( "query completed, returning resultset; query took " + ( stop - start ) + "ms" );
         return rs;
     }
 
