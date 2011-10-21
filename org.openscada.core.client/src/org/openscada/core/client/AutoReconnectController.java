@@ -39,8 +39,7 @@ import org.slf4j.LoggerFactory;
  * controller.connect ();
  * </code></pre> 
  * <p>
- * Note that if you do not hold an instance to the auto reconnect controller it will be garbage collected
- * and the connection state will no longer be monitored.
+ * The {@link AutoReconnectController} needs to be disposed since 0.17.0
  * @since 0.12.0
  * @author Jens Reimann
  *
