@@ -88,7 +88,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
         if ( this.connection == null )
         {
-            throw new NullPointerException ( "'connection' must not be null" );
+            throw new IllegalArgumentException ( "'connection' must not be null" );
         }
 
         if ( reconnectDelay <= 0 )
