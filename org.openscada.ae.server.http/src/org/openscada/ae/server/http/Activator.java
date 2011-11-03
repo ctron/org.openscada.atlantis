@@ -71,6 +71,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.context = context;
@@ -87,7 +88,7 @@ public class Activator implements BundleActivator
 
         // register factory
         this.factory = new EventMonitorFactory ( this.context, this.executor, this.monitorServicePool, this.eventProcessor );
-        Hashtable<Object, Object> properties = new Hashtable<Object, Object> ();
+        final Hashtable<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, EventMonitorFactory.FACTORY_ID );
         properties.put ( Constants.SERVICE_DESCRIPTION, "Reference list alarm monitor" );
         this.factoryServiceHandle = this.context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, this.factory, properties );
@@ -99,6 +100,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         // do not process any events anymore
@@ -161,6 +163,7 @@ public class Activator implements BundleActivator
     private ServiceTrackerCustomizer createHttpServiceTrackerCustomizer ()
     {
         return new ServiceTrackerCustomizer () {
+            @Override
             public Object addingService ( final ServiceReference reference )
             {
                 final Object service = Activator.this.context.getService ( reference );
@@ -175,11 +178,13 @@ public class Activator implements BundleActivator
                 return service;
             }
 
+            @Override
             public void modifiedService ( final ServiceReference reference, final Object service )
             {
                 // pass
             }
 
+            @Override
             public void removedService ( final ServiceReference reference, final Object service )
             {
                 synchronized ( Activator.this )

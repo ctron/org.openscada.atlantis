@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,20 +19,22 @@
 
 package org.openscada.net.mina;
 
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,7 @@ public class Messenger implements MessageListener
 
     private final static Logger logger = LoggerFactory.getLogger ( Messenger.class );
 
-    private TimerTask timeoutJob = null;
+    private ScheduledFuture<?> timeoutJob;
 
     private static class MessageTag
     {
@@ -63,21 +65,9 @@ public class Messenger implements MessageListener
             this.listener = listener;
         }
 
-        @SuppressWarnings ( "unused" )
-        public long getTimestamp ()
-        {
-            return this.timestamp;
-        }
-
         public void setTimestamp ( final long timestamp )
         {
             this.timestamp = timestamp;
-        }
-
-        @SuppressWarnings ( "unused" )
-        public long getTimeout ()
-        {
-            return this.timeout;
         }
 
         public void setTimeout ( final long timeout )
@@ -115,7 +105,7 @@ public class Messenger implements MessageListener
 
     private MessageSender connection;
 
-    private Timer timer;
+    private ScheduledExecutorService timer;
 
     private final long sessionTimeout;
 
@@ -138,7 +128,7 @@ public class Messenger implements MessageListener
         logger.debug ( "Finalized" );
         if ( this.timer != null )
         {
-            this.timer.cancel ();
+            this.timer.shutdown ();
         }
         super.finalize ();
     }
@@ -158,8 +148,8 @@ public class Messenger implements MessageListener
                 this.connection = connection;
                 tags = cleanTagList ();
 
-                this.timer = new Timer ( "MessengerTimer/" + connection, true );
-                this.timeoutJob = new TimerTask () {
+                this.timer = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "MessengerTimer/" + connection, true ) );
+                final Runnable runnable = new Runnable () {
 
                     @Override
                     public void run ()
@@ -174,7 +164,7 @@ public class Messenger implements MessageListener
                         super.finalize ();
                     }
                 };
-                this.timer.scheduleAtFixedRate ( this.timeoutJob, this.sessionTimeout, this.timeoutJobPeriod );
+                this.timeoutJob = this.timer.scheduleWithFixedDelay ( runnable, this.sessionTimeout, this.timeoutJobPeriod, TimeUnit.MILLISECONDS );
             }
         }
 
@@ -198,12 +188,12 @@ public class Messenger implements MessageListener
             final Collection<MessageTag> tags = cleanTagList ();
             if ( this.timeoutJob != null )
             {
-                this.timeoutJob.cancel ();
+                this.timeoutJob.cancel ( false );
                 this.timeoutJob = null;
             }
             if ( this.timer != null )
             {
-                this.timer.cancel ();
+                this.timer.shutdown ();
                 this.timer = null;
             }
             return tags;
@@ -239,7 +229,7 @@ public class Messenger implements MessageListener
 
     private final Map<Integer, MessageListener> listeners = new HashMap<Integer, MessageListener> ();
 
-    private long lastMessge;
+    private volatile long lastMessge;
 
     public void setHandler ( final int commandCode, final MessageListener handler )
     {
@@ -357,7 +347,7 @@ public class Messenger implements MessageListener
 
     private void processTimeOuts ()
     {
-        final List<MessageTag> removeBag = new ArrayList<MessageTag> ();
+        final List<MessageTag> removeBag = new LinkedList<MessageTag> ();
 
         // check for session timeout
         checkSessionTimeout ();
@@ -412,7 +402,9 @@ public class Messenger implements MessageListener
                 }
 
                 logger.warn ( "Closing connection due to receive timeout: {} (timeout: {})", timeDiff, this.sessionTimeout );
+                // we close the connection and wait for "disconnected" to get called from outside
                 this.connection.close ();
+
                 tags = performDisconnect ();
             }
             fireTimeouts ( tags );
@@ -436,9 +428,9 @@ public class Messenger implements MessageListener
             return;
         }
 
-        synchronized ( Messenger.this.tagList )
+        synchronized ( this.tagList )
         {
-            Messenger.this.tagList.put ( sequence, messageTag );
+            this.tagList.put ( sequence, messageTag );
         }
     }
 

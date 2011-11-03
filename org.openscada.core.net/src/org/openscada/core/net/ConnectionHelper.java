@@ -57,19 +57,19 @@ public class ConnectionHelper
         @Override
         public void checkClientTrusted ( final X509Certificate[] arg0, final String arg1 ) throws CertificateException
         {
-            System.out.println ( "checkClientTrusted: " + arg0 + "/" + arg1 );
+            logger.info ( "checkClientTrusted: " + arg0 + "/" + arg1 );
         }
 
         @Override
         public void checkServerTrusted ( final X509Certificate[] arg0, final String arg1 ) throws CertificateException
         {
-            System.out.println ( "checkServerTrusted: " + arg0 + "/" + arg1 );
+            logger.info ( "checkServerTrusted: " + arg0 + "/" + arg1 );
         }
 
         @Override
         public X509Certificate[] getAcceptedIssuers ()
         {
-            System.out.println ( "getAcceptedIssuers" );
+            logger.info ( "getAcceptedIssuers" );
             return new X509Certificate[0];
         }
     }

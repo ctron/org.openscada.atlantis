@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -44,16 +44,17 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        Dictionary<Object, Object> properties;
+        Dictionary<String, Object> properties;
 
         this.dataSourceTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
         this.dataSourceTracker.open ();
 
         // master service
         this.masterFactory = new MasterFactory ( context, this.dataSourceTracker );
-        properties = new Hashtable<Object, Object> ();
+        properties = new Hashtable<String, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "master.item" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A configuration factory for master items" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
@@ -64,6 +65,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.dataSourceTracker.close ();

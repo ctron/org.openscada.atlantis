@@ -58,9 +58,10 @@ public abstract class ServiceCommon implements Service
     protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
     {
         final String username = properties.getProperty ( ConnectionInformation.PROP_USER );
+        final String password = properties.getProperty ( ConnectionInformation.PROP_PASSWORD );
         if ( username != null )
         {
-            return new UserInformation ( username, new String[0] );
+            return new UserInformation ( username, password, new String[0] );
         }
         else
         {

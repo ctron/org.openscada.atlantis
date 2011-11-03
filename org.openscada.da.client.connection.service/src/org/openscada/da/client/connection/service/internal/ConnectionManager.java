@@ -40,7 +40,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConnectionManager implements SingleServiceListener
+public class ConnectionManager implements SingleServiceListener<DriverFactory>
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionManager.class );
@@ -51,11 +51,11 @@ public class ConnectionManager implements SingleServiceListener
 
     private final String connectionId;
 
-    private SingleServiceTracker tracker;
+    private SingleServiceTracker<DriverFactory> tracker;
 
     private ConnectionServiceImpl connection;
 
-    private ServiceRegistration serviceReg;
+    private ServiceRegistration<?> serviceReg;
 
     private DriverFactory factory;
 
@@ -84,7 +84,7 @@ public class ConnectionManager implements SingleServiceListener
 
         if ( filter != null )
         {
-            this.tracker = new SingleServiceTracker ( this.context, filter, this );
+            this.tracker = new SingleServiceTracker<DriverFactory> ( this.context, filter, this );
             this.tracker.open ();
         }
         else
@@ -106,17 +106,12 @@ public class ConnectionManager implements SingleServiceListener
         disposeConnection ();
     }
 
-    public void update ( final ConnectionInformation connectionInformation )
-    {
-        // FIXME: implement
-    }
-
     @Override
-    public void serviceChange ( final ServiceReference reference, final Object factory )
+    public void serviceChange ( final ServiceReference<DriverFactory> reference, final DriverFactory factory )
     {
         logger.info ( "Service changed: {}/{}", reference, factory );
         disposeConnection ();
-        this.factory = (DriverFactory)factory;
+        this.factory = factory;
 
         if ( factory != null )
         {

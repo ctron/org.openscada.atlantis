@@ -1,25 +1,26 @@
 /*
- * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * This file is part of the openSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
- * OpenSCADA is free software: you can redistribute it and/or modify
+ * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
  *
- * OpenSCADA is distributed in the hope that it will be useful,
+ * openSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  *
  * You should have received a copy of the GNU Lesser General Public License
- * version 3 along with OpenSCADA. If not, see
+ * version 3 along with openSCADA. If not, see
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.core.client;
 
-import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -38,9 +39,8 @@ import org.slf4j.LoggerFactory;
  * controller.connect ();
  * </code></pre> 
  * <p>
- * Note that if you do not hold an instance to the auto reconnect controller it will be garbage collected
- * and the connection state will no longer be monitored.
- * @since 0.12
+ * The {@link AutoReconnectController} needs to be disposed since 0.17.0
+ * @since 0.12.0
  * @author Jens Reimann
  *
  */
@@ -57,13 +57,15 @@ public class AutoReconnectController implements ConnectionStateListener
 
     private final long reconnectDelay;
 
-    private final ScheduledThreadPoolExecutor executor;
+    private ScheduledExecutorService executor;
 
     private long lastTimestamp;
 
     private ConnectionState state;
 
     private boolean checkScheduled;
+
+    private long lastStateChange;
 
     /**
      * Create a new reconnect controller for the provided connection using the default reconnect delay
@@ -95,9 +97,91 @@ public class AutoReconnectController implements ConnectionStateListener
         }
 
         final ThreadFactory threadFactory = new NamedThreadFactory ( "AutoReconnect/" + connection.getConnectionInformation ().toMaskedString () );
-        this.executor = new ScheduledThreadPoolExecutor ( 1, threadFactory );
+        this.executor = Executors.newSingleThreadScheduledExecutor ( threadFactory );
 
         this.connection.addConnectionStateListener ( this );
+
+        if ( !Boolean.getBoolean ( "org.openscada.core.client.AutoReconnectController.disableZombieMode" ) )
+        {
+            this.executor.scheduleWithFixedDelay ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    checkDead ();
+                }
+            }, reconnectDelay, reconnectDelay, TimeUnit.MILLISECONDS );
+        }
+    }
+
+    protected void checkDead ()
+    {
+        synchronized ( this )
+        {
+            // Check if we are lying dead in the water
+            if ( this.lastStateChange == 0 )
+            {
+                return;
+            }
+
+            if ( this.state != ConnectionState.CONNECTING )
+            {
+                // no need to do anything
+                return;
+            }
+
+            if ( System.currentTimeMillis () - this.lastStateChange < this.reconnectDelay * 3 )
+            {
+                // too early for considering dead
+                return;
+            }
+
+        }
+
+        // dead - kill the zombie - outside the lock to avoid deadlocks
+        logger.error ( "Found zombie : {} {}", new Object[] { this.state, this.lastStateChange } );
+        this.connection.disconnect ();
+    }
+
+    /**
+     * Dispose controller forcibly
+     * <p>
+     * This will also close the connection
+     * </p>
+     */
+    public void dispose ()
+    {
+        dispose ( true );
+    }
+
+    /**
+     * Dispose controller forcibly
+     * @param disconnect if <code>true</code> the connection will also be disconnected
+     */
+    public void dispose ( final boolean disconnect )
+    {
+        logger.debug ( "Disposing - disconnect: {}", disconnect );
+
+        final ScheduledExecutorService executor;
+
+        synchronized ( this )
+        {
+            executor = this.executor;
+            if ( this.executor != null )
+            {
+                if ( disconnect )
+                {
+                    disconnect ();
+                }
+                this.executor = null;
+            }
+        }
+
+        if ( executor != null )
+        {
+            // shutdown outside of sync lock
+            executor.shutdown ();
+        }
     }
 
     @Override
@@ -106,7 +190,8 @@ public class AutoReconnectController implements ConnectionStateListener
         logger.debug ( "Finalized" );
         if ( this.executor != null )
         {
-            this.executor.shutdownNow ();
+            this.executor.shutdown ();
+            this.executor = null;
         }
         super.finalize ();
     }
@@ -142,6 +227,7 @@ public class AutoReconnectController implements ConnectionStateListener
         triggerUpdate ( this.connection.getState () );
     }
 
+    @Override
     public void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )
     {
         logger.info ( String.format ( "State change: %s", state ), error );
@@ -151,12 +237,14 @@ public class AutoReconnectController implements ConnectionStateListener
     private synchronized void triggerUpdate ( final ConnectionState state )
     {
         this.state = state;
+        this.lastStateChange = System.currentTimeMillis ();
 
         if ( !this.checkScheduled )
         {
             this.checkScheduled = true;
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     performUpdate ( state );
@@ -184,6 +272,7 @@ public class AutoReconnectController implements ConnectionStateListener
             logger.info ( String.format ( "Delaying next check by %s milliseconds", delay ) );
             this.executor.schedule ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     performCheckNow ();

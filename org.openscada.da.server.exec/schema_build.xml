@@ -4,38 +4,52 @@
 
 	<property name="xmlbeans.root" location="../builder_atlantis/common/lib/xmlbeans"/>
 	<property name="source.root" location=".."/>
+	<property name="target.folder" location="schemabin"/>
 	
 	<taskdef name="xmlbean" classname="org.apache.xmlbeans.impl.tool.XMLBean">
 		 <classpath id="xmlbeanspath">
             <pathelement location="${xmlbeans.root}/xbean.jar"/>
             <pathelement location="${xmlbeans.root}/jsr173_1.0_api.jar"/>
 		 	
-		 	<!-- FIXME: duplicate entry for the moment --> 
-		 	<pathelement location="${source.root}/org.openscada.da.server.common/schemabin"/>
 		 	<pathelement location="../org.openscada.da.server.common/schemabin"/>
+		 	<pathelement location="../org.openscada.da.server.common/@dot"/>
          </classpath>
 	</taskdef>
 
+	<!-- ================================= 
+          target: clean
+         ================================= -->
 	<target name="clean">
-		<delete failonerror="false" dir="schemabin"/>
-		<delete failonerror="false" dir="schemasrc"/>
+		<delete failonerror="false" dir="${target.folder}"/>
 	</target>
 	
-	<target name="main" depends="clean">
+	<!-- ================================= 
+          target: eclipse.main
+         ================================= -->
+	<target name="eclipse.main" depends="clean">
 		<xmlbean
 			failonerror="true"
 			download="false"
-			classgendir="schemabin"
+			classgendir="${target.folder}"
 			javasource="1.5"
 			verbose="true"
-            classpathref="xmlbeanspath"
 			>
 			<fileset dir="schema">
 				<include name="*.xsd"/>
 				<include name=".xsdconfig"/>
 			</fileset>
+			<classpath refid="xmlbeanspath"/>
+			<classpath refid="@dot.classpath"/>
         </xmlbean>
-		<delete file="xmltypes.jar"/>
   	</target>
+	
+	<!-- ================================= 
+          target: main
+         ================================= -->
+    <target name="main">
+        <antcall inheritall="true" inheritrefs="true" target="eclipse.main">
+        	<reference refid="xmlbeanspath" torefid="@dot.classpath" />
+    	</antcall>
+    </target>
   
 </project>

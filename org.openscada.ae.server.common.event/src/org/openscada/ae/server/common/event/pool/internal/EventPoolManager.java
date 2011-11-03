@@ -130,6 +130,8 @@ public class EventPoolManager
 
             this.pool.start ();
 
+            logger.info ( "pool {} created", this.id );
+
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_PID, this.id );
             this.poolHandle = this.context.registerService ( EventQuery.class.getName (), this.pool, properties );

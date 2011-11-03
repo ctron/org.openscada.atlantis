@@ -67,6 +67,7 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
         return this.hive;
     }
 
+    @Override
     public void setListener ( final ItemChangeListener listener )
     {
         this.listener = listener;
@@ -87,12 +88,14 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
         return this.folderListener;
     }
 
+    @Override
     public void setListener ( final FolderListener folderListener )
     {
         this.folderListener = folderListener;
     }
 
     // Data item listener stuff
+    @Override
     public void updateStatus ( final Object topic, final SubscriptionState subscriptionState )
     {
         ItemChangeListener listener;
@@ -103,6 +106,7 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
         }
     }
 
+    @Override
     public void dataChanged ( final DataItem item, final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         logger.debug ( "Data changed - itemId: {}, value: {}, attributes: {}, cache: {}", new Object[] { item.getInformation ().getName (), value, attributes, cache } );
@@ -141,6 +145,7 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
         // now add the listener
         future.addListener ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 removeFuture ( future );
@@ -175,7 +180,14 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
 
         for ( final Future<?> task : tasks )
         {
-            task.cancel ( true );
+            try
+            {
+                task.cancel ( true );
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to cancel task", e );
+            }
         }
     }
 }

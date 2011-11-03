@@ -26,8 +26,10 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
+import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.core.Variant;
+import org.openscada.core.VariantEditor;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.osgi.framework.BundleContext;
@@ -45,9 +47,9 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
     {
         private final HistoricalItemImpl item;
 
-        private final ServiceRegistration registration;
+        private final ServiceRegistration<HistoricalItem> registration;
 
-        public ItemWrapper ( final HistoricalItemImpl item, final ServiceRegistration registration )
+        public ItemWrapper ( final HistoricalItemImpl item, final ServiceRegistration<HistoricalItem> registration )
         {
             this.item = item;
             this.registration = registration;
@@ -58,7 +60,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
             return this.item;
         }
 
-        public ServiceRegistration getRegistration ()
+        public ServiceRegistration<HistoricalItem> getRegistration ()
         {
             return this.registration;
         }
@@ -154,9 +156,17 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
         attributes.put ( Constants.SERVICE_PID, Variant.valueOf ( configurationId ) );
         attributes.put ( "master.id", Variant.valueOf ( masterId ) );
 
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
+        final VariantEditor ve = new VariantEditor ();
+        for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "information." ).entrySet () )
+        {
+            ve.setAsText ( entry.getValue () );
+            attributes.put ( entry.getKey (), (Variant)ve.getValue () );
+        }
+
         final HistoricalItemImpl item = new HistoricalItemImpl ( configurationId, attributes, masterId, this.context );
 
-        final ServiceRegistration registration = this.context.registerService ( HistoricalItem.class.getName (), item, serviceProperties );
+        final ServiceRegistration<HistoricalItem> registration = this.context.registerService ( HistoricalItem.class, item, serviceProperties );
 
         item.start ();
 

@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <schema targetNamespace="http://openscada.org/DA/Exec/Configuration"
-	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:exec="http://openscada.org/DA/Exec/Configuration">
+	elementFormDefault="qualified"
+	xmlns="http://www.w3.org/2001/XMLSchema"
+	xmlns:exec="http://openscada.org/DA/Exec/Configuration">
 
-    <import schemaLocation="da_server_common/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
+    <import schemaLocation="../../org.openscada.da.server.common/schema/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
 	
     <element name="root" type="exec:RootType"></element>
     

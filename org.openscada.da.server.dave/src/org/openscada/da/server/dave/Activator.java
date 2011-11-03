@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,6 +32,7 @@ import org.openscada.da.server.dave.data.VariableManagerImpl;
 import org.openscada.da.server.dave.factory.ConfigurationFactoryImpl;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.BeanConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -51,7 +52,7 @@ public class Activator implements BundleActivator
 
     private ObjectPoolImpl itemPool;
 
-    private ServiceRegistration itemPoolHandle;
+    private ServiceRegistration<ObjectPool> itemPoolHandle;
 
     public static VariableManager getVariableManager ()
     {
@@ -62,6 +63,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.itemPool = new ObjectPoolImpl ();
@@ -73,13 +75,13 @@ public class Activator implements BundleActivator
         this.service = new ConfigurationFactoryImpl ( context );
 
         {
-            final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.dave.device" );
             context.registerService ( ConfigurationFactory.class.getName (), this.service, properties );
         }
 
         {
-            final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.dave.block" );
             this.blockFactory = new BeanConfigurationFactory ( context, BlockConfiguration.class );
             context.registerService ( ConfigurationFactory.class.getName (), this.blockFactory, properties );
@@ -87,7 +89,7 @@ public class Activator implements BundleActivator
 
         {
             Activator.variableManager = new VariableManagerImpl ( this.executor, this.itemPool );
-            final Dictionary<Object, Object> properties = new Hashtable<Object, Object> ();
+            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.dave.types" );
             context.registerService ( ConfigurationFactory.class.getName (), Activator.variableManager, properties );
         }
@@ -97,6 +99,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.itemPoolHandle.unregister ();

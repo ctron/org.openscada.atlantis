@@ -19,7 +19,8 @@
 
 package org.openscada.hd.exporter.http.random;
 
-import java.util.Properties;
+import java.util.Dictionary;
+import java.util.Hashtable;
 
 import org.openscada.hd.exporter.http.HttpExporter;
 import org.osgi.framework.BundleActivator;
@@ -33,9 +34,10 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        final Properties props = new Properties ();
+        final Dictionary<String, Object> props = new Hashtable<String, Object> ();
         props.put ( Constants.SERVICE_RANKING, 100 );
         context.registerService ( HttpExporter.class.getName (), new RandomHttpExporter (), props );
     }
@@ -44,6 +46,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
     }

@@ -103,7 +103,7 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
             data.put ( "active", active.asString () ); //$NON-NLS-1$
         }
 
-        return updateConfiguration ( data, attributes, false );
+        return updateConfiguration ( data, attributes, false, operationParameters );
     }
 
 }

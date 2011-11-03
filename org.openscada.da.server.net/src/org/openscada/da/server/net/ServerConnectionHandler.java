@@ -178,6 +178,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         final Properties props = new Properties ();
         MessageHelper.getProperties ( props, message.getValues ().get ( "properties" ) );
 
+        debugSessionDelay ( props );
+
         // now check client version
         final String clientVersion = props.getProperty ( "client-version", "" );
         if ( clientVersion.equals ( "" ) )
@@ -188,7 +190,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         // client version does not match server version
         if ( !clientVersion.equals ( VERSION ) )
         {
-            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, "protocol version mismatch: client '" + clientVersion + "' server: '" + VERSION + "'" ) );
+            this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, String.format ( "protocol version mismatch: client '%s' server: '%s'", clientVersion, VERSION ) ) );
             return;
         }
 
@@ -215,6 +217,29 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         // send success
         this.messenger.sendMessage ( MessageHelper.createSessionACK ( message, this.session.getProperties () ) );
+    }
+
+    private void debugSessionDelay ( final Properties props )
+    {
+        try
+        {
+            final String delayString = props.getProperty ( "debug.sessionDelay" );
+            if ( delayString == null || delayString.isEmpty () )
+            {
+                return;
+            }
+            final long delay = Long.parseLong ( delayString );
+
+            if ( delay > 0 )
+            {
+                logger.warn ( "Delaying session creation by {} ms", delay );
+
+                Thread.sleep ( delay );
+            }
+        }
+        catch ( final Exception e )
+        {
+        }
     }
 
     private void disposeSession ()

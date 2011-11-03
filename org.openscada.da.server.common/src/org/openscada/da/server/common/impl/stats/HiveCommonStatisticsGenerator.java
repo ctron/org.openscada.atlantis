@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,12 +19,13 @@
 
 package org.openscada.da.server.common.impl.stats;
 
-import java.util.Date;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 
 public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
 {
@@ -42,7 +43,7 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
 
     private DataItemCounterOutput sessionsOutput;
 
-    private Timer timer;
+    private ScheduledExecutorService timer;
 
     private DataItemCounterOutput attributeEventsOutput;
 
@@ -76,15 +77,15 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
         registerOutput ( "valueEvents", this.valueEventsOutput, "Number of value events" );
         registerOutput ( "attributeEvents", this.attributeEventsOutput, "Number of attribute events" );
 
-        this.timer = new Timer ( "HiveStatsTimer", true );
-        this.timer.scheduleAtFixedRate ( new TimerTask () {
+        this.timer = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "HiveStatsTimer" ) );
+        this.timer.scheduleAtFixedRate ( new Runnable () {
 
             @Override
             public void run ()
             {
                 HiveCommonStatisticsGenerator.this.tick ();
             }
-        }, new Date (), 1000 );
+        }, 1000, 1000, TimeUnit.MILLISECONDS );
     }
 
     protected void registerOutput ( final String name, final CounterOutput output, final String description )
@@ -119,7 +120,7 @@ public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
         }
         if ( this.timer != null )
         {
-            this.timer.cancel ();
+            this.timer.shutdown ();
             this.timer = null;
         }
     }
