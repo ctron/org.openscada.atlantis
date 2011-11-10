@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -139,6 +139,7 @@ public class ItemSyncController implements ItemUpdateListener
             // send the initial update
             this.itemManager.getExecutor ().execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.notifySubscriptionChange ( state, error );
@@ -163,6 +164,7 @@ public class ItemSyncController implements ItemUpdateListener
     {
         this.itemManager.getExecutor ().execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 sync ( false );
@@ -226,6 +228,7 @@ public class ItemSyncController implements ItemUpdateListener
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }
 
+    @Override
     public synchronized void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         boolean change = false;
@@ -253,6 +256,7 @@ public class ItemSyncController implements ItemUpdateListener
 
             this.itemManager.getExecutor ().execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     for ( final ListenerInfo listenerInfo : listeners )
@@ -264,6 +268,7 @@ public class ItemSyncController implements ItemUpdateListener
         }
     }
 
+    @Override
     public synchronized void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable e )
     {
         if ( this.subscriptionState.equals ( subscriptionState ) && this.subscriptionError == e )
@@ -278,6 +283,7 @@ public class ItemSyncController implements ItemUpdateListener
 
         this.itemManager.getExecutor ().execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 for ( final ListenerInfo listenerInfo : listeners )
