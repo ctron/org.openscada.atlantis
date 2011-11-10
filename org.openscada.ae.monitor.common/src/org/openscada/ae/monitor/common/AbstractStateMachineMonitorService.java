@@ -427,7 +427,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
          * Suppress events if:
          * a) the state did not change
          * b) the state is still INIT
-         * b) the state is INACTIVE, active changes are reported separately 
+         * c) the state is INACTIVE, active changes are reported separately 
          */
         if ( oldConditionState != newConditionState && oldState != MonitorStatus.INIT && newState != MonitorStatus.INIT && newState != MonitorStatus.INACTIVE )
         {
