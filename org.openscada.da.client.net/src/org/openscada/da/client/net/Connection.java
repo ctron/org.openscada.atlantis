@@ -228,10 +228,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        if ( message.getValues ().get ( "attributes-set" ) instanceof MapValue )
+        final Value setEntries = message.getValues ().get ( "attributes-set" );
+        if ( setEntries instanceof MapValue )
         {
-            final MapValue setEntries = (MapValue)message.getValues ().get ( "attributes-set" );
-            for ( final Map.Entry<String, Value> entry : setEntries.getValues ().entrySet () )
+            for ( final Map.Entry<String, Value> entry : ( (MapValue)setEntries ).getValues ().entrySet () )
             {
                 final Variant variant = MessageHelper.valueToVariant ( entry.getValue (), null );
                 if ( variant != null )
@@ -241,10 +241,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
             }
         }
 
-        if ( message.getValues ().get ( "attributes-unset" ) instanceof ListValue )
+        final Value unsetEntries = message.getValues ().get ( "attributes-unset" );
+        if ( unsetEntries instanceof ListValue )
         {
-            final ListValue unsetEntries = (ListValue)message.getValues ().get ( "attributes-unset" );
-            for ( final Value entry : unsetEntries.getValues () )
+            for ( final Value entry : ( (ListValue)unsetEntries ).getValues () )
             {
                 if ( entry instanceof StringValue )
                 {
