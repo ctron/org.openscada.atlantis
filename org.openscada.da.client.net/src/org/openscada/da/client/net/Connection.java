@@ -205,7 +205,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         if ( cache && attributes == null )
         {
             // we need attributes if we read from cache
-            attributes = new HashMap<String, Variant> ();
+            attributes = new HashMap<String, Variant> ( 0 );
         }
 
         fireDataChange ( itemId, value, attributes, cache );
