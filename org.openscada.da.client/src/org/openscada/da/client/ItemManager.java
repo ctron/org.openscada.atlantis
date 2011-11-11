@@ -125,6 +125,7 @@ public class ItemManager implements ConnectionStateListener
         logger.debug ( "Disconnecting all items: complete" );
     }
 
+    @Override
     public synchronized void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
     {
         switch ( state )

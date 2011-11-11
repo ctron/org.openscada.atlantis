@@ -261,7 +261,14 @@ public class ItemSyncController implements ItemUpdateListener
                 {
                     for ( final ListenerInfo listenerInfo : listeners )
                     {
-                        listenerInfo.getListener ().notifyDataChange ( value, attributes, cache );
+                        try
+                        {
+                            listenerInfo.getListener ().notifyDataChange ( value, attributes, cache );
+                        }
+                        catch ( final Exception e )
+                        {
+                            logger.info ( "Failed to notify listener for data change", e );
+                        }
                     }
                 }
             } );
@@ -288,7 +295,14 @@ public class ItemSyncController implements ItemUpdateListener
             {
                 for ( final ListenerInfo listenerInfo : listeners )
                 {
-                    listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState, e );
+                    try
+                    {
+                        listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState, e );
+                    }
+                    catch ( final Exception e )
+                    {
+                        logger.info ( "Failed to notify listener subscription change", e );
+                    }
                 }
             }
         } );
