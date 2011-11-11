@@ -83,11 +83,11 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     private final Map<Location, FolderListener> folderListeners = new ConcurrentHashMap<Location, FolderListener> ();
 
     // operations
-    private BrowseOperationController browseController;
+    private final BrowseOperationController browseController;
 
-    private WriteOperationController writeController;
+    private final WriteOperationController writeController;
 
-    private WriteAttributesOperationController writeAttributesController;
+    private final WriteAttributesOperationController writeAttributesController;
 
     private final ExecutorService executor;
 
@@ -102,21 +102,8 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         super ( connectionInformantion );
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + connectionInformantion.toMaskedString () ) );
-        init ();
-    }
 
-    @Override
-    protected void finalize () throws Throwable
-    {
-        this.executor.shutdown ();
-        super.finalize ();
-    }
-
-    /**
-     * Set up message handlers
-     */
-    private void init ()
-    {
+        // setup messaging
         this.messenger.setHandler ( Messages.CC_NOTIFY_DATA, new MessageListener () {
 
             @Override
@@ -154,6 +141,13 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
         this.writeAttributesController = new WriteAttributesOperationController ( this.messenger );
         this.writeAttributesController.register ();
+    }
+
+    @Override
+    protected void finalize () throws Throwable
+    {
+        this.executor.shutdown ();
+        super.finalize ();
     }
 
     private void fireBrowseEvent ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
