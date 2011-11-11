@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -37,8 +37,9 @@ public class Activator implements BundleActivator
 {
     private org.openscada.core.client.DriverFactory factory;
 
-    private ServiceRegistration handle;
+    private ServiceRegistration<org.openscada.core.client.DriverFactory> handle;
 
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.factory = new DriverFactory ();
@@ -48,9 +49,10 @@ public class Activator implements BundleActivator
         properties.put ( org.openscada.core.client.DriverFactory.DRIVER_NAME, "net" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "OpenSCADA DA NET Adapter" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
-        this.handle = context.registerService ( org.openscada.core.client.DriverFactory.class.getName (), this.factory, properties );
+        this.handle = context.registerService ( org.openscada.core.client.DriverFactory.class, this.factory, properties );
     }
 
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.handle.unregister ();
