@@ -271,6 +271,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     {
         if ( !ackPending ( this.information ) )
         {
+            logger.debug ( "No ack is pending - {} / {}", this.information, aknTimestamp );
             return;
         }
 
