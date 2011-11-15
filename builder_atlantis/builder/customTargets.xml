@@ -76,7 +76,7 @@
 
 	
 	<target name="preProcessRepos">
-		<openscada.import.repository id="org.openscada.external" version="${external.version}"/>
+		<openscada.import.repository id="org.openscada.external.sdk" version="${external.version}"/>
 		<openscada.import.repository id="org.openscada.aurora.sdk" version="${aurora.version}"/>
 		<openscada.import.repository id="org.openscada.utgard.sdk" version="${utgard.version}"/>
 		<openscada.import.repository id="org.openscada.oxygen.sdk" version="${oxygen.version}"/>
