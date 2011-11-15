@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -42,6 +42,7 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -61,7 +62,7 @@ public class Activator implements BundleActivator
 
     private EventProcessor eventProcessor;
 
-    private ServiceTracker configAdminTracker;
+    private ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> configAdminTracker;
 
     private final Collection<AbstractMonitorFactory> factories = new LinkedList<AbstractMonitorFactory> ();
 
@@ -71,7 +72,7 @@ public class Activator implements BundleActivator
 
     private ObjectPoolImpl monitorServicePool;
 
-    private ServiceRegistration monitorServicePoolHandler;
+    private ServiceRegistration<ObjectPool> monitorServicePoolHandler;
 
     /*
      * (non-Javadoc)
@@ -87,7 +88,7 @@ public class Activator implements BundleActivator
         this.eventProcessor = new EventProcessor ( context );
         this.eventProcessor.open ();
 
-        this.configAdminTracker = new ServiceTracker ( context, ConfigurationAdministrator.class.getName (), null );
+        this.configAdminTracker = new ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> ( context, ConfigurationAdministrator.class, null );
         this.configAdminTracker.open ();
 
         Dictionary<String, Object> properties;
@@ -189,6 +190,6 @@ public class Activator implements BundleActivator
 
     public static ConfigurationAdministrator getConfigAdmin ()
     {
-        return (ConfigurationAdministrator)Activator.instance.configAdminTracker.getService ();
+        return Activator.instance.configAdminTracker.getService ();
     }
 }
