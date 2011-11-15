@@ -37,25 +37,27 @@
       <import plugin="org.apache.mina.core"/>
       <import plugin="org.apache.mina.transport.socket.apr"/>
       <import plugin="org.openscada.utils"/>
-      <import plugin="com.springsource.org.apache.commons.beanutils"/>
-      <import plugin="org.springframework.beans"/>
-      <import plugin="org.springframework.core"/>
-      <import plugin="org.openscada.ca"/>
       <import plugin="slf4j.api"/>
-      <import plugin="org.eclipse.osgi"/>
+      <import plugin="com.springsource.org.apache.commons.beanutils"/>
       <import plugin="org.openscada.core"/>
       <import plugin="org.openscada.core.client"/>
       <import plugin="org.openscada.core.server.common"/>
       <import plugin="org.openscada.da.client"/>
       <import plugin="org.openscada.da.core.common"/>
       <import plugin="org.openscada.da.server.common"/>
+      <import plugin="org.springframework.beans"/>
+      <import plugin="org.springframework.core"/>
+      <import plugin="org.openscada.ca"/>
       <import plugin="org.openscada.ca.servlet.jaxws"/>
       <import plugin="org.openscada.core.connection.provider"/>
+      <import plugin="org.eclipse.osgi"/>
       <import feature="org.openscada.external" version="0.16.0.qualifier"/>
       <import feature="org.openscada.aurora" version="0.15.0.qualifier"/>
       <import feature="org.openscada.oxygen" version="0.1.0.qualifier"/>
       <import feature="org.openscada.utgard" version="0.7.0.qualifier"/>
-      <import plugin="log4j.over.slf4j"/>
+      <import plugin="org.openscada.core.server"/>
+      <import plugin="org.openscada.da.core.server"/>
+      <import plugin="org.openscada.da.server.net"/>
    </requires>
 
    <plugin
