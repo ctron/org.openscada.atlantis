@@ -34,7 +34,6 @@
          version="0.0.0"/>
 
    <requires>
-      <import plugin="com.springsource.org.apache.log4j"/>
       <import plugin="org.apache.mina.core"/>
       <import plugin="org.apache.mina.transport.socket.apr"/>
       <import plugin="org.openscada.utils"/>
@@ -56,6 +55,7 @@
       <import feature="org.openscada.aurora" version="0.15.0.qualifier"/>
       <import feature="org.openscada.oxygen" version="0.1.0.qualifier"/>
       <import feature="org.openscada.utgard" version="0.7.0.qualifier"/>
+      <import plugin="log4j.over.slf4j"/>
    </requires>
 
    <plugin
