@@ -71,7 +71,6 @@
       <import plugin="org.openscada.ds"/>
       <import plugin="org.openscada.sec.osgi"/>
       <import plugin="com.google.guava"/>
-      <import plugin="org.junit"/>
       <import plugin="org.openscada.external.osgi.enterprise"/>
       <import plugin="com.google.gson"/>
       <import plugin="javax.servlet"/>
