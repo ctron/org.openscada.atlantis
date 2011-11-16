@@ -103,8 +103,12 @@ public class JdbcStorage extends BaseStorage
                     {
                         try
                         {
-                            JdbcStorage.this.jdbcStorageDao.storeEvent ( event );
-                            logger.debug ( "Event saved to database which could not be saved before - remaining in queue: {}, event: {}", size - ii, event );
+                            Event existingEvent = JdbcStorage.this.jdbcStorageDao.loadEvent ( event.getId () );
+                            if ( existingEvent == null )
+                            {
+                                JdbcStorage.this.jdbcStorageDao.storeEvent ( event );
+                                logger.debug ( "Event saved to database which could not be saved before - remaining in queue: {}, event: {}", size - ii, event );
+                            }
                         }
                         catch ( final Exception e )
                         {
