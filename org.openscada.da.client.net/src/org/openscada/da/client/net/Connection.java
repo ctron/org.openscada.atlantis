@@ -83,11 +83,11 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     private final Map<Location, FolderListener> folderListeners = new ConcurrentHashMap<Location, FolderListener> ();
 
     // operations
-    private BrowseOperationController browseController = null;
+    private final BrowseOperationController browseController;
 
-    private WriteOperationController writeController = null;
+    private final WriteOperationController writeController;
 
-    private WriteAttributesOperationController writeAttributesController = null;
+    private final WriteAttributesOperationController writeAttributesController;
 
     private final ExecutorService executor;
 
@@ -102,21 +102,8 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         super ( connectionInformantion );
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + connectionInformantion.toMaskedString () ) );
-        init ();
-    }
 
-    @Override
-    protected void finalize () throws Throwable
-    {
-        this.executor.shutdown ();
-        super.finalize ();
-    }
-
-    /**
-     * Set up message handlers
-     */
-    private void init ()
-    {
+        // setup messaging
         this.messenger.setHandler ( Messages.CC_NOTIFY_DATA, new MessageListener () {
 
             @Override
@@ -154,6 +141,13 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
         this.writeAttributesController = new WriteAttributesOperationController ( this.messenger );
         this.writeAttributesController.register ();
+    }
+
+    @Override
+    protected void finalize () throws Throwable
+    {
+        this.executor.shutdown ();
+        super.finalize ();
     }
 
     private void fireBrowseEvent ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
@@ -205,7 +199,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         if ( cache && attributes == null )
         {
             // we need attributes if we read from cache
-            attributes = new HashMap<String, Variant> ();
+            attributes = new HashMap<String, Variant> ( 0 );
         }
 
         fireDataChange ( itemId, value, attributes, cache );
@@ -234,10 +228,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        if ( message.getValues ().get ( "attributes-set" ) instanceof MapValue )
+        final Value setEntries = message.getValues ().get ( "attributes-set" );
+        if ( setEntries instanceof MapValue )
         {
-            final MapValue setEntries = (MapValue)message.getValues ().get ( "attributes-set" );
-            for ( final Map.Entry<String, Value> entry : setEntries.getValues ().entrySet () )
+            for ( final Map.Entry<String, Value> entry : ( (MapValue)setEntries ).getValues ().entrySet () )
             {
                 final Variant variant = MessageHelper.valueToVariant ( entry.getValue (), null );
                 if ( variant != null )
@@ -247,10 +241,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
             }
         }
 
-        if ( message.getValues ().get ( "attributes-unset" ) instanceof ListValue )
+        final Value unsetEntries = message.getValues ().get ( "attributes-unset" );
+        if ( unsetEntries instanceof ListValue )
         {
-            final ListValue unsetEntries = (ListValue)message.getValues ().get ( "attributes-unset" );
-            for ( final Value entry : unsetEntries.getValues () )
+            for ( final Value entry : ( (ListValue)unsetEntries ).getValues () )
             {
                 if ( entry instanceof StringValue )
                 {

@@ -201,20 +201,6 @@ public class DataItem extends Observable
     }
 
     /**
-     * Fetch the current cached value.
-     * 
-     * <b>Note:</b> The returned object may not be modified!
-     *  
-     * @return the current value
-     * @deprecated You should use {@link #getSnapshotValue()} instead to get a consistent value
-     */
-    @Deprecated
-    public Variant getValue ()
-    {
-        return this.value.getValue ();
-    }
-
-    /**
      * Get the complete state of the current data item in an atomic operation
      * @return the current state of the data item 
      */

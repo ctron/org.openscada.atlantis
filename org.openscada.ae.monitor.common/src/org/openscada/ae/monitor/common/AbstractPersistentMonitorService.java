@@ -34,7 +34,7 @@ public abstract class AbstractPersistentMonitorService extends AbstractMonitorSe
 
     private final BundleContext context;
 
-    private final ServiceTracker tracker;
+    private final ServiceTracker<DataStore, DataStore> tracker;
 
     private final DataListener storeListener;
 
@@ -48,21 +48,24 @@ public abstract class AbstractPersistentMonitorService extends AbstractMonitorSe
         this.context = context;
 
         // setup hooks
-        this.tracker = new ServiceTracker ( this.context, DataStore.class.getName (), new ServiceTrackerCustomizer () {
+        this.tracker = new ServiceTracker<DataStore, DataStore> ( this.context, DataStore.class, new ServiceTrackerCustomizer<DataStore, DataStore> () {
 
-            public void removedService ( final ServiceReference reference, final Object service )
+            @Override
+            public void removedService ( final ServiceReference<DataStore> reference, final DataStore service )
             {
                 AbstractPersistentMonitorService.this.context.ungetService ( reference );
                 setDataStore ( null );
             }
 
-            public void modifiedService ( final ServiceReference reference, final Object service )
+            @Override
+            public void modifiedService ( final ServiceReference<DataStore> reference, final DataStore service )
             {
             }
 
-            public Object addingService ( final ServiceReference reference )
+            @Override
+            public DataStore addingService ( final ServiceReference<DataStore> reference )
             {
-                final DataStore store = (DataStore)AbstractPersistentMonitorService.this.context.getService ( reference );
+                final DataStore store = AbstractPersistentMonitorService.this.context.getService ( reference );
                 setDataStore ( store );
                 return store;
             }
@@ -70,6 +73,7 @@ public abstract class AbstractPersistentMonitorService extends AbstractMonitorSe
 
         this.storeListener = new DataListener () {
 
+            @Override
             public void nodeChanged ( final DataNode node )
             {
                 AbstractPersistentMonitorService.this.nodeChanged ( node );

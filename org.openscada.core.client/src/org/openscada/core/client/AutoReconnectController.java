@@ -88,7 +88,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
         if ( this.connection == null )
         {
-            throw new NullPointerException ( "'connection' must not be null" );
+            throw new IllegalArgumentException ( "'connection' must not be null" );
         }
 
         if ( reconnectDelay <= 0 )
@@ -97,7 +97,10 @@ public class AutoReconnectController implements ConnectionStateListener
         }
 
         final ThreadFactory threadFactory = new NamedThreadFactory ( "AutoReconnect/" + connection.getConnectionInformation ().toMaskedString () );
-        this.executor = Executors.newSingleThreadScheduledExecutor ( threadFactory );
+        synchronized ( this )
+        {
+            this.executor = Executors.newSingleThreadScheduledExecutor ( threadFactory );
+        }
 
         this.connection.addConnectionStateListener ( this );
 

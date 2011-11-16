@@ -9,13 +9,13 @@ Import-Package: org.openscada.core;version="0.15.0",
  org.openscada.utils.lang;version="0.15.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.client;version="0.16.0";
+Export-Package: org.openscada.da.client;version="0.17.0";
   uses:="org.openscada.core.client,
    org.openscada.core,
    org.openscada.da.core,
    org.openscada.core.subscription"
-Bundle-Version: 0.16.0.qualifier
-Bundle-Name: OpenSCADA DA Client
+Bundle-Version: 0.17.0.qualifier
+Bundle-Name: openSCADA DA Client
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH

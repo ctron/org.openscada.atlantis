@@ -78,7 +78,7 @@ public class JdbcStorage extends BaseStorage
                 catch ( final Exception e )
                 {
                     JdbcStorage.this.queueSize.decrementAndGet ();
-                    errorQueue.offer ( eventToStore );
+                    JdbcStorage.this.errorQueue.offer ( eventToStore );
                     logger.error ( "Exception occured ({}) while saving Event to database: {}", e, event );
                     logger.info ( "Exception was", e );
                 }
@@ -89,12 +89,12 @@ public class JdbcStorage extends BaseStorage
 
     private void drainErrorQueue ()
     {
-        final int size = errorQueue.size ();
+        final int size = this.errorQueue.size ();
         final Set<Event> eventsNotSaved = new HashSet<Event> ();
         for ( int i = 0; i < size; i++ )
         {
             final int ii = i;
-            final Event event = errorQueue.poll ();
+            final Event event = this.errorQueue.poll ();
             if ( event != null )
             {
                 this.executor.submit ( new Runnable () {
@@ -121,9 +121,9 @@ public class JdbcStorage extends BaseStorage
             }
         }
         // add to queue again
-        for ( Event event : eventsNotSaved )
+        for ( final Event event : eventsNotSaved )
         {
-            errorQueue.offer ( event );
+            this.errorQueue.offer ( event );
         }
     }
 
@@ -176,7 +176,7 @@ public class JdbcStorage extends BaseStorage
         logger.info ( "jdbcStorageDAO instanciated" );
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( getClass ().getCanonicalName () ) );
         // try to store events which could not be stored before
-        executor.scheduleAtFixedRate ( new Runnable () {
+        this.executor.scheduleAtFixedRate ( new Runnable () {
             @Override
             public void run ()
             {

@@ -1,19 +1,19 @@
 /*
- * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * This file is part of the openSCADA project
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
- * OpenSCADA is free software: you can redistribute it and/or modify
+ * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
  *
- * OpenSCADA is distributed in the hope that it will be useful,
+ * openSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  *
  * You should have received a copy of the GNU Lesser General Public License
- * version 3 along with OpenSCADA. If not, see
+ * version 3 along with openSCADA. If not, see
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
@@ -139,6 +139,7 @@ public class ItemSyncController implements ItemUpdateListener
             // send the initial update
             this.itemManager.getExecutor ().execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.notifySubscriptionChange ( state, error );
@@ -163,6 +164,7 @@ public class ItemSyncController implements ItemUpdateListener
     {
         this.itemManager.getExecutor ().execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 sync ( false );
@@ -226,6 +228,7 @@ public class ItemSyncController implements ItemUpdateListener
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }
 
+    @Override
     public synchronized void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         boolean change = false;
@@ -253,17 +256,26 @@ public class ItemSyncController implements ItemUpdateListener
 
             this.itemManager.getExecutor ().execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     for ( final ListenerInfo listenerInfo : listeners )
                     {
-                        listenerInfo.getListener ().notifyDataChange ( value, attributes, cache );
+                        try
+                        {
+                            listenerInfo.getListener ().notifyDataChange ( value, attributes, cache );
+                        }
+                        catch ( final Exception e )
+                        {
+                            logger.info ( "Failed to notify listener for data change", e );
+                        }
                     }
                 }
             } );
         }
     }
 
+    @Override
     public synchronized void notifySubscriptionChange ( final SubscriptionState subscriptionState, final Throwable e )
     {
         if ( this.subscriptionState.equals ( subscriptionState ) && this.subscriptionError == e )
@@ -278,11 +290,19 @@ public class ItemSyncController implements ItemUpdateListener
 
         this.itemManager.getExecutor ().execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 for ( final ListenerInfo listenerInfo : listeners )
                 {
-                    listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState, e );
+                    try
+                    {
+                        listenerInfo.getListener ().notifySubscriptionChange ( subscriptionState, e );
+                    }
+                    catch ( final Exception e )
+                    {
+                        logger.info ( "Failed to notify listener subscription change", e );
+                    }
                 }
             }
         } );
