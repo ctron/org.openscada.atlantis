@@ -44,15 +44,15 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private final static Logger logger = LoggerFactory.getLogger ( AbstractMonitorService.class );
 
-    private final static StateInformation defaultState;
+    private final static StateInformation DEFAULT_STATE;
 
     static
     {
-        defaultState = new StateInformation ();
-        defaultState.setActive ( false );
-        defaultState.setState ( State.UNSAFE );
-        defaultState.setRequireAck ( true );
-        defaultState.setTimestamp ( new Date () );
+        DEFAULT_STATE = new StateInformation ();
+        DEFAULT_STATE.setActive ( false );
+        DEFAULT_STATE.setState ( State.UNSAFE );
+        DEFAULT_STATE.setRequireAck ( true );
+        DEFAULT_STATE.setTimestamp ( new Date () );
     }
 
     private final EventProcessor eventProcessor;
@@ -129,7 +129,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         if ( doInit )
         {
             sendDebugMessage ( String.format ( "Initialize from store - current: %s, stored: %s", this.information, this.initialInformation ) );
-            final StateInformation newInformation = defaultState.apply ( this.initialInformation ).apply ( this.information );
+            final StateInformation newInformation = DEFAULT_STATE.apply ( this.initialInformation ).apply ( this.information );
 
             this.information = newInformation;
 
