@@ -29,10 +29,10 @@ import javax.sql.ConnectionPoolDataSource;
 import org.openscada.ae.server.storage.Storage;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
+import org.openscada.utils.osgi.jdbc.DataSourceFactoryTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
-import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.jdbc.DataSourceFactory;
@@ -68,15 +68,16 @@ public class Activator implements BundleActivator
         Activator.context = bundleContext;
 
         final String driver = System.getProperty ( "org.openscada.ae.server.storage.jdbc.driver", System.getProperty ( "org.openscada.jdbc.driver", "" ) );
-        Filter filter = context.createFilter ( "(&(objectClass=" + DataSourceFactory.class.getName () + ")(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=" + driver + "))" );
-        dataSouceFactoryTracker = new SingleServiceTracker<DataSourceFactory> ( bundleContext, filter, new SingleServiceListener<DataSourceFactory> () {
-            public void serviceChange ( ServiceReference<DataSourceFactory> reference, DataSourceFactory dsf )
+
+        this.dataSouceFactoryTracker = new DataSourceFactoryTracker ( bundleContext, driver, new SingleServiceListener<DataSourceFactory> () {
+            @Override
+            public void serviceChange ( final ServiceReference<DataSourceFactory> reference, final DataSourceFactory dsf )
             {
                 try
                 {
                     deactivate ();
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     logger.error ( "an error occured on deactivating ae jdbc storage", e );
                 }
@@ -86,17 +87,17 @@ public class Activator implements BundleActivator
                     {
                         activate ( dsf );
                     }
-                    catch ( Exception e )
+                    catch ( final Exception e )
                     {
                         logger.error ( "an error occured on activating ae jdbc storage", e );
                     }
                 }
             }
         } );
-        dataSouceFactoryTracker.open ();
+        this.dataSouceFactoryTracker.open ();
     }
 
-    private void activate ( DataSourceFactory dsf ) throws Exception
+    private void activate ( final DataSourceFactory dsf ) throws Exception
     {
         final Properties dbproperties = new Properties ();
         setupDbProperties ( dbproperties );
@@ -106,7 +107,7 @@ public class Activator implements BundleActivator
             dbproperties.setProperty ( DataSourceFactory.JDBC_USER, System.getProperty ( "org.openscada.ae.server.storage.jdbc.username", "" ) );
         }
 
-        ConnectionPoolDataSource dataSource = dsf.createConnectionPoolDataSource ( dbproperties );
+        final ConnectionPoolDataSource dataSource = dsf.createConnectionPoolDataSource ( dbproperties );
         this.jdbcStorage = createJdbcStorage ( dataSource );
         this.jdbcStorage.start ();
 
@@ -116,16 +117,16 @@ public class Activator implements BundleActivator
         this.jdbcStorageHandle = context.registerService ( new String[] { JdbcStorage.class.getName (), Storage.class.getName () }, this.jdbcStorage, properties );
     }
 
-    private void setupDbProperties ( Properties dbproperties )
+    private void setupDbProperties ( final Properties dbproperties )
     {
-        for ( Entry<Object, Object> e : System.getProperties ().entrySet () )
+        for ( final Entry<Object, Object> e : System.getProperties ().entrySet () )
         {
             if ( ! ( e.getKey () instanceof String ) || ! ( e.getValue () instanceof String ) )
             {
                 continue;
             }
             String key = (String)e.getKey ();
-            String value = (String)e.getValue ();
+            final String value = (String)e.getValue ();
             if ( !key.startsWith ( "org.openscada.jdbc." ) )
             {
                 continue;
@@ -133,14 +134,14 @@ public class Activator implements BundleActivator
             key = key.replace ( "org.openscada.jdbc.", "" );
             dbproperties.setProperty ( key, value );
         }
-        for ( Entry<Object, Object> e : System.getProperties ().entrySet () )
+        for ( final Entry<Object, Object> e : System.getProperties ().entrySet () )
         {
             if ( ! ( e.getKey () instanceof String ) || ! ( e.getValue () instanceof String ) )
             {
                 continue;
             }
             String key = (String)e.getKey ();
-            String value = (String)e.getValue ();
+            final String value = (String)e.getValue ();
             if ( !key.startsWith ( "org.openscada.ae.server.storage.jdbc." ) )
             {
                 continue;
@@ -171,9 +172,9 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext bundleContext ) throws Exception
     {
-        if ( dataSouceFactoryTracker != null )
+        if ( this.dataSouceFactoryTracker != null )
         {
-            dataSouceFactoryTracker.close ();
+            this.dataSouceFactoryTracker.close ();
         }
         deactivate (); // redundant, but if something happened with the tracker we are sure it is shut down
         Activator.context = null;
