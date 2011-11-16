@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,23 +35,26 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.http.HttpService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator
 {
     private static final String SERVLET_PATH = "/org.openscada.hd";
 
-    private final SingleServiceListener httpServiceListener = new SingleServiceListener () {
+    private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
+
+    private final SingleServiceListener<HttpService> httpServiceListener = new SingleServiceListener<HttpService> () {
         @Override
-        public void serviceChange ( final ServiceReference reference, final Object service )
+        public void serviceChange ( final ServiceReference<HttpService> reference, final HttpService service )
         {
-            final HttpService httpService = (HttpService)service;
             if ( Activator.this.httpService != null )
             {
                 Activator.this.httpService.unregister ( SERVLET_PATH );
                 Activator.this.httpService.unregister ( "/media" );
                 Activator.this.httpService = null;
             }
-            Activator.this.httpService = httpService;
+            Activator.this.httpService = service;
             try
             {
                 Activator.this.httpService.registerServlet ( SERVLET_PATH, Activator.this.jsonServlet, null, null );
@@ -59,40 +62,38 @@ public class Activator implements BundleActivator
             }
             catch ( final Exception e )
             {
-                e.printStackTrace ();
+                logger.warn ( "Failed to handle http service change", e );
             }
         }
     };
 
-    private final SingleServiceListener exporterServiceListener = new SingleServiceListener () {
+    private final SingleServiceListener<HttpExporter> exporterServiceListener = new SingleServiceListener<HttpExporter> () {
         @Override
-        public void serviceChange ( final ServiceReference reference, final Object service )
+        public void serviceChange ( final ServiceReference<HttpExporter> reference, final HttpExporter service )
         {
-            final HttpExporter exporter = (HttpExporter)service;
-            Activator.this.jsonServlet.setExporter ( exporter );
+            Activator.this.jsonServlet.setExporter ( service );
         }
     };
 
-    private final SingleServiceListener localHdServerServiceListener = new SingleServiceListener () {
+    private final SingleServiceListener<Service> localHdServerServiceListener = new SingleServiceListener<Service> () {
         @Override
-        public void serviceChange ( final ServiceReference reference, final Object service )
+        public void serviceChange ( final ServiceReference<Service> reference, final Service service )
         {
             if ( Activator.this.localHdServerServiceRegistration != null )
             {
                 Activator.this.localHdServerServiceRegistration.unregister ();
             }
-            final Service hdService = (Service)service;
-            if ( hdService != null )
+            if ( service != null )
             {
                 final Dictionary<String, Object> props = new Hashtable<String, Object> ();
                 props.put ( Constants.SERVICE_RANKING, 20 );
                 try
                 {
-                    Activator.this.localHdServerServiceRegistration = context.registerService ( HttpExporter.class.getName (), new LocalHttpExporter ( (Service)service ), props );
+                    Activator.this.localHdServerServiceRegistration = context.registerService ( HttpExporter.class, new LocalHttpExporter ( service ), props );
                 }
                 catch ( final Exception e )
                 {
-                    e.printStackTrace ();
+                    logger.warn ( "Failed to handle service change", e );
                 }
             }
         }
@@ -104,13 +105,13 @@ public class Activator implements BundleActivator
 
     private HttpService httpService = null;
 
-    private SingleServiceTracker httpServiceTracker;
+    private SingleServiceTracker<HttpService> httpServiceTracker;
 
-    private SingleServiceTracker exporterServiceTracker;
+    private SingleServiceTracker<HttpExporter> exporterServiceTracker;
 
-    private SingleServiceTracker localHdServerServiceTracker;
+    private SingleServiceTracker<Service> localHdServerServiceTracker;
 
-    private ServiceRegistration localHdServerServiceRegistration;
+    private ServiceRegistration<HttpExporter> localHdServerServiceRegistration;
 
     /*
      * (non-Javadoc)
@@ -122,13 +123,13 @@ public class Activator implements BundleActivator
         Activator.context = context;
 
         // start servlet
-        this.httpServiceTracker = new SingleServiceTracker ( context, HttpService.class.getName (), this.httpServiceListener );
+        this.httpServiceTracker = new SingleServiceTracker<HttpService> ( context, HttpService.class, this.httpServiceListener );
         this.httpServiceTracker.open ();
 
-        this.exporterServiceTracker = new SingleServiceTracker ( context, HttpExporter.class.getName (), this.exporterServiceListener );
+        this.exporterServiceTracker = new SingleServiceTracker<HttpExporter> ( context, HttpExporter.class, this.exporterServiceListener );
         this.exporterServiceTracker.open ();
 
-        this.localHdServerServiceTracker = new SingleServiceTracker ( context, Service.class.getName (), this.localHdServerServiceListener );
+        this.localHdServerServiceTracker = new SingleServiceTracker<Service> ( context, Service.class, this.localHdServerServiceListener );
         this.localHdServerServiceTracker.open ();
 
         // try to start local exporter
@@ -138,7 +139,7 @@ public class Activator implements BundleActivator
     private void registerRemoteExporter ( final BundleContext context )
     {
         // TODO: create clientConnection
-        final Dictionary<String, Object> props = new Hashtable<String, Object> ();
+        final Dictionary<String, Object> props = new Hashtable<String, Object> ( 1 );
         props.put ( Constants.SERVICE_RANKING, 10 );
         context.registerService ( HttpExporter.class.getName (), new RemoteHttpExporter (), props );
     }
