@@ -38,7 +38,7 @@ import org.openscada.da.client.ItemManager;
  * simplifies that handling a little bit. You do not get the
  * much more detailed event information since you only get the information
  * <q>object changed</q>. On the other side you have an instance which always
- * has the latest value merged up for you. So you can access it using {@link DataItem#getValue()},
+ * has the latest value merged up for you. So you can access it using {@link DataItem#getSnapshotValue()},
  * {@link DataItem#getAttributes()} and {@link DataItem#getSubscriptionState()} at any
  * time.
  * </p> 
@@ -82,6 +82,7 @@ public class Sample5 extends SampleBase implements Observer
         this.dataItem.unregister ();
     }
 
+    @Override
     public void update ( final Observable o, final Object arg )
     {
         // you can either use the dataItem field or the observable

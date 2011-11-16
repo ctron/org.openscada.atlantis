@@ -83,7 +83,7 @@ public class ItemEventObserver extends AbstractItemEventObserver
         {
         case DISCONNECTED:
         case GRANTED:
-            builder.setAttributes ( new HashMap<String, Variant> () );
+            builder.setAttributes ( new HashMap<String, Variant> ( 0 ) );
             builder.setValue ( Variant.NULL );
             break;
         }

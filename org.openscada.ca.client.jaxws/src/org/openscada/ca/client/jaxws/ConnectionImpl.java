@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -47,9 +47,13 @@ import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionImpl implements Connection
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
     private ScheduledExecutorService executor;
 
@@ -70,11 +74,13 @@ public class ConnectionImpl implements Connection
         this.connectionInformation = connectionInformation;
     }
 
+    @Override
     public Map<String, String> getSessionProperties ()
     {
         return Collections.emptyMap ();
     }
 
+    @Override
     public synchronized void addConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         if ( this.stateListener.add ( connectionStateListener ) )
@@ -83,6 +89,7 @@ public class ConnectionImpl implements Connection
         }
     }
 
+    @Override
     public synchronized void removeConnectionStateListener ( final ConnectionStateListener connectionStateListener )
     {
         this.stateListener.remove ( connectionStateListener );
@@ -93,10 +100,18 @@ public class ConnectionImpl implements Connection
         this.state = state;
         for ( final ConnectionStateListener listener : this.stateListener )
         {
-            listener.stateChange ( this, state, e );
+            try
+            {
+                listener.stateChange ( this, state, e );
+            }
+            catch ( final Exception e1 )
+            {
+                logger.info ( "Failed to call listener", e1 );
+            }
         }
     }
 
+    @Override
     public synchronized void connect ()
     {
         if ( this.executor != null )
@@ -109,6 +124,7 @@ public class ConnectionImpl implements Connection
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 try
@@ -154,6 +170,7 @@ public class ConnectionImpl implements Connection
 
         task.addListener ( new FutureListener<FactoryInformation[]> () {
 
+            @Override
             public void complete ( final Future<FactoryInformation[]> future )
             {
                 try
@@ -195,6 +212,7 @@ public class ConnectionImpl implements Connection
         return new RemoteConfigurationClient ( this.connectionInformation.getTarget (), this.connectionInformation.getSecondaryTarget () );
     }
 
+    @Override
     public synchronized void disconnect ()
     {
         if ( this.executor == null )
@@ -219,16 +237,19 @@ public class ConnectionImpl implements Connection
         this.port = null;
     }
 
+    @Override
     public ConnectionInformation getConnectionInformation ()
     {
         return this.connectionInformation;
     }
 
+    @Override
     public ConnectionState getState ()
     {
         return this.state;
     }
 
+    @Override
     public synchronized void addFactoriesListener ( final FactoriesListener listener )
     {
         if ( this.factoriesListener.add ( listener ) )
@@ -237,6 +258,7 @@ public class ConnectionImpl implements Connection
         }
     }
 
+    @Override
     public synchronized NotifyFuture<FactoryInformation[]> getFactories ()
     {
         if ( this.executor == null )
@@ -251,6 +273,7 @@ public class ConnectionImpl implements Connection
         return task;
     }
 
+    @Override
     public synchronized NotifyFuture<FactoryInformation> getFactoryWithData ( final String factoryId )
     {
         if ( this.executor == null )
@@ -267,6 +290,7 @@ public class ConnectionImpl implements Connection
         return task;
     }
 
+    @Override
     public synchronized NotifyFuture<ConfigurationInformation> getConfiguration ( final String factoryId, final String configurationId )
     {
         if ( this.executor == null )
@@ -283,6 +307,7 @@ public class ConnectionImpl implements Connection
         return task;
     }
 
+    @Override
     public synchronized NotifyFuture<Void> applyDiff ( final Collection<DiffEntry> changeSet )
     {
         if ( this.executor == null )
@@ -299,6 +324,7 @@ public class ConnectionImpl implements Connection
         return task;
     }
 
+    @Override
     public synchronized void removeFactoriesListener ( final FactoriesListener listener )
     {
         this.factoriesListener.remove ( listener );
