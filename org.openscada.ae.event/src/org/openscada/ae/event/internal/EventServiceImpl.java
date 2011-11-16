@@ -142,7 +142,14 @@ public class EventServiceImpl implements EventService, EventManager
         // feed the event pools
         for ( final EventListener listener : this.listeners )
         {
-            listener.handleEvent ( new Event[] { storedEvent } );
+            try
+            {
+                listener.handleEvent ( new Event[] { storedEvent } );
+            }
+            catch ( final Exception e )
+            {
+                logger.info ( "Failed to handle listener", e );
+            }
         }
     }
 
