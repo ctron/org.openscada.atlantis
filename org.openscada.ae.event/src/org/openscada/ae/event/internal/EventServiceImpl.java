@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -47,7 +47,7 @@ public class EventServiceImpl implements EventService, EventManager
 
     private final BundleContext context;
 
-    private final SingleServiceTracker storageTracker;
+    private final SingleServiceTracker<Storage> storageTracker;
 
     private final List<Event> writeQueue = new LinkedList<Event> ();
 
@@ -65,6 +65,7 @@ public class EventServiceImpl implements EventService, EventManager
 
         this.storeListener = new StoreListener () {
 
+            @Override
             public void notify ( final Event event )
             {
                 EventServiceImpl.this.eventStored ( event );
@@ -72,11 +73,12 @@ public class EventServiceImpl implements EventService, EventManager
         };
 
         final Filter filter = FilterUtil.createClassFilter ( Storage.class.getName () );
-        this.storageTracker = new SingleServiceTracker ( this.context, filter, new SingleServiceListener () {
+        this.storageTracker = new SingleServiceTracker<Storage> ( this.context, filter, new SingleServiceListener<Storage> () {
 
-            public void serviceChange ( final ServiceReference reference, final Object service )
+            @Override
+            public void serviceChange ( final ServiceReference<Storage> reference, final Storage service )
             {
-                setStorage ( (Storage)service );
+                setStorage ( service );
             }
         } );
         this.storageTracker.open ();
@@ -112,6 +114,7 @@ public class EventServiceImpl implements EventService, EventManager
         this.eventBuffer.clear ();
     }
 
+    @Override
     public synchronized void publishEvent ( final Event event )
     {
         if ( this.storage != null )
@@ -126,9 +129,13 @@ public class EventServiceImpl implements EventService, EventManager
 
     private void performStore ( final Event event )
     {
-        final Event storedEvent = this.storage.store ( event, this.storeListener );
-        // add to the write queue
-        this.writeQueue.add ( storedEvent );
+        final Event storedEvent;
+        synchronized ( this )
+        {
+            storedEvent = this.storage.store ( event, this.storeListener );
+            // add to the write queue
+            this.writeQueue.add ( storedEvent );
+        }
 
         logger.debug ( "Write queue size - after store: {}", this.writeQueue.size () );
 
@@ -139,6 +146,7 @@ public class EventServiceImpl implements EventService, EventManager
         }
     }
 
+    @Override
     public synchronized void addEventListener ( final EventListener listener )
     {
         if ( this.listeners.add ( listener ) )
@@ -147,6 +155,7 @@ public class EventServiceImpl implements EventService, EventManager
         }
     }
 
+    @Override
     public synchronized void removeEventListener ( final EventListener listener )
     {
         this.listeners.remove ( listener );
