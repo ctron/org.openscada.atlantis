@@ -38,13 +38,13 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
     private final String prefix;
 
-    private final ServiceTracker tracker;
+    private final ServiceTracker<ConfigurationAdministrator,ConfigurationAdministrator> tracker;
 
     private final String factoryId;
 
     private final String configurationId;
 
-    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker, final String prefix, final String factoryId )
+    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator,ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
     {
         super ( poolTracker, priority );
         this.configurationId = configurationId;
@@ -142,7 +142,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
             return result;
         }
 
-        final Object service = this.tracker.getService ();
+        final ConfigurationAdministrator service = this.tracker.getService ();
         if ( ! ( service instanceof ConfigurationAdministrator ) )
         {
             final OperationException error = new OperationException ( "Configuration administrator not available" );

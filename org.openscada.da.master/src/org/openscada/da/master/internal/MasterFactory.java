@@ -29,6 +29,7 @@ import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -48,9 +49,9 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
     private final ObjectPoolImpl masterItemPool;
 
-    private final ServiceRegistration dataSourcePoolHandler;
+    private final ServiceRegistration<ObjectPool> dataSourcePoolHandler;
 
-    private final ServiceRegistration masterItemPoolHandler;
+    private final ServiceRegistration<ObjectPool> masterItemPoolHandler;
 
     private final ObjectPoolTracker objectPoolTracker;
 
