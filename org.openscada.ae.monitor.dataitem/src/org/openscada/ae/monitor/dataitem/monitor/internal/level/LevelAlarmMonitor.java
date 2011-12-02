@@ -84,9 +84,9 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        final Double newLimit = cfg.getDouble ( "preset" );
+        final Double newLimit = cfg.getDouble ( "preset" ); //$NON-NLS-1$
 
-        logger.debug ( "New limit: {}", newLimit );
+        logger.debug ( "New limit: {}", newLimit ); //$NON-NLS-1$
 
         if ( newLimit == null )
         {
@@ -98,7 +98,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             this.limit = newLimit;
             if ( !isInitialUpdate () )
             {
-                final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Change preset", Variant.valueOf ( newLimit ), new Date () );
+                final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), Messages.getString ( "LevelAlarmMonitor.message.changePreset" ), Variant.valueOf ( newLimit ), new Date () ); //$NON-NLS-1$
                 injectEventAttributes ( builder );
                 publishEvent ( builder );
             }
@@ -122,13 +122,13 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
         if ( active )
         {
-            builder.setAttribute ( this.prefix + ".preset", Variant.valueOf ( this.limit ) );
+            builder.setAttribute ( this.prefix + ".preset", Variant.valueOf ( this.limit ) ); //$NON-NLS-1$
         }
-        builder.setAttribute ( this.prefix + ".active", active ? Variant.TRUE : Variant.FALSE );
+        builder.setAttribute ( this.prefix + ".active", active ? Variant.TRUE : Variant.FALSE ); //$NON-NLS-1$
 
         if ( this.cap && this.failure )
         {
-            builder.setAttribute ( this.prefix + ".original.value", Variant.valueOf ( this.value ) );
+            builder.setAttribute ( this.prefix + ".original.value", Variant.valueOf ( this.value ) ); //$NON-NLS-1$
         }
     }
 
@@ -137,24 +137,24 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     {
         super.handleConfigUpdate ( configUpdate, attributes, result );
 
-        final Variant active = attributes.get ( this.prefix + ".active" );
+        final Variant active = attributes.get ( this.prefix + ".active" ); //$NON-NLS-1$
         if ( active != null )
         {
-            configUpdate.put ( "active", "" + active.asBoolean () );
+            configUpdate.put ( "active", "" + active.asBoolean () ); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        final Variant preset = attributes.get ( this.prefix + ".preset" );
+        final Variant preset = attributes.get ( this.prefix + ".preset" ); //$NON-NLS-1$
         if ( preset != null )
         {
             if ( preset.isNull () )
             {
-                configUpdate.put ( "active", "" + false );
+                configUpdate.put ( "active", "" + false ); //$NON-NLS-1$ //$NON-NLS-2$
             }
             else
             {
-                configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) );
+                configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) ); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            result.put ( this.prefix + ".preset", WriteAttributeResult.OK );
+            result.put ( this.prefix + ".preset", WriteAttributeResult.OK ); //$NON-NLS-1$
         }
 
     }
@@ -168,7 +168,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     @Override
     protected synchronized void update ( final Builder builder )
     {
-        logger.debug ( "Handle data update: {} (value: {}, timestamp: {}, limit: {})", new Object[] { builder, this.value, this.timestamp, this.limit } );
+        logger.debug ( "Handle data update: {} (value: {}, timestamp: {}, limit: {})", new Object[] { builder, this.value, this.timestamp, this.limit } ); //$NON-NLS-1$
 
         if ( this.value == null || this.timestamp == null || this.limit == null )
         {
