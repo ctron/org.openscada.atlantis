@@ -19,6 +19,7 @@
 
 package org.openscada.da.master;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -84,7 +85,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         this.trackers.clear ();
     }
 
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final Principal principal, final Map<String, String> parameters ) throws Exception
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 

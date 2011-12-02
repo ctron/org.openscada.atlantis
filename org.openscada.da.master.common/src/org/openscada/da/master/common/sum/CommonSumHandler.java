@@ -19,6 +19,7 @@
 
 package org.openscada.da.master.common.sum;
 
+import java.security.Principal;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -48,9 +49,9 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final Principal principal, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
+        super.update ( principal, parameters );
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         this.debug = cfg.getBoolean ( "debug", false );
         this.prefix = cfg.getString ( "prefix", "osgi.source" );

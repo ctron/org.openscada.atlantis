@@ -19,6 +19,7 @@
 
 package org.openscada.da.master.common.negate;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,9 +78,9 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final Principal principal, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
+        super.update ( principal, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         this.active = cfg.getBoolean ( "active", false ); //$NON-NLS-1$

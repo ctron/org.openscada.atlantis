@@ -19,6 +19,7 @@
 
 package org.openscada.da.master.common.manual;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -126,9 +127,9 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final Principal principal, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
+        super.update ( principal, parameters );
 
         final VariantEditor ve = new VariantEditor ();
 

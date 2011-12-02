@@ -19,6 +19,7 @@
 
 package org.openscada.da.master.common.scale;
 
+import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -77,9 +78,9 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final Principal principal, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
+        super.update ( principal, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         this.factor = cfg.getDouble ( "factor", 1 ); //$NON-NLS-1$

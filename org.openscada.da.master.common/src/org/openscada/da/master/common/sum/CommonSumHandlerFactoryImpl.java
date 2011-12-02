@@ -50,14 +50,14 @@ public class CommonSumHandlerFactoryImpl extends AbstractServiceConfigurationFac
     protected Entry<AbstractMasterHandlerImpl> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final AbstractMasterHandlerImpl handler = new CommonSumHandler ( this.poolTracker );
-        handler.update ( parameters );
+        handler.update ( principal, parameters );
         return new Entry<AbstractMasterHandlerImpl> ( configurationId, handler );
     }
 
     @Override
     protected Entry<AbstractMasterHandlerImpl> updateService ( final Principal principal, final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( parameters );
+        entry.getService ().update ( principal, parameters );
         return null;
     }
 
