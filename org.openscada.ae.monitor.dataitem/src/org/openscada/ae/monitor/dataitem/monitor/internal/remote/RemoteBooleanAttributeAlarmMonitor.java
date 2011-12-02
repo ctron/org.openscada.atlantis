@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.dataitem.monitor.internal.remote;
 
+import java.security.Principal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
@@ -164,9 +165,9 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final Principal principal, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
+        super.update ( principal, parameters );
 
         logger.debug ( "Apply update: {}", parameters );
 

@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.dataitem.monitor.internal.list;
 
+import java.security.Principal;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -81,9 +82,9 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
     }
 
     @Override
-    public void update ( final Map<String, String> properties ) throws Exception
+    public void update ( final Principal principal, final Map<String, String> properties ) throws Exception
     {
-        super.update ( properties );
+        super.update ( principal, properties );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 

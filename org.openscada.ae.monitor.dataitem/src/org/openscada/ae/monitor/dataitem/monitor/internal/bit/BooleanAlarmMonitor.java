@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.dataitem.monitor.internal.bit;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -69,9 +70,9 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
     }
 
     @Override
-    public void update ( final Map<String, String> properties ) throws Exception
+    public void update ( final Principal principal, final Map<String, String> properties ) throws Exception
     {
-        super.update ( properties );
+        super.update ( principal, properties );
 
         final boolean newReference = Boolean.parseBoolean ( properties.get ( "reference" ) );
         if ( isDifferent ( this.reference, newReference ) )

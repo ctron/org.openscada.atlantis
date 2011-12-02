@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.dataitem.monitor.internal.level;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -77,9 +78,9 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> properties ) throws Exception
+    public synchronized void update ( final Principal principal, final Map<String, String> properties ) throws Exception
     {
-        super.update ( properties );
+        super.update ( principal, properties );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 

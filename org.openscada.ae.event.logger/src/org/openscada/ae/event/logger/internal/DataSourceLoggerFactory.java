@@ -51,7 +51,7 @@ public class DataSourceLoggerFactory extends AbstractServiceConfigurationFactory
     protected Entry<MasterItemLogger> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final MasterItemLogger logger = new MasterItemLogger ( context, this.poolTracker, 0 );
-        logger.update ( parameters );
+        logger.update ( principal, parameters );
         return new Entry<MasterItemLogger> ( configurationId, logger );
     }
 
@@ -64,7 +64,7 @@ public class DataSourceLoggerFactory extends AbstractServiceConfigurationFactory
     @Override
     protected Entry<MasterItemLogger> updateService ( final Principal principal, final String configurationId, final Entry<MasterItemLogger> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( parameters );
+        entry.getService ().update ( principal, parameters );
         return null;
     }
 

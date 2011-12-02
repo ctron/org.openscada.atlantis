@@ -59,7 +59,7 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
     {
         final DataItemMonitor instance = createInstance ( configurationId, this.eventProcessor );
 
-        instance.update ( parameters );
+        instance.update ( principal, parameters );
         instance.init ();
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
@@ -78,7 +78,7 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
     @Override
     protected Entry<DataItemMonitor> updateService ( final Principal principal, final String configurationId, final Entry<DataItemMonitor> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( parameters );
+        entry.getService ().update ( principal, parameters );
         return null;
     }
 

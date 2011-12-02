@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.dataitem;
 
+import java.security.Principal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Dictionary;
@@ -124,7 +125,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> properties ) throws Exception
+    public synchronized void update ( final Principal principal, final Map<String, String> properties ) throws Exception
     {
         disconnect ();
 
