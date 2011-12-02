@@ -120,6 +120,16 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
             return this;
         }
 
+        public boolean hasAttribute ( final String key )
+        {
+            return this.event.getAttributes ().containsKey ( key );
+        }
+
+        public boolean hasAttribute ( final Fields key )
+        {
+            return this.event.getAttributes ().containsKey ( key.getName () );
+        }
+
         public Event build ()
         {
             return new Event ( this.event );
