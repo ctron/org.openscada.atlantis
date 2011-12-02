@@ -459,7 +459,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         {
             builder.attribute ( Event.Fields.COMPONENT, this.component );
         }
-        if ( this.message != null )
+        if ( this.message != null && !builder.hasAttribute ( Event.Fields.MESSAGE ) )
         {
             builder.attribute ( Event.Fields.MESSAGE, this.message );
         }
