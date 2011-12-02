@@ -30,6 +30,7 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -59,9 +60,9 @@ public class Activator implements BundleActivator
 
     private InfoServiceFactory factory;
 
-    private ServiceRegistration factoryHandle;
+    private ServiceRegistration<ConfigurationFactory> factoryHandle;
 
-    private ServiceRegistration dataSourcePoolHandler;
+    private ServiceRegistration<ObjectPool> dataSourcePoolHandler;
 
     private ObjectPoolTracker monitorPoolTracker;
 
@@ -72,7 +73,8 @@ public class Activator implements BundleActivator
     {
     }
 
-    public void start ( BundleContext context ) throws Exception
+    @Override
+    public void start ( final BundleContext context ) throws Exception
     {
         plugin = this;
 
@@ -84,18 +86,19 @@ public class Activator implements BundleActivator
         this.monitorPoolTracker.open ();
 
         this.dataSourcePool = new ObjectPoolImpl ();
-        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, dataSourcePool, DataSource.class.getName () );
+        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class.getName () );
 
         this.factory = new InfoServiceFactory ( context, this.executor, this.monitorPoolTracker, this.dataSourcePool );
-        final Dictionary<String, String> properties = new Hashtable<String, String> ();
+        final Dictionary<String, String> properties = new Hashtable<String, String> ( 2 );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A monitor query" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, InfoServiceFactory.FACTORY_ID );
 
-        this.factoryHandle = context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );
+        this.factoryHandle = context.registerService ( ConfigurationFactory.class, this.factory, properties );
     }
 
-    public void stop ( BundleContext context ) throws Exception
+    @Override
+    public void stop ( final BundleContext context ) throws Exception
     {
         this.factoryHandle.unregister ();
         this.factory.dispose ();

@@ -46,9 +46,9 @@ public class EventPoolManager
 
     private final BundleContext context;
 
-    private final SingleServiceTracker eventManagerTracker;
+    private final SingleServiceTracker<?> eventManagerTracker;
 
-    private final SingleServiceTracker storageTracker;
+    private final SingleServiceTracker<?> storageTracker;
 
     private Storage storage;
 
@@ -56,7 +56,7 @@ public class EventPoolManager
 
     private EventPoolImpl pool;
 
-    private ServiceRegistration poolHandle;
+    private ServiceRegistration<?> poolHandle;
 
     private final String id;
 
@@ -75,18 +75,20 @@ public class EventPoolManager
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "EventPoolManager/" + id ) );
 
-        this.eventManagerTracker = new SingleServiceTracker ( this.context, FilterUtil.createClassFilter ( EventManager.class.getName () ), new SingleServiceListener () {
+        this.eventManagerTracker = new SingleServiceTracker<Object> ( this.context, FilterUtil.createClassFilter ( EventManager.class.getName () ), new SingleServiceListener<Object> () {
 
-            public void serviceChange ( final ServiceReference reference, final Object service )
+            @Override
+            public void serviceChange ( final ServiceReference<Object> reference, final Object service )
             {
                 EventPoolManager.this.setEventManager ( (EventManager)service );
             }
         } );
         this.eventManagerTracker.open ();
 
-        this.storageTracker = new SingleServiceTracker ( this.context, FilterUtil.createClassFilter ( Storage.class.getName () ), new SingleServiceListener () {
+        this.storageTracker = new SingleServiceTracker<Object> ( this.context, FilterUtil.createClassFilter ( Storage.class.getName () ), new SingleServiceListener<Object> () {
 
-            public void serviceChange ( final ServiceReference reference, final Object service )
+            @Override
+            public void serviceChange ( final ServiceReference<Object> reference, final Object service )
             {
                 EventPoolManager.this.setStorageService ( (Storage)service );
             }

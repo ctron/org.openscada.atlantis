@@ -19,6 +19,7 @@
 
 package org.openscada.da.client.connection.service.internal;
 
+import java.security.Principal;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -50,7 +51,7 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
     }
 
     @Override
-    public void delete ( final String pid )
+    public void delete ( final Principal principal, final String pid )
     {
         logger.info ( "Request to delete: {}", pid ); //$NON-NLS-1$
 
@@ -73,7 +74,7 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
     }
 
     @Override
-    public void update ( final String pid, final Map<String, String> properties )
+    public void update ( final Principal principal, final String pid, final Map<String, String> properties )
     {
         logger.info ( "Update request: {} ({})", pid, properties ); //$NON-NLS-1$
 
@@ -87,7 +88,7 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
         synchronized ( this )
         {
             // delete first
-            delete ( pid );
+            delete ( principal, pid );
 
             // create
             final ConnectionManager newManager = new ConnectionManager ( this.context, pid, ConnectionInformation.fromURI ( uri ) );

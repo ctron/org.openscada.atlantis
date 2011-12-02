@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +19,7 @@
 
 package org.openscada.ae.server.common.event.pool.internal;
 
+import java.security.Principal;
 import java.util.Map;
 
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
@@ -33,7 +34,7 @@ public class EventPoolConfigurationFactory extends AbstractServiceConfigurationF
     }
 
     @Override
-    protected Entry<EventPoolManager> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<EventPoolManager> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final String filter = parameters.get ( "filter" );
         final Integer size = Integer.parseInt ( parameters.get ( "size" ) );
@@ -43,13 +44,13 @@ public class EventPoolConfigurationFactory extends AbstractServiceConfigurationF
     }
 
     @Override
-    protected void disposeService ( final String id, final EventPoolManager service )
+    protected void disposeService ( final Principal principal, final String id, final EventPoolManager service )
     {
         service.dispose ();
     }
 
     @Override
-    protected Entry<EventPoolManager> updateService ( final String configurationId, final Entry<EventPoolManager> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<EventPoolManager> updateService ( final Principal principal, final String configurationId, final Entry<EventPoolManager> entry, final Map<String, String> parameters ) throws Exception
     {
         final String filter = parameters.get ( "filter" );
         final Integer size = Integer.parseInt ( parameters.get ( "size" ) );

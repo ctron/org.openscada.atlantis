@@ -22,6 +22,7 @@ package org.openscada.da.master.common.negate;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -34,9 +35,9 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class NegateHandlerImpl extends AbstractCommonHandlerImpl
 {
-    private boolean active = false;
+    private boolean active;
 
-    public NegateHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker )
+    public NegateHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, NegateHandlerFactoryImpl.FACTORY_ID, NegateHandlerFactoryImpl.FACTORY_ID );
     }

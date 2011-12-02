@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +19,7 @@
 
 package org.openscada.da.datasource.testing;
 
+import java.security.Principal;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -50,18 +51,20 @@ public abstract class AbstractDataSourceFactory implements ConfigurationFactory
 
     private final Map<String, DefaultDataSource> dataSources = new HashMap<String, DefaultDataSource> ();
 
-    private final Map<String, ServiceRegistration> regs = new HashMap<String, ServiceRegistration> ();
+    private final Map<String, ServiceRegistration<DataSource>> regs = new HashMap<String, ServiceRegistration<DataSource>> ();
 
-    public synchronized void delete ( final String configurationId ) throws Exception
+    @Override
+    public synchronized void delete ( final Principal principal, final String configurationId ) throws Exception
     {
-        final ServiceRegistration reg = this.regs.remove ( configurationId );
+        final ServiceRegistration<DataSource> reg = this.regs.remove ( configurationId );
         reg.unregister ();
 
         final DefaultDataSource source = this.dataSources.remove ( configurationId );
         source.dispose ();
     }
 
-    public synchronized void update ( final String configurationId, final Map<String, String> properties ) throws Exception
+    @Override
+    public synchronized void update ( final Principal principal, final String configurationId, final Map<String, String> properties ) throws Exception
     {
         DefaultDataSource source = this.dataSources.get ( configurationId );
         if ( source == null )
@@ -71,7 +74,7 @@ public abstract class AbstractDataSourceFactory implements ConfigurationFactory
             final Dictionary<String, String> props = new Hashtable<String, String> ();
             props.put ( DataSource.DATA_SOURCE_ID, configurationId );
 
-            this.regs.put ( configurationId, this.context.registerService ( DataSource.class.getName (), source, props ) );
+            this.regs.put ( configurationId, this.context.registerService ( DataSource.class, source, props ) );
         }
         source.update ( properties );
     }
@@ -80,7 +83,7 @@ public abstract class AbstractDataSourceFactory implements ConfigurationFactory
 
     public synchronized void dispose ()
     {
-        for ( final ServiceRegistration reg : this.regs.values () )
+        for ( final ServiceRegistration<DataSource> reg : this.regs.values () )
         {
             reg.unregister ();
         }

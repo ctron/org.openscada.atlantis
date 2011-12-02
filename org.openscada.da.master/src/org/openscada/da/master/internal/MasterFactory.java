@@ -19,6 +19,7 @@
 
 package org.openscada.da.master.internal;
 
+import java.security.Principal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
@@ -71,7 +72,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
     }
 
     @Override
-    protected Entry<MasterItemImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<MasterItemImpl> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final MasterItemImpl service = new MasterItemImpl ( this.executor, context, configurationId, this.objectPoolTracker );
 
@@ -89,7 +90,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final MasterItemImpl service )
+    protected void disposeService ( final Principal principal, final String configurationId, final MasterItemImpl service )
     {
         this.dataSourcePool.removeService ( configurationId, service );
         this.masterItemPool.removeService ( configurationId, service );
@@ -97,7 +98,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
     }
 
     @Override
-    protected Entry<MasterItemImpl> updateService ( final String configurationId, final Entry<MasterItemImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<MasterItemImpl> updateService ( final Principal principal, final String configurationId, final Entry<MasterItemImpl> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

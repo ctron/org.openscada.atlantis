@@ -46,13 +46,13 @@ public class Activator implements BundleActivator
 
     private BundleMonitorQuery allQuery;
 
-    private ServiceRegistration handle;
+    private ServiceRegistration<MonitorQuery> handle;
 
     private ObjectPoolTracker poolTracker;
 
     private QueryServiceFactory factory;
 
-    private ServiceRegistration factoryHandle;
+    private ServiceRegistration<ConfigurationFactory> factoryHandle;
 
     private ExecutorService executor;
 
@@ -79,7 +79,7 @@ public class Activator implements BundleActivator
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A condition query containing all condition services" );
 
-        this.handle = this.context.registerService ( MonitorQuery.class.getName (), this.allQuery, properties );
+        this.handle = this.context.registerService ( MonitorQuery.class, this.allQuery, properties );
 
         // register factory
         this.factory = new QueryServiceFactory ( this.executor, context, this.poolTracker );
@@ -87,7 +87,7 @@ public class Activator implements BundleActivator
         properties.put ( Constants.SERVICE_DESCRIPTION, "A monitor query" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, QueryServiceFactory.FACTORY_ID );
 
-        this.factoryHandle = context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );
+        this.factoryHandle = context.registerService ( ConfigurationFactory.class, this.factory, properties );
 
         logger.info ( "Initialized" );
     }

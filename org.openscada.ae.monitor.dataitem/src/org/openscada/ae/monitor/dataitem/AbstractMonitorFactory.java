@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.dataitem;
 
+import java.security.Principal;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -54,7 +55,7 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
     }
 
     @Override
-    protected Entry<DataItemMonitor> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemMonitor> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final DataItemMonitor instance = createInstance ( configurationId, this.eventProcessor );
 
@@ -68,14 +69,14 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
     }
 
     @Override
-    protected void disposeService ( final String id, final DataItemMonitor service )
+    protected void disposeService ( final Principal principal, final String id, final DataItemMonitor service )
     {
         this.servicePool.removeService ( id, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<DataItemMonitor> updateService ( final String configurationId, final Entry<DataItemMonitor> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemMonitor> updateService ( final Principal principal, final String configurationId, final Entry<DataItemMonitor> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

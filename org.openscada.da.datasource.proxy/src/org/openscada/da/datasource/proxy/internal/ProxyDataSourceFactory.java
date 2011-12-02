@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +19,7 @@
 
 package org.openscada.da.datasource.proxy.internal;
 
+import java.security.Principal;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,6 +27,7 @@ import java.util.concurrent.Executors;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -41,7 +43,7 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
 
     private final ObjectPoolImpl objectPool;
 
-    private final ServiceRegistration poolRegistration;
+    private final ServiceRegistration<ObjectPool> poolRegistration;
 
     public ProxyDataSourceFactory ( final BundleContext context ) throws InvalidSyntaxException
     {
@@ -68,7 +70,7 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected Entry<ProxyDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<ProxyDataSource> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final ProxyDataSource dataSource = new ProxyDataSource ( this.poolTracker, this.executor );
         dataSource.update ( parameters );
@@ -79,14 +81,14 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final ProxyDataSource service )
+    protected void disposeService ( final Principal principal, final String configurationId, final ProxyDataSource service )
     {
         this.objectPool.removeService ( configurationId, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<ProxyDataSource> updateService ( final String configurationId, final Entry<ProxyDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<ProxyDataSource> updateService ( final Principal principal, final String configurationId, final Entry<ProxyDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

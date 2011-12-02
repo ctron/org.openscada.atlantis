@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,8 +19,10 @@
 
 package org.openscada.da.master.common.scale;
 
+import java.security.Principal;
 import java.util.Map;
 
+import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -36,9 +38,9 @@ public class ScaleHandlerFactoryImpl extends AbstractServiceConfigurationFactory
 
     private final ObjectPoolTracker poolTracker;
 
-    private final ServiceTracker caTracker;
+    private final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker;
 
-    public ScaleHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ServiceTracker caTracker, final int priority ) throws InvalidSyntaxException
+    public ScaleHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final int priority ) throws InvalidSyntaxException
     {
         super ( context );
         this.priority = priority;
@@ -54,7 +56,7 @@ public class ScaleHandlerFactoryImpl extends AbstractServiceConfigurationFactory
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final AbstractMasterHandlerImpl handler = new ScaleHandlerImpl ( configurationId, this.poolTracker, this.priority, this.caTracker );
         handler.update ( parameters );
@@ -62,14 +64,14 @@ public class ScaleHandlerFactoryImpl extends AbstractServiceConfigurationFactory
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> updateService ( final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> updateService ( final Principal principal, final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;
     }
 
     @Override
-    protected void disposeService ( final String id, final AbstractMasterHandlerImpl service )
+    protected void disposeService ( final Principal principal, final String id, final AbstractMasterHandlerImpl service )
     {
         service.dispose ();
     }

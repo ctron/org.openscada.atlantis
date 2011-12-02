@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.osgi.summary;
 
+import java.security.Principal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
@@ -50,7 +51,7 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<AttributeDa
     }
 
     @Override
-    protected Entry<AttributeDataSourceSummarizer> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<AttributeDataSourceSummarizer> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final AttributeDataSourceSummarizer service = new AttributeDataSourceSummarizer ( this.executor, this.tracker );
         service.update ( parameters );
@@ -62,14 +63,14 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<AttributeDa
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final AttributeDataSourceSummarizer service )
+    protected void disposeService ( final Principal principal, final String configurationId, final AttributeDataSourceSummarizer service )
     {
         this.pool.removeService ( configurationId, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<AttributeDataSourceSummarizer> updateService ( final String configurationId, final Entry<AttributeDataSourceSummarizer> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<AttributeDataSourceSummarizer> updateService ( final Principal principal, final String configurationId, final Entry<AttributeDataSourceSummarizer> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

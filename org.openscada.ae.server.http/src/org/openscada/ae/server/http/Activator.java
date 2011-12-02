@@ -33,6 +33,7 @@ import org.openscada.ae.server.http.monitor.EventMonitorFactory;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -55,17 +56,17 @@ public class Activator implements BundleActivator
 
     private EventProcessor eventProcessor;
 
-    private ServiceTracker httpServiceTracker;
+    private ServiceTracker<HttpService, HttpService> httpServiceTracker;
 
     private HttpService httpService;
 
-    private ServiceRegistration factoryServiceHandle;
+    private ServiceRegistration<?> factoryServiceHandle;
 
     private EventMonitorFactory factory;
 
     private ObjectPoolImpl monitorServicePool;
 
-    private ServiceRegistration monitorServicePoolHandler;
+    private ServiceRegistration<ObjectPool> monitorServicePoolHandler;
 
     /*
      * (non-Javadoc)
@@ -82,7 +83,7 @@ public class Activator implements BundleActivator
         this.monitorServicePool = new ObjectPoolImpl ();
         this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class.getName () );
 
-        this.httpServiceTracker = new ServiceTracker ( context, HttpService.class.getName (), createHttpServiceTrackerCustomizer () );
+        this.httpServiceTracker = new ServiceTracker<HttpService, HttpService> ( context, HttpService.class, createHttpServiceTrackerCustomizer () );
 
         this.eventProcessor.open ();
 
@@ -160,18 +161,18 @@ public class Activator implements BundleActivator
         }
     }
 
-    private ServiceTrackerCustomizer createHttpServiceTrackerCustomizer ()
+    private ServiceTrackerCustomizer<HttpService, HttpService> createHttpServiceTrackerCustomizer ()
     {
-        return new ServiceTrackerCustomizer () {
+        return new ServiceTrackerCustomizer<HttpService, HttpService> () {
             @Override
-            public Object addingService ( final ServiceReference reference )
+            public HttpService addingService ( final ServiceReference<HttpService> reference )
             {
-                final Object service = Activator.this.context.getService ( reference );
+                final HttpService service = Activator.this.context.getService ( reference );
                 synchronized ( Activator.this )
                 {
                     if ( Activator.this.httpService == null )
                     {
-                        Activator.this.httpService = (HttpService)service;
+                        Activator.this.httpService = service;
                         Activator.this.bind ();
                     }
                 }
@@ -179,13 +180,13 @@ public class Activator implements BundleActivator
             }
 
             @Override
-            public void modifiedService ( final ServiceReference reference, final Object service )
+            public void modifiedService ( final ServiceReference<HttpService> reference, final HttpService service )
             {
                 // pass
             }
 
             @Override
-            public void removedService ( final ServiceReference reference, final Object service )
+            public void removedService ( final ServiceReference<HttpService> reference, final HttpService service )
             {
                 synchronized ( Activator.this )
                 {

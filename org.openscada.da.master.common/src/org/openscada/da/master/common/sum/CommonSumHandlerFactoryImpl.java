@@ -19,6 +19,7 @@
 
 package org.openscada.da.master.common.sum;
 
+import java.security.Principal;
 import java.util.Map;
 
 import org.openscada.da.master.AbstractMasterHandlerImpl;
@@ -46,7 +47,7 @@ public class CommonSumHandlerFactoryImpl extends AbstractServiceConfigurationFac
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final AbstractMasterHandlerImpl handler = new CommonSumHandler ( this.poolTracker );
         handler.update ( parameters );
@@ -54,14 +55,14 @@ public class CommonSumHandlerFactoryImpl extends AbstractServiceConfigurationFac
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> updateService ( final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> updateService ( final Principal principal, final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;
     }
 
     @Override
-    protected void disposeService ( final String id, final AbstractMasterHandlerImpl service )
+    protected void disposeService ( final Principal principal, final String id, final AbstractMasterHandlerImpl service )
     {
         service.dispose ();
     }

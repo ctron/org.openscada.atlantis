@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA DA Item Datasource
+Bundle-Name: openSCADA DA Item Datasource
 Bundle-SymbolicName: org.openscada.da.datasource.item
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.18.0.qualifier
 Bundle-Activator: org.openscada.da.datasource.item.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

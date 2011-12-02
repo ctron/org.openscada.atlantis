@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +19,7 @@
 
 package org.openscada.ae.event.logger.internal;
 
+import java.security.Principal;
 import java.util.Map;
 
 import org.openscada.da.master.MasterItem;
@@ -47,7 +48,7 @@ public class DataSourceLoggerFactory extends AbstractServiceConfigurationFactory
     }
 
     @Override
-    protected Entry<MasterItemLogger> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<MasterItemLogger> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final MasterItemLogger logger = new MasterItemLogger ( context, this.poolTracker, 0 );
         logger.update ( parameters );
@@ -55,13 +56,13 @@ public class DataSourceLoggerFactory extends AbstractServiceConfigurationFactory
     }
 
     @Override
-    protected void disposeService ( final String id, final MasterItemLogger service )
+    protected void disposeService ( final Principal principal, final String id, final MasterItemLogger service )
     {
         service.dispose ();
     }
 
     @Override
-    protected Entry<MasterItemLogger> updateService ( final String configurationId, final Entry<MasterItemLogger> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<MasterItemLogger> updateService ( final Principal principal, final String configurationId, final Entry<MasterItemLogger> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

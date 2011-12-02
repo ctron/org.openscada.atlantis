@@ -19,6 +19,7 @@
 
 package org.openscada.hd.server.common.item.internal;
 
+import java.security.Principal;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -96,7 +97,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
     }
 
     @Override
-    public void delete ( final String configurationId ) throws Exception
+    public void delete ( final Principal principal, final String configurationId ) throws Exception
     {
         final ItemWrapper item;
         synchronized ( this.items )
@@ -116,7 +117,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
     }
 
     @Override
-    public void update ( final String configurationId, final Map<String, String> properties ) throws Exception
+    public void update ( final Principal principal, final String configurationId, final Map<String, String> properties ) throws Exception
     {
         logger.info ( "Update call for {} -> {}", new Object[] { configurationId, properties } );
 

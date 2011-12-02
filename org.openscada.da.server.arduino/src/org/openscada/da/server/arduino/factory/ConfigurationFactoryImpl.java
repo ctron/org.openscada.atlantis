@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.arduino.factory;
 
+import java.security.Principal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
@@ -46,7 +47,7 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected Entry<ArduinoDevice> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<ArduinoDevice> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final ArduinoDevice device = new ArduinoDevice ( this.context, configurationId, parameters, this.itemPool, this.executor );
 
@@ -56,7 +57,7 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected Entry<ArduinoDevice> updateService ( final String configurationId, final Entry<ArduinoDevice> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<ArduinoDevice> updateService ( final Principal principal, final String configurationId, final Entry<ArduinoDevice> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().dispose ();
         entry.getHandle ().unregister ();
@@ -69,7 +70,7 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected void disposeService ( final String id, final ArduinoDevice service )
+    protected void disposeService ( final Principal principal, final String id, final ArduinoDevice service )
     {
         service.dispose ();
     }
