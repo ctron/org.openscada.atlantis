@@ -39,7 +39,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
 {
     private EventMatcher matcher = null;
 
-    private String monitorType = "EVENT";
+    private String monitorType = Messages.getString ( "EventMonitorImpl.tag.event" ); //$NON-NLS-1$
 
     public EventMonitorImpl ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String id )
     {
@@ -52,10 +52,10 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
         setEventInformationAttributes ( convertAttributes ( cfg ) );
-        setActive ( cfg.getBoolean ( "active", true ) );
-        setRequireAkn ( cfg.getBoolean ( "requireAck", true ) );
-        setEventMatcher ( cfg.getString ( "filter", "" ) );
-        setMonitorType ( cfg.getString ( "monitorType", "EVENT" ) );
+        setActive ( cfg.getBoolean ( "active", true ) ); //$NON-NLS-1$
+        setRequireAkn ( cfg.getBoolean ( "requireAck", true ) ); //$NON-NLS-1$
+        setEventMatcher ( cfg.getString ( "filter", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        setMonitorType ( cfg.getString ( "monitorType", Messages.getString ( "EventMonitorImpl.tag.event" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void setEventMatcher ( final String filter )
@@ -72,7 +72,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "info." ).entrySet () )
+        for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "info." ).entrySet () ) //$NON-NLS-1$
         {
             attributes.put ( entry.getKey (), Variant.valueOf ( entry.getValue () ) );
         }
@@ -96,7 +96,7 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
                 .attribute ( Fields.COMMENT, annotateCommentWithSource ( event ) ) //
                 .attribute ( Fields.SOURCE, getId () ) //
                 .attribute ( Fields.MONITOR_TYPE, this.monitorType )//
-                .attribute ( "sequence", 0 )//
+                .attribute ( "sequence", 0 )// //$NON-NLS-1$
                 .build ();
                 return new Pair<Boolean, Event> ( true, resultEvent );
             }
@@ -115,19 +115,19 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
         final Variant originalComment = event.getField ( Fields.COMMENT );
         final Variant originalSource = event.getField ( Fields.SOURCE );
         boolean commentThere = false;
-        if ( originalComment != null && originalComment.isString () && originalComment.asString ( "" ).length () > 0 )
+        if ( originalComment != null && originalComment.isString () && originalComment.asString ( "" ).length () > 0 ) //$NON-NLS-1$
         {
             commentThere = true;
-            sb.append ( originalComment.asString ( "" ) );
+            sb.append ( originalComment.asString ( "" ) ); //$NON-NLS-1$
         }
-        if ( originalSource != null && originalSource.isString () && originalSource.asString ( "" ).length () > 0 )
+        if ( originalSource != null && originalSource.isString () && originalSource.asString ( "" ).length () > 0 ) //$NON-NLS-1$
         {
             if ( commentThere )
             {
-                sb.append ( "; " );
+                sb.append ( Messages.getString ( "EventMonitorImpl.delimiter" ) ); //$NON-NLS-1$
             }
-            sb.append ( "original source: " );
-            sb.append ( originalSource.asString ( "" ) );
+            sb.append ( Messages.getString ( "EventMonitorImpl.string.originalSource" ) ); //$NON-NLS-1$
+            sb.append ( originalSource.asString ( "" ) ); //$NON-NLS-1$
         }
 
         return Variant.valueOf ( sb.toString () );
