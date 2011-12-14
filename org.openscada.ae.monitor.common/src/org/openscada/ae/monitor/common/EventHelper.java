@@ -45,7 +45,7 @@ public class EventHelper
 
         if ( userInformation != null && userInformation.getName () != null )
         {
-            builder.attribute ( Event.Fields.ACTOR_TYPE, userInformation.getName () );
+            builder.attribute ( Event.Fields.ACTOR_NAME, userInformation.getName () );
             builder.attribute ( Event.Fields.ACTOR_TYPE, "USER" );
         }
     }
