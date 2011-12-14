@@ -471,6 +471,10 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private static boolean ackPending ( final StateInformation information )
     {
+        if ( !information.getRequireAck () )
+        {
+            return false;
+        }
         if ( information.getLastFailTimestamp () == null )
         {
             return false;
