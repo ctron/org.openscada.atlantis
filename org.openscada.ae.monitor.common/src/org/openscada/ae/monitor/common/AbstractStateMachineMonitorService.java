@@ -176,6 +176,25 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         applyState ( this.information, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
+    /**
+     * This methods triggers a failure that is active for no time.
+     * 
+     * <p>
+     * This methods combined a {@link #setFailure(Variant, Date)} and 
+     * @link #setOk(Variant, Date)} call in a compound operation
+     * </p>
+     */
+    protected synchronized void triggerFail ( final Variant value, final Date timestamp, final MonitorDecorator eventDecorator )
+    {
+        final StateInformation newInformation = new StateInformation ( this.information );
+        newInformation.setState ( State.OK );
+        newInformation.setValue ( value );
+        newInformation.setTimestamp ( timestamp );
+        newInformation.setLastFailTimestamp ( timestamp );
+
+        applyAndSendStatus ( newInformation, eventDecorator );
+    }
+
     protected synchronized void setFailure ( final Variant value, final Date timestamp, final MonitorDecorator eventDecorator )
     {
         if ( this.information.getState () != null && this.information.getState () == State.FAILED )

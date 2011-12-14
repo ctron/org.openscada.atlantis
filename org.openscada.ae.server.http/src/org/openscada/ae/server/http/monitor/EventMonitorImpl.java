@@ -88,9 +88,14 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
             if ( this.matcher.matches ( event ) )
             {
                 final Variant message = makeMessage ( event );
+
                 // FIXME: just for now, the real implementation should set AKN directly
+                /*
                 setFailure ( Variant.NULL, event.getSourceTimestamp (), new EventMonitorDecorator ( 1, message ) );
                 setOk ( Variant.NULL, event.getSourceTimestamp (), new EventMonitorDecorator ( 2, message ) );
+                */
+                triggerFail ( Variant.NULL, event.getSourceTimestamp (), new EventMonitorDecorator ( 1, message ) );
+
                 final Event resultEvent = Event.create () //
                 .event ( event ) //
                 .attribute ( Fields.COMMENT, annotateCommentWithSource ( event ) ) //
