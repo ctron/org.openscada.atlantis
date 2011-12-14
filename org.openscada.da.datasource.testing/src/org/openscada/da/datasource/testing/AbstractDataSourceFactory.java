@@ -19,7 +19,6 @@
 
 package org.openscada.da.datasource.testing;
 
-import java.security.Principal;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -28,6 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
+import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 
@@ -54,7 +54,7 @@ public abstract class AbstractDataSourceFactory implements ConfigurationFactory
     private final Map<String, ServiceRegistration<DataSource>> regs = new HashMap<String, ServiceRegistration<DataSource>> ();
 
     @Override
-    public synchronized void delete ( final Principal principal, final String configurationId ) throws Exception
+    public synchronized void delete ( final UserInformation userInformation, final String configurationId ) throws Exception
     {
         final ServiceRegistration<DataSource> reg = this.regs.remove ( configurationId );
         reg.unregister ();
@@ -64,7 +64,7 @@ public abstract class AbstractDataSourceFactory implements ConfigurationFactory
     }
 
     @Override
-    public synchronized void update ( final Principal principal, final String configurationId, final Map<String, String> properties ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final String configurationId, final Map<String, String> properties ) throws Exception
     {
         DefaultDataSource source = this.dataSources.get ( configurationId );
         if ( source == null )

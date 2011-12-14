@@ -19,9 +19,9 @@
 
 package org.openscada.ae.server.common.event.pool.internal;
 
-import java.security.Principal;
 import java.util.Map;
 
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 
@@ -34,7 +34,7 @@ public class EventPoolConfigurationFactory extends AbstractServiceConfigurationF
     }
 
     @Override
-    protected Entry<EventPoolManager> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<EventPoolManager> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final String filter = parameters.get ( "filter" );
         final Integer size = Integer.parseInt ( parameters.get ( "size" ) );
@@ -44,13 +44,13 @@ public class EventPoolConfigurationFactory extends AbstractServiceConfigurationF
     }
 
     @Override
-    protected void disposeService ( final Principal principal, final String id, final EventPoolManager service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final EventPoolManager service )
     {
         service.dispose ();
     }
 
     @Override
-    protected Entry<EventPoolManager> updateService ( final Principal principal, final String configurationId, final Entry<EventPoolManager> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<EventPoolManager> updateService ( final UserInformation userInformation, final String configurationId, final Entry<EventPoolManager> entry, final Map<String, String> parameters ) throws Exception
     {
         final String filter = parameters.get ( "filter" );
         final Integer size = Integer.parseInt ( parameters.get ( "size" ) );

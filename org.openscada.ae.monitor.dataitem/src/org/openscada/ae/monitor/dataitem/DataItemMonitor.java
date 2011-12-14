@@ -19,14 +19,14 @@
 
 package org.openscada.ae.monitor.dataitem;
 
-import java.security.Principal;
 import java.util.Map;
 
 import org.openscada.ae.monitor.MonitorService;
+import org.openscada.sec.UserInformation;
 
 public interface DataItemMonitor extends MonitorService
 {
-    public abstract void update ( Principal principal, final Map<String, String> properties ) throws Exception;
+    public abstract void update ( UserInformation userInformation, final Map<String, String> properties ) throws Exception;
 
     public abstract void dispose ();
 

@@ -19,7 +19,6 @@
 
 package org.openscada.ae.monitor.dataitem;
 
-import java.security.Principal;
 import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -55,11 +54,11 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
     }
 
     @Override
-    protected Entry<DataItemMonitor> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemMonitor> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final DataItemMonitor instance = createInstance ( configurationId, this.eventProcessor );
 
-        instance.update ( principal, parameters );
+        instance.update ( userInformation, parameters );
         instance.init ();
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
@@ -69,16 +68,16 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
     }
 
     @Override
-    protected void disposeService ( final Principal principal, final String id, final DataItemMonitor service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final DataItemMonitor service )
     {
         this.servicePool.removeService ( id, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<DataItemMonitor> updateService ( final Principal principal, final String configurationId, final Entry<DataItemMonitor> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemMonitor> updateService ( final UserInformation userInformation, final String configurationId, final Entry<DataItemMonitor> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( principal, parameters );
+        entry.getService ().update ( userInformation, parameters );
         return null;
     }
 

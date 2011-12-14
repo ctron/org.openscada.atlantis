@@ -29,7 +29,6 @@ import org.openscada.core.Variant;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.sec.UserInformationPrincipal;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -38,13 +37,13 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
     private final String prefix;
 
-    private final ServiceTracker<ConfigurationAdministrator,ConfigurationAdministrator> tracker;
+    private final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> tracker;
 
     private final String factoryId;
 
     private final String configurationId;
 
-    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator,ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
+    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
     {
         super ( poolTracker, priority );
         this.configurationId = configurationId;
@@ -163,9 +162,9 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
                 }
             }
 
-            final ConfigurationAdministrator admin = (ConfigurationAdministrator)service;
+            final ConfigurationAdministrator admin = service;
 
-            admin.updateConfiguration ( UserInformationPrincipal.create ( operationParameters.getUserInformation () ), this.factoryId, this.configurationId, data, fullSet );
+            admin.updateConfiguration ( operationParameters.getUserInformation (), this.factoryId, this.configurationId, data, fullSet );
 
             return result;
         }

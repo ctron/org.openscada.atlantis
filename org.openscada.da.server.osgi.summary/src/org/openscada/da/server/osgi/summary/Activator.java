@@ -46,7 +46,7 @@ public class Activator implements BundleActivator
 
     private FactoryImpl factory;
 
-    private ServiceRegistration factoryHandle;
+    private ServiceRegistration<?> factoryHandle;
 
     /*
      * (non-Javadoc)

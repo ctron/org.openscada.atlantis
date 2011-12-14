@@ -19,13 +19,13 @@
 
 package org.openscada.da.server.dave.factory;
 
-import java.security.Principal;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
 import org.openscada.da.server.dave.DaveDevice;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 
@@ -66,7 +66,7 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected Entry<DaveDevice> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DaveDevice> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final DaveDevice device = new DaveDevice ( this.context, configurationId, parameters );
 
@@ -76,14 +76,14 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected Entry<DaveDevice> updateService ( final Principal principal, final String configurationId, final Entry<DaveDevice> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DaveDevice> updateService ( final UserInformation userInformation, final String configurationId, final Entry<DaveDevice> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;
     }
 
     @Override
-    protected void disposeService ( final Principal principal, final String id, final DaveDevice service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final DaveDevice service )
     {
         service.dispose ();
     }

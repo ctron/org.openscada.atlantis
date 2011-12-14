@@ -19,13 +19,13 @@
 
 package org.openscada.ae.server.common.monitor.internal;
 
-import java.security.Principal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.server.common.monitor.MonitorQuery;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
@@ -47,7 +47,7 @@ public class QueryServiceFactory extends AbstractServiceConfigurationFactory<Bun
     }
 
     @Override
-    protected Entry<BundleMonitorQuery> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<BundleMonitorQuery> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final BundleMonitorQuery query = new BundleMonitorQuery ( this.executor, context, this.poolTracker );
         query.update ( parameters );
@@ -60,13 +60,13 @@ public class QueryServiceFactory extends AbstractServiceConfigurationFactory<Bun
     }
 
     @Override
-    protected void disposeService ( final Principal principal, final String configurationId, final BundleMonitorQuery service )
+    protected void disposeService ( final UserInformation userInformation, final String configurationId, final BundleMonitorQuery service )
     {
         service.dispose ();
     }
 
     @Override
-    protected Entry<BundleMonitorQuery> updateService ( final Principal principal, final String configurationId, final Entry<BundleMonitorQuery> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<BundleMonitorQuery> updateService ( final UserInformation userInformation, final String configurationId, final Entry<BundleMonitorQuery> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return entry;

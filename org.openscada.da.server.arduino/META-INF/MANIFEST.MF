@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Arduino DA Server
 Bundle-SymbolicName: org.openscada.da.server.arduino
-Bundle-Version: 0.17.0.qualifier
+Bundle-Version: 0.18.0.qualifier
 Bundle-Activator: org.openscada.da.server.arduino.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -15,6 +15,7 @@ Import-Package: org.openscada.ca;version="0.15.0",
  org.openscada.da.server.common.chain.item;version="0.15.0",
  org.openscada.da.server.common.chain.storage;version="0.15.0",
  org.openscada.protocols.arduino;version="1.0.0",
+ org.openscada.sec;version="0.4.0",
  org.openscada.utils.concurrent;version="0.15.0",
  org.openscada.utils.osgi.ca.factory;version="0.15.0",
  org.openscada.utils.osgi.pool;version="0.15.0",

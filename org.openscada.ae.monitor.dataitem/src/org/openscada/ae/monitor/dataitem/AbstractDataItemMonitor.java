@@ -19,7 +19,6 @@
 
 package org.openscada.ae.monitor.dataitem;
 
-import java.security.Principal;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Dictionary;
@@ -44,7 +43,7 @@ import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
-import org.openscada.sec.UserInformationPrincipal;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
@@ -125,7 +124,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     }
 
     @Override
-    public synchronized void update ( final Principal principal, final Map<String, String> properties ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> properties ) throws Exception
     {
         disconnect ();
 
@@ -381,7 +380,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         {
             try
             {
-                Activator.getConfigAdmin ().updateConfiguration ( UserInformationPrincipal.create ( operationParameters.getUserInformation () ), factoryId, configurationId, configUpdate, false );
+                Activator.getConfigAdmin ().updateConfiguration ( operationParameters.getUserInformation (), factoryId, configurationId, configUpdate, false );
             }
             catch ( final Exception e )
             {

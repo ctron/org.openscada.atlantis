@@ -19,12 +19,12 @@
 
 package org.openscada.da.datasource.proxy.internal;
 
-import java.security.Principal;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.da.datasource.DataSource;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPool;
@@ -70,7 +70,7 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected Entry<ProxyDataSource> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<ProxyDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final ProxyDataSource dataSource = new ProxyDataSource ( this.poolTracker, this.executor );
         dataSource.update ( parameters );
@@ -81,14 +81,14 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected void disposeService ( final Principal principal, final String configurationId, final ProxyDataSource service )
+    protected void disposeService ( final UserInformation userInformation, final String configurationId, final ProxyDataSource service )
     {
         this.objectPool.removeService ( configurationId, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<ProxyDataSource> updateService ( final Principal principal, final String configurationId, final Entry<ProxyDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<ProxyDataSource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<ProxyDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

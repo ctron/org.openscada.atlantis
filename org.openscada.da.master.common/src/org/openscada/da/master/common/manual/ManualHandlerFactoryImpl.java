@@ -19,12 +19,12 @@
 
 package org.openscada.da.master.common.manual;
 
-import java.security.Principal;
 import java.util.Map;
 
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
@@ -60,22 +60,22 @@ public class ManualHandlerFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final AbstractMasterHandlerImpl handler = new ManualHandlerImpl ( configurationId, this.eventProcessor, this.poolTracker, this.priority, this.caTracker );
-        handler.update ( principal, parameters );
+        handler.update ( userInformation, parameters );
         return new Entry<AbstractMasterHandlerImpl> ( configurationId, handler );
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> updateService ( final Principal principal, final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> updateService ( final UserInformation userInformation, final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( principal, parameters );
+        entry.getService ().update ( userInformation, parameters );
         return null;
     }
 
     @Override
-    protected void disposeService ( final Principal principal, final String id, final AbstractMasterHandlerImpl service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final AbstractMasterHandlerImpl service )
     {
         service.dispose ();
     }

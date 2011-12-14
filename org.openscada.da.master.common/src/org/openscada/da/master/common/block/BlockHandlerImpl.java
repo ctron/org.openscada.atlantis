@@ -19,7 +19,6 @@
 
 package org.openscada.da.master.common.block;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -126,9 +125,9 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Principal principal, final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( principal, parameters );
+        super.update ( userInformation, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         this.note = updateValue ( cfg.getString ( "note", null ), this.note ); //$NON-NLS-1$

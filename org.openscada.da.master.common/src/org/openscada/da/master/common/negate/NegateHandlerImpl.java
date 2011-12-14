@@ -19,7 +19,6 @@
 
 package org.openscada.da.master.common.negate;
 
-import java.security.Principal;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -31,6 +30,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -78,9 +78,9 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Principal principal, final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( principal, parameters );
+        super.update ( userInformation, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         this.active = cfg.getBoolean ( "active", false ); //$NON-NLS-1$

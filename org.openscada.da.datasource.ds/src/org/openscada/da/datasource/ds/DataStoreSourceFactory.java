@@ -19,7 +19,6 @@
 
 package org.openscada.da.datasource.ds;
 
-import java.security.Principal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
@@ -27,6 +26,7 @@ import java.util.concurrent.Executor;
 
 import org.openscada.da.datasource.DataSource;
 import org.openscada.ds.DataNodeTracker;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
@@ -76,7 +76,7 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected Entry<DataStoreDataSource> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataStoreDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         logger.debug ( "Creating new memory source: {}", configurationId );
 
@@ -92,7 +92,7 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected void disposeService ( final Principal principal, final String id, final DataStoreDataSource service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final DataStoreDataSource service )
     {
         logger.info ( "Disposing: {}", id );
 
@@ -102,7 +102,7 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected Entry<DataStoreDataSource> updateService ( final Principal principal, final String configurationId, final Entry<DataStoreDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataStoreDataSource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<DataStoreDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

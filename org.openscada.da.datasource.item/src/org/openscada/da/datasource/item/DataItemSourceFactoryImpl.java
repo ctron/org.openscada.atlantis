@@ -19,13 +19,13 @@
 
 package org.openscada.da.datasource.item;
 
-import java.security.Principal;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.da.datasource.DataSource;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
@@ -54,7 +54,7 @@ public class DataItemSourceFactoryImpl extends AbstractServiceConfigurationFacto
     }
 
     @Override
-    protected Entry<DataItemSourceImpl> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemSourceImpl> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final DataItemSourceImpl service = new DataItemSourceImpl ( context, this.executor );
 
@@ -67,14 +67,14 @@ public class DataItemSourceFactoryImpl extends AbstractServiceConfigurationFacto
     }
 
     @Override
-    protected void disposeService ( final Principal principal, final String configurationId, final DataItemSourceImpl service )
+    protected void disposeService ( final UserInformation userInformation, final String configurationId, final DataItemSourceImpl service )
     {
         this.objectPool.removeService ( configurationId, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<DataItemSourceImpl> updateService ( final Principal principal, final String configurationId, final Entry<DataItemSourceImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemSourceImpl> updateService ( final UserInformation userInformation, final String configurationId, final Entry<DataItemSourceImpl> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

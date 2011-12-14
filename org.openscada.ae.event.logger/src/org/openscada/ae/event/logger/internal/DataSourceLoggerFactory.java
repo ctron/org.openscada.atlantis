@@ -19,10 +19,10 @@
 
 package org.openscada.ae.event.logger.internal;
 
-import java.security.Principal;
 import java.util.Map;
 
 import org.openscada.da.master.MasterItem;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
@@ -48,23 +48,23 @@ public class DataSourceLoggerFactory extends AbstractServiceConfigurationFactory
     }
 
     @Override
-    protected Entry<MasterItemLogger> createService ( final Principal principal, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<MasterItemLogger> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final MasterItemLogger logger = new MasterItemLogger ( context, this.poolTracker, 0 );
-        logger.update ( principal, parameters );
+        logger.update ( userInformation, parameters );
         return new Entry<MasterItemLogger> ( configurationId, logger );
     }
 
     @Override
-    protected void disposeService ( final Principal principal, final String id, final MasterItemLogger service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final MasterItemLogger service )
     {
         service.dispose ();
     }
 
     @Override
-    protected Entry<MasterItemLogger> updateService ( final Principal principal, final String configurationId, final Entry<MasterItemLogger> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<MasterItemLogger> updateService ( final UserInformation userInformation, final String configurationId, final Entry<MasterItemLogger> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( principal, parameters );
+        entry.getService ().update ( userInformation, parameters );
         return null;
     }
 

@@ -19,7 +19,6 @@
 
 package org.openscada.da.server.dave.data;
 
-import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -32,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.slf4j.Logger;
@@ -192,7 +192,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     }
 
     @Override
-    public synchronized void delete ( final Principal principal, final String configurationId ) throws Exception
+    public synchronized void delete ( final UserInformation userInformation, final String configurationId ) throws Exception
     {
         this.types.remove ( configurationId );
         this.typeDeps.removeAll ( configurationId );
@@ -223,7 +223,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     }
 
     @Override
-    public synchronized void update ( final Principal principal, final String configurationId, final Map<String, String> properties ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final String configurationId, final Map<String, String> properties ) throws Exception
     {
         logger.debug ( "Adding type: {}", configurationId );
 
