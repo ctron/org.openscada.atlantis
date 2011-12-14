@@ -46,22 +46,22 @@ public class EventHelper
     public static Event newFailEvent ( final String id, final String message, final Variant value, final Date timestamp )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, "FAIL", timestamp, message );
-        builder.attribute ( "value", value );
+        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.fail" ), timestamp, message ); //$NON-NLS-1$
+        builder.attribute ( "value", value ); //$NON-NLS-1$
         return builder.build ();
     }
 
     public static Event newUnsafeEvent ( final String id, final String message, final Date timestamp )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, "UNSAFE", timestamp, message );
+        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.unsafe" ), timestamp, message ); //$NON-NLS-1$
         return builder.build ();
     }
 
     public static Event newAknEvent ( final String id, final String message, final Date timestamp, final String user )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, "ACK", timestamp, message );
+        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.akn" ), timestamp, message ); //$NON-NLS-1$
         builder.attribute ( Fields.ACTOR_NAME, user );
         return builder.build ();
     }
@@ -69,16 +69,16 @@ public class EventHelper
     public static Event newOkEvent ( final String id, final String message, final Variant value, final Date timestamp )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, "OK", timestamp, message );
-        builder.attribute ( "value", value );
+        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.ok" ), timestamp, message ); //$NON-NLS-1$
+        builder.attribute ( "value", value ); //$NON-NLS-1$
         return builder.build ();
     }
 
     public static EventBuilder newConfigurationEvent ( final String id, final String message, final Variant value, final Date timestamp )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, "CFG", timestamp, message );
-        builder.attribute ( "value", value );
+        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.cfg" ), timestamp, message ); //$NON-NLS-1$
+        builder.attribute ( "value", value ); //$NON-NLS-1$
         return builder;
     }
 

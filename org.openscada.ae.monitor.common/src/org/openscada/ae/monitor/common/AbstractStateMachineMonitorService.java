@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 
 public class AbstractStateMachineMonitorService extends AbstractPersistentMonitorService
 {
-    private final static boolean DEBUG = Boolean.getBoolean ( "debug" );
+    private final static boolean DEBUG = Boolean.getBoolean ( "debug" ); //$NON-NLS-1$
 
     private final static Logger logger = LoggerFactory.getLogger ( AbstractMonitorService.class );
 
@@ -71,7 +71,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         this.eventProcessor = eventProcessor;
         this.eventInformationAttributes = Collections.emptyMap ();
 
-        sendDebugMessage ( "Initializing" );
+        sendDebugMessage ( "Initializing" ); //$NON-NLS-1$
     }
 
     protected void sendDebugMessage ( final String message )
@@ -84,7 +84,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final EventBuilder builder = createEventBuilder ();
 
         builder.attribute ( Fields.MESSAGE, message );
-        builder.attribute ( Fields.EVENT_TYPE, "DEBUG" );
+        builder.attribute ( Fields.EVENT_TYPE, "DEBUG" ); //$NON-NLS-1$
 
         this.eventProcessor.publishEvent ( builder.build () );
     }
@@ -113,7 +113,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     @Override
     protected synchronized void setPersistentState ( final StateInformation state )
     {
-        logger.debug ( "Setting persistent state: {}", state );
+        logger.debug ( "Setting persistent state: {}", state ); //$NON-NLS-1$
 
         final boolean doInit = this.initialInformation == null;
 
@@ -128,7 +128,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
         if ( doInit )
         {
-            sendDebugMessage ( String.format ( "Initialize from store - current: %s, stored: %s", this.information, this.initialInformation ) );
+            sendDebugMessage ( String.format ( "Initialize from store - current: %s, stored: %s", this.information, this.initialInformation ) ); //$NON-NLS-1$
             final StateInformation newInformation = DEFAULT_STATE.apply ( this.initialInformation ).apply ( this.information );
 
             this.information = newInformation;
@@ -168,7 +168,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     @Override
     protected synchronized void switchToInit ()
     {
-        logger.warn ( "Switched back to init: {}", getId () );
+        logger.warn ( "Switched back to init: {}", getId () ); //$NON-NLS-1$
 
         // FIXME: implement
         this.initSent = false;
@@ -257,7 +257,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setActive ( state );
 
-        publishEvent ( eventDecorator.decorate ( createEvent ( new Date (), null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change active state" ) ) );
+        publishEvent ( eventDecorator.decorate ( createEvent ( new Date (), null, Messages.getString ( "AbstractStateMachineMonitorService.tag.cfg" ), Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, Messages.getString ( "AbstractStateMachineMonitorService.message.changeActiveState" ) ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
         applyAndSendStatus ( newInformation );
     }
 
@@ -271,7 +271,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     {
         if ( !ackPending ( this.information ) )
         {
-            logger.debug ( "No ack is pending - {} / {}", this.information, aknTimestamp );
+            logger.debug ( "No ack is pending - {} / {}", this.information, aknTimestamp ); //$NON-NLS-1$
             return;
         }
 
@@ -280,7 +280,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         newInformation.setLastAckUser ( getUserName ( userInformation ) );
         newInformation.setTimestamp ( aknTimestamp );
 
-        publishEvent ( eventDecorator.decorate ( createEvent ( null, userInformation, "AKN", null ) ) );
+        publishEvent ( eventDecorator.decorate ( createEvent ( null, userInformation, Messages.getString ( "AbstractStateMachineMonitorService.tag.akn" ), null ) ) ); //$NON-NLS-1$
         applyAndSendStatus ( newInformation );
     }
 
@@ -301,7 +301,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setRequireAck ( state );
 
-        publishEvent ( eventDecorator.decorate ( createEvent ( null, null, "CFG", Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, "Change require acknowledge state" ) ) );
+        publishEvent ( eventDecorator.decorate ( createEvent ( null, null, Messages.getString ( "AbstractStateMachineMonitorService.tag.cfg" ), Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, Messages.getString ( "AbstractStateMachineMonitorService.message.changeAknRequired" ) ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
         applyAndSendStatus ( newInformation );
     }
 
@@ -339,7 +339,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         if ( userInformation != null && userInformation.getName () != null )
         {
             builder.attribute ( Fields.ACTOR_NAME, userInformation.getName () );
-            builder.attribute ( Fields.ACTOR_TYPE, "USER" );
+            builder.attribute ( Fields.ACTOR_TYPE, Messages.getString ( "AbstractStateMachineMonitorService.tag.user" ) ); //$NON-NLS-1$
         }
         if ( value != null )
         {
@@ -360,7 +360,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
     {
         final MonitorStatusInformation csi;
 
-        logger.debug ( "Apply new state: {} for {}", new Object[] { information, getId () } );
+        logger.debug ( "Apply new state: {} for {}", new Object[] { information, getId () } ); //$NON-NLS-1$
 
         this.information = information;
 
@@ -376,7 +376,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         }
         else
         {
-            logger.debug ( "Skipping apply notification since we are still un-initialized" );
+            logger.debug ( "Skipping apply notification since we are still un-initialized" ); //$NON-NLS-1$
 
             // otherwise send out our dummy status until we got initialized
             if ( !this.initSent )

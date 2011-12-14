@@ -94,7 +94,7 @@ public abstract class AbstractMonitorService implements MonitorService
                     }
                     catch ( final Throwable e )
                     {
-                        logger.warn ( "Failed to notify", e );
+                        logger.warn ( "Failed to notify", e ); //$NON-NLS-1$
                     }
                 }
             }
