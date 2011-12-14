@@ -31,9 +31,13 @@ import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMasterHandlerImpl
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractConfigurableMasterHandlerImpl.class );
 
     private final String prefix;
 
@@ -144,6 +148,8 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         final ConfigurationAdministrator service = this.tracker.getService ();
         if ( ! ( service instanceof ConfigurationAdministrator ) )
         {
+            logger.info ( "Unable to set attributes - Configuration administrator not available" );
+
             final OperationException error = new OperationException ( "Configuration administrator not available" );
             for ( final String attr : data.keySet () )
             {
