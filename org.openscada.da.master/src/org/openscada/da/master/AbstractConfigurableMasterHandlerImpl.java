@@ -22,13 +22,17 @@ package org.openscada.da.master;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
+import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.utils.concurrent.FutureListener;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
@@ -168,9 +172,23 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
                 }
             }
 
-            final ConfigurationAdministrator admin = service;
+            final NotifyFuture<Configuration> future = service.updateConfiguration ( operationParameters.getUserInformation (), this.factoryId, this.configurationId, data, fullSet );
 
-            admin.updateConfiguration ( operationParameters.getUserInformation (), this.factoryId, this.configurationId, data, fullSet );
+            future.addListener ( new FutureListener<Configuration> () {
+
+                @Override
+                public void complete ( final Future<Configuration> future )
+                {
+                    try
+                    {
+                        logger.info ( "Completed applying: {}", future.get () );
+                    }
+                    catch ( final Exception e )
+                    {
+                        logger.warn ( "Failed applying", e );
+                    }
+                }
+            } );
 
             return result;
         }
