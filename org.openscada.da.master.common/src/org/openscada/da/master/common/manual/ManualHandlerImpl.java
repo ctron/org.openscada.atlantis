@@ -39,9 +39,14 @@ import org.openscada.da.master.common.AbstractCommonHandlerImpl;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ManualHandlerImpl.class );
+
     private Variant value = Variant.NULL;
 
     private String user;
@@ -136,6 +141,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
         final String str = cfg.getString ( "value" ); //$NON-NLS-1$
+        logger.debug ( "Request to set manual value '{}'", str );
         if ( str != null )
         {
             ve.setAsText ( str );
