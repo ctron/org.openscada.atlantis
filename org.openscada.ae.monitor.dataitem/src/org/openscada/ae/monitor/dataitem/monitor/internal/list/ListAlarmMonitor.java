@@ -49,7 +49,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
 
     private final static Logger logger = LoggerFactory.getLogger ( ListAlarmMonitor.class );
 
-    public static final String FACTORY_ID = "ae.monitor.da.listAlarm";
+    public static final String FACTORY_ID = "ae.monitor.da.listAlarm"; //$NON-NLS-1$
 
     private Collection<Variant> referenceList;
 
@@ -59,7 +59,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
 
     public ListAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int defaultPriority )
     {
-        super ( context, executor, poolTracker, eventProcessor, id, id, "VALUE" );
+        super ( context, executor, poolTracker, eventProcessor, id, id, "VALUE" ); //$NON-NLS-1$
         this.defaultPriority = defaultPriority;
     }
 
@@ -89,20 +89,20 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
         // parameter - "referenceList"
-        final Collection<Variant> newReferenceList = parseValues ( cfg.getString ( "referenceList", "" ), cfg.getString ( "splitPattern", "[, \t\n\r]+" ) );
+        final Collection<Variant> newReferenceList = parseValues ( cfg.getString ( "referenceList", "" ), cfg.getString ( "splitPattern", "[, \t\n\r]+" ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         if ( isDifferent ( this.referenceList, newReferenceList ) )
         {
-            final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Change reference value list", Variant.valueOf ( newReferenceList ), new Date () );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), Messages.getString("ListAlarmMonitor.message.changeReferenceList"), Variant.valueOf ( newReferenceList ), new Date () ); //$NON-NLS-1$
             injectEventAttributes ( builder );
             publishEvent ( builder );
             this.referenceList = newReferenceList;
         }
 
         // parameter - "listIsAlarm"
-        final boolean listIsAlarm = cfg.getBoolean ( "listIsAlarm", true );
+        final boolean listIsAlarm = cfg.getBoolean ( "listIsAlarm", true ); //$NON-NLS-1$
         if ( isDifferent ( this.listIsAlarm, listIsAlarm ) )
         {
-            final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Items in reference list are alarm", Variant.valueOf ( listIsAlarm ), new Date () );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), Messages.getString("ListAlarmMonitor.message.alarmItems"), Variant.valueOf ( listIsAlarm ), new Date () ); //$NON-NLS-1$
             injectEventAttributes ( builder );
             publishEvent ( builder );
 
@@ -143,8 +143,8 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
     {
         super.injectAttributes ( builder );
 
-        builder.setAttribute ( this.prefix + ".referenceList", Variant.valueOf ( this.referenceList ) );
-        builder.setAttribute ( this.prefix + ".listIsAlarm", Variant.valueOf ( this.listIsAlarm ) );
+        builder.setAttribute ( this.prefix + ".referenceList", Variant.valueOf ( this.referenceList ) ); //$NON-NLS-1$
+        builder.setAttribute ( this.prefix + ".listIsAlarm", Variant.valueOf ( this.listIsAlarm ) ); //$NON-NLS-1$
     }
 
     @Override
@@ -152,21 +152,21 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
     {
         super.handleConfigUpdate ( configUpdate, attributes, result );
 
-        final Variant reference = attributes.get ( this.prefix + ".referenceList" );
+        final Variant reference = attributes.get ( this.prefix + ".referenceList" ); //$NON-NLS-1$
         if ( reference != null )
         {
-            configUpdate.put ( "referenceList", reference.asString ( "" ) );
-            result.put ( this.prefix + ".referenceList", WriteAttributeResult.OK );
+            configUpdate.put ( "referenceList", reference.asString ( "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+            result.put ( this.prefix + ".referenceList", WriteAttributeResult.OK ); //$NON-NLS-1$
         }
 
-        final Variant listIsAlarm = attributes.get ( this.prefix + ".listIsAlarm" );
+        final Variant listIsAlarm = attributes.get ( this.prefix + ".listIsAlarm" ); //$NON-NLS-1$
         if ( listIsAlarm != null )
         {
             final Boolean value = listIsAlarm.asBoolean ( null );
             if ( value != null )
             {
-                configUpdate.put ( "listIsAlarm", value ? "true" : "false" );
-                result.put ( this.prefix + ".listIsAlarm", WriteAttributeResult.OK );
+                configUpdate.put ( "listIsAlarm", value ? "true" : "false" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                result.put ( this.prefix + ".listIsAlarm", WriteAttributeResult.OK ); //$NON-NLS-1$
             }
         }
     }
@@ -174,7 +174,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
     @Override
     protected void update ( final Builder builder )
     {
-        logger.debug ( "Handle data update: {}", builder );
+        logger.debug ( "Handle data update: {}", builder ); //$NON-NLS-1$
 
         if ( this.value == null || this.value.isNull () || this.timestamp == null || this.referenceList == null )
         {

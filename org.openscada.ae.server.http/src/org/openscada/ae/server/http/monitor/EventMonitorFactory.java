@@ -65,7 +65,7 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
     {
         final EventMonitor instance = new EventMonitorImpl ( context, this.executor, this.eventProcessor, configurationId );
 
-        instance.update ( parameters );
+        instance.update ( userInformation, parameters );
         instance.init ();
 
         this.monitors.put ( configurationId, instance );
@@ -87,7 +87,7 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
     @Override
     protected Entry<EventMonitor> updateService ( final UserInformation userInformation, final String configurationId, final AbstractServiceConfigurationFactory.Entry<EventMonitor> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( parameters );
+        entry.getService ().update ( userInformation, parameters );
         return null;
     }
 

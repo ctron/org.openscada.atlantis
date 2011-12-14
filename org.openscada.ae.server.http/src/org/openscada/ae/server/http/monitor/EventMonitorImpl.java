@@ -32,6 +32,7 @@ import org.openscada.ae.filter.internal.EventMatcherImpl;
 import org.openscada.ae.monitor.common.AbstractStateMachineMonitorService;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.lang.Pair;
 import org.osgi.framework.BundleContext;
 
@@ -47,23 +48,23 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
     }
 
     @Override
-    public void update ( final Map<String, String> properties )
+    public void update ( final UserInformation userInformation, final Map<String, String> properties )
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        setEventInformationAttributes ( convertAttributes ( cfg ) );
-        setActive ( cfg.getBoolean ( "active", true ) ); //$NON-NLS-1$
-        setRequireAkn ( cfg.getBoolean ( "requireAck", true ) ); //$NON-NLS-1$
-        setEventMatcher ( cfg.getString ( "filter", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-        setMonitorType ( cfg.getString ( "monitorType", Messages.getString ( "EventMonitorImpl.tag.event" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        setEventInformationAttributes ( userInformation, convertAttributes ( cfg ) );
+        setActive ( userInformation, cfg.getBoolean ( "active", true ) ); //$NON-NLS-1$
+        setRequireAkn ( userInformation, cfg.getBoolean ( "requireAck", true ) ); //$NON-NLS-1$
+        setEventMatcher ( userInformation, cfg.getString ( "filter", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        setMonitorType ( userInformation, cfg.getString ( "monitorType", Messages.getString ( "EventMonitorImpl.tag.event" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    private void setEventMatcher ( final String filter )
+    private void setEventMatcher ( final UserInformation userInformation, final String filter )
     {
         this.matcher = new EventMatcherImpl ( filter );
     }
 
-    private void setMonitorType ( final String monitorType )
+    private void setMonitorType ( final UserInformation userInformation, final String monitorType )
     {
         this.monitorType = monitorType;
     }

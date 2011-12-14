@@ -144,7 +144,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         super.init ();
     }
 
-    protected void setEventInformationAttributes ( final Map<String, Variant> informationAttributes )
+    protected void setEventInformationAttributes ( final UserInformation userInformation, final Map<String, Variant> informationAttributes )
     {
         if ( informationAttributes == null )
         {
@@ -266,7 +266,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         setUnsafe ( MonitorDecoratorAdapter.getNullDecorator () );
     }
 
-    public synchronized void setActive ( final boolean state, final MonitorDecorator eventDecorator )
+    public synchronized void setActive ( final UserInformation userInformation, final boolean state, final MonitorDecorator eventDecorator )
     {
         if ( this.information.getActive () != null && this.information.getActive () == state )
         {
@@ -276,14 +276,14 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setActive ( state );
 
-        publishEvent ( eventDecorator.decorate ( createEvent ( new Date (), null, Messages.getString ( "AbstractStateMachineMonitorService.tag.cfg" ), Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, Messages.getString ( "AbstractStateMachineMonitorService.message.changeActiveState" ) ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        publishEvent ( eventDecorator.decorate ( createEvent ( new Date (), userInformation, Messages.getString ( "AbstractStateMachineMonitorService.tag.cfg" ), Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, Messages.getString ( "AbstractStateMachineMonitorService.message.changeActiveState" ) ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
         applyAndSendStatus ( newInformation );
     }
 
     @Override
-    public synchronized void setActive ( final boolean state )
+    public synchronized void setActive ( final UserInformation userInformation, final boolean state )
     {
-        setActive ( state, MonitorDecoratorAdapter.getNullDecorator () );
+        setActive ( userInformation, state, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
     public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp, final MonitorDecorator eventDecorator )
@@ -309,7 +309,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         akn ( userInformation, aknTimestamp, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
-    public synchronized void setRequireAkn ( final boolean state, final MonitorDecorator eventDecorator )
+    public synchronized void setRequireAkn ( final UserInformation userInformation, final boolean state, final MonitorDecorator eventDecorator )
     {
         if ( this.information.getRequireAck () != null && this.information.getRequireAck () == state )
         {
@@ -320,13 +320,13 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setRequireAck ( state );
 
-        publishEvent ( eventDecorator.decorate ( createEvent ( null, null, Messages.getString ( "AbstractStateMachineMonitorService.tag.cfg" ), Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, Messages.getString ( "AbstractStateMachineMonitorService.message.changeAknRequired" ) ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        publishEvent ( eventDecorator.decorate ( createEvent ( null, userInformation, Messages.getString ( "AbstractStateMachineMonitorService.tag.cfg" ), Variant.valueOf ( state ) ).attribute ( Fields.MESSAGE, Messages.getString ( "AbstractStateMachineMonitorService.message.changeAknRequired" ) ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
         applyAndSendStatus ( newInformation );
     }
 
-    public synchronized void setRequireAkn ( final boolean state )
+    public synchronized void setRequireAkn ( final UserInformation userInformation, final boolean state )
     {
-        setRequireAkn ( state, MonitorDecoratorAdapter.getNullDecorator () );
+        setRequireAkn ( userInformation, state, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
     private String getUserName ( final UserInformation userInformation )

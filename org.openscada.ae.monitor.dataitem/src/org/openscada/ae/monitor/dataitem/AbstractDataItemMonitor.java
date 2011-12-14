@@ -143,9 +143,9 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         this.handlerPriority = cfg.getInteger ( "handlerPriority", getDefaultPriority () );
         this.monitorType = cfg.getString ( "monitorType", this.defaultMonitorType );
 
-        setEventInformationAttributes ( convertAttributes ( cfg ) );
-        setActive ( cfg.getBoolean ( "active", true ) );
-        setRequireAkn ( cfg.getBoolean ( "requireAck", false ) );
+        setEventInformationAttributes ( userInformation, convertAttributes ( cfg ) );
+        setActive ( userInformation, cfg.getBoolean ( "active", true ) );
+        setRequireAkn ( userInformation, cfg.getBoolean ( "requireAck", false ) );
 
         connect ();
     }
@@ -391,17 +391,17 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     }
 
     @Override
-    public synchronized void setRequireAkn ( final boolean state )
+    public synchronized void setRequireAkn ( final UserInformation userInformation, final boolean state )
     {
-        super.setRequireAkn ( state );
+        super.setRequireAkn ( userInformation, state );
         this.requireAkn = state;
         reprocess ();
     }
 
     @Override
-    public synchronized void setActive ( final boolean state )
+    public synchronized void setActive ( final UserInformation userInformation, final boolean state )
     {
-        super.setActive ( state );
+        super.setActive ( userInformation, state );
         this.active = state;
         reprocess ();
     }

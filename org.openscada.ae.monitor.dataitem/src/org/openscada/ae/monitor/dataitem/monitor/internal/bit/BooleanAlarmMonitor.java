@@ -77,7 +77,7 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
         final boolean newReference = Boolean.parseBoolean ( properties.get ( "reference" ) );
         if ( isDifferent ( this.reference, newReference ) )
         {
-            final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Change reference value", Variant.valueOf ( newReference ), new Date () );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), "Change reference value", Variant.valueOf ( newReference ), new Date () );
             injectEventAttributes ( builder );
             publishEvent ( builder );
             this.reference = newReference;

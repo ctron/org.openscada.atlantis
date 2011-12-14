@@ -156,7 +156,7 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
     }
 
     @Override
-    public void setActive ( final boolean state )
+    public void setActive ( final UserInformation userInformation, final boolean state )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( this.attributeActive, state ? Variant.TRUE : Variant.FALSE );

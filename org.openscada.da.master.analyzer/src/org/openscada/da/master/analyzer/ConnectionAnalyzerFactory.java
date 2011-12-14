@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,7 +35,7 @@ public class ConnectionAnalyzerFactory
 {
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionAnalyzerFactory.class );
 
-    private final ServiceTracker connectionTracker;
+    private final ServiceTracker<ConnectionService, ConnectionService> connectionTracker;
 
     private final Map<ConnectionService, ConnectionAnalyzer> serviceMap = new HashMap<ConnectionService, ConnectionAnalyzer> ();
 
@@ -47,24 +47,27 @@ public class ConnectionAnalyzerFactory
     {
         this.executor = executor;
         this.context = context;
-        this.connectionTracker = new ServiceTracker ( context, ConnectionService.class.getName (), new ServiceTrackerCustomizer () {
+        this.connectionTracker = new ServiceTracker<ConnectionService, ConnectionService> ( context, ConnectionService.class, new ServiceTrackerCustomizer<ConnectionService, ConnectionService> () {
 
-            public void removedService ( final ServiceReference reference, final Object service )
+            @Override
+            public void removedService ( final ServiceReference<ConnectionService> reference, final ConnectionService service )
             {
-                ConnectionAnalyzerFactory.this.removeService ( ( (ConnectionService)service ) );
+                ConnectionAnalyzerFactory.this.removeService ( service );
             }
 
-            public void modifiedService ( final ServiceReference reference, final Object service )
+            @Override
+            public void modifiedService ( final ServiceReference<ConnectionService> reference, final ConnectionService service )
             {
 
             }
 
-            public Object addingService ( final ServiceReference reference )
+            @Override
+            public ConnectionService addingService ( final ServiceReference<ConnectionService> reference )
             {
                 try
                 {
                     logger.debug ( "Found new service: {}", reference );
-                    final ConnectionService service = (ConnectionService)context.getService ( reference );
+                    final ConnectionService service = context.getService ( reference );
                     ConnectionAnalyzerFactory.this.addService ( reference, service );
                     return service;
                 }
@@ -84,7 +87,7 @@ public class ConnectionAnalyzerFactory
         this.connectionTracker.close ();
     }
 
-    protected void addService ( final ServiceReference reference, final ConnectionService service )
+    protected void addService ( final ServiceReference<ConnectionService> reference, final ConnectionService service )
     {
         logger.info ( "Adding service: {} -> {}", new Object[] { reference, service } );
 

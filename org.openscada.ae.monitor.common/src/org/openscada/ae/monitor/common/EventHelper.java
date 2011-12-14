@@ -25,10 +25,11 @@ import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.core.Variant;
+import org.openscada.sec.UserInformation;
 
 public class EventHelper
 {
-    protected static void fillBasic ( final EventBuilder builder, final String id, final String type, final Date timestamp, final String message )
+    protected static void fillBasic ( final EventBuilder builder, final UserInformation userInformation, final String id, final String type, final Date timestamp, final String message )
     {
         if ( timestamp != null )
         {
@@ -41,12 +42,18 @@ public class EventHelper
         builder.attribute ( Event.Fields.SOURCE, id );
         builder.attribute ( Event.Fields.EVENT_TYPE, type );
         builder.attribute ( Event.Fields.MESSAGE, message );
+
+        if ( userInformation != null && userInformation.getName () != null )
+        {
+            builder.attribute ( Event.Fields.ACTOR_TYPE, userInformation.getName () );
+            builder.attribute ( Event.Fields.ACTOR_TYPE, "USER" );
+        }
     }
 
     public static Event newFailEvent ( final String id, final String message, final Variant value, final Date timestamp )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.fail" ), timestamp, message ); //$NON-NLS-1$
+        fillBasic ( builder, null, id, Messages.getString ( "EventHelper.tag.fail" ), timestamp, message ); //$NON-NLS-1$
         builder.attribute ( "value", value ); //$NON-NLS-1$
         return builder.build ();
     }
@@ -54,14 +61,14 @@ public class EventHelper
     public static Event newUnsafeEvent ( final String id, final String message, final Date timestamp )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.unsafe" ), timestamp, message ); //$NON-NLS-1$
+        fillBasic ( builder, null, id, Messages.getString ( "EventHelper.tag.unsafe" ), timestamp, message ); //$NON-NLS-1$
         return builder.build ();
     }
 
-    public static Event newAknEvent ( final String id, final String message, final Date timestamp, final String user )
+    public static Event newAknEvent ( final UserInformation userInformation, final String id, final String message, final Date timestamp, final String user )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.akn" ), timestamp, message ); //$NON-NLS-1$
+        fillBasic ( builder, userInformation, id, Messages.getString ( "EventHelper.tag.akn" ), timestamp, message ); //$NON-NLS-1$
         builder.attribute ( Fields.ACTOR_NAME, user );
         return builder.build ();
     }
@@ -69,15 +76,15 @@ public class EventHelper
     public static Event newOkEvent ( final String id, final String message, final Variant value, final Date timestamp )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.ok" ), timestamp, message ); //$NON-NLS-1$
+        fillBasic ( builder, null, id, Messages.getString ( "EventHelper.tag.ok" ), timestamp, message ); //$NON-NLS-1$
         builder.attribute ( "value", value ); //$NON-NLS-1$
         return builder.build ();
     }
 
-    public static EventBuilder newConfigurationEvent ( final String id, final String message, final Variant value, final Date timestamp )
+    public static EventBuilder newConfigurationEvent ( final UserInformation userInformation, final String id, final String message, final Variant value, final Date timestamp )
     {
         final EventBuilder builder = Event.create ();
-        fillBasic ( builder, id, Messages.getString ( "EventHelper.tag.cfg" ), timestamp, message ); //$NON-NLS-1$
+        fillBasic ( builder, userInformation, id, Messages.getString ( "EventHelper.tag.cfg" ), timestamp, message ); //$NON-NLS-1$
         builder.attribute ( "value", value ); //$NON-NLS-1$
         return builder;
     }

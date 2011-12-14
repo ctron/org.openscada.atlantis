@@ -90,7 +90,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
         if ( newLimit == null )
         {
-            setActive ( false );
+            setActive ( userInformation, false );
         }
 
         if ( isDifferent ( this.limit, newLimit ) )
@@ -98,7 +98,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             this.limit = newLimit;
             if ( !isInitialUpdate () )
             {
-                final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), Messages.getString ( "LevelAlarmMonitor.message.changePreset" ), Variant.valueOf ( newLimit ), new Date () ); //$NON-NLS-1$
+                final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), Messages.getString ( "LevelAlarmMonitor.message.changePreset" ), Variant.valueOf ( newLimit ), new Date () ); //$NON-NLS-1$
                 injectEventAttributes ( builder );
                 publishEvent ( builder );
             }
