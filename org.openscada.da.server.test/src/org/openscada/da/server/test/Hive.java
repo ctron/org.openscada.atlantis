@@ -98,13 +98,14 @@ public class Hive extends HiveCommon
 
         // create and register test folder
         this.testFolder = new FolderCommon ();
-        rootFolder.add ( "test", this.testFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This folder contains numerous test data items!" ) ).getMap () );
+        rootFolder.add ( "test", this.testFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This folder contains numerous test data items!" ) ).getMap () );
         final FolderCommon helloWorldFolder = new FolderCommon ();
-        rootFolder.add ( "Hello World!", helloWorldFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This folder hello world items! Actually there are several tree entries that point to one item instance!" ) ).getMap () );
+        rootFolder.add ( "Hello World!", helloWorldFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This folder hello world items! Actually there are several tree entries that point to one item instance!" ) ).getMap () );
 
         // query folders
         final QueryFolder queryFolderRoot = new QueryFolder ( new Matcher () {
 
+            @Override
             public boolean matches ( final ItemDescriptor desc )
             {
                 return true;
@@ -112,28 +113,31 @@ public class Hive extends HiveCommon
         }, new NullNameProvider () );
         final QueryFolder queryFolder1 = new QueryFolder ( new Matcher () {
 
+            @Override
             public boolean matches ( final ItemDescriptor desc )
             {
                 return desc.getItem ().getInformation ().getName ().matches ( ".*e+.*" );
             }
         }, new IDNameProvider () );
 
-        queryFolderRoot.addChild ( "query", queryFolder1, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "contains items the have an 'e' in their id" ) ).getMap () );
-        this.testFolder.add ( "storage", queryFolderRoot, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "storage based folder for grouping and query folders" ) ).getMap () );
+        queryFolderRoot.addChild ( "query", queryFolder1, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "contains items the have an 'e' in their id" ) ).getMap () );
+        this.testFolder.add ( "storage", queryFolderRoot, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "storage based folder for grouping and query folders" ) ).getMap () );
 
         // memory cell factory
         this.queryFolderFactory = new QueryFolder ( new Matcher () {
 
+            @Override
             public boolean matches ( final ItemDescriptor desc )
             {
                 return desc.getItem ().getInformation ().getName ().matches ( "memory\\.[a-z0-9]+" );
             }
         }, new IDNameProvider () );
-        this.testFolder.add ( "memory-factory", this.queryFolderFactory, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "storage folder for items automatically created by the memory cell factory" ) ).getMap () );
+        this.testFolder.add ( "memory-factory", this.queryFolderFactory, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "storage folder for items automatically created by the memory cell factory" ) ).getMap () );
 
         // Group Folders
         final GroupFolder groupFolder = new GroupFolder ( new GroupProvider () {
 
+            @Override
             public String[] getGrouping ( final ItemDescriptor descriptor )
             {
                 final String id = descriptor.getItem ().getInformation ().getName ();
@@ -147,74 +151,77 @@ public class Hive extends HiveCommon
                 }
             }
         }, new IDNameProvider () );
-        queryFolderRoot.addChild ( "grouping1", groupFolder, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Items with an ID of lenght >=2 will be pre-grouped by their first two characters" ) ).getMap () );
+        queryFolderRoot.addChild ( "grouping1", groupFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Items with an ID of lenght >=2 will be pre-grouped by their first two characters" ) ).getMap () );
 
         DataItem item;
         final MapBuilder<String, Variant> builder = new MapBuilder<String, Variant> ();
 
         registerItem ( item = new MemoryDataItem ( "memory" ) );
-        this.testFolder.add ( "memory", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "A memory cell that simply maps the output to its input." ) ).getMap () );
+        this.testFolder.add ( "memory", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "A memory cell that simply maps the output to its input." ) ).getMap () );
 
         registerItem ( item = new TestItem2 ( this, "memory-chained" ) );
-        this.testFolder.add ( "memory-chained", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "A memory cell that simply maps the output to its input using a chain." ) ).getMap () );
+        this.testFolder.add ( "memory-chained", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "A memory cell that simply maps the output to its input using a chain." ) ).getMap () );
 
         registerItem ( item = new TestItem1 ( "test-1" ) );
         this.testFolder.add ( "test-1", item, new MapBuilder<String, Variant> ().getMap () );
 
         DataItemCommand cmd;
-        cmd = new DataItemCommand ( "hello", this.getOperationService () );
+        cmd = new DataItemCommand ( "hello", getOperationService () );
         cmd.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 System.out.println ( "Hello World!" );
             }
         } );
         registerItem ( item = cmd );
-        helloWorldFolder.add ( "hello world", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", new Variant ( "en" ) ).getMap () );
-        helloWorldFolder.add ( "おはよう", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", new Variant ( "ja" ) ).getMap () );
-        helloWorldFolder.add ( "你好", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", new Variant ( "zh" ) ).getMap () );
-        helloWorldFolder.add ( "नमस्ते", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", new Variant ( "hi" ) ).getMap () );
-        helloWorldFolder.add ( "Hallo Welt!", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", new Variant ( "de" ) ).getMap () );
+        helloWorldFolder.add ( "hello world", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", Variant.valueOf ( "en" ) ).getMap () );
+        helloWorldFolder.add ( "おはよう", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", Variant.valueOf ( "ja" ) ).getMap () );
+        helloWorldFolder.add ( "你好", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", Variant.valueOf ( "zh" ) ).getMap () );
+        helloWorldFolder.add ( "नमस्ते", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", Variant.valueOf ( "hi" ) ).getMap () );
+        helloWorldFolder.add ( "Hallo Welt!", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This cell triggers a command on the server. On the server it will print out 'Hello World'. On the client side you will see nothing ;-)" ) ).put ( "lang", Variant.valueOf ( "de" ) ).getMap () );
 
-        cmd = new DataItemCommand ( "command", this.getOperationService () );
+        cmd = new DataItemCommand ( "command", getOperationService () );
         cmd.addListener ( new DataItemCommand.Listener () {
 
+            @Override
             public void command ( final Variant value )
             {
                 System.out.println ( "Command is: " + value.asString ( "<null>" ) );
             }
         } );
         registerItem ( item = cmd );
-        this.testFolder.add ( "command", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Like the 'hello world' item it will print out something on the server. Instead of using a fixed string the value that was written to it is used." ) ).getMap () );
+        this.testFolder.add ( "command", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Like the 'hello world' item it will print out something on the server. Instead of using a fixed string the value that was written to it is used." ) ).getMap () );
 
         registerItem ( item = new TimeDataItem ( "time", this.timer ) );
         builder.clear ();
-        builder.put ( "description", new Variant ( "Need the unix time in microseconds? You get it here!" ) );
+        builder.put ( "description", Variant.valueOf ( "Need the unix time in microseconds? You get it here!" ) );
         this.testFolder.add ( "time", item, builder.getMap () );
         this.changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
 
-        this.testFolder.add ( String.valueOf ( System.currentTimeMillis () ), item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Alias to 'time' but with a name that will change every server startup." ) ).getMap () );
+        this.testFolder.add ( String.valueOf ( System.currentTimeMillis () ), item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Alias to 'time' but with a name that will change every server startup." ) ).getMap () );
 
         final MemoryChainedItem memoryChainedItem = new MemoryChainedItem ( this, "chained" );
         registerItem ( memoryChainedItem );
         this.testFolder.add ( "chained", memoryChainedItem, new MapBuilder<String, Variant> ().getMap () );
 
         registerItem ( item = new WriteDelayItem ( "write-delay", getOperationService () ) );
-        this.testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Simulate a long running write operation here. The value written to the data item is used as microsecond delay that the write operation will take." ) ).getMap () );
+        this.testFolder.add ( "write delay", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Simulate a long running write operation here. The value written to the data item is used as microsecond delay that the write operation will take." ) ).getMap () );
 
         registerItem ( item = new SuspendItem ( "suspendable" ) );
         builder.clear ();
-        builder.put ( "description", new Variant ( "This item is suspendable and will print is suspend status when it changes. WriteAttributeResult can only be seen on the server itself." ) );
+        builder.put ( "description", Variant.valueOf ( "This item is suspendable and will print is suspend status when it changes. WriteAttributeResult can only be seen on the server itself." ) );
         this.testFolder.add ( "suspendable", item, builder.getMap () );
         this.changingItems.add ( new ItemDescriptor ( item, builder.getMap () ) );
 
         final FolderCommon memoryFolder = new FolderCommon ();
         rootFolder.add ( "memory-cell", memoryFolder, new HashMap<String, Variant> () );
         registerItem ( item = new MemoryCellItem ( this, "memory-cell", memoryFolder ) );
-        memoryFolder.add ( "control", item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "This is the control item of the data cell. Write to number of cells you want to this item. The memory cells wil be created dynamically." ) ).getMap () );
+        memoryFolder.add ( "control", item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This is the control item of the data cell. Write to number of cells you want to this item. The memory cells wil be created dynamically." ) ).getMap () );
         addDataItemValidator ( new DataItemValidator () {
 
+            @Override
             public boolean isValid ( final String itemId )
             {
                 return itemId.matches ( "memory-cell-[0-9]+" );
@@ -224,6 +231,7 @@ public class Hive extends HiveCommon
         // do some stuff in the query folders
         final Thread changeThread = new Thread ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 while ( true )

@@ -21,7 +21,6 @@ package org.openscada.da.server.proxy.connection;
 
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
-import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,23 +48,21 @@ public class ProxyDataItemFactory implements DataItemFactory
     }
 
     @Override
-    public boolean canCreate ( final DataItemFactoryRequest request )
+    public boolean canCreate ( final String requestItemId )
     {
-        final String requestItemId = request.getId ();
-
         logger.info ( "Checking request: {} for {}", requestItemId, this.prefix );
 
         return requestItemId.startsWith ( this.prefix.getName () + this.separator );
     }
 
     @Override
-    public DataItem create ( final DataItemFactoryRequest request )
+    public DataItem create ( final String requestItemId )
     {
-        if ( !canCreate ( request ) )
+        if ( !canCreate ( requestItemId ) )
         {
             return null;
         }
 
-        return this.connection.realizeItem ( request.getId () );
+        return this.connection.realizeItem ( requestItemId );
     }
 }

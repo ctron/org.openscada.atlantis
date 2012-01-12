@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,15 +19,16 @@
 
 package org.openscada.da.server.test.items;
 
+import java.util.Collections;
+
+import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.chain.ChainProcessEntry;
 import org.openscada.da.server.common.factory.DataItemFactory;
-import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.test.Hive;
 
 public class MemoryCellFactory implements DataItemFactory
 {
-    private Hive hive = null;
+    private final Hive hive;
 
     public MemoryCellFactory ( final Hive hive )
     {
@@ -35,29 +36,17 @@ public class MemoryCellFactory implements DataItemFactory
     }
 
     @Override
-    public boolean canCreate ( final DataItemFactoryRequest request )
+    public boolean canCreate ( final String itemId )
     {
-        return request.getId ().matches ( "memory\\..*" );
+        return itemId.matches ( "memory\\..*" );
     }
 
     @Override
-    public DataItem create ( final DataItemFactoryRequest request )
+    public DataItem create ( final String itemId )
     {
-        final FactoryMemoryCell item = new FactoryMemoryCell ( this.hive, request.getId () );
+        final FactoryMemoryCell item = new FactoryMemoryCell ( this.hive, itemId );
 
-        for ( final ChainProcessEntry entry : request.getItemChain () )
-        {
-            item.addChainElement ( entry.getWhen (), entry.getWhat () );
-        }
-
-        try
-        {
-            item.startSetAttributes ( request.getItemAttributes (), null ).get ();
-        }
-        catch ( final Throwable e )
-        {
-        }
-        this.hive.addMemoryFactoryItem ( item, request.getBrowserAttributes () );
+        this.hive.addMemoryFactoryItem ( item, Collections.<String, Variant> emptyMap () );
         return item;
     }
 

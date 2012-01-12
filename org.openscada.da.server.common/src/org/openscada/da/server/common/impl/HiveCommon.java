@@ -58,12 +58,9 @@ import org.openscada.da.server.common.HiveService;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.configuration.ConfigurableHive;
-import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemFactoryListener;
-import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.common.factory.DataItemValidator;
-import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
 import org.openscada.sec.AuthorizationResult;
@@ -434,15 +431,15 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         }
     }
 
-    private DataItem factoryCreate ( final DataItemFactoryRequest request )
+    private DataItem factoryCreate ( final String id )
     {
         for ( final DataItemFactory factory : this.factoryList )
         {
-            if ( factory.canCreate ( request ) )
+            if ( factory.canCreate ( id ) )
             {
                 // we can create the item
 
-                final DataItem dataItem = factory.create ( request );
+                final DataItem dataItem = factory.create ( id );
 
                 // stats
                 fireDataItemCreated ( dataItem );
@@ -485,14 +482,11 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             }
         }
 
-        final DataItemFactoryRequest request = new DataItemFactoryRequest ();
-        request.setId ( id );
-
         synchronized ( this.factoryList )
         {
             for ( final DataItemFactory factory : this.factoryList )
             {
-                if ( factory.canCreate ( request ) )
+                if ( factory.canCreate ( id ) )
                 {
                     return true;
                 }
@@ -524,44 +518,12 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     public DataItem retrieveItem ( final String id )
     {
-        // if we already have the item we don't need to create it
-        final DataItem dataItem = lookupItem ( id );
-        if ( dataItem != null )
-        {
-            return dataItem;
-        }
-
-        final DataItemFactoryRequest request = new DataItemFactoryRequest ();
-        request.setId ( id );
-
-        final FactoryTemplate template = findFactoryTemplate ( id );
-        if ( template != null )
-        {
-            request.setBrowserAttributes ( template.getBrowserAttributes () );
-            request.setItemAttributes ( template.getItemAttributes () );
-            try
-            {
-                request.setItemChain ( FactoryHelper.instantiateChainList ( this, template.getChainEntries () ) );
-            }
-            catch ( final ConfigurationError e )
-            {
-                logger.warn ( String.format ( "Unable to create item %s", id ), e );
-                return null;
-            }
-        }
-
-        return retrieveItem ( request );
-    }
-
-    @Override
-    public DataItem retrieveItem ( final DataItemFactoryRequest request )
-    {
         synchronized ( this.itemMap )
         {
-            DataItem dataItem = lookupItem ( request.getId () );
+            DataItem dataItem = lookupItem ( id );
             if ( dataItem == null )
             {
-                dataItem = factoryCreate ( request );
+                dataItem = factoryCreate ( id );
             }
             return dataItem;
         }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -43,7 +43,7 @@ public class XMLConfigurator
 
     private static final int DEFAULT_RECONNECT_DELAY = 5000;
 
-    private RootDocument rootDocument = null;
+    private final RootDocument rootDocument;
 
     public XMLConfigurator ( final RootDocument rootDocument )
     {
@@ -63,7 +63,7 @@ public class XMLConfigurator
     public void configure ( final Hive hive ) throws ConfigurationError
     {
         // first configure the base hive
-        new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null, this.rootDocument.getRoot ().getItemTemplates (), null, null ).configure ( hive );
+        new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null, this.rootDocument.getRoot ().getItemTemplates () ).configure ( hive );
 
         // now configure the opc hive
         for ( final ConfigurationType configuration : this.rootDocument.getRoot ().getConnections ().getConfigurationList () )

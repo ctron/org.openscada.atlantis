@@ -23,7 +23,7 @@ import org.openscada.da.server.common.DataItem;
 
 public interface DataItemFactory
 {
-    public boolean canCreate ( DataItemFactoryRequest request );
+    public boolean canCreate ( String id );
 
-    public DataItem create ( DataItemFactoryRequest request );
+    public DataItem create ( String id );
 }

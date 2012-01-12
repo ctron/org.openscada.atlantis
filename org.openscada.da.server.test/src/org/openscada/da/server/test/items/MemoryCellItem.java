@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -125,7 +125,7 @@ public class MemoryCellItem extends DataItemOutput
                 MemoryChainedItem.applyDefaultInputChain ( this.hive, item );
 
                 this.hive.registerItem ( item );
-                this.folder.add ( String.valueOf ( i ), item, new MapBuilder<String, Variant> ().put ( "description", new Variant ( "Cell #" + i + " of " + num + " automaticall provided memory cells." ) ).getMap () );
+                this.folder.add ( String.valueOf ( i ), item, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Cell #" + i + " of " + num + " automaticall provided memory cells." ) ).getMap () );
                 newItems.put ( i, item );
             }
 

@@ -40,8 +40,8 @@ Export-Package: org.openscada.da.server.test;version="0.17.0";uses:="org.opensca
    org.openscada.core",
  org.openscada.da.server.test.model;version="0.17.0",
  org.openscada.da.server.test.utils;version="0.17.0"
-Bundle-Version: 0.17.0.qualifier
-Bundle-Name: OpenSCADA-DA-Server-Test
+Bundle-Version: 0.18.0.qualifier
+Bundle-Name: openSCADA-DA-Server-Test
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-SymbolicName: org.openscada.da.server.test
