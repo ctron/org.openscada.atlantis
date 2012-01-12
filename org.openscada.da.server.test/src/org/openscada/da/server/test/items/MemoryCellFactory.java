@@ -22,7 +22,6 @@ package org.openscada.da.server.test.items;
 import java.util.Collections;
 
 import org.openscada.core.Variant;
-import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.test.Hive;
 
@@ -42,12 +41,11 @@ public class MemoryCellFactory implements DataItemFactory
     }
 
     @Override
-    public DataItem create ( final String itemId )
+    public void create ( final String itemId )
     {
         final FactoryMemoryCell item = new FactoryMemoryCell ( this.hive, itemId );
 
         this.hive.addMemoryFactoryItem ( item, Collections.<String, Variant> emptyMap () );
-        return item;
     }
 
 }

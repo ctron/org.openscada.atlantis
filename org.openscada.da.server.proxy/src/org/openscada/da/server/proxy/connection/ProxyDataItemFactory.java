@@ -19,8 +19,9 @@
 
 package org.openscada.da.server.proxy.connection;
 
-import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
+import org.openscada.da.server.proxy.Hive;
+import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,11 +41,14 @@ public class ProxyDataItemFactory implements DataItemFactory
 
     private final ProxyConnection connection;
 
-    public ProxyDataItemFactory ( final ProxyPrefixName prefix, final ProxyConnection connection, final String separator )
+    private final Hive hive;
+
+    public ProxyDataItemFactory ( final ProxyPrefixName prefix, final ProxyConnection connection, final Hive hive, final String separator )
     {
         this.separator = separator;
         this.prefix = prefix;
         this.connection = connection;
+        this.hive = hive;
     }
 
     @Override
@@ -56,13 +60,14 @@ public class ProxyDataItemFactory implements DataItemFactory
     }
 
     @Override
-    public DataItem create ( final String requestItemId )
+    public void create ( final String requestItemId )
     {
         if ( !canCreate ( requestItemId ) )
         {
-            return null;
+            return;
         }
 
-        return this.connection.realizeItem ( requestItemId );
+        final ProxyDataItem item = this.connection.realizeItem ( requestItemId );
+        this.hive.registerItem ( item );
     }
 }

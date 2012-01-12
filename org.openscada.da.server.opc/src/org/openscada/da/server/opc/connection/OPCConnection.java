@@ -494,13 +494,13 @@ public class OPCConnection implements PropertyChangeListener
         this.serverStateItem.updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
-    public OPCItem addUnrealizedItem ( final String opcItemId )
+    public void addUnrealizedItem ( final String opcItemId )
     {
         if ( opcItemId == null )
         {
-            return null;
+            return;
         }
-        return this.controller.getItemManager ().registerItem ( opcItemId, EnumSet.allOf ( IODirection.class ), null );
+        this.controller.getItemManager ().registerItem ( opcItemId, EnumSet.allOf ( IODirection.class ), null );
     }
 
     public String getItemPrefix ()

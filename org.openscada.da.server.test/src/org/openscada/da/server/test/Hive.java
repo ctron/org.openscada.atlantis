@@ -306,6 +306,7 @@ public class Hive extends HiveCommon
     {
         final ItemDescriptor desc = new ItemDescriptor ( item, browserAttributes );
         this.queryFolderFactory.added ( desc );
+        registerItem ( item );
     }
 
     public void removeMemoryFactoryItem ( final FactoryMemoryCell item )

@@ -117,19 +117,16 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
     /**
      * Unregister everything from the hive
      */
-    protected void unregisterAllItems ()
+    protected synchronized void unregisterAllItems ()
     {
-        synchronized ( this )
+        for ( final Map.Entry<String, OPCItem> entry : this.itemMap.entrySet () )
         {
-            for ( final Map.Entry<String, OPCItem> entry : this.itemMap.entrySet () )
-            {
-                final OPCItem item = entry.getValue ();
-                this.hive.unregisterItem ( item );
-                this.allItemsStorage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
-            }
-
-            this.itemMap.clear ();
+            final OPCItem item = entry.getValue ();
+            this.hive.unregisterItem ( item );
+            this.allItemsStorage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> () ) );
         }
+
+        this.itemMap.clear ();
     }
 
     /**
@@ -162,11 +159,11 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
      * @param opcItemId the OPC item id
      * @return the new item
      */
-    private OPCItem createRealizedItem ( final String opcItemId, final KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
+    private void createRealizedItem ( final String opcItemId, final KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
     {
         final OPCITEMRESULT result = entry.getValue ();
 
-        return registerItem ( opcItemId, Helper.convertToAccessSet ( result.getAccessRights () ), Helper.convertToAttributes ( entry.getKey () ) );
+        registerItem ( opcItemId, Helper.convertToAccessSet ( result.getAccessRights () ), Helper.convertToAttributes ( entry.getKey () ) );
     }
 
     /**
@@ -175,7 +172,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
      * @param di the data item information used when creating a new item
      * @return the OPC item
      */
-    public synchronized OPCItem registerItem ( final String opcItemId, final EnumSet<IODirection> ioDirection, final Map<String, Variant> additionalBrowserAttributes )
+    public synchronized void registerItem ( final String opcItemId, final EnumSet<IODirection> ioDirection, final Map<String, Variant> additionalBrowserAttributes )
     {
         OPCItem item;
 
@@ -185,7 +182,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
             if ( item != null )
             {
                 // return existing item
-                return item;
+                return;
             }
 
             item = new OPCItem ( this.hive, this.controller, new DataItemInformationBase ( createItemId ( opcItemId ), ioDirection ), opcItemId );
@@ -204,18 +201,14 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         this.hive.registerItem ( item );
 
         // fill the browser map
-        final Map<String, Variant> browserMap = new HashMap<String, Variant> ();
+        final Map<String, Variant> browserMap = new HashMap<String, Variant> ( additionalBrowserAttributes.size () + 1 );
         browserMap.put ( "opc.itemId", Variant.valueOf ( opcItemId ) );
         if ( additionalBrowserAttributes != null )
         {
             browserMap.putAll ( additionalBrowserAttributes );
         }
         // add to "allItems" folder
-        // this.knownItemsFolder.add ( opcItemId, item, browserMap );
-        this.allItemsStorage.added ( new ItemDescriptor ( item, new HashMap<String, Variant> ( browserMap ) ) );
-
-        // return new item
-        return item;
+        this.allItemsStorage.added ( new ItemDescriptor ( item, browserMap ) );
     }
 
     /**

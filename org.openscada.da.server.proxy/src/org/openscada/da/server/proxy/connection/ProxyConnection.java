@@ -98,7 +98,7 @@ public class ProxyConnection implements LifecycleAware
         this.group.setConnectionFolder ( this.connectionFolder );
         this.connectionsFolder.add ( this.group.getPrefix ().getName (), this.connectionFolder, new HashMap<String, Variant> () );
 
-        this.factory = new ProxyDataItemFactory ( prefix, this, this.separator );
+        this.factory = new ProxyDataItemFactory ( prefix, this, hive, this.separator );
     }
 
     protected DataItemInputChained createItem ( final String localId )

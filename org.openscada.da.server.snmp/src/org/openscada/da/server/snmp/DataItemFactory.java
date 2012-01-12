@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +19,6 @@
 
 package org.openscada.da.server.snmp;
 
-import org.openscada.da.server.common.DataItem;
 import org.snmp4j.smi.OID;
 
 public class DataItemFactory implements org.openscada.da.server.common.factory.DataItemFactory
@@ -52,13 +51,13 @@ public class DataItemFactory implements org.openscada.da.server.common.factory.D
      */
 
     @Override
-    public DataItem create ( final String itemId )
+    public void create ( final String itemId )
     {
         // get the OID and convert it
         final String oidString = itemId.substring ( this.connectionPrefix.length () );
         final OID oid = new OID ( oidString );
 
         // fetch the ID
-        return this.node.getSNMPItem ( oid );
+        this.node.createSNMPItem ( oid );
     }
 }

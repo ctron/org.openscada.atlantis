@@ -84,7 +84,7 @@ public class SNMPNode
 
     private ScheduledFuture<?> _bulkReaderJob = null;
 
-    private final Map<OID, SNMPItem> _itemMap = new HashMap<OID, SNMPItem> ();
+    private final Map<OID, SNMPItem> itemMap = new HashMap<OID, SNMPItem> ();
 
     private final InvisibleStorage storage = new InvisibleStorage ();
 
@@ -271,15 +271,15 @@ public class SNMPNode
      * @param oid the oid for which this snmp item should be created
      * @return the snmp item
      */
-    public SNMPItem getSNMPItem ( final OID oid )
+    public void createSNMPItem ( final OID oid )
     {
-        synchronized ( this._itemMap )
+        synchronized ( this.itemMap )
         {
-            if ( !this._itemMap.containsKey ( oid ) )
+            if ( !this.itemMap.containsKey ( oid ) )
             {
-                this._itemMap.put ( oid, createItem ( oid ) );
+                this.itemMap.put ( oid, createItem ( oid ) );
+                this.hive.registerItem ( this.itemMap.get ( oid ) );
             }
-            return this._itemMap.get ( oid );
         }
     }
 
@@ -382,7 +382,7 @@ public class SNMPNode
 
             for ( final OID oid : list )
             {
-                getSNMPItem ( oid );
+                createSNMPItem ( oid );
             }
         }
         catch ( final NullValueException e )
