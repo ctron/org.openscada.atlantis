@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -103,7 +103,7 @@ public class JdbcStorage extends BaseStorage
                     {
                         try
                         {
-                            Event existingEvent = JdbcStorage.this.jdbcStorageDao.loadEvent ( event.getId () );
+                            final Event existingEvent = JdbcStorage.this.jdbcStorageDao.loadEvent ( event.getId () );
                             if ( existingEvent == null )
                             {
                                 JdbcStorage.this.jdbcStorageDao.storeEvent ( event );
