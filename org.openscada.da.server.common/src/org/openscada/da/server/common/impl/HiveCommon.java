@@ -345,8 +345,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         // subscribe using the new item subscription manager
         try
         {
-            retrieveItem ( itemId );
+            // subscribe to item
             this.itemSubscriptionManager.subscribe ( itemId, sessionCommon );
+            // and request realization
+            retrieveItem ( itemId );
         }
         catch ( final ValidationException e )
         {
@@ -457,6 +459,8 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             {
                 // we let the factory create the item
                 factory.create ( id );
+                // only try one factory
+                return;
             }
         }
     }
