@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -201,7 +201,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         this.hive.registerItem ( item );
 
         // fill the browser map
-        final Map<String, Variant> browserMap = new HashMap<String, Variant> ( additionalBrowserAttributes.size () + 1 );
+        final Map<String, Variant> browserMap = new HashMap<String, Variant> ( additionalBrowserAttributes != null ? additionalBrowserAttributes.size () + 1 : 1 );
         browserMap.put ( "opc.itemId", Variant.valueOf ( opcItemId ) );
         if ( additionalBrowserAttributes != null )
         {
