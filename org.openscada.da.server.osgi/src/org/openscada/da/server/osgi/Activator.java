@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.osgi;
 
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
@@ -40,7 +41,7 @@ public class Activator implements BundleActivator
 
     private HiveImpl service;
 
-    private ServiceRegistration handle;
+    private ServiceRegistration<Hive> handle;
 
     private ServiceListener listener;
 
@@ -63,7 +64,7 @@ public class Activator implements BundleActivator
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A common generic OSGi DA Hive" );
 
-        this.handle = context.registerService ( Hive.class.getName (), this.service, properties );
+        this.handle = context.registerService ( Hive.class, this.service, properties );
 
         context.addServiceListener ( this.listener = new ServiceListener () {
 
@@ -82,10 +83,10 @@ public class Activator implements BundleActivator
             }
         }, "(" + Constants.OBJECTCLASS + "=" + DataItem.class.getName () + ")" );
 
-        final ServiceReference[] refs = context.getServiceReferences ( DataItem.class.getName (), null );
+        final Collection<ServiceReference<DataItem>> refs = context.getServiceReferences ( DataItem.class, null );
         if ( refs != null )
         {
-            for ( final ServiceReference ref : refs )
+            for ( final ServiceReference<DataItem> ref : refs )
             {
                 addItem ( ref );
             }
@@ -116,12 +117,12 @@ public class Activator implements BundleActivator
         this.itemTracker.open ();
     }
 
-    protected void removeItem ( final ServiceReference serviceReference )
+    protected void removeItem ( final ServiceReference<?> serviceReference )
     {
         this.service.removeItem ( serviceReference );
     }
 
-    protected void addItem ( final ServiceReference serviceReference )
+    protected void addItem ( final ServiceReference<?> serviceReference )
     {
         this.service.addItem ( serviceReference );
     }

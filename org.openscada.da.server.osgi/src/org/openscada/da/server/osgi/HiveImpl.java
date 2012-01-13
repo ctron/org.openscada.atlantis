@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -60,7 +60,7 @@ public class HiveImpl extends HiveCommon
 
     private final InvisibleStorage storage;
 
-    private final Map<ServiceReference, ItemDescriptor> items;
+    private final Map<ServiceReference<?>, ItemDescriptor> items;
 
     private final AuthenticationHelper authenticationManager;
 
@@ -77,7 +77,7 @@ public class HiveImpl extends HiveCommon
 
         setRootFolder ( this.rootFolder = new FolderCommon () );
 
-        this.items = new HashMap<ServiceReference, ItemDescriptor> ();
+        this.items = new HashMap<ServiceReference<?>, ItemDescriptor> ();
 
         this.storage = new InvisibleStorage ();
         final GroupFolder allItemsFolder = new GroupFolder ( new SplitGroupProvider ( new IDNameProvider (), "\\.", 0, 2 ), new SplitNameProvider ( new IDNameProvider (), "\\.", 0, 2, "." ) );
@@ -145,7 +145,7 @@ public class HiveImpl extends HiveCommon
         this.storage.removed ( new ItemDescriptor ( item, null ) );
     }
 
-    public synchronized void addItem ( final ServiceReference serviceReference )
+    public synchronized void addItem ( final ServiceReference<?> serviceReference )
     {
         if ( !serviceReference.isAssignableTo ( this.context.getBundle (), DataItem.class.getName () ) )
         {
@@ -163,7 +163,7 @@ public class HiveImpl extends HiveCommon
         logger.info ( "Exporting {} as {}", serviceReference, item.getInformation ().getName () );
     }
 
-    public synchronized void removeItem ( final ServiceReference serviceReference )
+    public synchronized void removeItem ( final ServiceReference<?> serviceReference )
     {
         logger.info ( "Removing {}", serviceReference );
 
