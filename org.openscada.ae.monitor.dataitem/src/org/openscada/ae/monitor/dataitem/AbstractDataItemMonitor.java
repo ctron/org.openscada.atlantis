@@ -84,12 +84,6 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     private String monitorType;
 
-    private String component;
-
-    private String message;
-
-    private String messageCode;
-
     private final ObjectPoolTracker poolTracker;
 
     private Boolean initialUpdate;
@@ -454,18 +448,6 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     {
         super.injectEventAttributes ( builder );
         builder.attribute ( Event.Fields.MONITOR_TYPE, this.monitorType );
-        if ( this.component != null )
-        {
-            builder.attribute ( Event.Fields.COMPONENT, this.component );
-        }
-        if ( this.message != null && !builder.hasAttribute ( Event.Fields.MESSAGE ) )
-        {
-            builder.attribute ( Event.Fields.MESSAGE, this.message );
-        }
-        if ( this.messageCode != null )
-        {
-            builder.attribute ( Event.Fields.MESSAGE_CODE, this.messageCode );
-        }
     }
 
     protected static boolean isDifferent ( final Object oldLimit, final Object newLimit )

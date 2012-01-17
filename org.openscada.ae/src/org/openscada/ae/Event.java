@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -59,6 +59,8 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
     {
         private final Event event = new Event ();
 
+        private boolean allowOverrideAttributes = true;
+
         private EventBuilder ()
         {
         }
@@ -92,31 +94,44 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
         public EventBuilder attributes ( final Map<String, Variant> attributes )
         {
-            this.event.attributes.putAll ( attributes );
+            if ( this.allowOverrideAttributes )
+            {
+                this.event.attributes.putAll ( attributes );
+            }
+            else
+            {
+                for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
+                {
+                    attribute ( entry.getKey (), entry.getValue () );
+                }
+            }
             return this;
         }
 
         public EventBuilder attribute ( final String key, final Variant value )
         {
-            this.event.attributes.put ( key, value );
+            if ( this.allowOverrideAttributes || !this.event.attributes.containsKey ( key ) )
+            {
+                this.event.attributes.put ( key, value );
+            }
             return this;
         }
 
         public EventBuilder attribute ( final Fields key, final Variant value )
         {
-            this.event.attributes.put ( key.getName (), value );
+            attribute ( key.getName (), value );
             return this;
         }
 
         public EventBuilder attribute ( final String key, final Object value )
         {
-            this.event.attributes.put ( key, Variant.valueOf ( value ) );
+            attribute ( key, Variant.valueOf ( value ) );
             return this;
         }
 
         public EventBuilder attribute ( final Fields key, final Object value )
         {
-            this.event.attributes.put ( key.getName (), Variant.valueOf ( value ) );
+            attribute ( key.getName (), Variant.valueOf ( value ) );
             return this;
         }
 
@@ -128,6 +143,19 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
         public boolean hasAttribute ( final Fields key )
         {
             return this.event.getAttributes ().containsKey ( key.getName () );
+        }
+
+        /**
+         * Set allow override attributes flag
+         * <p>
+         * Setting to <code>true</code> allows attributes to be overridden by calls to the attribute/attributes methods.
+         * Setting to <code>false</code> will not set attributes that already have been set by previous calls. 
+         * </p>
+         * @param allowOverrideAttributes
+         */
+        public void setAllowOverrideAttributes ( final boolean allowOverrideAttributes )
+        {
+            this.allowOverrideAttributes = allowOverrideAttributes;
         }
 
         public Event build ()

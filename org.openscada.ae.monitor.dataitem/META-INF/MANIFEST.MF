@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Dataitem Plug-in
+Bundle-Name: openSCADA Dataitem Plug-in
 Bundle-SymbolicName: org.openscada.ae.monitor.dataitem
 Bundle-Version: 0.18.0.qualifier
 Bundle-Activator: org.openscada.ae.monitor.dataitem.Activator
