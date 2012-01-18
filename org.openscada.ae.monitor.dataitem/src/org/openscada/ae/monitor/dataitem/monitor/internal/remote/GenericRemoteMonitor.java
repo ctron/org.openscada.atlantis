@@ -196,6 +196,8 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     protected synchronized void setState ( final MonitorStatus state, final Date timestamp, final Date aknTimestamp )
     {
+        logger.debug ( "Update state - old: {}, new: {}", this.state, state );
+
         if ( this.state != state )
         {
             this.state = state;
