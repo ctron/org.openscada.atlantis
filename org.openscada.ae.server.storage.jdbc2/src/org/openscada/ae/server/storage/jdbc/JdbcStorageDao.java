@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -188,18 +188,25 @@ public class JdbcStorageDao extends BaseStorageDao
                 stm.setString ( 1, getInstance () );
                 stm.setString ( 2, id.toString () );
                 final ResultSet result = stm.executeQuery ();
-                final List<Event> events = new ArrayList<Event> ();
-                final boolean hasMore = toEventList ( result, events, true, 1 );
+                try
+                {
+                    final List<Event> events = new ArrayList<Event> ();
+                    final boolean hasMore = toEventList ( result, events, true, 1 );
 
-                if ( hasMore )
-                {
-                    logger.warn ( "more distinct records found for id {}, this shouldn't happen at all", id );
+                    if ( hasMore )
+                    {
+                        logger.warn ( "more distinct records found for id {}, this shouldn't happen at all", id );
+                    }
+                    if ( events != null && !events.isEmpty () )
+                    {
+                        return events.get ( 0 );
+                    }
+                    return null;
                 }
-                if ( events != null && !events.isEmpty () )
+                finally
                 {
-                    return events.get ( 0 );
+                    result.close ();
                 }
-                return null;
             }
             finally
             {
