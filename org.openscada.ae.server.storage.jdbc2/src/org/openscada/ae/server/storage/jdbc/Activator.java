@@ -23,7 +23,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Properties;
 
-import javax.sql.ConnectionPoolDataSource;
+import javax.sql.DataSource;
 
 import org.openscada.ae.server.storage.Storage;
 import org.openscada.utils.osgi.SingleServiceListener;
@@ -101,7 +101,7 @@ public class Activator implements BundleActivator
     {
         final Properties dbproperties = DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.server.storage.jdbc", "org.openscada.jdbc" );
 
-        final ConnectionPoolDataSource dataSource = dsf.createConnectionPoolDataSource ( dbproperties );
+        final DataSource dataSource = dsf.createDataSource ( dbproperties );
         this.jdbcStorage = createJdbcStorage ( dataSource );
         this.jdbcStorage.start ();
 
@@ -140,7 +140,7 @@ public class Activator implements BundleActivator
         Activator.context = null;
     }
 
-    private JdbcStorage createJdbcStorage ( final ConnectionPoolDataSource dataSource )
+    private JdbcStorage createJdbcStorage ( final DataSource dataSource )
     {
         final JdbcStorage jdbcStorage = new JdbcStorage ();
         StorageDao storageDao;

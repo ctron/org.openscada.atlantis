@@ -6,7 +6,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.UUID;
 
-import javax.sql.ConnectionPoolDataSource;
+import javax.sql.DataSource;
 
 import org.openscada.ae.Event;
 import org.openscada.core.VariantType;
@@ -23,7 +23,7 @@ public abstract class BaseStorageDao implements StorageDao
 
     private String instance = "default";
 
-    private ConnectionPoolDataSource dataSource;
+    private DataSource dataSource;
 
     public void setSchema ( final String schema )
     {
@@ -32,7 +32,7 @@ public abstract class BaseStorageDao implements StorageDao
 
     public String getSchema ()
     {
-        return schema;
+        return this.schema;
     }
 
     public void setMaxLength ( final int maxLength )
@@ -42,7 +42,7 @@ public abstract class BaseStorageDao implements StorageDao
 
     public int getMaxLength ()
     {
-        return maxLength;
+        return this.maxLength;
     }
 
     public void setInstance ( final String instance )
@@ -52,27 +52,27 @@ public abstract class BaseStorageDao implements StorageDao
 
     public String getInstance ()
     {
-        return instance;
+        return this.instance;
     }
 
-    public void setDataSource ( ConnectionPoolDataSource dataSource )
+    public void setDataSource ( final DataSource dataSource )
     {
         this.dataSource = dataSource;
     }
 
-    public ConnectionPoolDataSource getDataSource ()
+    public DataSource getDataSource ()
     {
-        return dataSource;
+        return this.dataSource;
     }
 
     public Connection createConnection () throws SQLException
     {
-        Connection connection = this.getDataSource ().getPooledConnection ().getConnection ();
+        final Connection connection = this.dataSource.getConnection ();
         connection.setAutoCommit ( false );
         return connection;
     }
 
-    public void closeStatement ( Statement statement )
+    public void closeStatement ( final Statement statement )
     {
         try
         {
@@ -82,13 +82,13 @@ public abstract class BaseStorageDao implements StorageDao
             }
             statement.close ();
         }
-        catch ( SQLException e )
+        catch ( final SQLException e )
         {
             logger.debug ( "Exception on closing statement", e );
         }
     }
 
-    public void closeConnection ( Connection connection )
+    public void closeConnection ( final Connection connection )
     {
         try
         {
@@ -98,7 +98,7 @@ public abstract class BaseStorageDao implements StorageDao
             }
             connection.close ();
         }
-        catch ( SQLException e )
+        catch ( final SQLException e )
         {
             logger.debug ( "Exception on closing statement", e );
         }
@@ -108,27 +108,45 @@ public abstract class BaseStorageDao implements StorageDao
     public void updateComment ( final UUID id, final String comment ) throws Exception
     {
         final Connection con = createConnection ();
+        try
+        {
 
-        final PreparedStatement stm1 = con.prepareStatement ( String.format ( getDeleteAttributesSql (), this.getSchema () ) );
-        stm1.setString ( 1, id.toString () );
-        stm1.setString ( 2, Event.Fields.COMMENT.getName () );
-        stm1.addBatch ();
-        stm1.execute ();
+            final PreparedStatement stm1 = con.prepareStatement ( String.format ( getDeleteAttributesSql (), getSchema () ) );
+            try
+            {
+                stm1.setString ( 1, id.toString () );
+                stm1.setString ( 2, Event.Fields.COMMENT.getName () );
+                stm1.addBatch ();
+                stm1.execute ();
 
-        final PreparedStatement stm2 = con.prepareStatement ( String.format ( getInsertAttributesSql (), this.getSchema () ) );
-        stm2.setString ( 1, id.toString () );
-        stm2.setString ( 2, Event.Fields.COMMENT.getName () );
-        stm2.setString ( 3, VariantType.STRING.name () );
-        stm2.setString ( 4, clip ( this.getMaxLength (), comment ) );
-        stm2.setLong ( 5, (Long)null );
-        stm2.setDouble ( 6, (Double)null );
-        stm2.addBatch ();
-        stm2.execute ();
+                final PreparedStatement stm2 = con.prepareStatement ( String.format ( getInsertAttributesSql (), getSchema () ) );
+                try
+                {
+                    stm2.setString ( 1, id.toString () );
+                    stm2.setString ( 2, Event.Fields.COMMENT.getName () );
+                    stm2.setString ( 3, VariantType.STRING.name () );
+                    stm2.setString ( 4, clip ( getMaxLength (), comment ) );
+                    stm2.setLong ( 5, (Long)null );
+                    stm2.setDouble ( 6, (Double)null );
+                    stm2.addBatch ();
+                    stm2.execute ();
 
-        con.commit ();
-        closeStatement ( stm1 );
-        closeStatement ( stm2 );
-        closeConnection ( con );
+                    con.commit ();
+                }
+                finally
+                {
+                    closeStatement ( stm2 );
+                }
+            }
+            finally
+            {
+                closeStatement ( stm1 );
+            }
+        }
+        finally
+        {
+            closeConnection ( con );
+        }
     }
 
     protected String clip ( final int i, final String string )

@@ -20,6 +20,7 @@
 package org.openscada.ae.server.storage.jdbc;
 
 import java.lang.ref.WeakReference;
+import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -99,6 +100,17 @@ public class JdbcQuery implements Query
         this.hasMore = false;
         if ( this.resultSet != null )
         {
+
+            Connection connection = null;
+            try
+            {
+                connection = this.statement.getConnection ();
+            }
+            catch ( final SQLException e )
+            {
+                logger.warn ( "Failed to get connection from statement", e );
+            }
+
             try
             {
                 if ( this.resultSet != null && !this.resultSet.isClosed () )
@@ -120,6 +132,17 @@ public class JdbcQuery implements Query
             catch ( final SQLException e )
             {
                 logger.warn ( "error on closing database resources", e );
+            }
+            try
+            {
+                if ( connection != null && !connection.isClosed () )
+                {
+                    connection.close ();
+                }
+            }
+            catch ( final SQLException e )
+            {
+                logger.warn ( "error on closing database connection", e );
             }
         }
         final List<JdbcQuery> openQueries = this.openQueries.get ();
