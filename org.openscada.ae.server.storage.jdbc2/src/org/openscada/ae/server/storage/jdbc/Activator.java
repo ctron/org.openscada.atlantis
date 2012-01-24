@@ -21,7 +21,6 @@ package org.openscada.ae.server.storage.jdbc;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.Map.Entry;
 import java.util.Properties;
 
 import javax.sql.ConnectionPoolDataSource;
@@ -29,6 +28,7 @@ import javax.sql.ConnectionPoolDataSource;
 import org.openscada.ae.server.storage.Storage;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
+import org.openscada.utils.osgi.jdbc.DataSourceHelper;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -68,15 +68,16 @@ public class Activator implements BundleActivator
         Activator.context = bundleContext;
 
         final String driver = System.getProperty ( "org.openscada.ae.server.storage.jdbc.driver", System.getProperty ( "org.openscada.jdbc.driver", "" ) );
-        Filter filter = context.createFilter ( "(&(objectClass=" + DataSourceFactory.class.getName () + ")(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=" + driver + "))" );
-        dataSouceFactoryTracker = new SingleServiceTracker<DataSourceFactory> ( bundleContext, filter, new SingleServiceListener<DataSourceFactory> () {
-            public void serviceChange ( ServiceReference<DataSourceFactory> reference, DataSourceFactory dsf )
+        final Filter filter = context.createFilter ( "(&(objectClass=" + DataSourceFactory.class.getName () + ")(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=" + driver + "))" );
+        this.dataSouceFactoryTracker = new SingleServiceTracker<DataSourceFactory> ( bundleContext, filter, new SingleServiceListener<DataSourceFactory> () {
+            @Override
+            public void serviceChange ( final ServiceReference<DataSourceFactory> reference, final DataSourceFactory dsf )
             {
                 try
                 {
                     deactivate ();
                 }
-                catch ( Exception e )
+                catch ( final Exception e )
                 {
                     logger.error ( "an error occured on deactivating ae jdbc storage", e );
                 }
@@ -86,68 +87,28 @@ public class Activator implements BundleActivator
                     {
                         activate ( dsf );
                     }
-                    catch ( Exception e )
+                    catch ( final Exception e )
                     {
                         logger.error ( "an error occured on activating ae jdbc storage", e );
                     }
                 }
             }
         } );
-        dataSouceFactoryTracker.open ();
+        this.dataSouceFactoryTracker.open ();
     }
 
-    private void activate ( DataSourceFactory dsf ) throws Exception
+    private void activate ( final DataSourceFactory dsf ) throws Exception
     {
-        final Properties dbproperties = new Properties ();
-        setupDbProperties ( dbproperties );
+        final Properties dbproperties = DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.server.storage.jdbc", "org.openscada.jdbc" );
 
-        if ( dbproperties.get ( DataSourceFactory.JDBC_USER ) == null || ( (String)dbproperties.get ( DataSourceFactory.JDBC_USER ) ).trim ().isEmpty () )
-        {
-            dbproperties.setProperty ( DataSourceFactory.JDBC_USER, System.getProperty ( "org.openscada.ae.server.storage.jdbc.username", "" ) );
-        }
-
-        ConnectionPoolDataSource dataSource = dsf.createConnectionPoolDataSource ( dbproperties );
+        final ConnectionPoolDataSource dataSource = dsf.createConnectionPoolDataSource ( dbproperties );
         this.jdbcStorage = createJdbcStorage ( dataSource );
         this.jdbcStorage.start ();
 
-        final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
+        final Dictionary<String, Object> properties = new Hashtable<String, Object> ( 2 );
         properties.put ( Constants.SERVICE_DESCRIPTION, "JDBC implementation for org.openscada.ae.server.storage.Storage" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         this.jdbcStorageHandle = context.registerService ( new String[] { JdbcStorage.class.getName (), Storage.class.getName () }, this.jdbcStorage, properties );
-    }
-
-    private void setupDbProperties ( Properties dbproperties )
-    {
-        for ( Entry<Object, Object> e : System.getProperties ().entrySet () )
-        {
-            if ( ! ( e.getKey () instanceof String ) || ! ( e.getValue () instanceof String ) )
-            {
-                continue;
-            }
-            String key = (String)e.getKey ();
-            String value = (String)e.getValue ();
-            if ( !key.startsWith ( "org.openscada.jdbc." ) )
-            {
-                continue;
-            }
-            key = key.replace ( "org.openscada.jdbc.", "" );
-            dbproperties.setProperty ( key, value );
-        }
-        for ( Entry<Object, Object> e : System.getProperties ().entrySet () )
-        {
-            if ( ! ( e.getKey () instanceof String ) || ! ( e.getValue () instanceof String ) )
-            {
-                continue;
-            }
-            String key = (String)e.getKey ();
-            String value = (String)e.getValue ();
-            if ( !key.startsWith ( "org.openscada.ae.server.storage.jdbc." ) )
-            {
-                continue;
-            }
-            key = key.replace ( "org.openscada.ae.server.storage.jdbc.", "" );
-            dbproperties.setProperty ( key, value );
-        }
     }
 
     private void deactivate () throws Exception
@@ -171,9 +132,9 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext bundleContext ) throws Exception
     {
-        if ( dataSouceFactoryTracker != null )
+        if ( this.dataSouceFactoryTracker != null )
         {
-            dataSouceFactoryTracker.close ();
+            this.dataSouceFactoryTracker.close ();
         }
         deactivate (); // redundant, but if something happened with the tracker we are sure it is shut down
         Activator.context = null;
