@@ -256,6 +256,7 @@ public class JdbcStorageDao extends BaseStorageDao
     public ResultSet queryEvents ( final Filter filter ) throws SQLException, NotSupportedException
     {
         final Connection con = createConnection ();
+        con.setAutoCommit ( Boolean.getBoolean ( "org.openscada.ae.server.storage.jdbc.query.autoCommit" ) );
         final SqlCondition condition = SqlConverter.toSql ( getSchema (), filter );
         String sql = this.selectEventSql + StringHelper.join ( condition.joins, " " ) + this.whereSql;
         sql += condition.condition;
@@ -263,6 +264,7 @@ public class JdbcStorageDao extends BaseStorageDao
         final String querySql = String.format ( sql, getSchema () );
         logger.debug ( "executing query: " + querySql + " with parameters " + condition.joinParameters + " / " + condition.parameters );
         final PreparedStatement stm = con.prepareStatement ( querySql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
+        stm.setFetchSize ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.query.fetchSize", 1000 ) );
         int i = 0;
         for ( final String parameter : condition.joinParameters )
         {
