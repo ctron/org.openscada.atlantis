@@ -113,7 +113,7 @@ public class JdbcQuery implements Query
 
             try
             {
-                if ( this.resultSet != null && !this.resultSet.isClosed () )
+                if ( this.resultSet != null )
                 {
                     this.resultSet.close ();
                 }

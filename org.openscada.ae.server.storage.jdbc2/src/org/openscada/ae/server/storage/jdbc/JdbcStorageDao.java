@@ -118,9 +118,18 @@ public class JdbcStorageDao extends BaseStorageDao
                 stm.setString ( 15, clip ( 128, Variant.valueOf ( event.getField ( Fields.ACTOR_NAME ) ).asString ( "" ) ) );
                 stm.setString ( 16, clip ( 32, Variant.valueOf ( event.getField ( Fields.ACTOR_TYPE ) ).asString ( "" ) ) );
                 stm.addBatch ();
-                stm.executeBatch ();
+                try
+                {
+                    stm.executeBatch ();
+                }
+                catch ( final SQLException e )
+                {
+                    logSQLError ( e );
+                    throw e;
+                }
                 stm1 = stm;
             }
+
             {
                 final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertAttributesSql, getSchema () ) );
                 boolean hasAttr = false;
@@ -157,7 +166,15 @@ public class JdbcStorageDao extends BaseStorageDao
                 }
                 if ( hasAttr )
                 {
-                    stm.executeBatch ();
+                    try
+                    {
+                        stm.executeBatch ();
+                    }
+                    catch ( final SQLException e )
+                    {
+                        logSQLError ( e );
+                        throw e;
+                    }
                 }
                 stm2 = stm;
             }
@@ -168,6 +185,16 @@ public class JdbcStorageDao extends BaseStorageDao
         finally
         {
             closeConnection ( con );
+        }
+    }
+
+    protected void logSQLError ( final SQLException e )
+    {
+        SQLException ex = e;
+        while ( ex != null )
+        {
+            logger.info ( "Batch update - next exception", ex );
+            ex = ex.getNextException ();
         }
     }
 
