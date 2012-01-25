@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -134,7 +134,7 @@ public class EventFilterImpl implements EventFilter, ConfigurationFactory
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        final String id = cfg.getStringChecked ( "id", "'id' must be set" );
+        final String id = configurationId;
         final long priority = cfg.getLongChecked ( "priority", "'priority' must be set" );
         final String type = cfg.getStringChecked ( "type", "'type' must be set" );
 
