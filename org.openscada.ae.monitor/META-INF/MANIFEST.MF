@@ -8,4 +8,4 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae;version="0.14.0",
  org.openscada.sec;version="0.4.0",
  org.osgi.framework;version="1.3.0"
-Export-Package: org.openscada.ae.monitor;version="0.15.0";uses:="org.openscada.ae"
+Export-Package: org.openscada.ae.monitor;version="0.18.0";uses:="org.openscada.sec,org.openscada.ae"

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,18 +30,29 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.server.http.filter.EventFilter;
 import org.openscada.ae.server.http.monitor.EventMonitorEvaluator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonServlet extends HttpServlet
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( JsonServlet.class );
+
     private static final long serialVersionUID = -2152989291571139312L;
 
     private final EventProcessor eventProcessor;
 
     private final EventMonitorEvaluator eventMonitorEvaluator;
 
-    public JsonServlet ( final EventProcessor eventProcessor, final EventMonitorEvaluator evaluator )
+    private final EventFilter eventFilter;
+
+    public JsonServlet ( final EventProcessor eventProcessor, final EventMonitorEvaluator evaluator, final EventFilter eventFilter )
     {
+        // may be null
+        this.eventFilter = eventFilter;
+
         if ( eventProcessor == null )
         {
             throw new IllegalArgumentException ( "eventProcessor must not be null" );
@@ -74,11 +85,22 @@ public class JsonServlet extends HttpServlet
                 sb.append ( buffer, 0, len );
             }
             final Event event = EventSerializer.deserializeEvent ( sb.toString () );
+
+            // filter event
+            if ( this.eventFilter != null )
+            {
+                if ( this.eventFilter.matches ( event ) )
+                {
+                    logger.trace ( "Filter discarded event: {}", event );
+                }
+            }
+
             // publish event
             final Event evalEvent = this.eventMonitorEvaluator.evaluate ( event );
             this.eventProcessor.publishEvent ( evalEvent );
+
             // return output
-            response.setContentType ( "text/html" );
+            response.setContentType ( "text/plain" );
             final PrintWriter pw = new PrintWriter ( response.getOutputStream () );
             pw.write ( "OK" );
             pw.close ();

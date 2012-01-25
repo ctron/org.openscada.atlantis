@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,6 +28,8 @@ import javax.servlet.ServletException;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
+import org.openscada.ae.server.http.filter.EventFilter;
+import org.openscada.ae.server.http.filter.EventFilterImpl;
 import org.openscada.ae.server.http.internal.JsonServlet;
 import org.openscada.ae.server.http.monitor.EventMonitorFactory;
 import org.openscada.ca.ConfigurationAdministrator;
@@ -68,6 +70,8 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration<ObjectPool> monitorServicePoolHandler;
 
+    private EventFilter eventFilter;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -79,6 +83,7 @@ public class Activator implements BundleActivator
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
         this.eventProcessor = new EventProcessor ( context );
+        this.eventFilter = new EventFilterImpl ( context, context.getBundle ().getSymbolicName () + ".eventFilter" );
 
         this.monitorServicePool = new ObjectPoolImpl ();
         this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class.getName () );
@@ -127,6 +132,8 @@ public class Activator implements BundleActivator
         // shut down executor
         this.executor.shutdown ();
 
+        this.eventFilter.dispose ();
+
         this.context = null;
     }
 
@@ -139,7 +146,7 @@ public class Activator implements BundleActivator
         try
         {
             // register servlet
-            this.httpService.registerServlet ( SERVLET_PATH, new JsonServlet ( this.eventProcessor, this.factory ), null, null );
+            this.httpService.registerServlet ( SERVLET_PATH, new JsonServlet ( this.eventProcessor, this.factory, this.eventFilter ), null, null );
             this.httpService.registerResources ( SERVLET_PATH + "/ui", "/ui", null );
         }
         catch ( final ServletException e )
