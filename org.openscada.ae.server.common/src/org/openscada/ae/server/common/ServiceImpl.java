@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +19,7 @@
 
 package org.openscada.ae.server.common;
 
+import java.util.Collection;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -342,10 +343,10 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
                     ServiceImpl.this.serviceChanged ( event );
                 }
             }, "(" + Constants.OBJECTCLASS + "=" + MonitorQuery.class.getName () + ")" );
-            final ServiceReference[] refs = this.context.getServiceReferences ( MonitorQuery.class.getName (), null );
+            final Collection<ServiceReference<MonitorQuery>> refs = this.context.getServiceReferences ( MonitorQuery.class, null );
             if ( refs != null )
             {
-                for ( final ServiceReference ref : refs )
+                for ( final ServiceReference<MonitorQuery> ref : refs )
                 {
                     checkAddConditionQuery ( ref );
                 }
@@ -363,10 +364,10 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
                     ServiceImpl.this.serviceChanged ( event );
                 }
             }, "(" + Constants.OBJECTCLASS + "=" + EventQuery.class.getName () + ")" );
-            final ServiceReference[] refs = this.context.getServiceReferences ( EventQuery.class.getName (), null );
+            final Collection<ServiceReference<EventQuery>> refs = this.context.getServiceReferences ( EventQuery.class, null );
             if ( refs != null )
             {
-                for ( final ServiceReference ref : refs )
+                for ( final ServiceReference<EventQuery> ref : refs )
                 {
                     checkAddEventQuery ( ref );
                 }
@@ -422,7 +423,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
     public synchronized void serviceChanged ( final ServiceEvent event )
     {
         logger.debug ( "Service changed: {}", event );
-        final ServiceReference ref = event.getServiceReference ();
+        final ServiceReference<?> ref = event.getServiceReference ();
 
         try
         {
@@ -455,7 +456,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
-    private void checkAddConditionQuery ( final ServiceReference ref )
+    private void checkAddConditionQuery ( final ServiceReference<?> ref )
     {
         logger.info ( "Checking query: " + ref );
 
@@ -476,7 +477,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
-    private void checkAddEventQuery ( final ServiceReference ref )
+    private void checkAddEventQuery ( final ServiceReference<?> ref )
     {
         logger.info ( "Checking query: " + ref );
 
@@ -497,7 +498,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
-    private String getQueryId ( final ServiceReference ref )
+    private String getQueryId ( final ServiceReference<?> ref )
     {
         final Object p = ref.getProperty ( Constants.SERVICE_PID );
         if ( p != null )
