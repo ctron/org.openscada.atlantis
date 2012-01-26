@@ -8,7 +8,7 @@ Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae.event;version="0.15.0",
  org.openscada.ca;version="0.18.0",
- org.openscada.core;version="0.15.0",
+ org.openscada.core;version="0.18.0",
  org.openscada.core.client;version="0.14.0",
  org.openscada.core.connection.provider;version="0.14.0",
  org.openscada.core.subscription;version="0.15.0",
