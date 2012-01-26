@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -92,7 +92,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         final Collection<Variant> newReferenceList = parseValues ( cfg.getString ( "referenceList", "" ), cfg.getString ( "splitPattern", "[, \t\n\r]+" ) ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
         if ( isDifferent ( this.referenceList, newReferenceList ) )
         {
-            final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), Messages.getString("ListAlarmMonitor.message.changeReferenceList"), Variant.valueOf ( newReferenceList ), new Date () ); //$NON-NLS-1$
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), Messages.getString ( "ListAlarmMonitor.message.changeReferenceList" ), Variant.valueOf ( newReferenceList ), new Date () ); //$NON-NLS-1$
             injectEventAttributes ( builder );
             publishEvent ( builder );
             this.referenceList = newReferenceList;
@@ -102,7 +102,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
         final boolean listIsAlarm = cfg.getBoolean ( "listIsAlarm", true ); //$NON-NLS-1$
         if ( isDifferent ( this.listIsAlarm, listIsAlarm ) )
         {
-            final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), Messages.getString("ListAlarmMonitor.message.alarmItems"), Variant.valueOf ( listIsAlarm ), new Date () ); //$NON-NLS-1$
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), Messages.getString ( "ListAlarmMonitor.message.alarmItems" ), Variant.valueOf ( listIsAlarm ), new Date () ); //$NON-NLS-1$
             injectEventAttributes ( builder );
             publishEvent ( builder );
 
@@ -126,9 +126,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
 
         for ( final String item : toks )
         {
-            final VariantEditor ve = new VariantEditor ();
-            ve.setAsText ( item );
-            final Variant value = (Variant)ve.getValue ();
+            final Variant value = VariantEditor.toVariant ( item );
             if ( value != null )
             {
                 result.add ( value );
