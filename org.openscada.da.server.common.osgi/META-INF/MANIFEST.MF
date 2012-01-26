@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA DA Server Common OSGi
+Bundle-Name: openSCADA DA Server Common OSGi
 Bundle-SymbolicName: org.openscada.da.server.common.osgi
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 0.18.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core;version="0.15.0",
@@ -11,6 +11,6 @@ Import-Package: org.openscada.core;version="0.15.0",
  org.openscada.da.server.common;version="0.15.0",
  org.openscada.da.server.common.chain;version="0.15.0",
  org.openscada.da.server.common.chain.item;version="0.15.0",
- org.osgi.framework;version="1.4.3",
+ org.osgi.framework;version="1.6.0",
  org.slf4j;version="1.5.8"
-Export-Package: org.openscada.da.server.common.osgi.factory;version="0.15.0"
+Export-Package: org.openscada.da.server.common.osgi.factory;version="0.18.0"

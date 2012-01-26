@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -46,7 +46,7 @@ public class DataItemFactory
 
     private final Map<String, DataItem> items = new HashMap<String, DataItem> ();
 
-    private final Map<String, ServiceRegistration> itemRegs = new HashMap<String, ServiceRegistration> ();
+    private final Map<String, ServiceRegistration<DataItem>> itemRegs = new HashMap<String, ServiceRegistration<DataItem>> ();
 
     private final String delimiter = ".";
 
@@ -152,7 +152,7 @@ public class DataItemFactory
 
         fillProperties ( properties, props );
 
-        final ServiceRegistration handle = this.context.registerService ( DataItem.class.getName (), newItem, props );
+        final ServiceRegistration<DataItem> handle = this.context.registerService ( DataItem.class, newItem, props );
         this.items.put ( localId, newItem );
         this.itemRegs.put ( localId, handle );
     }
@@ -177,7 +177,7 @@ public class DataItemFactory
 
     public synchronized void dispose ()
     {
-        for ( final ServiceRegistration reg : this.itemRegs.values () )
+        for ( final ServiceRegistration<DataItem> reg : this.itemRegs.values () )
         {
             reg.unregister ();
         }
