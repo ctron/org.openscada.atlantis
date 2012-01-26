@@ -293,6 +293,7 @@ public class JdbcStorageDao extends BaseStorageDao
         EventBuilder eb = Event.create ();
         boolean hasMore = true;
         long l = 0;
+
         while ( true )
         {
             if ( isBeforeFirst )
@@ -340,9 +341,7 @@ public class JdbcStorageDao extends BaseStorageDao
             eb.attribute ( Fields.EVENT_TYPE, eventType );
             if ( valueType != null && valueString != null )
             {
-                final VariantEditor ed = new VariantEditor ();
-                ed.setAsText ( valueType + "#" + valueString );
-                eb.attribute ( Fields.VALUE, ed.getValue () );
+                eb.attribute ( Fields.VALUE, VariantEditor.toVariant ( valueType + "#" + valueString ) );
             }
             eb.attribute ( Fields.MESSAGE, message );
             eb.attribute ( Fields.MESSAGE_CODE, messageCode );
@@ -359,9 +358,7 @@ public class JdbcStorageDao extends BaseStorageDao
             {
                 if ( valueType != null && valueString != null )
                 {
-                    final VariantEditor ed = new VariantEditor ();
-                    ed.setAsText ( valueType + "#" + valueString );
-                    eb.attribute ( field, ed.getValue () );
+                    eb.attribute ( field, VariantEditor.toVariant ( valueType + "#" + valueString ) );
                 }
                 else
                 {

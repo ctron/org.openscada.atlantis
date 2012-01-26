@@ -7,7 +7,7 @@ Bundle-Activator: org.openscada.ae.server.storage.jdbc.Activator
 Import-Package: org.openscada.ae;version="0.14.0",
  org.openscada.ae.event;version="0.14.0",
  org.openscada.ae.server.storage;version="0.14.0",
- org.openscada.core;version="0.14.0",
+ org.openscada.core;version="0.18.0",
  org.openscada.utils.collection;version="0.17.0",
  org.openscada.utils.concurrent;version="0.14.0",
  org.openscada.utils.filter;version="0.14.0",
