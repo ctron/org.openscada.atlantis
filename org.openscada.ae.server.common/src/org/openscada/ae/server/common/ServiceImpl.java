@@ -79,7 +79,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
 
     private final Map<String, BrowserEntry> browserCache = new HashMap<String, BrowserEntry> ();
 
-    private final ServiceTracker aknTracker;
+    private final ServiceTracker<AknHandler, AknHandler> aknTracker;
 
     private ExecutorService queryLoadExecutor;
 
@@ -98,7 +98,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         this.eventSubscriptions = new SubscriptionManager ();
 
         // create akn handler
-        this.aknTracker = new ServiceTracker ( context, AknHandler.class.getName (), null );
+        this.aknTracker = new ServiceTracker<AknHandler, AknHandler> ( context, AknHandler.class, null );
 
         this.authorizationHelper = new AuthorizationHelper ( context );
     }
