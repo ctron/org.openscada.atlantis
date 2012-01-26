@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -39,7 +39,7 @@ public class Activator implements BundleActivator
 
     private ScheduledThreadPoolExecutor executor;
 
-    private ServiceRegistration handle;
+    private ServiceRegistration<DataItem> handle;
 
     /*
      * (non-Javadoc)
@@ -52,7 +52,7 @@ public class Activator implements BundleActivator
         this.service = new DataItemTest1 ( "test", this.executor );
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-        this.handle = context.registerService ( DataItem.class.getName (), this.service, properties );
+        this.handle = context.registerService ( DataItem.class, this.service, properties );
     }
 
     /*
