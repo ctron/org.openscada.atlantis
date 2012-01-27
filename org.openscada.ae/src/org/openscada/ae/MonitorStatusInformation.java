@@ -70,7 +70,7 @@ public class MonitorStatusInformation implements Serializable
 
         if ( id == null )
         {
-            throw new NullPointerException ( "'status' must not be null" );
+            throw new NullPointerException ( "'id' must not be null" );
         }
         if ( status == null )
         {
