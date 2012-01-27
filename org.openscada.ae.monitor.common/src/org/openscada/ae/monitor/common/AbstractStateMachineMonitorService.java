@@ -42,7 +42,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 {
     private final static boolean DEBUG = Boolean.getBoolean ( "debug" ); //$NON-NLS-1$
 
-    private final static Logger logger = LoggerFactory.getLogger ( AbstractMonitorService.class );
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractStateMachineMonitorService.class );
 
     private final static StateInformation DEFAULT_STATE;
 
