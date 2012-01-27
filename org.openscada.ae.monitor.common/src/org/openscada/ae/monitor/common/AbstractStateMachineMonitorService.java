@@ -427,6 +427,8 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     private synchronized void applyAndSendStatus ( final StateInformation newInformation, final MonitorDecorator monitorDecorator )
     {
+        logger.trace ( "applyAndSendStatus - old: {}, new: {}", this.currentState, newInformation );
+
         final MonitorStatusInformation oldConditionState = this.currentState;
         applyState ( newInformation, monitorDecorator );
         final MonitorStatusInformation newConditionState = this.currentState;
@@ -507,7 +509,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     protected synchronized void publishEvent ( final EventBuilder builder )
     {
-        if ( isActivated () )
+        final boolean activated = isActivated ();
+        logger.debug ( "Publish event - activated: {}", activated );
+        if ( activated )
         {
             this.eventProcessor.publishEvent ( builder.build () );
         }
