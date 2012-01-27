@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -94,7 +94,7 @@ public class MonitorStatusInformation implements Serializable
 
     public Date getStatusTimestamp ()
     {
-        return this.statusTimestamp;
+        return (Date)this.statusTimestamp.clone ();
     }
 
     public Variant getValue ()
@@ -109,7 +109,7 @@ public class MonitorStatusInformation implements Serializable
 
     public Date getLastAknTimestamp ()
     {
-        return this.lastAknTimestamp;
+        return (Date)this.lastAknTimestamp.clone ();
     }
 
     public Map<String, Variant> getAttributes ()
@@ -162,7 +162,9 @@ public class MonitorStatusInformation implements Serializable
         final StringBuilder sb = new StringBuilder ();
 
         sb.append ( this.id + "(" );
-        sb.append ( "status=" + this.status );
+        sb.append ( ", id=" + this.id );
+        sb.append ( ", status=" + this.status );
+        sb.append ( ", timestamp=" + this.statusTimestamp );
         sb.append ( ")" );
 
         return sb.toString ();
