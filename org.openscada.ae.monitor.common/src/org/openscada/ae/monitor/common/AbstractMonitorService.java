@@ -48,7 +48,7 @@ public abstract class AbstractMonitorService implements MonitorService
         this.executor = executor;
         this.id = id;
 
-        this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, new Date (), null, null, null, null );
+        this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, new Date (), null, null, null, null, null );
     }
 
     @Override

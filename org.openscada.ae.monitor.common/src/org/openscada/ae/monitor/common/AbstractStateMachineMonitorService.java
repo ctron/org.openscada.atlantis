@@ -390,7 +390,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             final Map<String, Variant> attributes = new HashMap<String, Variant> ();
             buildMonitorAttributes ( attributes );
             monitorDecorator.decorateMonitorStatus ( attributes );
-            csi = new MonitorStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser (), attributes );
+            csi = new MonitorStatusInformation ( getId (), generateStatus ( information ), information.getTimestamp (), information.getValue (), information.getLastAckTimestamp (), information.getLastAckUser (), information.getLastFailTimestamp (), attributes );
             storeData ( this.information );
         }
         else
@@ -400,7 +400,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
             // otherwise send out our dummy status until we got initialized
             if ( !this.initSent )
             {
-                csi = new MonitorStatusInformation ( getId (), MonitorStatus.INIT, new Date (), Variant.NULL, null, null, null );
+                csi = new MonitorStatusInformation ( getId (), MonitorStatus.INIT, new Date (), Variant.NULL, null, null, null, null );
                 this.initSent = true;
             }
             else

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -304,11 +304,11 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
         if ( this.persistentState == null )
         {
-            return new MonitorStatusInformation ( this.id, MonitorStatus.INIT, timestamp, null, this.aknTimestamp, this.lastAckUser, getMonitorAttributes () );
+            return new MonitorStatusInformation ( this.id, MonitorStatus.INIT, timestamp, null, this.aknTimestamp, this.lastAckUser, timestamp, getMonitorAttributes () );
         }
         else
         {
-            return new MonitorStatusInformation ( this.id, this.state, timestamp, null, this.aknTimestamp, this.lastAckUser, getMonitorAttributes () );
+            return new MonitorStatusInformation ( this.id, this.state, timestamp, null, this.aknTimestamp, this.lastAckUser, timestamp, getMonitorAttributes () );
         }
     }
 
