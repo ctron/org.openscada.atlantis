@@ -106,12 +106,12 @@ public class MonitorStatusInformation implements Serializable
 
     public Date getStatusTimestamp ()
     {
-        return (Date)this.statusTimestamp.clone ();
+        return this.statusTimestamp == null ? null : (Date)this.statusTimestamp.clone ();
     }
 
     public Date getLastFailTimestamp ()
     {
-        return (Date)this.lastFailTimestamp.clone ();
+        return this.lastFailTimestamp == null ? null : (Date)this.lastFailTimestamp.clone ();
     }
 
     public Variant getValue ()
@@ -126,7 +126,7 @@ public class MonitorStatusInformation implements Serializable
 
     public Date getLastAknTimestamp ()
     {
-        return (Date)this.lastAknTimestamp.clone ();
+        return this.lastAknTimestamp == null ? null : (Date)this.lastAknTimestamp.clone ();
     }
 
     public Map<String, Variant> getAttributes ()
