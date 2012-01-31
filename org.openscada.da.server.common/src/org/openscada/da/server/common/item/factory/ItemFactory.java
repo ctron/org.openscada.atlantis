@@ -33,12 +33,19 @@ public interface ItemFactory
     public abstract WriteHandlerItem createInputOutput ( String localId, WriteHandler writeHandler );
 
     /**
-     * Dispose all items that where created by this factory and where not disposed up to now
+     * Dispose the factory
+     * <p>All items that where created by this factory and where not disposed up to now are being disposed</p>
+     * <p>
+     * After a call to this method it is not possible to create new items. Multiple calls to {@link #dispose()} or calls to {@link #disposeAllItems()} are possible.
+     * </p>
      */
     public abstract void dispose ();
 
     /**
      * Dispose all items at once
+     * <p>
+     * After a call to this method it is still possible to create new items
+     * </p>
      */
     public abstract void disposeAllItems ();
 
