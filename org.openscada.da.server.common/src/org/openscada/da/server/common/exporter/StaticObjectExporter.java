@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,51 +24,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.da.server.common.item.factory.ItemFactory;
 
 public class StaticObjectExporter<T> extends AbstractObjectExporter
 {
-
     private T target;
 
     private HashMap<String, Variant> additionalAttributes;
 
-    public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz )
+    public StaticObjectExporter ( final ItemFactory itemFactory, final Class<T> modelClazz, final boolean readOnly, final boolean nullIsError )
     {
-        super ( localId, rootFactory );
-
-        createDataItems ( modelClazz );
-    }
-
-    public StaticObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final Class<T> modelClazz )
-    {
-        super ( localId, hive, rootFolder );
-
-        createDataItems ( modelClazz );
-    }
-
-    public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz, final boolean readOnly )
-    {
-        this ( localId, rootFactory, modelClazz, readOnly, false );
-    }
-
-    public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz, final boolean readOnly, final boolean nullIsError )
-    {
-        super ( localId, rootFactory, readOnly, nullIsError );
-
-        createDataItems ( modelClazz );
-    }
-
-    public StaticObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final Class<T> modelClazz, final boolean readOnly )
-    {
-        this ( localId, hive, rootFolder, modelClazz, readOnly, false );
-    }
-
-    public StaticObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final Class<T> modelClazz, final boolean readOnly, final boolean nullIsError )
-    {
-        super ( localId, hive, rootFolder, readOnly, nullIsError );
+        super ( itemFactory, readOnly, nullIsError );
 
         createDataItems ( modelClazz );
     }

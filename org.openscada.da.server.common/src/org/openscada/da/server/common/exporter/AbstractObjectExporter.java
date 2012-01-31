@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,14 +35,12 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.OperationParameters;
-import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.da.server.common.item.factory.ItemFactory;
 import org.openscada.utils.lang.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +50,7 @@ public abstract class AbstractObjectExporter implements Disposable
 
     private final static Logger logger = LoggerFactory.getLogger ( AbstractObjectExporter.class );
 
-    protected FolderItemFactory factory;
+    protected ItemFactory factory;
 
     protected final Map<String, DataItem> items = new HashMap<String, DataItem> ();
 
@@ -60,26 +58,17 @@ public abstract class AbstractObjectExporter implements Disposable
 
     private final boolean nullIsError;
 
-    public AbstractObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder )
+    /**
+     * Create a new object factory
+     * <p>
+     * </p>
+     * @param itemFactory the item factory to use
+     * @param readOnly flag if all properties should be created read-only
+     * @param nullIsError flag whether controls if <code>null</code> mean <q>error</q>
+     */
+    public AbstractObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
     {
-        this ( localId, hive, rootFolder, false, false );
-    }
-
-    public AbstractObjectExporter ( final String localId, final FolderItemFactory rootFactory )
-    {
-        this ( localId, rootFactory, false, false );
-    }
-
-    public AbstractObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly, final boolean nullIsError )
-    {
-        this.factory = new FolderItemFactory ( hive, rootFolder, localId, localId );
-        this.readOnly = readOnly;
-        this.nullIsError = nullIsError;
-    }
-
-    public AbstractObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly, final boolean nullIsError )
-    {
-        this.factory = rootFactory.createSubFolderFactory ( localId );
+        this.factory = itemFactory;
         this.readOnly = readOnly;
         this.nullIsError = nullIsError;
     }

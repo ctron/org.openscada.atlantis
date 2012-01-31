@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,9 +27,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.da.server.common.item.factory.ItemFactory;
 import org.openscada.utils.lang.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,34 +42,9 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
 
     private Map<String, Variant> additionalAttributes;
 
-    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory )
+    public ObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
     {
-        super ( localId, rootFactory );
-    }
-
-    public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder )
-    {
-        super ( localId, hive, rootFolder );
-    }
-
-    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly )
-    {
-        this ( localId, rootFactory, readOnly, false );
-    }
-
-    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly, final boolean nullIsError )
-    {
-        super ( localId, rootFactory, readOnly, nullIsError );
-    }
-
-    public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly )
-    {
-        this ( localId, hive, rootFolder, readOnly, false );
-    }
-
-    public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly, final boolean nullIsError )
-    {
-        super ( localId, hive, rootFolder, readOnly, nullIsError );
+        super ( itemFactory, readOnly, nullIsError );
     }
 
     /**
