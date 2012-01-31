@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +19,6 @@
 
 package org.openscada.da.server.common.item.factory;
 
-import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
@@ -34,12 +33,6 @@ public interface ItemFactory
     public abstract WriteHandlerItem createInputOutput ( String localId, WriteHandler writeHandler );
 
     /**
-     * Dispose a data item
-     * @param item a data item created by this data item factory
-     */
-    public abstract void disposeItem ( DataItem item );
-
-    /**
      * Dispose all items that where created by this factory and where not disposed up to now
      */
     public abstract void dispose ();
@@ -49,18 +42,4 @@ public interface ItemFactory
      */
     public abstract void disposeAllItems ();
 
-    /**
-     * Add a factory that will get disposed when this factory gets disposed
-     * @param itemFactory the item factory to add
-     */
-    public abstract boolean addSubFactory ( ItemFactory itemFactory );
-
-    /**
-     * Remove a factory from the dispose list that was added to this factory
-     * using {@link #addSubFactory(ItemFactory)}
-     * @param itemFactory
-     */
-    public abstract boolean removeSubFactory ( ItemFactory itemFactory );
-
-    public abstract String getBaseId ();
 }

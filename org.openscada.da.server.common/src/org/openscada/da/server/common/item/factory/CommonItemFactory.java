@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -50,7 +50,7 @@ public class CommonItemFactory implements ItemFactory
 
     private boolean disposed = false;
 
-    private final ItemFactory parentItemFactory;
+    private final CommonItemFactory parentItemFactory;
 
     private final Executor executor;
 
@@ -59,7 +59,7 @@ public class CommonItemFactory implements ItemFactory
         this ( executor, null, null, DEFAULT_ID_DELIMITER );
     }
 
-    public CommonItemFactory ( final Executor executor, final ItemFactory parentItemFactory, final String baseId, final String idDelimiter )
+    public CommonItemFactory ( final Executor executor, final CommonItemFactory parentItemFactory, final String baseId, final String idDelimiter )
     {
         this.executor = executor;
         this.parentItemFactory = parentItemFactory;
@@ -155,6 +155,7 @@ public class CommonItemFactory implements ItemFactory
         return ioItem;
     }
 
+    @Override
     public void dispose ()
     {
         if ( isDisposed () )
@@ -180,6 +181,7 @@ public class CommonItemFactory implements ItemFactory
     /**
      * Dispose all items but not the factory itself
      */
+    @Override
     public void disposeAllItems ()
     {
         this.itemMap.clear ();
@@ -190,16 +192,19 @@ public class CommonItemFactory implements ItemFactory
         this.itemMap.remove ( item.getInformation ().getName () );
     }
 
+    @Override
     public DataItemCommand createCommand ( final String localId )
     {
         return constructCommand ( localId );
     }
 
+    @Override
     public DataItemInputChained createInput ( final String localId )
     {
         return constructInput ( localId );
     }
 
+    @Override
     public WriteHandlerItem createInputOutput ( final String localId, final WriteHandler writeHandler )
     {
         return constructInputOutput ( localId, writeHandler );

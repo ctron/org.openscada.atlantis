@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -43,7 +43,7 @@ public class HiveItemFactory extends CommonItemFactory
         this.hive = hive;
     }
 
-    public HiveItemFactory ( final ItemFactory parentItemFactory, final HiveCommon hive, final String baseId, final String idDelimiter )
+    public HiveItemFactory ( final CommonItemFactory parentItemFactory, final HiveCommon hive, final String baseId, final String idDelimiter )
     {
         super ( hive.getOperationService (), parentItemFactory, baseId, idDelimiter );
         this.hive = hive;
