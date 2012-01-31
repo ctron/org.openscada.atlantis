@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -39,7 +39,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractConnectionManager implements SingleServiceListener
+public abstract class AbstractConnectionManager implements SingleServiceListener<DriverFactory>
 {
 
     private static final Logger logger = LoggerFactory.getLogger ( AbstractConnectionManager.class );
@@ -50,11 +50,11 @@ public abstract class AbstractConnectionManager implements SingleServiceListener
 
     private final String connectionId;
 
-    private SingleServiceTracker tracker;
+    private SingleServiceTracker<DriverFactory> tracker;
 
     private AbstractConnectionService connection;
 
-    private ServiceRegistration serviceReg;
+    private ServiceRegistration<?> serviceReg;
 
     private DriverFactory factory;
 
@@ -94,7 +94,7 @@ public abstract class AbstractConnectionManager implements SingleServiceListener
 
         if ( filter != null )
         {
-            this.tracker = new SingleServiceTracker ( this.context, filter, this );
+            this.tracker = new SingleServiceTracker<DriverFactory> ( this.context, filter, this );
             this.tracker.open ();
         }
         else
@@ -141,13 +141,14 @@ public abstract class AbstractConnectionManager implements SingleServiceListener
         // FIXME: implement
     }
 
-    public void serviceChange ( final ServiceReference reference, final Object factory )
+    @Override
+    public void serviceChange ( final ServiceReference<DriverFactory> reference, final DriverFactory factory )
     {
         logger.info ( "Service changed: {} / {} ({}:{})", new Object[] { reference, factory, this.connectionInformation.getInterface (), this.connectionInformation.getDriver () } );
 
         disposeConnection ();
 
-        this.factory = (DriverFactory)factory;
+        this.factory = factory;
 
         if ( this.factory != null )
         {
