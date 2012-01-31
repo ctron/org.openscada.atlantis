@@ -159,12 +159,12 @@ public abstract class ConnectionTracker
         return this.service;
     }
 
-    public boolean waitForService ( final long timeout ) throws InterruptedException
+    public ConnectionService waitForService ( final long timeout ) throws InterruptedException
     {
         if ( this.tracker == null )
         {
-            return false;
+            return null;
         }
-        return this.tracker.waitForService ( timeout ) != null;
+        return this.tracker.waitForService ( timeout );
     }
 }
