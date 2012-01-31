@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.server.osgi;
+package org.openscada.da.server.osgi.internal;
 
 import java.util.Collection;
 import java.util.Dictionary;
