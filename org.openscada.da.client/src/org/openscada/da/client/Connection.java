@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -99,11 +99,11 @@ public interface Connection extends org.openscada.core.client.Connection
      */
     public abstract void browse ( Location location, BrowseOperationCallback callback );
 
-    public abstract void write ( String itemName, Variant value, OperationParameters operationParameters ) throws NoConnectionException, OperationException;
+    public abstract void write ( String itemId, Variant value, OperationParameters operationParameters ) throws NoConnectionException, OperationException;
 
-    public abstract void write ( String itemName, Variant value, OperationParameters operationParameters, int timeout ) throws NoConnectionException, OperationException;
+    public abstract void write ( String itemId, Variant value, OperationParameters operationParameters, int timeout ) throws NoConnectionException, OperationException;
 
-    public abstract void write ( String itemName, Variant value, OperationParameters operationParameters, WriteOperationCallback callback );
+    public abstract void write ( String itemId, Variant value, OperationParameters operationParameters, WriteOperationCallback callback );
 
     public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes, OperationParameters operationParameters ) throws NoConnectionException, OperationException;
 
