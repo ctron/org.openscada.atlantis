@@ -187,6 +187,7 @@ public class CommonItemFactory implements ItemFactory
         this.itemMap.clear ();
     }
 
+    @Override
     public void disposeItem ( final DataItem item )
     {
         this.itemMap.remove ( item.getInformation ().getName () );

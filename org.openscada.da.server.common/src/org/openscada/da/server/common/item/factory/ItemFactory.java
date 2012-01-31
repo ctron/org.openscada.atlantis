@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.common.item.factory;
 
+import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
@@ -31,6 +32,15 @@ public interface ItemFactory
     public abstract DataItemInputChained createInput ( String localId );
 
     public abstract WriteHandlerItem createInputOutput ( String localId, WriteHandler writeHandler );
+
+    /**
+     * Dispose an item if it was created by this factory
+     * <p>
+     * If the item was not created by this factory or was already disposed this is no error and no exception is thrown
+     * </p>
+     * @param dataItem data item to dispose
+     */
+    public abstract void disposeItem ( DataItem dataItem );
 
     /**
      * Dispose the factory
