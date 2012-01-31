@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -36,7 +36,7 @@ public abstract class ConnectionTracker
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionTracker.class );
 
-    private SingleServiceTracker tracker;
+    private SingleServiceTracker<ConnectionService> tracker;
 
     private Filter filter;
 
@@ -60,7 +60,7 @@ public abstract class ConnectionTracker
         this.clazz = clazz;
     }
 
-    protected SingleServiceTracker createTracker ()
+    protected SingleServiceTracker<ConnectionService> createTracker ()
     {
         synchronized ( this )
         {
@@ -73,11 +73,12 @@ public abstract class ConnectionTracker
 
             if ( this.filter != null )
             {
-                return new SingleServiceTracker ( this.context, this.filter, new SingleServiceListener () {
+                return new SingleServiceTracker<ConnectionService> ( this.context, this.filter, new SingleServiceListener<ConnectionService> () {
 
-                    public void serviceChange ( final ServiceReference reference, final Object service )
+                    @Override
+                    public void serviceChange ( final ServiceReference<ConnectionService> reference, final ConnectionService service )
                     {
-                        ConnectionTracker.this.setService ( reference, (ConnectionService)service );
+                        ConnectionTracker.this.setService ( reference, service );
                     }
                 } );
             }
@@ -142,7 +143,7 @@ public abstract class ConnectionTracker
         }
     }
 
-    protected synchronized void setService ( final ServiceReference reference, final ConnectionService service )
+    protected synchronized void setService ( final ServiceReference<ConnectionService> reference, final ConnectionService service )
     {
         logger.debug ( "Set service: {} -> {}", new Object[] { reference, service } );
         this.service = service;
@@ -158,12 +159,12 @@ public abstract class ConnectionTracker
         return this.service;
     }
 
-    public boolean waitForService ( final long timeout ) throws InterruptedException
+    public ConnectionService waitForService ( final long timeout ) throws InterruptedException
     {
         if ( this.tracker == null )
         {
-            return false;
+            return null;
         }
-        return this.tracker.waitForService ( timeout ) != null;
+        return this.tracker.waitForService ( timeout );
     }
 }

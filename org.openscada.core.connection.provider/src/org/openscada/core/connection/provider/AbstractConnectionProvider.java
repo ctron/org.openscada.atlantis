@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -40,7 +40,7 @@ public abstract class AbstractConnectionProvider
 
     protected abstract AbstractConnectionManager createConnectionManager ( final ConnectionRequest request );
 
-    protected final ServiceTracker tracker;
+    protected final ServiceTracker<ConnectionRequest, ConnectionRequest> tracker;
 
     protected final BundleContext context;
 
@@ -67,19 +67,22 @@ public abstract class AbstractConnectionProvider
 
         if ( filter != null )
         {
-            this.tracker = new ServiceTracker ( context, filter, new ServiceTrackerCustomizer () {
+            this.tracker = new ServiceTracker<ConnectionRequest, ConnectionRequest> ( context, filter, new ServiceTrackerCustomizer<ConnectionRequest, ConnectionRequest> () {
 
-                public void removedService ( final ServiceReference reference, final Object service )
+                @Override
+                public void removedService ( final ServiceReference<ConnectionRequest> reference, final ConnectionRequest service )
                 {
                     AbstractConnectionProvider.this.removedService ( reference, service );
                 }
 
-                public void modifiedService ( final ServiceReference reference, final Object service )
+                @Override
+                public void modifiedService ( final ServiceReference<ConnectionRequest> reference, final ConnectionRequest service )
                 {
                     AbstractConnectionProvider.this.modifiedService ( reference, service );
                 }
 
-                public Object addingService ( final ServiceReference reference )
+                @Override
+                public ConnectionRequest addingService ( final ServiceReference<ConnectionRequest> reference )
                 {
                     return AbstractConnectionProvider.this.addingService ( reference );
                 }
@@ -102,7 +105,7 @@ public abstract class AbstractConnectionProvider
         this.tracker.close ();
     }
 
-    protected Object addingService ( final ServiceReference reference )
+    protected ConnectionRequest addingService ( final ServiceReference<ConnectionRequest> reference )
     {
         Object o = this.context.getService ( reference );
         try
@@ -122,7 +125,7 @@ public abstract class AbstractConnectionProvider
         return null;
     }
 
-    protected void modifiedService ( final ServiceReference reference, final Object service )
+    protected void modifiedService ( final ServiceReference<ConnectionRequest> reference, final Object service )
     {
         if ( service instanceof ConnectionRequest )
         {
@@ -131,7 +134,7 @@ public abstract class AbstractConnectionProvider
         }
     }
 
-    protected void removedService ( final ServiceReference reference, final Object service )
+    protected void removedService ( final ServiceReference<ConnectionRequest> reference, final Object service )
     {
         logger.debug ( "Removed service: {}", reference );
 

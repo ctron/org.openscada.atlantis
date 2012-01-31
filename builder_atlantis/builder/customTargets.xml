@@ -150,6 +150,8 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.testing"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.exporter.net"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.da.component.script"/>
+  	
   	<!-- OpenSCADA HD -->
   	
   	<openscada.builder.copyFeature id="org.openscada.hd"/>
