@@ -42,6 +42,11 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
 
     private Map<String, Variant> additionalAttributes;
 
+    public ObjectExporter ( final ItemFactory itemFactory )
+    {
+        this ( itemFactory, false, false );
+    }
+
     public ObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
     {
         super ( itemFactory, readOnly, nullIsError );

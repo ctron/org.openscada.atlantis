@@ -282,7 +282,7 @@ public class Hive extends HiveCommon
 
     private void setupExporter ( final FolderCommon rootFolder )
     {
-        this.objectExporter = new ObjectExporter ( "objectExporter", this, rootFolder );
+        this.objectExporter = new ObjectExporter ( new FolderItemFactory ( this, rootFolder, "objectExporter", "objectExporter" ) );
         this.objectExporter.attachTarget ( this.testObject = new TestModelObject () );
         this.testObject.setLongValue ( 1234 );
     }
