@@ -67,6 +67,7 @@ import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
+import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
@@ -244,7 +245,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         this.statisticsGenerator = stats;
 
         final FolderCommon statsFolder = new FolderCommon ();
-        rootFolder.add ( "statistics", statsFolder, new HashMap<String, Variant> () );
+        rootFolder.add ( "statistics", statsFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "A folder containing statistic items" ) ).getMap () );
 
         stats.register ( this, statsFolder );
     }
