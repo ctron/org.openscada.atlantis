@@ -163,8 +163,7 @@ public class EventFilterImpl implements EventFilter, ConfigurationFactory
             this.writeLock.lock ();
             internalDelete ( configurationId );
 
-            // finally re-sort
-            resort ();
+            // no need to resort
         }
         finally
         {
