@@ -86,18 +86,17 @@ public class JsonServlet extends HttpServlet
             }
             final Event event = EventSerializer.deserializeEvent ( sb.toString () );
 
-            // filter event
-            if ( this.eventFilter != null )
+            if ( this.eventFilter != null && this.eventFilter.matches ( event ) )
             {
-                if ( this.eventFilter.matches ( event ) )
-                {
-                    logger.trace ( "Filter discarded event: {}", event );
-                }
+                // filter event
+                logger.trace ( "Filter discarded event: {}", event );
             }
-
-            // publish event
-            final Event evalEvent = this.eventMonitorEvaluator.evaluate ( event );
-            this.eventProcessor.publishEvent ( evalEvent );
+            else
+            {
+                // publish event
+                final Event evalEvent = this.eventMonitorEvaluator.evaluate ( event );
+                this.eventProcessor.publishEvent ( evalEvent );
+            }
 
             // return output
             response.setContentType ( "text/plain" );
