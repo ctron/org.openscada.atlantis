@@ -52,9 +52,12 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     private Long timestamp;
 
+    private final Variant source;
+
     public BlockHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, BlockHandlerFactoryImpl.FACTORY_ID, BlockHandlerFactoryImpl.FACTORY_ID );
+        this.source = Variant.valueOf ( configurationId );
         this.eventProcessor = eventProcessor;
     }
 
@@ -220,6 +223,9 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     {
         final EventBuilder builder = createEventBuilder ();
 
+        builder.attribute ( Fields.SOURCE, this.source );
+        builder.attribute ( Fields.MONITOR_TYPE, "BLOCK" ); //$NON-NLS-1$
+
         if ( user != null && user.getName () != null )
         {
             builder.attribute ( Fields.ACTOR_TYPE, "USER" ); //$NON-NLS-1$
@@ -237,5 +243,4 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
         return builder;
     }
-
 }
