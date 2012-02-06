@@ -88,7 +88,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             if ( !testRequest.isEmpty () )
             {
                 // if there is a remaining request
-                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, String.format ( Messages.getString ( "BlockHandlerImpl.WriteError" ), this.note ), makeString ( testRequest ) ); //$NON-NLS-1$
+                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, String.format ( Messages.getString ( "BlockHandlerImpl.WriteError" ), this.note ), makeString ( testRequest ), "BLOCK" ); //$NON-NLS-1$
                 return createBlockedResult ();
             }
         }
@@ -152,7 +152,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             }
         }
 
-        publishEvent ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration" ), newValue ); //$NON-NLS-1$
+        publishEvent ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration" ), newValue, "CFG" ); //$NON-NLS-1$
         return newValue;
     }
 
@@ -194,9 +194,14 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
         return updateConfiguration ( data, attributes, false, operationParameters );
     }
 
-    protected void publishEvent ( final UserInformation user, final String message, final Object value )
+    protected void publishEvent ( final UserInformation user, final String message, final Object value, final String eventType )
     {
-        this.eventProcessor.publishEvent ( createEvent ( user, message, value ).build () );
+        final EventBuilder builder = createEvent ( user, message, value );
+        if ( eventType != null )
+        {
+            builder.attribute ( Fields.EVENT_TYPE, Variant.valueOf ( eventType ) );
+        }
+        this.eventProcessor.publishEvent ( builder.build () );
     }
 
     protected EventBuilder createEvent ( final UserInformation user, final String message, final Object value )
