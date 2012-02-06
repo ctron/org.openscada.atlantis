@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -130,15 +130,15 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
         super.update ( userInformation, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.note = updateValue ( cfg.getString ( "note", null ), this.note ); //$NON-NLS-1$
-        this.active = updateValue ( cfg.getBoolean ( "active", false ), this.active ); //$NON-NLS-1$
-        this.user = updateValue ( cfg.getString ( "user", null ), this.user ); //$NON-NLS-1$
+        this.note = updateValue ( userInformation, cfg.getString ( "note", null ), this.note ); //$NON-NLS-1$
+        this.active = updateValue ( userInformation, cfg.getBoolean ( "active", false ), this.active ); //$NON-NLS-1$
+        this.user = updateValue ( userInformation, cfg.getString ( "user", null ), this.user ); //$NON-NLS-1$
         this.timestamp = cfg.getLong ( "timestamp" ); //$NON-NLS-1$
 
         reprocess ();
     }
 
-    protected <T> T updateValue ( final T newValue, final T oldValue )
+    protected <T> T updateValue ( final UserInformation userInformation, final T newValue, final T oldValue )
     {
         if ( newValue == oldValue )
         {
@@ -152,7 +152,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             }
         }
 
-        publishEvent ( null, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration" ), newValue ); //$NON-NLS-1$
+        publishEvent ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration" ), newValue ); //$NON-NLS-1$
         return newValue;
     }
 
@@ -202,6 +202,8 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     protected EventBuilder createEvent ( final UserInformation user, final String message, final Object value )
     {
         final EventBuilder builder = createEventBuilder ();
+
+        builder.attributes ( this.eventAttributes );
 
         if ( user != null && user.getName () != null )
         {
