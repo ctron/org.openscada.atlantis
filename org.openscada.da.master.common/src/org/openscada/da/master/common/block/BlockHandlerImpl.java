@@ -220,8 +220,6 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     {
         final EventBuilder builder = createEventBuilder ();
 
-        builder.attributes ( this.eventAttributes );
-
         if ( user != null && user.getName () != null )
         {
             builder.attribute ( Fields.ACTOR_TYPE, "USER" ); //$NON-NLS-1$
