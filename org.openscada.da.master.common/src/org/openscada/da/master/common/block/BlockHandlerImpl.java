@@ -99,7 +99,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     {
         if ( this.note == null || this.note.isEmpty () )
         {
-            return Messages.getString("BlockHandlerImpl.WriteErrorNoReason"); //$NON-NLS-1$
+            return Messages.getString ( "BlockHandlerImpl.WriteErrorNoReason" ); //$NON-NLS-1$
         }
         else
         {
@@ -142,15 +142,15 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
         super.update ( userInformation, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.note = updateValue ( userInformation, cfg.getString ( "note", null ), this.note ); //$NON-NLS-1$
-        this.active = updateValue ( userInformation, cfg.getBoolean ( "active", false ), this.active ); //$NON-NLS-1$
-        this.user = updateValue ( userInformation, cfg.getString ( "user", null ), this.user ); //$NON-NLS-1$
+        this.note = updateValue ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration.note" ), cfg.getString ( "note", null ), this.note ); //$NON-NLS-1$
+        this.active = updateValue ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration.active" ), cfg.getBoolean ( "active", false ), this.active ); //$NON-NLS-1$
+        this.user = updateValue ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration.user" ), cfg.getString ( "user", null ), this.user ); //$NON-NLS-1$
         this.timestamp = cfg.getLong ( "timestamp" ); //$NON-NLS-1$
 
         reprocess ();
     }
 
-    protected <T> T updateValue ( final UserInformation userInformation, final T newValue, final T oldValue )
+    protected <T> T updateValue ( final UserInformation userInformation, final String message, final T newValue, final T oldValue )
     {
         if ( newValue == oldValue )
         {
@@ -164,7 +164,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             }
         }
 
-        publishEvent ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration" ), newValue, "CFG" ); //$NON-NLS-1$ //$NON-NLS-2$
+        publishEvent ( userInformation, message, newValue, "CFG" ); //$NON-NLS-1$ 
         return newValue;
     }
 
