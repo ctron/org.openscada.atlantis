@@ -88,11 +88,23 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             if ( !testRequest.isEmpty () )
             {
                 // if there is a remaining request
-                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, String.format ( Messages.getString ( "BlockHandlerImpl.WriteError" ), this.note ), makeString ( testRequest ), "BLOCK" ); //$NON-NLS-1$
+                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, makeNote (), makeString ( testRequest ), "BLOCK" ); //$NON-NLS-1$
                 return createBlockedResult ();
             }
         }
         return result;
+    }
+
+    private String makeNote ()
+    {
+        if ( this.note == null || this.note.isEmpty () )
+        {
+            return Messages.getString("BlockHandlerImpl.WriteErrorNoReason"); //$NON-NLS-1$
+        }
+        else
+        {
+            return String.format ( Messages.getString ( "BlockHandlerImpl.WriteError" ), this.note ); //$NON-NLS-1$
+        }
     }
 
     private String makeString ( final WriteRequest result )
@@ -152,7 +164,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             }
         }
 
-        publishEvent ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration" ), newValue, "CFG" ); //$NON-NLS-1$
+        publishEvent ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration" ), newValue, "CFG" ); //$NON-NLS-1$ //$NON-NLS-2$
         return newValue;
     }
 
