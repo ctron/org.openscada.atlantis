@@ -297,7 +297,7 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         final StateInformation newInformation = new StateInformation ( this.information );
         newInformation.setLastAckTimestamp ( aknTimestamp );
         newInformation.setLastAckUser ( getUserName ( userInformation ) );
-        newInformation.setTimestamp ( aknTimestamp );
+        newInformation.setTimestamp ( new Date () );
 
         publishEvent ( eventDecorator.decorate ( createEvent ( null, userInformation, Messages.getString ( "AbstractStateMachineMonitorService.tag.akn" ), null ) ) ); //$NON-NLS-1$
         applyAndSendStatus ( newInformation );
