@@ -30,6 +30,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
 
 import org.openscada.ae.Event;
@@ -39,6 +40,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
 import org.openscada.utils.filter.Filter;
 import org.openscada.utils.str.StringHelper;
+import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,6 +73,11 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
 
     private final String defaultOrder = " ORDER BY E.SOURCE_TIMESTAMP DESC, E.ENTRY_TIMESTAMP DESC";
 
+    public LegacyJdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties ) throws SQLException
+    {
+        super ( dataSourceFactory, properties );
+    }
+
     @Override
     public void storeEvent ( final Event event ) throws Exception
     {
@@ -78,14 +85,14 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
         Statement stm1 = null;
         Statement stm2 = null;
         {
-            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertEventSql, this.getSchema () ) );
+            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertEventSql, getSchema () ) );
             stm.setString ( 1, event.getId ().toString () );
             stm.setTimestamp ( 2, new java.sql.Timestamp ( event.getSourceTimestamp ().getTime () ) );
             stm.setTimestamp ( 3, new java.sql.Timestamp ( event.getEntryTimestamp ().getTime () ) );
             stm.setString ( 4, clip ( 32, Variant.valueOf ( event.getField ( Fields.MONITOR_TYPE ) ).asString ( "" ) ) );
             stm.setString ( 5, clip ( 32, Variant.valueOf ( event.getField ( Fields.EVENT_TYPE ) ).asString ( "" ) ) );
             stm.setString ( 6, clip ( 32, Variant.valueOf ( event.getField ( Fields.VALUE ) ).getType ().name () ) );
-            stm.setString ( 7, clip ( this.getMaxLength (), Variant.valueOf ( event.getField ( Fields.VALUE ) ).asString ( "" ) ) );
+            stm.setString ( 7, clip ( getMaxLength (), Variant.valueOf ( event.getField ( Fields.VALUE ) ).asString ( "" ) ) );
             final Long longValue = Variant.valueOf ( event.getField ( Fields.VALUE ) ).asLong ( null );
             if ( longValue == null )
             {
@@ -104,7 +111,7 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
             {
                 stm.setDouble ( 9, longValue );
             }
-            stm.setString ( 10, clip ( this.getMaxLength (), Variant.valueOf ( event.getField ( Fields.MESSAGE ) ).asString ( "" ) ) );
+            stm.setString ( 10, clip ( getMaxLength (), Variant.valueOf ( event.getField ( Fields.MESSAGE ) ).asString ( "" ) ) );
             stm.setString ( 11, clip ( 255, Variant.valueOf ( event.getField ( Fields.MESSAGE_CODE ) ).asString ( "" ) ) );
             stm.setInt ( 12, Variant.valueOf ( event.getField ( Fields.PRIORITY ) ).asInteger ( 50 ) );
             stm.setString ( 13, clip ( 255, Variant.valueOf ( event.getField ( Fields.SOURCE ) ).asString ( "" ) ) );
@@ -115,7 +122,7 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
             stm1 = stm;
         }
         {
-            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertAttributesSql, this.getSchema () ) );
+            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertAttributesSql, getSchema () ) );
             boolean hasAttr = false;
             for ( final String attr : event.getAttributes ().keySet () )
             {
@@ -126,7 +133,7 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
                 stm.setString ( 1, event.getId ().toString () );
                 stm.setString ( 2, attr );
                 stm.setString ( 3, clip ( 32, event.getAttributes ().get ( attr ).getType ().name () ) );
-                stm.setString ( 4, clip ( this.getMaxLength (), event.getAttributes ().get ( attr ).asString ( "" ) ) );
+                stm.setString ( 4, clip ( getMaxLength (), event.getAttributes ().get ( attr ).asString ( "" ) ) );
                 final Long longValue = Variant.valueOf ( event.getAttributes ().get ( attr ) ).asLong ( null );
                 if ( longValue == null )
                 {
@@ -165,7 +172,7 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
     {
         final Connection con = createConnection ();
         final String sql = this.selectEventSql + this.whereSql + " AND E.ID = ? " + this.defaultOrder;
-        final PreparedStatement stm = con.prepareStatement ( String.format ( sql, this.getSchema (), "" ), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
+        final PreparedStatement stm = con.prepareStatement ( String.format ( sql, getSchema (), "" ), ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
         stm.setString ( 1, "default" );
         stm.setString ( 2, id.toString () );
         final ResultSet result = stm.executeQuery ();
@@ -188,11 +195,11 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
     public ResultSet queryEvents ( final Filter filter ) throws SQLException, NotSupportedException
     {
         final Connection con = createConnection ();
-        final SqlCondition condition = SqlConverter.toSql ( this.getSchema (), filter );
+        final SqlCondition condition = SqlConverter.toSql ( getSchema (), filter );
         String sql = this.selectEventSql + StringHelper.join ( condition.joins, " " ) + this.whereSql;
         sql += condition.condition;
         sql += this.defaultOrder;
-        final String querySql = String.format ( sql, this.getSchema () );
+        final String querySql = String.format ( sql, getSchema () );
         logger.debug ( "executing query: " + querySql + " with parameters " + condition.joinParameters + " / " + condition.parameters );
         final PreparedStatement stm = con.prepareStatement ( querySql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
         int i = 0;
@@ -309,12 +316,12 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
     @Override
     protected String getDeleteAttributesSql ()
     {
-        return deleteAttributesSql;
+        return this.deleteAttributesSql;
     }
 
     @Override
     protected String getInsertAttributesSql ()
     {
-        return insertAttributesSql;
+        return this.insertAttributesSql;
     }
 }

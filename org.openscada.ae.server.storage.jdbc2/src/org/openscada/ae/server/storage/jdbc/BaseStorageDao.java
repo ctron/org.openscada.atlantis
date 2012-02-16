@@ -1,15 +1,35 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.jdbc;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Properties;
 import java.util.UUID;
-
-import javax.sql.DataSource;
 
 import org.openscada.ae.Event;
 import org.openscada.core.VariantType;
+import org.openscada.utils.osgi.jdbc.DataSourceConnectionAccessor;
+import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -23,7 +43,18 @@ public abstract class BaseStorageDao implements StorageDao
 
     private String instance = "default";
 
-    private DataSource dataSource;
+    private final DataSourceConnectionAccessor accessor;
+
+    public BaseStorageDao ( final DataSourceFactory dataSourceFactory, final Properties paramProperties ) throws SQLException
+    {
+        this.accessor = new DataSourceConnectionAccessor ( dataSourceFactory, paramProperties );
+    }
+
+    @Override
+    public void dispose ()
+    {
+        this.accessor.dispose ();
+    }
 
     public void setSchema ( final String schema )
     {
@@ -55,21 +86,16 @@ public abstract class BaseStorageDao implements StorageDao
         return this.instance;
     }
 
-    public void setDataSource ( final DataSource dataSource )
-    {
-        this.dataSource = dataSource;
-    }
-
-    public DataSource getDataSource ()
-    {
-        return this.dataSource;
-    }
-
     public Connection createConnection () throws SQLException
     {
-        final Connection connection = this.dataSource.getConnection ();
+        final Connection connection = this.accessor.getConnection ();
         connection.setAutoCommit ( false );
         return connection;
+    }
+
+    protected DataSourceConnectionAccessor getAccessor ()
+    {
+        return this.accessor;
     }
 
     public void closeStatement ( final Statement statement )
@@ -160,6 +186,11 @@ public abstract class BaseStorageDao implements StorageDao
             return string;
         }
         return string.substring ( 0, i );
+    }
+
+    protected int getCleanupDays ()
+    {
+        return Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.archiveDays", -1 );
     }
 
     protected abstract String getDeleteAttributesSql ();

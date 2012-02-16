@@ -27,24 +27,37 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Properties;
 import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.filter.Filter;
+import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
+import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
 import org.openscada.utils.str.StringHelper;
+import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class JdbcStorageDao extends BaseStorageDao
 {
+
     private static final Logger logger = LoggerFactory.getLogger ( JdbcStorageDao.class );
+
+    private final String cleanupArchiveSql = "DELETE FROM %sOPENSCADA_AE_EVENTS " //
+            + "WHERE ENTRY_TIMESTAMP < ?";
 
     private final String insertEventSql = "INSERT INTO %sOPENSCADA_AE_EVENTS " //
             + "(ID, INSTANCE_ID, SOURCE_TIMESTAMP, ENTRY_TIMESTAMP, MONITOR_TYPE, EVENT_TYPE, " //
@@ -70,6 +83,37 @@ public class JdbcStorageDao extends BaseStorageDao
     private final String whereSql = " WHERE E.INSTANCE_ID = ? ";
 
     private final String defaultOrder = " ORDER BY E.SOURCE_TIMESTAMP DESC, E.ENTRY_TIMESTAMP DESC";
+
+    private final ScheduledExecutorService executor;
+
+    public JdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties ) throws SQLException
+    {
+        super ( dataSourceFactory, properties );
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "org.openscada.ae.server.storage.jdbc/CleanupThread" ) );
+        this.executor.scheduleWithFixedDelay ( new Runnable () {
+
+            @Override
+            public void run ()
+            {
+                cleanupArchive ();
+            }
+        }, getCleanupPeriod (), getCleanupPeriod (), TimeUnit.SECONDS );
+    }
+
+    @Override
+    public void dispose ()
+    {
+        logger.info ( "Shutting down" );
+        this.executor.shutdown ();
+
+        super.dispose ();
+        logger.info ( "Shutdown complete" );
+    }
+
+    public static long getCleanupPeriod ()
+    {
+        return Long.getLong ( "org.openscada.ae.server.storage.jdbc.cleanupPeriodSeconds", 60 * 60 /* default to one hour */);
+    }
 
     /* (non-Javadoc)
      * @see org.openscada.ae.server.storage.jdbc.StorageDao#storeEvent(org.openscada.ae.Event)
@@ -386,5 +430,50 @@ public class JdbcStorageDao extends BaseStorageDao
     protected String getInsertAttributesSql ()
     {
         return this.insertAttributesSql;
+    }
+
+    private void cleanupArchive ()
+    {
+        try
+        {
+            cleanupArchive ( getCleanupDays () );
+        }
+        catch ( final Exception e )
+        {
+            logger.error ( "Failed to clean up archive", e );
+        }
+    }
+
+    /**
+     * Cleanup the archive
+     * @param days days in the past that should remain in the archive
+     * @return the number of entries deleted or -1 if the parameters <q>days</q> was negative or zero.
+     */
+    protected int cleanupArchive ( final int days ) throws Exception
+    {
+        logger.info ( "Request to clean up archive - days: {}", days );
+        if ( days <= 0 )
+        {
+            logger.info ( "Skipping archive cleanup" );
+            return -1;
+        }
+
+        final Calendar c = Calendar.getInstance ();
+        c.add ( Calendar.DAY_OF_MONTH, -days );
+
+        return getAccessor ().doWithConnection ( new CommonConnectionTask<Integer> () {
+            @Override
+            protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
+            {
+                connectionContext.setAutoCommit ( true );
+
+                final Date d = c.getTime ();
+                logger.info ( "Starting to delete events up to {}", d );
+                final int result = connectionContext.update ( String.format ( JdbcStorageDao.this.cleanupArchiveSql, getSchema () ), d );
+                logger.info ( "Successfully cleaned up {} entries", result );
+
+                return result;
+            }
+        } );
     }
 }

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -49,11 +48,16 @@ public class JdbcStorage extends BaseStorage
 
     private final AtomicInteger queueSize = new AtomicInteger ( 0 );
 
-    private StorageDao jdbcStorageDao;
+    private final StorageDao jdbcStorageDao;
 
     private final List<JdbcQuery> openQueries = new CopyOnWriteArrayList<JdbcQuery> ();
 
     private final BoundedPriorityQueueSet<Event> errorQueue = new BoundedPriorityQueueSet<Event> ( 1000 );
+
+    public JdbcStorage ( final StorageDao jdbcStorageDao )
+    {
+        this.jdbcStorageDao = jdbcStorageDao;
+    }
 
     @Override
     public Event store ( final Event event, final StoreListener listener )
@@ -166,9 +170,7 @@ public class JdbcStorage extends BaseStorage
     }
 
     /**
-     * is called by Spring when {@link JdbcStorage} is initialized. It creates a
-     * new {@link ExecutorService} which is used to schedule the events for storage.
-     *  
+     * Initialize the instance
      * @throws Exception
      */
     public void start () throws Exception
@@ -186,13 +188,9 @@ public class JdbcStorage extends BaseStorage
     }
 
     /**
-     * is called by Spring when {@link JdbcStorage} is destroyed. It halts the
-     * {@link ExecutorService} and tries to process the remaining events (say, store them
-     * to the database).
-     * 
-     * @throws Exception
+     * Dispose the object and free resources
      */
-    public void stop () throws Exception
+    public void dispose ()
     {
         final List<Runnable> openTasks = this.executor.shutdownNow ();
         final int numOfOpenTasks = openTasks.size ();
@@ -207,11 +205,10 @@ public class JdbcStorage extends BaseStorage
                 logger.debug ( "jdbcStorageDAO is beeing shut down, but there are still {} open tasks", numOfOpenTasksRemaining );
             }
         }
+
+        this.jdbcStorageDao.dispose ();
+
         logger.info ( "jdbcStorageDAO destroyed" );
     }
 
-    public void setJdbcStorageDao ( final StorageDao jdbcStorageDao )
-    {
-        this.jdbcStorageDao = jdbcStorageDao;
-    }
 }
