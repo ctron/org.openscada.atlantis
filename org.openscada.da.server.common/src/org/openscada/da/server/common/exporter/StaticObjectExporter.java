@@ -26,12 +26,34 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.item.factory.ItemFactory;
 
+/**
+ * An object exporter which will not bind to change events from the bean
+ * <p>
+ * The object can be set using {@link #setTarget(Object)} or {@link #setTarget(Object, Map)} and
+ * object data will be extracted once.
+ * </p>
+ * <p>
+ * The difference to the {@link ObjectExporter} is that this exporter must know the class
+ * of the target object in advance and can therefore create the data items in advance.
+ * Setting a target is a quick operation and does not destroy the data items in the process.
+ * </p>
+ * @author Jens Reimann
+ *
+ * @param <T> the object type
+ */
 public class StaticObjectExporter<T> extends AbstractObjectExporter
 {
     private T target;
 
     private HashMap<String, Variant> additionalAttributes;
 
+    /**
+     * Create a new static object exporter
+     * @param itemFactory the factory used to create items. This factory is disposed when the object exporter is disposed. 
+     * @param modelClazz the class of the object to export
+     * @param readOnly set to <code>true</code> so all fields will be read-only
+     * @param nullIsError set to <code>true</code> to mark fields that are <code>null</code> with an error attribute
+     */
     public StaticObjectExporter ( final ItemFactory itemFactory, final Class<T> modelClazz, final boolean readOnly, final boolean nullIsError )
     {
         super ( itemFactory, readOnly, nullIsError );
