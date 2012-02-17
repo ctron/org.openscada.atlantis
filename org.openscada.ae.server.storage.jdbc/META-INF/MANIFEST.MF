@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA AE JDBC Storage
-Bundle-SymbolicName: org.openscada.ae.server.storage.jdbc2
+Bundle-SymbolicName: org.openscada.ae.server.storage.jdbc
 Bundle-Version: 0.18.0.qualifier
 Bundle-Activator: org.openscada.ae.server.storage.jdbc.Activator
 Import-Package: org.openscada.ae;version="0.14.0",

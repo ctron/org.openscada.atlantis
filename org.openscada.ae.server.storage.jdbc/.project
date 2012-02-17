@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
-	<name>org.openscada.ae.server.storage.jdbc2</name>
+	<name>org.openscada.ae.server.storage.jdbc</name>
 	<comment></comment>
 	<projects>
 	</projects>
