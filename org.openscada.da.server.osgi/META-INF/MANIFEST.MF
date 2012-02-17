@@ -26,8 +26,3 @@ Import-Package: org.openscada.ae.sec;version="0.15.0",
  org.openscada.utils.statuscodes;version="0.15.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.8"
-Export-Package: org.openscada.da.server.osgi;version="0.18.0";
-  uses:="org.openscada.da.server.common.chain,
-   org.openscada.da.server.common,
-   org.openscada.utils.osgi.pool,
-   org.openscada.da.server.common.item.factory"

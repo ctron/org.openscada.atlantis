@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.server.osgi;
+package org.openscada.da.server.common.osgi.factory;
 
 import java.util.Dictionary;
 import java.util.HashMap;
@@ -33,7 +33,7 @@ import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.ItemFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 
-public class DataItemFactory implements ItemFactory
+public class ObjectPoolDataItemFactory implements ItemFactory
 {
     private final ObjectPoolImpl objectPool;
 
@@ -43,7 +43,7 @@ public class DataItemFactory implements ItemFactory
 
     private final Map<String, DataItem> items = new HashMap<String, DataItem> ();
 
-    public DataItemFactory ( final Executor executor, final ObjectPoolImpl objectPool, final String prefix )
+    public ObjectPoolDataItemFactory ( final Executor executor, final ObjectPoolImpl objectPool, final String prefix )
     {
         this.executor = executor;
         this.objectPool = objectPool;
