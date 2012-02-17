@@ -82,7 +82,7 @@ public class DataItemFactory implements ItemFactory
 
     private <T extends DataItem> T registerItem ( final T item )
     {
-        final Dictionary<String, String> properties = new Hashtable<String, String> ();
+        final Dictionary<String, String> properties = new Hashtable<String, String> ( 0 );
 
         final String itemId = item.getInformation ().getName ();
 
