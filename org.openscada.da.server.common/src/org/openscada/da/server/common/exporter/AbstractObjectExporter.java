@@ -25,6 +25,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -89,7 +90,7 @@ public abstract class AbstractObjectExporter implements Disposable
             final BeanInfo bi = Introspector.getBeanInfo ( targetClazz );
             for ( final PropertyDescriptor pd : bi.getPropertyDescriptors () )
             {
-                final DataItem item = createItem ( pd );
+                final DataItem item = createItem ( pd, targetClazz );
                 this.items.put ( pd.getName (), item );
                 initAttribute ( pd );
             }
@@ -182,17 +183,102 @@ public abstract class AbstractObjectExporter implements Disposable
         attributes.put ( "property.constrained", Variant.valueOf ( pd.isConstrained () ) );
         attributes.put ( "property.label", Variant.valueOf ( pd.getDisplayName () ) );
         attributes.put ( "property.type", Variant.valueOf ( pd.getPropertyType ().getName () ) );
+        attributes.put ( "proptery.name", Variant.valueOf ( pd.getName () ) );
         attributes.put ( "description", Variant.valueOf ( pd.getShortDescription () ) );
     }
 
-    private DataItem createItem ( final PropertyDescriptor pd )
+    /**
+     * Find the annotation
+     * <p>
+     * The following search order processed
+     * <ol>
+     * <li>Check the field with the same name as the property, process through all superclasses</li>
+     * <li>Check the read method</li>
+     * <li>Check the write method</li>
+     * </ol>
+     * 
+     * </p>
+     * @param pd the property descriptor to check
+     * @param clazz class instance
+     * @return the annotation or <code>null</code> if none was found
+     */
+    protected ItemName findAnnotation ( final PropertyDescriptor pd, final Class<?> clazz )
+    {
+        final String name = pd.getName ();
+
+        try
+        {
+            final Field field = findField ( name, clazz );
+            final ItemName itemName = field.getAnnotation ( ItemName.class );
+            if ( itemName != null )
+            {
+                return itemName;
+            }
+        }
+        catch ( final NoSuchFieldException e )
+        {
+        }
+
+        if ( pd.getReadMethod () != null && pd.getReadMethod ().getAnnotation ( ItemName.class ) != null )
+        {
+            return pd.getReadMethod ().getAnnotation ( ItemName.class );
+        }
+
+        if ( pd.getWriteMethod () != null && pd.getWriteMethod ().getAnnotation ( ItemName.class ) != null )
+        {
+            return pd.getWriteMethod ().getAnnotation ( ItemName.class );
+        }
+
+        return null;
+    }
+
+    protected String makeItemName ( final PropertyDescriptor pd, final Class<?> clazz )
+    {
+        try
+        {
+            final ItemName itemName = findAnnotation ( pd, clazz );
+            if ( itemName == null )
+            {
+                return pd.getName ();
+            }
+            else
+            {
+                return itemName.value ();
+            }
+        }
+        catch ( final Exception e )
+        {
+            return pd.getName ();
+        }
+    }
+
+    private Field findField ( final String name, final Class<?> clazz ) throws NoSuchFieldException
+    {
+        try
+        {
+            return clazz.getDeclaredField ( name );
+        }
+        catch ( final NoSuchFieldException e )
+        {
+            final Class<?> superClazz = clazz.getSuperclass ();
+            if ( superClazz == null || superClazz == Object.class )
+            {
+                throw new NoSuchFieldException ( name );
+            }
+            return findField ( name, superClazz );
+        }
+    }
+
+    private DataItem createItem ( final PropertyDescriptor pd, final Class<?> clazz )
     {
         final boolean writeable = !this.readOnly && pd.getWriteMethod () != null;
         final boolean readable = pd.getReadMethod () != null;
 
+        final String itemName = makeItemName ( pd, clazz );
+
         if ( writeable && readable )
         {
-            return this.factory.createInputOutput ( pd.getName (), new WriteHandler () {
+            return this.factory.createInputOutput ( itemName, new WriteHandler () {
 
                 @Override
                 public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -203,11 +289,11 @@ public abstract class AbstractObjectExporter implements Disposable
         }
         else if ( readable )
         {
-            return this.factory.createInput ( pd.getName () );
+            return this.factory.createInput ( itemName );
         }
         else if ( writeable )
         {
-            final DataItemCommand item = this.factory.createCommand ( pd.getName () );
+            final DataItemCommand item = this.factory.createCommand ( itemName );
             item.addListener ( new DataItemCommand.Listener () {
 
                 @Override
