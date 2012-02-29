@@ -660,9 +660,12 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     @Override
     public NotifyFuture<WriteResult> startWrite ( final Session session, final String itemId, final Variant value, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
     {
+        logger.debug ( "startWrite - session: {}, itemId: {}, value: {}, operationParameters: {}", new Object[] { session, itemId, value, operationParameters } );
         final SessionCommon sessionCommon = validateSession ( session );
 
         final OperationParameters effectiveOperationParameters = makeOperationParameters ( sessionCommon, operationParameters );
+
+        logger.debug ( "Operation parameters - provided: {}, effective: {}", operationParameters, effectiveOperationParameters );
 
         final AuthorizationResult result = authorize ( DATA_ITEM_OBJECT_TYPE, itemId, "WRITE", effectiveOperationParameters.getUserInformation (), makeWriteValueContext ( value ) );
         if ( !result.isGranted () )
