@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -46,6 +46,14 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
 {
     private final static Logger logger = LoggerFactory.getLogger ( GMPPProtocolDecoder.class );
 
+    private final ThreadLocal<Charset> decoderLocal = new ThreadLocal<Charset> () {
+        @Override
+        protected Charset initialValue ()
+        {
+            return Charset.forName ( "utf-8" );
+        }
+    };
+
     private final static boolean disableIntern = Boolean.getBoolean ( "org.openscada.net.mina.GMPPProtocolDecoder.disableIntern" );
 
     private String decodeStringFromStream ( final IoBuffer buffer, final int size )
@@ -53,7 +61,7 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
         final ByteBuffer data = buffer.buf ().slice ();
         data.limit ( size );
 
-        final String result = Charset.forName ( "utf-8" ).decode ( data ).toString ();
+        final String result = this.decoderLocal.get ().decode ( data ).toString ();
 
         buffer.skip ( size );
 
