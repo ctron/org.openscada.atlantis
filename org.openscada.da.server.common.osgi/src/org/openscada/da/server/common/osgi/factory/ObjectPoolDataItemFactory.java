@@ -31,11 +31,11 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.ItemFactory;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
+import org.openscada.utils.osgi.pool.ManageableObjectPool;
 
 public class ObjectPoolDataItemFactory implements ItemFactory
 {
-    private final ObjectPoolImpl objectPool;
+    private final ManageableObjectPool objectPool;
 
     private final Executor executor;
 
@@ -43,7 +43,7 @@ public class ObjectPoolDataItemFactory implements ItemFactory
 
     private final Map<String, DataItem> items = new HashMap<String, DataItem> ();
 
-    public ObjectPoolDataItemFactory ( final Executor executor, final ObjectPoolImpl objectPool, final String prefix )
+    public ObjectPoolDataItemFactory ( final Executor executor, final ManageableObjectPool objectPool, final String prefix )
     {
         this.executor = executor;
         this.objectPool = objectPool;
