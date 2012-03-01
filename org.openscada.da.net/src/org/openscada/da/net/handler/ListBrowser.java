@@ -109,7 +109,7 @@ public class ListBrowser
                 mapValue.put ( "type", new StringValue ( "item" ) );
                 final DataItemEntry dataItemEntry = (DataItemEntry)entry;
                 mapValue.put ( "item-id", new StringValue ( dataItemEntry.getId () ) );
-                mapValue.put ( "io-direction", new IntegerValue ( Messages.encodeIO ( dataItemEntry.getIODirections () ) ) );
+                mapValue.put ( "io-direction", IntegerValue.valueOf ( Messages.encodeIO ( dataItemEntry.getIODirections () ) ) );
             }
             else
             {
