@@ -23,7 +23,9 @@ public class LongValue extends Value
 {
     public final long value;
 
-    private static LongValue[] staticValues = new LongValue[100];
+    private static int VALUES = 100;
+
+    private static LongValue[] staticValues = new LongValue[VALUES];
 
     static
     {
@@ -35,7 +37,7 @@ public class LongValue extends Value
 
     public static LongValue valueOf ( final long value )
     {
-        if ( value >= 0 && value < staticValues.length )
+        if ( value >= 0 && value < VALUES )
         {
             return staticValues[(int)value];
         }

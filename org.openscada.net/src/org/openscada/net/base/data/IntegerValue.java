@@ -23,7 +23,9 @@ public class IntegerValue extends Value
 {
     public final int value;
 
-    private static IntegerValue[] staticValues = new IntegerValue[100];
+    private static int VALUES = 100;
+
+    private static IntegerValue[] staticValues = new IntegerValue[VALUES];
 
     static
     {
@@ -35,7 +37,7 @@ public class IntegerValue extends Value
 
     public static IntegerValue valueOf ( final int value )
     {
-        if ( value >= 0 && value < staticValues.length )
+        if ( value >= 0 && value < VALUES )
         {
             return staticValues[value];
         }
