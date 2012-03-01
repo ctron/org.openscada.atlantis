@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,7 +23,29 @@ public class LongValue extends Value
 {
     public final long value;
 
-    public LongValue ( final long value )
+    private static LongValue[] staticValues = new LongValue[100];
+
+    static
+    {
+        for ( int i = 0; i < staticValues.length; i++ )
+        {
+            staticValues[i] = new LongValue ( i );
+        }
+    }
+
+    public static LongValue valueOf ( final long value )
+    {
+        if ( value >= 0 && value < staticValues.length )
+        {
+            return staticValues[(int)value];
+        }
+        else
+        {
+            return new LongValue ( value );
+        }
+    }
+
+    private LongValue ( final long value )
     {
         super ();
         this.value = value;

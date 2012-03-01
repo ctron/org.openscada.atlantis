@@ -82,9 +82,9 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
         switch ( type )
         {
         case VT_LONG:
-            return new LongValue ( buffer.getLong () );
+            return LongValue.valueOf ( buffer.getLong () );
         case VT_INTEGER:
-            return new IntegerValue ( buffer.getInt () );
+            return IntegerValue.valueOf ( buffer.getInt () );
         case VT_STRING:
             return new StringValue ( decodeStringFromStream ( buffer, len ) );
         case VT_DOUBLE:

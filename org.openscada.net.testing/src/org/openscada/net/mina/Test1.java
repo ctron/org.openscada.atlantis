@@ -80,6 +80,6 @@ public class Test1
 
     public Value createScalarValue ( final int index )
     {
-        return new IntegerValue ( index );
+        return IntegerValue.valueOf ( index );
     }
 }
