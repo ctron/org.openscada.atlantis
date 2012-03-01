@@ -21,11 +21,10 @@ package org.openscada.net.base.data;
 
 public class LongValue extends Value
 {
-    public final long value;
 
-    private static int VALUES = 100;
+    private static final int VALUES = 100;
 
-    private static LongValue[] staticValues = new LongValue[VALUES];
+    private static final LongValue[] staticValues = new LongValue[VALUES];
 
     static
     {
@@ -47,9 +46,10 @@ public class LongValue extends Value
         }
     }
 
+    public final long value;
+
     private LongValue ( final long value )
     {
-        super ();
         this.value = value;
     }
 
