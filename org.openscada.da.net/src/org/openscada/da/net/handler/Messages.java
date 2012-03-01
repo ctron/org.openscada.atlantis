@@ -163,13 +163,13 @@ public class Messages extends org.openscada.core.net.MessageHelper
         switch ( subscriptionState )
         {
         case DISCONNECTED:
-            msg.getValues ().put ( "state", new IntegerValue ( 0 ) );
+            msg.getValues ().put ( "state", IntegerValue.valueOf ( 0 ) );
             break;
         case GRANTED:
-            msg.getValues ().put ( "state", new IntegerValue ( 1 ) );
+            msg.getValues ().put ( "state", IntegerValue.valueOf ( 1 ) );
             break;
         case CONNECTED:
-            msg.getValues ().put ( "state", new IntegerValue ( 2 ) );
+            msg.getValues ().put ( "state", IntegerValue.valueOf ( 2 ) );
             break;
         }
         return msg;
