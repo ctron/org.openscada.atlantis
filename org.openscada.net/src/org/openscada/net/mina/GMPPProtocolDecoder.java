@@ -75,11 +75,6 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
         }
     }
 
-    private String decodeStringFromStream ( final IoBuffer buffer )
-    {
-        return decodeStringFromStream ( buffer, buffer.getInt () );
-    }
-
     private Value decodeValueFromStream ( final IoBuffer buffer )
     {
         final int type = buffer.getInt ();
@@ -143,7 +138,7 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
         for ( int i = 0; i < items; i++ )
         {
             final Value value = decodeValueFromStream ( buffer );
-            final String key = decodeStringFromStream ( buffer );
+            final String key = decodeStringFromStream ( buffer, buffer.getInt () );
             values.put ( key, value );
         }
 
