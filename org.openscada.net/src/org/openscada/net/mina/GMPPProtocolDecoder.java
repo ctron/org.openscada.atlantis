@@ -80,7 +80,7 @@ public class GMPPProtocolDecoder extends CumulativeProtocolDecoder implements GM
         final int type = buffer.getInt ();
         final int len = buffer.getInt ();
 
-        logger.debug ( "Additional data: {} len: {}", type, len );
+        logger.trace ( "Additional data: {} len: {}", type, len );
 
         switch ( type )
         {
