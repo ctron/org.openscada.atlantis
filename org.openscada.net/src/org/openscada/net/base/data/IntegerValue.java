@@ -48,7 +48,7 @@ public class IntegerValue extends Value
 
     public final int value;
 
-    private IntegerValue ( final int value )
+    public IntegerValue ( final int value )
     {
         this.value = value;
     }

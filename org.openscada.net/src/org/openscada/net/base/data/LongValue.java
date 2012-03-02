@@ -48,7 +48,7 @@ public class LongValue extends Value
 
     public final long value;
 
-    private LongValue ( final long value )
+    public LongValue ( final long value )
     {
         this.value = value;
     }
