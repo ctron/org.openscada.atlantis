@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,6 +27,7 @@ import java.util.Set;
 
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
+import org.openscada.net.base.data.Value;
 import org.openscada.net.mina.Messenger;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningState;
@@ -38,43 +39,43 @@ public class LongRunningController implements MessageListener
 
     private final static Logger logger = LoggerFactory.getLogger ( LongRunningController.class );
 
-    private final Set<Integer> _commandCodes = new HashSet<Integer> ();
+    private final Set<Integer> commandCodes = new HashSet<Integer> ();
 
-    private Messenger _connectionHandler = null;
+    private Messenger connectionHandler = null;
 
     private final Map<Long, LongRunningOperation> opMap = new HashMap<Long, LongRunningOperation> ();
 
     public LongRunningController ( final Messenger connectionHandler, final int commandCode )
     {
-        this._connectionHandler = connectionHandler;
-        this._commandCodes.add ( commandCode );
+        this.connectionHandler = connectionHandler;
+        this.commandCodes.add ( commandCode );
     }
 
     public LongRunningController ( final Messenger connectionHandler, final Set<Integer> commandCodes )
     {
-        this._connectionHandler = connectionHandler;
-        this._commandCodes.addAll ( commandCodes );
+        this.connectionHandler = connectionHandler;
+        this.commandCodes.addAll ( commandCodes );
     }
 
     public LongRunningController ( final Messenger connectionHandler, final Integer... commandCodes )
     {
-        this._connectionHandler = connectionHandler;
-        this._commandCodes.addAll ( Arrays.asList ( commandCodes ) );
+        this.connectionHandler = connectionHandler;
+        this.commandCodes.addAll ( Arrays.asList ( commandCodes ) );
     }
 
     public void register ()
     {
-        for ( final Integer commandCode : this._commandCodes )
+        for ( final Integer commandCode : this.commandCodes )
         {
-            this._connectionHandler.setHandler ( commandCode, this );
+            this.connectionHandler.setHandler ( commandCode, this );
         }
     }
 
     public void unregister ()
     {
-        for ( final Integer commandCode : this._commandCodes )
+        for ( final Integer commandCode : this.commandCodes )
         {
-            this._connectionHandler.unsetHandler ( commandCode );
+            this.connectionHandler.unsetHandler ( commandCode );
         }
     }
 
@@ -87,23 +88,23 @@ public class LongRunningController implements MessageListener
 
         final LongRunningOperation op = new LongRunningOperation ( this, listener );
 
-        this._connectionHandler.sendMessage ( message, new MessageStateListener () {
+        this.connectionHandler.sendMessage ( message, new MessageStateListener () {
 
+            @Override
             public void messageReply ( final Message message )
             {
-                if ( message.getValues ().containsKey ( "id" ) )
+                final Value value = message.getValues ().get ( "id" );
+                if ( value instanceof LongValue )
                 {
-                    if ( message.getValues ().get ( "id" ) instanceof LongValue )
-                    {
-                        final long id = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
-                        op.granted ( id );
-                        assignOperation ( id, op );
-                        return;
-                    }
+                    final long id = ( (LongValue)value ).getValue ();
+                    op.granted ( id );
+                    assignOperation ( id, op );
+                    return;
                 }
-                else if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
+                final Value errorValue = message.getValues ().get ( Message.FIELD_ERROR_INFO );
+                if ( errorValue != null )
                 {
-                    final String errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
+                    final String errorInfo = errorValue.toString ();
                     op.fail ( new InvalidMessageReplyException ( errorInfo ).fillInStackTrace () );
                     return;
                 }
@@ -111,6 +112,7 @@ public class LongRunningController implements MessageListener
                 op.fail ( new InvalidMessageReplyException ( "Message did not contain 'id' field" ).fillInStackTrace () );
             }
 
+            @Override
             public void messageTimedOut ()
             {
                 op.fail ( new MessageTimeoutException ().fillInStackTrace () );
@@ -130,23 +132,22 @@ public class LongRunningController implements MessageListener
         this.opMap.put ( id, op );
     }
 
+    @Override
     public void messageReceived ( final Message message )
     {
-        long id = 0;
-
-        if ( message.getValues ().containsKey ( "id" ) )
+        final Value value = message.getValues ().get ( "id" );
+        if ( ! ( value instanceof LongValue ) )
         {
-            if ( message.getValues ().get ( "id" ) instanceof LongValue )
-            {
-                id = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
-            }
+            return;
         }
+
+        final long id = ( (LongValue)value ).getValue ();
 
         logger.debug ( "Received long-op reply with id {}", id );
 
         if ( id != 0 )
         {
-            LongRunningOperation op = null;
+            final LongRunningOperation op;
             synchronized ( this.opMap )
             {
                 op = this.opMap.get ( id );
