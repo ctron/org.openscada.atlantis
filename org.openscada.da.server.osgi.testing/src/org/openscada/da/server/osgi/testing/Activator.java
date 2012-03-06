@@ -23,6 +23,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import org.openscada.ca.ConfigurationAdministrator;
+import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.server.common.DataItem;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -41,28 +43,39 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration<DataItem> handle;
 
-    /*
-     * (non-Javadoc)
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-     */
+    private TimeItemFactory factory1;
+
+    private ServiceRegistration<?> factory1Handle;
+
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.executor = new ScheduledThreadPoolExecutor ( 1 );
         this.service = new DataItemTest1 ( "test", this.executor );
 
-        final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-        this.handle = context.registerService ( DataItem.class, this.service, properties );
+        {
+            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
+            this.handle = context.registerService ( DataItem.class, this.service, properties );
+        }
+
+        {
+            this.factory1 = new TimeItemFactory ( this.executor, context );
+            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, TimeItemFactory.class.getName () );
+            this.factory1Handle = context.registerService ( ConfigurationFactory.class, this.factory1, properties );
+        }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
     @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         logger.info ( "Stopping test server" );
+
+        this.factory1Handle.unregister ();
+        this.factory1Handle = null;
+
+        this.factory1.dispose ();
+        this.factory1 = null;
 
         this.handle.unregister ();
         this.handle = null;
