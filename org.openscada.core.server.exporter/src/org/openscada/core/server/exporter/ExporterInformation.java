@@ -44,4 +44,10 @@ public class ExporterInformation
     {
         return this.connectionInformation;
     }
+
+    @Override
+    public String toString ()
+    {
+        return String.format ( "[%s, description=%s]", this.connectionInformation, this.description );
+    }
 }
