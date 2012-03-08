@@ -242,7 +242,7 @@ public class AutoReconnectController implements ConnectionStateListener
         this.state = state;
         this.lastStateChange = System.currentTimeMillis ();
 
-        if ( !this.checkScheduled )
+        if ( !this.checkScheduled && this.executor != null )
         {
             this.checkScheduled = true;
             this.executor.execute ( new Runnable () {
