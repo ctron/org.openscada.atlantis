@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +25,7 @@ import java.util.Set;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.utils.lang.Immutable;
+import org.openscada.utils.str.StringHelper;
 
 /**
  * Default implementation of data {@link DataItemInformation}
@@ -38,17 +39,17 @@ public class DataItemInformationBase implements org.openscada.da.core.DataItemIn
 
     private final Set<IODirection> ioDirection;
 
-    public DataItemInformationBase ( final String name, final Set<IODirection> ioDirection )
+    public DataItemInformationBase ( final String id, final Set<IODirection> ioDirection )
     {
         super ();
-        this.id = new String ( name );
+        this.id = id;
         this.ioDirection = EnumSet.copyOf ( ioDirection );
     }
 
     public DataItemInformationBase ( final String id )
     {
         super ();
-        this.id = new String ( id );
+        this.id = id;
         this.ioDirection = EnumSet.allOf ( IODirection.class );
     }
 
@@ -56,15 +57,17 @@ public class DataItemInformationBase implements org.openscada.da.core.DataItemIn
     {
         super ();
 
-        this.id = new String ( information.getName () );
+        this.id = information.getName ();
         this.ioDirection = EnumSet.copyOf ( information.getIODirection () );
     }
 
+    @Override
     public Set<IODirection> getIODirection ()
     {
         return this.ioDirection;
     }
 
+    @Override
     public String getName ()
     {
         return this.id;
@@ -73,14 +76,10 @@ public class DataItemInformationBase implements org.openscada.da.core.DataItemIn
     @Override
     public int hashCode ()
     {
-        if ( this.id == null )
-        {
-            return "".hashCode ();
-        }
-        else
-        {
-            return this.id.hashCode ();
-        }
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( this.id == null ? 0 : this.id.hashCode () );
+        return result;
     }
 
     @Override
@@ -94,24 +93,29 @@ public class DataItemInformationBase implements org.openscada.da.core.DataItemIn
         {
             return false;
         }
-        if ( ! ( obj instanceof DataItemInformation ) )
+        if ( getClass () != obj.getClass () )
         {
             return false;
         }
-
-        final DataItemInformation other = (DataItemInformation)obj;
+        final DataItemInformationBase other = (DataItemInformationBase)obj;
         if ( this.id == null )
         {
-            if ( other.getName () != null )
+            if ( other.id != null )
             {
                 return false;
             }
         }
-        else if ( !this.id.equals ( other.getName () ) )
+        else if ( !this.id.equals ( other.id ) )
         {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public String toString ()
+    {
+        return String.format ( "[%s, %s]", this.id, StringHelper.join ( this.ioDirection, ", " ) );
     }
 
 }
