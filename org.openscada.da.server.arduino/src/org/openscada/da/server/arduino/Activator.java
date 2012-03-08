@@ -50,6 +50,8 @@ public class Activator implements BundleActivator
 
     private ConfigurationFactoryImpl service;
 
+    private ServiceRegistration<ConfigurationFactory> factoryHandle;
+
     static BundleContext getContext ()
     {
         return context;
@@ -76,7 +78,7 @@ public class Activator implements BundleActivator
             final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.arduino.device" );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Arduino OpenSCADA Device" );
-            context.registerService ( ConfigurationFactory.class.getName (), this.service, properties );
+            this.factoryHandle = context.registerService ( ConfigurationFactory.class, this.service, properties );
         }
 
     }
@@ -88,6 +90,8 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext bundleContext ) throws Exception
     {
+        this.factoryHandle.unregister ();
+
         this.itemPoolHandle.unregister ();
         this.itemPool.dispose ();
 

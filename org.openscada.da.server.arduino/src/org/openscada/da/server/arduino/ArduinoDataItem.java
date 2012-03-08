@@ -19,28 +19,51 @@
 
 package org.openscada.da.server.arduino;
 
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
+import org.openscada.protocols.arduino.ArduinoDevice;
+import org.openscada.utils.concurrent.InstantErrorFuture;
+import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 
 public class ArduinoDataItem extends DataItemInputOutputChained
 {
 
-    public ArduinoDataItem ( final DataItemInformation information, final Executor executor )
+    private final ArduinoDevice device;
+
+    private final short itemIndex;
+
+    public ArduinoDataItem ( final ArduinoDevice device, final short itemIndex, final DataItemInformation information, final Executor executor )
     {
         super ( information, executor );
+        this.device = device;
+        this.itemIndex = itemIndex;
+
+        final Map<String, Variant> attributes = new HashMap<String, Variant> ( 1 );
+        attributes.put ( "itemIndex", Variant.valueOf ( itemIndex ) );
+        updateData ( null, attributes, AttributeMode.SET );
     }
 
     @Override
     protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters )
     {
-        // TODO Auto-generated method stub
-        return null;
+        try
+        {
+            this.device.sendWrite ( this.itemIndex, value.as ( null ) );
+        }
+        catch ( final Exception e )
+        {
+            return new InstantErrorFuture<WriteResult> ( e );
+        }
+        return new InstantFuture<WriteResult> ( WriteResult.OK );
     }
 
 }

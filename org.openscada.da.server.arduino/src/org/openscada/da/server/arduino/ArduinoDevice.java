@@ -140,7 +140,7 @@ public class ArduinoDevice
 
         for ( int i = 0; i < parameters.length; i++ )
         {
-            this.items[i] = new ArduinoDataItem ( new DataItemInformationBase ( makeId ( String.format ( "data.%s", getItemName ( i, parameters[i] ) ) ), getIODirection ( parameters[i] ) ), this.executor );
+            this.items[i] = new ArduinoDataItem ( this.device, (short)i, new DataItemInformationBase ( makeId ( String.format ( "data.%s", getItemName ( i, parameters[i] ) ) ), getIODirection ( parameters[i] ) ), this.executor );
             this.itemPool.addService ( this.items[i].getInformation ().getName (), this.items[i], null );
         }
     }
