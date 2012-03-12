@@ -48,7 +48,7 @@ public class ConnectionRequestTracker extends ConnectionTracker
         this ( context, request, listener, null );
     }
 
-    public ConnectionRequestTracker ( final BundleContext context, final ConnectionRequest request, final Listener listener, final Class<?> clazz )
+    public ConnectionRequestTracker ( final BundleContext context, final ConnectionRequest request, final Listener listener, final Class<? extends ConnectionService> clazz )
     {
         super ( context, listener, clazz );
         this.context = context;
