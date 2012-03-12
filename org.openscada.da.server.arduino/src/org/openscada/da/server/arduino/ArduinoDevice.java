@@ -127,9 +127,12 @@ public class ArduinoDevice
 
     private void disposeItems ()
     {
-        for ( final ArduinoDataItem item : this.items )
+        if ( this.items != null )
         {
-            this.itemPool.removeService ( item.getInformation ().getName (), item );
+            for ( final ArduinoDataItem item : this.items )
+            {
+                this.itemPool.removeService ( item.getInformation ().getName (), item );
+            }
         }
         this.items = null;
     }
