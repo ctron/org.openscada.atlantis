@@ -33,6 +33,8 @@ public class Application
 
     private final static Logger logger = LoggerFactory.getLogger ( Application.class );
 
+    private static volatile boolean running = true;
+
     public static void main ( final String[] args ) throws Exception
     {
         String configurationFile = "configuration.xml";
@@ -50,8 +52,8 @@ public class Application
 
         logger.info ( "Exporter running..." );
 
-        // Loop forever
-        while ( true )
+        // Loop forever ... maybe
+        while ( running )
         {
             try
             {
@@ -60,7 +62,16 @@ public class Application
             catch ( final InterruptedException e )
             {
                 logger.warn ( "Failed to sleep", e );
+                Thread.interrupted ();
             }
         }
+    }
+
+    /**
+     * shutdown method for advanced installers stop mechanism
+     */
+    public static void stop ()
+    {
+        running = false;
     }
 }

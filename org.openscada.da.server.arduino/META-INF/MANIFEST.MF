@@ -6,7 +6,8 @@ Bundle-Version: 0.18.0.qualifier
 Bundle-Activator: org.openscada.da.server.arduino.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ca;version="0.15.0",
+Import-Package: org.apache.mina.core.service;version="2.0.4",
+ org.openscada.ca;version="0.15.0",
  org.openscada.core;version="0.15.0",
  org.openscada.core.server.common.session;version="0.15.0",
  org.openscada.da.core;version="0.15.0",
@@ -14,6 +15,7 @@ Import-Package: org.openscada.ca;version="0.15.0",
  org.openscada.da.server.common.chain;version="0.15.0",
  org.openscada.da.server.common.chain.item;version="0.15.0",
  org.openscada.da.server.common.chain.storage;version="0.15.0",
+ org.openscada.da.server.common.impl;version="0.18.0",
  org.openscada.protocols.arduino;version="1.0.0",
  org.openscada.sec;version="0.4.0",
  org.openscada.utils.concurrent;version="0.15.0",

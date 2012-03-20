@@ -95,7 +95,7 @@ public class ValueTools
 
     public static int toInteger ( final Value value, final int defaultValue )
     {
-        return toInteger ( value, defaultValue );
+        return toInteger ( value, Integer.valueOf ( defaultValue ) );
     }
 
     public static ListValue toStringList ( final Iterable<?> list )

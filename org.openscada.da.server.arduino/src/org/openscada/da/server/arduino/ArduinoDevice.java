@@ -127,9 +127,12 @@ public class ArduinoDevice
 
     private void disposeItems ()
     {
-        for ( final ArduinoDataItem item : this.items )
+        if ( this.items != null )
         {
-            this.itemPool.removeService ( item.getInformation ().getName (), item );
+            for ( final ArduinoDataItem item : this.items )
+            {
+                this.itemPool.removeService ( item.getInformation ().getName (), item );
+            }
         }
         this.items = null;
     }
@@ -140,7 +143,7 @@ public class ArduinoDevice
 
         for ( int i = 0; i < parameters.length; i++ )
         {
-            this.items[i] = new ArduinoDataItem ( new DataItemInformationBase ( makeId ( String.format ( "data.%s", getItemName ( i, parameters[i] ) ) ), getIODirection ( parameters[i] ) ), this.executor );
+            this.items[i] = new ArduinoDataItem ( this.device, (short)i, new DataItemInformationBase ( makeId ( String.format ( "data.%s", getItemName ( i, parameters[i] ) ) ), getIODirection ( parameters[i] ) ), this.executor );
             this.itemPool.addService ( this.items[i].getInformation ().getName (), this.items[i], null );
         }
     }

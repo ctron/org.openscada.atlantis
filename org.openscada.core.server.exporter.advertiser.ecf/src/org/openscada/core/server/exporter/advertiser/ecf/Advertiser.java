@@ -47,7 +47,7 @@ public class Advertiser
 
     private final static Logger logger = LoggerFactory.getLogger ( Advertiser.class );
 
-    public static final String DISCOVERY_CONTAINER = "ecf.singleton.discovery"; //$NON-NLS-1$
+    public static final String DISCOVERY_CONTAINER = "ecf.discovery.composite"; //$NON-NLS-1$
 
     private IContainer container;
 
@@ -89,6 +89,7 @@ public class Advertiser
             public ExporterInformation addingService ( final ServiceReference<ExporterInformation> reference )
             {
                 final ExporterInformation info = context.getService ( reference );
+                logger.info ( "Exporint information: {}", info );
                 try
                 {
                     Advertiser.this.addingService ( info );

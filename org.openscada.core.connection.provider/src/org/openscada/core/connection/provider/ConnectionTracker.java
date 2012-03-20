@@ -46,14 +46,14 @@ public abstract class ConnectionTracker
 
     private final BundleContext context;
 
-    private final Class<?> clazz;
+    private final Class<? extends ConnectionService> clazz;
 
     public interface Listener
     {
         public void setConnection ( final ConnectionService connectionService );
     }
 
-    public ConnectionTracker ( final BundleContext context, final Listener listener, final Class<?> clazz )
+    public ConnectionTracker ( final BundleContext context, final Listener listener, final Class<? extends ConnectionService> clazz )
     {
         this.context = context;
         this.listener = listener;

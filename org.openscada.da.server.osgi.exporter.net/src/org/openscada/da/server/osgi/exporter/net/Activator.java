@@ -130,7 +130,9 @@ public class Activator implements BundleActivator
                 this.exporter = new Exporter ( this.currentService, this.connectionInformation );
                 this.exporter.start ();
 
-                final ExporterInformation info = new ExporterInformation ( this.connectionInformation, null );
+                final String description = "" + serviceReference.getProperty ( Constants.SERVICE_DESCRIPTION );
+
+                final ExporterInformation info = new ExporterInformation ( this.connectionInformation, description );
                 this.exporterHandle = this.context.registerService ( ExporterInformation.class, info, null );
             }
             catch ( final Throwable e )

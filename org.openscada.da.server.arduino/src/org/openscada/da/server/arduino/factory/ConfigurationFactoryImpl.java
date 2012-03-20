@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -53,7 +53,7 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( "adrduinoDevice", configurationId );
-        return new Entry<ArduinoDevice> ( configurationId, device, context.registerService ( ArduinoDevice.class.getName (), device, properties ) );
+        return new Entry<ArduinoDevice> ( configurationId, device, context.registerService ( ArduinoDevice.class, device, properties ) );
     }
 
     @Override
@@ -66,7 +66,7 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
         properties.put ( "adrduinoDevice", configurationId );
         final ArduinoDevice device = new ArduinoDevice ( this.context, configurationId, parameters, this.itemPool, this.executor );
 
-        return new Entry<ArduinoDevice> ( configurationId, device, this.context.registerService ( ArduinoDevice.class.getName (), device, properties ) );
+        return new Entry<ArduinoDevice> ( configurationId, device, this.context.registerService ( ArduinoDevice.class, device, properties ) );
     }
 
     @Override
