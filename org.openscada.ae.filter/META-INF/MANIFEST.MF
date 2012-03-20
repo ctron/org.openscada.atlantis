@@ -10,5 +10,6 @@ Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.utils.lang;version="0.15.0",
  org.openscada.utils.propertyeditors;version="0.15.0",
  org.openscada.utils.str;version="0.15.0"
-Export-Package: org.openscada.ae.filter;version="0.18.0";uses:="org.openscada.ae"
+Export-Package: org.openscada.ae.filter;version="0.18.0";uses:="org.openscada.ae",
+ org.openscada.ae.filter.internal;version="0.18.0"
 Bundle-Vendor: TH4 SYSTEMS GmbH
