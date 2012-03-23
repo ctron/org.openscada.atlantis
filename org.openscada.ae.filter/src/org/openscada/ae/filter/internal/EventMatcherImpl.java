@@ -48,7 +48,7 @@ import org.openscada.utils.str.StringHelper;
 
 public class EventMatcherImpl implements EventMatcher
 {
-    private static final DateFormat isoDateFormat = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss.S" );
+    private static final DateFormat isoDateFormat = new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss.S" ); //$NON-NLS-1$
 
     private static PropertyEditorRegistry propertyEditorRegistry = new PropertyEditorRegistry ();
 
@@ -132,16 +132,16 @@ public class EventMatcherImpl implements EventMatcher
     private static boolean matches ( final FilterAssertion assertion, final Event event )
     {
         // special case id
-        if ( "id".equals ( assertion.getAttribute () ) )
+        if ( "id".equals ( assertion.getAttribute () ) ) //$NON-NLS-1$
         {
             return compareId ( assertion, event.getId () );
         }
         // special case source/entryTimestamp
-        else if ( "sourceTimestamp".equals ( assertion.getAttribute () ) )
+        else if ( "sourceTimestamp".equals ( assertion.getAttribute () ) ) //$NON-NLS-1$
         {
             return compareTimestamp ( assertion, event.getSourceTimestamp () );
         }
-        else if ( "entryTimestamp".equals ( assertion.getAttribute () ) )
+        else if ( "entryTimestamp".equals ( assertion.getAttribute () ) ) //$NON-NLS-1$
         {
             return compareTimestamp ( assertion, event.getEntryTimestamp () );
         }
@@ -181,7 +181,7 @@ public class EventMatcherImpl implements EventMatcher
         case GREATERTHAN:
             return left.compareTo ( right ) == 1;
         case APPROXIMATE:
-            throw new IllegalArgumentException ( "Assertion APPROXIMATE is not supported" );
+            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ApproximateNotSupported") ); //$NON-NLS-1$
         }
         return false;
     }
@@ -218,7 +218,7 @@ public class EventMatcherImpl implements EventMatcher
         }
         else
         {
-            throw new IllegalArgumentException ( "Assertion value type is not supported" );
+            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ValueTypeNotSupported") ); //$NON-NLS-1$
         }
         switch ( assertion.getAssertion () )
         {
@@ -233,7 +233,7 @@ public class EventMatcherImpl implements EventMatcher
         case GREATERTHAN:
             return left.compareTo ( right ) == 1;
         case APPROXIMATE:
-            throw new IllegalArgumentException ( "Assertion APPROXIMATE is not supported" );
+            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ApproximateNotSupported") ); //$NON-NLS-1$
         }
         return false;
     }
@@ -259,7 +259,7 @@ public class EventMatcherImpl implements EventMatcher
         }
         if ( assertion.getAssertion () == Assertion.SUBSTRING )
         {
-            return left.asString ( "" ).matches ( toRegEx ( (Collection<String>)assertion.getValue () ) );
+            return left.asString ( "" ).matches ( toRegEx ( (Collection<String>)assertion.getValue () ) ); //$NON-NLS-1$
         }
         Variant right = null;
         if ( assertion.getValue () instanceof String )
@@ -274,7 +274,7 @@ public class EventMatcherImpl implements EventMatcher
         }
         else
         {
-            throw new IllegalArgumentException ( "Assertion value type is not supported" );
+            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ValueTypeNotSupported") ); //$NON-NLS-1$
         }
         switch ( assertion.getAssertion () )
         {
@@ -289,14 +289,14 @@ public class EventMatcherImpl implements EventMatcher
         case GREATERTHAN:
             return left.compareTo ( right ) == 1;
         case APPROXIMATE:
-            throw new IllegalArgumentException ( "Assertion APPROXIMATE is not supported" );
+            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ApproximateNotSupported") ); //$NON-NLS-1$
         }
         return false;
     }
 
     private static String toRegEx ( final Collection<String> parts )
     {
-        return StringHelper.join ( parts, ".*", new Apply<String> () {
+        return StringHelper.join ( parts, ".*", new Apply<String> () { //$NON-NLS-1$
             public String apply ( final String parameter )
             {
                 return Pattern.quote ( parameter );
