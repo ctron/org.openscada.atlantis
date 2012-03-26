@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -111,6 +111,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         this.messenger.setHandler ( Messages.CC_CONDITIONS_STATUS, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleConditionStatus ( message );
@@ -119,6 +120,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.messenger.setHandler ( Messages.CC_CONDITIONS_DATA, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleConditionData ( message );
@@ -127,6 +129,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.messenger.setHandler ( Messages.CC_EVENT_POOL_STATUS, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleEventStatus ( message );
@@ -135,6 +138,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.messenger.setHandler ( Messages.CC_EVENT_POOL_DATA, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleEventData ( message );
@@ -143,6 +147,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.messenger.setHandler ( Messages.CC_BROWSER_UPDATE, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleBrowserUpdate ( message );
@@ -151,6 +156,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.messenger.setHandler ( Messages.CC_QUERY_STATUS_CHANGED, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleQueryStateChange ( message );
@@ -159,6 +165,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.messenger.setHandler ( Messages.CC_QUERY_DATA, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message ) throws Exception
             {
                 ConnectionImpl.this.handleQueryData ( message );
@@ -185,6 +192,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             }
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     query.handleData ( EventMessageHelper.fromValue ( message.getValues ().get ( "data" ) ) );
@@ -211,6 +219,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             return;
         }
 
+        final String error;
+        {
+            final Value errorValue = message.getValues ().get ( "error" );
+            error = errorValue != null ? errorValue.toString () : null;
+        }
+
         synchronized ( this )
         {
             final QueryImpl query = this.queries.get ( queryId );
@@ -226,6 +240,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 this.queries.remove ( queryId );
                 this.executor.execute ( new Runnable () {
 
+                    @Override
                     public void run ()
                     {
                         query.dispose ();
@@ -233,7 +248,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 } );
                 break;
             default:
-                fireQueryStateChange ( query, state );
+                fireQueryStateChange ( query, state, error != null ? new RuntimeException ( error ).fillInStackTrace () : null );
                 break;
             }
 
@@ -343,6 +358,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.dataChanged ( data );
@@ -404,6 +420,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             logger.debug ( "notify condition data change" );
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.dataChanged ( addedOrUpdated, removed );
@@ -480,6 +497,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         return this.executor;
     }
 
+    @Override
     public synchronized Query createQuery ( final String queryType, final String queryData, final QueryListener listener )
     {
         if ( !isConnected () )
@@ -502,7 +520,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.queries.put ( l, query );
 
         // fire state change
-        fireQueryStateChange ( query, QueryState.CONNECTING );
+        fireQueryStateChange ( query, QueryState.CONNECTING, null );
 
         // send create request
         sendCreateQuery ( l, queryType, queryData );
@@ -521,6 +539,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.messenger.sendMessage ( message );
     }
 
+    @Override
     public synchronized void setConditionListener ( final String conditionQueryId, final MonitorListener listener )
     {
         if ( listener == null )
@@ -597,6 +616,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         }
 
         this.executor.execute ( new Runnable () {
+            @Override
             public void run ()
             {
                 listener.statusChanged ( status );
@@ -604,6 +624,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         } );
     }
 
+    @Override
     public synchronized void setEventListener ( final String eventQueryId, final EventListener listener )
     {
         if ( listener == null )
@@ -663,6 +684,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 listener.statusChanged ( status );
@@ -715,6 +737,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     query.dispose ();
@@ -729,17 +752,19 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         super.sessionClosed ( session );
     }
 
-    private void fireQueryStateChange ( final QueryImpl query, final QueryState state )
+    private void fireQueryStateChange ( final QueryImpl query, final QueryState state, final Throwable error )
     {
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
-                query.handleStateChange ( state );
+                query.handleStateChange ( state, error );
             }
         } );
     }
 
+    @Override
     public synchronized void addBrowserListener ( final BrowserListener listener )
     {
         if ( listener == null )
@@ -753,6 +778,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.dataChanged ( addedOrChanged, null, true );
@@ -762,6 +788,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         }
     }
 
+    @Override
     public synchronized void removeBrowserListener ( final BrowserListener listener )
     {
         if ( listener == null )
@@ -782,6 +809,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
 
@@ -801,6 +829,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         } );
     }
 
+    @Override
     public void acknowledge ( final String conditionId, final Date aknTimestamp )
     {
         logger.debug ( "Sending ACK: {} / {}", new Object[] { conditionId, aknTimestamp } );

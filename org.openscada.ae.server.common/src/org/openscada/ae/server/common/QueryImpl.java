@@ -101,7 +101,7 @@ public class QueryImpl implements Query
         this.storage = service;
         if ( this.storage == null )
         {
-            dispose ();
+            dispose ( null );
         }
         else
         {
@@ -116,7 +116,7 @@ public class QueryImpl implements Query
     @Override
     public synchronized void close ()
     {
-        dispose ();
+        dispose ( null );
     }
 
     private void loadInitial ()
@@ -136,7 +136,7 @@ public class QueryImpl implements Query
 
                 if ( QueryImpl.this.query == null )
                 {
-                    dispose ();
+                    dispose ( null );
                 }
                 else
                 {
@@ -184,11 +184,11 @@ public class QueryImpl implements Query
             if ( result.size () < count )
             {
                 logger.info ( "Reached end of query: {}", result.size () );
-                dispose ();
+                dispose ( null );
             }
             else
             {
-                setState ( QueryState.CONNECTED );
+                setState ( QueryState.CONNECTED, null );
             }
 
         }
@@ -198,7 +198,7 @@ public class QueryImpl implements Query
             synchronized ( this )
             {
                 this.loadJob = null;
-                dispose ();
+                dispose ( e );
             }
         }
         finally
@@ -219,17 +219,17 @@ public class QueryImpl implements Query
             return;
         }
 
-        setState ( QueryState.LOADING );
+        setState ( QueryState.LOADING, null );
         startLoad ( count );
     }
 
     public synchronized void start ()
     {
-        setState ( QueryState.LOADING );
+        setState ( QueryState.LOADING, null );
         this.tracker.open ();
     }
 
-    private void setState ( final QueryState state )
+    private void setState ( final QueryState state, final Throwable error )
     {
         if ( this.currentState == state )
         {
@@ -242,12 +242,12 @@ public class QueryImpl implements Query
             @Override
             public void run ()
             {
-                QueryImpl.this.listener.queryStateChanged ( state );
+                QueryImpl.this.listener.queryStateChanged ( state, error );
             }
         } );
     }
 
-    public void dispose ()
+    public void dispose ( final Throwable error )
     {
         synchronized ( this )
         {
@@ -276,7 +276,7 @@ public class QueryImpl implements Query
                 this.query = null;
             }
 
-            setState ( QueryState.DISCONNECTED );
+            setState ( QueryState.DISCONNECTED, error );
             this.tracker.close ();
         }
 

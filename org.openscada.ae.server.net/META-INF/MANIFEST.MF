@@ -1,11 +1,11 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA A&E Server Net Plug-in
+Bundle-Name: openSCADA A&E Server Net Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.net
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.18.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.ae.server.net;version="0.16.0";
+Export-Package: org.openscada.ae.server.net;version="0.18.0";
   uses:="org.apache.mina.core.session,
    org.openscada.net.base.data,
    org.openscada.core.server.net,

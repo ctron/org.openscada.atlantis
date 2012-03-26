@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -663,7 +663,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
     }
 
-    public void sendQueryState ( final QueryImpl queryImpl, final QueryState state )
+    public void sendQueryState ( final QueryImpl queryImpl, final QueryState state, final Throwable error )
     {
         synchronized ( this )
         {
@@ -677,6 +677,10 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         final Message message = new Message ( Messages.CC_QUERY_STATUS_CHANGED );
         message.getValues ().put ( "state", new StringValue ( state.name () ) );
         message.getValues ().put ( MESSAGE_QUERY_ID, new LongValue ( queryImpl.getQueryId () ) );
+        if ( error != null )
+        {
+            message.getValues ().put ( "error", new StringValue ( error.getMessage () ) );
+        }
         this.messenger.sendMessage ( message );
     }
 
