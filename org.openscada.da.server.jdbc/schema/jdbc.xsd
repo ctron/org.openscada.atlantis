@@ -16,8 +16,11 @@
     		<element name="sql" type="string" maxOccurs="1"
     			minOccurs="0">
     		</element>
+    		<element name="columnMapping"
+    			type="jdbc:ColumnMappingType" minOccurs="0" maxOccurs="unbounded">
+    		</element>
     	</sequence>
-        <attribute name="id" type="string" use="required"></attribute>
+    	<attribute name="id" type="string" use="required"></attribute>
         <attribute name="period" type="int" use="required"></attribute>
     	<attribute name="sql" type="string" use="optional"></attribute>
     </complexType>
@@ -53,5 +56,22 @@
     <complexType name="UpdateMappingType">
     	<attribute name="name" type="string" use="optional"></attribute>
     	<attribute name="namedParameter" type="string" use="required"></attribute>
+    </complexType>
+
+    <complexType name="ColumnMappingType">
+    	<attribute name="columnNumber" use="required">
+    		<simpleType>
+    			<restriction base="int">
+    				<minInclusive value="1"></minInclusive>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
+    	<attribute name="aliasName" use="required">
+    		<simpleType>
+    			<restriction base="string">
+    				<minLength value="1"></minLength>
+    			</restriction>
+    		</simpleType>
+    	</attribute>
     </complexType>
 </schema>

@@ -22,10 +22,15 @@ package org.openscada.da.server.jdbc;
 import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.LinkedList;
-import java.util.Timer;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.xmlbeans.XmlException;
+import org.openscada.da.jdbc.configuration.ColumnMappingType;
 import org.openscada.da.jdbc.configuration.ConnectionType;
 import org.openscada.da.jdbc.configuration.QueryType;
 import org.openscada.da.jdbc.configuration.RootDocument;
@@ -35,6 +40,7 @@ import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.jdbc.Update.Mapping;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
@@ -48,7 +54,7 @@ public class Hive extends HiveCommon
 
     private final Collection<Connection> connections = new LinkedList<Connection> ();
 
-    private final Timer timer;
+    private final ScheduledExecutorService timer;
 
     public Hive () throws XmlException, IOException
     {
@@ -68,11 +74,18 @@ public class Hive extends HiveCommon
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
-        this.timer = new Timer ( "JdbcHiveTimer", true );
+        this.timer = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "JdbcHiveTimer", true ) );
 
         configure ( doc );
 
         register ();
+    }
+
+    @Override
+    public void stop () throws Exception
+    {
+        this.timer.shutdown ();
+        super.stop ();
     }
 
     public void register ()
@@ -105,7 +118,7 @@ public class Hive extends HiveCommon
 
         for ( final QueryType queryType : connectionType.getQueryList () )
         {
-            createQuery ( connection, queryType );
+            createQuery ( connection, queryType, convertMappings ( queryType.getColumnMappingList () ) );
         }
 
         for ( final UpdateType updateType : connectionType.getUpdateList () )
@@ -114,6 +127,18 @@ public class Hive extends HiveCommon
         }
 
         this.connections.add ( connection );
+    }
+
+    private Map<Integer, String> convertMappings ( final List<ColumnMappingType> list )
+    {
+        final Map<Integer, String> result = new HashMap<Integer, String> ();
+
+        for ( final ColumnMappingType mapping : list )
+        {
+            result.put ( mapping.getColumnNumber (), mapping.getAliasName () );
+        }
+
+        return result;
     }
 
     private void createUpdate ( final Connection connection, final UpdateType updateType )
@@ -136,7 +161,7 @@ public class Hive extends HiveCommon
         connection.add ( update );
     }
 
-    private void createQuery ( final Connection connection, final QueryType queryType )
+    private void createQuery ( final Connection connection, final QueryType queryType, final Map<Integer, String> columnAliases )
     {
         String sql = queryType.getSql ();
         if ( sql == null || sql.length () == 0 )
@@ -146,6 +171,6 @@ public class Hive extends HiveCommon
 
         logger.info ( "Creating new query: {}", sql );
 
-        connection.add ( new Query ( queryType.getId (), queryType.getPeriod (), sql, connection ) );
+        connection.add ( new Query ( queryType.getId (), queryType.getPeriod (), sql, connection, columnAliases ) );
     }
 }

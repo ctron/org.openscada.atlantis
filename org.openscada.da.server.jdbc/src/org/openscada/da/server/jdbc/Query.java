@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,8 +24,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
@@ -46,26 +47,30 @@ public class Query
 
     private final Connection connection;
 
-    private Timer timer;
+    private ScheduledExecutorService timer;
 
-    private final TimerTask task;
+    private final Runnable task;
 
     private final Map<String, DataItemInputChained> items = new HashMap<String, DataItemInputChained> ();
 
     private FolderItemFactory itemFactory;
 
-    public Query ( final String id, final int period, final String sql, final Connection connection )
+    private final Map<Integer, String> columnAliases;
+
+    private ScheduledFuture<?> job;
+
+    public Query ( final String id, final int period, final String sql, final Connection connection, final Map<Integer, String> columnAliases )
     {
         super ();
         this.id = id;
         this.period = period;
         this.sql = sql;
         this.connection = connection;
+        this.columnAliases = columnAliases;
 
         logger.info ( "Created new query: {}", this.id );
 
-        // FIXME: use executor
-        this.task = new TimerTask () {
+        this.task = new Runnable () {
 
             @Override
             public void run ()
@@ -75,17 +80,18 @@ public class Query
         };
     }
 
-    public void register ( final Timer timer, final DataItemFactory parentItemFactory )
+    public void register ( final ScheduledExecutorService timer, final DataItemFactory parentItemFactory )
     {
         this.timer = timer;
         this.itemFactory = parentItemFactory.createSubFolderFactory ( this.id );
 
-        this.timer.scheduleAtFixedRate ( this.task, 0, this.period );
+        this.job = this.timer.scheduleAtFixedRate ( this.task, 0, this.period, TimeUnit.MILLISECONDS );
     }
 
     public void unregister ()
     {
-        this.task.cancel ();
+        this.job.cancel ( false );
+        this.timer = null;
 
         this.itemFactory.dispose ();
         this.itemFactory = null;
@@ -106,13 +112,11 @@ public class Query
     private void setGlobalError ( final Throwable e )
     {
         logger.error ( "Failed to query", e );
-        // TODO Auto-generated method stub
 
         for ( final Map.Entry<String, DataItemInputChained> entry : this.items.entrySet () )
         {
             setError ( entry.getKey (), e );
         }
-
     }
 
     private void doQuery () throws Exception
@@ -157,7 +161,16 @@ public class Query
 
     private void updateField ( final int i, final ResultSet result ) throws SQLException
     {
-        final String field = result.getMetaData ().getColumnName ( i + 1 );
+        final String field;
+        if ( this.columnAliases.containsKey ( i + 1 ) )
+        {
+            field = this.columnAliases.get ( i + 1 );
+        }
+        else
+        {
+            field = result.getMetaData ().getColumnName ( i + 1 );
+        }
+
         try
         {
             setValue ( field, Variant.valueOf ( result.getObject ( i + 1 ) ) );
