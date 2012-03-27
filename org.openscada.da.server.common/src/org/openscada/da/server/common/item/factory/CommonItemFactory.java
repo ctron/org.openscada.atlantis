@@ -46,7 +46,7 @@ public class CommonItemFactory implements ItemFactory
 
     protected Map<String, DataItem> itemMap = new HashMap<String, DataItem> ();
 
-    private final Set<ItemFactory> factoryMap = new HashSet<ItemFactory> ();
+    private final Set<ItemFactory> factorySet = new HashSet<ItemFactory> ();
 
     private boolean disposed = false;
 
@@ -172,10 +172,15 @@ public class CommonItemFactory implements ItemFactory
 
         disposeAllItems ();
 
-        for ( final ItemFactory factory : this.factoryMap )
+        // make a copy so that we can iterate over it and remove factories 
+        final Set<ItemFactory> factoryMap = new HashSet<ItemFactory> ( this.factorySet );
+
+        for ( final ItemFactory factory : factoryMap )
         {
             factory.dispose ();
         }
+
+        this.factorySet.clear ();
     }
 
     /**
@@ -218,11 +223,11 @@ public class CommonItemFactory implements ItemFactory
 
     public boolean addSubFactory ( final ItemFactory itemFactory )
     {
-        return this.factoryMap.add ( itemFactory );
+        return this.factorySet.add ( itemFactory );
     }
 
     public boolean removeSubFactory ( final ItemFactory itemFactory )
     {
-        return this.factoryMap.remove ( itemFactory );
+        return this.factorySet.remove ( itemFactory );
     }
 }
