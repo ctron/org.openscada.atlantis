@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +25,7 @@ import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
 import java.beans.PropertyEditor;
 import java.beans.PropertyEditorManager;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -35,14 +36,12 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.OperationParameters;
-import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.da.server.common.item.factory.ItemFactory;
 import org.openscada.utils.lang.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,7 +51,7 @@ public abstract class AbstractObjectExporter implements Disposable
 
     private final static Logger logger = LoggerFactory.getLogger ( AbstractObjectExporter.class );
 
-    protected FolderItemFactory factory;
+    protected ItemFactory factory;
 
     protected final Map<String, DataItem> items = new HashMap<String, DataItem> ();
 
@@ -60,26 +59,17 @@ public abstract class AbstractObjectExporter implements Disposable
 
     private final boolean nullIsError;
 
-    public AbstractObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder )
+    /**
+     * Create a new object factory
+     * <p>
+     * </p>
+     * @param itemFactory the item factory to use
+     * @param readOnly flag if all properties should be created read-only
+     * @param nullIsError flag whether controls if <code>null</code> mean <q>error</q>
+     */
+    public AbstractObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
     {
-        this ( localId, hive, rootFolder, false, false );
-    }
-
-    public AbstractObjectExporter ( final String localId, final FolderItemFactory rootFactory )
-    {
-        this ( localId, rootFactory, false, false );
-    }
-
-    public AbstractObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly, final boolean nullIsError )
-    {
-        this.factory = new FolderItemFactory ( hive, rootFolder, localId, localId );
-        this.readOnly = readOnly;
-        this.nullIsError = nullIsError;
-    }
-
-    public AbstractObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly, final boolean nullIsError )
-    {
-        this.factory = rootFactory.createSubFolderFactory ( localId );
+        this.factory = itemFactory;
         this.readOnly = readOnly;
         this.nullIsError = nullIsError;
     }
@@ -100,7 +90,7 @@ public abstract class AbstractObjectExporter implements Disposable
             final BeanInfo bi = Introspector.getBeanInfo ( targetClazz );
             for ( final PropertyDescriptor pd : bi.getPropertyDescriptors () )
             {
-                final DataItem item = createItem ( pd );
+                final DataItem item = createItem ( pd, targetClazz );
                 this.items.put ( pd.getName (), item );
                 initAttribute ( pd );
             }
@@ -193,17 +183,102 @@ public abstract class AbstractObjectExporter implements Disposable
         attributes.put ( "property.constrained", Variant.valueOf ( pd.isConstrained () ) );
         attributes.put ( "property.label", Variant.valueOf ( pd.getDisplayName () ) );
         attributes.put ( "property.type", Variant.valueOf ( pd.getPropertyType ().getName () ) );
+        attributes.put ( "proptery.name", Variant.valueOf ( pd.getName () ) );
         attributes.put ( "description", Variant.valueOf ( pd.getShortDescription () ) );
     }
 
-    private DataItem createItem ( final PropertyDescriptor pd )
+    /**
+     * Find the annotation
+     * <p>
+     * The following search order processed
+     * <ol>
+     * <li>Check the field with the same name as the property, process through all superclasses</li>
+     * <li>Check the read method</li>
+     * <li>Check the write method</li>
+     * </ol>
+     * 
+     * </p>
+     * @param pd the property descriptor to check
+     * @param clazz class instance
+     * @return the annotation or <code>null</code> if none was found
+     */
+    protected ItemName findAnnotation ( final PropertyDescriptor pd, final Class<?> clazz )
+    {
+        final String name = pd.getName ();
+
+        try
+        {
+            final Field field = findField ( name, clazz );
+            final ItemName itemName = field.getAnnotation ( ItemName.class );
+            if ( itemName != null )
+            {
+                return itemName;
+            }
+        }
+        catch ( final NoSuchFieldException e )
+        {
+        }
+
+        if ( pd.getReadMethod () != null && pd.getReadMethod ().getAnnotation ( ItemName.class ) != null )
+        {
+            return pd.getReadMethod ().getAnnotation ( ItemName.class );
+        }
+
+        if ( pd.getWriteMethod () != null && pd.getWriteMethod ().getAnnotation ( ItemName.class ) != null )
+        {
+            return pd.getWriteMethod ().getAnnotation ( ItemName.class );
+        }
+
+        return null;
+    }
+
+    protected String makeItemName ( final PropertyDescriptor pd, final Class<?> clazz )
+    {
+        try
+        {
+            final ItemName itemName = findAnnotation ( pd, clazz );
+            if ( itemName == null )
+            {
+                return pd.getName ();
+            }
+            else
+            {
+                return itemName.value ();
+            }
+        }
+        catch ( final Exception e )
+        {
+            return pd.getName ();
+        }
+    }
+
+    private Field findField ( final String name, final Class<?> clazz ) throws NoSuchFieldException
+    {
+        try
+        {
+            return clazz.getDeclaredField ( name );
+        }
+        catch ( final NoSuchFieldException e )
+        {
+            final Class<?> superClazz = clazz.getSuperclass ();
+            if ( superClazz == null || superClazz == Object.class )
+            {
+                throw new NoSuchFieldException ( name );
+            }
+            return findField ( name, superClazz );
+        }
+    }
+
+    private DataItem createItem ( final PropertyDescriptor pd, final Class<?> clazz )
     {
         final boolean writeable = !this.readOnly && pd.getWriteMethod () != null;
         final boolean readable = pd.getReadMethod () != null;
 
+        final String itemName = makeItemName ( pd, clazz );
+
         if ( writeable && readable )
         {
-            return this.factory.createInputOutput ( pd.getName (), new WriteHandler () {
+            return this.factory.createInputOutput ( itemName, new WriteHandler () {
 
                 @Override
                 public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -214,11 +289,11 @@ public abstract class AbstractObjectExporter implements Disposable
         }
         else if ( readable )
         {
-            return this.factory.createInput ( pd.getName () );
+            return this.factory.createInput ( itemName );
         }
         else if ( writeable )
         {
-            final DataItemCommand item = this.factory.createCommand ( pd.getName () );
+            final DataItemCommand item = this.factory.createCommand ( itemName );
             item.addListener ( new DataItemCommand.Listener () {
 
                 @Override

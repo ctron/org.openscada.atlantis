@@ -22,6 +22,7 @@ package org.openscada.da.master.common.scale;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -29,6 +30,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -40,7 +42,7 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
 
     private double offset = 0.0;
 
-    public ScaleHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker )
+    public ScaleHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, ScaleHandlerFactoryImpl.FACTORY_ID, ScaleHandlerFactoryImpl.FACTORY_ID );
     }
@@ -76,9 +78,9 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
+        super.update ( userInformation, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         this.factor = cfg.getDouble ( "factor", 1 ); //$NON-NLS-1$

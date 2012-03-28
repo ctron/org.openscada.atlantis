@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.hd.server.common.HistoricalItem;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -42,7 +43,7 @@ public class ProxyItemFactory extends AbstractServiceConfigurationFactory<ProxyH
     }
 
     @Override
-    protected Entry<ProxyHistoricalItem> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<ProxyHistoricalItem> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final ProxyHistoricalItem service = new ProxyHistoricalItem ( context, this.executor, configurationId, parameters );
 
@@ -56,17 +57,17 @@ public class ProxyItemFactory extends AbstractServiceConfigurationFactory<ProxyH
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final ProxyHistoricalItem service )
+    protected void disposeService ( final UserInformation userInformation, final String configurationId, final ProxyHistoricalItem service )
     {
         service.dispose ();
     }
 
     @Override
-    protected Entry<ProxyHistoricalItem> updateService ( final String configurationId, final Entry<ProxyHistoricalItem> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<ProxyHistoricalItem> updateService ( final UserInformation userInformation, final String configurationId, final Entry<ProxyHistoricalItem> entry, final Map<String, String> parameters ) throws Exception
     {
         final BundleContext context = entry.getHandle ().getReference ().getBundle ().getBundleContext ();
         entry.getHandle ().unregister ();
-        disposeService ( configurationId, entry.getService () );
-        return createService ( configurationId, context, parameters );
+        disposeService ( userInformation, configurationId, entry.getService () );
+        return createService ( userInformation, configurationId, context, parameters );
     }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,51 +24,39 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.da.server.common.item.factory.ItemFactory;
 
+/**
+ * An object exporter which will not bind to change events from the bean
+ * <p>
+ * The object can be set using {@link #setTarget(Object)} or {@link #setTarget(Object, Map)} and
+ * object data will be extracted once.
+ * </p>
+ * <p>
+ * The difference to the {@link ObjectExporter} is that this exporter must know the class
+ * of the target object in advance and can therefore create the data items in advance.
+ * Setting a target is a quick operation and does not destroy the data items in the process.
+ * </p>
+ * @author Jens Reimann
+ *
+ * @param <T> the object type
+ */
 public class StaticObjectExporter<T> extends AbstractObjectExporter
 {
-
     private T target;
 
     private HashMap<String, Variant> additionalAttributes;
 
-    public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz )
+    /**
+     * Create a new static object exporter
+     * @param itemFactory the factory used to create items. This factory is disposed when the object exporter is disposed. 
+     * @param modelClazz the class of the object to export
+     * @param readOnly set to <code>true</code> so all fields will be read-only
+     * @param nullIsError set to <code>true</code> to mark fields that are <code>null</code> with an error attribute
+     */
+    public StaticObjectExporter ( final ItemFactory itemFactory, final Class<T> modelClazz, final boolean readOnly, final boolean nullIsError )
     {
-        super ( localId, rootFactory );
-
-        createDataItems ( modelClazz );
-    }
-
-    public StaticObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final Class<T> modelClazz )
-    {
-        super ( localId, hive, rootFolder );
-
-        createDataItems ( modelClazz );
-    }
-
-    public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz, final boolean readOnly )
-    {
-        this ( localId, rootFactory, modelClazz, readOnly, false );
-    }
-
-    public StaticObjectExporter ( final String localId, final FolderItemFactory rootFactory, final Class<T> modelClazz, final boolean readOnly, final boolean nullIsError )
-    {
-        super ( localId, rootFactory, readOnly, nullIsError );
-
-        createDataItems ( modelClazz );
-    }
-
-    public StaticObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final Class<T> modelClazz, final boolean readOnly )
-    {
-        this ( localId, hive, rootFolder, modelClazz, readOnly, false );
-    }
-
-    public StaticObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final Class<T> modelClazz, final boolean readOnly, final boolean nullIsError )
-    {
-        super ( localId, hive, rootFolder, readOnly, nullIsError );
+        super ( itemFactory, readOnly, nullIsError );
 
         createDataItems ( modelClazz );
     }

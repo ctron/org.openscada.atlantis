@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,33 +30,20 @@ import java.util.Stack;
 import java.util.regex.Pattern;
 
 import org.apache.xmlbeans.XmlException;
-import org.openscada.core.Variant;
 import org.openscada.da.core.IODirection;
-import org.openscada.da.hive.BrowserType;
 import org.openscada.da.hive.FactoriesType;
 import org.openscada.da.hive.FactoryType;
-import org.openscada.da.hive.FolderEntryType;
-import org.openscada.da.hive.FolderType;
 import org.openscada.da.hive.HiveDocument;
 import org.openscada.da.hive.ItemTemplateType;
 import org.openscada.da.hive.ItemTemplatesType;
-import org.openscada.da.hive.ItemsType;
 import org.openscada.da.hive.dataItem.DataItemBaseType;
-import org.openscada.da.hive.dataItem.DataItemReferenceType;
-import org.openscada.da.hive.dataItem.DataItemType;
 import org.openscada.da.hive.itemChain.ItemType;
-import org.openscada.da.server.browser.common.Folder;
-import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.configuration.ConfigurableFactory;
-import org.openscada.da.server.common.configuration.ConfigurableFolder;
 import org.openscada.da.server.common.configuration.ConfigurableHive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.configuration.Configurator;
 import org.openscada.da.server.common.factory.ChainEntry;
 import org.openscada.da.server.common.factory.DataItemFactory;
-import org.openscada.da.server.common.factory.DataItemFactoryRequest;
-import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
@@ -67,27 +54,20 @@ public class XMLConfigurator implements Configurator
 {
     private final static Logger logger = LoggerFactory.getLogger ( XMLConfigurator.class );
 
-    private FactoriesType _factoriesPart = null;
+    private final FactoriesType factoriesPart;
 
-    private ItemTemplatesType _itemTemplatesPart = null;
+    private final ItemTemplatesType itemTemplatesPart;
 
-    private ItemsType _itemsPart = null;
+    private final Map<String, Factory> factories = new HashMap<String, Factory> ();
 
-    private BrowserType _browserPart = null;
+    private final Map<String, Template> templates = new HashMap<String, Template> ();
 
-    private final Map<String, Factory> _factories = new HashMap<String, Factory> ();
-
-    private final Map<String, Template> _templates = new HashMap<String, Template> ();
-
-    private final Map<String, Item> _items = new HashMap<String, Item> ();
-
-    public XMLConfigurator ( final FactoriesType factoriesPart, final ItemTemplatesType itemTemplatesPart, final ItemsType itemsPart, final BrowserType browserPart )
+    public XMLConfigurator ( final FactoriesType factoriesPart, final ItemTemplatesType itemTemplatesPart )
     {
         super ();
-        this._factoriesPart = factoriesPart;
-        this._itemTemplatesPart = itemTemplatesPart;
-        this._itemsPart = itemsPart;
-        this._browserPart = browserPart;
+        this.factoriesPart = factoriesPart;
+        this.itemTemplatesPart = itemTemplatesPart;
+
     }
 
     public XMLConfigurator ( final HiveDocument hiveDocument ) throws ConfigurationError
@@ -97,10 +77,9 @@ public class XMLConfigurator implements Configurator
             throw new ConfigurationError ( "Document is not valid!" );
         }
 
-        this._factoriesPart = hiveDocument.getHive ().getFactories ();
-        this._itemTemplatesPart = hiveDocument.getHive ().getItemTemplates ();
-        this._itemsPart = hiveDocument.getHive ().getItems ();
-        this._browserPart = hiveDocument.getHive ().getBrowser ();
+        this.factoriesPart = hiveDocument.getHive ().getFactories ();
+        this.itemTemplatesPart = hiveDocument.getHive ().getItemTemplates ();
+
     }
 
     public XMLConfigurator ( final InputStream stream ) throws ConfigurationError, XmlException, IOException
@@ -124,14 +103,12 @@ public class XMLConfigurator implements Configurator
     @Override
     public synchronized void configure ( final ConfigurableHive hive ) throws ConfigurationError
     {
-        this._factories.clear ();
-        this._items.clear ();
-        this._templates.clear ();
+        this.factories.clear ();
+        this.templates.clear ();
 
-        configureFactories ( hive, this._factoriesPart );
-        configureTemplates ( hive, this._itemTemplatesPart );
-        configureItems ( hive, this._itemsPart );
-        configureBrowser ( hive, this._browserPart );
+        configureFactories ( hive, this.factoriesPart );
+        configureTemplates ( hive, this.itemTemplatesPart );
+
     }
 
     private void configureFactories ( final ConfigurableHive hive, final FactoriesType factories ) throws ConfigurationError
@@ -192,205 +169,8 @@ public class XMLConfigurator implements Configurator
             final Factory factory2 = new Factory ();
             factory2.setFactory ( (DataItemFactory)factoryObject );
 
-            this._factories.put ( factory.getId (), factory2 );
+            this.factories.put ( factory.getId (), factory2 );
         }
-    }
-
-    private void configureBrowser ( final ConfigurableHive hive, final BrowserType browser ) throws ConfigurationError
-    {
-        if ( browser == null )
-        {
-            return;
-        }
-
-        Folder folder = hive.getRootFolder ();
-        if ( folder == null )
-        {
-            hive.setRootFolder ( folder = new FolderCommon () );
-        }
-
-        if ( ! ( folder instanceof ConfigurableFolder ) )
-        {
-            throw new ConfigurationError ( "Root folder does not implement ConfigurableFolder" );
-        }
-
-        final Stack<String> folderStack = new Stack<String> ();
-        configureFolder ( hive, (ConfigurableFolder)folder, browser.getFolder (), folderStack );
-    }
-
-    private void configureFolder ( final ConfigurableHive hive, final ConfigurableFolder configurableFolder, final FolderType folder, final Stack<String> folderStack ) throws ConfigurationError
-    {
-        for ( final FolderEntryType entry : folder.getEntryList () )
-        {
-            final Map<String, Variant> attributes = Helper.convertAttributes ( entry.getAttributes () );
-            final String name = entry.getName ();
-            final FolderType subFolder = entry.getFolder ();
-            final DataItemReferenceType itemReference = entry.getDataItemReference ();
-
-            if ( subFolder != null && itemReference != null )
-            {
-                throw new ConfigurationError ( String.format ( "Item %s in folder %s has both folder and item reference set! Only one is allowed!", name, StringHelper.join ( folderStack, "/" ) ) );
-            }
-
-            if ( subFolder == null && itemReference == null )
-            {
-                throw new ConfigurationError ( String.format ( "Item %s in folder %s has neither folder nor item reference set!", name, StringHelper.join ( folderStack, "/" ) ) );
-            }
-
-            if ( subFolder != null )
-            {
-                final ConfigurableFolder newSubFolder = new FolderCommon ();
-                configurableFolder.add ( name, newSubFolder, attributes );
-                folderStack.push ( name );
-                configureFolder ( hive, newSubFolder, subFolder, folderStack );
-                folderStack.pop ();
-            }
-            else
-            {
-                configureItemEntry ( hive, configurableFolder, itemReference, name, attributes, folderStack );
-            }
-        }
-    }
-
-    private void configureItemEntry ( final ConfigurableHive hive, final ConfigurableFolder configurableFolder, final DataItemReferenceType itemReference, final String name, final Map<String, Variant> attributes, final Stack<String> folderStack ) throws ConfigurationError
-    {
-
-        if ( itemReference.getRef () != null )
-        {
-            final Item item = this._items.get ( itemReference.getRef () );
-
-            if ( item == null )
-            {
-                throw new ConfigurationError ( String.format ( "Entry %s in folder %s is strict-referencing to item %s which is not configured. Either use weak-ref or configure item", name, StringHelper.join ( folderStack, "/" ), itemReference.getRef () ) );
-            }
-
-            // merge local browser attributes over item's browser attributes 
-            final Map<String, Variant> browserAttributes = new HashMap<String, Variant> ( item.getBrowserAttributes () );
-            browserAttributes.putAll ( attributes );
-
-            configurableFolder.add ( name, item.getItem ().getInformation (), browserAttributes );
-        }
-        else if ( itemReference.getWeakRef () != null )
-        {
-            final DataItemFactoryRequest request = new DataItemFactoryRequest ();
-            request.setId ( itemReference.getWeakRef () );
-            request.setBrowserAttributes ( attributes );
-            final DataItem dataItem = hive.retrieveItem ( request );
-
-            if ( dataItem != null )
-            {
-                configurableFolder.add ( name, dataItem.getInformation (), attributes );
-            }
-            else
-            {
-                throw new ConfigurationError ( String.format ( "Entry %s in folder %s is weak-referencing to item %s which cannot be found", name, StringHelper.join ( folderStack, "/" ), itemReference.getRef () ) );
-            }
-        }
-    }
-
-    private void configureItems ( final ConfigurableHive hive, final ItemsType items ) throws ConfigurationError
-    {
-        if ( items == null )
-        {
-            return;
-        }
-        if ( items.getDataItemList () == null )
-        {
-            return;
-        }
-
-        for ( final DataItemType dataItem : items.getDataItemList () )
-        {
-            final String id = dataItem.getId ();
-
-            final Template template = this._templates.get ( dataItem.getTemplate () );
-            if ( template == null && dataItem.getTemplate () != null )
-            {
-                throw new ConfigurationError ( String.format ( "Item %s requires template %s which is not configured", id, dataItem.getTemplate () ) );
-            }
-
-            Item item;
-            if ( template != null )
-            {
-                item = new Item ( id, template );
-            }
-            else
-            {
-                item = new Item ( id );
-            }
-
-            // expand local configuration to object
-            overwriteWithLocal ( item, dataItem, "item", id );
-
-            instantiateItem ( hive, item );
-
-            this._items.put ( id, item );
-        }
-    }
-
-    /**
-     * instantiate an item
-     * 
-     * If the item is already instatiated the method will simply return.
-     * 
-     * Otherwise, depending if the "factory" attribute is set, it will try two different
-     * approaches.
-     * 
-     * If the "factory" attribute is set it will try to explicitly instatiate
-     * the item using the provided factory. In this case the item must not
-     * already exsist in the repository. It will be instatiated and added
-     * to the repository.
-     * 
-     * If the "factory" attribute is missing it will simply request the item from the
-     * repository. In this case the repository can return an already existing item
-     * or create one on the fly (possibly using its factories).
-     * 
-     * @param item the item to instatiate
-     * @throws ConfigurationError any configuration error that prevents the item from being
-     * instantiated.
-     */
-    private void instantiateItem ( final ConfigurableHive hive, final Item item ) throws ConfigurationError
-    {
-        if ( item.getItem () != null )
-        {
-            return;
-        }
-
-        DataItem dataItem;
-
-        final DataItemFactoryRequest request = new DataItemFactoryRequest ();
-        request.setId ( item.getId () );
-        request.setBrowserAttributes ( item.getBrowserAttributes () );
-        request.setItemAttributes ( item.getItemAttributes () );
-        request.setItemChain ( FactoryHelper.instantiateChainList ( hive, item.getChainEntries () ) );
-
-        if ( item.getFactory () != null )
-        {
-            // explicit instatiation
-            logger.debug ( "Trying to create item {} using provided item factory", item.getId () );
-
-            if ( hive.lookupItem ( item.getId () ) != null )
-            {
-                throw new ConfigurationError ( String.format ( "Data item %s was configured to be instiated explicitly but already exists in the hive. Unable to create it twice. Remove from configuration, change item id or change to implict creating using hive/factories", item.getId () ) );
-            }
-
-            dataItem = item.getFactory ().getFactory ().create ( request );
-
-            hive.registerItem ( dataItem );
-        }
-        else
-        {
-            // try using hive::retrieveItem
-            logger.debug ( "Trying to retrieve the item {} from the hive", item.getId () );
-
-            dataItem = hive.retrieveItem ( request );
-            if ( dataItem == null )
-            {
-                throw new ConfigurationError ( String.format ( "Unable to retrieve item %s from factory", item.getId () ) );
-            }
-        }
-
-        item.setItem ( dataItem );
     }
 
     private void configureTemplates ( final ConfigurableHive hive, final ItemTemplatesType itemTemplates ) throws ConfigurationError
@@ -435,7 +215,7 @@ public class XMLConfigurator implements Configurator
 
         if ( dataItemBase.getItemFactory () != null )
         {
-            final Factory factory = this._factories.get ( dataItemBase.getItemFactory () );
+            final Factory factory = this.factories.get ( dataItemBase.getItemFactory () );
             if ( factory == null )
             {
                 throw new ConfigurationError ( String.format ( "%s %s requires factory %s which is not configured", objectType, id, dataItemBase.getItemFactory () ) );
@@ -514,9 +294,9 @@ public class XMLConfigurator implements Configurator
 
     private Template getExpandedTemplate ( final Stack<String> templateStack, final Map<String, ItemTemplateType> unexpandedTemplates, final String id ) throws ConfigurationError
     {
-        if ( this._templates.containsKey ( id ) )
+        if ( this.templates.containsKey ( id ) )
         {
-            return this._templates.get ( id );
+            return this.templates.get ( id );
         }
 
         if ( templateStack.contains ( id ) )
@@ -561,7 +341,7 @@ public class XMLConfigurator implements Configurator
 
         overwriteWithLocal ( template, itemTemplate, "template", id );
 
-        this._templates.put ( id, template );
+        this.templates.put ( id, template );
         return template;
     }
 }

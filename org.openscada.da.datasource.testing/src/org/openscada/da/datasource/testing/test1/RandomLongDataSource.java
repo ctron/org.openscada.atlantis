@@ -37,6 +37,7 @@ public class RandomLongDataSource extends ScheduledDataSource implements Default
 
     private long lastSwitch = System.currentTimeMillis ();
 
+    @SuppressWarnings ( "unused" )
     private long offset;
 
     private long switchDelay = 10 * 1000;

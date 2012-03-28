@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -47,13 +47,13 @@ public class Advertiser
 
     private final static Logger logger = LoggerFactory.getLogger ( Advertiser.class );
 
-    public static final String DISCOVERY_CONTAINER = "ecf.singleton.discovery"; //$NON-NLS-1$
+    public static final String DISCOVERY_CONTAINER = "ecf.discovery.composite"; //$NON-NLS-1$
 
     private IContainer container;
 
     private IDiscoveryAdvertiser advertiser;
 
-    private ServiceTracker tracker;
+    private ServiceTracker<ExporterInformation, ExporterInformation> tracker;
 
     private final Map<ExporterInformation, IServiceInfo> infoMap = new HashMap<ExporterInformation, IServiceInfo> ();
 
@@ -72,20 +72,24 @@ public class Advertiser
             logger.warn ( "Failed to start advertiser", e );
         }
 
-        this.tracker = new ServiceTracker ( context, ExporterInformation.class.getName (), new ServiceTrackerCustomizer () {
+        this.tracker = new ServiceTracker<ExporterInformation, ExporterInformation> ( context, ExporterInformation.class, new ServiceTrackerCustomizer<ExporterInformation, ExporterInformation> () {
 
-            public void removedService ( final ServiceReference reference, final Object service )
+            @Override
+            public void removedService ( final ServiceReference<ExporterInformation> reference, final ExporterInformation service )
             {
-                Advertiser.this.removedService ( (ExporterInformation)service );
+                Advertiser.this.removedService ( service );
             }
 
-            public void modifiedService ( final ServiceReference reference, final Object service )
+            @Override
+            public void modifiedService ( final ServiceReference<ExporterInformation> reference, final ExporterInformation service )
             {
             }
 
-            public Object addingService ( final ServiceReference reference )
+            @Override
+            public ExporterInformation addingService ( final ServiceReference<ExporterInformation> reference )
             {
-                final ExporterInformation info = (ExporterInformation)context.getService ( reference );
+                final ExporterInformation info = context.getService ( reference );
+                logger.info ( "Exporint information: {}", info );
                 try
                 {
                     Advertiser.this.addingService ( info );

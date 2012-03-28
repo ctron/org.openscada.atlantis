@@ -56,8 +56,8 @@
 	</target>
 
 	<target name="pre.@dot">
-		<ant antfile="schema_build.xml" inheritrefs="true" taskname="eclipse.main">
-			<property name="xmlbeans.root" location="${source.root}/builder_atlantis/common/lib/xmlbeans"/>
+		<ant antfile="${source.root}/org.openscada.da.server.simulation/schema_build.xml" inheritrefs="true" taskname="eclipse.main">
+			<property name="xmlbeans.root" location="${source.root}/builder_atlantis/global/lib/xmlbeans"/>
 		</ant>
 	</target>
 

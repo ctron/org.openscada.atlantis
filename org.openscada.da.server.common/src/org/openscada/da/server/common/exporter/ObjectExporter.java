@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,13 +27,28 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.openscada.da.server.common.item.factory.ItemFactory;
 import org.openscada.utils.lang.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * An object exporter which will bind to the change events of a bean.
+ * <p>
+ * The object exporter is attached to a bean using {@link #attachTarget(Object)} and reads out the initial state of the bean
+ * and tries to subscribe to the bean using the method <q>addPropertyChangeListener</q>. Changes announced by the bean will then
+ * be reflected in the data items of the exporter. 
+ * </p>
+ * <p>
+ * The difference to the {@link StaticObjectExporter} is, that the bean class type must not be known in advance and
+ * data items will be created on the fly based on the provided target object. If the target bean does not provide
+ * the <q>addPropertyChangeListener</q> method it still shows the state the target bean had on attaching but will not
+ * update. Attaching to a new target object is more expensive using the {@link ObjectExporter} since all data items will
+ * be destroyed in the process.
+ * </p>
+ * @author Jens Reimann
+ *
+ */
 public class ObjectExporter extends AbstractObjectExporter implements PropertyChangeListener, Disposable
 {
     private final static Logger logger = LoggerFactory.getLogger ( ObjectExporter.class );
@@ -44,34 +59,24 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
 
     private Map<String, Variant> additionalAttributes;
 
-    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory )
+    /**
+     * Create a new object exporter
+     * @param itemFactory the factory used to create items. This factory is disposed when the object exporter is disposed.
+     */
+    public ObjectExporter ( final ItemFactory itemFactory )
     {
-        super ( localId, rootFactory );
+        this ( itemFactory, false, false );
     }
 
-    public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder )
+    /**
+     * Create a new object exporter
+     * @param itemFactory the factory used to create items. This factory is disposed when the object exporter is disposed.
+     * @param readOnly set to <code>true</code> in order to make all items read-only
+     * @param nullIsError set to <code>true</code> to mark fields that are <code>null</code> with an error attribute
+     */
+    public ObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
     {
-        super ( localId, hive, rootFolder );
-    }
-
-    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly )
-    {
-        this ( localId, rootFactory, readOnly, false );
-    }
-
-    public ObjectExporter ( final String localId, final FolderItemFactory rootFactory, final boolean readOnly, final boolean nullIsError )
-    {
-        super ( localId, rootFactory, readOnly, nullIsError );
-    }
-
-    public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly )
-    {
-        this ( localId, hive, rootFolder, readOnly, false );
-    }
-
-    public ObjectExporter ( final String localId, final HiveCommon hive, final FolderCommon rootFolder, final boolean readOnly, final boolean nullIsError )
-    {
-        super ( localId, hive, rootFolder, readOnly, nullIsError );
+        super ( itemFactory, readOnly, nullIsError );
     }
 
     /**

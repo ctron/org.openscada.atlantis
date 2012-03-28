@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,37 +28,36 @@ import org.osgi.framework.ServiceRegistration;
 
 public class Activator implements BundleActivator
 {
-    @SuppressWarnings ( "unused" )
-    private BundleContext context;
-
     private ServiceImpl service;
 
-    private ServiceRegistration serviceRegistration;
+    private ServiceRegistration<Service> serviceRegistration;
 
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.context = context;
+
         this.service = new ServiceImpl ( context );
         this.service.start ();
 
-        this.serviceRegistration = context.registerService ( Service.class.getName (), this.service, new Hashtable<String, String> () );
+        this.serviceRegistration = context.registerService ( Service.class, this.service, new Hashtable<String, String> () );
     }
 
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.serviceRegistration.unregister ();
 
         this.service.stop ();
         this.service = null;
-        this.context = null;
+
     }
 
 }

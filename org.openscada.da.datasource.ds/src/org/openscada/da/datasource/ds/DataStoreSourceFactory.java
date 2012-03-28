@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,7 +26,9 @@ import java.util.concurrent.Executor;
 
 import org.openscada.da.datasource.DataSource;
 import org.openscada.ds.DataNodeTracker;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -47,7 +49,7 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
 
     private final ObjectPoolImpl objectPool;
 
-    private final ServiceRegistration poolRegistration;
+    private final ServiceRegistration<ObjectPool> poolRegistration;
 
     private final DataNodeTracker dataNodeTracker;
 
@@ -74,7 +76,7 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected Entry<DataStoreDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataStoreDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         logger.debug ( "Creating new memory source: {}", configurationId );
 
@@ -90,7 +92,7 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected void disposeService ( final String id, final DataStoreDataSource service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final DataStoreDataSource service )
     {
         logger.info ( "Disposing: {}", id );
 
@@ -100,7 +102,7 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
     }
 
     @Override
-    protected Entry<DataStoreDataSource> updateService ( final String configurationId, final Entry<DataStoreDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataStoreDataSource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<DataStoreDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

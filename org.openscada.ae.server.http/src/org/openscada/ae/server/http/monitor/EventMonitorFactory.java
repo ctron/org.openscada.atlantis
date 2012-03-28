@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -61,11 +61,11 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
     }
 
     @Override
-    protected Entry<EventMonitor> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<EventMonitor> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final EventMonitor instance = new EventMonitorImpl ( context, this.executor, this.eventProcessor, configurationId );
 
-        instance.update ( parameters );
+        instance.update ( userInformation, parameters );
         instance.init ();
 
         this.monitors.put ( configurationId, instance );
@@ -77,7 +77,7 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final EventMonitor service )
+    protected void disposeService ( final UserInformation userInformation, final String configurationId, final EventMonitor service )
     {
         this.monitors.remove ( configurationId );
         this.servicePool.removeService ( configurationId, service );
@@ -85,12 +85,13 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
     }
 
     @Override
-    protected Entry<EventMonitor> updateService ( final String configurationId, final AbstractServiceConfigurationFactory.Entry<EventMonitor> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<EventMonitor> updateService ( final UserInformation userInformation, final String configurationId, final AbstractServiceConfigurationFactory.Entry<EventMonitor> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( parameters );
+        entry.getService ().update ( userInformation, parameters );
         return null;
     }
 
+    @Override
     public boolean acknowledge ( final String monitorId, final UserInformation aknUser, final Date aknTimestamp )
     {
         logger.debug ( "Try to process ACK: {}", monitorId );
@@ -104,9 +105,10 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
         return false;
     }
 
+    @Override
     public Event evaluate ( final Event event )
     {
-        for ( EventMonitor monitor : this.monitors.values () )
+        for ( final EventMonitor monitor : this.monitors.values () )
         {
             final Pair<Boolean, Event> result = monitor.evaluate ( event );
             if ( result.first )

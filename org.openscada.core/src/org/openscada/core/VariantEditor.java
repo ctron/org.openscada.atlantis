@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,35 +23,35 @@ import java.beans.PropertyEditorSupport;
 
 public class VariantEditor extends PropertyEditorSupport
 {
-    @Override
-    public void setAsText ( final String text ) throws IllegalArgumentException
+
+    public static Variant toVariant ( final String text ) throws IllegalArgumentException
     {
         final String[] toks = text.split ( "#", 2 );
         if ( toks.length > 1 )
         {
             if ( toks[0].equalsIgnoreCase ( "INT" ) || toks[0].equalsIgnoreCase ( "INT32" ) || toks[0].equalsIgnoreCase ( "INTEGER" ) )
             {
-                setValue ( Variant.valueOf ( Integer.parseInt ( toks[1] ) ) );
+                return Variant.valueOf ( Integer.parseInt ( toks[1] ) );
             }
             else if ( toks[0].equalsIgnoreCase ( "BOOLEAN" ) || toks[0].equalsIgnoreCase ( "BOOL" ) )
             {
-                setValue ( Variant.valueOf ( Boolean.parseBoolean ( toks[1] ) ) );
+                return Variant.valueOf ( Boolean.parseBoolean ( toks[1] ) );
             }
             else if ( toks[0].equalsIgnoreCase ( "DOUBLE" ) || toks[0].equalsIgnoreCase ( "FLOAT" ) )
             {
-                setValue ( Variant.valueOf ( Double.parseDouble ( toks[1] ) ) );
+                return Variant.valueOf ( Double.parseDouble ( toks[1] ) );
             }
             else if ( toks[0].equalsIgnoreCase ( "LONG" ) || toks[0].equalsIgnoreCase ( "INT64" ) )
             {
-                setValue ( Variant.valueOf ( Long.parseLong ( toks[1] ) ) );
+                return Variant.valueOf ( Long.parseLong ( toks[1] ) );
             }
             else if ( toks[0].equalsIgnoreCase ( "STRING" ) || toks[0].equalsIgnoreCase ( "UNKNOWN" ) )
             {
-                setValue ( Variant.valueOf ( toks[1] ) );
+                return Variant.valueOf ( toks[1] );
             }
             else if ( toks[0].equalsIgnoreCase ( "NULL" ) )
             {
-                setValue ( Variant.NULL );
+                return Variant.NULL;
             }
             else
             {
@@ -60,7 +60,13 @@ public class VariantEditor extends PropertyEditorSupport
         }
         else
         {
-            setValue ( Variant.valueOf ( text ) );
+            return Variant.valueOf ( text );
         }
+    }
+
+    @Override
+    public void setAsText ( final String text ) throws IllegalArgumentException
+    {
+        setValue ( toVariant ( text ) );
     }
 }

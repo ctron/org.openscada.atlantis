@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -39,11 +39,13 @@ public class QueryImpl implements Query, QueryListener
         this.server = serverConnectionHandler;
     }
 
+    @Override
     public void close ()
     {
         this.query.close ();
     }
 
+    @Override
     public void loadMore ( final int count )
     {
         this.query.loadMore ( count );
@@ -59,14 +61,16 @@ public class QueryImpl implements Query, QueryListener
         return this.queryId;
     }
 
+    @Override
     public void queryData ( final Event[] events )
     {
         this.server.sendQueryData ( this, events );
     }
 
-    public void queryStateChanged ( final QueryState state )
+    @Override
+    public void queryStateChanged ( final QueryState state, final Throwable error )
     {
-        this.server.sendQueryState ( this, state );
+        this.server.sendQueryState ( this, state, error );
     }
 
 }

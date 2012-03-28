@@ -200,21 +200,21 @@ public class StateInformation implements Serializable
     {
         final StringBuilder sb = new StringBuilder ();
 
-        sb.append ( "State: " );
+        sb.append ( "State: " ); //$NON-NLS-1$
         sb.append ( this.state );
-        sb.append ( ", Active: " );
+        sb.append ( ", Active: " ); //$NON-NLS-1$
         sb.append ( this.active );
-        sb.append ( ", requireAck: " );
+        sb.append ( ", requireAck: " ); //$NON-NLS-1$
         sb.append ( this.requireAck );
-        sb.append ( ", value: " );
+        sb.append ( ", value: " ); //$NON-NLS-1$
         sb.append ( this.value );
-        sb.append ( ", timestamp: " );
+        sb.append ( ", timestamp: " ); //$NON-NLS-1$
         sb.append ( this.timestamp );
-        sb.append ( ", lastFailTimestamp: " );
+        sb.append ( ", lastFailTimestamp: " ); //$NON-NLS-1$
         sb.append ( this.lastFailTimestamp );
-        sb.append ( ", lastAckTimestamp: " );
+        sb.append ( ", lastAckTimestamp: " ); //$NON-NLS-1$
         sb.append ( this.lastAckTimestamp );
-        sb.append ( ", lastAckUser: " );
+        sb.append ( ", lastAckUser: " ); //$NON-NLS-1$
         sb.append ( this.lastAckUser );
 
         return sb.toString ();

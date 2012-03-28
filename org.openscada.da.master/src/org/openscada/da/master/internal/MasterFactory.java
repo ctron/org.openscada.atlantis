@@ -27,8 +27,10 @@ import java.util.concurrent.Executors;
 
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -48,9 +50,9 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
     private final ObjectPoolImpl masterItemPool;
 
-    private final ServiceRegistration dataSourcePoolHandler;
+    private final ServiceRegistration<ObjectPool> dataSourcePoolHandler;
 
-    private final ServiceRegistration masterItemPoolHandler;
+    private final ServiceRegistration<ObjectPool> masterItemPoolHandler;
 
     private final ObjectPoolTracker objectPoolTracker;
 
@@ -70,7 +72,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
     }
 
     @Override
-    protected Entry<MasterItemImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<MasterItemImpl> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final MasterItemImpl service = new MasterItemImpl ( this.executor, context, configurationId, this.objectPoolTracker );
 
@@ -88,7 +90,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final MasterItemImpl service )
+    protected void disposeService ( final UserInformation userInformation, final String configurationId, final MasterItemImpl service )
     {
         this.dataSourcePool.removeService ( configurationId, service );
         this.masterItemPool.removeService ( configurationId, service );
@@ -96,7 +98,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
     }
 
     @Override
-    protected Entry<MasterItemImpl> updateService ( final String configurationId, final Entry<MasterItemImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<MasterItemImpl> updateService ( final UserInformation userInformation, final String configurationId, final Entry<MasterItemImpl> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

@@ -19,83 +19,140 @@
 
 package org.openscada.ae.server.storage.jdbc;
 
+import java.lang.ref.WeakReference;
+import java.sql.Connection;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.ae.Event;
-import org.openscada.ae.event.FilterUtils;
 import org.openscada.ae.server.storage.Query;
-import org.openscada.ae.server.storage.jdbc.internal.HqlConverter;
-import org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAO;
-import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
 import org.openscada.utils.filter.Filter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-/**
- * {@link JdbcQuery} is a thin wrapper around the {@link JdbcStorageDAO} which provides just 
- * the basic methods to retrieve Events. An event is converted from a {@link MutableEvent}
- * and then assembled in chunks of maximum given size via {@link #getNext(long)}
- * 
- * At the moment there is no optimization done via hibernate to retrieve the date from the 
- * database already given in chunks.
- * 
- * @author jrose
- */
 public class JdbcQuery implements Query
 {
-    private final JdbcStorageDAO jdbcStorageDAO;
+    private static final Logger logger = LoggerFactory.getLogger ( JdbcQuery.class );
 
-    private final Filter filter;
+    private final StorageDao jdbcStorageDao;
 
-    private int first = 0;
+    private ResultSet resultSet;
 
-    private boolean hasMore = true;
+    private Statement statement;
 
-    private final HqlConverter.HqlResult hqlResult;
+    private boolean hasMore;
 
-    /**
-     * @param jdbcStorageDAO
-     * @param filter
-     */
-    public JdbcQuery ( final JdbcStorageDAO jdbcStorageDAO, final Filter filter ) throws Exception
+    private WeakReference<List<JdbcQuery>> openQueries;
+
+    private ScheduledFuture<Boolean> future;
+
+    public JdbcQuery ( final StorageDao jdbcStorageDao, final Filter filter, final ScheduledExecutorService executor, final List<JdbcQuery> openQueries ) throws SQLException, NotSupportedException
     {
-        this.jdbcStorageDAO = jdbcStorageDAO;
-        this.filter = filter;
-        FilterUtils.toVariant ( this.filter );
-        this.hqlResult = HqlConverter.toHql ( filter );
+        openQueries.add ( this );
+        this.openQueries = new WeakReference<List<JdbcQuery>> ( openQueries );
+        this.jdbcStorageDao = jdbcStorageDao;
+        this.resultSet = jdbcStorageDao.queryEvents ( filter );
+        this.statement = this.resultSet.getStatement ();
+        this.hasMore = this.resultSet.next ();
+        this.future = executor.schedule ( new Callable<Boolean> () {
+            @Override
+            public Boolean call ()
+            {
+                logger.warn ( "Query '{}' was open for over an hour, or service is being shut down, and will now be closed automatically" );
+                dispose ();
+                return true;
+            }
+        }, 1, TimeUnit.HOURS );
     }
 
-    /* (non-Javadoc)
-     * @see org.openscada.ae.server.storage.Query#getNext(long)
-     */
-    @Override
-    public Collection<Event> getNext ( final long count ) throws Exception
-    {
-        final List<MutableEvent> queryResult = this.jdbcStorageDAO.queryEventSlice ( this.hqlResult.getHql (), this.first, (int)count, this.hqlResult.getParameters () );
-        final List<Event> result = new ArrayList<Event> ();
-        for ( final MutableEvent m : queryResult )
-        {
-            result.add ( MutableEvent.toEvent ( m ) );
-        }
-        this.first += result.size ();
-        this.hasMore = count >= result.size ();
-        return result;
-    }
-
-    /* (non-Javadoc)
-     * @see org.openscada.ae.server.storage.Query#hasMore()
-     */
     @Override
     public boolean hasMore ()
     {
         return this.hasMore;
     }
 
-    /* (non-Javadoc)
-     * @see org.openscada.ae.server.storage.Query#dispose()
-     */
+    @Override
+    public Collection<Event> getNext ( final long count ) throws Exception
+    {
+        final List<Event> result = new ArrayList<Event> ();
+        if ( this.hasMore )
+        {
+            if ( this.resultSet.isClosed () )
+            {
+                throw new RuntimeException ( "ResultSet is closed (probably due to a timeout), please create a new query" );
+            }
+            this.hasMore = this.jdbcStorageDao.toEventList ( this.resultSet, result, false, count );
+        }
+        return result;
+    }
+
     @Override
     public void dispose ()
     {
+        this.hasMore = false;
+        if ( this.resultSet != null )
+        {
+
+            Connection connection = null;
+            try
+            {
+                connection = this.statement.getConnection ();
+            }
+            catch ( final SQLException e )
+            {
+                logger.warn ( "Failed to get connection from statement", e );
+            }
+
+            try
+            {
+                if ( this.resultSet != null )
+                {
+                    this.resultSet.close ();
+                }
+            }
+            catch ( final SQLException e )
+            {
+                logger.warn ( "error on closing database resources", e );
+            }
+            try
+            {
+                if ( this.statement != null && !this.statement.isClosed () )
+                {
+                    this.statement.close ();
+                }
+            }
+            catch ( final SQLException e )
+            {
+                logger.warn ( "error on closing database resources", e );
+            }
+            try
+            {
+                if ( connection != null && !connection.isClosed () )
+                {
+                    connection.close ();
+                }
+            }
+            catch ( final SQLException e )
+            {
+                logger.warn ( "error on closing database connection", e );
+            }
+        }
+        final List<JdbcQuery> openQueries = this.openQueries.get ();
+        if ( openQueries != null )
+        {
+            openQueries.remove ( this );
+        }
+        if ( this.future != null )
+        {
+            this.future.cancel ( false );
+        }
     }
 }

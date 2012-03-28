@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMonitorService implements MonitorService
 {
-    private final static Logger logger = LoggerFactory.getLogger ( AbstractStateMachineMonitorService.class );
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractMonitorService.class );
 
     protected Set<MonitorListener> monitorListeners = new HashSet<MonitorListener> ();
 
@@ -48,14 +48,16 @@ public abstract class AbstractMonitorService implements MonitorService
         this.executor = executor;
         this.id = id;
 
-        this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, new Date (), null, null, null, null );
+        this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, new Date (), null, null, null, null, null );
     }
 
+    @Override
     public String getId ()
     {
         return this.id;
     }
 
+    @Override
     public synchronized void addStatusListener ( final MonitorListener listener )
     {
         if ( listener == null )
@@ -68,6 +70,7 @@ public abstract class AbstractMonitorService implements MonitorService
             final MonitorStatusInformation state = this.currentState;
             this.executor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     listener.statusChanged ( state );
@@ -84,6 +87,7 @@ public abstract class AbstractMonitorService implements MonitorService
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 for ( final MonitorListener listener : listeners )
@@ -94,13 +98,14 @@ public abstract class AbstractMonitorService implements MonitorService
                     }
                     catch ( final Throwable e )
                     {
-                        logger.warn ( "Failed to notify", e );
+                        logger.warn ( "Failed to notify", e ); //$NON-NLS-1$
                     }
                 }
             }
         } );
     }
 
+    @Override
     public synchronized void removeStatusListener ( final MonitorListener listener )
     {
         this.monitorListeners.remove ( listener );

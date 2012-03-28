@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.da.server.arduino.ArduinoDevice;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
@@ -46,17 +47,17 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected Entry<ArduinoDevice> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<ArduinoDevice> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final ArduinoDevice device = new ArduinoDevice ( this.context, configurationId, parameters, this.itemPool, this.executor );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( "adrduinoDevice", configurationId );
-        return new Entry<ArduinoDevice> ( configurationId, device, context.registerService ( ArduinoDevice.class.getName (), device, properties ) );
+        return new Entry<ArduinoDevice> ( configurationId, device, context.registerService ( ArduinoDevice.class, device, properties ) );
     }
 
     @Override
-    protected Entry<ArduinoDevice> updateService ( final String configurationId, final Entry<ArduinoDevice> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<ArduinoDevice> updateService ( final UserInformation userInformation, final String configurationId, final Entry<ArduinoDevice> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().dispose ();
         entry.getHandle ().unregister ();
@@ -65,11 +66,11 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
         properties.put ( "adrduinoDevice", configurationId );
         final ArduinoDevice device = new ArduinoDevice ( this.context, configurationId, parameters, this.itemPool, this.executor );
 
-        return new Entry<ArduinoDevice> ( configurationId, device, this.context.registerService ( ArduinoDevice.class.getName (), device, properties ) );
+        return new Entry<ArduinoDevice> ( configurationId, device, this.context.registerService ( ArduinoDevice.class, device, properties ) );
     }
 
     @Override
-    protected void disposeService ( final String id, final ArduinoDevice service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final ArduinoDevice service )
     {
         service.dispose ();
     }

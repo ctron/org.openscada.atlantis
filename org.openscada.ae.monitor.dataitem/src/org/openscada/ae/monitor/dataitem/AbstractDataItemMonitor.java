@@ -43,7 +43,7 @@ import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.MasterItemHandler;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
-import org.openscada.sec.UserInformationPrincipal;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
@@ -84,12 +84,6 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     private String monitorType;
 
-    private String component;
-
-    private String message;
-
-    private String messageCode;
-
     private final ObjectPoolTracker poolTracker;
 
     private Boolean initialUpdate;
@@ -124,7 +118,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> properties ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> properties ) throws Exception
     {
         disconnect ();
 
@@ -143,9 +137,9 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         this.handlerPriority = cfg.getInteger ( "handlerPriority", getDefaultPriority () );
         this.monitorType = cfg.getString ( "monitorType", this.defaultMonitorType );
 
-        setEventInformationAttributes ( convertAttributes ( cfg ) );
-        setActive ( cfg.getBoolean ( "active", true ) );
-        setRequireAkn ( cfg.getBoolean ( "requireAck", false ) );
+        setEventInformationAttributes ( userInformation, convertAttributes ( cfg ) );
+        setActive ( userInformation, cfg.getBoolean ( "active", true ) );
+        setRequireAkn ( userInformation, cfg.getBoolean ( "requireAck", false ) );
 
         connect ();
     }
@@ -380,7 +374,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         {
             try
             {
-                Activator.getConfigAdmin ().updateConfiguration ( UserInformationPrincipal.create ( operationParameters.getUserInformation () ), factoryId, configurationId, configUpdate, false );
+                Activator.getConfigAdmin ().updateConfiguration ( operationParameters.getUserInformation (), factoryId, configurationId, configUpdate, false );
             }
             catch ( final Exception e )
             {
@@ -391,17 +385,17 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     }
 
     @Override
-    public synchronized void setRequireAkn ( final boolean state )
+    public synchronized void setRequireAkn ( final UserInformation userInformation, final boolean state )
     {
-        super.setRequireAkn ( state );
+        super.setRequireAkn ( userInformation, state );
         this.requireAkn = state;
         reprocess ();
     }
 
     @Override
-    public synchronized void setActive ( final boolean state )
+    public synchronized void setActive ( final UserInformation userInformation, final boolean state )
     {
-        super.setActive ( state );
+        super.setActive ( userInformation, state );
         this.active = state;
         reprocess ();
     }
@@ -454,18 +448,6 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     {
         super.injectEventAttributes ( builder );
         builder.attribute ( Event.Fields.MONITOR_TYPE, this.monitorType );
-        if ( this.component != null )
-        {
-            builder.attribute ( Event.Fields.COMPONENT, this.component );
-        }
-        if ( this.message != null )
-        {
-            builder.attribute ( Event.Fields.MESSAGE, this.message );
-        }
-        if ( this.messageCode != null )
-        {
-            builder.attribute ( Event.Fields.MESSAGE_CODE, this.messageCode );
-        }
     }
 
     protected static boolean isDifferent ( final Object oldLimit, final Object newLimit )

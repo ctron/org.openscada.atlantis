@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,16 +27,18 @@ import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.AttributeWriteHandler;
 import org.openscada.da.server.common.chain.AttributeWriteHandlerItem;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
+import org.openscada.da.server.common.item.factory.ItemFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
-public class DataItemFactory
+public class DataItemFactory implements ItemFactory
 {
     private final BundleContext context;
 
@@ -46,7 +48,7 @@ public class DataItemFactory
 
     private final Map<String, DataItem> items = new HashMap<String, DataItem> ();
 
-    private final Map<String, ServiceRegistration> itemRegs = new HashMap<String, ServiceRegistration> ();
+    private final Map<String, ServiceRegistration<DataItem>> itemRegs = new HashMap<String, ServiceRegistration<DataItem>> ();
 
     private final String delimiter = ".";
 
@@ -119,17 +121,44 @@ public class DataItemFactory
             registerItem ( newItem, localId, localProperties );
             return newItem;
         }
+        else if ( item instanceof AttributeWriteHandlerItem )
+        {
+            return (AttributeWriteHandlerItem)item;
+        }
         else
         {
-            if ( item instanceof AttributeWriteHandlerItem )
-            {
-                return (AttributeWriteHandlerItem)item;
-            }
-            else
-            {
-                return null;
-            }
+            return null;
         }
+    }
+
+    @Override
+    public synchronized DataItemCommand createCommand ( final String localId )
+    {
+        final DataItem item = this.items.get ( localId );
+        if ( item == null )
+        {
+            final DataItemCommand newItem = new DataItemCommand ( getId ( localId ), this.executor );
+            registerItem ( item, localId, fixProperties ( null ) );
+            return newItem;
+        }
+        else if ( item instanceof DataItemCommand )
+        {
+            return (DataItemCommand)item;
+        }
+
+        return null;
+    }
+
+    @Override
+    public DataItemInputChained createInput ( final String localId )
+    {
+        return createInput ( localId, null );
+    }
+
+    @Override
+    public WriteHandlerItem createInputOutput ( final String localId, final WriteHandler writeHandler )
+    {
+        return createOutput ( localId, null, writeHandler );
     }
 
     private Map<String, Variant> fixProperties ( final Map<String, Variant> properties )
@@ -152,7 +181,7 @@ public class DataItemFactory
 
         fillProperties ( properties, props );
 
-        final ServiceRegistration handle = this.context.registerService ( DataItem.class.getName (), newItem, props );
+        final ServiceRegistration<DataItem> handle = this.context.registerService ( DataItem.class, newItem, props );
         this.items.put ( localId, newItem );
         this.itemRegs.put ( localId, handle );
     }
@@ -172,16 +201,46 @@ public class DataItemFactory
 
     protected String getId ( final String localId )
     {
-        return this.globalId + this.delimiter + localId;
+        if ( this.globalId == null )
+        {
+            return localId;
+        }
+        else
+        {
+            return this.globalId + this.delimiter + localId;
+        }
     }
 
-    public synchronized void dispose ()
+    @Override
+    public synchronized void disposeAllItems ()
     {
-        for ( final ServiceRegistration reg : this.itemRegs.values () )
+        for ( final ServiceRegistration<DataItem> reg : this.itemRegs.values () )
         {
             reg.unregister ();
         }
         this.items.clear ();
         this.itemRegs.clear ();
+    }
+
+    @Override
+    public synchronized void disposeItem ( final DataItem dataItem )
+    {
+        // FIXME: do a quicker lookup of the item in question
+        for ( final Map.Entry<String, DataItem> entry : this.items.entrySet () )
+        {
+            if ( entry.getValue () == dataItem )
+            {
+                this.items.remove ( entry.getKey () );
+                final ServiceRegistration<DataItem> reg = this.itemRegs.remove ( entry.getKey () );
+                reg.unregister ();
+                return;
+            }
+        }
+    }
+
+    @Override
+    public synchronized void dispose ()
+    {
+        disposeAllItems ();
     }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -53,7 +53,7 @@ public class QueryImpl implements Query
 
     private final ExecutorService loadExecutor;
 
-    private final SingleServiceTracker tracker;
+    private final SingleServiceTracker<Storage> tracker;
 
     private Storage storage;
 
@@ -79,11 +79,12 @@ public class QueryImpl implements Query
         this.queryType = queryType;
         this.queryData = queryData;
 
-        this.tracker = new SingleServiceTracker ( context, Storage.class.getName (), new SingleServiceListener () {
+        this.tracker = new SingleServiceTracker<Storage> ( context, Storage.class, new SingleServiceListener<Storage> () {
 
-            public void serviceChange ( final ServiceReference reference, final Object service )
+            @Override
+            public void serviceChange ( final ServiceReference<Storage> reference, final Storage service )
             {
-                QueryImpl.this.setStorage ( (Storage)service );
+                QueryImpl.this.setStorage ( service );
             }
         } );
     }
@@ -100,7 +101,7 @@ public class QueryImpl implements Query
         this.storage = service;
         if ( this.storage == null )
         {
-            dispose ();
+            dispose ( null );
         }
         else
         {
@@ -112,29 +113,30 @@ public class QueryImpl implements Query
         }
     }
 
+    @Override
     public synchronized void close ()
     {
-        dispose ();
+        dispose ( null );
     }
 
     private void loadInitial ()
     {
-        initialLoadJob = loadExecutor.submit ( new Runnable () {
+        this.initialLoadJob = this.loadExecutor.submit ( new Runnable () {
             @Override
             public void run ()
             {
                 try
                 {
-                    query = storage.query ( queryData );
+                    QueryImpl.this.query = QueryImpl.this.storage.query ( QueryImpl.this.queryData );
                 }
                 catch ( final Exception e )
                 {
                     logger.warn ( "Failed to query storage", e );
                 }
 
-                if ( query == null )
+                if ( QueryImpl.this.query == null )
                 {
-                    dispose ();
+                    dispose ( null );
                 }
                 else
                 {
@@ -150,6 +152,7 @@ public class QueryImpl implements Query
 
         this.loadJob = this.loadExecutor.submit ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 QueryImpl.this.performLoad ( count );
@@ -171,6 +174,7 @@ public class QueryImpl implements Query
 
             this.eventExecutor.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     QueryImpl.this.listener.queryData ( result.toArray ( new Event[result.size ()] ) );
@@ -180,11 +184,11 @@ public class QueryImpl implements Query
             if ( result.size () < count )
             {
                 logger.info ( "Reached end of query: {}", result.size () );
-                dispose ();
+                dispose ( null );
             }
             else
             {
-                setState ( QueryState.CONNECTED );
+                setState ( QueryState.CONNECTED, null );
             }
 
         }
@@ -194,7 +198,7 @@ public class QueryImpl implements Query
             synchronized ( this )
             {
                 this.loadJob = null;
-                dispose ();
+                dispose ( e );
             }
         }
         finally
@@ -206,6 +210,7 @@ public class QueryImpl implements Query
         }
     }
 
+    @Override
     public synchronized void loadMore ( final int count )
     {
         if ( this.loadJob != null )
@@ -214,17 +219,17 @@ public class QueryImpl implements Query
             return;
         }
 
-        setState ( QueryState.LOADING );
+        setState ( QueryState.LOADING, null );
         startLoad ( count );
     }
 
     public synchronized void start ()
     {
-        setState ( QueryState.LOADING );
+        setState ( QueryState.LOADING, null );
         this.tracker.open ();
     }
 
-    private void setState ( final QueryState state )
+    private void setState ( final QueryState state, final Throwable error )
     {
         if ( this.currentState == state )
         {
@@ -234,14 +239,15 @@ public class QueryImpl implements Query
         this.currentState = state;
         this.eventExecutor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
-                QueryImpl.this.listener.queryStateChanged ( state );
+                QueryImpl.this.listener.queryStateChanged ( state, error );
             }
         } );
     }
 
-    public void dispose ()
+    public void dispose ( final Throwable error )
     {
         synchronized ( this )
         {
@@ -270,7 +276,7 @@ public class QueryImpl implements Query
                 this.query = null;
             }
 
-            setState ( QueryState.DISCONNECTED );
+            setState ( QueryState.DISCONNECTED, error );
             this.tracker.close ();
         }
 

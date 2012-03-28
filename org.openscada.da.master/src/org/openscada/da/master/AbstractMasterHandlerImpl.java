@@ -33,6 +33,7 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolListener;
 import org.openscada.utils.osgi.pool.ObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -84,7 +85,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         this.trackers.clear ();
     }
 
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 

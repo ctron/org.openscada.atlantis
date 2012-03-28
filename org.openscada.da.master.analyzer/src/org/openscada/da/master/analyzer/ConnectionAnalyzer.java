@@ -45,7 +45,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
 
     private final ConnectionService service;
 
-    public ConnectionAnalyzer ( final Executor executor, final BundleContext context, final ServiceReference reference, final ConnectionService service )
+    public ConnectionAnalyzer ( final Executor executor, final BundleContext context, final ServiceReference<?> reference, final ConnectionService service )
     {
         this.factory = new DataItemFactory ( context, executor, "org.openscada.da.master.analyzer.connectionService." + makeId ( reference ) );
         this.exporter = new SimpleObjectExporter<ConnectionAnalyzerStatus> ( ConnectionAnalyzerStatus.class, this.factory, "state" );
@@ -101,7 +101,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
         this.factory.dispose ();
     }
 
-    private static String makeId ( final ServiceReference reference )
+    private static String makeId ( final ServiceReference<?> reference )
     {
         final Object id = reference.getProperty ( Constants.SERVICE_PID );
         if ( id instanceof String )

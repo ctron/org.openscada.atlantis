@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,8 +19,6 @@
 
 package org.openscada.da.server.snmp;
 
-import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.snmp4j.smi.OID;
 
 public class DataItemFactory implements org.openscada.da.server.common.factory.DataItemFactory
@@ -36,10 +34,9 @@ public class DataItemFactory implements org.openscada.da.server.common.factory.D
         this.connectionPrefix = connectionName + ".";
     }
 
-    public boolean canCreate ( final DataItemFactoryRequest request )
+    @Override
+    public boolean canCreate ( final String itemId )
     {
-        final String itemId = request.getId ();
-
         // we need this as prefix
         if ( !itemId.startsWith ( this.connectionPrefix ) )
         {
@@ -53,16 +50,14 @@ public class DataItemFactory implements org.openscada.da.server.common.factory.D
      * create the item based on the request
      */
 
-    public DataItem create ( final DataItemFactoryRequest request )
+    @Override
+    public void create ( final String itemId )
     {
-        // get the item id
-        final String itemId = request.getId ();
-
         // get the OID and convert it
         final String oidString = itemId.substring ( this.connectionPrefix.length () );
         final OID oid = new OID ( oidString );
 
         // fetch the ID
-        return this.node.getSNMPItem ( oid );
+        this.node.createSNMPItem ( oid );
     }
 }

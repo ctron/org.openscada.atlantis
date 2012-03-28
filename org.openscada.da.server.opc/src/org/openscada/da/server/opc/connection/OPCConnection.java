@@ -252,19 +252,19 @@ public class OPCConnection implements PropertyChangeListener
         }
 
         // add model exporter
-        this.modelExporter = new ObjectExporter ( "model", this.connectionItemFactory );
+        this.modelExporter = new ObjectExporter ( this.connectionItemFactory.createSubFolderFactory ( "model" ) );
         this.modelExporter.attachTarget ( this.controller.getModel () );
 
-        this.ioManagerExporter = new ObjectExporter ( "ioManager", this.connectionItemFactory );
+        this.ioManagerExporter = new ObjectExporter ( this.connectionItemFactory.createSubFolderFactory ( "ioManager" ) );
         this.ioManagerExporter.attachTarget ( this.controller.getIoManager () );
 
-        this.itemManagerExporter = new ObjectExporter ( "itemManager", this.connectionItemFactory );
+        this.itemManagerExporter = new ObjectExporter ( this.connectionItemFactory.createSubFolderFactory ( "itemManager" ) );
         this.itemManagerExporter.attachTarget ( this.controller.getItemManager () );
 
-        this.browserManagerExporter = new ObjectExporter ( "browserManager", this.connectionItemFactory );
+        this.browserManagerExporter = new ObjectExporter ( this.connectionItemFactory.createSubFolderFactory ( "browserManager" ) );
         this.browserManagerExporter.attachTarget ( this.controller.getBrowserManager () );
 
-        this.groupStateExporter = new ObjectExporter ( "group", this.connectionItemFactory );
+        this.groupStateExporter = new ObjectExporter ( this.connectionItemFactory.createSubFolderFactory ( "group" ) );
         this.groupStateExporter.attachTarget ( this.controller.getGroupState () );
     }
 
@@ -494,13 +494,13 @@ public class OPCConnection implements PropertyChangeListener
         this.serverStateItem.updateData ( null, attributes, AttributeMode.UPDATE );
     }
 
-    public OPCItem addUnrealizedItem ( final String opcItemId )
+    public void addUnrealizedItem ( final String opcItemId )
     {
         if ( opcItemId == null )
         {
-            return null;
+            return;
         }
-        return this.controller.getItemManager ().registerItem ( opcItemId, EnumSet.allOf ( IODirection.class ), null );
+        this.controller.getItemManager ().registerItem ( opcItemId, EnumSet.allOf ( IODirection.class ), null );
     }
 
     public String getItemPrefix ()

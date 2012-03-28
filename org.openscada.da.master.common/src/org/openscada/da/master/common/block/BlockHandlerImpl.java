@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +25,7 @@ import java.util.Map;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
@@ -51,9 +52,12 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     private Long timestamp;
 
-    public BlockHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker )
+    private final Variant source;
+
+    public BlockHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, BlockHandlerFactoryImpl.FACTORY_ID, BlockHandlerFactoryImpl.FACTORY_ID );
+        this.source = Variant.valueOf ( configurationId );
         this.eventProcessor = eventProcessor;
     }
 
@@ -87,11 +91,23 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             if ( !testRequest.isEmpty () )
             {
                 // if there is a remaining request
-                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, String.format ( Messages.getString ( "BlockHandlerImpl.WriteError" ), this.note ), makeString ( testRequest ) ); //$NON-NLS-1$
+                publishEvent ( testRequest.getOperationParameters () != null ? testRequest.getOperationParameters ().getUserInformation () : UserInformation.ANONYMOUS, makeNote (), makeString ( testRequest ), "BLOCK" ); //$NON-NLS-1$
                 return createBlockedResult ();
             }
         }
         return result;
+    }
+
+    private String makeNote ()
+    {
+        if ( this.note == null || this.note.isEmpty () )
+        {
+            return Messages.getString ( "BlockHandlerImpl.WriteErrorNoReason" ); //$NON-NLS-1$
+        }
+        else
+        {
+            return String.format ( Messages.getString ( "BlockHandlerImpl.WriteError" ), this.note ); //$NON-NLS-1$
+        }
     }
 
     private String makeString ( final WriteRequest result )
@@ -124,20 +140,20 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
+        super.update ( userInformation, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.note = updateValue ( cfg.getString ( "note", null ), this.note ); //$NON-NLS-1$
-        this.active = updateValue ( cfg.getBoolean ( "active", false ), this.active ); //$NON-NLS-1$
-        this.user = updateValue ( cfg.getString ( "user", null ), this.user ); //$NON-NLS-1$
+        this.note = updateValue ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration.note" ), cfg.getString ( "note", null ), this.note ); //$NON-NLS-1$
+        this.active = updateValue ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration.active" ), cfg.getBoolean ( "active", false ), this.active ); //$NON-NLS-1$
+        this.user = updateValue ( userInformation, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration.user" ), cfg.getString ( "user", null ), this.user ); //$NON-NLS-1$
         this.timestamp = cfg.getLong ( "timestamp" ); //$NON-NLS-1$
 
         reprocess ();
     }
 
-    protected <T> T updateValue ( final T newValue, final T oldValue )
+    protected <T> T updateValue ( final UserInformation userInformation, final String message, final T newValue, final T oldValue )
     {
         if ( newValue == oldValue )
         {
@@ -151,7 +167,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
             }
         }
 
-        publishEvent ( null, Messages.getString ( "BlockHandlerImpl.UpdateConfiguration" ), newValue ); //$NON-NLS-1$
+        publishEvent ( userInformation, message, newValue, "CFG" ); //$NON-NLS-1$ 
         return newValue;
     }
 
@@ -193,14 +209,22 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
         return updateConfiguration ( data, attributes, false, operationParameters );
     }
 
-    protected void publishEvent ( final UserInformation user, final String message, final Object value )
+    protected void publishEvent ( final UserInformation user, final String message, final Object value, final String eventType )
     {
-        this.eventProcessor.publishEvent ( createEvent ( user, message, value ).build () );
+        final EventBuilder builder = createEvent ( user, message, value );
+        if ( eventType != null )
+        {
+            builder.attribute ( Fields.EVENT_TYPE, Variant.valueOf ( eventType ) );
+        }
+        this.eventProcessor.publishEvent ( builder.build () );
     }
 
     protected EventBuilder createEvent ( final UserInformation user, final String message, final Object value )
     {
         final EventBuilder builder = createEventBuilder ();
+
+        builder.attribute ( Fields.SOURCE, this.source );
+        builder.attribute ( Fields.MONITOR_TYPE, "BLOCK" ); //$NON-NLS-1$
 
         if ( user != null && user.getName () != null )
         {
@@ -219,5 +243,4 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
         return builder;
     }
-
 }

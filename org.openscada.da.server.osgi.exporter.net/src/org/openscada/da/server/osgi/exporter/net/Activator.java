@@ -40,7 +40,7 @@ public class Activator implements BundleActivator
 
     private ServiceListener listener;
 
-    private ServiceReference currentServiceReference;
+    private ServiceReference<?> currentServiceReference;
 
     private BundleContext context;
 
@@ -50,7 +50,7 @@ public class Activator implements BundleActivator
 
     private Hive currentService;
 
-    private ServiceRegistration exporterHandle;
+    private ServiceRegistration<ExporterInformation> exporterHandle;
 
     /*
      * (non-Javadoc)
@@ -78,10 +78,10 @@ public class Activator implements BundleActivator
             }
         }, "(" + Constants.OBJECTCLASS + "=" + Hive.class.getName () + ")" );
 
-        startExporter ( context.getServiceReference ( Hive.class.getName () ) );
+        startExporter ( context.getServiceReference ( Hive.class ) );
     }
 
-    protected void stopExporter ( final ServiceReference serviceReference )
+    protected void stopExporter ( final ServiceReference<?> serviceReference )
     {
         if ( this.currentServiceReference != serviceReference )
         {
@@ -113,7 +113,7 @@ public class Activator implements BundleActivator
 
     }
 
-    protected void startExporter ( final ServiceReference serviceReference )
+    protected void startExporter ( final ServiceReference<?> serviceReference )
     {
         if ( this.currentServiceReference != null || serviceReference == null )
         {
@@ -130,12 +130,14 @@ public class Activator implements BundleActivator
                 this.exporter = new Exporter ( this.currentService, this.connectionInformation );
                 this.exporter.start ();
 
-                final ExporterInformation info = new ExporterInformation ( this.connectionInformation, null );
-                this.exporterHandle = this.context.registerService ( ExporterInformation.class.getName (), info, null );
+                final String description = "" + serviceReference.getProperty ( Constants.SERVICE_DESCRIPTION );
+
+                final ExporterInformation info = new ExporterInformation ( this.connectionInformation, description );
+                this.exporterHandle = this.context.registerService ( ExporterInformation.class, info, null );
             }
             catch ( final Throwable e )
             {
-                e.printStackTrace ();
+                logger.error ( "Failed to export", e );
                 this.exporter = null;
                 this.currentService = null;
                 this.context.ungetService ( serviceReference );

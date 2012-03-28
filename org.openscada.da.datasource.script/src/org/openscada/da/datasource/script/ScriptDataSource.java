@@ -34,6 +34,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
@@ -81,11 +82,14 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private ScriptExecutor writeCommand;
 
-    public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor )
+    private final EventProcessor eventProcessor;
+
+    public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor, final EventProcessor eventProcessor )
     {
         super ( poolTracker );
         this.executor = executor;
         this.classLoader = getClass ().getClassLoader ();
+        this.eventProcessor = eventProcessor;
 
         final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
 
@@ -113,6 +117,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         this.scriptContext.setAttribute ( "value", value, ScriptContext.ENGINE_SCOPE );
         this.scriptContext.setAttribute ( "attributes", attributes, ScriptContext.ENGINE_SCOPE );
         this.scriptContext.setAttribute ( "parameters", operationParameters, ScriptContext.ENGINE_SCOPE );
+        this.scriptContext.setAttribute ( "eventProcessor", this.eventProcessor, ScriptContext.ENGINE_SCOPE );
 
         return performScript ( command, this.scriptContext );
     }
@@ -312,6 +317,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
     protected synchronized void handleTimer ()
     {
         this.scriptContext.setAttribute ( "writer", this.writer, ScriptContext.ENGINE_SCOPE );
+        this.scriptContext.setAttribute ( "eventProcessor", this.eventProcessor, ScriptContext.ENGINE_SCOPE );
 
         executeScript ( this.timerCommand );
     }
@@ -332,6 +338,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
         this.scriptContext.setAttribute ( "data", values, ScriptContext.ENGINE_SCOPE );
         this.scriptContext.setAttribute ( "writer", this.writer, ScriptContext.ENGINE_SCOPE );
+        this.scriptContext.setAttribute ( "eventProcessor", this.eventProcessor, ScriptContext.ENGINE_SCOPE );
 
         executeScript ( this.updateCommand );
     }
@@ -382,7 +389,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
         else if ( result instanceof DataItemValue )
         {
             logger.debug ( "Using data item value" );
-            updateData ( ( (DataItemValue)result ) );
+            updateData ( (DataItemValue)result );
         }
         else
         {

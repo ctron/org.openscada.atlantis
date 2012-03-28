@@ -30,8 +30,8 @@ import org.openscada.da.server.common.chain.item.ScaleInputItem;
 import org.openscada.da.server.common.chain.item.SumAlarmChainItem;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.common.item.factory.CommonItemFactory;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
-import org.openscada.da.server.common.item.factory.ItemFactory;
 
 public class DefaultItemFactory extends FolderItemFactory
 {
@@ -44,13 +44,13 @@ public class DefaultItemFactory extends FolderItemFactory
         this.hiveServiceRegistry = hive;
     }
 
-    public DefaultItemFactory ( final ItemFactory parentFactory, final HiveCommon hive, final FolderCommon parentFolder, final String baseId, final String folderName, final String idDelimiter )
+    public DefaultItemFactory ( final CommonItemFactory parentFactory, final HiveCommon hive, final FolderCommon parentFolder, final String baseId, final String folderName, final String idDelimiter )
     {
         super ( parentFactory, hive, parentFolder, baseId, folderName, idDelimiter );
         this.hiveServiceRegistry = hive;
     }
 
-    public DefaultItemFactory ( final ItemFactory parentFactory, final HiveCommon hive, final FolderCommon parentFolder, final String baseId, final String folderName )
+    public DefaultItemFactory ( final CommonItemFactory parentFactory, final HiveCommon hive, final FolderCommon parentFolder, final String baseId, final String folderName )
     {
         super ( parentFactory, hive, parentFolder, baseId, folderName );
         this.hiveServiceRegistry = hive;
@@ -74,7 +74,7 @@ public class DefaultItemFactory extends FolderItemFactory
     @Override
     public FolderItemFactory createSubFolderFactory ( final String name )
     {
-        final FolderItemFactory factory = new DefaultItemFactory ( this, this.hive, this.getFolder (), name, name );
+        final FolderItemFactory factory = new DefaultItemFactory ( this, this.hive, getFolder (), name, name );
         addSubFactory ( factory );
         return factory;
     }

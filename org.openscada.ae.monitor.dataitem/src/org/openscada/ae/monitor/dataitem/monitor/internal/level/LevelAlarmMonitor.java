@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -33,6 +33,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -77,19 +78,19 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> properties ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> properties ) throws Exception
     {
-        super.update ( properties );
+        super.update ( userInformation, properties );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        final Double newLimit = cfg.getDouble ( "preset" );
+        final Double newLimit = cfg.getDouble ( "preset" ); //$NON-NLS-1$
 
-        logger.debug ( "New limit: {}", newLimit );
+        logger.debug ( "New limit: {}", newLimit ); //$NON-NLS-1$
 
         if ( newLimit == null )
         {
-            setActive ( false );
+            setActive ( userInformation, false );
         }
 
         if ( isDifferent ( this.limit, newLimit ) )
@@ -97,7 +98,8 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             this.limit = newLimit;
             if ( !isInitialUpdate () )
             {
-                final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Change preset", Variant.valueOf ( newLimit ), new Date () );
+                final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), Messages.getString ( "LevelAlarmMonitor.message.changePreset" ), Variant.valueOf ( newLimit ), new Date () ); //$NON-NLS-1$
+                builder.setAllowOverrideAttributes ( false );
                 injectEventAttributes ( builder );
                 publishEvent ( builder );
             }
@@ -121,13 +123,13 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
         if ( active )
         {
-            builder.setAttribute ( this.prefix + ".preset", Variant.valueOf ( this.limit ) );
+            builder.setAttribute ( this.prefix + ".preset", Variant.valueOf ( this.limit ) ); //$NON-NLS-1$
         }
-        builder.setAttribute ( this.prefix + ".active", active ? Variant.TRUE : Variant.FALSE );
+        builder.setAttribute ( this.prefix + ".active", active ? Variant.TRUE : Variant.FALSE ); //$NON-NLS-1$
 
         if ( this.cap && this.failure )
         {
-            builder.setAttribute ( this.prefix + ".original.value", Variant.valueOf ( this.value ) );
+            builder.setAttribute ( this.prefix + ".original.value", Variant.valueOf ( this.value ) ); //$NON-NLS-1$
         }
     }
 
@@ -136,24 +138,24 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     {
         super.handleConfigUpdate ( configUpdate, attributes, result );
 
-        final Variant active = attributes.get ( this.prefix + ".active" );
+        final Variant active = attributes.get ( this.prefix + ".active" ); //$NON-NLS-1$
         if ( active != null )
         {
-            configUpdate.put ( "active", "" + active.asBoolean () );
+            configUpdate.put ( "active", "" + active.asBoolean () ); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
-        final Variant preset = attributes.get ( this.prefix + ".preset" );
+        final Variant preset = attributes.get ( this.prefix + ".preset" ); //$NON-NLS-1$
         if ( preset != null )
         {
             if ( preset.isNull () )
             {
-                configUpdate.put ( "active", "" + false );
+                configUpdate.put ( "active", "" + false ); //$NON-NLS-1$ //$NON-NLS-2$
             }
             else
             {
-                configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) );
+                configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) ); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            result.put ( this.prefix + ".preset", WriteAttributeResult.OK );
+            result.put ( this.prefix + ".preset", WriteAttributeResult.OK ); //$NON-NLS-1$
         }
 
     }
@@ -167,7 +169,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     @Override
     protected synchronized void update ( final Builder builder )
     {
-        logger.debug ( "Handle data update: {} (value: {}, timestamp: {}, limit: {})", new Object[] { builder, this.value, this.timestamp, this.limit } );
+        logger.debug ( "Handle data update: {} (value: {}, timestamp: {}, limit: {})", new Object[] { builder, this.value, this.timestamp, this.limit } ); //$NON-NLS-1$
 
         if ( this.value == null || this.timestamp == null || this.limit == null )
         {

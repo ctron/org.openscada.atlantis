@@ -32,6 +32,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
@@ -69,14 +70,14 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
     }
 
     @Override
-    public void update ( final Map<String, String> properties ) throws Exception
+    public void update ( final UserInformation userInformation, final Map<String, String> properties ) throws Exception
     {
-        super.update ( properties );
+        super.update ( userInformation, properties );
 
         final boolean newReference = Boolean.parseBoolean ( properties.get ( "reference" ) );
         if ( isDifferent ( this.reference, newReference ) )
         {
-            final EventBuilder builder = EventHelper.newConfigurationEvent ( getId (), "Change reference value", Variant.valueOf ( newReference ), new Date () );
+            final EventBuilder builder = EventHelper.newConfigurationEvent ( userInformation, getId (), "Change reference value", Variant.valueOf ( newReference ), new Date () );
             injectEventAttributes ( builder );
             publishEvent ( builder );
             this.reference = newReference;

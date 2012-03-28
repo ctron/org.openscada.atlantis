@@ -26,6 +26,7 @@ import java.util.Map;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
@@ -35,11 +36,17 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ManualHandlerImpl.class );
+
     private Variant value = Variant.NULL;
 
     private String user;
@@ -52,7 +59,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
     private final String id;
 
-    public ManualHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker )
+    public ManualHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, ManualHandlerFactoryImpl.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
         this.id = configurationId;
@@ -125,15 +132,16 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
+        super.update ( userInformation, parameters );
 
         final VariantEditor ve = new VariantEditor ();
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
         final String str = cfg.getString ( "value" ); //$NON-NLS-1$
+        logger.debug ( "Request to set manual value '{}'", str );
         if ( str != null )
         {
             ve.setAsText ( str );

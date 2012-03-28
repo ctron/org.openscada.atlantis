@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,11 +28,14 @@ import javax.servlet.ServletException;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
+import org.openscada.ae.server.http.filter.EventFilter;
+import org.openscada.ae.server.http.filter.EventFilterImpl;
 import org.openscada.ae.server.http.internal.JsonServlet;
 import org.openscada.ae.server.http.monitor.EventMonitorFactory;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -55,17 +58,19 @@ public class Activator implements BundleActivator
 
     private EventProcessor eventProcessor;
 
-    private ServiceTracker httpServiceTracker;
+    private ServiceTracker<HttpService, HttpService> httpServiceTracker;
 
     private HttpService httpService;
 
-    private ServiceRegistration factoryServiceHandle;
+    private ServiceRegistration<?> factoryServiceHandle;
 
     private EventMonitorFactory factory;
 
     private ObjectPoolImpl monitorServicePool;
 
-    private ServiceRegistration monitorServicePoolHandler;
+    private ServiceRegistration<ObjectPool> monitorServicePoolHandler;
+
+    private EventFilter eventFilter;
 
     /*
      * (non-Javadoc)
@@ -78,11 +83,12 @@ public class Activator implements BundleActivator
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
         this.eventProcessor = new EventProcessor ( context );
+        this.eventFilter = new EventFilterImpl ( context, context.getBundle ().getSymbolicName () + ".eventFilter" );
 
         this.monitorServicePool = new ObjectPoolImpl ();
         this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class.getName () );
 
-        this.httpServiceTracker = new ServiceTracker ( context, HttpService.class.getName (), createHttpServiceTrackerCustomizer () );
+        this.httpServiceTracker = new ServiceTracker<HttpService, HttpService> ( context, HttpService.class, createHttpServiceTrackerCustomizer () );
 
         this.eventProcessor.open ();
 
@@ -126,6 +132,8 @@ public class Activator implements BundleActivator
         // shut down executor
         this.executor.shutdown ();
 
+        this.eventFilter.dispose ();
+
         this.context = null;
     }
 
@@ -138,7 +146,7 @@ public class Activator implements BundleActivator
         try
         {
             // register servlet
-            this.httpService.registerServlet ( SERVLET_PATH, new JsonServlet ( this.eventProcessor, this.factory ), null, null );
+            this.httpService.registerServlet ( SERVLET_PATH, new JsonServlet ( this.eventProcessor, this.factory, this.eventFilter ), null, null );
             this.httpService.registerResources ( SERVLET_PATH + "/ui", "/ui", null );
         }
         catch ( final ServletException e )
@@ -160,18 +168,18 @@ public class Activator implements BundleActivator
         }
     }
 
-    private ServiceTrackerCustomizer createHttpServiceTrackerCustomizer ()
+    private ServiceTrackerCustomizer<HttpService, HttpService> createHttpServiceTrackerCustomizer ()
     {
-        return new ServiceTrackerCustomizer () {
+        return new ServiceTrackerCustomizer<HttpService, HttpService> () {
             @Override
-            public Object addingService ( final ServiceReference reference )
+            public HttpService addingService ( final ServiceReference<HttpService> reference )
             {
-                final Object service = Activator.this.context.getService ( reference );
+                final HttpService service = Activator.this.context.getService ( reference );
                 synchronized ( Activator.this )
                 {
                     if ( Activator.this.httpService == null )
                     {
-                        Activator.this.httpService = (HttpService)service;
+                        Activator.this.httpService = service;
                         Activator.this.bind ();
                     }
                 }
@@ -179,13 +187,13 @@ public class Activator implements BundleActivator
             }
 
             @Override
-            public void modifiedService ( final ServiceReference reference, final Object service )
+            public void modifiedService ( final ServiceReference<HttpService> reference, final HttpService service )
             {
                 // pass
             }
 
             @Override
-            public void removedService ( final ServiceReference reference, final Object service )
+            public void removedService ( final ServiceReference<HttpService> reference, final HttpService service )
             {
                 synchronized ( Activator.this )
                 {

@@ -26,6 +26,7 @@ import java.util.Map;
 
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
@@ -50,7 +51,7 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
     }
 
     @Override
-    public void delete ( final String pid )
+    public void delete ( final UserInformation userInformation, final String pid )
     {
         logger.info ( "Request to delete: {}", pid ); //$NON-NLS-1$
 
@@ -73,7 +74,7 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
     }
 
     @Override
-    public void update ( final String pid, final Map<String, String> properties )
+    public void update ( final UserInformation userInformation, final String pid, final Map<String, String> properties )
     {
         logger.info ( "Update request: {} ({})", pid, properties ); //$NON-NLS-1$
 
@@ -87,7 +88,7 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
         synchronized ( this )
         {
             // delete first
-            delete ( pid );
+            delete ( userInformation, pid );
 
             // create
             final ConnectionManager newManager = new ConnectionManager ( this.context, pid, ConnectionInformation.fromURI ( uri ) );
@@ -107,8 +108,8 @@ public class ManagedConnectionServiceFactory implements ConfigurationFactory
 
     public void dispose ()
     {
-        Map<String, ServiceRegistration<ConnectionManager>> connectionsRegs;
-        Map<String, ConnectionManager> connections;
+        final Map<String, ServiceRegistration<ConnectionManager>> connectionsRegs;
+        final Map<String, ConnectionManager> connections;
 
         synchronized ( this )
         {

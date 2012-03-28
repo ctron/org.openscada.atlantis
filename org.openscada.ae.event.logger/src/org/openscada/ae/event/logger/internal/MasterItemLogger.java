@@ -127,7 +127,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         final String source = cfg.getStringChecked ( "source", "'source' must be set" );
@@ -143,7 +143,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
         this.typeAttributes = cfg.getString ( "type.change.attributes", "ATTRIBUTES" );
         this.typeSubscription = cfg.getString ( "type.change.subscription", "SUBSCRIPTION" );
 
-        super.update ( parameters );
+        super.update ( userInformation, parameters );
 
         this.source = source;
         this.itemId = itemId;

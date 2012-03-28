@@ -24,6 +24,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -40,7 +41,7 @@ public class InfoServiceFactory extends AbstractServiceConfigurationFactory<Info
 
     private final ObjectPoolTracker monitorPoolTracker;
 
-    public InfoServiceFactory ( final BundleContext context, final Executor executor, ObjectPoolTracker monitorPoolTracker, ObjectPoolImpl dataSourcePool )
+    public InfoServiceFactory ( final BundleContext context, final Executor executor, final ObjectPoolTracker monitorPoolTracker, final ObjectPoolImpl dataSourcePool )
     {
         super ( context );
         this.executor = executor;
@@ -49,7 +50,7 @@ public class InfoServiceFactory extends AbstractServiceConfigurationFactory<Info
     }
 
     @Override
-    protected Entry<InfoService> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<InfoService> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final InfoService query = new InfoService ( context, this.executor, this.monitorPoolTracker, this.dataSourcePool );
         query.update ( parameters );
@@ -62,13 +63,13 @@ public class InfoServiceFactory extends AbstractServiceConfigurationFactory<Info
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final InfoService service )
+    protected void disposeService ( final UserInformation userInformation, final String configurationId, final InfoService service )
     {
         service.dispose ();
     }
 
     @Override
-    protected Entry<InfoService> updateService ( final String configurationId, final Entry<InfoService> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<InfoService> updateService ( final UserInformation userInformation, final String configurationId, final Entry<InfoService> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return entry;

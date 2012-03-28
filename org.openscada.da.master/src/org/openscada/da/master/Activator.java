@@ -36,7 +36,7 @@ public class Activator implements BundleActivator
 {
     private MasterFactory masterFactory;
 
-    private ServiceRegistration masterHandle;
+    private ServiceRegistration<ConfigurationFactory> masterHandle;
 
     private ObjectPoolTracker dataSourceTracker;
 
@@ -58,7 +58,7 @@ public class Activator implements BundleActivator
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "master.item" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A configuration factory for master items" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
-        this.masterHandle = context.registerService ( new String[] { ConfigurationFactory.class.getName () }, this.masterFactory, properties );
+        this.masterHandle = context.registerService (ConfigurationFactory.class, this.masterFactory, properties );
     }
 
     /*

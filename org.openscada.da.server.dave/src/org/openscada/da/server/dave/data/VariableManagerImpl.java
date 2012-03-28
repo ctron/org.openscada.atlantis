@@ -31,6 +31,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.slf4j.Logger;
@@ -167,6 +168,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
         this.executor.shutdown ();
     }
 
+    @Override
     public synchronized void addVariableListener ( final String type, final VariableListener listener )
     {
         this.listeners.put ( type, listener );
@@ -175,6 +177,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 listener.variableConfigurationChanged ( vars );
@@ -182,12 +185,14 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
         } );
     }
 
+    @Override
     public synchronized void removeVariableListener ( final String type, final VariableListener listener )
     {
         this.listeners.remove ( type, listener );
     }
 
-    public synchronized void delete ( final String configurationId ) throws Exception
+    @Override
+    public synchronized void delete ( final UserInformation userInformation, final String configurationId ) throws Exception
     {
         this.types.remove ( configurationId );
         this.typeDeps.removeAll ( configurationId );
@@ -205,6 +210,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 for ( final VariableListener listener : listeners )
@@ -216,7 +222,8 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
         } );
     }
 
-    public synchronized void update ( final String configurationId, final Map<String, String> properties ) throws Exception
+    @Override
+    public synchronized void update ( final UserInformation userInformation, final String configurationId, final Map<String, String> properties ) throws Exception
     {
         logger.debug ( "Adding type: {}", configurationId );
 

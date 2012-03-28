@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA Core Server Common
+Bundle-Name: openSCADA Core Server Common
 Bundle-SymbolicName: org.openscada.core.server.common
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.18.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core;version="0.15.0",

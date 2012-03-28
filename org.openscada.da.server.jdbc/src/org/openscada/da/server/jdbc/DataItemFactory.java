@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,8 +29,8 @@ import org.openscada.da.server.common.chain.item.ScaleInputItem;
 import org.openscada.da.server.common.chain.item.SumAlarmChainItem;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.common.item.factory.CommonItemFactory;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
-import org.openscada.da.server.common.item.factory.ItemFactory;
 
 public class DataItemFactory extends FolderItemFactory
 {
@@ -40,12 +40,12 @@ public class DataItemFactory extends FolderItemFactory
         super ( hive, parentFolder, baseId, folderName );
     }
 
-    public DataItemFactory ( final ItemFactory parentFactory, final HiveCommon hive, final FolderCommon parentFolder, final String baseId, final String folderName, final String idDelimiter )
+    public DataItemFactory ( final CommonItemFactory parentFactory, final HiveCommon hive, final FolderCommon parentFolder, final String baseId, final String folderName, final String idDelimiter )
     {
         super ( parentFactory, hive, parentFolder, baseId, folderName, idDelimiter );
     }
 
-    public DataItemFactory ( final ItemFactory parentFactory, final HiveCommon hive, final FolderCommon parentFolder, final String baseId, final String folderName )
+    public DataItemFactory ( final CommonItemFactory parentFactory, final HiveCommon hive, final FolderCommon parentFolder, final String baseId, final String folderName )
     {
         super ( parentFactory, hive, parentFolder, baseId, folderName );
     }

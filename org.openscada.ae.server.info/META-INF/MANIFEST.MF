@@ -1,27 +1,28 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA AE Meta Information
+Bundle-Name: openSCADA AE Meta Information
 Bundle-SymbolicName: org.openscada.ae.server.info
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 0.18.0.qualifier
 Bundle-Activator: org.openscada.ae.server.info.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ae,
- org.openscada.ae.monitor,
- org.openscada.ae.server,
- org.openscada.ae.server.common.monitor,
+Import-Package: org.openscada.ae;version="0.15.0",
+ org.openscada.ae.monitor;version="0.15.0",
+ org.openscada.ae.server;version="0.15.0",
+ org.openscada.ae.server.common.monitor;version="0.15.0",
  org.openscada.ca;version="0.15.0",
- org.openscada.core,
- org.openscada.da.client,
- org.openscada.da.datasource,
- org.openscada.da.datasource.base,
- org.openscada.da.server.common,
+ org.openscada.core;version="0.15.0",
+ org.openscada.da.client;version="0.15.0",
+ org.openscada.da.datasource;version="0.15.0",
+ org.openscada.da.datasource.base;version="0.15.0",
+ org.openscada.da.server.common;version="0.15.0",
  org.openscada.sec;version="0.1.0",
- org.openscada.utils.concurrent,
- org.openscada.utils.filter,
- org.openscada.utils.filter.bean,
- org.openscada.utils.osgi,
- org.openscada.utils.osgi.ca.factory,
- org.openscada.utils.osgi.pool,
+ org.openscada.sec.osgi;version="0.4.0",
+ org.openscada.utils.concurrent;version="0.15.0",
+ org.openscada.utils.filter;version="0.15.0",
+ org.openscada.utils.filter.bean;version="0.15.0",
+ org.openscada.utils.osgi;version="0.15.0",
+ org.openscada.utils.osgi.ca.factory;version="0.15.0",
+ org.openscada.utils.osgi.pool;version="0.15.0",
  org.openscada.utils.propertyeditors;version="0.15.0",
  org.osgi.framework;version="1.5.0",
  org.slf4j;version="1.5.8"

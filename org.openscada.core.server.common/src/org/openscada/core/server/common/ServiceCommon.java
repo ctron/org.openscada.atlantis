@@ -36,7 +36,7 @@ public abstract class ServiceCommon implements Service
 
     private final static Logger logger = LoggerFactory.getLogger ( ServiceCommon.class );
 
-    protected static final AuthorizationResult DEFAULT_RESULT = AuthorizationResult.create ( org.openscada.sec.StatusCodes.AUTHORIZATION_FAILED, "No authentication provider voted. Rejecting request!" );
+    protected static final AuthorizationResult DEFAULT_RESULT = AuthorizationResult.create ( org.openscada.sec.StatusCodes.AUTHORIZATION_FAILED, Messages.getString ( "ServiceCommon.DefaultMessage" ) ); //$NON-NLS-1$
 
     /**
      * Authenticate a user
@@ -84,7 +84,7 @@ public abstract class ServiceCommon implements Service
         {
             final UserInformation result = authenticate ( properties, sessionResultProperties );
 
-            logger.debug ( "Authenticated as {}", result );
+            logger.debug ( "Authenticated as {}", result ); //$NON-NLS-1$
 
             authorizeSessionPriviliges ( properties, result, sessionResultProperties );
 
@@ -92,7 +92,7 @@ public abstract class ServiceCommon implements Service
             {
                 for ( final String role : result.getRoles () )
                 {
-                    sessionResultProperties.put ( "userInformation.roles." + role, "true" );
+                    sessionResultProperties.put ( "userInformation.roles." + role, "true" ); //$NON-NLS-1$ //$NON-NLS-2$
                 }
             }
 
@@ -123,7 +123,7 @@ public abstract class ServiceCommon implements Service
      */
     protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
     {
-        logger.debug ( "Requesting authorization - objectType: {}, objectId: {}, action: {}, userInformation: {}, context: {}, defaultResult: {} ... defaulting to GRANTED", new Object[] { objectType, objectId, action, userInformation, context, defaultResult } );
+        logger.debug ( "Requesting authorization - objectType: {}, objectId: {}, action: {}, userInformation: {}, context: {}, defaultResult: {} ... defaulting to GRANTED", new Object[] { objectType, objectId, action, userInformation, context, defaultResult } ); //$NON-NLS-1$
         return AuthorizationResult.GRANTED;
     }
 
@@ -135,12 +135,12 @@ public abstract class ServiceCommon implements Service
             {
                 final String key = (String)entry.getKey ();
                 final String value = (String)entry.getValue ();
-                if ( key.startsWith ( "session.privilege." ) )
+                if ( key.startsWith ( "session.privilege." ) ) //$NON-NLS-1$
                 {
-                    final String priv = key.substring ( "session.privilege.".length () );
+                    final String priv = key.substring ( "session.privilege.".length () ); //$NON-NLS-1$
                     if ( authorizeSessionPrivilege ( user, priv, value ) )
                     {
-                        sessionResultProperties.put ( key, "true" );
+                        sessionResultProperties.put ( key, "true" ); //$NON-NLS-1$
                     }
                 }
             }
@@ -149,7 +149,7 @@ public abstract class ServiceCommon implements Service
 
     protected boolean authorizeSessionPrivilege ( final UserInformation user, final String key, final String value )
     {
-        final AuthorizationResult result = authorize ( "SESSION", key, "PRIV", user, null );
+        final AuthorizationResult result = authorize ( "SESSION", key, "PRIV", user, null ); //$NON-NLS-1$ //$NON-NLS-2$
         return result.isGranted ();
     }
 

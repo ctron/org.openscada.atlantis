@@ -26,7 +26,9 @@ import java.util.Map;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -45,7 +47,7 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
 
     private final ObjectPoolImpl itemPool;
 
-    private final ServiceRegistration itemPoolHandle;
+    private final ServiceRegistration<ObjectPool> itemPoolHandle;
 
     public DataItemTargetFactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
@@ -71,20 +73,20 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
     }
 
     @Override
-    protected Entry<DataItemTargetImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemTargetImpl> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         return createDataItem ( configurationId, context, parameters );
     }
 
     @Override
-    protected void disposeService ( final String id, final DataItemTargetImpl service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final DataItemTargetImpl service )
     {
         this.itemPool.removeService ( id, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<DataItemTargetImpl> updateService ( final String configurationId, final Entry<DataItemTargetImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemTargetImpl> updateService ( final UserInformation userInformation, final String configurationId, final Entry<DataItemTargetImpl> entry, final Map<String, String> parameters ) throws Exception
     {
         this.itemPool.removeService ( configurationId, entry.getService () );
         entry.getService ().dispose ();

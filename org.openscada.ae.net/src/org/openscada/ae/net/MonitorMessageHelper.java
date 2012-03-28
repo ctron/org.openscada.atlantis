@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -97,7 +97,19 @@ public class MonitorMessageHelper
             }
 
             Date statusTimestamp = null;
-            statusTimestamp = new Date ( ( (LongValue)value.get ( "statusTimestamp" ) ).getValue () );
+            final LongValue statusTimestampValue = (LongValue)value.get ( "statusTimestamp" );
+            if ( statusTimestampValue != null )
+            {
+                statusTimestamp = new Date ( statusTimestampValue.getValue () );
+            }
+
+            Date lastFailTimestamp = null;
+            final LongValue lastFailTimestampValue = (LongValue)value.get ( "lastFailTimestamp" );
+            if ( lastFailTimestampValue != null )
+            {
+                lastFailTimestamp = new Date ( lastFailTimestampValue.getValue () );
+            }
+
             // get status
             final MonitorStatus status = MonitorStatus.valueOf ( ( (StringValue)value.get ( "status" ) ).getValue () );
             if ( status == null )
@@ -115,7 +127,7 @@ public class MonitorMessageHelper
                 attributes = null;
             }
 
-            return new MonitorStatusInformation ( id, status, statusTimestamp, currentValue, lastAknTimestamp, lastAknUser, attributes );
+            return new MonitorStatusInformation ( id, status, statusTimestamp, currentValue, lastAknTimestamp, lastAknUser, lastFailTimestamp, attributes );
         }
         catch ( final ClassCastException e )
         {

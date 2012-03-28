@@ -46,7 +46,7 @@ public class Activator implements BundleActivator
 
     private ObjectPoolTracker poolTracker;
 
-    private ServiceTracker caTracker;
+    private ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker;
 
     private ScaleHandlerFactoryImpl factory5;
 
@@ -69,7 +69,7 @@ public class Activator implements BundleActivator
         this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
         this.poolTracker.open ();
 
-        this.caTracker = new ServiceTracker ( context, ConfigurationAdministrator.class.getName (), null );
+        this.caTracker = new ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> ( context, ConfigurationAdministrator.class, null );
         this.caTracker.open ();
 
         {

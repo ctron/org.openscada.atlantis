@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Dataitem Plug-in
+Bundle-Name: openSCADA Dataitem Plug-in
 Bundle-SymbolicName: org.openscada.ae.monitor.dataitem
-Bundle-Version: 0.17.0.qualifier
+Bundle-Version: 0.18.0.qualifier
 Bundle-Activator: org.openscada.ae.monitor.dataitem.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -14,7 +14,7 @@ Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.ca;version="0.14.0",
  org.openscada.ca.common;version="0.14.0",
  org.openscada.ca.common.factory;version="0.14.0",
- org.openscada.core;version="0.14.0",
+ org.openscada.core;version="0.18.0",
  org.openscada.da.client;version="0.14.0",
  org.openscada.da.client.connection.service;version="0.14.0",
  org.openscada.da.core;version="0.14.0",

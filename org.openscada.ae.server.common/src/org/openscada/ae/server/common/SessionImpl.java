@@ -163,7 +163,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         // dispose queries : operate on copy to prevent concurrent modification
         for ( final QueryImpl query : new ArrayList<QueryImpl> ( this.queries ) )
         {
-            query.dispose ();
+            query.dispose ( null );
         }
         this.queries.clear ();
 
@@ -232,7 +232,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
     {
         if ( this.disposed )
         {
-            query.dispose ();
+            query.dispose ( null );
         }
         else
         {

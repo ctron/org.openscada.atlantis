@@ -25,7 +25,9 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.da.datasource.DataSource;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -46,7 +48,7 @@ public class FormulaSourceFactory extends AbstractServiceConfigurationFactory<Fo
 
     private final ObjectPoolImpl objectPool;
 
-    private final ServiceRegistration poolRegistration;
+    private final ServiceRegistration<ObjectPool> poolRegistration;
 
     public FormulaSourceFactory ( final BundleContext context, final ScheduledExecutorService executor ) throws InvalidSyntaxException
     {
@@ -70,7 +72,7 @@ public class FormulaSourceFactory extends AbstractServiceConfigurationFactory<Fo
     }
 
     @Override
-    protected Entry<FormulaDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<FormulaDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final FormulaDataSource source = new FormulaDataSource ( context, this.poolTracker, this.executor );
         source.update ( parameters );
@@ -84,7 +86,7 @@ public class FormulaSourceFactory extends AbstractServiceConfigurationFactory<Fo
     }
 
     @Override
-    protected void disposeService ( final String id, final FormulaDataSource service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final FormulaDataSource service )
     {
         logger.info ( "Disposing: {}", id );
 
@@ -94,7 +96,7 @@ public class FormulaSourceFactory extends AbstractServiceConfigurationFactory<Fo
     }
 
     @Override
-    protected Entry<FormulaDataSource> updateService ( final String configurationId, final Entry<FormulaDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<FormulaDataSource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<FormulaDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

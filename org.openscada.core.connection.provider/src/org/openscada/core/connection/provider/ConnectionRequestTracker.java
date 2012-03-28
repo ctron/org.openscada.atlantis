@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -39,7 +39,7 @@ public class ConnectionRequestTracker extends ConnectionTracker
 
     private final ConnectionRequest request;
 
-    private ServiceRegistration handle;
+    private ServiceRegistration<ConnectionRequest> handle;
 
     private final BundleContext context;
 
@@ -48,7 +48,7 @@ public class ConnectionRequestTracker extends ConnectionTracker
         this ( context, request, listener, null );
     }
 
-    public ConnectionRequestTracker ( final BundleContext context, final ConnectionRequest request, final Listener listener, final Class<?> clazz )
+    public ConnectionRequestTracker ( final BundleContext context, final ConnectionRequest request, final Listener listener, final Class<? extends ConnectionService> clazz )
     {
         super ( context, listener, clazz );
         this.context = context;
@@ -78,7 +78,7 @@ public class ConnectionRequestTracker extends ConnectionTracker
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( DriverFactory.DRIVER_NAME, this.request.getConnectionInformation ().getDriver () );
             properties.put ( DriverFactory.INTERFACE_NAME, this.request.getConnectionInformation ().getInterface () );
-            this.handle = this.context.registerService ( ConnectionRequest.class.getName (), this.request, properties );
+            this.handle = this.context.registerService ( ConnectionRequest.class, this.request, properties );
         }
     }
 

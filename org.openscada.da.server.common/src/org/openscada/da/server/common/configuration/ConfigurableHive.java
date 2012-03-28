@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,7 +23,6 @@ import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.factory.DataItemFactory;
-import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 
 public interface ConfigurableHive extends HiveServiceRegistry
@@ -35,13 +34,6 @@ public interface ConfigurableHive extends HiveServiceRegistry
     public abstract void addItemFactory ( DataItemFactory factory );
 
     public abstract void registerTemplate ( FactoryTemplate template );
-
-    /**
-     * retrieve a data item by id. Create it using the factories if it does not exists
-     * @param id the item id
-     * @return the data item or <code>null</code> if the item does not exists and cannot be created
-     */
-    public abstract DataItem retrieveItem ( DataItemFactoryRequest request );
 
     /**
      * lookup a data item by id. Just look it up in the internal item list, do not

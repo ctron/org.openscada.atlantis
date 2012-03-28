@@ -22,29 +22,36 @@ package org.openscada.da.master;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Future;
 
+import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.sec.UserInformationPrincipal;
+import org.openscada.utils.concurrent.FutureListener;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMasterHandlerImpl
 {
 
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractConfigurableMasterHandlerImpl.class );
+
     private final String prefix;
 
-    private final ServiceTracker tracker;
+    private final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> tracker;
 
     private final String factoryId;
 
     private final String configurationId;
 
-    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker, final String prefix, final String factoryId )
+    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
     {
         super ( poolTracker, priority );
         this.configurationId = configurationId;
@@ -142,9 +149,11 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
             return result;
         }
 
-        final Object service = this.tracker.getService ();
+        final ConfigurationAdministrator service = this.tracker.getService ();
         if ( ! ( service instanceof ConfigurationAdministrator ) )
         {
+            logger.info ( "Unable to set attributes - Configuration administrator not available" );
+
             final OperationException error = new OperationException ( "Configuration administrator not available" );
             for ( final String attr : data.keySet () )
             {
@@ -163,9 +172,23 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
                 }
             }
 
-            final ConfigurationAdministrator admin = (ConfigurationAdministrator)service;
+            final NotifyFuture<Configuration> future = service.updateConfiguration ( operationParameters.getUserInformation (), this.factoryId, this.configurationId, data, fullSet );
 
-            admin.updateConfiguration ( UserInformationPrincipal.create ( operationParameters.getUserInformation () ), this.factoryId, this.configurationId, data, fullSet );
+            future.addListener ( new FutureListener<Configuration> () {
+
+                @Override
+                public void complete ( final Future<Configuration> future )
+                {
+                    try
+                    {
+                        logger.info ( "Completed applying: {}", future.get () );
+                    }
+                    catch ( final Exception e )
+                    {
+                        logger.warn ( "Failed applying", e );
+                    }
+                }
+            } );
 
             return result;
         }

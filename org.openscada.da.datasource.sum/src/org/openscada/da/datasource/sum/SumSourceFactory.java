@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,7 +25,9 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.da.datasource.DataSource;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -46,7 +48,7 @@ public class SumSourceFactory extends AbstractServiceConfigurationFactory<SumDat
 
     private final ObjectPoolImpl objectPool;
 
-    private final ServiceRegistration poolRegistration;
+    private final ServiceRegistration<ObjectPool> poolRegistration;
 
     public SumSourceFactory ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
@@ -70,7 +72,7 @@ public class SumSourceFactory extends AbstractServiceConfigurationFactory<SumDat
     }
 
     @Override
-    protected Entry<SumDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<SumDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         logger.debug ( "Creating new summary source: {}", configurationId );
 
@@ -86,7 +88,7 @@ public class SumSourceFactory extends AbstractServiceConfigurationFactory<SumDat
     }
 
     @Override
-    protected void disposeService ( final String id, final SumDataSource service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final SumDataSource service )
     {
         logger.info ( "Disposing: {}", id );
 
@@ -96,7 +98,7 @@ public class SumSourceFactory extends AbstractServiceConfigurationFactory<SumDat
     }
 
     @Override
-    protected Entry<SumDataSource> updateService ( final String configurationId, final Entry<SumDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<SumDataSource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<SumDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

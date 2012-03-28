@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,6 +32,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.hd.server.common.HistoricalItem;
+import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -96,7 +97,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
     }
 
     @Override
-    public void delete ( final String configurationId ) throws Exception
+    public void delete ( final UserInformation userInformation, final String configurationId ) throws Exception
     {
         final ItemWrapper item;
         synchronized ( this.items )
@@ -116,7 +117,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
     }
 
     @Override
-    public void update ( final String configurationId, final Map<String, String> properties ) throws Exception
+    public void update ( final UserInformation userInformation, final String configurationId, final Map<String, String> properties ) throws Exception
     {
         logger.info ( "Update call for {} -> {}", new Object[] { configurationId, properties } );
 
@@ -157,11 +158,9 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
         attributes.put ( "master.id", Variant.valueOf ( masterId ) );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
-        final VariantEditor ve = new VariantEditor ();
         for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "information." ).entrySet () )
         {
-            ve.setAsText ( entry.getValue () );
-            attributes.put ( entry.getKey (), (Variant)ve.getValue () );
+            attributes.put ( entry.getKey (), VariantEditor.toVariant ( entry.getValue () ) );
         }
 
         final HistoricalItemImpl item = new HistoricalItemImpl ( configurationId, attributes, masterId, this.context );

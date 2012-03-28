@@ -1,64 +1,64 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
- org.apache.xmlbeans;version="2.4",
+Import-Package: javax.xml.stream;version="1.0.0";resolution:=optional,
+ org.apache.xmlbeans;version="2.4.0",
  org.apache.xmlbeans.impl.schema;version="2.4.0",
- org.apache.xmlbeans.impl.values;version="2.4",
- org.apache.xmlbeans.xml.stream;version="2.4",
- org.openscada.core;version="0.14",
+ org.apache.xmlbeans.impl.values;version="2.4.0",
+ org.apache.xmlbeans.xml.stream;version="2.4.0",
+ org.openscada.core;version="0.14.0",
  org.openscada.core.server;version="0.14.0",
  org.openscada.core.server.common;version="0.15.0",
- org.openscada.da.core;version="0.14",
+ org.openscada.da.core;version="0.14.0",
  org.openscada.da.core.server;version="0.14.0",
- org.openscada.da.server.browser.common;version="0.14",
- org.openscada.da.server.common;version="0.14",
- org.openscada.da.server.common.chain;version="0.14",
- org.openscada.da.server.common.chain.item;version="0.14",
- org.openscada.da.server.common.chain.storage;version="0.14",
- org.openscada.da.server.common.impl;version="0.14",
- org.openscada.da.server.common.item.factory;version="0.14",
+ org.openscada.da.server.browser.common;version="0.14.0",
+ org.openscada.da.server.common;version="0.14.0",
+ org.openscada.da.server.common.chain;version="0.14.0",
+ org.openscada.da.server.common.chain.item;version="0.14.0",
+ org.openscada.da.server.common.chain.storage;version="0.14.0",
+ org.openscada.da.server.common.impl;version="0.14.0",
+ org.openscada.da.server.common.item.factory;version="0.18.0",
  org.openscada.sec;version="0.1.0",
- org.openscada.utils.collection;version="0.13",
- org.openscada.utils.statuscodes;version="0.13",
+ org.openscada.utils.collection;version="0.13.0",
+ org.openscada.utils.statuscodes;version="0.13.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.exec;version="0.17.0";
+Export-Package: org.openscada.da.server.exec;version="0.18.0";
   uses:="org.openscada.da.server.exec.configuration.model,
    org.openscada.da.server.common.impl,
    org.openscada.utils.statuscodes,
    org.openscada.da.server.exec.command,
    org.w3c.dom",
- org.openscada.da.server.exec.command;version="0.17.0";
+ org.openscada.da.server.exec.command;version="0.18.0";
   uses:="org.openscada.da.server.common,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common.item.factory,
    org.openscada.da.server.exec,
    org.openscada.core,
    org.openscada.da.server.exec.splitter",
- org.openscada.da.server.exec.configuration;version="0.17.0";
+ org.openscada.da.server.exec.configuration;version="0.18.0";
   uses:="org.openscada.da.server.exec.configuration.model,
    org.openscada.da.server.exec,
    org.openscada.utils.statuscodes,
    org.w3c.dom",
- org.openscada.da.server.exec.configuration.model;version="0.17.0";
+ org.openscada.da.server.exec.configuration.model;version="0.18.0";
   uses:="javax.xml.stream,
    org.apache.xmlbeans,
    org.w3c.dom,
    org.apache.xmlbeans.xml.stream",
- org.openscada.da.server.exec.extractor;version="0.17.0";
+ org.openscada.da.server.exec.extractor;version="0.18.0";
   uses:="org.openscada.da.server.common.chain,
    org.openscada.da.server.common.item.factory,
    org.openscada.da.server.exec,
    org.openscada.da.server.exec.command",
- org.openscada.da.server.exec.splitter;version="0.17.0",
- org.openscada.da.server.exec.util;version="0.17.0";
+ org.openscada.da.server.exec.splitter;version="0.18.0",
+ org.openscada.da.server.exec.util;version="0.18.0";
   uses:="org.openscada.da.server.common.chain,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common.impl,
    org.openscada.da.server.common.item.factory,
    org.openscada.da.server.exec.command"
-Bundle-Version: 0.17.0.qualifier
-Bundle-Name: OpenSCADA DA Server Exec
+Bundle-Version: 0.18.0.qualifier
+Bundle-Name: openSCADA DA Server Exec
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-SymbolicName: org.openscada.da.server.exec
 Bundle-ClassPath: ., schemabin/

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,165 +19,140 @@
 
 package org.openscada.ae.server.storage.jdbc;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.UUID;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.server.storage.BaseStorage;
 import org.openscada.ae.server.storage.Query;
 import org.openscada.ae.server.storage.StoreListener;
-import org.openscada.ae.server.storage.jdbc.internal.JdbcStorageDAO;
-import org.openscada.ae.server.storage.jdbc.internal.MutableEvent;
-import org.openscada.core.Variant;
+import org.openscada.utils.collection.BoundedPriorityQueueSet;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.filter.FilterParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/**
- * {@link JdbcStorage} is a thin wrapper around the {@link JdbcStorageDAO} which provides just 
- * the basic methods to store Events. An event is converted to a {@link MutableEvent}
- * and then placed on a queue to store.
- * 
- * @author jrose
- */
 public class JdbcStorage extends BaseStorage
 {
     private static final Logger logger = LoggerFactory.getLogger ( JdbcStorage.class );
 
-    private final AtomicReference<JdbcStorageDAO> jdbcStorageDAO = new AtomicReference<JdbcStorageDAO> ();
-
-    private ExecutorService storageQueueProcessor;
-
-    private long shutDownTimeout = 30000;
+    private ScheduledExecutorService executor;
 
     private final AtomicInteger queueSize = new AtomicInteger ( 0 );
 
-    public JdbcStorageDAO getJdbcStorageDAO ()
+    private final StorageDao jdbcStorageDao;
+
+    private final List<JdbcQuery> openQueries = new CopyOnWriteArrayList<JdbcQuery> ();
+
+    private final BoundedPriorityQueueSet<Event> errorQueue = new BoundedPriorityQueueSet<Event> ( 1000 );
+
+    public JdbcStorage ( final StorageDao jdbcStorageDao )
     {
-        return this.jdbcStorageDAO.get ();
+        this.jdbcStorageDao = jdbcStorageDao;
     }
 
-    public void setJdbcStorageDAO ( final JdbcStorageDAO jdbcStorageDAO )
-    {
-        this.jdbcStorageDAO.set ( jdbcStorageDAO );
-    }
-
-    public long getShutDownTimeout ()
-    {
-        return this.shutDownTimeout;
-    }
-
-    public void setShutDownTimeout ( final long shutDownTimeout )
-    {
-        this.shutDownTimeout = shutDownTimeout;
-    }
-
-    /**
-     * is called by Spring when {@link JdbcStorage} is initialized. It creates a
-     * new {@link ExecutorService} which is used to schedule the events for storage.
-     *  
-     * @throws Exception
-     */
-    public void start () throws Exception
-    {
-        logger.info ( "jdbcStorageDAO instanciated" );
-        this.storageQueueProcessor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( getClass ().getCanonicalName () ) );
-    }
-
-    /**
-     * is called by Spring when {@link JdbcStorage} is destroyed. It halts the
-     * {@link ExecutorService} and tries to process the remaining events (say, store them
-     * to the database).
-     * 
-     * @throws Exception
-     */
-    public void stop () throws Exception
-    {
-        final List<Runnable> openTasks = this.storageQueueProcessor.shutdownNow ();
-        final int numOfOpenTasks = openTasks.size ();
-        if ( numOfOpenTasks > 0 )
-        {
-            int numOfOpenTasksRemaining = numOfOpenTasks;
-            logger.info ( "jdbcStorageDAO is beeing shut down, but there are still {} events to store", numOfOpenTasks );
-            for ( final Runnable runnable : openTasks )
-            {
-                runnable.run ();
-                numOfOpenTasksRemaining -= 1;
-                logger.debug ( "jdbcStorageDAO is beeing shut down, but there are still {} events to store", numOfOpenTasksRemaining );
-            }
-        }
-        logger.info ( "jdbcStorageDAO destroyed" );
-    }
-
-    /* (non-Javadoc)
-     * @see org.openscada.ae.server.storage.Storage#query(java.lang.String)
-     */
-    @Override
-    public Query query ( final String filter ) throws Exception
-    {
-        logger.debug ( "Query requested {}", filter );
-        return new JdbcQuery ( this.jdbcStorageDAO.get (), new FilterParser ( filter ).getFilter () );
-    }
-
-    /**
-     * the events are not actually stored within this method, rather given an 
-     * {@link ExecutorService} and stored later. This guarantees a immediate return
-     * of this method.
-     * 
-     * @see org.openscada.ae.server.storage.Storage#store(org.openscada.ae.Event)
-     */
     @Override
     public Event store ( final Event event, final StoreListener listener )
     {
         this.queueSize.incrementAndGet ();
         final Event eventToStore = createEvent ( event );
         logger.debug ( "Save Event to database: " + event );
-        this.storageQueueProcessor.submit ( new Callable<Boolean> () {
+        this.executor.submit ( new Runnable () {
             @Override
-            public Boolean call ()
+            public void run ()
             {
                 try
                 {
-                    JdbcStorage.this.jdbcStorageDAO.get ().storeEvent ( MutableEvent.fromEvent ( eventToStore ) );
+                    JdbcStorage.this.jdbcStorageDao.storeEvent ( eventToStore );
                     JdbcStorage.this.queueSize.decrementAndGet ();
                     if ( listener != null )
                     {
                         listener.notify ( eventToStore );
                     }
+                    logger.debug ( "Event saved to database - remaining in queue: {}, event: {}", JdbcStorage.this.queueSize.get (), event );
                 }
                 catch ( final Exception e )
                 {
+                    JdbcStorage.this.queueSize.decrementAndGet ();
+                    JdbcStorage.this.errorQueue.offer ( eventToStore );
                     logger.error ( "Exception occured ({}) while saving Event to database: {}", e, event );
                     logger.info ( "Exception was", e );
-                    return false;
                 }
-                logger.debug ( "Event saved to database - remaining queue: {}, event: {}", JdbcStorage.this.queueSize.get (), event );
-                return true;
             }
         } );
         return eventToStore;
     }
 
-    private Event updateInternal ( final UUID id, final Variant comment, final StoreListener listener ) throws Exception
+    private void drainErrorQueue ()
     {
-        final MutableEvent eventToUpdate = getJdbcStorageDAO ().loadEvent ( id );
-        eventToUpdate.getAttributes ().put ( Fields.COMMENT.getName (), comment );
-        final Event event = MutableEvent.toEvent ( eventToUpdate );
-        logger.debug ( "Update Event comment in database: " + event );
-        this.storageQueueProcessor.submit ( new Callable<Boolean> () {
+        final int size = this.errorQueue.size ();
+        final Set<Event> eventsNotSaved = new HashSet<Event> ();
+        for ( int i = 0; i < size; i++ )
+        {
+            final int ii = i;
+            final Event event = this.errorQueue.poll ();
+            if ( event != null )
+            {
+                this.executor.submit ( new Runnable () {
+                    @Override
+                    public void run ()
+                    {
+                        try
+                        {
+                            final Event existingEvent = JdbcStorage.this.jdbcStorageDao.loadEvent ( event.getId () );
+                            if ( existingEvent == null )
+                            {
+                                JdbcStorage.this.jdbcStorageDao.storeEvent ( event );
+                                logger.debug ( "Event saved to database which could not be saved before - remaining in queue: {}, event: {}", size - ii, event );
+                            }
+                        }
+                        catch ( final Exception e )
+                        {
+                            eventsNotSaved.add ( event );
+                            logger.error ( "Exception occured ({}) while saving Event to database: {}", e, event );
+                            logger.info ( "Exception was", e );
+                        }
+                    }
+                } );
+            }
+        }
+        // add to queue again
+        for ( final Event event : eventsNotSaved )
+        {
+            this.errorQueue.offer ( event );
+        }
+    }
+
+    @Override
+    public Query query ( final String filter ) throws Exception
+    {
+        logger.debug ( "Query requested {}", filter );
+        return new JdbcQuery ( this.jdbcStorageDao, new FilterParser ( filter ).getFilter (), this.executor, this.openQueries );
+    }
+
+    @Override
+    public Event update ( final UUID id, final String comment, final StoreListener listener ) throws Exception
+    {
+        this.queueSize.incrementAndGet ();
+        logger.debug ( "Update of comment on event {} with comment '{}'", id, comment );
+        final Event event = Event.create ().event ( this.jdbcStorageDao.loadEvent ( id ) ).attribute ( Fields.COMMENT, comment ).build ();
+        this.executor.submit ( new Runnable () {
             @Override
-            public Boolean call ()
+            public void run ()
             {
                 try
                 {
-                    JdbcStorage.this.jdbcStorageDAO.get ().storeEvent ( eventToUpdate );
+                    JdbcStorage.this.jdbcStorageDao.updateComment ( id, comment );
+                    logger.debug ( "Comment saved to database - remaining queue: {}, event: {}", JdbcStorage.this.queueSize.get (), event );
+                    JdbcStorage.this.queueSize.decrementAndGet ();
                     if ( listener != null )
                     {
                         listener.notify ( event );
@@ -185,20 +160,55 @@ public class JdbcStorage extends BaseStorage
                 }
                 catch ( final Exception e )
                 {
-                    logger.error ( "Exception occured ({}) while updating comment of Event in database: {}", e, event );
+                    JdbcStorage.this.queueSize.decrementAndGet ();
+                    logger.error ( "Exception occured ({}) while saving Comment to database: {}", e, event );
                     logger.info ( "Exception was", e );
-                    return false;
                 }
-                logger.debug ( "Event updated in database: {}", event );
-                return true;
             }
         } );
         return event;
     }
 
-    @Override
-    public Event update ( final UUID id, final String comment, final StoreListener listener ) throws Exception
+    /**
+     * Initialize the instance
+     * @throws Exception
+     */
+    public void start () throws Exception
     {
-        return updateInternal ( id, Variant.valueOf ( comment ), listener );
+        logger.info ( "jdbcStorageDAO instanciated" );
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( getClass ().getCanonicalName () ) );
+        // try to store events which could not be stored before
+        this.executor.scheduleAtFixedRate ( new Runnable () {
+            @Override
+            public void run ()
+            {
+                drainErrorQueue ();
+            }
+        }, 10000, 10000, TimeUnit.SECONDS );
     }
+
+    /**
+     * Dispose the object and free resources
+     */
+    public void dispose ()
+    {
+        final List<Runnable> openTasks = this.executor.shutdownNow ();
+        final int numOfOpenTasks = openTasks.size ();
+        if ( numOfOpenTasks > 0 )
+        {
+            int numOfOpenTasksRemaining = numOfOpenTasks;
+            logger.info ( "jdbcStorageDAO is beeing shut down, but there are still {} open tasks", numOfOpenTasks );
+            for ( final Runnable runnable : openTasks )
+            {
+                runnable.run ();
+                numOfOpenTasksRemaining -= 1;
+                logger.debug ( "jdbcStorageDAO is beeing shut down, but there are still {} open tasks", numOfOpenTasksRemaining );
+            }
+        }
+
+        this.jdbcStorageDao.dispose ();
+
+        logger.info ( "jdbcStorageDAO destroyed" );
+    }
+
 }

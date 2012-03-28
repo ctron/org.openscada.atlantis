@@ -335,8 +335,8 @@ public class ProtocolGMPPTest
 
         message.getValues ().put ( "string-0", new StringValue ( "test" ) );
         message.getValues ().put ( "string-1", new StringValue ( "test" ) );
-        message.getValues ().put ( "int-0", new LongValue ( 0 ) );
-        message.getValues ().put ( "int-1", new LongValue ( 0 ) );
+        message.getValues ().put ( "int-0", LongValue.valueOf ( 0 ) );
+        message.getValues ().put ( "int-1", LongValue.valueOf ( 0 ) );
         message.getValues ().put ( "double-0", new DoubleValue ( 1.234 ) );
         message.getValues ().put ( "double-1", new DoubleValue ( 1.234 ) );
 

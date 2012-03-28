@@ -19,9 +19,9 @@
 
 package org.openscada.da.server.proxy.connection;
 
-import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
-import org.openscada.da.server.common.factory.DataItemFactoryRequest;
+import org.openscada.da.server.proxy.Hive;
+import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,31 +41,33 @@ public class ProxyDataItemFactory implements DataItemFactory
 
     private final ProxyConnection connection;
 
-    public ProxyDataItemFactory ( final ProxyPrefixName prefix, final ProxyConnection connection, final String separator )
+    private final Hive hive;
+
+    public ProxyDataItemFactory ( final ProxyPrefixName prefix, final ProxyConnection connection, final Hive hive, final String separator )
     {
         this.separator = separator;
         this.prefix = prefix;
         this.connection = connection;
+        this.hive = hive;
     }
 
     @Override
-    public boolean canCreate ( final DataItemFactoryRequest request )
+    public boolean canCreate ( final String requestItemId )
     {
-        final String requestItemId = request.getId ();
-
         logger.info ( "Checking request: {} for {}", requestItemId, this.prefix );
 
         return requestItemId.startsWith ( this.prefix.getName () + this.separator );
     }
 
     @Override
-    public DataItem create ( final DataItemFactoryRequest request )
+    public void create ( final String requestItemId )
     {
-        if ( !canCreate ( request ) )
+        if ( !canCreate ( requestItemId ) )
         {
-            return null;
+            return;
         }
 
-        return this.connection.realizeItem ( request.getId () );
+        final ProxyDataItem item = this.connection.realizeItem ( requestItemId );
+        this.hive.registerItem ( item );
     }
 }

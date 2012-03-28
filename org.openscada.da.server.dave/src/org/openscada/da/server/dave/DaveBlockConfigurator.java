@@ -41,9 +41,9 @@ public class DaveBlockConfigurator
 
     private final BundleContext context;
 
-    private ServiceTracker tracker;
+    private ServiceTracker<?, ?> tracker;
 
-    private final Map<ServiceReference, String> blocks = new HashMap<ServiceReference, String> ();
+    private final Map<ServiceReference<?>, String> blocks = new HashMap<ServiceReference<?>, String> ();
 
     public DaveBlockConfigurator ( final DaveDevice device, final BundleContext context )
     {
@@ -55,9 +55,10 @@ public class DaveBlockConfigurator
         try
         {
             final Filter filter = FilterUtil.createAndFilter ( BlockConfiguration.class.getName (), parameters );
-            this.tracker = new ServiceTracker ( context, filter, new ServiceTrackerCustomizer () {
+            this.tracker = new ServiceTracker<Object, Object> ( context, filter, new ServiceTrackerCustomizer<Object, Object> () {
 
-                public void removedService ( final ServiceReference reference, final Object service )
+                @Override
+                public void removedService ( final ServiceReference<Object> reference, final Object service )
                 {
                     if ( service instanceof BlockConfiguration )
                     {
@@ -68,12 +69,14 @@ public class DaveBlockConfigurator
                     }
                 }
 
-                public void modifiedService ( final ServiceReference reference, final Object service )
+                @Override
+                public void modifiedService ( final ServiceReference<Object> reference, final Object service )
                 {
                     DaveBlockConfigurator.this.modifyBlock ( reference, (BlockConfiguration)service );
                 }
 
-                public Object addingService ( final ServiceReference reference )
+                @Override
+                public Object addingService ( final ServiceReference<Object> reference )
                 {
                     final Object o = DaveBlockConfigurator.this.context.getService ( reference );
                     try
@@ -99,7 +102,7 @@ public class DaveBlockConfigurator
         }
     }
 
-    protected void modifyBlock ( final ServiceReference reference, final BlockConfiguration service )
+    protected void modifyBlock ( final ServiceReference<?> reference, final BlockConfiguration service )
     {
         logger.info ( "Modify block: {}", reference );
 
@@ -107,7 +110,7 @@ public class DaveBlockConfigurator
         addBlock ( reference, service );
     }
 
-    protected boolean removeBlock ( final ServiceReference reference, final BlockConfiguration block )
+    protected boolean removeBlock ( final ServiceReference<?> reference, final BlockConfiguration block )
     {
         final String oldBlock = this.blocks.remove ( reference );
         if ( oldBlock != null )
@@ -118,7 +121,7 @@ public class DaveBlockConfigurator
         return false;
     }
 
-    protected void addBlock ( final ServiceReference reference, final BlockConfiguration block )
+    protected void addBlock ( final ServiceReference<?> reference, final BlockConfiguration block )
     {
         logger.info ( String.format ( "Adding block - ref: %s, block: %s", new Object[] { reference, block } ) );
 

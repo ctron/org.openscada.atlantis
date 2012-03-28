@@ -22,6 +22,7 @@ package org.openscada.da.master.common.sum;
 import java.util.Map;
 
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
@@ -46,22 +47,22 @@ public class CommonSumHandlerFactoryImpl extends AbstractServiceConfigurationFac
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final AbstractMasterHandlerImpl handler = new CommonSumHandler ( this.poolTracker );
-        handler.update ( parameters );
+        handler.update ( userInformation, parameters );
         return new Entry<AbstractMasterHandlerImpl> ( configurationId, handler );
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> updateService ( final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<AbstractMasterHandlerImpl> updateService ( final UserInformation userInformation, final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( parameters );
+        entry.getService ().update ( userInformation, parameters );
         return null;
     }
 
     @Override
-    protected void disposeService ( final String id, final AbstractMasterHandlerImpl service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final AbstractMasterHandlerImpl service )
     {
         service.dispose ();
     }

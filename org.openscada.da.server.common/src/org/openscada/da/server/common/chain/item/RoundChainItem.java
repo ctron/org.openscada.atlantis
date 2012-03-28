@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -97,13 +97,13 @@ public class RoundChainItem extends BaseChainItemCommon
         if ( type != RoundType.NONE && doubleValue != null )
         {
             newValue = performRound ( type, doubleValue, value, attributes );
-            attributes.put ( ROUND_ACTIVE, Variant.valueOf ( true ) );
+            attributes.put ( ROUND_ACTIVE, Variant.TRUE );
             attributes.put ( ORIGINAL_VALUE, originalValue );
             attributes.put ( ROUND_TYPE, Variant.valueOf ( type.toString () ) );
         }
         else if ( type == RoundType.NONE )
         {
-            attributes.put ( ROUND_TYPE, null );
+            attributes.put ( ROUND_ACTIVE, Variant.FALSE );
         }
 
         return newValue;

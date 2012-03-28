@@ -156,7 +156,7 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
     }
 
     @Override
-    public void setActive ( final boolean state )
+    public void setActive ( final UserInformation userInformation, final boolean state )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( this.attributeActive, state ? Variant.TRUE : Variant.FALSE );
@@ -168,11 +168,11 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
         logger.debug ( "Apply update: {}", parameters );
 
-        super.update ( parameters );
+        super.update ( userInformation, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 

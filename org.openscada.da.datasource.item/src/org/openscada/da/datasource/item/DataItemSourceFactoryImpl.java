@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,7 +25,9 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.da.datasource.DataSource;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
+import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
@@ -39,7 +41,7 @@ public class DataItemSourceFactoryImpl extends AbstractServiceConfigurationFacto
 
     private final Executor executor;
 
-    private final ServiceRegistration objectPoolHandler;
+    private final ServiceRegistration<ObjectPool> objectPoolHandler;
 
     public DataItemSourceFactoryImpl ( final BundleContext context, final Executor executor )
     {
@@ -52,7 +54,7 @@ public class DataItemSourceFactoryImpl extends AbstractServiceConfigurationFacto
     }
 
     @Override
-    protected Entry<DataItemSourceImpl> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemSourceImpl> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final DataItemSourceImpl service = new DataItemSourceImpl ( context, this.executor );
 
@@ -65,14 +67,14 @@ public class DataItemSourceFactoryImpl extends AbstractServiceConfigurationFacto
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final DataItemSourceImpl service )
+    protected void disposeService ( final UserInformation userInformation, final String configurationId, final DataItemSourceImpl service )
     {
         this.objectPool.removeService ( configurationId, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<DataItemSourceImpl> updateService ( final String configurationId, final Entry<DataItemSourceImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<DataItemSourceImpl> updateService ( final UserInformation userInformation, final String configurationId, final Entry<DataItemSourceImpl> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

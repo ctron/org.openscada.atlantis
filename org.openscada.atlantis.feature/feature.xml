@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openscada.atlantis"
-      label="OpenSCADA Atlantis"
-      version="0.17.0.qualifier"
+      label="openSCADA Atlantis"
+      version="0.18.0.qualifier"
       provider-name="TH4 SYSTEMS GmbH">
 
    <description>
-      The OpenSCADA Atlantis Project
+      The openSCADA Atlantis Project
    </description>
 
    <copyright>

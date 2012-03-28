@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -48,7 +48,9 @@ public class MonitorStatusInformation implements Serializable
 
     private final Map<String, Variant> attributes;
 
-    public MonitorStatusInformation ( final String id, final MonitorStatus status, final Date statusTimestamp, final Variant value, final Date lastAknTimestamp, final String lastAknUser, final Map<String, Variant> attributes )
+    private final Date lastFailTimestamp;
+
+    public MonitorStatusInformation ( final String id, final MonitorStatus status, final Date statusTimestamp, final Variant value, final Date lastAknTimestamp, final String lastAknUser, final Date lastFailTimestamp, final Map<String, Variant> attributes )
     {
         super ();
 
@@ -58,6 +60,16 @@ public class MonitorStatusInformation implements Serializable
         this.value = value;
         this.lastAknTimestamp = lastAknTimestamp;
         this.lastAknUser = lastAknUser;
+
+        // we might not have a lastFailTimestamp if we are communicating with old versions
+        if ( lastFailTimestamp == null )
+        {
+            this.lastFailTimestamp = statusTimestamp;
+        }
+        else
+        {
+            this.lastFailTimestamp = lastFailTimestamp;
+        }
 
         if ( attributes == null )
         {
@@ -70,7 +82,7 @@ public class MonitorStatusInformation implements Serializable
 
         if ( id == null )
         {
-            throw new NullPointerException ( "'status' must not be null" );
+            throw new NullPointerException ( "'id' must not be null" );
         }
         if ( status == null )
         {
@@ -94,7 +106,12 @@ public class MonitorStatusInformation implements Serializable
 
     public Date getStatusTimestamp ()
     {
-        return this.statusTimestamp;
+        return this.statusTimestamp == null ? null : (Date)this.statusTimestamp.clone ();
+    }
+
+    public Date getLastFailTimestamp ()
+    {
+        return this.lastFailTimestamp == null ? null : (Date)this.lastFailTimestamp.clone ();
     }
 
     public Variant getValue ()
@@ -109,7 +126,7 @@ public class MonitorStatusInformation implements Serializable
 
     public Date getLastAknTimestamp ()
     {
-        return this.lastAknTimestamp;
+        return this.lastAknTimestamp == null ? null : (Date)this.lastAknTimestamp.clone ();
     }
 
     public Map<String, Variant> getAttributes ()
@@ -162,7 +179,9 @@ public class MonitorStatusInformation implements Serializable
         final StringBuilder sb = new StringBuilder ();
 
         sb.append ( this.id + "(" );
-        sb.append ( "status=" + this.status );
+        sb.append ( ", id=" + this.id );
+        sb.append ( ", status=" + this.status );
+        sb.append ( ", timestamp=" + this.statusTimestamp );
         sb.append ( ")" );
 
         return sb.toString ();

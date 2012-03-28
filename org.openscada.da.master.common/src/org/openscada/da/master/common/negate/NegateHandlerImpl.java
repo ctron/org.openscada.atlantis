@@ -22,6 +22,7 @@ package org.openscada.da.master.common.negate;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -29,14 +30,15 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class NegateHandlerImpl extends AbstractCommonHandlerImpl
 {
-    private boolean active = false;
+    private boolean active;
 
-    public NegateHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker caTracker )
+    public NegateHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, NegateHandlerFactoryImpl.FACTORY_ID, NegateHandlerFactoryImpl.FACTORY_ID );
     }
@@ -76,9 +78,9 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    public synchronized void update ( final Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
-        super.update ( parameters );
+        super.update ( userInformation, parameters );
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         this.active = cfg.getBoolean ( "active", false ); //$NON-NLS-1$

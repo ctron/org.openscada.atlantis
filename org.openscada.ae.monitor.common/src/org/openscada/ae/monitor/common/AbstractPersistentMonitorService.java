@@ -89,7 +89,7 @@ public abstract class AbstractPersistentMonitorService extends AbstractMonitorSe
 
     protected String getNodeId ()
     {
-        return getId () + "/monitorState";
+        return getId () + "/monitorState"; //$NON-NLS-1$
     }
 
     public synchronized void dispose ()

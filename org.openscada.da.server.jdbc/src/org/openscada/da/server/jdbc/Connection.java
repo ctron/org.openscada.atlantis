@@ -23,7 +23,7 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
-import java.util.Timer;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.slf4j.Logger;
@@ -74,7 +74,7 @@ public class Connection
         this.queries.add ( query );
     }
 
-    public void register ( final Hive hive, final FolderCommon rootFolder, final Timer timer )
+    public void register ( final Hive hive, final FolderCommon rootFolder, final ScheduledExecutorService timer )
     {
         this.itemFactory = new DataItemFactory ( hive, rootFolder, this.id, this.id );
 

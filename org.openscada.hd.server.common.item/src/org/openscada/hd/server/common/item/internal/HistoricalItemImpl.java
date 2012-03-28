@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -61,11 +61,13 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
             this.query = query;
         }
 
+        @Override
         public void changeParameters ( final QueryParameters parameters )
         {
             this.query.changeParameters ( parameters );
         }
 
+        @Override
         public void close ()
         {
             HistoricalItemImpl.this.openQueries.remove ( this );
@@ -86,7 +88,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     private String dataSourceId;
 
-    private final SingleServiceTracker storageTracker;
+    private final SingleServiceTracker<StorageHistoricalItem> storageTracker;
 
     private StorageHistoricalItem service;
 
@@ -109,11 +111,12 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
         this.valueBuffer = new LinkedList<DataItemValue> ();
 
-        this.storageTracker = new SingleServiceTracker ( context, FilterUtil.createAndFilter ( StorageHistoricalItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, itemInformation.getId () ).getMap () ), new SingleServiceListener () {
+        this.storageTracker = new SingleServiceTracker<StorageHistoricalItem> ( context, FilterUtil.createAndFilter ( StorageHistoricalItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, itemInformation.getId () ).getMap () ), new SingleServiceListener<StorageHistoricalItem> () {
 
-            public void serviceChange ( final ServiceReference reference, final Object service )
+            @Override
+            public void serviceChange ( final ServiceReference<StorageHistoricalItem> reference, final StorageHistoricalItem service )
             {
-                HistoricalItemImpl.this.setStorage ( (StorageHistoricalItem)service );
+                HistoricalItemImpl.this.setStorage ( service );
             }
         } );
         this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
@@ -186,6 +189,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         this ( new HistoricalItemInformation ( id, attributes ), masterId, context );
     }
 
+    @Override
     public synchronized Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
         final Profiler p = new Profiler ( "hi.createQuery" );
@@ -214,6 +218,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         return query;
     }
 
+    @Override
     public HistoricalItemInformation getInformation ()
     {
         return this.itemInformation;
@@ -228,6 +233,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         this.openQueries.clear ();
     }
 
+    @Override
     public void stateChanged ( final DataItemValue value )
     {
         logger.debug ( "state changed: {}", value );
@@ -286,6 +292,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         {
             logger.debug ( "track datasource " + this.dataSourceId );
             this.dataSourceTracker = new SingleDataSourceTracker ( this.poolTracker, this.dataSourceId, new ServiceListener () {
+                @Override
                 public void dataSourceChanged ( final DataSource dataSource )
                 {
                     setMasterItem ( dataSource );

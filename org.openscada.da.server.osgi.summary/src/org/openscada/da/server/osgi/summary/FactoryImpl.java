@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.da.datasource.DataSource;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ManageableObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -50,7 +51,7 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<AttributeDa
     }
 
     @Override
-    protected Entry<AttributeDataSourceSummarizer> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<AttributeDataSourceSummarizer> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final AttributeDataSourceSummarizer service = new AttributeDataSourceSummarizer ( this.executor, this.tracker );
         service.update ( parameters );
@@ -62,14 +63,14 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<AttributeDa
     }
 
     @Override
-    protected void disposeService ( final String configurationId, final AttributeDataSourceSummarizer service )
+    protected void disposeService ( final UserInformation userInformation, final String configurationId, final AttributeDataSourceSummarizer service )
     {
         this.pool.removeService ( configurationId, service );
         service.dispose ();
     }
 
     @Override
-    protected Entry<AttributeDataSourceSummarizer> updateService ( final String configurationId, final Entry<AttributeDataSourceSummarizer> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<AttributeDataSourceSummarizer> updateService ( final UserInformation userInformation, final String configurationId, final Entry<AttributeDataSourceSummarizer> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

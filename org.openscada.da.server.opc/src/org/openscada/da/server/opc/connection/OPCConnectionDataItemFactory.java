@@ -19,9 +19,7 @@
 
 package org.openscada.da.server.opc.connection;
 
-import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.factory.DataItemFactory;
-import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,21 +42,18 @@ public class OPCConnectionDataItemFactory implements DataItemFactory
     }
 
     @Override
-    public boolean canCreate ( final DataItemFactoryRequest request )
+    public boolean canCreate ( final String itemId )
     {
-        final String itemId = request.getId ();
         return itemId.startsWith ( this.connection.getItemPrefix () + "." );
     }
 
     @Override
-    public DataItem create ( final DataItemFactoryRequest request )
+    public void create ( final String itemId )
     {
-        logger.info ( "Requested: {}", request.getId () );
-
-        final String itemId = request.getId ();
+        logger.info ( "Requested: {}", itemId );
         final String opcItemId = itemId.substring ( this.connection.getItemPrefix ().length () + 1 );
 
-        return this.connection.addUnrealizedItem ( opcItemId );
+        this.connection.addUnrealizedItem ( opcItemId );
     }
 
 }

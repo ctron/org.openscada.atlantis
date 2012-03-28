@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -33,6 +33,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
@@ -58,17 +60,14 @@ import org.openscada.da.server.common.HiveService;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.configuration.ConfigurableHive;
-import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.factory.DataItemFactory;
-import org.openscada.da.server.common.factory.DataItemFactoryListener;
-import org.openscada.da.server.common.factory.DataItemFactoryRequest;
 import org.openscada.da.server.common.factory.DataItemValidator;
-import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
+import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
@@ -80,19 +79,21 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private final Set<SessionCommon> sessions = new HashSet<SessionCommon> ();
 
-    private final Map<DataItemInformation, DataItem> itemMap = new HashMap<DataItemInformation, DataItem> ();
+    private final Map<DataItemInformation, DataItem> itemMap = new HashMap<DataItemInformation, DataItem> ( 1000 );
 
-    private HiveBrowserCommon browser = null;
+    private Lock itemMapReadLock;
 
-    private Folder rootFolder = null;
+    private Lock itemMapWriteLock;
+
+    private HiveBrowserCommon browser;
+
+    private Folder rootFolder;
 
     private final Set<SessionListener> sessionListeners = new CopyOnWriteArraySet<SessionListener> ();
 
     private ExecutorService operationService;
 
     private final List<DataItemFactory> factoryList = new CopyOnWriteArrayList<DataItemFactory> ();
-
-    private final Set<DataItemFactoryListener> factoryListeners = new HashSet<DataItemFactoryListener> ();
 
     private final List<FactoryTemplate> templates = new LinkedList<FactoryTemplate> ();
 
@@ -113,7 +114,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     public HiveCommon ()
     {
-        super ();
+        final ReentrantReadWriteLock itemMapLock = new ReentrantReadWriteLock ( Boolean.getBoolean ( "org.openscada.da.server.common.fairItemMapLock" ) );
+
+        this.itemMapReadLock = itemMapLock.readLock ();
+        this.itemMapWriteLock = itemMapLock.writeLock ();
 
         // set the validator of the subscription manager
         this.itemSubscriptionManager.setValidator ( new SubscriptionValidator () {
@@ -241,7 +245,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         this.statisticsGenerator = stats;
 
         final FolderCommon statsFolder = new FolderCommon ();
-        rootFolder.add ( "statistics", statsFolder, new HashMap<String, Variant> () );
+        rootFolder.add ( "statistics", statsFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "A folder containing statistic items" ) ).getMap () );
 
         stats.register ( this, statsFolder );
     }
@@ -342,8 +346,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         // subscribe using the new item subscription manager
         try
         {
-            retrieveItem ( itemId );
+            // subscribe to item
             this.itemSubscriptionManager.subscribe ( itemId, sessionCommon );
+            // and request realization
+            retrieveItem ( itemId );
         }
         catch ( final ValidationException e )
         {
@@ -370,8 +376,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     @Override
     public void registerItem ( final DataItem item )
     {
-        synchronized ( this.itemMap )
+        try
         {
+            this.itemMapWriteLock.lock ();
+
             final String id = item.getInformation ().getName ();
             final DataItemInformationBase information = new DataItemInformationBase ( item.getInformation () );
 
@@ -392,6 +400,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
             // add new topic to the new item subscription manager
             this.itemSubscriptionManager.setSource ( id, new DataItemSubscriptionSource ( getOperationService (), item, this.statisticsGenerator ) );
+        }
+        finally
+        {
+            this.itemMapWriteLock.unlock ();
         }
     }
 
@@ -417,8 +429,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
      */
     public void unregisterItem ( final DataItem item )
     {
-        synchronized ( this.itemMap )
+        try
         {
+            this.itemMapWriteLock.lock ();
+
             final DataItemInformationBase information = new DataItemInformationBase ( item.getInformation () );
             if ( this.itemMap.containsKey ( information ) )
             {
@@ -432,25 +446,24 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             // remove the source from the manager
             this.itemSubscriptionManager.setSource ( item.getInformation ().getName (), null );
         }
+        finally
+        {
+            this.itemMapWriteLock.unlock ();
+        }
     }
 
-    private DataItem factoryCreate ( final DataItemFactoryRequest request )
+    private void factoryCreate ( final String id )
     {
         for ( final DataItemFactory factory : this.factoryList )
         {
-            if ( factory.canCreate ( request ) )
+            if ( factory.canCreate ( id ) )
             {
-                // we can create the item
-
-                final DataItem dataItem = factory.create ( request );
-
-                // stats
-                fireDataItemCreated ( dataItem );
-                registerItem ( dataItem );
-                return dataItem;
+                // we let the factory create the item
+                factory.create ( id );
+                // only try one factory
+                return;
             }
         }
-        return null;
     }
 
     /**
@@ -485,14 +498,11 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
             }
         }
 
-        final DataItemFactoryRequest request = new DataItemFactoryRequest ();
-        request.setId ( id );
-
         synchronized ( this.factoryList )
         {
             for ( final DataItemFactory factory : this.factoryList )
             {
-                if ( factory.canCreate ( request ) )
+                if ( factory.canCreate ( id ) )
                 {
                     return true;
                 }
@@ -504,7 +514,15 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     @Override
     public DataItem lookupItem ( final String id )
     {
-        return this.itemMap.get ( new DataItemInformationBase ( id ) );
+        try
+        {
+            this.itemMapReadLock.lock ();
+            return this.itemMap.get ( new DataItemInformationBase ( id ) );
+        }
+        finally
+        {
+            this.itemMapReadLock.unlock ();
+        }
     }
 
     public FactoryTemplate findFactoryTemplate ( final String item )
@@ -522,49 +540,18 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         return null;
     }
 
-    public DataItem retrieveItem ( final String id )
+    protected DataItem retrieveItem ( final String id )
     {
-        // if we already have the item we don't need to create it
-        final DataItem dataItem = lookupItem ( id );
-        if ( dataItem != null )
+        DataItem dataItem = lookupItem ( id );
+        if ( dataItem == null )
         {
-            return dataItem;
+            // let it create
+            factoryCreate ( id );
+
+            // and refetch
+            dataItem = lookupItem ( id );
         }
-
-        final DataItemFactoryRequest request = new DataItemFactoryRequest ();
-        request.setId ( id );
-
-        final FactoryTemplate template = findFactoryTemplate ( id );
-        if ( template != null )
-        {
-            request.setBrowserAttributes ( template.getBrowserAttributes () );
-            request.setItemAttributes ( template.getItemAttributes () );
-            try
-            {
-                request.setItemChain ( FactoryHelper.instantiateChainList ( this, template.getChainEntries () ) );
-            }
-            catch ( final ConfigurationError e )
-            {
-                logger.warn ( String.format ( "Unable to create item %s", id ), e );
-                return null;
-            }
-        }
-
-        return retrieveItem ( request );
-    }
-
-    @Override
-    public DataItem retrieveItem ( final DataItemFactoryRequest request )
-    {
-        synchronized ( this.itemMap )
-        {
-            DataItem dataItem = lookupItem ( request.getId () );
-            if ( dataItem == null )
-            {
-                dataItem = factoryCreate ( request );
-            }
-            return dataItem;
-        }
+        return dataItem;
     }
 
     private static final String DATA_ITEM_OBJECT_TYPE = "ITEM";
@@ -673,9 +660,12 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     @Override
     public NotifyFuture<WriteResult> startWrite ( final Session session, final String itemId, final Variant value, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
     {
+        logger.debug ( "startWrite - session: {}, itemId: {}, value: {}, operationParameters: {}", new Object[] { session, itemId, value, operationParameters } );
         final SessionCommon sessionCommon = validateSession ( session );
 
         final OperationParameters effectiveOperationParameters = makeOperationParameters ( sessionCommon, operationParameters );
+
+        logger.debug ( "Operation parameters - provided: {}, effective: {}", operationParameters, effectiveOperationParameters );
 
         final AuthorizationResult result = authorize ( DATA_ITEM_OBJECT_TYPE, itemId, "WRITE", effectiveOperationParameters.getUserInformation (), makeWriteValueContext ( value ) );
         if ( !result.isGranted () )
@@ -739,24 +729,6 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     public void removeItemFactory ( final DataItemFactory factory )
     {
         this.factoryList.remove ( factory );
-    }
-
-    public void addItemFactoryListener ( final DataItemFactoryListener listener )
-    {
-        this.factoryListeners.add ( listener );
-    }
-
-    public void removeItemFactoryListener ( final DataItemFactoryListener listener )
-    {
-        this.factoryListeners.remove ( listener );
-    }
-
-    private void fireDataItemCreated ( final DataItem dataItem )
-    {
-        for ( final DataItemFactoryListener listener : this.factoryListeners )
-        {
-            listener.created ( dataItem );
-        }
     }
 
     @Override

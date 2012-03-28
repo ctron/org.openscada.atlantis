@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,33 +34,29 @@ public interface ItemFactory
     public abstract WriteHandlerItem createInputOutput ( String localId, WriteHandler writeHandler );
 
     /**
-     * Dispose a data item
-     * @param item a data item created by this data item factory
+     * Dispose an item if it was created by this factory
+     * <p>
+     * If the item was not created by this factory or was already disposed this is no error and no exception is thrown
+     * </p>
+     * @param dataItem data item to dispose
      */
-    public abstract void disposeItem ( DataItem item );
+    public abstract void disposeItem ( DataItem dataItem );
 
     /**
-     * Dispose all items that where created by this factory and where not disposed up to now
+     * Dispose the factory
+     * <p>All items that where created by this factory and where not disposed up to now are being disposed</p>
+     * <p>
+     * After a call to this method it is not possible to create new items. Multiple calls to {@link #dispose()} or calls to {@link #disposeAllItems()} are possible.
+     * </p>
      */
     public abstract void dispose ();
 
     /**
      * Dispose all items at once
+     * <p>
+     * After a call to this method it is still possible to create new items
+     * </p>
      */
     public abstract void disposeAllItems ();
 
-    /**
-     * Add a factory that will get disposed when this factory gets disposed
-     * @param itemFactory the item factory to add
-     */
-    public abstract boolean addSubFactory ( ItemFactory itemFactory );
-
-    /**
-     * Remove a factory from the dispose list that was added to this factory
-     * using {@link #addSubFactory(ItemFactory)}
-     * @param itemFactory
-     */
-    public abstract boolean removeSubFactory ( ItemFactory itemFactory );
-
-    public abstract String getBaseId ();
 }

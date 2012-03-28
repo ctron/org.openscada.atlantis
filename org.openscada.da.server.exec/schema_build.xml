@@ -2,7 +2,7 @@
 
 <project name="xmlbeans" default="main" basedir=".">
 
-	<property name="xmlbeans.root" location="../builder_atlantis/common/lib/xmlbeans"/>
+	<property name="xmlbeans.root" location="../builder_atlantis/global/lib/xmlbeans"/>
 	<property name="source.root" location=".."/>
 	<property name="target.folder" location="schemabin"/>
 	
@@ -34,7 +34,7 @@
 			javasource="1.5"
 			verbose="true"
 			>
-			<fileset dir="schema">
+			<fileset dir="${source.root}/org.openscada.da.server.exec/schema">
 				<include name="*.xsd"/>
 				<include name=".xsdconfig"/>
 			</fileset>

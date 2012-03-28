@@ -24,7 +24,9 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.openscada.ae.event.EventProcessor;
 import org.openscada.da.datasource.DataSource;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
@@ -49,10 +51,14 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
 
     private final ServiceRegistration<ObjectPool> poolRegistration;
 
-    public ScriptSourceFactory ( final BundleContext context, final ScheduledExecutorService executor ) throws InvalidSyntaxException
+    private final EventProcessor eventProcessor;
+
+    public ScriptSourceFactory ( final BundleContext context, final ScheduledExecutorService executor, final EventProcessor eventProcessor ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = executor;
+
+        this.eventProcessor = eventProcessor;
 
         this.objectPool = new ObjectPoolImpl ();
         this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class.getName () );
@@ -71,9 +77,9 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
     }
 
     @Override
-    protected Entry<ScriptDataSource> createService ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<ScriptDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final ScriptDataSource source = new ScriptDataSource ( context, this.poolTracker, this.executor );
+        final ScriptDataSource source = new ScriptDataSource ( context, this.poolTracker, this.executor, this.eventProcessor );
         source.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
@@ -85,7 +91,7 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
     }
 
     @Override
-    protected void disposeService ( final String id, final ScriptDataSource service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final ScriptDataSource service )
     {
         logger.info ( "Disposing: {}", id );
 
@@ -95,7 +101,7 @@ public class ScriptSourceFactory extends AbstractServiceConfigurationFactory<Scr
     }
 
     @Override
-    protected Entry<ScriptDataSource> updateService ( final String configurationId, final Entry<ScriptDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<ScriptDataSource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<ScriptDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;
