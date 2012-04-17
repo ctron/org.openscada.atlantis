@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -141,13 +141,7 @@ public class ConnectionImpl implements Connection
 
     protected synchronized void setError ( final Throwable e )
     {
-        if ( this.executor == null )
-        {
-            return;
-        }
-        setState ( ConnectionState.CLOSED, e );
-        setFactories ( null );
-        this.port = null;
+        disconnect ( e );
     }
 
     protected synchronized void setPort ( final RemoteConfigurationClient port )
@@ -215,12 +209,17 @@ public class ConnectionImpl implements Connection
     @Override
     public synchronized void disconnect ()
     {
+        disconnect ( null );
+    }
+
+    protected synchronized void disconnect ( final Throwable error )
+    {
         if ( this.executor == null )
         {
             return;
         }
 
-        setState ( ConnectionState.CLOSED, null );
+        setState ( ConnectionState.CLOSED, error );
         setFactories ( null );
         final List<Runnable> tasks = this.executor.shutdownNow ();
 
