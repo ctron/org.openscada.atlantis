@@ -100,7 +100,7 @@ public class Activator implements BundleActivator
     {
         final Properties dbProperties = DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.server.storage.jdbc", "org.openscada.jdbc" );
 
-        this.jdbcStorage = createJdbcStorage ( dataSourceFactory, dbProperties );
+        this.jdbcStorage = createJdbcStorage ( dataSourceFactory, dbProperties, DataSourceHelper.isConnectionPool ( "org.openscada.ae.server.storage.jdbc", "org.openscada.jdbc", false ) );
         this.jdbcStorage.start ();
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ( 2 );
@@ -138,11 +138,11 @@ public class Activator implements BundleActivator
         Activator.context = null;
     }
 
-    private JdbcStorage createJdbcStorage ( final DataSourceFactory dataSourceFactory, final Properties dbParameters ) throws SQLException
+    private JdbcStorage createJdbcStorage ( final DataSourceFactory dataSourceFactory, final Properties dbParameters, final boolean usePool ) throws SQLException
     {
         if ( "legacy".equals ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "" ) ) )
         {
-            final LegacyJdbcStorageDao jdbcStorageDao = new LegacyJdbcStorageDao ( dataSourceFactory, dbParameters );
+            final LegacyJdbcStorageDao jdbcStorageDao = new LegacyJdbcStorageDao ( dataSourceFactory, dbParameters, usePool );
             jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
             if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
             {
@@ -152,7 +152,7 @@ public class Activator implements BundleActivator
         }
         else
         {
-            final JdbcStorageDao jdbcStorageDao = new JdbcStorageDao ( dataSourceFactory, dbParameters );
+            final JdbcStorageDao jdbcStorageDao = new JdbcStorageDao ( dataSourceFactory, dbParameters, usePool );
             jdbcStorageDao.setInstance ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "default" ) );
             jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
             if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )

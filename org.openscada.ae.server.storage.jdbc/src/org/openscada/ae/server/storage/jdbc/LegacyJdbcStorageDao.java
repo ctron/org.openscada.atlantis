@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -73,9 +73,9 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
 
     private final String defaultOrder = " ORDER BY E.SOURCE_TIMESTAMP DESC, E.ENTRY_TIMESTAMP DESC";
 
-    public LegacyJdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties ) throws SQLException
+    public LegacyJdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties, final boolean usePool ) throws SQLException
     {
-        super ( dataSourceFactory, properties );
+        super ( dataSourceFactory, properties, usePool );
     }
 
     @Override
@@ -194,7 +194,7 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
     @Override
     public ResultSet queryEvents ( final Filter filter ) throws SQLException, NotSupportedException
     {
-        long start = System.currentTimeMillis ();
+        final long start = System.currentTimeMillis ();
         final Connection con = createConnection ();
         final SqlCondition condition = SqlConverter.toSql ( getSchema (), filter );
         String sql = this.selectEventSql + StringHelper.join ( condition.joins, " " ) + this.whereSql;
@@ -217,7 +217,7 @@ public class LegacyJdbcStorageDao extends BaseStorageDao
             stm.setObject ( i, parameter );
         }
         final ResultSet rs = stm.executeQuery ();
-        long stop = System.currentTimeMillis ();
+        final long stop = System.currentTimeMillis ();
         logger.debug ( "query completed, returning resultset; query took " + ( stop - start ) + "ms" );
         return rs;
     }

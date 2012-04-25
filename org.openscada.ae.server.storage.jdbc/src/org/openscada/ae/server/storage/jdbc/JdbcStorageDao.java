@@ -86,9 +86,9 @@ public class JdbcStorageDao extends BaseStorageDao
 
     private final ScheduledExecutorService executor;
 
-    public JdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties ) throws SQLException
+    public JdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties, final boolean usePool ) throws SQLException
     {
-        super ( dataSourceFactory, properties );
+        super ( dataSourceFactory, properties, usePool );
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "org.openscada.ae.server.storage.jdbc/CleanupThread" ) );
         this.executor.scheduleWithFixedDelay ( new Runnable () {
 
@@ -446,7 +446,9 @@ public class JdbcStorageDao extends BaseStorageDao
 
     /**
      * Cleanup the archive
-     * @param days days in the past that should remain in the archive
+     * 
+     * @param days
+     *            days in the past that should remain in the archive
      * @return the number of entries deleted or -1 if the parameters <q>days</q> was negative or zero.
      */
     protected int cleanupArchive ( final int days ) throws Exception

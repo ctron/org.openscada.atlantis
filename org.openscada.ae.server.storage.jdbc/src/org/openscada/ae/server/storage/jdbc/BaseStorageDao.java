@@ -28,7 +28,9 @@ import java.util.UUID;
 
 import org.openscada.ae.Event;
 import org.openscada.core.VariantType;
+import org.openscada.utils.osgi.jdbc.CommonConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.DataSourceConnectionAccessor;
+import org.openscada.utils.osgi.jdbc.pool.PoolConnectionAccessor;
 import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +45,11 @@ public abstract class BaseStorageDao implements StorageDao
 
     private String instance = "default";
 
-    private final DataSourceConnectionAccessor accessor;
+    private final CommonConnectionAccessor accessor;
 
-    public BaseStorageDao ( final DataSourceFactory dataSourceFactory, final Properties paramProperties ) throws SQLException
+    public BaseStorageDao ( final DataSourceFactory dataSourceFactory, final Properties paramProperties, final boolean usePool ) throws SQLException
     {
-        this.accessor = new DataSourceConnectionAccessor ( dataSourceFactory, paramProperties );
+        this.accessor = usePool ? new PoolConnectionAccessor ( dataSourceFactory, paramProperties ) : new DataSourceConnectionAccessor ( dataSourceFactory, paramProperties );
     }
 
     @Override
@@ -93,7 +95,7 @@ public abstract class BaseStorageDao implements StorageDao
         return connection;
     }
 
-    protected DataSourceConnectionAccessor getAccessor ()
+    protected CommonConnectionAccessor getAccessor ()
     {
         return this.accessor;
     }
