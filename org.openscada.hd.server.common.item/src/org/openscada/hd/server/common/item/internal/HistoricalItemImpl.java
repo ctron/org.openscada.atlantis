@@ -197,7 +197,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
         if ( this.service == null )
         {
-            logger.warn ( "We have not service. We cannot create a query" );
+            logger.warn ( "We have no service. We cannot create a query" );
             return null;
         }
 
