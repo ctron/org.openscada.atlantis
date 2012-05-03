@@ -146,7 +146,7 @@ Export-Package: org.openscada.common;version="0.18.0";
    org.openscada.da.server.common,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common.impl"
-Bundle-Version: 0.18.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Server Common
 Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: TH4 SYSTEMS GmbH
