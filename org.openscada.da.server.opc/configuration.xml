@@ -10,7 +10,7 @@
 	<components:connections>
 		<!-- M+F OPC Server -->
 		<components:configuration domain=""
-			host="1.2.3.4" user="jens" password="test12"
+			host="1.2.3.4" user="username" password="password"
 			access="sync"
 			refresh="250"
 			connected="true"
@@ -20,27 +20,14 @@
 			>
 			<components:clsid>AEDE6AB0-95F9-11d4-BF93-0050BAC23960</components:clsid>
 		</components:configuration>
-		
-		<!-- M+F OPC Server -->
-		<components:configuration domain=""
-			host="1.2.3.4" user="jens" password="test12"
-			access="sync"
-			refresh="250"
-			connected="true"
-			alias="MFX02"
-			enabled="false"
-			reconnectDelay="20000"
-			>
-			<components:clsid>AEDE6AB0-95F9-11d4-BF93-0050BAC23960</components:clsid>
-		</components:configuration>		
-		
+
 		<!-- Matrikon OPC Simulation Server -->
 		<components:configuration domain=""
-			host="1.2.3.4" user="jens" password="test12"
+			host="1.2.3.4" user="username" password="password"
 			access="sync"
 			refresh="250"
 			connected="true"
-			alias="TEST1"
+			alias="MATRIKON"
 			enabled="false"
 			>
 			<components:clsid>
@@ -52,10 +39,30 @@
 		</components:configuration>
 		
 		<!-- Softing OPC Demo Server -->
-		<components:configuration connected="false" domain="localhost"
-			host="1.2.3.4" access="sync" user="jens" password="test12" enabled="false">
+		<components:configuration
+			connected="false"
+			domain=""
+			host="1.2.3.4"
+			access="sync"
+			user="username"
+			password="password"
+			enabled="false">
 			<components:clsid>
 				2E565242-B238-11D3-842D-0008C779D775
+			</components:clsid>
+		</components:configuration>
+		
+		<!-- Top Server OPC Server -->
+		<components:configuration
+			connected="false"
+			domain=""
+			host="1.2.3.4"
+			access="sync"
+			user="username"
+			password="password"
+			enabled="false">
+			<components:clsid>
+				680DFBF7-C92D-484D-84BE-06DC3DECCD68
 			</components:clsid>
 		</components:configuration>
 		
