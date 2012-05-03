@@ -1,5 +1,5 @@
 Manifest-Version: 1.0
-Bundle-Version: 0.18.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA OPC Server
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-ManifestVersion: 2
