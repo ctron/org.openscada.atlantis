@@ -35,11 +35,9 @@ import org.openscada.da.server.common.ItemListener;
 import org.openscada.da.server.common.impl.stats.HiveEventListener;
 
 /**
- * A subscription source for data items.
+ * A subscription source for data items. This SubscriptionSource does not use a hint object.
  * 
- * This SubscriptionSource does not use a hint object.
  * @author Jens Reimann
- *
  */
 public class DataItemSubscriptionSource implements SubscriptionSource, ItemListener
 {
@@ -67,7 +65,6 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 
     /**
      * Bind us to the data item
-     *
      */
     private synchronized void bind ()
     {
@@ -91,7 +88,6 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 
     /**
      * Unbind us from the data item
-     *
      */
     private synchronized void unbind ()
     {
@@ -179,15 +175,18 @@ public class DataItemSubscriptionSource implements SubscriptionSource, ItemListe
 
         final DataItemSubscriptionListener[] listeners = this.listeners.toArray ( new DataItemSubscriptionListener[this.listeners.size ()] );
 
-        // send out the events
-        this.executor.execute ( new Runnable () {
+        if ( listeners.length > 0 )
+        {
+            // send out the events
+            this.executor.execute ( new Runnable () {
 
-            @Override
-            public void run ()
-            {
-                fireDataChange ( item, variant, attributes, cache, listeners );
-            }
-        } );
+                @Override
+                public void run ()
+                {
+                    fireDataChange ( item, variant, attributes, cache, listeners );
+                }
+            } );
+        }
 
         if ( this.hiveEventListener != null )
         {
