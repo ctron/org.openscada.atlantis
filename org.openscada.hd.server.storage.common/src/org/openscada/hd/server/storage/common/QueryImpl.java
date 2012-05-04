@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,6 +21,7 @@ package org.openscada.hd.server.storage.common;
 
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openscada.hd.Query;
@@ -88,15 +89,23 @@ public class QueryImpl implements Query
 
     /**
      * Create a new common query
-     * @param storage the value source manager
-     * @param executor a single threaded executor for posting events
-     * @param parameters the initial query parameters
-     * @param listener the query listener, must not be <code>null</code>
-     * @param updateData request data updates
-     * @param fixedStartDate an optional fixed start date before which all query data is invalid
-     * @param fixedEndDate an optional fixed end date after which all query data is invalid
+     * 
+     * @param storage
+     *            the value source manager
+     * @param executor
+     *            a single threaded executor for posting events
+     * @param parameters
+     *            the initial query parameters
+     * @param listener
+     *            the query listener, must not be <code>null</code>
+     * @param updateData
+     *            request data updates
+     * @param fixedStartDate
+     *            an optional fixed start date before which all query data is invalid
+     * @param fixedEndDate
+     *            an optional fixed end date after which all query data is invalid
      */
-    public QueryImpl ( final ValueSourceManager storage, final ExecutorService executor, final QueryParameters parameters, final QueryListener listener, final boolean updateData, final Date fixedStartDate, final Date fixedEndDate )
+    public QueryImpl ( final ValueSourceManager storage, final ScheduledExecutorService executor, final QueryParameters parameters, final QueryListener listener, final boolean updateData, final Date fixedStartDate, final Date fixedEndDate )
     {
         this.storage = storage;
         this.executor = executor;
@@ -140,8 +149,8 @@ public class QueryImpl implements Query
 
     /**
      * Request a close of the query
-     * @return <code>true</code> if the close was requested, <code>false</code> if the close already was
-     * requested by someone else
+     * 
+     * @return <code>true</code> if the close was requested, <code>false</code> if the close already was requested by someone else
      */
     private boolean requestClose ()
     {
@@ -291,7 +300,9 @@ public class QueryImpl implements Query
 
     /**
      * Have the requested parameters changed
-     * @param loadingParameters the current loading parameters
+     * 
+     * @param loadingParameters
+     *            the current loading parameters
      * @return <code>true</code> if the provided loading parameters are different to the current state parameters
      */
     private boolean hasChanged ( final QueryParameters loadingParameters )
@@ -307,7 +318,8 @@ public class QueryImpl implements Query
 
     /**
      * Should the current loading continue
-     * @param queryParameters 
+     * 
+     * @param queryParameters
      * @return
      */
     protected boolean shouldContinue ( final QueryParameters queryParameters )

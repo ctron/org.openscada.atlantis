@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,9 +22,13 @@ package org.openscada.hd.server.storage.common;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryParameters;
@@ -177,9 +181,12 @@ public class QueryBuffer extends QueryDataBuffer
 
     private final boolean renderWhileLoading = Boolean.getBoolean ( "org.openscada.hd.server.storage.hds.renderWhileLoading" );
 
-    public QueryBuffer ( final QueryListener listener, final Executor executor, final Date fixedStartDate, final Date fixedEndDate )
+    private final ScheduledExecutorService scheduledExecutor;
+
+    public QueryBuffer ( final QueryListener listener, final ScheduledExecutorService executor, final Date fixedStartDate, final Date fixedEndDate )
     {
         super ( listener, executor, fixedStartDate, fixedEndDate );
+        this.scheduledExecutor = executor;
     }
 
     @Override
@@ -210,12 +217,17 @@ public class QueryBuffer extends QueryDataBuffer
 
     }
 
-    /**
-     * Insert data when loading 
-     */
     public synchronized void insertData ( final double value, final Date timestamp, final boolean error, final boolean manual )
     {
-        final Entry entry = new Entry ( value, timestamp, error, manual );
+        insertData ( new Entry ( value, timestamp, error, manual ) );
+    }
+
+    /**
+     * Insert data when loading
+     */
+    public synchronized void insertData ( final Entry entry )
+    {
+        final Date timestamp = entry.getTimestamp ();
         logger.debug ( "Received new data: {}", entry );
 
         if ( timestamp.before ( this.parameters.getStartTimestamp ().getTime () ) )
@@ -253,7 +265,9 @@ public class QueryBuffer extends QueryDataBuffer
 
     /**
      * Render buffer from provided start index to the end of the buffer
-     * @param startIndex the start index
+     * 
+     * @param startIndex
+     *            the start index
      */
     private void render ( final int startIndex )
     {
@@ -262,8 +276,11 @@ public class QueryBuffer extends QueryDataBuffer
 
     /**
      * render the buffer from the provided start to the provided end
-     * @param startIndex the start index
-     * @param endIndex the end index
+     * 
+     * @param startIndex
+     *            the start index
+     * @param endIndex
+     *            the end index
      */
     private void render ( final int startIndex, int endIndex )
     {
@@ -399,12 +416,47 @@ public class QueryBuffer extends QueryDataBuffer
         notifyStateUpdate ( QueryState.DISCONNECTED );
     }
 
+    private final List<Entry> updateList = new LinkedList<Entry> ();
+
+    private final int updateListMax = Integer.getInteger ( "org.openscada.hd.server.storage.hds.updateListMax", 10 );
+
+    private final long updateTimeMax = Long.getLong ( "org.openscada.hd.server.storage.hds.updateTimeMax", 1000 );
+
+    private ScheduledFuture<?> flushFuture;
+
     /**
      * Update data after loading has completed
      */
     public synchronized void updateData ( final double value, final Date timestamp, final boolean error, final boolean manual )
     {
-        insertData ( value, timestamp, error, manual );
+        this.updateList.add ( new Entry ( value, timestamp, error, manual ) );
+        if ( this.updateList.size () > this.updateListMax )
+        {
+            flushUpdateQueue ();
+        }
+        else if ( this.flushFuture == null )
+        {
+            this.flushFuture = this.scheduledExecutor.schedule ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    flushUpdateQueue ();
+
+                }
+            }, this.updateTimeMax, TimeUnit.MILLISECONDS );
+        }
+    }
+
+    private synchronized void flushUpdateQueue ()
+    {
+        this.flushFuture = null;
+
+        for ( final Entry entry : this.updateList )
+        {
+            insertData ( entry );
+        }
+        this.updateList.clear ();
         complete ();
     }
 

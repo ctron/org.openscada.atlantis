@@ -26,12 +26,8 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -57,15 +53,11 @@ public class StorageManager
 
     private final DataFilePool pool;
 
-    private final ExecutorService queryExecutor;
+    private final ScheduledExecutorService queryExecutor;
 
     private final ScheduledExecutorService updateExecutor;
 
     private final int coreThreads = Integer.getInteger ( "org.openscada.hd.server.storage.hds.coreQueryThread", 1 );
-
-    private final int maxThreads = Integer.getInteger ( "org.openscada.hd.server.storage.hds.maxQueryThread", 10 );
-
-    private final int keepAliveTime = Integer.getInteger ( "org.openscada.hd.server.storage.hds.queryKeepAliveTime", 60 * 1000 );
 
     public StorageManager ( final BundleContext context, final DataFilePool pool )
     {
@@ -85,7 +77,7 @@ public class StorageManager
             logger.warn ( "Using global data storage - {}, exists: {}", this.base, this.base.exists () );
         }
 
-        this.queryExecutor = new ThreadPoolExecutor ( this.coreThreads, this.maxThreads, this.keepAliveTime, TimeUnit.MILLISECONDS, new LinkedBlockingQueue<Runnable> (), new NamedThreadFactory ( "HDSQuery" ) );
+        this.queryExecutor = Executors.newScheduledThreadPool ( this.coreThreads, new NamedThreadFactory ( "HDSQuery" ) );
         this.updateExecutor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "HDSUpdate" ) );
 
         initialize ();
