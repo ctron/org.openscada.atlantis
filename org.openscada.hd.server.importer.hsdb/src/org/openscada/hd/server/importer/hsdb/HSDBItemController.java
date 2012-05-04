@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,7 +23,7 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.core.Variant;
 import org.openscada.hd.HistoricalItemInformation;
@@ -40,7 +40,7 @@ public class HSDBItemController
 
     private final ServiceRegistration<HistoricalItem> handle;
 
-    public HSDBItemController ( final String id, final ExecutorService executor, final BundleContext context, final HSDBValueSource source )
+    public HSDBItemController ( final String id, final ScheduledExecutorService executor, final BundleContext context, final HSDBValueSource source )
     {
         this.source = source;
 

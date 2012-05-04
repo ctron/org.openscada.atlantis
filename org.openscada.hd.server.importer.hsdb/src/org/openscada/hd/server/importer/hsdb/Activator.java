@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,8 +20,8 @@
 package org.openscada.hd.server.importer.hsdb;
 
 import java.io.File;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleActivator;
@@ -39,7 +39,7 @@ public class Activator implements BundleActivator
 
     private HSDBStorageManager manager;
 
-    private ExecutorService executor;
+    private ScheduledExecutorService executor;
 
     /*
      * (non-Javadoc)
@@ -49,7 +49,7 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext bundleContext ) throws Exception
     {
         Activator.context = bundleContext;
-        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "HSBDImporter" ) );
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "HSBDImporter" ) );
         this.manager = new HSDBStorageManager ( this.executor, "HSDB.", bundleContext, new File ( System.getProperty ( "org.openscada.hd.server.importer.hsdb.root", "" ) ) );
     }
 

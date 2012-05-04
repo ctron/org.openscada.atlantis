@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,7 +21,7 @@ package org.openscada.hd.server.importer.hsdb;
 
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
@@ -36,13 +36,13 @@ public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
 {
     private final HistoricalItemInformation information;
 
-    private final ExecutorService executor;
+    private final ScheduledExecutorService executor;
 
     private final HSDBValueSource source;
 
     private Set<QueryImpl> queries = new HashSet<QueryImpl> ();
 
-    public HSDBHistoricalItem ( final ExecutorService executor, final HSDBValueSource source, final HistoricalItemInformation information )
+    public HSDBHistoricalItem ( final ScheduledExecutorService executor, final HSDBValueSource source, final HistoricalItemInformation information )
     {
         this.executor = executor;
         this.information = information;
