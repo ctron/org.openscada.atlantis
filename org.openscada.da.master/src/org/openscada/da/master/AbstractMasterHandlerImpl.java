@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +19,6 @@
 
 package org.openscada.da.master;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -179,9 +178,14 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         }
     }
 
+    /**
+     * Get an unmodifiable list of master items
+     * 
+     * @return unmodifiable list of master items
+     */
     protected Collection<MasterItem> getMasterItems ()
     {
-        return new ArrayList<MasterItem> ( this.items );
+        return Collections.unmodifiableCollection ( this.items );
     }
 
     protected void reprocess ()
@@ -198,9 +202,8 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
     /**
      * Process the write request
      * <p>
-     * This implementation does <em>nothing</em> and can be overridden by
-     * derived implementations.
-     * </p>  
+     * This implementation does <em>nothing</em> and can be overridden by derived implementations.
+     * </p>
      */
     @Override
     public WriteRequestResult processWrite ( final WriteRequest request )
