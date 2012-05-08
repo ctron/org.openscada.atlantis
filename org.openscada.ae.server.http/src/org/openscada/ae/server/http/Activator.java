@@ -23,8 +23,6 @@ import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import javax.servlet.ServletException;
-
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
@@ -44,12 +42,16 @@ import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
 import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.http.HttpService;
-import org.osgi.service.http.NamespaceException;
 import org.osgi.util.tracker.ServiceTracker;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
+
     private static final String SERVLET_PATH = "/org.openscada.ae";
 
     private BundleContext context;
@@ -149,13 +151,9 @@ public class Activator implements BundleActivator
             this.httpService.registerServlet ( SERVLET_PATH, new JsonServlet ( this.eventProcessor, this.factory, this.eventFilter ), null, null );
             this.httpService.registerResources ( SERVLET_PATH + "/ui", "/ui", null );
         }
-        catch ( final ServletException e )
+        catch ( final Exception e )
         {
-            e.printStackTrace ();
-        }
-        catch ( final NamespaceException e )
-        {
-            e.printStackTrace ();
+            logger.error ( "Failed to bind", e );
         }
     }
 
@@ -202,7 +200,8 @@ public class Activator implements BundleActivator
                         return;
                     }
                     Activator.this.unbind ();
-                    Activator.this.bind ();
+                    Activator.this.httpService = null;
+                    Activator.this.context.ungetService ( reference );
                 }
             }
         };
