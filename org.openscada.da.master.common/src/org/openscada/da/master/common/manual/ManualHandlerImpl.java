@@ -64,7 +64,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         public ManualStateData ( final Variant value, final String user, final String reason, final Date timestmap )
         {
             super ();
-            this.value = value;
+            this.value = value != null ? value : Variant.NULL;
             this.user = user;
             this.reason = reason;
             this.timestmap = timestmap;
@@ -284,7 +284,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         final String newUser = cfg.getString ( "user" );//$NON-NLS-1$
         final String newReason = cfg.getString ( "reason" ); //$NON-NLS-1$;
         final Date ts = new Date ();
-        final Date newTimestamp = new Date ( cfg.getLong ( "timestamp", ts.getTime () ) ); //$NON-NLS-1$;
+        final Date newTimestamp = makeNewTimestamp ( cfg, ts, newValue ); //;
 
         final ManualStateData newState = new ManualStateData ( newValue, newUser, newReason, newTimestamp );
 
@@ -293,6 +293,42 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         this.state = newState;
 
         reprocess ();
+    }
+
+    /**
+     * Return the new timestamp value
+     * <p>
+     * The new timestamp
+     * <ol>
+     * <li>The provided timestamp</li>
+     * <li>The previous timestamp of the value did not change</li>
+     * <li>The
+     * <q>now</q> timestamp</li>
+     * </ol>
+     * </p>
+     * 
+     * @param cfg
+     *            the configuration data
+     * @param ts
+     *            the <q>now</q> time
+     * @param newValue
+     *            the new value
+     * @return the new timestamp value, never returns <code>null</code>
+     */
+    private Date makeNewTimestamp ( final ConfigurationDataHelper cfg, final Date ts, final Variant newValue )
+    {
+        final Long newTimestamp = cfg.getLong ( "timestamp" );
+        if ( newTimestamp != null )
+        {
+            return new Date ( newTimestamp );
+        }
+
+        if ( this.state.getValue ().equals ( newValue ) )
+        {
+            return this.state.getTimestmap ();
+        }
+
+        return ts;
     }
 
     private void sendUpdateEvent ( final ManualStateData newState, final Date eventTimestamp )
