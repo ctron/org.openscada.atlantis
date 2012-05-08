@@ -51,6 +51,14 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
     private final String id;
 
+    /**
+     * Send all updates, event if the value did not change
+     * <p>
+     * Defaults to <code>false</code>
+     * </p>
+     */
+    private final boolean sendAllUpdates = Boolean.getBoolean ( "org.openscada.da.master.common.manual.sendAllUpdates" );
+
     public static class ManualStateData
     {
         private Variant value;
@@ -284,11 +292,14 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         final String newUser = cfg.getString ( "user" );//$NON-NLS-1$
         final String newReason = cfg.getString ( "reason" ); //$NON-NLS-1$;
         final Date ts = new Date ();
-        final Date newTimestamp = makeNewTimestamp ( cfg, ts, newValue ); //;
+        final Date newTimestamp = makeNewTimestamp ( cfg, ts, newValue );
 
         final ManualStateData newState = new ManualStateData ( newValue, newUser, newReason, newTimestamp );
 
-        sendUpdateEvent ( newState, ts );
+        if ( !this.state.equals ( newState ) || this.sendAllUpdates )
+        {
+            sendUpdateEvent ( newState, ts );
+        }
 
         this.state = newState;
 
