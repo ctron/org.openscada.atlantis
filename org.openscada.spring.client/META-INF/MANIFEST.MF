@@ -41,7 +41,7 @@ Export-Package: org.openscada.spring.client;version="1.0.0";
    org.openscada.core,
    org.openscada.core.subscription,
    org.springframework.beans.factory"
--Version: 1.0.0.qualifier
+Bundle-Version: 0.17.0.qualifier
 Bundle-Name: openSCADA Spring Client
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
