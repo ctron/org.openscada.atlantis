@@ -43,14 +43,17 @@ import org.openscada.ae.server.common.event.EventQuery;
 import org.openscada.ae.server.common.event.EventQuerySource;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ae.server.common.monitor.MonitorQuerySource;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.core.server.common.ServiceCommon;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.ValidationException;
+import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.osgi.AuthenticationHelper;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -90,6 +93,8 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
 
     private ServiceListener eventServiceListener;
 
+    private final AuthenticationHelper authenticationManager;
+
     private final AuthorizationHelper authorizationHelper;
 
     public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
@@ -101,7 +106,20 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         // create akn handler
         this.aknTracker = new ServiceTracker<AknHandler, AknHandler> ( context, AknHandler.class, null );
 
+        this.authenticationManager = new AuthenticationHelper ( context );
         this.authorizationHelper = new AuthorizationHelper ( context );
+    }
+
+    @Override
+    protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
+    {
+        return this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
+    }
+
+    @Override
+    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
+    {
+        return this.authorizationHelper.authorize ( objectType, objectId, action, userInformation, context, defaultResult );
     }
 
     @Override
@@ -330,6 +348,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         this.queryLoadExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ServiceImpl/QueryLoad" ) );
         this.eventExecutor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ServiceImpl/Event" ) );
 
+        this.authenticationManager.open ();
         this.authorizationHelper.open ();
 
         // create monitor query listener
@@ -404,6 +423,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         this.eventExecutor = null;
 
         this.authorizationHelper.close ();
+        this.authenticationManager.close ();
     }
 
     protected SessionImpl validateSession ( final Session session ) throws InvalidSessionException
