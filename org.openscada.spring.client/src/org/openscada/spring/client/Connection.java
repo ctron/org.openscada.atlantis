@@ -1,19 +1,19 @@
 /*
- * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * This file is part of the openSCADA project
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
- * OpenSCADA is free software: you can redistribute it and/or modify
+ * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
  *
- * OpenSCADA is distributed in the hope that it will be useful,
+ * openSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  *
  * You should have received a copy of the GNU Lesser General Public License
- * version 3 along with OpenSCADA. If not, see
+ * version 3 along with openSCADA. If not, see
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
@@ -40,18 +40,17 @@ import org.springframework.beans.factory.DisposableBean;
 import org.springframework.beans.factory.InitializingBean;
 
 /**
- * <p>A wrapper around the DA connection creation for OpenSCADA</p>
  * <p>
- * The connection is bound to the lifecycle of the bean context. All assigned
- * item adapters will be attached to the connection and a subscription will be
- * requested.
+ * A wrapper around the DA connection creation for openSCADA
  * </p>
  * <p>
- * By default the connection will be kept open using a {@link AutoReconnectController}. Use the property {@link #keepOpen}
- * to change this behavior.
+ * The connection is bound to the lifecycle of the bean context. All assigned item adapters will be attached to the connection and a subscription will be requested.
  * </p>
+ * <p>
+ * By default the connection will be kept open using a {@link AutoReconnectController}. Use the property {@link #keepOpen} to change this behavior.
+ * </p>
+ * 
  * @author Jens Reimannn
- *
  */
 public class Connection implements InitializingBean, DisposableBean, ConnectionOperations, ConnectionStateListener
 {
@@ -82,8 +81,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
     private ItemManager itemManager;
 
     /**
-     * A flag that indicates if the connection should be kept open using
-     * a {@link AutoReconnectController}.
+     * A flag that indicates if the connection should be kept open using a {@link AutoReconnectController}.
      */
     private boolean keepOpen = true;
 
@@ -105,12 +103,15 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
     }
 
     /**
-     * <p>Start the connection</p>
      * <p>
-     * If the property <q>auto-reconnect</q> is set then connection will be kept open. If it failes
-     * an automated reconnect will be scheduled.
+     * Start the connection
      * </p>
-     * @throws ClassNotFoundException 
+     * <p>
+     * If the property
+     * <q>auto-reconnect</q> is set then connection will be kept open. If it failes an automated reconnect will be scheduled.
+     * </p>
+     * 
+     * @throws ClassNotFoundException
      */
     @Override
     public void start () throws ClassNotFoundException
@@ -164,7 +165,9 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
     }
 
     /**
-     * <p>Stop the connection</p>
+     * <p>
+     * Stop the connection
+     * </p>
      * <p>
      * This will disconnect the currently established connection and prevent further reconnects.
      * </p>
@@ -187,16 +190,23 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
     }
 
     /**
-     * <p>set the connection information as a connection string</p>
      * <p>
-     * A connection string can be <code>da:net://192.168.1.200:1202</code> for a
-     * DA connection using the <q>net</q> (aka <q>GMPP</q>) protocol to host
-     * <q>192.168.1.200</q> on port <q>1202</q>.
+     * set the connection information as a connection string
      * </p>
-     * @param connectionString The connection string
+     * <p>
+     * A connection string can be <code>da:net://192.168.1.200:1202</code> for a DA connection using the
+     * <q>net</q> (aka
+     * <q>GMPP</q>) protocol to host
+     * <q>192.168.1.200</q> on port
+     * <q>1202</q>.
+     * </p>
+     * 
+     * @param connectionString
+     *            The connection string
      */
     public void setConnectionString ( final String connectionString )
     {
+        logger.debug ( "Setting connection string: '{}'", connectionString );
         setConnectionInformation ( ConnectionInformation.fromURI ( connectionString ) );
     }
 
@@ -215,6 +225,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
 
     /**
      * Get the item manager of this connection
+     * 
      * @return the item manager
      */
     public ItemManager getItemManager ()
