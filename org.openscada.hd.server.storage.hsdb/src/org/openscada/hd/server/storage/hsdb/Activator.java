@@ -67,15 +67,15 @@ public class Activator implements BundleActivator
                 synchronized ( lock )
                 {
                     final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
-                    final Hashtable<String, String> gescheiteHT = new Hashtable<String, String> ();
-                    gescheiteHT.put ( Constants.SERVICE_DESCRIPTION, StorageService.SERVICE_DESCRIPTION );
-                    gescheiteHT.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
-                    gescheiteHT.put ( ConfigurationAdministrator.FACTORY_ID, StorageService.FACTORY_ID );
+                    final Hashtable<String, String> properties = new Hashtable<String, String> ();
+                    properties.put ( Constants.SERVICE_DESCRIPTION, StorageService.SERVICE_DESCRIPTION );
+                    properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+                    properties.put ( ConfigurationAdministrator.FACTORY_ID, StorageService.FACTORY_ID );
                     logger.info ( bundleName + " starting..." );
                     service = new StorageService ( context );
                     service.start ();
                     logger.info ( bundleName + " service started" );
-                    serviceRegistration = context.registerService ( new String[] { StorageService.class.getName (), SelfManagedConfigurationFactory.class.getName () }, service, gescheiteHT );
+                    serviceRegistration = context.registerService ( new String[] { StorageService.class.getName (), SelfManagedConfigurationFactory.class.getName () }, service, properties );
                     logger.info ( bundleName + " service registered" );
                 }
             }
