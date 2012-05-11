@@ -54,6 +54,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Storage service that manages available storage historical item services.
+ * 
  * @author Ludwig Straub
  */
 public class StorageService implements SelfManagedConfigurationFactory
@@ -129,7 +130,9 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     /**
      * Constructor.
-     * @param bundleContext OSGi bundle context
+     * 
+     * @param bundleContext
+     *            OSGi bundle context
      */
     public StorageService ( final BundleContext bundleContext )
     {
@@ -211,8 +214,11 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     /**
      * This method creates a new service using the passed configuration as input.
-     * @param backEndManager manager that will be used to handle and distribute back end objects
-     * @throws Exception if the service or related back end objects could not be created
+     * 
+     * @param backEndManager
+     *            manager that will be used to handle and distribute back end objects
+     * @throws Exception
+     *             if the service or related back end objects could not be created
      */
     private Configuration createAndAddService ( final BackEndManager<?> backEndManager )
     {
@@ -287,6 +293,7 @@ public class StorageService implements SelfManagedConfigurationFactory
             // start heart beat task
             this.heartBeatTask = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( HEARTBEAT_THREAD_ID ) );
             this.heartBeatTask.scheduleWithFixedDelay ( new Runnable () {
+                @Override
                 public void run ()
                 {
                     performPingOfLife ();
@@ -297,12 +304,14 @@ public class StorageService implements SelfManagedConfigurationFactory
         // get information of existing configurations
         for ( final FileBackEndManager backEndManager : this.fileBackEndManagerFactory.getBackEndManagers () )
         {
+            logger.debug ( "Loading backend: {}", backEndManager );
             createAndAddService ( backEndManager );
         }
 
         // start clean relicts timer
         this.relictCleanerTask = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( RELICT_CLEANER_THREAD_ID ) );
         this.relictCleanerTask.scheduleWithFixedDelay ( new Runnable () {
+            @Override
             public void run ()
             {
                 cleanupRelicts ();
@@ -331,6 +340,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     /**
      * @see org.openscada.ca.SelfManagedConfigurationFactory#addConfigurationListener
      */
+    @Override
     public void addConfigurationListener ( final ConfigurationListener listener )
     {
         if ( !this.configurationListeners.contains ( listener ) )
@@ -353,6 +363,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     /**
      * @see org.openscada.ca.SelfManagedConfigurationFactory#removeConfigurationListener
      */
+    @Override
     public void removeConfigurationListener ( final ConfigurationListener listener )
     {
         this.configurationListeners.remove ( listener );
@@ -360,35 +371,38 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     /**
      * This method fills the passed map with default settings if it is passed empty.
-     * @param properties map to be filled with default settings if map is passed empty
+     * 
+     * @param properties
+     *            map to be filled with default settings if map is passed empty
      */
     private static void fillConfigurationDefaultSettings ( final Map<String, String> properties )
     {
         if ( properties != null && properties.isEmpty () )
         {
-            properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "2d" );
-            properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "90d" );
-            properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 2, "5y" );
-            properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 3, "10y" );
-            properties.put ( ConfigurationImpl.PROPOSED_DATA_AGE_KEY_PREFIX + 4, "15y" );
-            properties.put ( ConfigurationImpl.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1s" );
-            properties.put ( ConfigurationImpl.COMPRESSION_TIMESPAN_KEY_PREFIX + 2, "1m" );
-            properties.put ( ConfigurationImpl.COMPRESSION_TIMESPAN_KEY_PREFIX + 3, "10m" );
-            properties.put ( ConfigurationImpl.COMPRESSION_TIMESPAN_KEY_PREFIX + 4, "1h" );
-            properties.put ( ConfigurationImpl.ACCEPTED_TIME_DELTA_KEY, "90m" );
-            properties.put ( ConfigurationImpl.MAX_COMPRESSION_LEVEL, "4" );
-            properties.put ( ConfigurationImpl.DATA_TYPE_KEY, DataType.convertDataTypeToShortString ( DataType.DOUBLE_VALUE ) );
-            properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 0, "1d" );
-            properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 1, "1d" );
-            properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 2, "100d" );
-            properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 3, "1y" );
-            properties.put ( ConfigurationImpl.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 4, "5y" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.PROPOSED_DATA_AGE_KEY_PREFIX + 0, "2d" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.PROPOSED_DATA_AGE_KEY_PREFIX + 1, "90d" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.PROPOSED_DATA_AGE_KEY_PREFIX + 2, "5y" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.PROPOSED_DATA_AGE_KEY_PREFIX + 3, "10y" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.PROPOSED_DATA_AGE_KEY_PREFIX + 4, "15y" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.COMPRESSION_TIMESPAN_KEY_PREFIX + 1, "1s" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.COMPRESSION_TIMESPAN_KEY_PREFIX + 2, "1m" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.COMPRESSION_TIMESPAN_KEY_PREFIX + 3, "10m" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.COMPRESSION_TIMESPAN_KEY_PREFIX + 4, "1h" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.ACCEPTED_TIME_DELTA_KEY, "90m" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.MAX_COMPRESSION_LEVEL, "4" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.DATA_TYPE_KEY, DataType.convertDataTypeToShortString ( DataType.DOUBLE_VALUE ) );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 0, "1d" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 1, "1d" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 2, "100d" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 3, "1y" );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.MANAGER_FRAGMENT_TIMESPAN_PER_LEVEL_PREFIX + 4, "5y" );
         }
     }
 
     /**
      * @return the future for completion of the purge operation
      */
+    @Override
     public synchronized NotifyFuture<Void> purge ()
     {
         // FIXME: must be implemented asynchronously. But all others are not, so wait for the rest first
@@ -405,6 +419,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     /**
      * @see org.openscada.ca.SelfManagedConfigurationFactory#update
      */
+    @Override
     public NotifyFuture<Configuration> update ( final String configurationId, final Map<String, String> inputProperties, final boolean fullSet )
     {
         // FIXME: must be implemented asynchronously
@@ -416,9 +431,9 @@ public class StorageService implements SelfManagedConfigurationFactory
             properties.putAll ( inputProperties );
         }
         fillConfigurationDefaultSettings ( properties );
-        if ( !properties.containsKey ( ConfigurationImpl.CALCULATION_METHODS ) )
+        if ( !properties.containsKey ( org.openscada.hsdb.configuration.Configuration.CALCULATION_METHODS ) )
         {
-            properties.put ( ConfigurationImpl.CALCULATION_METHODS, CalculationMethod.convertCalculationMethodToShortString ( CalculationMethod.AVERAGE ) + "," + CalculationMethod.convertCalculationMethodToShortString ( CalculationMethod.MINIMUM ) + "," + CalculationMethod.convertCalculationMethodToShortString ( CalculationMethod.MAXIMUM ) );
+            properties.put ( org.openscada.hsdb.configuration.Configuration.CALCULATION_METHODS, CalculationMethod.convertCalculationMethodToShortString ( CalculationMethod.AVERAGE ) + "," + CalculationMethod.convertCalculationMethodToShortString ( CalculationMethod.MINIMUM ) + "," + CalculationMethod.convertCalculationMethodToShortString ( CalculationMethod.MAXIMUM ) );
         }
 
         // prepare temporary configuration from which data will be converted
@@ -451,6 +466,7 @@ public class StorageService implements SelfManagedConfigurationFactory
     /**
      * @see org.openscada.ca.SelfManagedConfigurationFactory#delete
      */
+    @Override
     public synchronized NotifyFuture<Configuration> delete ( final String configurationId )
     {
         // FIXME: must be implemented asynchronously
@@ -480,6 +496,7 @@ public class StorageService implements SelfManagedConfigurationFactory
 
     /**
      * This method cleans old data.
+     * 
      * @see org.openscada.hsdb.relict.RelictCleaner#cleanupRelicts
      */
     public synchronized void cleanupRelicts ()
