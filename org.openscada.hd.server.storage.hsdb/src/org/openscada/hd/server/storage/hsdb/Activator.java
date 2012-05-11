@@ -35,6 +35,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * OSGi activator for package org.openscada.hd.server.storage.hsdb.
+ * 
  * @author Ludwig Straub
  */
 public class Activator implements BundleActivator
@@ -57,16 +58,18 @@ public class Activator implements BundleActivator
     /**
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         final Object lock = lockObject;
         executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
         executor.submit ( new Runnable () {
+            @Override
             public void run ()
             {
                 synchronized ( lock )
                 {
-                    final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
+                    final Object bundleName = context.getBundle ().getSymbolicName ();
                     final Hashtable<String, String> properties = new Hashtable<String, String> ();
                     properties.put ( Constants.SERVICE_DESCRIPTION, StorageService.SERVICE_DESCRIPTION );
                     properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
@@ -85,6 +88,7 @@ public class Activator implements BundleActivator
     /**
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         if ( lockObject != null && executor != null )
