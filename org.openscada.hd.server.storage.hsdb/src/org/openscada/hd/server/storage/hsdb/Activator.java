@@ -69,7 +69,7 @@ public class Activator implements BundleActivator
             {
                 synchronized ( lock )
                 {
-                    final Object bundleName = context.getBundle ().getSymbolicName ();
+                    final String bundleName = context.getBundle ().getSymbolicName ();
                     final Hashtable<String, String> properties = new Hashtable<String, String> ();
                     properties.put ( Constants.SERVICE_DESCRIPTION, StorageService.SERVICE_DESCRIPTION );
                     properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
@@ -96,7 +96,7 @@ public class Activator implements BundleActivator
             final Object lock = lockObject;
             synchronized ( lock )
             {
-                final Object bundleName = context.getBundle ().getHeaders ().get ( Constants.BUNDLE_NAME );
+                final String bundleName = context.getBundle ().getSymbolicName ();
                 logger.info ( bundleName + " stopping..." );
                 if ( serviceRegistration != null )
                 {
