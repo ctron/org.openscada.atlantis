@@ -2,9 +2,11 @@
 <site>
    <feature url="features/org.openscada.atlantis_0.18.0.qualifier.jar" id="org.openscada.atlantis" version="0.18.0.qualifier">
       <category name="org.openscada.atlantis"/>
+      <category name="org.openscada.atlantis.sdk"/>
    </feature>
    <feature url="features/org.openscada.atlantis.sdk_0.18.0.qualifier.jar" id="org.openscada.atlantis.sdk" version="0.18.0.qualifier">
-      <category name="org.openscada.atlantis"/>
+      <category name="org.openscada.atlantis.sdk"/>
    </feature>
    <category-def name="org.openscada.atlantis" label="openSCADA Atlantis"/>
+   <category-def name="org.openscada.atlantis.sdk" label="openSCADA Aurora SDK"/>
 </site>
