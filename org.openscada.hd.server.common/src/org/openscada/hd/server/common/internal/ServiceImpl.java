@@ -28,6 +28,8 @@ import java.util.Set;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.openscada.ae.sec.AuthorizationHelper;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.server.common.ServiceCommon;
@@ -39,7 +41,10 @@ import org.openscada.hd.QueryParameters;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
 import org.openscada.hd.server.common.HistoricalItem;
+import org.openscada.sec.AuthenticationException;
+import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.osgi.AuthenticationHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -67,10 +72,17 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
 
     private final Set<HistoricalItemInformation> itemInformations = new HashSet<HistoricalItemInformation> ();
 
+    private final AuthenticationHelper authenticationManager;
+
+    private final AuthorizationHelper authorizationManager;
+
     public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         this.context = context;
         this.tracker = new ServiceTracker<HistoricalItem, HistoricalItem> ( this.context, HistoricalItem.class, this );
+
+        this.authenticationManager = new AuthenticationHelper ( context );
+        this.authorizationManager = new AuthorizationHelper ( context );
     }
 
     @Override
@@ -127,12 +139,19 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
     {
         logger.info ( "Staring new service" );
         this.tracker.open ();
+
+        this.authenticationManager.open ();
+        this.authorizationManager.open ();
     }
 
     @Override
     public void stop () throws Exception
     {
         logger.info ( "Stopping service" );
+
+        this.authenticationManager.close ();
+        this.authorizationManager.close ();
+
         this.tracker.close ();
     }
 
@@ -203,6 +222,18 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
         {
             p.stop ().log ();
         }
+    }
+
+    @Override
+    protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
+    {
+        return this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
+    }
+
+    @Override
+    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
+    {
+        return this.authorizationManager.authorize ( objectType, objectId, action, userInformation, context, defaultResult );
     }
 
     protected void fireListChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
