@@ -152,6 +152,8 @@
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.component.script"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.da.utils.daemon"/>
+  	
   	<!-- OpenSCADA HD -->
   	
   	<openscada.builder.copyFeature id="org.openscada.hd"/>
