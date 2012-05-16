@@ -1,7 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Import-Package: javax.xml.stream;version="1.0.0";resolution:=optional,
- org.apache.xmlbeans;version="2.4.0",
+Import-Package: org.apache.xmlbeans;version="2.4.0",
  org.apache.xmlbeans.impl.schema;version="2.4.0",
  org.apache.xmlbeans.impl.values;version="2.4.0",
  org.apache.xmlbeans.xml.stream;version="2.4.0",
@@ -57,7 +56,7 @@ Export-Package: org.openscada.da.server.exec;version="0.18.0";
    org.openscada.da.server.common.impl,
    org.openscada.da.server.common.item.factory,
    org.openscada.da.server.exec.command"
-Bundle-Version: 0.18.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Server Exec
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-SymbolicName: org.openscada.da.server.exec
