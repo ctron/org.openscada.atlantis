@@ -41,41 +41,60 @@ public abstract class ServiceCommon implements Service
     /**
      * Authenticate a user
      * <p>
-     * This method simply implements an <em>any</em> authentication which allows
-     * access to session with or without user names. No password is checked.
+     * This method simply implements an <em>any</em> authentication which allows access to session with or without user names. No password is checked.
      * </p>
      * <p>
-     * This method should be overridden if a different authentication scheme
-     * is required.
+     * This method should be overridden if a different authentication scheme is required.
      * </p>
-     * @param properties the session properties used for authentication
-     * @param sessionResultProperties the session properties that will be returned to the client.
-     * The method may add or remove properties as it likes.
-     * @return the user information object or <code>null</code> if it is an
-     * anonymous session
-     * @throws AuthenticationException if the user was rejected 
+     * 
+     * @param properties
+     *            the session properties used for authentication
+     * @param sessionResultProperties
+     *            the session properties that will be returned to the client. The method may add or remove properties as it likes.
+     * @return the user information object or <code>null</code> if it is an anonymous session
+     * @throws AuthenticationException
+     *             if the user was rejected
      */
     protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
     {
         final String username = properties.getProperty ( ConnectionInformation.PROP_USER );
         final String password = properties.getProperty ( ConnectionInformation.PROP_PASSWORD );
-        if ( username != null )
+
+        final String plainPassword = System.getProperty ( "org.openscada.core.server.common.ServiceCommon.password" );
+
+        if ( plainPassword == null || plainPassword.isEmpty () )
         {
-            return new UserInformation ( username, password, new String[0] );
+            if ( username != null )
+            {
+                return new UserInformation ( username, password, new String[0] );
+            }
+            else
+            {
+                return null;
+            }
         }
         else
         {
-            return null;
+            if ( username == null || password == null || !plainPassword.equals ( password ) )
+            {
+                logger.debug ( "Password requested using system properties. But not or wrong provided." );
+                throw new AuthenticationException ( org.openscada.sec.StatusCodes.INVALID_USER_OR_PASSWORD );
+            }
+            else
+            {
+                return new UserInformation ( username, password, new String[0] );
+            }
         }
     }
 
     /**
-     * Wraps the call to {@link #authenticate(Properties)} so that the correct exceptions
-     * are thrown for a {@link #createSession(Properties)} call.
-     * @param properties the user session properties
+     * Wraps the call to {@link #authenticate(Properties)} so that the correct exceptions are thrown for a {@link #createSession(Properties)} call.
+     * 
+     * @param properties
+     *            the user session properties
      * @return the user information returned by {@link #authenticate(Properties)}
-     * @throws UnableToCreateSessionException if a {@link AuthenticationException} was
-     * caught by the call to {@link #authenticate(Properties)}.
+     * @throws UnableToCreateSessionException
+     *             if a {@link AuthenticationException} was caught by the call to {@link #authenticate(Properties)}.
      * @see #authenticate(Properties)
      */
     protected UserInformation createUserInformation ( final Properties properties, final Map<String, String> sessionResultProperties ) throws UnableToCreateSessionException
@@ -114,11 +133,17 @@ public abstract class ServiceCommon implements Service
      * <p>
      * The default implementation grants everything. Override to change according to your needs.
      * </p>
-     * @param objectType the type of the object the operation takes place
-     * @param objectId the id of the object the operation takes place
-     * @param userInformation the user information
-     * @param context the context information
-     * @param defaultResult the default result that should be returned if no one votes, must not be <code>null</code>
+     * 
+     * @param objectType
+     *            the type of the object the operation takes place
+     * @param objectId
+     *            the id of the object the operation takes place
+     * @param userInformation
+     *            the user information
+     * @param context
+     *            the context information
+     * @param defaultResult
+     *            the default result that should be returned if no one votes, must not be <code>null</code>
      * @return the authorization result, never returns <code>null</code>
      */
     protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
