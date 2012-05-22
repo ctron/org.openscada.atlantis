@@ -49,13 +49,13 @@ public class ConnectionInformation implements Cloneable
 
     private static final String URI_ENCODING = "utf-8";
 
-    private String interfaceName = null;
+    private String interfaceName;
 
-    private String driver = null;
+    private String driver;
 
-    private String target = null;
+    private String target;
 
-    private Integer secondaryTarget = null;
+    private Integer secondaryTarget;
 
     private List<String> subtargets = new LinkedList<String> ();
 
@@ -154,8 +154,9 @@ public class ConnectionInformation implements Cloneable
 
     /**
      * Set the user name
-     * @param user the user name to set, can be <code>null</code> in order to reset
-     * the password
+     * 
+     * @param user
+     *            the user name to set, can be <code>null</code> in order to reset the password
      */
     public void setUser ( final String user )
     {
@@ -171,8 +172,9 @@ public class ConnectionInformation implements Cloneable
 
     /**
      * Set the password
-     * @param password the password to set, can be <code>null</code> in order to reset
-     * the password
+     * 
+     * @param password
+     *            the password to set, can be <code>null</code> in order to reset the password
      */
     public void setPassword ( final String password )
     {
@@ -188,6 +190,7 @@ public class ConnectionInformation implements Cloneable
 
     /**
      * Get the password from the properties
+     * 
      * @return the password or <code>null</code> if none was set
      */
     public String getPassword ()
@@ -254,7 +257,10 @@ public class ConnectionInformation implements Cloneable
                 uri += userInfo + "@";
             }
 
-            uri += URLEncoder.encode ( this.target, URI_ENCODING );
+            if ( this.target != null )
+            {
+                uri += URLEncoder.encode ( this.target, URI_ENCODING );
+            }
             if ( this.secondaryTarget != null )
             {
                 uri += ":" + this.secondaryTarget;
@@ -459,12 +465,11 @@ public class ConnectionInformation implements Cloneable
     /**
      * Returns a string with the password masked out if one is set.
      * <p>
-     * The method actually replaces the password with the mask if it is set
-     * and calls {@link #toString()} on the result. The current instance is not altered
-     * in the process.
+     * The method actually replaces the password with the mask if it is set and calls {@link #toString()} on the result. The current instance is not altered in the process.
      * </p>
-     * @param mask The mask to use instead of the password or <code>null</code> if the password
-     * should simply be removed
+     * 
+     * @param mask
+     *            The mask to use instead of the password or <code>null</code> if the password should simply be removed
      * @return the masked string
      * @see #toString()
      */
