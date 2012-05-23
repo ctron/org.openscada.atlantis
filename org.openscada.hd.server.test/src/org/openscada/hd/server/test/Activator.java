@@ -30,13 +30,13 @@ import org.osgi.framework.ServiceRegistration;
 public class Activator implements BundleActivator
 {
 
-    private ServiceRegistration handle;
+    private ServiceRegistration<HistoricalItem> handle;
 
     private TestItemImpl service;
 
     private Test2ItemImpl service2;
 
-    private ServiceRegistration handle2;
+    private ServiceRegistration<HistoricalItem> handle2;
 
     /*
      * (non-Javadoc)
@@ -48,12 +48,12 @@ public class Activator implements BundleActivator
         Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( "itemId", "test1" );
         this.service = new TestItemImpl ();
-        this.handle = context.registerService ( HistoricalItem.class.getName (), this.service, properties );
+        this.handle = context.registerService ( HistoricalItem.class, this.service, properties );
 
         properties = new Hashtable<String, Object> ();
         properties.put ( "itemId", "test2" );
         this.service2 = new Test2ItemImpl ();
-        this.handle2 = context.registerService ( HistoricalItem.class.getName (), this.service2, properties );
+        this.handle2 = context.registerService ( HistoricalItem.class, this.service2, properties );
     }
 
     /*
