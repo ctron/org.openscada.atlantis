@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA DA Master Common Implementations
 Bundle-SymbolicName: org.openscada.da.master.common
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.openscada.da.master.common.Activator
+Bundle-Activator: org.openscada.da.master.common.internal.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae;version="0.15.0",
@@ -27,3 +27,4 @@ Import-Package: org.openscada.ae;version="0.15.0",
  org.osgi.framework;version="1.6.0",
  org.osgi.util.tracker;version="1.5.0",
  org.slf4j;version="1.5.0"
+Export-Package: org.openscada.da.master.common;version="1.0.0"

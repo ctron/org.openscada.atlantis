@@ -1,0 +1,9 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: Value Mapper
+Bundle-SymbolicName: org.openscada.da.mapper
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.openscada.core;version="1.0.0"
+Export-Package: org.openscada.da.mapper;version="1.0.0"
