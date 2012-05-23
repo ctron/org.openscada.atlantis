@@ -19,13 +19,7 @@
 
 package org.openscada.da.mapper;
 
-import org.openscada.core.Variant;
-
-public interface ValueMapper
+public interface ValueMapperListener
 {
-    public Variant mapValue ( Variant value );
-
-    public void addListener ( ValueMapperListener listener );
-
-    public void removeListener ( ValueMapperListener listener );
+    public void stateChanged ();
 }

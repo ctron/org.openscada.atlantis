@@ -155,6 +155,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.utils.daemon"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.mapper"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.mapper.osgi"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.master.mapper"/>
   	
   	<!-- OpenSCADA HD -->

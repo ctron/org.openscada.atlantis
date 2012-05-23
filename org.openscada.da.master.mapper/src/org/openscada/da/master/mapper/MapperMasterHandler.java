@@ -8,12 +8,13 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.mapper.ValueMapper;
+import org.openscada.da.mapper.ValueMapperListener;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
 
-public class MapperMasterHandler extends AbstractMasterHandlerImpl
+public class MapperMasterHandler extends AbstractMasterHandlerImpl implements ValueMapperListener
 {
 
     private String sourceAttributeName;
@@ -62,7 +63,15 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl
 
     protected void setMapper ( final ValueMapper mapper )
     {
+        if ( this.mapper != null )
+        {
+            this.mapper.removeListener ( this );
+        }
         this.mapper = mapper;
+        if ( this.mapper != null )
+        {
+            this.mapper.addListener ( this );
+        }
         reprocess ();
     }
 
@@ -101,6 +110,12 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl
     protected ValueMapper getMapper ()
     {
         return this.mapper;
+    }
+
+    @Override
+    public void stateChanged ()
+    {
+        reprocess ();
     }
 
 }
