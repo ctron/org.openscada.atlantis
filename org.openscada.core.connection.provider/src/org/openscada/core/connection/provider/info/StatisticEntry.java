@@ -17,11 +17,13 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.client;
+package org.openscada.core.connection.provider.info;
 
-public interface ItemManager
+public interface StatisticEntry
 {
-    public void addItemUpdateListener ( final String itemId, final ItemUpdateListener listener );
+    public Object getKey ();
 
-    public void removeItemUpdateListener ( final String itemId, final ItemUpdateListener listener );
+    public String getLabel ();
+
+    public StatisticValue getValue ();
 }

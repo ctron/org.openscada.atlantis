@@ -27,6 +27,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.ItemManagerImpl;
 
 /**
  * Sample showing how to subscribe for events using the {@link DataItem} class.
@@ -64,7 +65,7 @@ public class Sample5 extends SampleBase implements Observer
     public void connect () throws Exception
     {
         super.connect ();
-        this.itemManager = new ItemManager ( this.connection );
+        this.itemManager = new ItemManagerImpl ( this.connection );
     }
 
     public void subscribe ()

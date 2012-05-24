@@ -106,9 +106,9 @@ public class ItemSyncController implements ItemUpdateListener
 
     private final Map<ItemUpdateListener, ListenerInfo> listeners = new HashMap<ItemUpdateListener, ListenerInfo> ( 0 );
 
-    private final ItemManager itemManager;
+    private final ItemManagerImpl itemManager;
 
-    public ItemSyncController ( final org.openscada.da.client.Connection connection, final ItemManager itemManager, final String itemId )
+    public ItemSyncController ( final org.openscada.da.client.Connection connection, final ItemManagerImpl itemManager, final String itemId )
     {
         this.connection = connection;
         this.itemManager = itemManager;

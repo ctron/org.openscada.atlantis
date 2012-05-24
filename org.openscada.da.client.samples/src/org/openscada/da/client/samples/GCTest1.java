@@ -24,6 +24,7 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.ItemManagerImpl;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.net.Connection;
 
@@ -43,7 +44,7 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
     public void connect () throws Exception
     {
         super.connect ();
-        this.itemManager = new ItemManager ( this.connection );
+        this.itemManager = new ItemManagerImpl ( this.connection );
     }
 
     public void subscribe ()

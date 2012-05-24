@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,18 +19,25 @@
 
 package org.openscada.core.connection.provider;
 
+import java.util.Collection;
+
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.core.client.Connection;
+import org.openscada.core.connection.provider.info.ConnectionInformationProvider;
+import org.openscada.core.connection.provider.info.StatisticEntry;
+import org.openscada.core.connection.provider.info.StatisticsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractConnectionService implements org.openscada.core.connection.provider.ConnectionService
+public abstract class AbstractConnectionService implements org.openscada.core.connection.provider.ConnectionService, ConnectionInformationProvider
 {
     private static final Logger logger = LoggerFactory.getLogger ( AbstractConnectionService.class );
 
     private final Connection connection;
 
     private final AutoReconnectController controller;
+
+    protected final StatisticsImpl statistics = new StatisticsImpl ();
 
     public AbstractConnectionService ( final Connection connection, final Integer autoReconnectController )
     {
@@ -95,6 +102,18 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
         {
             this.connection.disconnect ();
         }
+    }
+
+    @Override
+    public String getLabel ()
+    {
+        return this.connection.getConnectionInformation ().toMaskedString ();
+    }
+
+    @Override
+    public Collection<StatisticEntry> getStatistics ()
+    {
+        return this.statistics.getEntries ();
     }
 
 }

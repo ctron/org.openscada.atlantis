@@ -17,11 +17,46 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.client;
+package org.openscada.core.connection.provider.info;
 
-public interface ItemManager
+import org.openscada.utils.lang.Immutable;
+
+@Immutable
+public class StatisticValue
 {
-    public void addItemUpdateListener ( final String itemId, final ItemUpdateListener listener );
+    private final Number minimum;
 
-    public void removeItemUpdateListener ( final String itemId, final ItemUpdateListener listener );
+    private final Number maximum;
+
+    private final Number current;
+
+    public StatisticValue ( final Number minimum, final Number maximum, final Number current )
+    {
+        super ();
+        this.minimum = minimum;
+        this.maximum = maximum;
+        this.current = current;
+    }
+
+    public Number getMinimum ()
+    {
+        return this.minimum;
+    }
+
+    public Number getMaximum ()
+    {
+        return this.maximum;
+    }
+
+    public Number getCurrent ()
+    {
+        return this.current;
+    }
+
+    @Override
+    public String toString ()
+    {
+        return String.format ( "%s [%s-%s]", this.current, this.minimum, this.maximum );
+    }
+
 }

@@ -26,6 +26,7 @@ import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.ItemManagerImpl;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
@@ -72,7 +73,7 @@ public class ProxySubConnection implements ConnectionStateListener
     public ProxySubConnection ( final Connection connection, final ProxyPrefixName parentName, final ProxySubConnectionId id, final ProxyPrefixName prefix, final Hive hive, final FolderCommon connectionFolder )
     {
         this.connection = connection;
-        this.itemManager = new ItemManager ( this.connection );
+        this.itemManager = new ItemManagerImpl ( this.connection );
         this.folderManager = new FolderManager ( this.connection );
         this.prefix = prefix;
         this.id = id;
