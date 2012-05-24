@@ -19,10 +19,13 @@
 
 package org.openscada.core.server.net;
 
+import java.util.Collection;
+
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;
@@ -36,6 +39,12 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
 
     private final static Logger logger = LoggerFactory.getLogger ( AbstractServerConnectionHandler.class );
 
+    private static final Object STATS_PINGS_SENT = new Object ();
+
+    private static final Object STATS_SESSION_BYTES_READ = new Object ();
+
+    private static final Object STATS_SESSION_BYTES_WRITTEN = new Object ();
+
     private static final int DEFAULT_TIMEOUT = 10000;
 
     protected IoSession ioSession;
@@ -47,6 +56,8 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
     protected final ConnectionInformation connectionInformation;
 
     private final StatisticsImpl statistics;
+
+    private ManagedConnection mxBean;
 
     public AbstractServerConnectionHandler ( final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
@@ -64,6 +75,24 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         this.ioSession.getConfig ().setReaderIdleTime ( getPingPeriod () / 1000 );
 
         this.messenger.connected ( new IoSessionSender ( this.ioSession, this.statistics ) );
+
+        this.mxBean = ManagedConnection.register ( new ManagedConnection () {
+            @Override
+            protected Collection<StatisticEntry> getEntries ()
+            {
+                return AbstractServerConnectionHandler.this.statistics.getEntries ();
+            }
+
+            @Override
+            public void close ()
+            {
+                AbstractServerConnectionHandler.this.ioSession.close ( false );
+            }
+        }, ioSession.getRemoteAddress () );
+
+        this.statistics.setLabel ( STATS_PINGS_SENT, "Pings sent" );
+        this.statistics.setLabel ( STATS_SESSION_BYTES_READ, "Bytes read in session" );
+        this.statistics.setLabel ( STATS_SESSION_BYTES_WRITTEN, "Bytes written in session" );
     }
 
     @Override
@@ -77,6 +106,7 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
     {
         if ( message instanceof Message )
         {
+            this.statistics.setCurrentValue ( STATS_SESSION_BYTES_READ, this.ioSession.getReadBytes () );
             this.messenger.messageReceived ( (Message)message );
         }
     }
@@ -84,6 +114,8 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
     @Override
     public void messageSent ( final Object message ) throws Exception
     {
+        this.statistics.setCurrentValue ( STATS_SESSION_BYTES_WRITTEN, this.ioSession.getWrittenBytes () );
+        this.statistics.setCurrentValue ( IoSessionSender.STATS_QUEUED_BYTES, this.ioSession.getScheduledWriteBytes () );
     }
 
     @Override
@@ -94,6 +126,12 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
 
     protected void cleanUp ()
     {
+        if ( this.mxBean != null )
+        {
+            this.mxBean.dispose ();
+            this.mxBean = null;
+        }
+
         if ( this.ioSession != null )
         {
             this.messenger.disconnected ();
@@ -111,6 +149,7 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
     public void sessionIdle ( final IdleStatus status ) throws Exception
     {
         this.pingService.sendPing ();
+        this.statistics.changeCurrentValue ( STATS_PINGS_SENT, 1 );
     }
 
     @Override
