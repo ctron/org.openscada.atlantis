@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -33,6 +33,8 @@ public class PingService
 
     private final Messenger messenger;
 
+    private volatile boolean started;
+
     public PingService ( final Messenger messenger )
     {
         this.messenger = messenger;
@@ -43,8 +45,25 @@ public class PingService
 
     public void sendPing ()
     {
-        logger.debug ( "Sending ping" );
-        this.messenger.sendMessage ( MessageCreator.createPing () );
+        if ( this.started )
+        {
+            logger.debug ( "Sending ping" );
+            this.messenger.sendMessage ( MessageCreator.createPing () );
+        }
+        else
+        {
+            logger.info ( "Skipping ping. Not started!" );
+        }
+    }
+
+    public void start ()
+    {
+        this.started = true;
+    }
+
+    public void stop ()
+    {
+        this.started = false;
     }
 
 }
