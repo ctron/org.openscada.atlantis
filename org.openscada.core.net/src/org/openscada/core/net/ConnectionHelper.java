@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -88,7 +88,22 @@ public class ConnectionHelper
         final String compress = connectionInformation.getProperties ().get ( "compress" );
         if ( compress != null )
         {
-            filterChainBuilder.addLast ( "compress", new CompressionFilter () );
+            int level = CompressionFilter.COMPRESSION_DEFAULT;
+            try
+            {
+                level = Integer.parseInt ( compress );
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to parse 'compress' property", e );
+            }
+            if ( level < CompressionFilter.COMPRESSION_NONE || level > CompressionFilter.COMPRESSION_MAX )
+            {
+                logger.warn ( "Compression ({}) outside of valid range. Setting to default", level );
+                level = CompressionFilter.COMPRESSION_DEFAULT;
+            }
+
+            filterChainBuilder.addLast ( "compress", new CompressionFilter ( level ) );
         }
 
         // set up ssl
