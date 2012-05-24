@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,6 +21,8 @@ package org.openscada.net.mina;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.net.base.data.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IoSessionSender implements MessageSender
 {
@@ -31,6 +33,8 @@ public class IoSessionSender implements MessageSender
     private long sequence = INIT_SEQUENCE;
 
     private final IoSession session;
+
+    private final static Logger logger = LoggerFactory.getLogger ( IoSessionSender.class );
 
     public IoSessionSender ( final IoSession session )
     {
@@ -49,6 +53,8 @@ public class IoSessionSender implements MessageSender
         }
 
         this.session.write ( message );
+
+        logger.trace ( "Scheduled write bytes: {}", this.session.getScheduledWriteBytes () );
 
         return true;
     }
