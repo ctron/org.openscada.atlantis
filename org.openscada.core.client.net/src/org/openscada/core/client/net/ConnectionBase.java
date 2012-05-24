@@ -93,6 +93,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         this.messenger = new Messenger ( getMessageTimeout () );
 
         this.pingService = new PingService ( this.messenger );
+        this.pingService.start ();
 
         this.connector = createConnector ();
     }
@@ -108,111 +109,120 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         switch ( this.connectionState )
         {
-        case CLOSED:
-            handleSwitchClosed ( state );
-            break;
-        case CONNECTING:
-            handleSwitchConnecting ( state, error );
-            break;
-        case CONNECTED:
-            handleSwitchConnected ( state, error, properties );
-            break;
-        case BOUND:
-            handleSwitchBound ( state, error );
-            break;
-        case CLOSING:
-            handleSwitchClosing ( state, error );
-            break;
-        case LOOKUP:
-            handleSwitchLookup ( state, error );
-            break;
+            case CLOSED:
+                handleSwitchClosed ( state );
+                break;
+            case CONNECTING:
+                handleSwitchConnecting ( state, error );
+                break;
+            case CONNECTED:
+                handleSwitchConnected ( state, error, properties );
+                break;
+            case BOUND:
+                handleSwitchBound ( state, error );
+                break;
+            case CLOSING:
+                handleSwitchClosing ( state, error );
+                break;
+            case LOOKUP:
+                handleSwitchLookup ( state, error );
+                break;
         }
     }
 
     /**
      * Handle when we are in state LOOKUP
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
 
     private void handleSwitchLookup ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case CONNECTING:
-            performConnect ();
-            break;
-        case CLOSED:
-            requestClose ( error );
-            break;
-        case CLOSING:
-            requestClose ( error );
-            break;
+            case CONNECTING:
+                performConnect ();
+                break;
+            case CLOSED:
+                requestClose ( error );
+                break;
+            case CLOSING:
+                requestClose ( error );
+                break;
         }
     }
 
     /**
      * Handle when we are in state CLOSING
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
 
     private void handleSwitchClosing ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case CLOSED:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
+            case CLOSED:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
         }
     }
 
     /**
      * Handle when we are in state BOUND
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
 
     private void handleSwitchBound ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case CLOSING:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
-        case CLOSED:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
+            case CLOSING:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
+            case CLOSED:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
         }
     }
 
     /**
      * Handle when we are in state CONNECTED
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
 
     private void handleSwitchConnected ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
     {
         switch ( state )
         {
-        case CLOSING:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
-        case CLOSED:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
-        case BOUND:
-            this.properties = properties;
-            setState ( ConnectionState.BOUND, error );
-            onConnectionBound ();
-            break;
+            case CLOSING:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
+            case CLOSED:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
+            case BOUND:
+                this.properties = properties;
+                setState ( ConnectionState.BOUND, error );
+                onConnectionBound ();
+                break;
         }
     }
 
     /**
      * We want to be closed ... maybe we already are
+     * 
      * @param error
      */
     private void requestClose ( final Throwable error )
@@ -239,44 +249,48 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * Handle when we are in state CONNECTING
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
     private void handleSwitchConnecting ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case CLOSING:
-            requestClose ( error );
-            break;
-        case CONNECTED:
-            setState ( ConnectionState.CONNECTED, null );
-            onConnectionEstablished ();
-            break;
-        case CLOSED:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
+            case CLOSING:
+                requestClose ( error );
+                break;
+            case CONNECTED:
+                setState ( ConnectionState.CONNECTED, null );
+                onConnectionEstablished ();
+                break;
+            case CLOSED:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
         }
     }
 
     /**
      * Handle when we are in state CLOSED
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
     private void handleSwitchClosed ( final ConnectionState state )
     {
         switch ( state )
         {
-        case CONNECTING:
-            if ( this.remoteAddress != null )
-            {
-                performConnect ();
-            }
-            else
-            {
-                performLookup ();
-            }
-            break;
+            case CONNECTING:
+                if ( this.remoteAddress != null )
+                {
+                    performConnect ();
+                }
+                else
+                {
+                    performLookup ();
+                }
+                break;
         }
     }
 
@@ -291,7 +305,9 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * request a disconnect
-     * @param error optionally the error that caused the request to close
+     * 
+     * @param error
+     *            optionally the error that caused the request to close
      */
     protected void disconnect ( final Throwable error )
     {
@@ -326,8 +342,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * set new state internally
+     * 
      * @param connectionState
-     * @param error additional error information or <code>null</code> if we don't have an error.
+     * @param error
+     *            additional error information or <code>null</code> if we don't have an error.
      */
     private void setState ( final ConnectionState connectionState, final Throwable error )
     {
@@ -348,8 +366,11 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * Notify state change listeners
-     * @param connectionState new state
-     * @param error additional error information or <code>null</code> if we don't have an error. 
+     * 
+     * @param connectionState
+     *            new state
+     * @param error
+     *            additional error information or <code>null</code> if we don't have an error.
      */
     private void notifyStateChange ( final ConnectionState connectionState, final Throwable error )
     {
@@ -481,8 +502,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * called when a connection attempt failed
-     * @param future 
-     * @param e the error
+     * 
+     * @param future
+     * @param e
+     *            the error
      */
     protected synchronized void connectFailed ( final ConnectFuture future, final Throwable e )
     {
@@ -539,6 +562,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * Set the {@link ConnectionState#BOUND} including the session properties
+     * 
      * @param properties
      */
     public void setBound ( final Properties properties )
@@ -548,7 +572,9 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * Convert properties to map
-     * @param properties the properties to convert
+     * 
+     * @param properties
+     *            the properties to convert
      * @return the converted map
      */
     private Map<String, String> convertProperties ( final Properties properties )
@@ -671,6 +697,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * get the timeout used for connecting to the remote host
+     * 
      * @return the timeout in milliseconds
      */
     public int getConnectTimeout ()

@@ -54,6 +54,7 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         this.messenger = new Messenger ( getMessageTimeout () );
 
         this.pingService = new PingService ( this.messenger );
+        this.pingService.start ();
 
         this.ioSession.getConfig ().setReaderIdleTime ( getPingPeriod () / 1000 );
 
