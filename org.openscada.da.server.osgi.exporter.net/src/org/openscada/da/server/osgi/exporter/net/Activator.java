@@ -44,13 +44,34 @@ public class Activator implements BundleActivator
 
     private BundleContext context;
 
-    private final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( System.getProperty ( "openscada.da.net.exportUri", "da:net://0.0.0.0:1202" ) );
+    private ConnectionInformation connectionInformation;
 
     private Exporter exporter;
 
     private Hive currentService;
 
     private ServiceRegistration<ExporterInformation> exporterHandle;
+
+    public Activator ()
+    {
+        try
+        {
+            final String uri = System.getProperty ( "openscada.da.net.exportUri", "da:net://0.0.0.0:1202" );
+            if ( uri == null || uri.isEmpty () )
+            {
+                this.connectionInformation = null;
+            }
+            else
+            {
+                this.connectionInformation = ConnectionInformation.fromURI ( uri );
+            }
+        }
+        catch ( final Exception e )
+        {
+            logger.warn ( "Failed to parse export uri", e );
+            this.connectionInformation = null;
+        }
+    }
 
     /*
      * (non-Javadoc)
@@ -68,12 +89,12 @@ public class Activator implements BundleActivator
             {
                 switch ( event.getType () )
                 {
-                case ServiceEvent.REGISTERED:
-                    Activator.this.startExporter ( event.getServiceReference () );
-                    break;
-                case ServiceEvent.UNREGISTERING:
-                    Activator.this.stopExporter ( event.getServiceReference () );
-                    break;
+                    case ServiceEvent.REGISTERED:
+                        Activator.this.startExporter ( event.getServiceReference () );
+                        break;
+                    case ServiceEvent.UNREGISTERING:
+                        Activator.this.stopExporter ( event.getServiceReference () );
+                        break;
                 }
             }
         }, "(" + Constants.OBJECTCLASS + "=" + Hive.class.getName () + ")" );
@@ -115,7 +136,7 @@ public class Activator implements BundleActivator
 
     protected void startExporter ( final ServiceReference<?> serviceReference )
     {
-        if ( this.currentServiceReference != null || serviceReference == null )
+        if ( this.connectionInformation == null || this.currentServiceReference != null || serviceReference == null )
         {
             return;
         }
