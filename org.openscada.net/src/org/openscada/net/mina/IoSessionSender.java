@@ -20,6 +20,7 @@
 package org.openscada.net.mina;
 
 import org.apache.mina.core.session.IoSession;
+import org.openscada.core.info.StatisticsImpl;
 import org.openscada.net.base.data.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +35,17 @@ public class IoSessionSender implements MessageSender
 
     private final IoSession session;
 
+    public static Object STATS_QUEUED_BYTES = new Object ();
+
+    private final StatisticsImpl statistics;
+
     private final static Logger logger = LoggerFactory.getLogger ( IoSessionSender.class );
 
-    public IoSessionSender ( final IoSession session )
+    public IoSessionSender ( final IoSession session, final StatisticsImpl statistics )
     {
         this.session = session;
+        this.statistics = statistics;
+        statistics.setLabel ( STATS_QUEUED_BYTES, "Scheduled write bytes" );
     }
 
     @Override
@@ -55,6 +62,7 @@ public class IoSessionSender implements MessageSender
         this.session.write ( message );
 
         logger.trace ( "Scheduled write bytes: {}", this.session.getScheduledWriteBytes () );
+        this.statistics.setCurrentValue ( STATS_QUEUED_BYTES, this.session.getScheduledWriteBytes () );
 
         return true;
     }

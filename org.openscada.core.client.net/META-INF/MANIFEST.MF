@@ -8,6 +8,7 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
  org.openscada.core;version="0.14.0",
  org.openscada.core.client;version="0.14.0",
  org.openscada.core.client.net;version="0.14.0",
+ org.openscada.core.info;version="1.0.0",
  org.openscada.core.net;version="0.14.0",
  org.openscada.net.base;version="0.14.0",
  org.openscada.net.base.data;version="0.14.0",
@@ -23,7 +24,7 @@ Export-Package: org.openscada.core.client.net;version="0.17.0";
    org.apache.mina.core.service,
    org.openscada.core,
    org.openscada.net.mina"
-Bundle-Version: 0.17.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA Core Client NET
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2

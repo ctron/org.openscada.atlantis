@@ -23,6 +23,7 @@ import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.info.StatisticsImpl;
 import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.IoSessionSender;
@@ -45,20 +46,24 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
 
     protected final ConnectionInformation connectionInformation;
 
+    private final StatisticsImpl statistics;
+
     public AbstractServerConnectionHandler ( final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
         super ();
         this.ioSession = ioSession;
         this.connectionInformation = connectionInformation;
 
-        this.messenger = new Messenger ( getMessageTimeout () );
+        this.statistics = new StatisticsImpl ();
+
+        this.messenger = new Messenger ( getMessageTimeout (), this.statistics );
 
         this.pingService = new PingService ( this.messenger );
         this.pingService.start ();
 
         this.ioSession.getConfig ().setReaderIdleTime ( getPingPeriod () / 1000 );
 
-        this.messenger.connected ( new IoSessionSender ( this.ioSession ) );
+        this.messenger.connected ( new IoSessionSender ( this.ioSession, this.statistics ) );
     }
 
     @Override

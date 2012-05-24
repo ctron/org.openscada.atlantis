@@ -24,7 +24,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.core.connection.provider.info.ConnectionInformationProvider;
-import org.openscada.core.connection.provider.info.StatisticsImpl;
+import org.openscada.core.info.StatisticsImpl;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.client.ItemManager;

@@ -19,13 +19,15 @@
 
 package org.openscada.core.connection.provider;
 
+import java.util.ArrayList;
 import java.util.Collection;
 
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.core.client.Connection;
 import org.openscada.core.connection.provider.info.ConnectionInformationProvider;
-import org.openscada.core.connection.provider.info.StatisticEntry;
-import org.openscada.core.connection.provider.info.StatisticsImpl;
+import org.openscada.core.info.StatisticEntry;
+import org.openscada.core.info.StatisticsImpl;
+import org.openscada.core.info.StatisticsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +115,17 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
     @Override
     public Collection<StatisticEntry> getStatistics ()
     {
-        return this.statistics.getEntries ();
+        final Collection<StatisticEntry> result = new ArrayList<StatisticEntry> ();
+        result.addAll ( this.statistics.getEntries () );
+        if ( this.connection instanceof StatisticsProvider )
+        {
+            result.addAll ( ( (StatisticsProvider)this.connection ).getStatistics () );
+        }
+        if ( this.controller instanceof StatisticsProvider )
+        {
+            result.addAll ( ( (StatisticsProvider)this.controller ).getStatistics () );
+        }
+        return result;
     }
 
 }

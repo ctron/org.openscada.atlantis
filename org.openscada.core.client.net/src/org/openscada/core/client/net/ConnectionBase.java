@@ -20,6 +20,7 @@
 package org.openscada.core.client.net;
 
 import java.net.SocketAddress;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +44,9 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.core.info.StatisticEntry;
+import org.openscada.core.info.StatisticsImpl;
+import org.openscada.core.info.StatisticsProvider;
 import org.openscada.core.net.ConnectionHelper;
 import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;
@@ -53,10 +57,16 @@ import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ConnectionBase implements Connection, IoHandler
+public abstract class ConnectionBase implements Connection, IoHandler, StatisticsProvider
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionBase.class );
+
+    private static final Object STATS_PINGS_SENT = new Object ();
+
+    private static final Object STATS_SESSION_BYTES_READ = new Object ();
+
+    private static final Object STATS_SESSION_BYTES_WRITTEN = new Object ();
 
     private final Set<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArraySet<ConnectionStateListener> ();
 
@@ -82,6 +92,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private volatile Map<String, String> properties;
 
+    private final StatisticsImpl statistics = new StatisticsImpl ();
+
     public ConnectionBase ( final ConnectionInformation connectionInformation )
     {
         super ();
@@ -90,12 +102,16 @@ public abstract class ConnectionBase implements Connection, IoHandler
         // the lookup executor has at max one thread and kills this if idle for one minute
         this.lookupExecutor = new ThreadPoolExecutor ( 0, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable> (), new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation.toMaskedString () ) );
 
-        this.messenger = new Messenger ( getMessageTimeout () );
+        this.messenger = new Messenger ( getMessageTimeout (), this.statistics );
 
         this.pingService = new PingService ( this.messenger );
         this.pingService.start ();
 
         this.connector = createConnector ();
+
+        this.statistics.setLabel ( STATS_PINGS_SENT, "Pings sent" );
+        this.statistics.setLabel ( STATS_SESSION_BYTES_READ, "Bytes read in session" );
+        this.statistics.setLabel ( STATS_SESSION_BYTES_WRITTEN, "Bytes written in session" );
     }
 
     protected synchronized void switchState ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
@@ -614,6 +630,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         if ( session == this.session )
         {
+            this.statistics.setCurrentValue ( STATS_SESSION_BYTES_READ, session.getReadBytes () );
             // only accept current session stuff
             if ( message instanceof Message )
             {
@@ -625,6 +642,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
     @Override
     public void messageSent ( final IoSession session, final Object message ) throws Exception
     {
+        this.statistics.setCurrentValue ( STATS_SESSION_BYTES_WRITTEN, session.getWrittenBytes () );
+        this.statistics.setCurrentValue ( IoSessionSender.STATS_QUEUED_BYTES, session.getScheduledWriteBytes () );
     }
 
     @Override
@@ -680,6 +699,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
 
         this.pingService.sendPing ();
+        this.statistics.changeCurrentValue ( STATS_PINGS_SENT, 1 );
     }
 
     @Override
@@ -689,7 +709,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         if ( session == this.session )
         {
-            this.messenger.connected ( new IoSessionSender ( session ) );
+            this.messenger.connected ( new IoSessionSender ( session, this.statistics ) );
 
             switchState ( ConnectionState.CONNECTED, null, null );
         }
@@ -785,6 +805,12 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
             return Collections.emptyMap ();
         }
+    }
+
+    @Override
+    public Collection<StatisticEntry> getStatistics ()
+    {
+        return this.statistics.getEntries ();
     }
 
 }
