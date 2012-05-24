@@ -19,10 +19,13 @@
 
 package org.openscada.core.server.net;
 
+import java.util.Collection;
+
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;
@@ -48,6 +51,8 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
 
     private final StatisticsImpl statistics;
 
+    private ManagedConnection mxBean;
+
     public AbstractServerConnectionHandler ( final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
         super ();
@@ -64,6 +69,20 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         this.ioSession.getConfig ().setReaderIdleTime ( getPingPeriod () / 1000 );
 
         this.messenger.connected ( new IoSessionSender ( this.ioSession, this.statistics ) );
+
+        this.mxBean = ManagedConnection.register ( new ManagedConnection () {
+            @Override
+            protected Collection<StatisticEntry> getEntries ()
+            {
+                return AbstractServerConnectionHandler.this.statistics.getEntries ();
+            }
+
+            @Override
+            public void close ()
+            {
+                AbstractServerConnectionHandler.this.ioSession.close ( false );
+            }
+        }, ioSession.getRemoteAddress () );
     }
 
     @Override
@@ -94,6 +113,12 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
 
     protected void cleanUp ()
     {
+        if ( this.mxBean != null )
+        {
+            this.mxBean.dispose ();
+            this.mxBean = null;
+        }
+
         if ( this.ioSession != null )
         {
             this.messenger.disconnected ();
