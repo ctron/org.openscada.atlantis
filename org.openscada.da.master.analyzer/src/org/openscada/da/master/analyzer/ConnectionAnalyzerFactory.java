@@ -21,7 +21,7 @@ package org.openscada.da.master.analyzer;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.core.connection.provider.ConnectionService;
 import org.osgi.framework.BundleContext;
@@ -41,9 +41,9 @@ public class ConnectionAnalyzerFactory
 
     private final BundleContext context;
 
-    private final Executor executor;
+    private final ScheduledExecutorService executor;
 
-    public ConnectionAnalyzerFactory ( final Executor executor, final BundleContext context )
+    public ConnectionAnalyzerFactory ( final ScheduledExecutorService executor, final BundleContext context )
     {
         this.executor = executor;
         this.context = context;
