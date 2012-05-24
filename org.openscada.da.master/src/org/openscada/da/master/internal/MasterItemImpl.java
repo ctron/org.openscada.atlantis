@@ -263,14 +263,14 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
             @Override
             public void run ()
             {
-                doReprocess ();
+                MasterItemImpl.this.doReprocess ();
             }
         } );
     }
 
     protected synchronized void doReprocess ()
     {
-        process ( this.sourceValue );
+        handleReprocess ( this.sourceValue );
     }
 
     protected void process ( final DataItemValue value )
@@ -471,8 +471,11 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     /**
      * Merge the two result sets
-     * @param firstResult first set
-     * @param secondResult second set
+     * 
+     * @param firstResult
+     *            first set
+     * @param secondResult
+     *            second set
      * @return the merged result
      */
     protected WriteAttributeResults mergeResults ( final WriteAttributeResults firstResult, final WriteAttributeResults secondResult )
