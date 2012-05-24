@@ -76,8 +76,11 @@ public class ConnectionHelper
 
     /**
      * Setup the filter chain of a NET/GMPP connection
-     * @param connectionInformation the connection information to use
-     * @param filterChainBuilder the chain builder
+     * 
+     * @param connectionInformation
+     *            the connection information to use
+     * @param filterChainBuilder
+     *            the chain builder
      */
     public static void setupFilterChain ( final ConnectionInformation connectionInformation, final DefaultIoFilterChainBuilder filterChainBuilder, final boolean isClient )
     {
@@ -108,6 +111,7 @@ public class ConnectionHelper
 
     /**
      * FIXME: still need to implement correctly
+     * 
      * @param connectionInformation
      * @param filterChainBuilder
      * @param isClient
