@@ -58,11 +58,13 @@ public class PingService
 
     public void start ()
     {
+        logger.info ( "Starting ping service" );
         this.started = true;
     }
 
     public void stop ()
     {
+        logger.info ( "Stopping ping service" );
         this.started = false;
     }
 
