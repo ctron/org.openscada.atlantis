@@ -105,7 +105,6 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
         this.messenger = new Messenger ( getMessageTimeout (), this.statistics );
 
         this.pingService = new PingService ( this.messenger );
-        this.pingService.start ();
 
         this.connector = createConnector ();
 
@@ -568,6 +567,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
 
     protected void onConnectionClosed ()
     {
+        this.pingService.stop ();
         this.properties = null;
     }
 
@@ -583,6 +583,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
      */
     public void setBound ( final Properties properties )
     {
+        this.pingService.start ();
         switchState ( ConnectionState.BOUND, null, convertProperties ( properties ) );
     }
 
