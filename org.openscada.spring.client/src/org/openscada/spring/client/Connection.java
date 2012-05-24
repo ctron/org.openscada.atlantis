@@ -29,6 +29,7 @@ import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.NoConnectionException;
+import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemManagerImpl;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
@@ -78,7 +79,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
     /**
      * The item manager handling all item subscriptions
      */
-    private Object itemManager;
+    private ItemManager itemManager;
 
     /**
      * A flag that indicates if the connection should be kept open using a {@link AutoReconnectController}.
@@ -228,7 +229,7 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
      * 
      * @return the item manager
      */
-    public Object getItemManager ()
+    public ItemManager getItemManager ()
     {
         return this.itemManager;
     }
