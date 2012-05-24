@@ -124,7 +124,7 @@ public class Messenger implements MessageListener
         this.statistics = statistics;
 
         statistics.setLabel ( STATS_RECEIVED_MSGS, "Received messages" );
-        statistics.setLabel ( STATS_SENT_MSGS, "Received messages" );
+        statistics.setLabel ( STATS_SENT_MSGS, "Sent messages" );
     }
 
     public long getSessionTimeout ()
