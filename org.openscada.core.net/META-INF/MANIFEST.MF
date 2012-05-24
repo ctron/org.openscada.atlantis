@@ -11,20 +11,13 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0",
  org.openscada.net.utils;version="0.15.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.core.net;version="0.16.0";
-  uses:="javax.net.ssl,
-   org.apache.mina.filter.logging,
-   org.openscada.core,
-   org.apache.log4j,
-   org.apache.mina.filter.compression,
+Export-Package: org.openscada.core.net;version="1.0.0";
+  uses:="org.openscada.net.base.data,
    org.apache.mina.core.filterchain,
-   org.apache.mina.filter.ssl,
-   org.apache.mina.filter.codec,
-   org.openscada.net.mina,
-   org.openscada.net.base.data,
-   org.openscada.net.utils"
-Bundle-Version: 0.17.0.qualifier
-Bundle-Name: OpenSCADA Core Net
+   org.openscada.core,
+   org.openscada.net.mina"
+Bundle-Version: 1.0.0.qualifier
+Bundle-Name: openSCADA Core Net
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH
