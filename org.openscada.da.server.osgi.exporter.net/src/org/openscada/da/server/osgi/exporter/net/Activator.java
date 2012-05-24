@@ -146,7 +146,7 @@ public class Activator implements BundleActivator
         {
             try
             {
-                logger.info ( "Exporting: " + serviceReference );
+                logger.info ( "Exporting: {} ", serviceReference );
                 this.currentService = (Hive)o;
                 this.exporter = new Exporter ( this.currentService, this.connectionInformation );
                 this.exporter.start ();
