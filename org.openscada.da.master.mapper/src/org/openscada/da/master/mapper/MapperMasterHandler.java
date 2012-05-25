@@ -47,7 +47,7 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
-        this.mapperTracker = new SingleObjectPoolServiceTracker ( this.mapperPoolTracker, cfg.getStringChecked ( "mapperId", "'mapperId' must be specified" ), new ServiceListener () {
+        this.mapperTracker = new SingleObjectPoolServiceTracker ( this.mapperPoolTracker, cfg.getStringChecked ( "mapper.id", "'mapper.id' must be specified" ), new ServiceListener () {
 
             @Override
             public void serviceChange ( final Object service, final Dictionary<?, ?> properties )
