@@ -19,6 +19,7 @@
 
 package org.openscada.net.mina;
 
+import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IoSession;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.net.base.data.Message;
@@ -49,7 +50,7 @@ public class IoSessionSender implements MessageSender
     }
 
     @Override
-    public synchronized boolean sendMessage ( final Message message, final PrepareSendHandler handler )
+    public synchronized WriteFuture sendMessage ( final Message message, final PrepareSendHandler handler )
     {
         message.setSequence ( nextSequence () );
 
@@ -59,12 +60,12 @@ public class IoSessionSender implements MessageSender
             handler.prepareSend ( message );
         }
 
-        this.session.write ( message );
+        final WriteFuture future = this.session.write ( message );
 
         logger.trace ( "Scheduled write bytes: {}", this.session.getScheduledWriteBytes () );
         this.statistics.setCurrentValue ( STATS_QUEUED_BYTES, this.session.getScheduledWriteBytes () );
 
-        return true;
+        return future;
     }
 
     private long nextSequence ()

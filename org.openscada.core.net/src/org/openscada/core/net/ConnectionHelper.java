@@ -37,6 +37,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.compression.CompressionFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
@@ -74,24 +75,29 @@ public class ConnectionHelper
         }
     }
 
-    /**
-     * Setup the filter chain of a NET/GMPP connection
-     * 
-     * @param connectionInformation
-     *            the connection information to use
-     * @param filterChainBuilder
-     *            the chain builder
-     */
-    public static void setupFilterChain ( final ConnectionInformation connectionInformation, final DefaultIoFilterChainBuilder filterChainBuilder, final boolean isClient )
+    public static void injectCompression ( final IoSession session, final String compressionMode )
     {
-        // set up compression
-        final String compress = connectionInformation.getProperties ().get ( "compress" );
-        if ( compress != null )
+        final CompressionFilter compressionFilter = createCompressionFilter ( compressionMode );
+        if ( compressionFilter == null )
         {
+            return;
+        }
+
+        if ( !session.getFilterChain ().contains ( "compress" ) )
+        {
+            session.getFilterChain ().addFirst ( "compress", compressionFilter );
+        }
+    }
+
+    private static CompressionFilter createCompressionFilter ( final String compressionMode )
+    {
+        if ( compressionMode != null )
+        {
+            logger.debug ( "Compression mode {}", compressionMode );
             int level = CompressionFilter.COMPRESSION_DEFAULT;
             try
             {
-                level = Integer.parseInt ( compress );
+                level = Integer.parseInt ( compressionMode );
             }
             catch ( final Exception e )
             {
@@ -103,7 +109,30 @@ public class ConnectionHelper
                 level = CompressionFilter.COMPRESSION_DEFAULT;
             }
 
-            filterChainBuilder.addLast ( "compress", new CompressionFilter ( level ) );
+            logger.debug ( "Creating filter with compression mode: {}", level );
+            return new CompressionFilter ( level );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
+    /**
+     * Setup the filter chain of a NET/GMPP connection
+     * 
+     * @param connectionInformation
+     *            the connection information to use
+     * @param filterChainBuilder
+     *            the chain builder
+     */
+    public static void setupFilterChain ( final ConnectionInformation connectionInformation, final DefaultIoFilterChainBuilder filterChainBuilder, final boolean isClient )
+    {
+        // set up compression
+        final CompressionFilter compressionFilter = createCompressionFilter ( connectionInformation.getProperties ().get ( "compress" ) );
+        if ( compressionFilter != null )
+        {
+            filterChainBuilder.addLast ( "compress", compressionFilter );
         }
 
         // set up ssl

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,13 +20,22 @@
 package org.openscada.core.server.net;
 
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Properties;
 
+import org.apache.mina.core.future.IoFuture;
+import org.apache.mina.core.future.IoFutureListener;
+import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
+import org.openscada.core.net.ConnectionHelper;
+import org.openscada.core.net.MessageHelper;
+import org.openscada.net.Constants;
 import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.IoSessionSender;
@@ -70,7 +79,6 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         this.messenger = new Messenger ( getMessageTimeout (), this.statistics );
 
         this.pingService = new PingService ( this.messenger );
-        this.pingService.start ();
 
         this.ioSession.getConfig ().setReaderIdleTime ( getPingPeriod () / 1000 );
 
@@ -93,6 +101,63 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         this.statistics.setLabel ( STATS_PINGS_SENT, "Pings sent" );
         this.statistics.setLabel ( STATS_SESSION_BYTES_READ, "Bytes read in session" );
         this.statistics.setLabel ( STATS_SESSION_BYTES_WRITTEN, "Bytes written in session" );
+    }
+
+    protected void sessionConfigured ( final Map<String, String> properties )
+    {
+        logger.info ( "Session configured" );
+
+        modifyFilterChain ( this.ioSession, properties );
+        this.pingService.start ();
+    }
+
+    protected void modifyFilterChain ( final IoSession ioSession, final Map<String, String> properties )
+    {
+        ConnectionHelper.injectCompression ( ioSession, properties.get ( Constants.PROP_TR_COMPRESSION ) );
+    }
+
+    protected Map<String, String> getTransportProperties ( final Properties props )
+    {
+        final Map<String, String> transportProperties = new HashMap<String, String> ();
+        if ( props.containsKey ( "transport.request.compression" ) )
+        {
+            if ( isCompressionDenied () )
+            {
+                logger.info ( "Remote peer requested compression but we don't allow compression" );
+            }
+            else
+            {
+                transportProperties.put ( "transport.request.compression", props.getProperty ( "transport.request.compression" ) );
+            }
+        }
+        return transportProperties;
+    }
+
+    private boolean isCompressionDenied ()
+    {
+        if ( getBooleanProperty ( "transport.reject.compression", false ) )
+        {
+            return true;
+        }
+        else if ( Boolean.getBoolean ( "org.openscada.core.server.net.rejectCompression" ) )
+        {
+            return true;
+        }
+        return false;
+    }
+
+    protected void replySessionCreated ( final Properties originalProperties, final Message originalMessage, final Map<String, String> sessionProperties )
+    {
+        final Map<String, String> transportProperties = getTransportProperties ( originalProperties );
+
+        final WriteFuture future = this.messenger.sendMessage ( MessageHelper.createSessionACK ( originalMessage, sessionProperties, transportProperties ) );
+        future.addListener ( new IoFutureListener<IoFuture> () {
+            @Override
+            public void operationComplete ( final IoFuture future )
+            {
+                sessionConfigured ( transportProperties );
+            };
+        } );
     }
 
     @Override
@@ -167,6 +232,19 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         return getIntProperty ( "messageTimeout", getIntProperty ( "timeout", DEFAULT_TIMEOUT ) );
     }
 
+    protected boolean getBooleanProperty ( final String propertyName, final boolean defaultValue )
+    {
+        try
+        {
+            final String timeout = this.connectionInformation.getProperties ().get ( propertyName );
+            return Boolean.parseBoolean ( timeout );
+        }
+        catch ( final Exception e )
+        {
+            return defaultValue;
+        }
+    }
+
     protected int getIntProperty ( final String propertyName, final int defaultValue )
     {
         try
@@ -179,7 +257,7 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
             }
             return i;
         }
-        catch ( final Throwable e )
+        catch ( final Exception e )
         {
             return defaultValue;
         }

@@ -15,7 +15,8 @@ Import-Package: org.apache.mina.core.buffer;version="2.0.0",
  org.openscada.utils.statuscodes;version="0.15.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.net.base;version="1.0.0";uses:="org.openscada.net.base.data,org.openscada.utils.exec,org.openscada.net.mina",
+Export-Package: org.openscada.net;version="1.0.0",
+ org.openscada.net.base;version="1.0.0";uses:="org.openscada.net.base.data,org.openscada.utils.exec,org.openscada.net.mina",
  org.openscada.net.base.data;version="1.0.0",
  org.openscada.net.base.handlers;version="1.0.0";uses:="org.openscada.net.base.data,org.openscada.net.base,org.openscada.net.mina",
  org.openscada.net.codec;version="1.0.0",

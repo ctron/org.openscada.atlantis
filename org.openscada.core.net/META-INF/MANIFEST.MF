@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 Import-Package: org.apache.mina.core.filterchain;version="2.0",
+ org.apache.mina.core.session;version="2.0.0",
  org.apache.mina.filter.codec;version="2.0",
  org.apache.mina.filter.compression;version="2.0",
  org.apache.mina.filter.logging;version="2.0",
@@ -12,7 +13,8 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.core.net;version="1.0.0";
-  uses:="org.openscada.net.base.data,
+  uses:="org.apache.mina.core.session,
+   org.openscada.net.base.data,
    org.apache.mina.core.filterchain,
    org.openscada.core,
    org.openscada.net.mina"

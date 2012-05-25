@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,8 +21,11 @@ package org.openscada.core.client.net;
 
 import java.util.Properties;
 
+import org.apache.mina.core.session.IoSession;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.net.ConnectionHelper;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.net.Constants;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 import org.slf4j.Logger;
@@ -103,8 +106,19 @@ public abstract class SessionConnectionBase extends ConnectionBase
         else
         {
             final Properties properties = new Properties ();
-            MessageHelper.getProperties ( properties, message.getValues ().get ( "properties" ) ); //$NON-NLS-1$
+            MessageHelper.getProperties ( properties, message.getValues ().get ( MessageHelper.FIELD_SESSION_PROPERTIES ) );
+
+            final Properties transportProperties = new Properties ();
+            MessageHelper.getProperties ( transportProperties, message.getValues ().get ( MessageHelper.FIELD_TRANSPORT_PROPERTIES ) );
+
+            modifyFilterChain ( this.session, transportProperties );
+
             setBound ( properties );
         }
+    }
+
+    protected void modifyFilterChain ( final IoSession session, final Properties properties )
+    {
+        ConnectionHelper.injectCompression ( session, properties.getProperty ( Constants.PROP_TR_COMPRESSION ) );
     }
 }

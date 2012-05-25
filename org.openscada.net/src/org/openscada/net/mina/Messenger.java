@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,6 +30,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.mina.core.future.WriteFuture;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
@@ -425,14 +426,14 @@ public class Messenger implements MessageListener
         }
     }
 
-    public void sendMessage ( final Message message )
+    public WriteFuture sendMessage ( final Message message )
     {
-        sendMessage ( message, null );
+        return sendMessage ( message, null );
     }
 
-    public void sendMessage ( final Message message, final MessageStateListener messageListener )
+    public WriteFuture sendMessage ( final Message message, final MessageStateListener messageListener )
     {
-        sendMessage ( message, messageListener, 0L );
+        return sendMessage ( message, messageListener, 0L );
     }
 
     protected void registerMessageTag ( final long sequence, final MessageTag messageTag )
@@ -458,13 +459,13 @@ public class Messenger implements MessageListener
      * @param timeout
      *            the timeout
      */
-    public void sendMessage ( final Message message, final MessageStateListener listener, final long timeout )
+    public WriteFuture sendMessage ( final Message message, final MessageStateListener listener, final long timeout )
     {
         logger.debug ( "Sending message: {}", message.getCommandCode () );
 
         this.statistics.changeCurrentValue ( STATS_SENT_MSGS, 1 );
 
-        final boolean isSent;
+        final WriteFuture future;
 
         final MessageSender connection = this.connection;
         if ( connection != null )
@@ -475,7 +476,7 @@ public class Messenger implements MessageListener
             tag.setTimestamp ( System.currentTimeMillis () );
             tag.setTimeout ( timeout < 0 ? 0 : timeout );
 
-            isSent = connection.sendMessage ( message, new PrepareSendHandler () {
+            future = connection.sendMessage ( message, new PrepareSendHandler () {
 
                 @Override
                 public void prepareSend ( final Message message )
@@ -486,11 +487,11 @@ public class Messenger implements MessageListener
         }
         else
         {
-            isSent = false;
+            future = null;
         }
 
         // If the message was not sent, notify that
-        if ( !isSent )
+        if ( future == null )
         {
             if ( listener != null )
             {
@@ -498,6 +499,7 @@ public class Messenger implements MessageListener
             }
         }
 
+        return future;
     }
 
     protected boolean handleDefaultMessage ( final Message message )

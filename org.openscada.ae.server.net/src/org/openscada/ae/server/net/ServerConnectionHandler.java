@@ -193,7 +193,9 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     /**
      * Extract the query id from the message
-     * @param message the message
+     * 
+     * @param message
+     *            the message
      * @return the extracted query id or <code>null</code> if there was none
      */
     private Long queryIdFromMessage ( final Message message )
@@ -531,7 +533,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.session.setBrowserListener ( this );
 
         // send success
-        this.messenger.sendMessage ( MessageHelper.createSessionACK ( message, this.session.getProperties () ) );
+        replySessionCreated ( props, message, this.session.getProperties () );
     }
 
     @Override

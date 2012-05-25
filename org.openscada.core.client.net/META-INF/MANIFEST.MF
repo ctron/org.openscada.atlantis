@@ -10,13 +10,14 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
  org.openscada.core.client.net;version="0.14.0",
  org.openscada.core.info;version="1.0.0",
  org.openscada.core.net;version="0.14.0",
+ org.openscada.net;version="1.0.0",
  org.openscada.net.base;version="0.14.0",
  org.openscada.net.base.data;version="0.14.0",
  org.openscada.net.mina;version="0.14.0",
  org.openscada.utils.concurrent;version="0.14.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.core.client.net;version="0.17.0";
+Export-Package: org.openscada.core.client.net;version="1.0.0";
   uses:="org.openscada.core.client,
    org.apache.mina.core.session,
    org.apache.mina.core.future,

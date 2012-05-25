@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -83,6 +83,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( MessageHelper.CC_CREATE_SESSION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 createSession ( message );
@@ -91,6 +92,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( MessageHelper.CC_CLOSE_SESSION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 closeSession ();
@@ -99,6 +101,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_START_LIST, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.setItemList ( true );
@@ -107,6 +110,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_STOP_LIST, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.setItemList ( false );
@@ -115,6 +119,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_CREATE_QUERY, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.handleCreateQuery ( message );
@@ -123,6 +128,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_CLOSE_QUERY, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.handleCloseQuery ( message );
@@ -131,6 +137,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_CHANGE_QUERY_PARAMETERS, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.handleUpdateQueryParameters ( message );
@@ -182,6 +189,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             // throw it in the disposer queue ... the storage module takes too long
             this.queryDisposer.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     handler.close ();
@@ -422,7 +430,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
 
         // send success
-        this.messenger.sendMessage ( MessageHelper.createSessionACK ( message, this.session.getProperties () ) );
+        replySessionCreated ( props, message, this.session.getProperties () );
     }
 
     @Override
@@ -457,6 +465,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         cleanUp ();
     }
 
+    @Override
     public void listChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
         final Message message = new Message ( Messages.CC_HD_LIST_UPDATE );
