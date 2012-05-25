@@ -219,9 +219,13 @@ public class ConnectionImpl implements Connection
             return;
         }
 
+        final List<Runnable> tasks = this.executor.shutdownNow ();
+
+        this.executor = null;
+        this.port = null;
+
         setState ( ConnectionState.CLOSED, error );
         setFactories ( null );
-        final List<Runnable> tasks = this.executor.shutdownNow ();
 
         // cancel all open tasks
         for ( final Runnable r : tasks )
@@ -232,8 +236,6 @@ public class ConnectionImpl implements Connection
             }
         }
 
-        this.executor = null;
-        this.port = null;
     }
 
     @Override
