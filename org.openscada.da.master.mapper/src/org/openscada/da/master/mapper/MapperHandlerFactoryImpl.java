@@ -55,7 +55,7 @@ public class MapperHandlerFactoryImpl extends AbstractServiceConfigurationFactor
     @Override
     protected Entry<MapperMasterHandler> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final MapperMasterHandler handler = new MapperMasterHandler ( this.poolTracker, this.mapperPoolTracker, this.defaultPriority );
+        final MapperMasterHandler handler = new MapperMasterHandler ( configurationId, this.poolTracker, this.mapperPoolTracker, this.defaultPriority );
         handler.update ( userInformation, parameters );
         return new Entry<MapperMasterHandler> ( configurationId, handler );
     }

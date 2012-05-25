@@ -27,9 +27,12 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
 
     private SingleObjectPoolServiceTracker mapperTracker;
 
-    public MapperMasterHandler ( final ObjectPoolTracker poolTracker, final ObjectPoolTracker mapperPoolTracker, final int defaultPriority )
+    private final String id;
+
+    public MapperMasterHandler ( final String id, final ObjectPoolTracker poolTracker, final ObjectPoolTracker mapperPoolTracker, final int defaultPriority )
     {
         super ( poolTracker, defaultPriority );
+        this.id = id;
         this.mapperPoolTracker = mapperPoolTracker;
     }
 
@@ -88,9 +91,9 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
             sourceValue = value.getValue ();
         }
         final ValueMapper mapper = getMapper ();
+        final Builder builder = new DataItemValue.Builder ( value );
         if ( mapper != null )
         {
-            final Builder builder = new DataItemValue.Builder ( value );
             if ( this.targetAttributeName == null || this.targetAttributeName.isEmpty () )
             {
                 builder.setValue ( mapper.mapValue ( sourceValue ) );
@@ -99,12 +102,12 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
             {
                 builder.setAttribute ( this.targetAttributeName, mapper.mapValue ( sourceValue ) );
             }
-            return builder.build ();
         }
         else
         {
-            return null;
+            builder.setAttribute ( this.id + ".mapperMissing", Variant.TRUE );
         }
+        return builder.build ();
     }
 
     protected ValueMapper getMapper ()
