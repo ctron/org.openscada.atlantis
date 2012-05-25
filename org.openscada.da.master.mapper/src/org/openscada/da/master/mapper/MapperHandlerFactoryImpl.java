@@ -21,14 +21,13 @@ package org.openscada.da.master.mapper;
 
 import java.util.Map;
 
-import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 
-public class MapperHandlerFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
+public class MapperHandlerFactoryImpl extends AbstractServiceConfigurationFactory<MapperMasterHandler>
 {
     public static final String FACTORY_ID = "org.openscada.da.master.mapper";
 
@@ -54,22 +53,22 @@ public class MapperHandlerFactoryImpl extends AbstractServiceConfigurationFactor
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<MapperMasterHandler> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final AbstractMasterHandlerImpl handler = new MapperMasterHandler ( this.poolTracker, this.mapperPoolTracker, this.defaultPriority );
+        final MapperMasterHandler handler = new MapperMasterHandler ( this.poolTracker, this.mapperPoolTracker, this.defaultPriority );
         handler.update ( userInformation, parameters );
-        return new Entry<AbstractMasterHandlerImpl> ( configurationId, handler );
+        return new Entry<MapperMasterHandler> ( configurationId, handler );
     }
 
     @Override
-    protected Entry<AbstractMasterHandlerImpl> updateService ( final UserInformation userInformation, final String configurationId, final Entry<AbstractMasterHandlerImpl> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<MapperMasterHandler> updateService ( final UserInformation userInformation, final String configurationId, final Entry<MapperMasterHandler> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( userInformation, parameters );
         return null;
     }
 
     @Override
-    protected void disposeService ( final UserInformation userInformation, final String id, final AbstractMasterHandlerImpl service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final MapperMasterHandler service )
     {
         service.dispose ();
     }
