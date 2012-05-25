@@ -103,7 +103,7 @@ public class ConnectionHelper
             {
                 logger.warn ( "Failed to parse 'compress' property", e );
             }
-            if ( level < CompressionFilter.COMPRESSION_NONE || level > CompressionFilter.COMPRESSION_MAX )
+            if ( level < CompressionFilter.COMPRESSION_DEFAULT || level > CompressionFilter.COMPRESSION_MAX )
             {
                 logger.warn ( "Compression ({}) outside of valid range. Setting to default", level );
                 level = CompressionFilter.COMPRESSION_DEFAULT;
