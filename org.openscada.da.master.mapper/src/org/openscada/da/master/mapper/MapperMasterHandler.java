@@ -106,11 +106,11 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
         Variant sourceValue;
         if ( this.sourceAttributeName == null || this.sourceAttributeName.isEmpty () )
         {
-            sourceValue = value.getAttributes ().get ( this.sourceAttributeName );
+            sourceValue = value.getValue ();
         }
         else
         {
-            sourceValue = value.getValue ();
+            sourceValue = value.getAttributes ().get ( this.sourceAttributeName );
         }
         final ValueMapper mapper = getMapper ();
         final Builder builder = new DataItemValue.Builder ( value );
