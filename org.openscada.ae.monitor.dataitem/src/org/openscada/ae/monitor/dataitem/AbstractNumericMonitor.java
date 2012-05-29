@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,6 +26,7 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.openscada.da.master.MasterItem;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
@@ -35,7 +36,7 @@ public abstract class AbstractNumericMonitor extends AbstractDataItemMonitor
 
     protected Date timestamp;
 
-    public AbstractNumericMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
+    public AbstractNumericMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
         super ( context, executor, poolTracker, eventProcessor, id, prefix, defaultMonitorType );
     }

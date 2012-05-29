@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
@@ -43,9 +44,9 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
 
     protected final EventProcessor eventProcessor;
 
-    private final ObjectPoolImpl servicePool;
+    private final ObjectPoolImpl<MonitorService> servicePool;
 
-    public AbstractMonitorFactory ( final BundleContext context, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor )
+    public AbstractMonitorFactory ( final BundleContext context, final ObjectPoolImpl<MonitorService> servicePool, final EventProcessor eventProcessor )
     {
         super ( context );
         this.context = context;
