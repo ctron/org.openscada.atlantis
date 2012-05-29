@@ -21,6 +21,7 @@ package org.openscada.da.mapper.osgi;
 
 import java.util.Map;
 
+import org.openscada.da.mapper.ValueMapper;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ManageableObjectPool;
@@ -31,9 +32,9 @@ public class ConfiguredValueMapperFactory extends AbstractServiceConfigurationFa
 
     public static final String FACTORY_ID = "org.openscada.da.mapper.osgi.configuredMapper";
 
-    private final ManageableObjectPool pool;
+    private final ManageableObjectPool<ValueMapper> pool;
 
-    public ConfiguredValueMapperFactory ( final BundleContext context, final ManageableObjectPool pool )
+    public ConfiguredValueMapperFactory ( final BundleContext context, final ManageableObjectPool<ValueMapper> pool )
     {
         super ( context );
         this.pool = pool;

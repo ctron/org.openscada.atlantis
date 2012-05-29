@@ -25,7 +25,6 @@ import java.util.Hashtable;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.mapper.ValueMapper;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -36,9 +35,9 @@ import org.osgi.framework.ServiceRegistration;
 public class Activator implements BundleActivator
 {
 
-    private ObjectPoolImpl pool;
+    private ObjectPoolImpl<ValueMapper> pool;
 
-    private ServiceRegistration<ObjectPool> poolRegistration;
+    private ServiceRegistration<?> poolRegistration;
 
     private ConfiguredValueMapperFactory factory;
 
@@ -49,7 +48,7 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.pool = new ObjectPoolImpl ();
+        this.pool = new ObjectPoolImpl<ValueMapper> ();
         this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.pool, ValueMapper.class );
 
         this.factory = new ConfiguredValueMapperFactory ( context, this.pool );
