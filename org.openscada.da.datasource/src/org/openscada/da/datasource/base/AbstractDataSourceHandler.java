@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -34,18 +34,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Basic implementation of a data source which is based on another
- * data source.
+ * Basic implementation of a data source which is based on another data source.
+ * 
  * @author Jens Reimann
  * @since 0.15.0
- *
  */
 public abstract class AbstractDataSourceHandler extends AbstractDataSource
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( AbstractDataSourceHandler.class );
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<DataSource> poolTracker;
 
     private SingleDataSourceTracker tracker;
 
@@ -61,7 +60,7 @@ public abstract class AbstractDataSourceHandler extends AbstractDataSource
 
     private final Lock trackerLock;
 
-    public AbstractDataSourceHandler ( final ObjectPoolTracker poolTracker )
+    public AbstractDataSourceHandler ( final ObjectPoolTracker<DataSource> poolTracker )
     {
         this.poolTracker = poolTracker;
         this.serviceListener = new ServiceListener () {
