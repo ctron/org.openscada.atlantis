@@ -343,7 +343,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
     {
         logger.debug ( "Processing handlers" );
 
-        ArrayList<HandlerEntry> handler;
+        final ArrayList<HandlerEntry> handler;
         synchronized ( this.itemHandler )
         {
             handler = new ArrayList<HandlerEntry> ( this.itemHandler );
