@@ -61,7 +61,7 @@ public class ConfiguredValueMapper implements ValueMapper
             this.data.clear ();
             this.data.putAll ( cfg.getPrefixed ( "data." ) );
 
-            this.defaultValue = VariantEditor.toVariant ( cfg.getString ( "defaultValue", "NULL#" ) );
+            this.defaultValue = makeDefaultValue ( cfg );
 
             listeners = this.listeners.toArray ( new ValueMapperListener[this.listeners.size ()] );
         }
@@ -71,6 +71,16 @@ public class ConfiguredValueMapper implements ValueMapper
         }
 
         fireStateChange ( listeners );
+    }
+
+    private Variant makeDefaultValue ( final ConfigurationDataHelper cfg )
+    {
+        final String stringValue = cfg.getString ( "defaultValue", null );
+        if ( stringValue == null )
+        {
+            return null;
+        }
+        return VariantEditor.toVariant ( stringValue );
     }
 
     private void fireStateChange ( final ValueMapperListener[] listeners )
@@ -88,23 +98,40 @@ public class ConfiguredValueMapper implements ValueMapper
         }
     }
 
+    protected Variant defaultValue ( final Variant currentValue )
+    {
+        if ( this.defaultValue != null )
+        {
+            return this.defaultValue;
+        }
+        else
+        {
+            return currentValue;
+        }
+    }
+
     @Override
     public Variant mapValue ( final Variant value )
     {
         if ( value == null )
         {
-            return this.defaultValue;
+            return defaultValue ( value );
         }
 
         try
         {
             this.readLock.lock ();
-            return Variant.valueOf ( this.data.get ( value.asString ( null ) ) );
+            final String result = this.data.get ( value.asString ( null ) );
+            if ( result == null )
+            {
+                return defaultValue ( value );
+            }
+            return Variant.valueOf ( result );
         }
         catch ( final Exception e )
         {
             logger.info ( "Failed to map value", e );
-            return this.defaultValue;
+            return defaultValue ( value );
         }
         finally
         {
