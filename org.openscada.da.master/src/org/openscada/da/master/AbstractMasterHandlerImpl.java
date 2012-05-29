@@ -48,20 +48,20 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private final int defaultPriority;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
     private volatile int priority;
 
-    private final Map<String, ObjectPoolServiceTracker> trackers = new HashMap<String, ObjectPoolServiceTracker> ();
+    private final Map<String, ObjectPoolServiceTracker<MasterItem>> trackers = new HashMap<String, ObjectPoolServiceTracker<MasterItem>> ();
 
     protected Map<String, Variant> eventAttributes;
 
-    public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker )
+    public AbstractMasterHandlerImpl ( final ObjectPoolTracker<MasterItem> poolTracker )
     {
         this ( poolTracker, Integer.MAX_VALUE );
     }
 
-    public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker, final int defaultPriority )
+    public AbstractMasterHandlerImpl ( final ObjectPoolTracker<MasterItem> poolTracker, final int defaultPriority )
     {
         this.poolTracker = poolTracker;
         this.defaultPriority = defaultPriority;
@@ -77,7 +77,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private void closeTrackers ()
     {
-        for ( final ObjectPoolServiceTracker tracker : this.trackers.values () )
+        for ( final ObjectPoolServiceTracker<MasterItem> tracker : this.trackers.values () )
         {
             tracker.close ();
         }
@@ -106,7 +106,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         if ( trackerUpdate )
         {
             createTrackers ( newIds );
-            for ( final ObjectPoolServiceTracker tracker : this.trackers.values () )
+            for ( final ObjectPoolServiceTracker<MasterItem> tracker : this.trackers.values () )
             {
                 tracker.open ();
             }
@@ -129,25 +129,25 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
     {
         for ( final String masterId : masterIds )
         {
-            this.trackers.put ( masterId, new ObjectPoolServiceTracker ( this.poolTracker, masterId, new ObjectPoolListener () {
+            this.trackers.put ( masterId, new ObjectPoolServiceTracker<MasterItem> ( this.poolTracker, masterId, new ObjectPoolListener<MasterItem> () {
 
                 @Override
-                public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
+                public void serviceAdded ( final MasterItem service, final Dictionary<?, ?> properties )
                 {
-                    addItem ( (MasterItem)service );
+                    addItem ( service );
                 }
 
                 @Override
-                public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
+                public void serviceModified ( final MasterItem service, final Dictionary<?, ?> properties )
                 {
                     // TODO Auto-generated method stub
 
                 }
 
                 @Override
-                public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
+                public void serviceRemoved ( final MasterItem service, final Dictionary<?, ?> properties )
                 {
-                    removeItem ( (MasterItem)service );
+                    removeItem ( service );
                 }
             } ) );
         }

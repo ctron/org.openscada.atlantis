@@ -28,7 +28,6 @@ import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -43,21 +42,21 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
 
     private final BundleContext context;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<DataSource> poolTracker;
 
-    private final ObjectPoolImpl itemPool;
+    private final ObjectPoolImpl<DataItem> itemPool;
 
-    private final ServiceRegistration<ObjectPool> itemPoolHandle;
+    private final ServiceRegistration<?> itemPoolHandle;
 
     public DataItemTargetFactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
-        this.itemPool = new ObjectPoolImpl ();
+        this.itemPool = new ObjectPoolImpl<DataItem> ();
 
-        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class.getName () );
+        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class );
 
         this.context = context;
-        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
         this.poolTracker.open ();
     }
 

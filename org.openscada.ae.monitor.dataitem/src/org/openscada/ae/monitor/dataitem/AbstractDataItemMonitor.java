@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -58,7 +58,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     private String masterId;
 
-    private SingleObjectPoolServiceTracker tracker;
+    private SingleObjectPoolServiceTracker<MasterItem> tracker;
 
     protected MasterItem masterItem;
 
@@ -84,13 +84,13 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     private String monitorType;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
     private Boolean initialUpdate;
 
     private final Executor executor;
 
-    public AbstractDataItemMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
+    public AbstractDataItemMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
         super ( context, executor, eventProcessor, id );
         this.executor = executor;
@@ -172,12 +172,12 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
         logger.debug ( "Setting up for master item: {}", this.masterId );
 
-        this.tracker = new SingleObjectPoolServiceTracker ( this.poolTracker, this.masterId, new ServiceListener () {
+        this.tracker = new SingleObjectPoolServiceTracker<MasterItem> ( this.poolTracker, this.masterId, new ServiceListener<MasterItem> () {
 
             @Override
-            public void serviceChange ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceChange ( final MasterItem service, final Dictionary<?, ?> properties )
             {
-                AbstractDataItemMonitor.this.setMasterItem ( (MasterItem)service );
+                AbstractDataItemMonitor.this.setMasterItem ( service );
             }
         } );
 
@@ -268,12 +268,14 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     /**
      * Return the factory id that configured this instance
+     * 
      * @return the factory id
      */
     protected abstract String getFactoryId ();
 
     /**
      * Return the configuration id that is assigned to this instance
+     * 
      * @return the configuration id
      */
     protected abstract String getConfigurationId ();
@@ -300,9 +302,10 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     }
 
     /**
-     * Inject attributes to the value after the value update has been performed using
-     * {@link #performDataUpdate(Builder)}
-     * @param builder the builder to use for changing information
+     * Inject attributes to the value after the value update has been performed using {@link #performDataUpdate(Builder)}
+     * 
+     * @param builder
+     *            the builder to use for changing information
      */
     protected void injectAttributes ( final Builder builder )
     {

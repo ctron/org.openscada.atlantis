@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,7 +30,6 @@ import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -46,17 +45,17 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
     private final ExecutorService executor;
 
-    private final ObjectPoolImpl dataSourcePool;
+    private final ObjectPoolImpl<DataSource> dataSourcePool;
 
-    private final ObjectPoolImpl masterItemPool;
+    private final ObjectPoolImpl<MasterItem> masterItemPool;
 
-    private final ServiceRegistration<ObjectPool> dataSourcePoolHandler;
+    private final ServiceRegistration<?> dataSourcePoolHandler;
 
-    private final ServiceRegistration<ObjectPool> masterItemPoolHandler;
+    private final ServiceRegistration<?> masterItemPoolHandler;
 
-    private final ObjectPoolTracker objectPoolTracker;
+    private final ObjectPoolTracker<DataSource> objectPoolTracker;
 
-    public MasterFactory ( final BundleContext context, final ObjectPoolTracker dataSourceTracker )
+    public MasterFactory ( final BundleContext context, final ObjectPoolTracker<DataSource> dataSourceTracker )
     {
         super ( context );
 
@@ -64,11 +63,11 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "MasterItemFactory" ) );
 
-        this.dataSourcePool = new ObjectPoolImpl ();
-        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class.getName () );
+        this.dataSourcePool = new ObjectPoolImpl<DataSource> ();
+        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class );
 
-        this.masterItemPool = new ObjectPoolImpl ();
-        this.masterItemPoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.masterItemPool, MasterItem.class.getName () );
+        this.masterItemPool = new ObjectPoolImpl<MasterItem> ();
+        this.masterItemPoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.masterItemPool, MasterItem.class );
     }
 
     @Override

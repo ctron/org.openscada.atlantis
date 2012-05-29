@@ -82,11 +82,11 @@ public class Activator implements BundleActivator
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
-        this.monitorPoolTracker = new ObjectPoolTracker ( context, MonitorService.class.getName () );
+        this.monitorPoolTracker = new ObjectPoolTracker<MonitorService> ( context, MonitorService.class );
         this.monitorPoolTracker.open ();
 
         this.dataSourcePool = new ObjectPoolImpl ();
-        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class.getName () );
+        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class );
 
         this.factory = new InfoServiceFactory ( context, this.executor, this.monitorPoolTracker, this.dataSourcePool );
         final Dictionary<String, String> properties = new Hashtable<String, String> ( 2 );
@@ -114,7 +114,7 @@ public class Activator implements BundleActivator
 
     /**
      * Returns the shared instance
-     *
+     * 
      * @return the shared instance
      */
     public static Activator getDefault ()

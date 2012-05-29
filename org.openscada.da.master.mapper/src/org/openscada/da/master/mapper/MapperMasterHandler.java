@@ -66,12 +66,12 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
-        this.mapperTracker = new SingleObjectPoolServiceTracker ( this.mapperPoolTracker, cfg.getStringChecked ( "mapper.id", "'mapper.id' must be specified" ), new ServiceListener () {
+        this.mapperTracker = new SingleObjectPoolServiceTracker<ValueMapper> ( this.mapperPoolTracker, cfg.getStringChecked ( "mapper.id", "'mapper.id' must be specified" ), new ServiceListener<ValueMapper> () {
 
             @Override
-            public void serviceChange ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceChange ( final ValueMapper service, final Dictionary<?, ?> properties )
             {
-                setMapper ( (ValueMapper)service );
+                setMapper ( service );
             }
         } );
 
@@ -98,7 +98,7 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
     }
 
     @Override
-    public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public synchronized DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
         Variant sourceValue;
         if ( this.sourceAttributeName == null || this.sourceAttributeName.isEmpty () )

@@ -128,7 +128,7 @@ public class InfoService
         };
 
         // listener for all monitors of a pool
-        final ObjectPoolListener objectPoolListener = new ObjectPoolListener () {
+        final ObjectPoolListener objectPoolListener = new ObjectPoolListener<Object> () {
             @Override
             public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
             {

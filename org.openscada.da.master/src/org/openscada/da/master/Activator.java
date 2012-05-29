@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -38,7 +38,7 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration<ConfigurationFactory> masterHandle;
 
-    private ObjectPoolTracker dataSourceTracker;
+    private ObjectPoolTracker<DataSource> dataSourceTracker;
 
     /*
      * (non-Javadoc)
@@ -49,7 +49,7 @@ public class Activator implements BundleActivator
     {
         Dictionary<String, Object> properties;
 
-        this.dataSourceTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.dataSourceTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
         this.dataSourceTracker.open ();
 
         // master service
@@ -58,7 +58,7 @@ public class Activator implements BundleActivator
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "master.item" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A configuration factory for master items" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
-        this.masterHandle = context.registerService (ConfigurationFactory.class, this.masterFactory, properties );
+        this.masterHandle = context.registerService ( ConfigurationFactory.class, this.masterFactory, properties );
     }
 
     /*

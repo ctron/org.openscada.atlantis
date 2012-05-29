@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,7 +27,6 @@ import java.util.concurrent.Executor;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
@@ -37,11 +36,11 @@ public class DataItemSourceFactoryImpl extends AbstractServiceConfigurationFacto
 {
     public static final String FACTORY_ID = "da.datasource.dataitem";
 
-    private final ObjectPoolImpl objectPool;
+    private final ObjectPoolImpl<DataSource> objectPool;
 
     private final Executor executor;
 
-    private final ServiceRegistration<ObjectPool> objectPoolHandler;
+    private final ServiceRegistration<?> objectPoolHandler;
 
     public DataItemSourceFactoryImpl ( final BundleContext context, final Executor executor )
     {
@@ -49,8 +48,8 @@ public class DataItemSourceFactoryImpl extends AbstractServiceConfigurationFacto
 
         this.executor = executor;
 
-        this.objectPool = new ObjectPoolImpl ();
-        this.objectPoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class.getName () );
+        this.objectPool = new ObjectPoolImpl<DataSource> ();
+        this.objectPoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class );
     }
 
     @Override

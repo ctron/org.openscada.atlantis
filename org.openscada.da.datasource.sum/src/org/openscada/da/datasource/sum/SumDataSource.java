@@ -34,6 +34,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
 import org.openscada.da.datasource.base.DataSourceHandler;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -52,7 +53,7 @@ public class SumDataSource extends AbstractMultiSourceDataSource
 
     private Set<String> groups;
 
-    public SumDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
+    public SumDataSource ( final ObjectPoolTracker<DataSource> poolTracker, final Executor executor )
     {
         super ( poolTracker );
         this.executor = executor;

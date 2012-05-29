@@ -24,6 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.VariantType;
+import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
@@ -36,13 +37,13 @@ public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
 
     protected final Map<String, DataSourceHandler> sources = new HashMap<String, DataSourceHandler> ();
 
-    protected final ObjectPoolTracker poolTracker;
+    protected final ObjectPoolTracker<DataSource> poolTracker;
 
     private boolean disposed;
 
     private final DataSourceHandlerListener listener;
 
-    public AbstractMultiSourceDataSource ( final ObjectPoolTracker poolTracker )
+    public AbstractMultiSourceDataSource ( final ObjectPoolTracker<DataSource> poolTracker )
     {
         super ();
         this.poolTracker = poolTracker;

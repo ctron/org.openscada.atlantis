@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -42,7 +42,6 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -66,13 +65,13 @@ public class Activator implements BundleActivator
 
     private final Collection<AbstractMonitorFactory> factories = new LinkedList<AbstractMonitorFactory> ();
 
-    private ObjectPoolTracker poolTracker;
+    private ObjectPoolTracker<MasterItem> poolTracker;
 
     private ExecutorService executor;
 
-    private ObjectPoolImpl monitorServicePool;
+    private ObjectPoolImpl<MonitorService> monitorServicePool;
 
-    private ServiceRegistration<ObjectPool> monitorServicePoolHandler;
+    private ServiceRegistration<?> monitorServicePoolHandler;
 
     /*
      * (non-Javadoc)
@@ -93,11 +92,11 @@ public class Activator implements BundleActivator
 
         Dictionary<String, Object> properties;
 
-        this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<MasterItem> ( context, MasterItem.class );
         this.poolTracker.open ();
 
-        this.monitorServicePool = new ObjectPoolImpl ();
-        this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class.getName () );
+        this.monitorServicePool = new ObjectPoolImpl<MonitorService> ();
+        this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class );
 
         // monitor service
         {

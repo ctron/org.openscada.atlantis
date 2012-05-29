@@ -45,7 +45,7 @@ public class DataSourceHandler implements DataSourceListener
 
     private final VariantType type;
 
-    public DataSourceHandler ( final ObjectPoolTracker poolTracker, final String datasourceId, final DataSourceHandlerListener listener, final VariantType type ) throws InvalidSyntaxException
+    public DataSourceHandler ( final ObjectPoolTracker<DataSource> poolTracker, final String datasourceId, final DataSourceHandlerListener listener, final VariantType type ) throws InvalidSyntaxException
     {
         this.listener = listener;
         this.type = type;

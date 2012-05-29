@@ -33,7 +33,6 @@ import org.openscada.ae.server.http.monitor.EventMonitorFactory;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -68,9 +67,9 @@ public class Activator implements BundleActivator
 
     private EventMonitorFactory factory;
 
-    private ObjectPoolImpl monitorServicePool;
+    private ObjectPoolImpl<MonitorService> monitorServicePool;
 
-    private ServiceRegistration<ObjectPool> monitorServicePoolHandler;
+    private ServiceRegistration<?> monitorServicePoolHandler;
 
     private EventFilter eventFilter;
 
@@ -87,8 +86,8 @@ public class Activator implements BundleActivator
         this.eventProcessor = new EventProcessor ( context );
         this.eventFilter = new EventFilterImpl ( context, context.getBundle ().getSymbolicName () + ".eventFilter" );
 
-        this.monitorServicePool = new ObjectPoolImpl ();
-        this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class.getName () );
+        this.monitorServicePool = new ObjectPoolImpl<MonitorService> ();
+        this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class );
 
         this.httpServiceTracker = new ServiceTracker<HttpService, HttpService> ( context, HttpService.class, createHttpServiceTrackerCustomizer () );
 

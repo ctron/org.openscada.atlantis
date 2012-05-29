@@ -39,19 +39,19 @@ public abstract class AbstractDataSourceSummarizer extends AbstractInputDataSour
 
     private final static Logger logger = LoggerFactory.getLogger ( AbstractDataSourceSummarizer.class );
 
-    private final AllObjectPoolServiceTracker tracker;
+    private final AllObjectPoolServiceTracker<DataSource> tracker;
 
     private final Map<DataSource, DataSourceListenerImpl> listeners = new HashMap<DataSource, DataSourceListenerImpl> ();
 
     private final Executor executor;
 
-    public AbstractDataSourceSummarizer ( final Executor executor, final ObjectPoolTracker tracker )
+    public AbstractDataSourceSummarizer ( final Executor executor, final ObjectPoolTracker<DataSource> tracker )
     {
         this.executor = executor;
-        this.tracker = new AllObjectPoolServiceTracker ( tracker, new ObjectPoolListener () {
+        this.tracker = new AllObjectPoolServiceTracker<DataSource> ( tracker, new ObjectPoolListener<DataSource> () {
 
             @Override
-            public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceAdded ( final DataSource service, final Dictionary<?, ?> properties )
             {
                 if ( ! ( service instanceof DataSource ) )
                 {
@@ -64,21 +64,21 @@ public abstract class AbstractDataSourceSummarizer extends AbstractInputDataSour
                     return;
                 }
 
-                if ( !isMatch ( (DataSource)service, properties ) )
+                if ( !isMatch ( service, properties ) )
                 {
                     return;
                 }
 
-                AbstractDataSourceSummarizer.this.handleAdded ( (DataSource)service, properties );
+                AbstractDataSourceSummarizer.this.handleAdded ( service, properties );
             }
 
             @Override
-            public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceModified ( final DataSource service, final Dictionary<?, ?> properties )
             {
             }
 
             @Override
-            public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceRemoved ( final DataSource service, final Dictionary<?, ?> properties )
             {
                 if ( ! ( service instanceof DataSource ) )
                 {
@@ -91,7 +91,7 @@ public abstract class AbstractDataSourceSummarizer extends AbstractInputDataSour
                     return;
                 }
 
-                AbstractDataSourceSummarizer.this.handleRemoved ( (DataSource)service, properties );
+                AbstractDataSourceSummarizer.this.handleRemoved ( service, properties );
             }
         } );
     }
@@ -185,15 +185,18 @@ public abstract class AbstractDataSourceSummarizer extends AbstractInputDataSour
     }
 
     /**
-     * Called right before the new data source is added but before it is
-     * registered
-     * @param source the source that changed
+     * Called right before the new data source is added but before it is registered
+     * 
+     * @param source
+     *            the source that changed
      */
     protected abstract void handleAdding ( final DataSource source );
 
     /**
      * Called after the data source has been removed
-     * @param source the source that changed
+     * 
+     * @param source
+     *            the source that changed
      */
     protected abstract void handleRemoved ( final DataSource source );
 

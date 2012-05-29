@@ -32,7 +32,6 @@ import org.openscada.da.server.dave.data.VariableManagerImpl;
 import org.openscada.da.server.dave.factory.ConfigurationFactoryImpl;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.BeanConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -50,9 +49,9 @@ public class Activator implements BundleActivator
 
     private ExecutorService executor;
 
-    private ObjectPoolImpl itemPool;
+    private ObjectPoolImpl<DataItem> itemPool;
 
-    private ServiceRegistration<ObjectPool> itemPoolHandle;
+    private ServiceRegistration<?> itemPoolHandle;
 
     public static VariableManager getVariableManager ()
     {
@@ -66,9 +65,9 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.itemPool = new ObjectPoolImpl ();
+        this.itemPool = new ObjectPoolImpl<DataItem> ();
 
-        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class.getName () );
+        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class );
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 

@@ -45,9 +45,9 @@ public class Activator implements BundleActivator
 
     private ServiceListener listener;
 
-    private ObjectPoolTracker poolTracker;
+    private ObjectPoolTracker<DataItem> poolTracker;
 
-    private AllObjectPoolServiceTracker itemTracker;
+    private AllObjectPoolServiceTracker<DataItem> itemTracker;
 
     /*
      * (non-Javadoc)
@@ -73,12 +73,12 @@ public class Activator implements BundleActivator
             {
                 switch ( event.getType () )
                 {
-                case ServiceEvent.REGISTERED:
-                    Activator.this.addItem ( event.getServiceReference () );
-                    break;
-                case ServiceEvent.UNREGISTERING:
-                    Activator.this.removeItem ( event.getServiceReference () );
-                    break;
+                    case ServiceEvent.REGISTERED:
+                        Activator.this.addItem ( event.getServiceReference () );
+                        break;
+                    case ServiceEvent.UNREGISTERING:
+                        Activator.this.removeItem ( event.getServiceReference () );
+                        break;
                 }
             }
         }, "(" + Constants.OBJECTCLASS + "=" + DataItem.class.getName () + ")" );
@@ -92,26 +92,26 @@ public class Activator implements BundleActivator
             }
         }
 
-        this.poolTracker = new ObjectPoolTracker ( context, DataItem.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<DataItem> ( context, DataItem.class );
         this.poolTracker.open ();
 
-        this.itemTracker = new AllObjectPoolServiceTracker ( this.poolTracker, new ObjectPoolListener () {
+        this.itemTracker = new AllObjectPoolServiceTracker<DataItem> ( this.poolTracker, new ObjectPoolListener<DataItem> () {
 
             @Override
-            public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceRemoved ( final DataItem service, final Dictionary<?, ?> properties )
             {
-                Activator.this.service.removeItem ( (DataItem)service );
+                Activator.this.service.removeItem ( service );
             }
 
             @Override
-            public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceModified ( final DataItem service, final Dictionary<?, ?> properties )
             {
             }
 
             @Override
-            public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceAdded ( final DataItem service, final Dictionary<?, ?> properties )
             {
-                Activator.this.service.addItem ( (DataItem)service, properties );
+                Activator.this.service.addItem ( service, properties );
             }
         } );
         this.itemTracker.open ();
