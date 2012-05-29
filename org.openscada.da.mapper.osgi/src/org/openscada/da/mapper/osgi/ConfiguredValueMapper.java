@@ -28,6 +28,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
+import org.openscada.core.VariantEditor;
 import org.openscada.da.mapper.ValueMapper;
 import org.openscada.da.mapper.ValueMapperListener;
 import org.slf4j.Logger;
@@ -48,6 +49,8 @@ public class ConfiguredValueMapper implements ValueMapper
 
     private final Set<ValueMapperListener> listeners = new LinkedHashSet<ValueMapperListener> ();
 
+    private Variant defaultValue = Variant.NULL;
+
     public void update ( final Map<String, String> parameters )
     {
         ValueMapperListener[] listeners;
@@ -57,6 +60,8 @@ public class ConfiguredValueMapper implements ValueMapper
             final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
             this.data.clear ();
             this.data.putAll ( cfg.getPrefixed ( "data." ) );
+
+            this.defaultValue = VariantEditor.toVariant ( cfg.getString ( "defaultValue", "NULL#" ) );
 
             listeners = this.listeners.toArray ( new ValueMapperListener[this.listeners.size ()] );
         }
@@ -86,10 +91,20 @@ public class ConfiguredValueMapper implements ValueMapper
     @Override
     public Variant mapValue ( final Variant value )
     {
+        if ( value == null )
+        {
+            return this.defaultValue;
+        }
+
         try
         {
             this.readLock.lock ();
             return Variant.valueOf ( this.data.get ( value.asString ( null ) ) );
+        }
+        catch ( final Exception e )
+        {
+            logger.info ( "Failed to map value", e );
+            return this.defaultValue;
         }
         finally
         {
