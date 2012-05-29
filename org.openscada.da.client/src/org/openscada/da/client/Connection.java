@@ -32,70 +32,46 @@ import org.openscada.da.core.browser.Entry;
 
 /**
  * A DataAccess (DA) connection.
+ * 
  * @author Jens Reimann &lt;jens.reimann@th4-systems.com&gt;
- *
  */
 public interface Connection extends org.openscada.core.client.Connection
 {
     /**
-     * Browse a server folder for items. The operation will block until the result is available,
-     * an error occurred or the connection failed.
-     * @see org.openscada.da.client.Connection#browse(Location)
-     * @param path The path to browse
+     * Browse a server folder for items. The operation will block until the result is available, an error occurred or the connection failed.
+     * 
+     * @param location
+     *            The path to browse
      * @return The entries of the server folder
-     * @throws NoConnectionException Raised if there is currently no connect to the server
-     * @throws OperationException Raised if the operation failed
-     */
-    @Deprecated
-    public abstract Entry[] browse ( String[] path ) throws NoConnectionException, OperationException;
-
-    /**
-     * Browse a server folder for items. The operation will block until the result is available,
-     * an error occurred or the connection failed.
-     * @param location The path to browse
-     * @return The entries of the server folder
-     * @throws NoConnectionException Raised if there is currently no connect to the server
-     * @throws OperationException Raised if the operation failed
+     * @throws NoConnectionException
+     *             Raised if there is currently no connect to the server
+     * @throws OperationException
+     *             Raised if the operation failed
      */
     public abstract Entry[] browse ( Location location ) throws NoConnectionException, OperationException;
 
     /**
-     * Browse a server folder for items. The operation will block until the result is available,
-     * an error occurred, the timeout expired or the connection failed.
-     * @see org.openscada.da.client.Connection#browse(Location, int))
-     * @param path The path to browse
-     * @param timeout Timeout of the operation in milliseconds
+     * Browse a server folder for items. The operation will block until the result is available, an error occurred, the timeout expired or the connection failed.
+     * 
+     * @param location
+     *            The path to browse
+     * @param timeout
+     *            Timeout of the operation in milliseconds
      * @return The entries of the server folder
-     * @throws NoConnectionException Raised if there is currently no connect to the server
-     * @throws OperationException Raised if the operation failed
-     */
-    @Deprecated
-    public abstract Entry[] browse ( String[] path, int timeout ) throws NoConnectionException, OperationException;
-
-    /**
-     * Browse a server folder for items. The operation will block until the result is available,
-     * an error occurred, the timeout expired or the connection failed.
-     * @param location The path to browse
-     * @param timeout Timeout of the operation in milliseconds
-     * @return The entries of the server folder
-     * @throws NoConnectionException Raised if there is currently no connect to the server
-     * @throws OperationException Raised if the operation failed
+     * @throws NoConnectionException
+     *             Raised if there is currently no connect to the server
+     * @throws OperationException
+     *             Raised if the operation failed
      */
     public abstract Entry[] browse ( Location location, int timeout ) throws NoConnectionException, OperationException;
 
     /**
      * Browse a server folder for items. The operation will return immediately.
-     * @see org.openscada.da.client.Connection#browse(Location, BrowseOperationCallback)
-     * @param path The path to browse
-     * @param callback The callback that shall receive notifications of the operation
-     */
-    @Deprecated
-    public abstract void browse ( String[] path, BrowseOperationCallback callback );
-
-    /**
-     * Browse a server folder for items. The operation will return immediately.
-     * @param location The path to browse
-     * @param callback The callback that shall receive notifications of the operation
+     * 
+     * @param location
+     *            The path to browse
+     * @param callback
+     *            The callback that shall receive notifications of the operation
      */
     public abstract void browse ( Location location, BrowseOperationCallback callback );
 
@@ -117,8 +93,11 @@ public interface Connection extends org.openscada.core.client.Connection
 
     /**
      * Set the listener for this location.
-     * @param location The location for which to set the listener
-     * @param listener The listener to set
+     * 
+     * @param location
+     *            The location for which to set the listener
+     * @param listener
+     *            The listener to set
      * @return The previous set listener or <code>null</code> if there was no previous listener
      */
     public abstract FolderListener setFolderListener ( Location location, FolderListener listener );
@@ -129,14 +108,18 @@ public interface Connection extends org.openscada.core.client.Connection
 
     /**
      * Set the listener for this item.
-     * @param itemId The item for which to set the listener
-     * @param listener The listener to set
+     * 
+     * @param itemId
+     *            The item for which to set the listener
+     * @param listener
+     *            The listener to set
      * @return The previous set listener or <code>null</code> if there was no previous listener
      */
     public abstract ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener );
 
     /**
      * Retrieve the executor that is currently set
+     * 
      * @return the currently used executor. Implementations must never return <code>null</code>
      */
     public abstract Executor getExecutor ();

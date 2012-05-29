@@ -206,8 +206,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     }
 
     /**
-     * Decode the value change information from a "notify data" message 
-     * @param message the message 
+     * Decode the value change information from a "notify data" message
+     * 
+     * @param message
+     *            the message
      * @return the decoded value or <code>null</code> if no value was encoded
      */
     private Variant decodeValueChange ( final Message message )
@@ -221,8 +223,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     /**
      * Decode the attributes from a "notify data" message
-     * @param message the message
-     * @return the decoded attributes or <code>null</code> if no attribute changed 
+     * 
+     * @param message
+     *            the message
+     * @return the decoded attributes or <code>null</code> if no attribute changed
      */
     private Map<String, Variant> decodeAttributeChange ( final Message message )
     {
@@ -316,31 +320,31 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                 {
                     switch ( state )
                     {
-                    case FAILURE:
-                        if ( callback != null )
-                        {
-                            callback.failed ( error != null ? error.getMessage () : "<unknown error>" );
-                        }
-                        break;
-                    case SUCCESS:
-                        try
-                        {
-                            completeWrite ( operation );
+                        case FAILURE:
                             if ( callback != null )
                             {
-                                callback.complete ();
+                                callback.failed ( error != null ? error.getMessage () : "<unknown error>" );
                             }
-                        }
-                        catch ( final OperationException e )
-                        {
-                            logger.debug ( "Failed to write", e );
-                            if ( callback != null )
+                            break;
+                        case SUCCESS:
+                            try
                             {
-                                callback.failed ( e.getMessage () );
+                                completeWrite ( operation );
+                                if ( callback != null )
+                                {
+                                    callback.complete ();
+                                }
                             }
-                        }
+                            catch ( final OperationException e )
+                            {
+                                logger.debug ( "Failed to write", e );
+                                if ( callback != null )
+                                {
+                                    callback.failed ( e.getMessage () );
+                                }
+                            }
 
-                        break;
+                            break;
                     }
                 }
             } );
@@ -412,31 +416,31 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                 {
                     switch ( state )
                     {
-                    case FAILURE:
-                        if ( callback != null )
-                        {
-                            callback.failed ( error.getMessage () );
-                        }
-                        break;
-                    case SUCCESS:
-                        try
-                        {
-                            final WriteAttributeResults results = completeWriteAttributes ( operation );
+                        case FAILURE:
                             if ( callback != null )
                             {
-                                callback.complete ( results );
+                                callback.failed ( error.getMessage () );
                             }
-                        }
-                        catch ( final OperationException e )
-                        {
-                            logger.debug ( "Failed to write attributes", e );
-                            if ( callback != null )
+                            break;
+                        case SUCCESS:
+                            try
                             {
-                                callback.failed ( e.getMessage () );
+                                final WriteAttributeResults results = completeWriteAttributes ( operation );
+                                if ( callback != null )
+                                {
+                                    callback.complete ( results );
+                                }
                             }
-                        }
+                            catch ( final OperationException e )
+                            {
+                                logger.debug ( "Failed to write attributes", e );
+                                if ( callback != null )
+                                {
+                                    callback.failed ( e.getMessage () );
+                                }
+                            }
 
-                        break;
+                            break;
                     }
                 }
             } );
@@ -474,31 +478,6 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
             }
         }
         return null;
-    }
-
-    @Override
-    public Entry[] browse ( final String[] path ) throws NoConnectionException, OperationException
-    {
-        return browse ( new Location ( path ) );
-    }
-
-    @Override
-    public Entry[] browse ( final String[] path, final int timeout ) throws OperationException
-    {
-        try
-        {
-            return browse ( new Location ( path ), timeout );
-        }
-        catch ( final NoConnectionException e )
-        {
-            throw new OperationException ( e );
-        }
-    }
-
-    @Override
-    public void browse ( final String[] path, final BrowseOperationCallback callback )
-    {
-        browse ( new Location ( path ), callback );
     }
 
     protected Entry[] completeBrowse ( final LongRunningOperation operation ) throws OperationException
@@ -661,30 +640,30 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                 {
                     switch ( state )
                     {
-                    case FAILURE:
-                        if ( callback != null )
-                        {
-                            callback.failed ( error.getMessage () );
-                        }
-                        break;
-                    case SUCCESS:
-                        try
-                        {
-                            final Entry[] result = completeBrowse ( operation );
+                        case FAILURE:
                             if ( callback != null )
                             {
-                                callback.complete ( result );
+                                callback.failed ( error.getMessage () );
                             }
-                        }
-                        catch ( final OperationException e )
-                        {
-                            logger.debug ( "Failed to browse", e );
-                            if ( callback != null )
+                            break;
+                        case SUCCESS:
+                            try
                             {
-                                callback.failed ( e.getMessage () );
+                                final Entry[] result = completeBrowse ( operation );
+                                if ( callback != null )
+                                {
+                                    callback.complete ( result );
+                                }
                             }
-                        }
-                        break;
+                            catch ( final OperationException e )
+                            {
+                                logger.debug ( "Failed to browse", e );
+                                if ( callback != null )
+                                {
+                                    callback.failed ( e.getMessage () );
+                                }
+                            }
+                            break;
                     }
                 }
             } );
