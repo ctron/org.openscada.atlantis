@@ -30,7 +30,6 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -56,15 +55,15 @@ public class Activator implements BundleActivator
 
     private ExecutorService executor;
 
-    private ObjectPoolImpl dataSourcePool;
+    private ObjectPoolImpl<DataSource> dataSourcePool;
 
     private InfoServiceFactory factory;
 
     private ServiceRegistration<ConfigurationFactory> factoryHandle;
 
-    private ServiceRegistration<ObjectPool> dataSourcePoolHandler;
+    private ServiceRegistration<?> dataSourcePoolHandler;
 
-    private ObjectPoolTracker monitorPoolTracker;
+    private ObjectPoolTracker<MonitorService> monitorPoolTracker;
 
     /**
      * The constructor
@@ -85,7 +84,7 @@ public class Activator implements BundleActivator
         this.monitorPoolTracker = new ObjectPoolTracker<MonitorService> ( context, MonitorService.class );
         this.monitorPoolTracker.open ();
 
-        this.dataSourcePool = new ObjectPoolImpl ();
+        this.dataSourcePool = new ObjectPoolImpl<DataSource> ();
         this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class );
 
         this.factory = new InfoServiceFactory ( context, this.executor, this.monitorPoolTracker, this.dataSourcePool );

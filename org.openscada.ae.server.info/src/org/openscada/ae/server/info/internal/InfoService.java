@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,6 +34,7 @@ import org.openscada.ae.monitor.MonitorService;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
+import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.base.DataInputOutputSource;
 import org.openscada.da.datasource.base.DataInputSource;
 import org.openscada.da.datasource.base.WriteHandler;
@@ -57,7 +58,7 @@ public class InfoService
 
     private final Executor executor;
 
-    private final ObjectPoolImpl dataSourcePool;
+    private final ObjectPoolImpl<DataSource> dataSourcePool;
 
     private final Map<String, DataInputSource> items = new HashMap<String, DataInputSource> ();
 
@@ -83,7 +84,7 @@ public class InfoService
      * @param monitorPoolTracker
      * @param dataSourcePool
      */
-    public InfoService ( final BundleContext context, final Executor executor, final ObjectPoolTracker monitorPoolTracker, final ObjectPoolImpl dataSourcePool )
+    public InfoService ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MonitorService> monitorPoolTracker, final ObjectPoolImpl<DataSource> dataSourcePool )
     {
         // set final fields
         this.executor = executor;
@@ -128,43 +129,43 @@ public class InfoService
         };
 
         // listener for all monitors of a pool
-        final ObjectPoolListener objectPoolListener = new ObjectPoolListener<Object> () {
+        final ObjectPoolListener<MonitorService> objectPoolListener = new ObjectPoolListener<MonitorService> () {
             @Override
-            public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceAdded ( final MonitorService service, final Dictionary<?, ?> properties )
             {
-                ( (MonitorService)service ).addStatusListener ( ml );
+                service.addStatusListener ( ml );
             }
 
             @Override
-            public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceRemoved ( final MonitorService service, final Dictionary<?, ?> properties )
             {
-                ( (MonitorService)service ).removeStatusListener ( ml );
+                service.removeStatusListener ( ml );
             }
 
             @Override
-            public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceModified ( final MonitorService service, final Dictionary<?, ?> properties )
             {
-                ( (MonitorService)service ).removeStatusListener ( ml );
-                ( (MonitorService)service ).addStatusListener ( ml );
+                service.removeStatusListener ( ml );
+                service.addStatusListener ( ml );
             }
         };
 
         // listener for all monitor pools
-        monitorPoolTracker.addListener ( new ObjectPoolServiceListener () {
+        monitorPoolTracker.addListener ( new ObjectPoolServiceListener<MonitorService> () {
             @Override
-            public void poolAdded ( final ObjectPool objectPool, final int priority )
+            public void poolAdded ( final ObjectPool<MonitorService> objectPool, final int priority )
             {
                 objectPool.addListener ( objectPoolListener );
             }
 
             @Override
-            public void poolRemoved ( final ObjectPool objectPool )
+            public void poolRemoved ( final ObjectPool<MonitorService> objectPool )
             {
                 objectPool.removeListener ( objectPoolListener );
             }
 
             @Override
-            public void poolModified ( final ObjectPool objectPool, final int newPriority )
+            public void poolModified ( final ObjectPool<MonitorService> objectPool, final int newPriority )
             {
                 objectPool.removeListener ( objectPoolListener );
                 objectPool.addListener ( objectPoolListener );
