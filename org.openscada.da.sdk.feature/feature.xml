@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openscada.da.sdk"
-      label="OpenSCADA DA SDK"
-      version="0.15.0.qualifier"
+      label="openSCADA DA SDK"
+      version="1.0.0.qualifier"
       provider-name="TH4 SYSTEMS GmbH">
 
    <description>
