@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -44,7 +44,7 @@ public class Activator implements BundleActivator
 
     private CommonSumHandlerFactoryImpl factory1;
 
-    private ObjectPoolTracker poolTracker;
+    private ObjectPoolTracker<MasterItem> poolTracker;
 
     private ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker;
 
@@ -66,7 +66,7 @@ public class Activator implements BundleActivator
         this.eventProcessor = new EventProcessor ( context );
         this.eventProcessor.open ();
 
-        this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<MasterItem> ( context, MasterItem.class );
         this.poolTracker.open ();
 
         this.caTracker = new ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> ( context, ConfigurationAdministrator.class, null );

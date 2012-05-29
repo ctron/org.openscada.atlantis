@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -36,11 +37,11 @@ public class ScaleHandlerFactoryImpl extends AbstractServiceConfigurationFactory
 
     private final int priority;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
     private final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker;
 
-    public ScaleHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final int priority ) throws InvalidSyntaxException
+    public ScaleHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker<MasterItem> poolTracker, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final int priority ) throws InvalidSyntaxException
     {
         super ( context );
         this.priority = priority;

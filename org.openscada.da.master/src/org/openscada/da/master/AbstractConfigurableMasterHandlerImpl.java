@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -51,7 +51,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
     private final String configurationId;
 
-    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
+    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
     {
         super ( poolTracker, priority );
         this.configurationId = configurationId;
@@ -133,10 +133,14 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
     /**
      * This method will be called on write request that have attributes which match our prefix.
-     * @param writeInformation the write information of the write request
-     * @param attributes the filtered attributes that match our prefix 
+     * 
+     * @param writeInformation
+     *            the write information of the write request
+     * @param attributes
+     *            the filtered attributes that match our prefix
      * @return the attribute result of the written attributes
-     * @throws Exception if anything goes wrong
+     * @throws Exception
+     *             if anything goes wrong
      */
     protected abstract WriteAttributeResults handleUpdate ( final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws Exception;
 

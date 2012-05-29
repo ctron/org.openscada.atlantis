@@ -29,6 +29,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.str.StringHelper;
@@ -43,7 +44,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
 
     private boolean debug = false;
 
-    public CommonSumHandler ( final ObjectPoolTracker poolTracker )
+    public CommonSumHandler ( final ObjectPoolTracker<MasterItem> poolTracker )
     {
         super ( poolTracker );
     }
