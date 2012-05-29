@@ -21,6 +21,8 @@ package org.openscada.da.master.mapper;
 
 import java.util.Map;
 
+import org.openscada.da.mapper.ValueMapper;
+import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -31,13 +33,13 @@ public class MapperHandlerFactoryImpl extends AbstractServiceConfigurationFactor
 {
     public static final String FACTORY_ID = "org.openscada.da.master.mapper";
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
-    private final ObjectPoolTracker mapperPoolTracker;
+    private final ObjectPoolTracker<ValueMapper> mapperPoolTracker;
 
     private final int defaultPriority;
 
-    public MapperHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ObjectPoolTracker mapperPoolTracker, final int defaultPriority ) throws InvalidSyntaxException
+    public MapperHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker<MasterItem> poolTracker, final ObjectPoolTracker<ValueMapper> mapperPoolTracker, final int defaultPriority ) throws InvalidSyntaxException
     {
         super ( context );
         this.poolTracker = poolTracker;

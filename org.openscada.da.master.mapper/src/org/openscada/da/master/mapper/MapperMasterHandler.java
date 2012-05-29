@@ -29,6 +29,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.mapper.ValueMapper;
 import org.openscada.da.mapper.ValueMapperListener;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.da.master.MasterItem;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
@@ -40,15 +41,15 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
 
     private String targetAttributeName;
 
-    private final ObjectPoolTracker mapperPoolTracker;
+    private final ObjectPoolTracker<ValueMapper> mapperPoolTracker;
 
     private volatile ValueMapper mapper;
 
-    private SingleObjectPoolServiceTracker mapperTracker;
+    private SingleObjectPoolServiceTracker<ValueMapper> mapperTracker;
 
     private final String id;
 
-    public MapperMasterHandler ( final String id, final ObjectPoolTracker poolTracker, final ObjectPoolTracker mapperPoolTracker, final int defaultPriority )
+    public MapperMasterHandler ( final String id, final ObjectPoolTracker<MasterItem> poolTracker, final ObjectPoolTracker<ValueMapper> mapperPoolTracker, final int defaultPriority )
     {
         super ( poolTracker, defaultPriority );
         this.id = id;
@@ -58,6 +59,8 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
     @Override
     public synchronized void update ( final org.openscada.sec.UserInformation userInformation, final java.util.Map<String, String> parameters ) throws Exception
     {
+        super.update ( userInformation, parameters );
+
         if ( this.mapperTracker != null )
         {
             this.mapperTracker.close ();

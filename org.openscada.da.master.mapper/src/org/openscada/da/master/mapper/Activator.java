@@ -34,11 +34,11 @@ import org.osgi.framework.Constants;
 public class Activator implements BundleActivator
 {
 
-    private ObjectPoolTracker poolTracker;
+    private ObjectPoolTracker<MasterItem> poolTracker;
 
     private MapperHandlerFactoryImpl factory;
 
-    private ObjectPoolTracker mapperPoolTracker;
+    private ObjectPoolTracker<ValueMapper> mapperPoolTracker;
 
     /*
      * (non-Javadoc)
@@ -47,13 +47,13 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<MasterItem> ( context, MasterItem.class );
         this.poolTracker.open ();
 
-        this.mapperPoolTracker = new ObjectPoolTracker ( context, ValueMapper.class.getName () );
+        this.mapperPoolTracker = new ObjectPoolTracker<ValueMapper> ( context, ValueMapper.class );
         this.mapperPoolTracker.open ();
 
-        this.factory = new MapperHandlerFactoryImpl ( context, this.poolTracker, this.mapperPoolTracker, 501 );
+        this.factory = new MapperHandlerFactoryImpl ( context, this.poolTracker, this.mapperPoolTracker, 1001 /* after manual */);
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "A value mapper master handler" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, MapperHandlerFactoryImpl.FACTORY_ID );
