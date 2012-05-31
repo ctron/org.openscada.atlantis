@@ -68,6 +68,12 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
 
     private static final Object STATS_SESSION_BYTES_WRITTEN = new Object ();
 
+    private static final Object STATS_CALLS_CONNECT = new Object ();
+
+    private static final Object STATS_CALLS_DISCONNECT = new Object ();
+
+    private static final Object STATS_NUMERIC_STATE = new Object ();
+
     private final Set<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArraySet<ConnectionStateListener> ();
 
     private volatile ConnectionState connectionState = ConnectionState.CLOSED;
@@ -111,6 +117,11 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
         this.statistics.setLabel ( STATS_PINGS_SENT, "Pings sent" );
         this.statistics.setLabel ( STATS_SESSION_BYTES_READ, "Bytes read in session" );
         this.statistics.setLabel ( STATS_SESSION_BYTES_WRITTEN, "Bytes written in session" );
+
+        this.statistics.setLabel ( STATS_CALLS_CONNECT, "Calls to connect" );
+        this.statistics.setLabel ( STATS_CALLS_DISCONNECT, "Calls to disconnect" );
+
+        this.statistics.setLabel ( STATS_NUMERIC_STATE, "Numeric state" );
     }
 
     protected synchronized void switchState ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
@@ -315,6 +326,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
     @Override
     public void disconnect ()
     {
+        this.statistics.changeCurrentValue ( STATS_CALLS_DISCONNECT, 1 );
         disconnect ( null );
     }
 
@@ -369,6 +381,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
         {
             if ( this.connectionState != connectionState )
             {
+                this.statistics.setCurrentValue ( STATS_NUMERIC_STATE, connectionState.ordinal () );
                 this.connectionState = connectionState;
                 trigger = true;
             }
@@ -420,6 +433,8 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
     public synchronized void connect ()
     {
         logger.debug ( "Requesting connect in state {}", this.connectionState );
+
+        this.statistics.changeCurrentValue ( STATS_CALLS_CONNECT, 1 );
 
         if ( this.connectionState == ConnectionState.CLOSED )
         {

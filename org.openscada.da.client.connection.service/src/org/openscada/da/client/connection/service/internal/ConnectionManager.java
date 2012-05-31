@@ -128,7 +128,7 @@ public class ConnectionManager implements SingleServiceListener<DriverFactory>
 
         if ( connection != null )
         {
-            this.connection = new ConnectionServiceImpl ( connection, 10000 );
+            this.connection = new ConnectionServiceImpl ( connection, 10000, false );
             this.connection.connect ();
 
             final Hashtable<String, String> properties = new Hashtable<String, String> ();

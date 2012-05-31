@@ -35,20 +35,30 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
 {
     private static final Logger logger = LoggerFactory.getLogger ( AbstractConnectionService.class );
 
-    private final Connection connection;
+    private Connection connection;
 
-    private final AutoReconnectController controller;
+    private AutoReconnectController controller;
 
     protected final StatisticsImpl statistics = new StatisticsImpl ();
 
-    public AbstractConnectionService ( final Connection connection, final Integer autoReconnectController )
-    {
-        super ();
-        this.connection = connection;
+    private final boolean lazyActivation;
 
-        if ( autoReconnectController != null )
+    private boolean connectionRequested = false;
+
+    private final Integer autoReconnectDelay;
+
+    public AbstractConnectionService ( final Integer autoReconnectDelay, final boolean lazyActivation )
+    {
+        this.lazyActivation = lazyActivation;
+        this.autoReconnectDelay = autoReconnectDelay;
+    }
+
+    protected void setConnection ( final Connection connection )
+    {
+        this.connection = connection;
+        if ( this.autoReconnectDelay != null )
         {
-            this.controller = new AutoReconnectController ( connection, autoReconnectController );
+            this.controller = new AutoReconnectController ( connection, this.autoReconnectDelay );
         }
         else
         {
@@ -74,14 +84,31 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
         return this.controller;
     }
 
-    @Override
-    public Connection getConnection ()
+    protected boolean shouldConnect ()
     {
-        return this.connection;
+        return true;
+    }
+
+    protected synchronized void checkConnect ()
+    {
+        if ( this.connectionRequested && ( !this.lazyActivation || shouldConnect () ) )
+        {
+            performConnect ();
+        }
+        else
+        {
+            performDisconnect ();
+        }
     }
 
     @Override
-    public void connect ()
+    public synchronized void connect ()
+    {
+        this.connectionRequested = true;
+        checkConnect ();
+    }
+
+    protected void performConnect ()
     {
         if ( this.controller != null )
         {
@@ -94,7 +121,13 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
     }
 
     @Override
-    public void disconnect ()
+    public synchronized void disconnect ()
+    {
+        this.connectionRequested = false;
+        checkConnect ();
+    }
+
+    protected void performDisconnect ()
     {
         if ( this.controller != null )
         {
