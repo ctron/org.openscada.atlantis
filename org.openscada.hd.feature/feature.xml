@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.hd"
       label="openSCADA HD"
-      version="0.17.0.qualifier"
+      version="1.0.0.qualifier"
       provider-name="TH4 SYSTEMS GmbH">
 
    <description url="http://openscada.org">
