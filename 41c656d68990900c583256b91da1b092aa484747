@@ -1,0 +1,8 @@
+Change-Id: I41c656d68990900c583256b91da1b092aa484747
+Verified+1: Jens Reimann <jens.reimann@th4-systems.com>
+Code-Review+2: Jens Reimann <jens.reimann@th4-systems.com>
+Submitted-by: Jens Reimann <jens.reimann@th4-systems.com>
+Submitted-at: Wed, 06 Jun 2012 11:04:13 +0200
+Reviewed-on: http://gerrit.intra/39
+Project: org.openscada.atlantis
+Branch: refs/heads/0.18
