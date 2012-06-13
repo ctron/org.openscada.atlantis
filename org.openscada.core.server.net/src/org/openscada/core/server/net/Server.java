@@ -20,7 +20,14 @@
 package org.openscada.core.server.net;
 
 import java.io.IOException;
+import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.net.InterfaceAddress;
+import java.net.NetworkInterface;
+import java.net.SocketAddress;
+import java.util.Enumeration;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandler;
@@ -28,9 +35,14 @@ import org.apache.mina.handler.multiton.SingleSessionIoHandlerDelegate;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.net.ConnectionHelper;
 import org.openscada.net.mina.SocketImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Server
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( Server.class );
+
     private IoAcceptor acceptor;
 
     private final ConnectionInformation connectionInformation;
@@ -40,9 +52,46 @@ public class Server
         this.connectionInformation = connectionInformation;
     }
 
-    public void start ( final SingleSessionIoHandlerDelegate ioHandler ) throws IOException
+    public Set<ConnectionInformation> start ( final SingleSessionIoHandlerDelegate ioHandler ) throws IOException
     {
         this.acceptor = createAcceptor ( ioHandler );
+
+        final Set<ConnectionInformation> result = new HashSet<ConnectionInformation> ();
+
+        for ( final SocketAddress address : this.acceptor.getLocalAddresses () )
+        {
+            logger.info ( "Bound to: {}", address );
+            if ( address instanceof InetSocketAddress )
+            {
+                final InetSocketAddress socketAddress = (InetSocketAddress)address;
+                if ( socketAddress.getAddress ().isAnyLocalAddress () )
+                {
+                    final Enumeration<NetworkInterface> interfaces = NetworkInterface.getNetworkInterfaces ();
+                    while ( interfaces.hasMoreElements () )
+                    {
+                        final NetworkInterface networkInterface = interfaces.nextElement ();
+
+                        for ( final InterfaceAddress interfaceAddress : networkInterface.getInterfaceAddresses () )
+                        {
+                            result.add ( cloneFill ( interfaceAddress.getAddress () ) );
+                        }
+                    }
+                }
+                else
+                {
+                    result.add ( cloneFill ( socketAddress.getAddress () ) );
+                }
+            }
+        }
+
+        return result;
+    }
+
+    private ConnectionInformation cloneFill ( final InetAddress inetAddress )
+    {
+        final ConnectionInformation info = this.connectionInformation.clone ();
+        info.setTarget ( inetAddress.getHostAddress () );
+        return info;
     }
 
     private IoAcceptor createAcceptor ( final IoHandler ioHandler ) throws IOException

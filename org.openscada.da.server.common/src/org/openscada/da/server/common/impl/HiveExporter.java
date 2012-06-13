@@ -19,13 +19,18 @@
 
 package org.openscada.da.server.common.impl;
 
-import org.openscada.utils.lifecycle.LifecycleAware;
+import java.util.Collection;
+
+import org.openscada.core.ConnectionInformation;
 
 /**
  * A hive exporter interface
+ * 
  * @author Jens Reimann
- *
  */
-public interface HiveExporter extends LifecycleAware
+public interface HiveExporter
 {
+    public Collection<ConnectionInformation> start () throws Exception;
+
+    public void stop () throws Exception;
 }

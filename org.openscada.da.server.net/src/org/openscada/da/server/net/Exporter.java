@@ -20,6 +20,7 @@
 package org.openscada.da.server.net;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
@@ -39,10 +40,10 @@ public class Exporter extends ExporterBase
         super ( hive, connectionInformation );
     }
 
-    private void createServer () throws IOException
+    private Collection<ConnectionInformation> createServer () throws IOException
     {
         this.server = new Server ( this.connectionInformation );
-        this.server.start ( createFactory () );
+        return this.server.start ( createFactory () );
     }
 
     private SingleSessionIoHandlerDelegate createFactory ()
@@ -58,9 +59,9 @@ public class Exporter extends ExporterBase
     }
 
     @Override
-    public void start () throws Exception
+    public Collection<ConnectionInformation> start () throws Exception
     {
-        createServer ();
+        return createServer ();
     }
 
     @Override
