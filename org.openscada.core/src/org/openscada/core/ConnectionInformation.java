@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,10 +19,8 @@
 
 package org.openscada.core;
 
-import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
-import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -75,7 +73,7 @@ public class ConnectionInformation implements Cloneable
             final ConnectionInformation ci = new ConnectionInformation ();
             ci.interfaceName = uri.getScheme ();
             ci.driver = subUri.getScheme ();
-            ci.target = subUri.getHost ();
+            ci.target = URLDecoder.decode ( subUri.getHost (), URI_ENCODING );
 
             if ( subUri.getPort () >= 0 )
             {
@@ -198,88 +196,67 @@ public class ConnectionInformation implements Cloneable
         return this.properties.get ( PROP_PASSWORD );
     }
 
-    @Override
-    public String toString ()
+    public URI toUri ()
     {
+        final Map<String, String> properties = new HashMap<String, String> ( this.properties );
+
+        final String user = properties.remove ( PROP_USER );
+        final String password = properties.remove ( PROP_PASSWORD );
+
+        final StringBuilder query = new StringBuilder ();
+        final String path = "";
+
         try
         {
-            final HashMap<String, String> properties = new HashMap<String, String> ( this.properties );
-
-            String userInfo = null;
-            final String user = properties.remove ( PROP_USER );
-            final String password = properties.remove ( PROP_PASSWORD );
-            String subtargets = null;
-            String query = null;
-
-            // prepare subtargets
-            if ( this.subtargets.size () > 0 )
+            String userInfo;
+            if ( user == null && password == null )
             {
-                subtargets = "";
-                for ( final String subtarget : this.subtargets )
-                {
-                    subtargets += "/";
-                    subtargets += URLEncoder.encode ( subtarget, URI_ENCODING );
-                }
-            }
-
-            // perpare properties
-
-            for ( final Map.Entry<String, String> entry : properties.entrySet () )
-            {
-                if ( query == null )
-                {
-                    query = "?";
-                }
-                else
-                {
-                    query += "&";
-                }
-                query += URLEncoder.encode ( entry.getKey (), URI_ENCODING );
-                query += "=";
-                query += URLEncoder.encode ( entry.getValue (), URI_ENCODING );
-            }
-
-            // prepare user info
-            if ( user != null && password != null )
-            {
-                userInfo = URLEncoder.encode ( user, URI_ENCODING ) + ":" + URLEncoder.encode ( password, URI_ENCODING );
+                userInfo = null;
             }
             else if ( user != null )
             {
-                userInfo = URLEncoder.encode ( user, URI_ENCODING );
+                userInfo = user;
+            }
+            else
+            {
+                userInfo = user + ":" + password;
             }
 
-            String uri = "";
-
-            uri += URLEncoder.encode ( this.interfaceName, URI_ENCODING ) + ":" + URLEncoder.encode ( this.driver, URI_ENCODING ) + "://";
-            if ( userInfo != null )
+            String target;
+            if ( this.target == null )
             {
-                uri += userInfo + "@";
+                target = "";
+            }
+            else if ( this.target.indexOf ( '%' ) >= 0 )
+            {
+                target = this.target.replace ( "%", "%25" );
+            }
+            else
+            {
+                target = this.target;
             }
 
-            if ( this.target != null )
-            {
-                uri += URLEncoder.encode ( this.target, URI_ENCODING );
-            }
-            if ( this.secondaryTarget != null )
-            {
-                uri += ":" + this.secondaryTarget;
-            }
-            if ( subtargets != null )
-            {
-                uri += subtargets;
-            }
-            if ( query != null )
-            {
-                uri += query;
-            }
-
-            return uri;
+            return new URI ( this.interfaceName + ":" + this.driver, userInfo, target, this.secondaryTarget, path, query.length () <= 0 ? null : query.toString (), null );
         }
-        catch ( final UnsupportedEncodingException e )
+        catch ( final Exception e )
         {
-            logger.warn ( "Failed to encode URI", e );
+            logger.warn ( "Failed to convert", e );
             return null;
+        }
+
+    }
+
+    @Override
+    public String toString ()
+    {
+        final URI uri = toUri ();
+        if ( uri == null )
+        {
+            return null;
+        }
+        else
+        {
+            return uri.toString ();
         }
     }
 
