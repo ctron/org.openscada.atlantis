@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.hd.server.storage.hds.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: com.google.common.io;version="0.6.0",
+Import-Package: org.apache.commons.io;version="2.3.0",
  org.eclipse.osgi.framework.console;version="1.1.0";resolution:=optional,
  org.openscada.core;version="0.17.0",
  org.openscada.da.client;version="0.16.0",
