@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,9 +20,10 @@
 package org.openscada.da.client;
 
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
@@ -33,7 +34,7 @@ public class FolderSyncController extends FolderWatcher
 {
     private final static Logger logger = LoggerFactory.getLogger ( FolderSyncController.class );
 
-    private final Set<FolderListener> listener = new CopyOnWriteArraySet<FolderListener> ();
+    private final Set<FolderListener> listener = new HashSet<FolderListener> ();
 
     private final Connection connection;
 
@@ -48,14 +49,17 @@ public class FolderSyncController extends FolderWatcher
 
     public void addListener ( final FolderListener listener )
     {
-        if ( this.listener.add ( listener ) )
+        synchronized ( this )
         {
-            sync ();
+            if ( this.listener.add ( listener ) )
+            {
+                sync ();
+            }
         }
         transmitCache ( listener );
     }
 
-    public void removeListener ( final FolderListener listener )
+    public synchronized void removeListener ( final FolderListener listener )
     {
         if ( this.listener.remove ( listener ) )
         {
@@ -63,33 +67,29 @@ public class FolderSyncController extends FolderWatcher
         }
     }
 
-    public void sync ()
+    public synchronized void sync ()
     {
         sync ( false );
     }
 
-    public void resync ()
+    public synchronized void resync ()
     {
         sync ( true );
     }
 
-    private void sync ( final boolean force )
+    private synchronized void sync ( final boolean force )
     {
-        synchronized ( this )
-        {
-            // FIXME: use isEmpty
-            final boolean needSubscription = this.listener.size () > 0;
+        final boolean needSubscription = !this.listener.isEmpty ();
 
-            if ( needSubscription != this.subscribed || force )
+        if ( needSubscription != this.subscribed || force )
+        {
+            if ( needSubscription )
             {
-                if ( needSubscription )
-                {
-                    subscribe ();
-                }
-                else
-                {
-                    unsubscribe ();
-                }
+                subscribe ();
+            }
+            else
+            {
+                unsubscribe ();
             }
         }
     }
@@ -133,8 +133,7 @@ public class FolderSyncController extends FolderWatcher
 
     private void transmitCache ( final FolderListener listener )
     {
-        // FIXME: use emptyList
-        listener.folderChanged ( this.cache.values (), new LinkedList<String> (), true );
+        listener.folderChanged ( this.cache.values (), Collections.<String> emptySet (), true );
     }
 
     @Override
