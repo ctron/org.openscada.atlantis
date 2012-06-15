@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,6 +23,7 @@ import java.util.EnumSet;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.IODirection;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
@@ -32,9 +33,14 @@ import org.openscada.utils.concurrent.NotifyFuture;
 public abstract class DataItemInput extends DataItemBase
 {
 
+    public DataItemInput ( final DataItemInformation information )
+    {
+        super ( information );
+    }
+
     public DataItemInput ( final String name )
     {
-        super ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.INPUT ) ) );
+        this ( new DataItemInformationBase ( name, EnumSet.of ( IODirection.INPUT ) ) );
     }
 
     @Override
