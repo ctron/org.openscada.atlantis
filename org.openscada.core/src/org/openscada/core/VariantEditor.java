@@ -26,6 +26,11 @@ public class VariantEditor extends PropertyEditorSupport
 
     public static Variant toVariant ( final String text ) throws IllegalArgumentException
     {
+        if ( text == null )
+        {
+            return null;
+        }
+
         final String[] toks = text.split ( "#", 2 );
         if ( toks.length > 1 )
         {
