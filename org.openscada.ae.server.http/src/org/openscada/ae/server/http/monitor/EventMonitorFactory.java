@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,6 +29,7 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.lang.Pair;
@@ -46,13 +47,13 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
 
     private final Executor executor;
 
-    private final ObjectPoolImpl servicePool;
+    private final ObjectPoolImpl<MonitorService> servicePool;
 
     private final EventProcessor eventProcessor;
 
     private final ConcurrentMap<String, EventMonitor> monitors = new ConcurrentHashMap<String, EventMonitor> ();
 
-    public EventMonitorFactory ( final BundleContext context, final Executor executor, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor )
+    public EventMonitorFactory ( final BundleContext context, final Executor executor, final ObjectPoolImpl<MonitorService> servicePool, final EventProcessor eventProcessor )
     {
         super ( context );
         this.executor = executor;
