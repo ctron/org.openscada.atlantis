@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,12 +31,12 @@ import org.osgi.framework.InvalidSyntaxException;
 public class DataSourceLoggerFactory extends AbstractServiceConfigurationFactory<MasterItemLogger>
 {
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
     public DataSourceLoggerFactory ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
-        this.poolTracker = new ObjectPoolTracker ( context, MasterItem.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<MasterItem> ( context, MasterItem.class );
         this.poolTracker.open ();
     }
 

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA AE Datasource Logger
 Bundle-SymbolicName: org.openscada.ae.event.logger
-Bundle-Version: 0.18.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.ae.event.logger.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -19,5 +19,5 @@ Import-Package: org.openscada.ae;version="0.15.0",
  org.openscada.da.master;version="0.15.0",
  org.openscada.sec;version="0.1.0",
  org.openscada.utils.osgi.ca.factory;version="0.15.0",
- org.openscada.utils.osgi.pool;version="0.15.0",
+ org.openscada.utils.osgi.pool;version="1.0.0",
  org.osgi.framework;version="1.6.0"
