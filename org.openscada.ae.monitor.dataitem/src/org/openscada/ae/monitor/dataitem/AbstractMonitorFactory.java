@@ -29,7 +29,7 @@ import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
+import org.openscada.utils.osgi.pool.ManageableObjectPool;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,9 +44,9 @@ public abstract class AbstractMonitorFactory extends AbstractServiceConfiguratio
 
     protected final EventProcessor eventProcessor;
 
-    private final ObjectPoolImpl<MonitorService> servicePool;
+    private final ManageableObjectPool<MonitorService> servicePool;
 
-    public AbstractMonitorFactory ( final BundleContext context, final ObjectPoolImpl<MonitorService> servicePool, final EventProcessor eventProcessor )
+    public AbstractMonitorFactory ( final BundleContext context, final ManageableObjectPool<MonitorService> servicePool, final EventProcessor eventProcessor )
     {
         super ( context );
         this.context = context;

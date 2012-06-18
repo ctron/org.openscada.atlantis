@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,19 +22,21 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.remote;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.dataitem.AbstractMonitorFactory;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
+import org.openscada.da.master.MasterItem;
+import org.openscada.utils.osgi.pool.ManageableObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
 public class RemoteAttributeMonitorFactoryImpl extends AbstractMonitorFactory
 {
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
     private final Executor executor;
 
-    public RemoteAttributeMonitorFactoryImpl ( final BundleContext context, final ObjectPoolImpl servicePool, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor )
+    public RemoteAttributeMonitorFactoryImpl ( final BundleContext context, final ManageableObjectPool<MonitorService> servicePool, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor )
     {
         super ( context, servicePool, eventProcessor );
         this.poolTracker = poolTracker;

@@ -100,7 +100,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     }
 
     @Override
-    public void dispose ()
+    public synchronized void dispose ()
     {
         disconnect ();
     }
@@ -281,7 +281,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     protected abstract String getConfigurationId ();
 
     @Override
-    protected void notifyStateChange ( final MonitorStatusInformation status )
+    protected synchronized void notifyStateChange ( final MonitorStatusInformation status )
     {
         super.notifyStateChange ( status );
         this.state = status.getStatus ();

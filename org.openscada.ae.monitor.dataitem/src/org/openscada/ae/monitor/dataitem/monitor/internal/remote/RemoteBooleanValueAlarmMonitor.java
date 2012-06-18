@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -56,7 +56,7 @@ public class RemoteBooleanValueAlarmMonitor extends GenericRemoteMonitor impleme
 
     private Variant aknValue = Variant.TRUE;
 
-    public RemoteBooleanValueAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
+    public RemoteBooleanValueAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final int priority )
     {
         super ( context, executor, poolTracker, priority, id, eventProcessor );
     }

@@ -82,7 +82,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     private PersistentState persistentState;
 
-    public GenericRemoteMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final int priority, final String id, final EventProcessor eventProcessor )
+    public GenericRemoteMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final String id, final EventProcessor eventProcessor )
     {
         super ( poolTracker, priority );
         this.context = context;
@@ -319,6 +319,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
     /**
      * Create a pre-filled event builder
+     * 
      * @return a new event builder
      */
     protected EventBuilder createEventBuilder ()
@@ -378,10 +379,13 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         boolean alarm = false;
         switch ( this.state )
         {
-        case NOT_OK_AKN:
-        case NOT_OK_NOT_AKN:
-        case NOT_OK:
-            alarm = true;
+            case NOT_OK_AKN: //$FALL-THROUGH$
+            case NOT_OK_NOT_AKN: //$FALL-THROUGH$
+            case NOT_OK: //$FALL-THROUGH$
+                alarm = true;
+                break;
+            default:
+                break;
         }
 
         builder.setAttribute ( this.id + ".alarm", Variant.valueOf ( alarm ) );

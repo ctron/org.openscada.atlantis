@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,8 +22,10 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.level;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.dataitem.AbstractMonitorFactory;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
+import org.openscada.da.master.MasterItem;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
@@ -43,13 +45,13 @@ public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
 
     private final String defaultMonitorType;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
     private final boolean includedOk;
 
     private final Executor executor;
 
-    public LevelMonitorFactoryImpl ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
+    public LevelMonitorFactoryImpl ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final ObjectPoolImpl<MonitorService> servicePool, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
         super ( context, servicePool, eventProcessor );
         this.executor = executor;

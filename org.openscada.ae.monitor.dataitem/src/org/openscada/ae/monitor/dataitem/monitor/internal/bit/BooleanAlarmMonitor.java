@@ -32,6 +32,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
@@ -45,7 +46,7 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
 
     private final int defaultPriority;
 
-    public BooleanAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int defaultPriority )
+    public BooleanAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final int defaultPriority )
     {
         super ( context, executor, poolTracker, eventProcessor, id, "ae.monitor.booleanAlarm", "VALUE" );
         this.defaultPriority = defaultPriority;
