@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -48,7 +48,7 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration<MonitorQuery> handle;
 
-    private ObjectPoolTracker poolTracker;
+    private ObjectPoolTracker<MonitorService> poolTracker;
 
     private QueryServiceFactory factory;
 
@@ -69,7 +69,7 @@ public class Activator implements BundleActivator
 
         this.context = context;
 
-        this.poolTracker = new ObjectPoolTracker ( context, MonitorService.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<MonitorService> ( context, MonitorService.class );
         this.poolTracker.open ();
 
         this.allQuery = new BundleMonitorQuery ( this.executor, context, this.poolTracker );
