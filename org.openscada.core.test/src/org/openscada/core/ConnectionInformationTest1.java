@@ -24,7 +24,6 @@ import static org.junit.Assert.assertNotNull;
 import junit.framework.Assert;
 
 import org.junit.Test;
-import org.openscada.core.ConnectionInformation;
 
 public class ConnectionInformationTest1
 {
@@ -242,7 +241,7 @@ public class ConnectionInformationTest1
         o.getSubtargets ().add ( "sub1" );
         o.getSubtargets ().add ( "sub2" );
         o.getProperties ().put ( "key", "value" );
-        Assert.assertEquals ( o.toString (), "da:net://jens:test@localhost:1202/sub1/sub2?key=value" );
+        Assert.assertEquals ( "da:net://jens:test@localhost:1202/sub1/sub2?key=value", o.toString () );
     }
 
     @Test

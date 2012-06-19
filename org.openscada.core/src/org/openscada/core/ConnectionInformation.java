@@ -19,8 +19,10 @@
 
 package org.openscada.core;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -29,6 +31,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -203,17 +206,17 @@ public class ConnectionInformation implements Cloneable
         final String user = properties.remove ( PROP_USER );
         final String password = properties.remove ( PROP_PASSWORD );
 
-        final StringBuilder query = new StringBuilder ();
-        final String path = "";
-
         try
         {
+            final String query = makeQuery ( properties );
+            final String path = makePath ();
+
             String userInfo;
             if ( user == null && password == null )
             {
                 userInfo = null;
             }
-            else if ( user != null )
+            else if ( user != null && password == null )
             {
                 userInfo = user;
             }
@@ -236,7 +239,7 @@ public class ConnectionInformation implements Cloneable
                 target = this.target;
             }
 
-            return new URI ( this.interfaceName + ":" + this.driver, userInfo, target, this.secondaryTarget, path, query.length () <= 0 ? null : query.toString (), null );
+            return new URI ( this.interfaceName + ":" + this.driver, userInfo, target, this.secondaryTarget, path, query, null );
         }
         catch ( final Exception e )
         {
@@ -244,6 +247,40 @@ public class ConnectionInformation implements Cloneable
             return null;
         }
 
+    }
+
+    private String makeQuery ( final Map<String, String> properties ) throws UnsupportedEncodingException
+    {
+        if ( properties == null || properties.isEmpty () )
+        {
+            return null;
+        }
+
+        final StringBuilder sb = new StringBuilder ();
+
+        for ( final Map.Entry<String, String> entry : properties.entrySet () )
+        {
+            final String key = URLEncoder.encode ( entry.getKey (), ConnectionInformation.URI_ENCODING );
+            final String value = URLEncoder.encode ( entry.getValue (), ConnectionInformation.URI_ENCODING );
+
+            if ( sb.length () > 0 )
+            {
+                sb.append ( "&" );
+            }
+            sb.append ( key ).append ( '=' ).append ( value );
+        }
+
+        return sb.toString ();
+    }
+
+    private String makePath ()
+    {
+        if ( this.subtargets == null || this.subtargets.isEmpty () )
+        {
+            return null;
+        }
+
+        return "/" + StringHelper.join ( this.subtargets, "/" );
     }
 
     @Override
