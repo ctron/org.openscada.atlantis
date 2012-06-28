@@ -32,9 +32,14 @@ import org.openscada.da.server.proxy.connection.ProxySubConnection;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.da.server.proxy.utils.ProxyUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ProxyWriteHandlerImpl extends ProxyItemSupport implements ProxyWriteHandler
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ProxyWriteHandlerImpl.class );
+
     protected final Map<ProxySubConnectionId, ProxySubConnection> subConnections;
 
     public ProxyWriteHandlerImpl ( final String separator, final ProxyPrefixName prefix, final Map<ProxySubConnectionId, ProxySubConnection> subConnections, final ProxySubConnectionId currentConnection, final String proxyItemId )
@@ -49,8 +54,13 @@ public class ProxyWriteHandlerImpl extends ProxyItemSupport implements ProxyWrit
     @Override
     public void write ( final String itemId, final Variant value, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
     {
+        logger.debug ( "Writing item - itemId: {}, value: {}, operationParameters: {}", new Object[] { itemId, value, operationParameters } );
+
         final ProxySubConnection subConnection = this.subConnections.get ( this.currentConnection );
         final String actualItemId = ProxyUtils.originalItemId ( itemId, this.separator, this.prefix, subConnection.getPrefix () );
+
+        logger.debug ( "Writing to subconnection - subConnection: {}, originalItem: {}, actualItem: {}", new Object[] { subConnection.getId (), itemId, actualItemId } );
+
         subConnection.getConnection ().write ( actualItemId, value, operationParameters );
     }
 

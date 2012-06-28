@@ -54,7 +54,6 @@ import org.openscada.da.server.proxy.Hive;
 import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.item.ProxyItemUpdateListener;
 import org.openscada.da.server.proxy.item.ProxyValueHolder;
-import org.openscada.da.server.proxy.item.ProxyWriteHandler;
 import org.openscada.da.server.proxy.item.ProxyWriteHandlerImpl;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
@@ -304,17 +303,11 @@ public class ProxyGroup implements LifecycleAware
         return null;
     }
 
-    /**
-     * 
-     */
     public void disconnectCurrentConnection ()
     {
         currentSubConnection ().disconnect ();
     }
 
-    /**
-     * 
-     */
     public void connectCurrentConnection ()
     {
         currentSubConnection ().connect ();
@@ -333,7 +326,7 @@ public class ProxyGroup implements LifecycleAware
             {
                 // create actual item
                 final ProxyValueHolder pvh = new ProxyValueHolder ( this.hive.getSeparator (), getPrefix (), getCurrentConnection (), id );
-                final ProxyWriteHandler pwh = new ProxyWriteHandlerImpl ( this.hive.getSeparator (), getPrefix (), getSubConnections (), getCurrentConnection (), id );
+                final ProxyWriteHandlerImpl pwh = new ProxyWriteHandlerImpl ( this.hive.getSeparator (), getPrefix (), getSubConnections (), getCurrentConnection (), id );
                 item = new ProxyDataItem ( id, pvh, pwh, this.hive.getOperationService () );
                 this.registeredItems.put ( id, item );
 
@@ -444,6 +437,7 @@ public class ProxyGroup implements LifecycleAware
             for ( final ProxyDataItem proxyDataItem : this.registeredItems.values () )
             {
                 proxyDataItem.getProxyValueHolder ().switchTo ( newConnectionId );
+                proxyDataItem.getWriteHandler ().switchTo ( newConnectionId );
             }
             this.currentConnection = newConnectionId;
             for ( final ConnectionStateListener listener : this.connectionStateListeners )
