@@ -83,6 +83,8 @@ public class ItemManagerImpl implements ConnectionStateListener, ItemManager
     @Override
     public synchronized void addItemUpdateListener ( final String itemName, final ItemUpdateListener listener )
     {
+        logger.debug ( "Adding item update listener - itemId: {}, listener: {}", itemName, listener );
+
         ItemSyncController controller = this.itemListeners.get ( itemName );
         if ( controller == null )
         {
@@ -98,6 +100,8 @@ public class ItemManagerImpl implements ConnectionStateListener, ItemManager
     @Override
     public synchronized void removeItemUpdateListener ( final String itemName, final ItemUpdateListener listener )
     {
+        logger.debug ( "Removing item update listener - itemId: {}, listener: {}", itemName, listener );
+
         final ItemSyncController controller = this.itemListeners.get ( itemName );
         if ( itemName == null )
         {
