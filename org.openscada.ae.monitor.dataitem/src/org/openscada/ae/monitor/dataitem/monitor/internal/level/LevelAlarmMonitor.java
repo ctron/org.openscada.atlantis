@@ -130,7 +130,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
         if ( this.cap && this.failure )
         {
-            builder.setAttribute ( this.prefix + ".original.value", Variant.valueOf ( this.value ) ); //$NON-NLS-1$
+            builder.setAttribute ( this.prefix + ".value.original", Variant.valueOf ( this.value ) ); //$NON-NLS-1$
         }
     }
 
