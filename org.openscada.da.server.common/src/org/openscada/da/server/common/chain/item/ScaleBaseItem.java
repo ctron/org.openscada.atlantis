@@ -30,7 +30,7 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
 {
     public static final String SCALE_FACTOR = ".factor";
 
-    public static final String SCALE_RAW = ".raw";
+    public static final String SCALE_RAW = ".value.original";
 
     public static final String SCALE_ERROR = ".error";
 
