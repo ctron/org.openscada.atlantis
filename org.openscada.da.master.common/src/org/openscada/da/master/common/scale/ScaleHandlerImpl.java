@@ -54,7 +54,7 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
         final Builder builder = new Builder ( value );
 
         injectAttributes ( builder );
-        builder.setAttribute ( getPrefixed ( "raw" ), value.getValue () ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "value.original" ), value.getValue () ); //$NON-NLS-1$
 
         final Variant val = value.getValue ();
         if ( val == null || val.isNull () )
