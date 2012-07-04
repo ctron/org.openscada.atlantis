@@ -28,19 +28,29 @@ import org.openscada.da.server.common.chain.VariantBinder;
 
 public abstract class ScaleBaseItem extends BaseChainItemCommon
 {
+    public static final String SCALE_ACTIVE = ".active";
+
     public static final String SCALE_FACTOR = ".factor";
+
+    public static final String SCALE_OFFSET = ".offset";
 
     public static final String SCALE_RAW = ".value.original";
 
     public static final String SCALE_ERROR = ".error";
 
-    private final VariantBinder scaleFactor = new VariantBinder ( Variant.NULL );
+    private final VariantBinder active = new VariantBinder ( Variant.FALSE );
+
+    private final VariantBinder factor = new VariantBinder ( Variant.valueOf ( 1.0 ) );
+
+    private final VariantBinder offset = new VariantBinder ( Variant.valueOf ( 0.0 ) );
 
     public ScaleBaseItem ( final HiveServiceRegistry serviceRegistry )
     {
         super ( serviceRegistry );
 
-        addBinder ( getFactorName (), this.scaleFactor );
+        addBinder ( getActiveName (), this.active );
+        addBinder ( getFactorName (), this.factor );
+        addBinder ( getOffsetName (), this.offset );
         setReservedAttributes ( getRawName (), getErrorName () );
     }
 
@@ -53,12 +63,14 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
         attributes.put ( getErrorName (), null );
         try
         {
-            final Variant scaleFactor = this.scaleFactor.getValue ();
+            final Variant active = this.active.getValue ();
+            final Variant factor = this.factor.getValue ();
+            final Variant offset = this.offset.getValue ();
             // only process if we have a scale factor
-            if ( !scaleFactor.isNull () )
+            if ( active.asBoolean ( false ) && ( !factor.isNull () || !offset.isNull () ) )
             {
                 attributes.put ( getRawName (), Variant.valueOf ( value ) );
-                newValue = Variant.valueOf ( value.asDouble () * scaleFactor.asDouble () );
+                newValue = Variant.valueOf ( value.asDouble () * factor.asDouble ( 1.0 ) + offset.asDouble ( 0.0 ) );
             }
         }
         catch ( final Exception e )
@@ -71,9 +83,19 @@ public abstract class ScaleBaseItem extends BaseChainItemCommon
         return newValue;
     }
 
+    private String getActiveName ()
+    {
+        return getBase () + SCALE_ACTIVE;
+    }
+
     private String getFactorName ()
     {
         return getBase () + SCALE_FACTOR;
+    }
+
+    private String getOffsetName ()
+    {
+        return getBase () + SCALE_OFFSET;
     }
 
     private String getErrorName ()
