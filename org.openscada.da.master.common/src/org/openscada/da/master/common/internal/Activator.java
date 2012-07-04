@@ -29,6 +29,7 @@ import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.block.BlockHandlerFactoryImpl;
 import org.openscada.da.master.common.manual.ManualHandlerFactoryImpl;
 import org.openscada.da.master.common.negate.NegateHandlerFactoryImpl;
+import org.openscada.da.master.common.round.RoundHandlerFactoryImpl;
 import org.openscada.da.master.common.scale.ScaleHandlerFactoryImpl;
 import org.openscada.da.master.common.sum.CommonSumHandlerFactoryImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -55,6 +56,8 @@ public class Activator implements BundleActivator
     private ManualHandlerFactoryImpl factory7;
 
     private BlockHandlerFactoryImpl factory8;
+
+    private RoundHandlerFactoryImpl factory9;
 
     /*
      * (non-Javadoc)
@@ -110,6 +113,15 @@ public class Activator implements BundleActivator
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BlockHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class.getName (), this.factory8, properties );
         }
+
+        {
+            this.factory9 = new RoundHandlerFactoryImpl (  context, this.poolTracker, this.caTracker, 502);
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( Constants.SERVICE_DESCRIPTION, "A rounding operation handler" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, RoundHandlerFactoryImpl.FACTORY_ID );
+            context.registerService ( ConfigurationFactory.class.getName (), this.factory9, properties );
+        }
+        
     }
 
     /*
@@ -124,6 +136,7 @@ public class Activator implements BundleActivator
         this.factory6.dispose ();
         this.factory7.dispose ();
         this.factory8.dispose ();
+        this.factory9.dispose ();
 
         this.poolTracker.close ();
         this.poolTracker = null;
