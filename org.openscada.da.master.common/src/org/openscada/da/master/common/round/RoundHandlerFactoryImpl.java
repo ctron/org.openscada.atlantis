@@ -33,7 +33,7 @@ import org.osgi.util.tracker.ServiceTracker;
 
 public class RoundHandlerFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
 {
-    public static final String FACTORY_ID = "org.openscada.da.round.input";
+    public static final String FACTORY_ID = "org.openscada.da.round";
 
     private final int priority;
 
