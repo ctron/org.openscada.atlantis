@@ -419,9 +419,10 @@ public class DataItemValue
             return this.subscriptionState;
         }
 
-        public void setSubscriptionState ( final SubscriptionState subscriptionState )
+        public Builder setSubscriptionState ( final SubscriptionState subscriptionState )
         {
             this.subscriptionState = subscriptionState;
+            return this;
         }
 
         public Throwable getSubscriptionError ()
@@ -429,9 +430,10 @@ public class DataItemValue
             return this.subscriptionError;
         }
 
-        public void setSubscriptionError ( final Throwable subscriptionError )
+        public Builder setSubscriptionError ( final Throwable subscriptionError )
         {
             this.subscriptionError = subscriptionError;
+            return this;
         }
 
         public Variant getValue ()
@@ -439,9 +441,10 @@ public class DataItemValue
             return this.value;
         }
 
-        public void setValue ( final Variant value )
+        public Builder setValue ( final Variant value )
         {
             this.value = value;
+            return this;
         }
 
         public Map<String, Variant> getAttributes ()
@@ -449,12 +452,13 @@ public class DataItemValue
             return this.attributes;
         }
 
-        public void setAttributes ( final Map<String, Variant> attributes )
+        public Builder setAttributes ( final Map<String, Variant> attributes )
         {
             this.attributes = attributes;
+            return this;
         }
 
-        public void setAttribute ( final String name, final Variant value )
+        public Builder setAttribute ( final String name, final Variant value )
         {
             if ( value == null )
             {
@@ -464,14 +468,16 @@ public class DataItemValue
             {
                 this.attributes.put ( name, value );
             }
+            return this;
         }
 
-        public void clearAttribute ( final String name )
+        public Builder clearAttribute ( final String name )
         {
             this.attributes.remove ( name );
+            return this;
         }
 
-        public void setTimestamp ( final Calendar timestamp )
+        public Builder setTimestamp ( final Calendar timestamp )
         {
             if ( timestamp == null )
             {
@@ -481,6 +487,7 @@ public class DataItemValue
             {
                 setAttribute ( "timestamp", Variant.valueOf ( timestamp.getTimeInMillis () ) );
             }
+            return this;
         }
 
         public DataItemValue build ()
