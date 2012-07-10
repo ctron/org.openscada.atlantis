@@ -30,6 +30,7 @@ import org.openscada.utils.lang.Immutable;
 
 /**
  * A current value snapshot of the {@link DataItem}
+ * 
  * @author Jens Reimann
  */
 @Immutable
@@ -45,12 +46,14 @@ public class DataItemValue
 
     /**
      * A default instance that means <q>disconnected</q>
+     * 
      * @since 0.17.0
      */
     public static final DataItemValue DISCONNECTED = new DataItemValue ();
 
     /**
      * Construct a new disconnected instance
+     * 
      * @deprecated use {@link #DISCONNECTED} instead
      */
     @Deprecated
@@ -83,7 +86,9 @@ public class DataItemValue
 
     /**
      * Make the attribute map
-     * @param attributes initial attributes
+     * 
+     * @param attributes
+     *            initial attributes
      * @return a new attribute map with cleared out attributes
      */
     private static Map<String, Variant> makeAttributes ( final Map<String, Variant> attributes )
@@ -129,6 +134,7 @@ public class DataItemValue
 
     /**
      * Get an unmodifiable map of the attributes
+     * 
      * @return an unmodifiable map of the attributes
      */
     public Map<String, Variant> getAttributes ()
@@ -143,6 +149,7 @@ public class DataItemValue
 
     /**
      * Get the message of the subscription error
+     * 
      * @return the message of the subscription error or <code>null</code> if no subscription error is known
      */
     public String getSubscriptionErrorString ()
@@ -162,7 +169,9 @@ public class DataItemValue
 
     /**
      * Get the value of the attribute
-     * @param attributeName the name of the attribute
+     * 
+     * @param attributeName
+     *            the name of the attribute
      * @return the value of the attribute or <code>null</code> if the attribute is not set
      */
     public Boolean isAttribute ( final String attributeName )
@@ -184,8 +193,11 @@ public class DataItemValue
 
     /**
      * Get the boolean value of the named attribute
-     * @param attributeName the attribute name to check
-     * @param defaultValue the default value, if the attribute is not set
+     * 
+     * @param attributeName
+     *            the attribute name to check
+     * @param defaultValue
+     *            the default value, if the attribute is not set
      * @return the attribute value or the default value it the attribute is not available
      */
     public boolean isAttribute ( final String attributeName, final boolean defaultValue )
@@ -200,6 +212,7 @@ public class DataItemValue
 
     /**
      * Check if the value has the manual override attribute set
+     * 
      * @return <code>true</code> if the value is manually overridden, <code>false</code> otherwise
      */
     public boolean isManual ()
@@ -233,7 +246,9 @@ public class DataItemValue
 
     /**
      * get an attribute as timestamp
-     * @param attributeName the attribute to get
+     * 
+     * @param attributeName
+     *            the attribute to get
      * @return the timestamp or <code>null</code> if the timestamp property is not set
      */
     public Calendar getAsTimestamp ( final String attributeName )
@@ -258,11 +273,12 @@ public class DataItemValue
         {
             return null;
         }
-        return (Calendar)c.clone ();
+        return c;
     }
 
     /**
      * get the timestamp of the value
+     * 
      * @return the timestamp or <code>null</code> if the timestamp property is not set
      */
     public Calendar getTimestamp ()
@@ -376,8 +392,8 @@ public class DataItemValue
 
     /**
      * A mutable version of {@link DataItemValue}
+     * 
      * @author Jens Reimann
-     *
      */
     public static class Builder
     {
