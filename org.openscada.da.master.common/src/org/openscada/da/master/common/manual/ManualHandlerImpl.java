@@ -19,6 +19,7 @@
 
 package org.openscada.da.master.common.manual;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -212,14 +213,27 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
         injectAttributes ( builder );
 
-        if ( this.state.getValue ().isNull () )
+        final ManualStateData state = this.state;
+
+        if ( state.getValue ().isNull () )
         {
+            final Date currentTimestamp = makeTimestamp ( value );
+
+            if ( currentTimestamp != null && state.getTimestmap () != null && currentTimestamp.after ( state.getTimestmap () ) )
+            {
+                // if we have a current timestamp and it is after the last manual change, reset the last manual change 
+                state.setTimestmap ( null );
+            }
+
+            // inject old manual timestamp
+            if ( state.getTimestmap () != null && state.getTimestmap ().after ( currentTimestamp ) )
+            {
+                injectTimestamp ( builder, state );
+            }
             return builder.build ();
         }
 
         // apply manual value : manual value is active
-
-        final ManualStateData state = this.state;
 
         final Variant originalError = builder.getAttributes ().remove ( "error" ); //$NON-NLS-1$
         builder.setAttribute ( getPrefixed ( "error.original" ), originalError ); //$NON-NLS-1$
@@ -255,6 +269,27 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         {
             builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( state.getReason () ) ); //$NON-NLS-1$
         }
+        injectTimestamp ( builder, state );
+
+        return builder.build ();
+    }
+
+    private Date makeTimestamp ( final DataItemValue value )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+        final Calendar c = value.getTimestamp ();
+        if ( c == null )
+        {
+            return null;
+        }
+        return c.getTime ();
+    }
+
+    private void injectTimestamp ( final Builder builder, final ManualStateData state )
+    {
         if ( state.getTimestmap () != null )
         {
             final Variant originalTimestamp = builder.getAttributes ().get ( "timestamp" ); //$NON-NLS-1$
@@ -264,8 +299,6 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
                 builder.setAttribute ( getPrefixed ( "timestamp.original" ), originalTimestamp ); //$NON-NLS-1$
             }
         }
-
-        return builder.build ();
     }
 
     @Override
@@ -425,7 +458,13 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         final Variant timestamp = attributes.get ( "timestamp" ); //$NON-NLS-1$
         if ( timestamp != null && !timestamp.isNull () )
         {
+            // we have a timestamp so we use it
             data.put ( "timestamp", "" + timestamp.asLong ( System.currentTimeMillis () ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        }
+        else
+        {
+            // we do not have a timestamp, so we use "now"
+            data.put ( "timestamp", "" + System.currentTimeMillis () );//$NON-NLS-1$
         }
 
         return updateConfiguration ( data, attributes, false, operationParameters );
