@@ -82,14 +82,16 @@ public class RoundHandlerImpl extends AbstractCommonHandlerImpl
         }
         else
         {
-            switch ( type )
+            switch ( this.type )
             {
-            case CEIL:
-                return Variant.valueOf ( Math.ceil ( value.asDouble ( null ) ) );
-            case FLOOR:
-                return Variant.valueOf ( Math.floor ( value.asDouble ( null ) ) );
-            case ROUND:
-                return Variant.valueOf ( (double)Math.round ( value.asDouble ( null ) ) );
+                case CEIL:
+                    return Variant.valueOf ( Math.ceil ( value.asDouble ( null ) ) );
+                case FLOOR:
+                    return Variant.valueOf ( Math.floor ( value.asDouble ( null ) ) );
+                case ROUND:
+                    return Variant.valueOf ( (double)Math.round ( value.asDouble ( null ) ) );
+                case NONE:
+                    break;
             }
             return value;
         }
@@ -107,12 +109,12 @@ public class RoundHandlerImpl extends AbstractCommonHandlerImpl
             this.type = RoundType.valueOf ( cfg.getString ( "type", "NONE" ) );
             this.error = null;
         }
-        catch ( IllegalArgumentException e )
+        catch ( final IllegalArgumentException e )
         {
             this.type = RoundType.NONE;
             this.error = e.getMessage ();
         }
-        catch ( NullPointerException e )
+        catch ( final NullPointerException e )
         {
             this.type = RoundType.NONE;
             this.error = e.getMessage ();
