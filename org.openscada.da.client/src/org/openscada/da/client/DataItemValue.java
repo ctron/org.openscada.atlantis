@@ -277,6 +277,34 @@ public class DataItemValue
     }
 
     /**
+     * Get an attribute as boolean value
+     * 
+     * @param attributeName
+     *            the name of the attribute to fetch
+     * @return the value of the attribute or <code>false</code> if the attribute is not set
+     * @see Variant#asBoolean()
+     */
+    public boolean getAttributeAsBoolean ( final String attributeName )
+    {
+        final Variant value = this.attributes.get ( attributeName );
+        if ( value == null )
+        {
+            return false;
+        }
+        return value.asBoolean ();
+    }
+
+    public Boolean getAttributeAsBoolean ( final String attributeName, final Boolean defaultValue )
+    {
+        final Variant value = this.attributes.get ( attributeName );
+        if ( value == null )
+        {
+            return defaultValue;
+        }
+        return value.asBoolean ( defaultValue );
+    }
+
+    /**
      * get the timestamp of the value
      * 
      * @return the timestamp or <code>null</code> if the timestamp property is not set
