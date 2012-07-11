@@ -72,7 +72,7 @@ public class DataItemValue
         this.attributes = makeAttributes ( attributes );
         this.subscriptionState = subscriptionState;
         this.subscriptionError = null;
-        this.value = value;
+        this.value = Variant.valueOf ( value ); // ensures that value is never null
     }
 
     public DataItemValue ( final Variant value, final Map<String, Variant> attributes, final SubscriptionState subscriptionState, final Throwable subscriptionError )
@@ -80,7 +80,7 @@ public class DataItemValue
         super ();
         this.attributes = makeAttributes ( attributes );
         this.subscriptionState = subscriptionState;
-        this.value = value;
+        this.value = Variant.valueOf ( value ); // ensures that value is never null
         this.subscriptionError = subscriptionError;
     }
 
@@ -119,12 +119,12 @@ public class DataItemValue
         return result;
     }
 
-    public DataItemValue ( final DataItemValue arg0 )
+    public DataItemValue ( final DataItemValue div )
     {
-        this.attributes = arg0.attributes;
-        this.value = arg0.value;
-        this.subscriptionError = arg0.subscriptionError;
-        this.subscriptionState = arg0.subscriptionState;
+        this.attributes = div.attributes;
+        this.value = div.value;
+        this.subscriptionError = div.subscriptionError;
+        this.subscriptionState = div.subscriptionState;
     }
 
     public Variant getValue ()
