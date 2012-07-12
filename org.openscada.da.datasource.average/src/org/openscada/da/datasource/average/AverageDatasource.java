@@ -84,6 +84,10 @@ public class AverageDatasource implements DataSourceListener
 
     private final DataInputSource weightedDataSource;
 
+    private final DataInputSource deviationArithmeticDataSource;
+
+    private final DataInputSource deviationWeightedDataSource;
+
     public AverageDatasource ( final String configurationId, final ExecutorService executor, final ScheduledExecutorService scheduler, final ObjectPoolTracker<DataSource> poolTracker, final ObjectPoolImpl<DataSource> dsObjectPool ) throws InvalidSyntaxException
     {
         this.executor = executor;
@@ -97,6 +101,8 @@ public class AverageDatasource implements DataSourceListener
         this.arithmeticDataSource = new DataInputSource ( scheduler );
         this.medianDataSource = new DataInputSource ( scheduler );
         this.weightedDataSource = new DataInputSource ( scheduler );
+        this.deviationArithmeticDataSource = new DataInputSource ( scheduler );
+        this.deviationWeightedDataSource = new DataInputSource ( scheduler );
 
         {
             final String id = this.configurationId + ".min";
@@ -128,6 +134,18 @@ public class AverageDatasource implements DataSourceListener
             properties.put ( DataSource.DATA_SOURCE_ID, id );
             this.dsObjectPool.addService ( id, this.weightedDataSource, null );
         }
+        {
+            final String id = this.configurationId + ".deviationArithmetic";
+            final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
+            properties.put ( DataSource.DATA_SOURCE_ID, id );
+            this.dsObjectPool.addService ( id, this.deviationArithmeticDataSource, null );
+        }
+        {
+            final String id = this.configurationId + ".deviationWeighted";
+            final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
+            properties.put ( DataSource.DATA_SOURCE_ID, id );
+            this.dsObjectPool.addService ( id, this.deviationWeightedDataSource, null );
+        }
     }
 
     public void dispose ()
@@ -137,6 +155,8 @@ public class AverageDatasource implements DataSourceListener
         this.dsObjectPool.removeService ( this.configurationId + ".arithmetic", this.arithmeticDataSource );
         this.dsObjectPool.removeService ( this.configurationId + ".median", this.medianDataSource );
         this.dsObjectPool.removeService ( this.configurationId + ".weighted", this.weightedDataSource );
+        this.dsObjectPool.removeService ( this.configurationId + ".deviationArithmetic", this.deviationArithmeticDataSource );
+        this.dsObjectPool.removeService ( this.configurationId + ".deviationWeighted", this.deviationWeightedDataSource );
     }
 
     public void update ( final Map<String, String> parameters ) throws InvalidSyntaxException
@@ -211,6 +231,8 @@ public class AverageDatasource implements DataSourceListener
                 average.arithmetic = state.getFirstValue ().getValue ().asDouble ( 0.0 );
                 average.median = state.getFirstValue ().getValue ().asDouble ( 0.0 );
                 average.weighted = state.getFirstValue ().getValue ().asDouble ( 0.0 );
+                average.deviationArithmetic = 0.0;
+                average.deviationWeighted = 0.0;
             }
         }
         else
@@ -251,12 +273,28 @@ public class AverageDatasource implements DataSourceListener
                 average.weighted = average.weighted / this.valueRange.getRange ();
             }
 
+            // calculate deviation
+            if ( !average.values.isEmpty () )
+            {
+                double da = 0.0;
+                double dw = 0.0;
+                for ( double v : average.values )
+                {
+                    da += Math.pow ( v - average.arithmetic, 2.0 );
+                    dw += Math.pow ( v - average.weighted, 2.0 );
+                }
+                average.deviationArithmetic = Math.sqrt ( da / average.values.size () );
+                average.deviationWeighted = Math.sqrt ( dw / average.values.size () );
+            }
+
             // handle null range
             if ( average.nullRange >= ( this.nullrange * 1000 ) )
             {
                 average.arithmetic = null;
                 average.median = null;
                 average.weighted = null;
+                average.deviationArithmetic = null;
+                average.deviationWeighted = null;
             }
         }
 
@@ -265,6 +303,8 @@ public class AverageDatasource implements DataSourceListener
         this.arithmeticDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.arithmetic ) ).build () );
         this.medianDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.median ) ).build () );
         this.weightedDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.weighted ) ).build () );
+        this.deviationArithmeticDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.deviationArithmetic ) ).build () );
+        this.deviationWeightedDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.deviationWeighted ) ).build () );
     }
 
     private void calculateForRange ( final AverageValues average, final long currentRange, final Variant value )
@@ -338,6 +378,10 @@ public class AverageDatasource implements DataSourceListener
         public Double median;
 
         public Double weighted;
+
+        public Double deviationArithmetic;
+
+        public Double deviationWeighted;
 
         public long nullRange = 0;
 
