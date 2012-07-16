@@ -422,7 +422,7 @@ public class ProxyGroup implements LifecycleAware
 
         if ( !locked )
         {
-            logger.warn ( "Failed switching from '{]' to '{}'. Switching is still in progress!", this.currentConnection, newConnectionId );
+            logger.warn ( "Failed switching from '{}' to '{}'. Switching is still in progress!", this.currentConnection, newConnectionId );
             return;
         }
 
