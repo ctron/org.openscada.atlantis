@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,6 +20,7 @@
 package org.openscada.hd.server.storage.common;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 
 public class RunningAverage
@@ -31,6 +32,8 @@ public class RunningAverage
     private BigDecimal counter;
 
     private long firstTimestamp;
+
+    private final MathContext mathContext = new MathContext ( 10, RoundingMode.HALF_DOWN );
 
     public void next ( final double value, final long timestamp )
     {
@@ -46,7 +49,7 @@ public class RunningAverage
         {
             final long offset = timestamp - this.lastTimestamp;
 
-            final BigDecimal localCounter = BigDecimal.valueOf ( offset ).multiply ( BigDecimal.valueOf ( this.lastValue ) );
+            final BigDecimal localCounter = BigDecimal.valueOf ( offset ).multiply ( BigDecimal.valueOf ( this.lastValue ), this.mathContext );
 
             if ( this.counter != null )
             {
@@ -75,7 +78,7 @@ public class RunningAverage
         }
         else
         {
-            return this.counter.divide ( BigDecimal.valueOf ( lastTimestamp - this.firstTimestamp ), RoundingMode.HALF_DOWN ).doubleValue ();
+            return this.counter.divide ( BigDecimal.valueOf ( lastTimestamp - this.firstTimestamp ), this.mathContext ).doubleValue ();
         }
     }
 }
