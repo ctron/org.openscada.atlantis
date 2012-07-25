@@ -23,17 +23,49 @@ import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
 
+// for calculation use algorithm found at 
+// http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Weighted_incremental_algorithm
+//
+// which is
+//
+// def weighted_incremental_variance(dataWeightPairs):
+//     sumweight = 0
+//     mean = 0
+//     M2 = 0
+// 
+//     for x, weight in dataWeightPairs:
+//         temp = weight + sumweight
+//         delta = x − mean
+//         R = delta * weight / temp
+//         mean = mean + R
+//         M2 = M2 + sumweight * delta * R
+//         sumweight = temp
+//  
+//     variance_n = M2/sumweight
+//     variance = variance_n * len(dataWeightPairs)/(len(dataWeightPairs) − 1)
+//
+// in this case we use the variable numOfIncrements for the expression len(dataWeightPairs)
+// which has to be updated on every value change
+
 public class RunningAverage
 {
+    private long firstTimestamp;
+
     private double lastValue = Double.NaN;
 
     private long lastTimestamp;
 
-    private BigDecimal counter;
-
-    private long firstTimestamp;
-
     private final MathContext mathContext = new MathContext ( 10, RoundingMode.HALF_DOWN );
+
+    private BigDecimal M2 = BigDecimal.ZERO;
+
+    private BigDecimal mean = BigDecimal.ZERO;
+
+    private long sumWeight = 0;
+
+    private long numOfIncrements = 0;
+
+    private boolean hadValue = false;
 
     public void next ( final double value, final long timestamp )
     {
@@ -41,24 +73,26 @@ public class RunningAverage
 
         this.lastValue = value;
         this.lastTimestamp = timestamp;
+
+        hadValue |= ( value != Double.NaN );
     }
 
     private void increment ( final long timestamp )
     {
-        if ( !Double.isNaN ( this.lastValue ) )
+        final long offset = timestamp - this.lastTimestamp;
+        final long newSumWeight = offset + sumWeight;
+
+        if ( offset > 0 )
         {
-            final long offset = timestamp - this.lastTimestamp;
-
-            final BigDecimal localCounter = BigDecimal.valueOf ( offset ).multiply ( BigDecimal.valueOf ( this.lastValue ), this.mathContext );
-
-            if ( this.counter != null )
+            if ( !Double.isNaN ( this.lastValue ) )
             {
-                this.counter = this.counter.add ( localCounter );
+                final BigDecimal delta = BigDecimal.valueOf ( this.lastValue ).subtract ( mean );
+                final BigDecimal R = delta.multiply ( BigDecimal.valueOf ( offset ) ).divide ( BigDecimal.valueOf ( newSumWeight ), mathContext );
+                mean = mean.add ( R );
+                M2 = M2.add ( BigDecimal.valueOf ( sumWeight ).multiply ( delta ).multiply ( R ) );
             }
-            else
-            {
-                this.counter = localCounter;
-            }
+            numOfIncrements += 1;
+            sumWeight = newSumWeight;
         }
     }
 
@@ -66,19 +100,33 @@ public class RunningAverage
     {
         this.firstTimestamp = timestamp;
         this.lastTimestamp = timestamp;
-        this.counter = null;
     }
 
     public double getAverage ( final long lastTimestamp )
     {
         increment ( lastTimestamp );
-        if ( this.counter == null )
+        if ( lastTimestamp == this.firstTimestamp || !hadValue )
         {
             return Double.NaN;
         }
         else
         {
-            return this.counter.divide ( BigDecimal.valueOf ( lastTimestamp - this.firstTimestamp ), this.mathContext ).doubleValue ();
+            return mean.doubleValue ();
+        }
+    }
+
+    public double getDeviation ( final long lastTimestamp )
+    {
+        increment ( lastTimestamp );
+        if ( lastTimestamp == this.firstTimestamp || !hadValue )
+        {
+            return Double.NaN;
+        }
+        else
+        {
+            final BigDecimal variance_n = M2.divide ( BigDecimal.valueOf ( sumWeight ), mathContext );
+            final BigDecimal variance = variance_n.multiply ( BigDecimal.valueOf ( numOfIncrements ).divide ( BigDecimal.valueOf ( numOfIncrements - 1 ), mathContext ) );
+            return Math.sqrt ( variance.doubleValue () );
         }
     }
 }
