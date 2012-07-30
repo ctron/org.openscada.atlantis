@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -108,7 +108,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     /**
      * Restore from persistent state
-     * @param state the persisted state
+     * 
+     * @param state
+     *            the persisted state
      */
     @Override
     protected synchronized void setPersistentState ( final StateInformation state )
@@ -144,8 +146,14 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         super.init ();
     }
 
-    protected void setEventInformationAttributes ( final UserInformation userInformation, final Map<String, Variant> informationAttributes )
+    protected synchronized void setEventInformationAttributes ( final UserInformation userInformation, final Map<String, Variant> informationAttributes )
     {
+        if ( this.eventInformationAttributes == null && informationAttributes == null || this.eventInformationAttributes.equals ( informationAttributes ) )
+        {
+            logger.debug ( "Event attributes did not change" );
+            return;
+        }
+
         if ( informationAttributes == null )
         {
             this.eventInformationAttributes = Collections.emptyMap ();
@@ -154,6 +162,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
         {
             this.eventInformationAttributes = new HashMap<String, Variant> ( informationAttributes );
         }
+
+        // re-apply current state to send out changed attributes
+        applyState ( this.information, MonitorDecoratorAdapter.getNullDecorator () );
     }
 
     protected Map<String, Variant> getEventInformationAttributes ()
@@ -178,11 +189,11 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     /**
      * This methods triggers a failure that is active for no time.
-     * 
      * <p>
-     * This methods combined a {@link #setFailure(Variant, Date)} and 
+     * This methods combined a {@link #setFailure(Variant, Date)} and
+     * 
      * @link #setOk(Variant, Date)} call in a compound operation
-     * </p>
+     *       </p>
      */
     protected synchronized void triggerFail ( final Variant value, final Date timestamp, final MonitorDecorator eventDecorator )
     {
@@ -418,7 +429,9 @@ public class AbstractStateMachineMonitorService extends AbstractPersistentMonito
 
     /**
      * Add monitor attributes to attribute list of new monitor state
-     * @param attributes the attributes that will be provided to the new monitor state
+     * 
+     * @param attributes
+     *            the attributes that will be provided to the new monitor state
      */
     protected void buildMonitorAttributes ( final Map<String, Variant> attributes )
     {
