@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -38,6 +38,13 @@ import org.slf4j.LoggerFactory;
 
 public abstract class QueryDataBuffer
 {
+    public static final String STDDEV = "STDDEV";
+
+    public static final String MAX = "MAX";
+
+    public static final String MIN = "MIN";
+
+    public static final String AVG = "AVG";
 
     private final static Logger logger = LoggerFactory.getLogger ( QueryDataBuffer.class );
 
@@ -59,6 +66,8 @@ public abstract class QueryDataBuffer
         private double min = Double.NaN;
 
         private double max = Double.NaN;
+
+        private double stdDev = Double.NaN;
 
         public Data ( final Date start, final Date end )
         {
@@ -98,6 +107,15 @@ public abstract class QueryDataBuffer
             }
         }
 
+        public void setStdDev ( final double stdDev )
+        {
+            if ( Double.compare ( this.stdDev, stdDev) != 0 )
+            {
+                this.changed = true;
+                this.stdDev = stdDev;
+            }
+        }
+
         public void setQuality ( final double error )
         {
             if ( Double.compare ( this.quality, error ) != 0 )
@@ -119,6 +137,11 @@ public abstract class QueryDataBuffer
         public double getAverage ()
         {
             return this.average;
+        }
+        
+        public double getStdDev ()
+        {
+            return this.stdDev;
         }
 
         public double getQuality ()
@@ -160,6 +183,7 @@ public abstract class QueryDataBuffer
             setQuality ( data.quality );
             setMax ( data.max );
             setMin ( data.min );
+            setStdDev(data.stdDev);
         }
     }
 
@@ -271,9 +295,10 @@ public abstract class QueryDataBuffer
     {
         final Collection<ValueInformation> information = new ArrayList<ValueInformation> ();
         final Map<String, Collection<Value>> values = new HashMap<String, Collection<Value>> ();
-        values.put ( "AVG", new ArrayList<Value> () );
-        values.put ( "MIN", new ArrayList<Value> () );
-        values.put ( "MAX", new ArrayList<Value> () );
+        values.put ( AVG, new ArrayList<Value> () );
+        values.put ( MIN, new ArrayList<Value> () );
+        values.put ( MAX, new ArrayList<Value> () );
+        values.put ( STDDEV, new ArrayList<Value> () );
 
         final QueryDataBuffer.Data[] data = getData ();
 
@@ -289,9 +314,10 @@ public abstract class QueryDataBuffer
                 {
                     // we are outside
                     information.add ( new ValueInformation ( convert ( data[i].getStart () ), convert ( data[i].getEnd () ), 0.0, 0.0, 0 ) );
-                    values.get ( "AVG" ).add ( Value.NaN );
-                    values.get ( "MIN" ).add ( Value.NaN );
-                    values.get ( "MAX" ).add ( Value.NaN );
+                    values.get ( AVG ).add ( Value.NaN );
+                    values.get ( MIN ).add ( Value.NaN );
+                    values.get ( MAX ).add ( Value.NaN );
+                    values.get ( STDDEV ).add ( Value.NaN );
                 }
                 else
                 {
@@ -301,9 +327,10 @@ public abstract class QueryDataBuffer
 
                     // add
                     information.add ( new ValueInformation ( convert ( data[i].getStart () ), convert ( data[i].getEnd () ), quality, manual, data[i].getEntryCount () ) );
-                    values.get ( "AVG" ).add ( new Value ( data[i].getAverage () ) );
-                    values.get ( "MIN" ).add ( new Value ( data[i].getMin () ) );
-                    values.get ( "MAX" ).add ( new Value ( data[i].getMax () ) );
+                    values.get ( AVG ).add ( new Value ( data[i].getAverage () ) );
+                    values.get ( MIN ).add ( new Value ( data[i].getMin () ) );
+                    values.get ( MAX ).add ( new Value ( data[i].getMax () ) );
+                    values.get ( STDDEV ).add ( new Value ( data[i].getStdDev () ) );
                 }
             }
             else
@@ -313,9 +340,10 @@ public abstract class QueryDataBuffer
                 {
                     notifyData ( lastIndex, convert ( values ), information.toArray ( new ValueInformation[information.size ()] ) );
                     information.clear ();
-                    values.get ( "AVG" ).clear ();
-                    values.get ( "MIN" ).clear ();
-                    values.get ( "MAX" ).clear ();
+                    values.get ( AVG ).clear ();
+                    values.get ( MIN ).clear ();
+                    values.get ( MAX ).clear ();
+                    values.get ( STDDEV ).clear ();
                 }
                 // clear
                 lastIndex = i + 1;

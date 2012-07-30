@@ -199,7 +199,7 @@ public class QueryBuffer extends QueryDataBuffer
     {
         this.parameters = parameters;
         notifyStateUpdate ( QueryState.LOADING );
-        notifyParameterUpdate ( parameters, new HashSet<String> ( Arrays.asList ( "AVG", "MIN", "MAX" ) ) );
+        notifyParameterUpdate ( parameters, new HashSet<String> ( Arrays.asList ( QueryDataBuffer.AVG, QueryDataBuffer.MIN, QueryDataBuffer.MAX, QueryDataBuffer.STDDEV ) ) );
 
         // clear
         this.entries.clear ();
@@ -334,6 +334,7 @@ public class QueryBuffer extends QueryDataBuffer
             }
 
             this.data[i].setAverage ( avg.getAverage ( this.data[i].getEnd ().getTime () ) );
+            this.data[i].setStdDev ( avg.getDeviation ( this.data[i].getEnd ().getTime () ) );
             this.data[i].setQuality ( quality.getAverage ( this.data[i].getEnd ().getTime () ) );
             this.data[i].setManual ( manual.getAverage ( this.data[i].getEnd ().getTime () ) );
             this.data[i].setMin ( min );
