@@ -28,6 +28,7 @@ import java.util.concurrent.Executors;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
+import org.openscada.utils.concurrent.ExecutorServiceExporterImpl;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
@@ -55,6 +56,8 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
     private final ObjectPoolTracker<DataSource> objectPoolTracker;
 
+    private final ExecutorServiceExporterImpl executorExporter;
+
     public MasterFactory ( final BundleContext context, final ObjectPoolTracker<DataSource> dataSourceTracker )
     {
         super ( context );
@@ -62,6 +65,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
         this.objectPoolTracker = dataSourceTracker;
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "MasterItemFactory" ) );
+        this.executorExporter = new ExecutorServiceExporterImpl ( this.executor, "MasterItemFactory" );
 
         this.dataSourcePool = new ObjectPoolImpl<DataSource> ();
         this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class );
@@ -113,6 +117,8 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
         this.dataSourcePool.dispose ();
         this.masterItemPool.dispose ();
+
+        this.executorExporter.dispose ();
 
         this.executor.shutdown ();
     }
