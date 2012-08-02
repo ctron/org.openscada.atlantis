@@ -27,6 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.OperationException;
@@ -55,6 +57,8 @@ import org.slf4j.LoggerFactory;
 
 public class MasterItemImpl extends AbstractDataSourceHandler implements MasterItem
 {
+
+    private final static boolean LOG_SUPPRESS = Boolean.getBoolean ( "org.openscada.da.master.internal.masterItemLogSuppressProcess" );
 
     private static class WriteListenerAttributeImpl extends AbstractFuture<WriteAttributeResults> implements WriteListener
     {
@@ -204,6 +208,18 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     private boolean dontOverrideSubscription = false;
 
+    private final Lock processTriggerLock = new ReentrantLock ();
+
+    private boolean processTriggered;
+
+    private final Runnable processRunnable = new Runnable () {
+        @Override
+        public void run ()
+        {
+            MasterItemImpl.this.doReprocess ();
+        }
+    };
+
     public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final ObjectPoolTracker<DataSource> dataSourcePoolTracker ) throws InvalidSyntaxException
     {
         super ( dataSourcePoolTracker );
@@ -259,36 +275,56 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
     @Override
     public void reprocess ()
     {
-        this.executor.execute ( new Runnable () {
-            @Override
-            public void run ()
+        try
+        {
+            this.processTriggerLock.lock ();
+            if ( this.processTriggered )
             {
-                MasterItemImpl.this.doReprocess ();
+                if ( LOG_SUPPRESS )
+                {
+                    logger.trace ( "Suppressed process()" );
+                }
+                return;
             }
-        } );
+
+            this.processTriggered = true;
+
+            this.executor.execute ( this.processRunnable );
+        }
+        finally
+        {
+            this.processTriggerLock.unlock ();
+        }
     }
 
-    protected synchronized void doReprocess ()
+    /**
+     * Re-process with the same source value
+     */
+    protected void doReprocess ()
     {
-        handleReprocess ( this.sourceValue );
+        try
+        {
+            this.processTriggerLock.lock ();
+            this.processTriggered = false;
+        }
+        finally
+        {
+            this.processTriggerLock.unlock ();
+        }
+
+        handleProcess ();
     }
 
-    protected void process ( final DataItemValue value )
-    {
-        this.executor.execute ( new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                MasterItemImpl.this.handleReprocess ( value );
-            }
-        } );
-    }
-
-    protected synchronized void handleReprocess ( final DataItemValue value )
+    /**
+     * handle the processing
+     * 
+     * @param value
+     *            the source value
+     */
+    protected synchronized void handleProcess ()
     {
         logger.debug ( "Reprocessing" );
-        updateData ( processHandler ( value ) );
+        updateData ( processHandler ( this.sourceValue ) );
     }
 
     @Override
@@ -316,7 +352,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
             this.sourceValue = builder.build ();
         }
 
-        process ( this.sourceValue );
+        reprocess ();
     }
 
     /* (non-Javadoc)
