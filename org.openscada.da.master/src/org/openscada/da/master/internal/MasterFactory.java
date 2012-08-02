@@ -23,7 +23,9 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
@@ -64,7 +66,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
         this.objectPoolTracker = dataSourceTracker;
 
-        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "MasterItemFactory" ) );
+        this.executor = new ThreadPoolExecutor ( 1, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable> (), new NamedThreadFactory ( "MasterItemFactory" ) );
         this.executorExporter = new ExecutorServiceExporterImpl ( this.executor, "MasterItemFactory" );
 
         this.dataSourcePool = new ObjectPoolImpl<DataSource> ();
