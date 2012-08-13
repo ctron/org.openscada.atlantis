@@ -42,6 +42,7 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.interner.InternerHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -54,7 +55,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Interner;
-import com.google.common.collect.Interners;
 
 public class Activator implements BundleActivator
 {
@@ -87,7 +87,7 @@ public class Activator implements BundleActivator
     {
         logger.info ( "Starting up..." );
 
-        this.stringInterner = makeInterner ();
+        this.stringInterner = InternerHelper.makeInterner ( "org.openscada.ae.monitor.dataitem.stringInternerType", "strong" );
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
@@ -155,30 +155,6 @@ public class Activator implements BundleActivator
         logger.info ( "Starting up...done" );
 
         Activator.instance = this;
-    }
-
-    private Interner<String> makeInterner ()
-    {
-        final String type = System.getProperty ( "org.openscada.ae.monitor.dataitem.stringInternerType", "weak" );
-        if ( "weak".equals ( type ) )
-        {
-            return Interners.newWeakInterner ();
-        }
-        else if ( "strong".equals ( type ) )
-        {
-            return Interners.newStrongInterner ();
-        }
-        else
-        {
-            return new Interner<String> () {
-
-                @Override
-                public String intern ( final String string )
-                {
-                    return string;
-                }
-            };
-        }
     }
 
     private void makeLevelFactory ( final BundleContext context, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
