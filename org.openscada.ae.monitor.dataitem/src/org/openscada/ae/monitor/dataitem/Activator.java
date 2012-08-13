@@ -154,7 +154,7 @@ public class Activator implements BundleActivator
     {
         Dictionary<String, Object> properties;
         final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, type, defaultMonitorType, lowerOk, includedOk, priority, cap );
-        properties = new Hashtable<String, Object> ();
+        properties = new Hashtable<String, Object> ( 2 );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, LevelMonitorFactoryImpl.FACTORY_PREFIX + "." + type );
         properties.put ( Constants.SERVICE_DESCRIPTION, type + " Alarms" );
         context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, factory, properties );
