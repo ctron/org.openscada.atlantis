@@ -51,6 +51,8 @@ import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Interner;
+
 public class JdbcStorageDao extends BaseStorageDao
 {
 
@@ -86,9 +88,12 @@ public class JdbcStorageDao extends BaseStorageDao
 
     private final ScheduledExecutorService executor;
 
-    public JdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties, final boolean usePool ) throws SQLException
+    private final Interner<String> stringInterner;
+
+    public JdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties, final boolean usePool, final Interner<String> stringInterner ) throws SQLException
     {
         super ( dataSourceFactory, properties, usePool );
+        this.stringInterner = stringInterner;
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "org.openscada.ae.server.storage.jdbc/CleanupThread" ) );
         this.executor.scheduleWithFixedDelay ( new Runnable () {
 
@@ -368,16 +373,16 @@ public class JdbcStorageDao extends BaseStorageDao
             eb.id ( id );
             final Date sourceTimestamp = new Date ( rs.getTimestamp ( 3 ).getTime () );
             final Date entryTimestamp = new Date ( rs.getTimestamp ( 4 ).getTime () );
-            final String monitorType = rs.getString ( 5 );
-            final String eventType = rs.getString ( 6 );
-            String valueType = rs.getString ( 7 );
-            String valueString = rs.getString ( 8 );
+            final String monitorType = intern ( rs.getString ( 5 ) );
+            final String eventType = intern ( rs.getString ( 6 ) );
+            String valueType = intern ( rs.getString ( 7 ) );
+            String valueString = intern ( rs.getString ( 8 ) );
             final String message = rs.getString ( 11 );
-            final String messageCode = rs.getString ( 12 );
+            final String messageCode = intern ( rs.getString ( 12 ) );
             final Integer priority = rs.getInt ( 13 );
-            final String source = rs.getString ( 14 );
-            final String actor = rs.getString ( 15 );
-            final String actorType = rs.getString ( 16 );
+            final String source = intern ( rs.getString ( 14 ) );
+            final String actor = intern ( rs.getString ( 15 ) );
+            final String actorType = intern ( rs.getString ( 16 ) );
 
             eb.sourceTimestamp ( sourceTimestamp );
             eb.entryTimestamp ( entryTimestamp );
@@ -395,7 +400,7 @@ public class JdbcStorageDao extends BaseStorageDao
             eb.attribute ( Fields.ACTOR_TYPE, actorType );
 
             // other attributes
-            final String field = rs.getString ( 17 );
+            final String field = intern ( rs.getString ( 17 ) );
             valueType = rs.getString ( 18 );
             valueString = rs.getString ( 19 );
             if ( field != null )
@@ -418,6 +423,11 @@ public class JdbcStorageDao extends BaseStorageDao
             }
         }
         return hasMore;
+    }
+
+    protected String intern ( final String string )
+    {
+        return this.stringInterner.intern ( string );
     }
 
     @Override

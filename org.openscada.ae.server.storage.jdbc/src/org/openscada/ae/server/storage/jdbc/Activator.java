@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import org.openscada.ae.server.storage.Storage;
+import org.openscada.utils.interner.InternerHelper;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
 import org.openscada.utils.osgi.jdbc.DataSourceHelper;
@@ -37,6 +38,8 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Interner;
 
 public class Activator implements BundleActivator
 {
@@ -52,6 +55,8 @@ public class Activator implements BundleActivator
 
     private SingleServiceTracker<DataSourceFactory> dataSouceFactoryTracker;
 
+    private Interner<String> stringInterner;
+
     static BundleContext getContext ()
     {
         return context;
@@ -65,6 +70,8 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext bundleContext ) throws Exception
     {
         Activator.context = bundleContext;
+
+        this.stringInterner = InternerHelper.makeInterner ( "org.openscada.ae.monitor.dataitem.stringInternerType", "weak" );
 
         final String driver = System.getProperty ( "org.openscada.ae.server.storage.jdbc.driver", System.getProperty ( "org.openscada.jdbc.driver", "" ) );
         final Filter filter = context.createFilter ( "(&(objectClass=" + DataSourceFactory.class.getName () + ")(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=" + driver + "))" );
@@ -152,7 +159,7 @@ public class Activator implements BundleActivator
         }
         else
         {
-            final JdbcStorageDao jdbcStorageDao = new JdbcStorageDao ( dataSourceFactory, dbParameters, usePool );
+            final JdbcStorageDao jdbcStorageDao = new JdbcStorageDao ( dataSourceFactory, dbParameters, usePool, this.stringInterner );
             jdbcStorageDao.setInstance ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "default" ) );
             jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
             if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
