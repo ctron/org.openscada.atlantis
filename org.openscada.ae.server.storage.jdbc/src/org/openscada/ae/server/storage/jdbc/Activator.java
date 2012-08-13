@@ -140,26 +140,13 @@ public class Activator implements BundleActivator
 
     private JdbcStorage createJdbcStorage ( final DataSourceFactory dataSourceFactory, final Properties dbParameters, final boolean usePool ) throws SQLException
     {
-        if ( "legacy".equals ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "" ) ) )
+        final JdbcStorageDao jdbcStorageDao = new JdbcStorageDao ( dataSourceFactory, dbParameters, usePool );
+        jdbcStorageDao.setInstance ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "default" ) );
+        jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
+        if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
         {
-            final LegacyJdbcStorageDao jdbcStorageDao = new LegacyJdbcStorageDao ( dataSourceFactory, dbParameters, usePool );
-            jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
-            if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
-            {
-                jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
-            }
-            return new JdbcStorage ( jdbcStorageDao );
+            jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
         }
-        else
-        {
-            final JdbcStorageDao jdbcStorageDao = new JdbcStorageDao ( dataSourceFactory, dbParameters, usePool );
-            jdbcStorageDao.setInstance ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "default" ) );
-            jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
-            if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
-            {
-                jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
-            }
-            return new JdbcStorage ( jdbcStorageDao );
-        }
+        return new JdbcStorage ( jdbcStorageDao );
     }
 }
