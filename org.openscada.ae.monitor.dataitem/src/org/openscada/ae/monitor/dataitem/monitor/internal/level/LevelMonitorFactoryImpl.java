@@ -30,6 +30,8 @@ import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
+import com.google.common.collect.Interner;
+
 public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
 {
 
@@ -51,7 +53,9 @@ public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
 
     private final Executor executor;
 
-    public LevelMonitorFactoryImpl ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final ObjectPoolImpl<MonitorService> servicePool, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
+    private final Interner<String> stringInterner;
+
+    public LevelMonitorFactoryImpl ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final ObjectPoolImpl<MonitorService> servicePool, final EventProcessor eventProcessor, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
         super ( context, servicePool, eventProcessor );
         this.executor = executor;
@@ -62,11 +66,12 @@ public class LevelMonitorFactoryImpl extends AbstractMonitorFactory
         this.priority = priority;
         this.cap = cap;
         this.defaultMonitorType = defaultMonitorType;
+        this.stringInterner = stringInterner;
     }
 
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new LevelAlarmMonitor ( this.context, this.executor, this.poolTracker, eventProcessor, configurationId, FACTORY_PREFIX + "." + this.type, this.defaultMonitorType, this.lowerOk, this.includedOk, this.priority, this.cap );
+        return new LevelAlarmMonitor ( this.context, this.executor, this.stringInterner, this.poolTracker, eventProcessor, configurationId, FACTORY_PREFIX + "." + this.type, this.defaultMonitorType, this.lowerOk, this.includedOk, this.priority, this.cap );
     }
 }

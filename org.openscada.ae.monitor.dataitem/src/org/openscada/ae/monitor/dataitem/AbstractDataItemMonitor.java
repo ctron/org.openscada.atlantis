@@ -52,6 +52,8 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Interner;
+
 public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonitorService implements DataItemMonitor
 {
     private final static Logger logger = LoggerFactory.getLogger ( AbstractDataItemMonitor.class );
@@ -90,13 +92,16 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     private final Executor executor;
 
-    public AbstractDataItemMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
+    protected Interner<String> stringInterner;
+
+    public AbstractDataItemMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
         super ( context, executor, eventProcessor, id );
         this.executor = executor;
         this.poolTracker = poolTracker;
         this.prefix = prefix;
         this.defaultMonitorType = defaultMonitorType;
+        this.stringInterner = stringInterner;
     }
 
     @Override
@@ -309,22 +314,27 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
      */
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( this.prefix + ".active", Variant.valueOf ( this.active ) );
-        builder.setAttribute ( this.prefix + ".requireAck", Variant.valueOf ( this.requireAkn ) );
+        builder.setAttribute ( intern ( this.prefix + ".active" ), Variant.valueOf ( this.active ) );
+        builder.setAttribute ( intern ( this.prefix + ".requireAck" ), Variant.valueOf ( this.requireAkn ) );
 
-        builder.setAttribute ( this.prefix + ".ackRequired", Variant.valueOf ( this.akn ) );
-        builder.setAttribute ( this.prefix + ".state", Variant.valueOf ( this.state.toString () ) );
+        builder.setAttribute ( intern ( this.prefix + ".ackRequired" ), Variant.valueOf ( this.akn ) );
+        builder.setAttribute ( intern ( this.prefix + ".state" ), Variant.valueOf ( this.state.toString () ) );
 
-        builder.setAttribute ( this.prefix + ".unsafe", Variant.valueOf ( this.unsafe ) );
+        builder.setAttribute ( intern ( this.prefix + ".unsafe" ), Variant.valueOf ( this.unsafe ) );
 
         if ( isError () )
         {
-            builder.setAttribute ( this.prefix + ".error", Variant.valueOf ( this.alarm ) );
+            builder.setAttribute ( intern ( this.prefix + ".error" ), Variant.valueOf ( this.alarm ) );
         }
         else
         {
-            builder.setAttribute ( this.prefix + ".alarm", Variant.valueOf ( this.alarm ) );
+            builder.setAttribute ( intern ( this.prefix + ".alarm" ), Variant.valueOf ( this.alarm ) );
         }
+    }
+
+    protected String intern ( final String string )
+    {
+        return this.stringInterner == null ? string : this.stringInterner.intern ( string );
     }
 
     protected WriteRequestResult handleProcessWrite ( final WriteRequest request )
@@ -418,14 +428,14 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         if ( active != null )
         {
             configUpdate.put ( "active", active.asBoolean () ? "true" : "false" );
-            result.put ( this.prefix + ".active", WriteAttributeResult.OK );
+            result.put ( intern ( this.prefix + ".active" ), WriteAttributeResult.OK );
         }
 
         final Variant requireAkn = attributes.get ( this.prefix + ".requireAck" );
         if ( requireAkn != null )
         {
             configUpdate.put ( "requireAck", requireAkn.asBoolean () ? "true" : "false" );
-            result.put ( this.prefix + ".requireAck", WriteAttributeResult.OK );
+            result.put ( intern ( this.prefix + ".requireAck" ), WriteAttributeResult.OK );
         }
     }
 

@@ -38,11 +38,14 @@ import org.openscada.core.VariantEditor;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Interner;
 
 public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItemMonitor
 {
@@ -57,9 +60,9 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
 
     private final int defaultPriority;
 
-    public ListAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final EventProcessor eventProcessor, final String id, final int defaultPriority )
+    public ListAlarmMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final int defaultPriority )
     {
-        super ( context, executor, poolTracker, eventProcessor, id, id, "VALUE" ); //$NON-NLS-1$
+        super ( context, executor, stringInterner, poolTracker, eventProcessor, id, id, "VALUE" ); //$NON-NLS-1$
         this.defaultPriority = defaultPriority;
     }
 

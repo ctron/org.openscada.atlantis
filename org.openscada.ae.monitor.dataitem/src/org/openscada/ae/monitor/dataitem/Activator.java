@@ -53,6 +53,9 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Interner;
+import com.google.common.collect.Interners;
+
 public class Activator implements BundleActivator
 {
     private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
@@ -73,6 +76,8 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration<?> monitorServicePoolHandler;
 
+    private Interner<String> stringInterner;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -81,6 +86,8 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext context ) throws Exception
     {
         logger.info ( "Starting up..." );
+
+        this.stringInterner = makeInterner ();
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
@@ -100,7 +107,7 @@ public class Activator implements BundleActivator
 
         // monitor service
         {
-            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, 4000 );
+            final MonitorFactoryImpl factory = new MonitorFactoryImpl ( context, this.executor, this.stringInterner, this.poolTracker, this.monitorServicePool, this.eventProcessor, 4000 );
             properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BooleanAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Boolean alarms" );
@@ -130,7 +137,7 @@ public class Activator implements BundleActivator
 
         // list based alarm monitor
         {
-            final ListAlarmMonitorFactoryImpl factory = new ListAlarmMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, 4000 );
+            final ListAlarmMonitorFactoryImpl factory = new ListAlarmMonitorFactoryImpl ( context, this.executor, this.stringInterner, this.poolTracker, this.monitorServicePool, this.eventProcessor, 4000 );
             properties = new Hashtable<String, Object> ();
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ListAlarmMonitor.FACTORY_ID );
             properties.put ( Constants.SERVICE_DESCRIPTION, "Reference list alarm monitor" );
@@ -150,10 +157,34 @@ public class Activator implements BundleActivator
         Activator.instance = this;
     }
 
+    private Interner<String> makeInterner ()
+    {
+        final String type = System.getProperty ( "org.openscada.ae.monitor.dataitem.stringInternerType", "weak" );
+        if ( "weak".equals ( type ) )
+        {
+            return Interners.newWeakInterner ();
+        }
+        else if ( "strong".equals ( type ) )
+        {
+            return Interners.newStrongInterner ();
+        }
+        else
+        {
+            return new Interner<String> () {
+
+                @Override
+                public String intern ( final String string )
+                {
+                    return string;
+                }
+            };
+        }
+    }
+
     private void makeLevelFactory ( final BundleContext context, final String type, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
         Dictionary<String, Object> properties;
-        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.executor, this.poolTracker, this.monitorServicePool, this.eventProcessor, type, defaultMonitorType, lowerOk, includedOk, priority, cap );
+        final LevelMonitorFactoryImpl factory = new LevelMonitorFactoryImpl ( context, this.executor, this.stringInterner, this.poolTracker, this.monitorServicePool, this.eventProcessor, type, defaultMonitorType, lowerOk, includedOk, priority, cap );
         properties = new Hashtable<String, Object> ( 2 );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, LevelMonitorFactoryImpl.FACTORY_PREFIX + "." + type );
         properties.put ( Constants.SERVICE_DESCRIPTION, type + " Alarms" );

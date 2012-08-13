@@ -30,6 +30,8 @@ import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
+import com.google.common.collect.Interner;
+
 public class MonitorFactoryImpl extends AbstractMonitorFactory
 {
     private final ObjectPoolTracker<MasterItem> poolTracker;
@@ -38,18 +40,21 @@ public class MonitorFactoryImpl extends AbstractMonitorFactory
 
     private final int defaultPriority;
 
-    public MonitorFactoryImpl ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final ObjectPoolImpl<MonitorService> servicePool, final EventProcessor eventProcessor, final int defaultPriority )
+    private final Interner<String> stringInterner;
+
+    public MonitorFactoryImpl ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final ObjectPoolImpl<MonitorService> servicePool, final EventProcessor eventProcessor, final int defaultPriority )
     {
         super ( context, servicePool, eventProcessor );
         this.poolTracker = poolTracker;
         this.executor = executor;
         this.defaultPriority = defaultPriority;
+        this.stringInterner = stringInterner;
     }
 
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new BooleanAlarmMonitor ( this.context, this.executor, this.poolTracker, eventProcessor, configurationId, this.defaultPriority );
+        return new BooleanAlarmMonitor ( this.context, this.executor, this.stringInterner, this.poolTracker, eventProcessor, configurationId, this.defaultPriority );
     }
 
 }

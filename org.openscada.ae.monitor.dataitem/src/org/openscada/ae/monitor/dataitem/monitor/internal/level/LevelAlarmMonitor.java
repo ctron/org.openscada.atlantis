@@ -40,6 +40,8 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Interner;
+
 public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataItemMonitor
 {
 
@@ -57,9 +59,9 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
     private final boolean includedOk;
 
-    public LevelAlarmMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
+    public LevelAlarmMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType, final boolean lowerOk, final boolean includedOk, final int priority, final boolean cap )
     {
-        super ( context, executor, poolTracker, eventProcessor, id, prefix, defaultMonitorType );
+        super ( context, executor, stringInterner, poolTracker, eventProcessor, id, prefix, defaultMonitorType );
         this.lowerOk = lowerOk;
         this.includedOk = includedOk;
         this.priority = priority;
@@ -124,13 +126,13 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
 
         if ( active )
         {
-            builder.setAttribute ( this.prefix + ".preset", Variant.valueOf ( this.limit ) ); //$NON-NLS-1$
+            builder.setAttribute ( intern ( this.prefix + ".preset" ), Variant.valueOf ( this.limit ) ); //$NON-NLS-1$
         }
-        builder.setAttribute ( this.prefix + ".active", active ? Variant.TRUE : Variant.FALSE ); //$NON-NLS-1$
+        builder.setAttribute ( intern ( this.prefix + ".active" ), active ? Variant.TRUE : Variant.FALSE ); //$NON-NLS-1$
 
         if ( this.cap && this.failure )
         {
-            builder.setAttribute ( this.prefix + ".value.original", Variant.valueOf ( this.value ) ); //$NON-NLS-1$
+            builder.setAttribute ( intern ( this.prefix + ".value.original" ), Variant.valueOf ( this.value ) ); //$NON-NLS-1$
         }
     }
 
@@ -156,7 +158,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
             {
                 configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) ); //$NON-NLS-1$ //$NON-NLS-2$
             }
-            result.put ( this.prefix + ".preset", WriteAttributeResult.OK ); //$NON-NLS-1$
+            result.put ( intern ( this.prefix + ".preset" ), WriteAttributeResult.OK ); //$NON-NLS-1$
         }
 
     }

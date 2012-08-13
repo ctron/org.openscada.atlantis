@@ -22,32 +22,39 @@ package org.openscada.ae.monitor.dataitem.monitor.internal.list;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.dataitem.AbstractMonitorFactory;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
+import org.openscada.da.master.MasterItem;
+import org.openscada.utils.osgi.pool.ManageableObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
+import com.google.common.collect.Interner;
+
 public class ListAlarmMonitorFactoryImpl extends AbstractMonitorFactory
 {
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
     private final Executor executor;
 
     private final int defaultPriority;
 
-    public ListAlarmMonitorFactoryImpl ( final BundleContext context, final Executor executor, final ObjectPoolTracker poolTracker, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor, final int defaultPriority )
+    private final Interner<String> stringInterner;
+
+    public ListAlarmMonitorFactoryImpl ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final ManageableObjectPool<MonitorService> servicePool, final EventProcessor eventProcessor, final int defaultPriority )
     {
         super ( context, servicePool, eventProcessor );
         this.poolTracker = poolTracker;
         this.executor = executor;
         this.defaultPriority = defaultPriority;
+        this.stringInterner = stringInterner;
     }
 
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new ListAlarmMonitor ( this.context, this.executor, this.poolTracker, eventProcessor, configurationId, this.defaultPriority );
+        return new ListAlarmMonitor ( this.context, this.executor, this.stringInterner, this.poolTracker, eventProcessor, configurationId, this.defaultPriority );
     }
 
 }

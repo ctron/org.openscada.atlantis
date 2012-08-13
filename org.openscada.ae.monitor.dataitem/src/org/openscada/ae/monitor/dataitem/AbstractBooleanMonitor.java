@@ -29,15 +29,17 @@ import org.openscada.da.master.MasterItem;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
+import com.google.common.collect.Interner;
+
 public abstract class AbstractBooleanMonitor extends AbstractDataItemMonitor
 {
     protected Boolean value;
 
     protected Date timestamp;
 
-    public AbstractBooleanMonitor ( final BundleContext context, final Executor executor, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
+    public AbstractBooleanMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
-        super ( context, executor, poolTracker, eventProcessor, id, prefix, defaultMonitorType );
+        super ( context, executor, stringInterner, poolTracker, eventProcessor, id, prefix, defaultMonitorType );
     }
 
     protected abstract void update ();
