@@ -44,6 +44,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.filter.Filter;
+import org.openscada.utils.interner.InternerHelper;
 import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
 import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
 import org.openscada.utils.str.StringHelper;
@@ -93,7 +94,7 @@ public class JdbcStorageDao extends BaseStorageDao
     public JdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties, final boolean usePool, final Interner<String> stringInterner ) throws SQLException
     {
         super ( dataSourceFactory, properties, usePool );
-        this.stringInterner = stringInterner;
+        this.stringInterner = stringInterner == null ? InternerHelper.makeNoOpInterner () : stringInterner;
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "org.openscada.ae.server.storage.jdbc/CleanupThread" ) );
         this.executor.scheduleWithFixedDelay ( new Runnable () {
 

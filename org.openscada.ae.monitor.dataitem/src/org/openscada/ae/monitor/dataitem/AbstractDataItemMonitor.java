@@ -44,6 +44,7 @@ import org.openscada.da.master.MasterItemHandler;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
 import org.openscada.sec.UserInformation;
+import org.openscada.utils.interner.InternerHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
@@ -101,7 +102,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         this.poolTracker = poolTracker;
         this.prefix = prefix;
         this.defaultMonitorType = defaultMonitorType;
-        this.stringInterner = stringInterner;
+        this.stringInterner = stringInterner == null ? InternerHelper.makeNoOpInterner () : stringInterner;
     }
 
     @Override
@@ -334,7 +335,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     protected String intern ( final String string )
     {
-        return this.stringInterner == null ? string : this.stringInterner.intern ( string );
+        return this.stringInterner.intern ( string );
     }
 
     protected WriteRequestResult handleProcessWrite ( final WriteRequest request )
