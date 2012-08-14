@@ -19,6 +19,7 @@
 
 package org.openscada.da.server.exec.configuration;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,15 +68,22 @@ import org.openscada.da.server.exec.splitter.RegExMatchSplitter;
 import org.openscada.da.server.exec.splitter.RegExSplitSplitter;
 import org.openscada.da.server.exec.splitter.SplitSplitter;
 import org.openscada.da.server.exec.splitter.Splitter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 
 public class XmlConfigurator implements Configurator
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( XmlConfigurator.class );
+
     private RootDocument document;
 
     /**
      * Configure based on provided root document
-     * @param document the root document
+     * 
+     * @param document
+     *            the root document
      */
     public XmlConfigurator ( final RootDocument document )
     {
@@ -83,10 +91,12 @@ public class XmlConfigurator implements Configurator
     }
 
     /**
-     * Configure based on an XML node which will be parsed for a root
-     * document
-     * @param node the node that will be parsed
-     * @throws ConfigurationException if anything goes wrong
+     * Configure based on an XML node which will be parsed for a root document
+     * 
+     * @param node
+     *            the node that will be parsed
+     * @throws ConfigurationException
+     *             if anything goes wrong
      */
     public XmlConfigurator ( final Node node ) throws ConfigurationException
     {
@@ -105,6 +115,7 @@ public class XmlConfigurator implements Configurator
      * <p>
      * The origin of the documentation is the provided configuration
      */
+    @Override
     public void configure ( final Hive hive ) throws ConfigurationException
     {
         configure ( this.document.getRoot (), hive );
@@ -149,11 +160,57 @@ public class XmlConfigurator implements Configurator
             final TriggerCommand command = new TriggerCommand ( triggerType.getId (), processConfiguration, createExtractors ( triggerType.getExtractorList (), hive ), triggerType.getArgumentPlaceholder (), triggerType.getSkipIfNull (), fork );
             hive.addTrigger ( command );
         }
+
+        if ( root.getAdditionalConfigurationDirectoryList () != null )
+        {
+            for ( final String directory : root.getAdditionalConfigurationDirectoryList () )
+            {
+                logger.info ( "Processing include dir: {}", directory );
+
+                final File dir = new File ( directory );
+                if ( !dir.isDirectory () )
+                {
+                    logger.error ( "Unable to load configurations from directory: {}", dir );
+                    continue;
+                }
+                for ( final File file : dir.listFiles () )
+                {
+                    logger.info ( "Found file: {}", file );
+                    if ( !file.isFile () )
+                    {
+                        logger.warn ( "Is not a file. Skipping." );
+                        continue;
+                    }
+                    if ( !file.canRead () )
+                    {
+                        logger.warn ( "Unable to read file. Skipping." );
+                        continue;
+                    }
+                    processSubFile ( file, hive );
+                }
+            }
+        }
+    }
+
+    private void processSubFile ( final File file, final Hive hive ) throws ConfigurationException
+    {
+        RootDocument root;
+        try
+        {
+            root = RootDocument.Factory.parse ( file );
+        }
+        catch ( final Exception e )
+        {
+            throw new ConfigurationException ( String.format ( "Failed to parse sub file: %s", file ), e );
+        }
+        configure ( root.getRoot (), hive );
     }
 
     /**
      * Construct a {@link Splitter} from the provided element
-     * @param splitterType the provided element
+     * 
+     * @param splitterType
+     *            the provided element
      * @return the new splitter or <code>null</code> if none exists
      */
     private Splitter createSplitter ( final SplitterType splitterType )
@@ -249,7 +306,9 @@ public class XmlConfigurator implements Configurator
 
     /**
      * Create a new {@link ProcessConfiguration} instance based on a {@link ProcessType}
-     * @param process the {@link ProcessType} object
+     * 
+     * @param process
+     *            the {@link ProcessType} object
      * @return the new {@link ProcessConfiguration} instance
      */
     private ProcessConfiguration createProcessConfiguration ( final ProcessType process )

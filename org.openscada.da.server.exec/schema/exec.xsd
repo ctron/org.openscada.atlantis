@@ -24,6 +24,7 @@
         	<element name="trigger" type="exec:TriggerCommandType"
         		maxOccurs="unbounded" minOccurs="0">
         	</element>
+        	<element name="additionalConfigurationDirectory" type="string" minOccurs="0" maxOccurs="unbounded"></element>
         </choice>
 
 
