@@ -30,6 +30,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.script.ScriptExecutor;
 import org.osgi.framework.BundleContext;
@@ -40,7 +41,7 @@ public class ScriptComponent
 
     private final ScriptContextImpl scriptContext;
 
-    public ScriptComponent ( final Executor executor, final ObjectPoolImpl objectPool, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws ScriptException
+    public ScriptComponent ( final Executor executor, final ObjectPoolImpl<DataItem> objectPool, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws ScriptException
     {
         this.id = configurationId;
 
