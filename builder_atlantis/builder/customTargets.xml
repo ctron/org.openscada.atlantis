@@ -239,6 +239,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.ds"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.formula"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.datasource.average"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.constant"/>
   	
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk" />
