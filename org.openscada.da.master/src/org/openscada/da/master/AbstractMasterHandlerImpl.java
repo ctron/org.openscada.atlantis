@@ -140,8 +140,6 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
                 @Override
                 public void serviceModified ( final MasterItem service, final Dictionary<?, ?> properties )
                 {
-                    // TODO Auto-generated method stub
-
                 }
 
                 @Override
