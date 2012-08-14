@@ -30,7 +30,6 @@ import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
@@ -43,8 +42,6 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
     private final static Logger logger = LoggerFactory.getLogger ( DataStoreSourceFactory.class );
 
     private final Executor executor;
-
-    private final ObjectPoolTracker<DataSource> poolTracker;
 
     private final ObjectPoolImpl<DataSource> objectPool;
 
@@ -60,9 +57,6 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
 
         this.objectPool = new ObjectPoolImpl<DataSource> ();
         this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class );
-
-        this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
-        this.poolTracker.open ();
     }
 
     @Override
@@ -70,7 +64,6 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
     {
         this.poolRegistration.unregister ();
         this.objectPool.dispose ();
-        this.poolTracker.close ();
         super.dispose ();
     }
 
