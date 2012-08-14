@@ -99,6 +99,8 @@ public class ConnectWaitController implements ConnectionStateListener
             case CLOSED:
                 notifyAll ();
                 break;
+            default:
+                break;
         }
     }
 }
