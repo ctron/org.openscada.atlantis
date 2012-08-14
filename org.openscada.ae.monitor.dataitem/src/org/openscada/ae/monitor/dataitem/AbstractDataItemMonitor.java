@@ -111,13 +111,13 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         disconnect ();
     }
 
-    protected static Map<String, Variant> convertAttributes ( final ConfigurationDataHelper cfg )
+    protected Map<String, Variant> convertAttributes ( final ConfigurationDataHelper cfg )
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "info." ).entrySet () )
         {
-            attributes.put ( entry.getKey (), Variant.valueOf ( entry.getValue () ) );
+            attributes.put ( intern ( entry.getKey () ), Variant.valueOf ( entry.getValue () ) );
         }
 
         return attributes;
@@ -139,9 +139,9 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        this.masterId = cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) );
+        this.masterId = intern ( cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) ) );
         this.handlerPriority = cfg.getInteger ( "handlerPriority", getDefaultPriority () );
-        this.monitorType = cfg.getString ( "monitorType", this.defaultMonitorType );
+        this.monitorType = intern ( cfg.getString ( "monitorType", this.defaultMonitorType ) );
 
         setEventInformationAttributes ( userInformation, convertAttributes ( cfg ) );
         setActive ( userInformation, cfg.getBoolean ( "active", true ) );
