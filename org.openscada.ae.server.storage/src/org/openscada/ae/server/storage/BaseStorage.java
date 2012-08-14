@@ -29,6 +29,7 @@ public abstract class BaseStorage implements Storage
 {
     private static final boolean allowEntryTimestamp = Boolean.getBoolean ( "org.openscada.ae.server.storage.allowExternalEntryTimestamp" );
 
+    @Override
     public Event store ( final Event event )
     {
         return store ( event, null );
@@ -48,6 +49,7 @@ public abstract class BaseStorage implements Storage
         return builder.build ();
     }
 
+    @Override
     public Event update ( final UUID id, final String comment ) throws Exception
     {
         return update ( id, comment, null );
