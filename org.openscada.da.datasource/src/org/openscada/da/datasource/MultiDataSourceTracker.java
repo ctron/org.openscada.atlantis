@@ -93,7 +93,7 @@ public class MultiDataSourceTracker
 
     public synchronized void open ()
     {
-        for ( final ObjectPoolServiceTracker tracker : this.trackers )
+        for ( final ObjectPoolServiceTracker<DataSource> tracker : this.trackers )
         {
             tracker.open ();
         }
@@ -101,7 +101,7 @@ public class MultiDataSourceTracker
 
     public synchronized void close ()
     {
-        for ( final ObjectPoolServiceTracker tracker : this.trackers )
+        for ( final ObjectPoolServiceTracker<DataSource> tracker : this.trackers )
         {
             tracker.close ();
         }
