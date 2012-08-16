@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: AE Common Monitors Plug-in
 Bundle-SymbolicName: org.openscada.ae.monitor.common
 Bundle-Version: 0.18.0.qualifier
-Bundle-Activator: org.openscada.ae.monitor.common.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae;version="0.18.0",
