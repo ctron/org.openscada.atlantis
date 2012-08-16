@@ -26,6 +26,7 @@ import java.util.concurrent.Executor;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.EventHelper;
+import org.openscada.ae.monitor.common.Severity;
 import org.openscada.ae.monitor.dataitem.AbstractNumericMonitor;
 import org.openscada.ae.monitor.dataitem.DataItemMonitor;
 import org.openscada.ca.ConfigurationDataHelper;
@@ -112,9 +113,13 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     }
 
     @Override
-    protected boolean isError ()
+    protected Severity makeSeverity ( final String string )
     {
-        return this.cap;
+        if ( string == null )
+        {
+            return this.cap ? Severity.FATAL : Severity.ERROR;
+        }
+        return super.makeSeverity ( string );
     }
 
     @Override
@@ -164,7 +169,7 @@ public class LevelAlarmMonitor extends AbstractNumericMonitor implements DataIte
     }
 
     @Override
-    protected int getDefaultPriority ()
+    protected int getDefaultHandlerPriority ()
     {
         return this.priority;
     }

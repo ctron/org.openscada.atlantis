@@ -32,6 +32,7 @@ import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractStateMachineMonitorService;
+import org.openscada.ae.monitor.common.Severity;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -95,6 +96,8 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
     protected Interner<String> stringInterner;
 
+    private Severity severity;
+
     public AbstractDataItemMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
         super ( context, executor, eventProcessor, id );
@@ -140,14 +143,34 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
         this.masterId = intern ( cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) ) );
-        this.handlerPriority = cfg.getInteger ( "handlerPriority", getDefaultPriority () );
+        this.handlerPriority = cfg.getInteger ( "handlerPriority", getDefaultHandlerPriority () );
         this.monitorType = intern ( cfg.getString ( "monitorType", this.defaultMonitorType ) );
 
         setEventInformationAttributes ( userInformation, convertAttributes ( cfg ) );
         setActive ( userInformation, cfg.getBoolean ( "active", true ) );
         setRequireAkn ( userInformation, cfg.getBoolean ( "requireAck", false ) );
+        setSeverity ( userInformation, makeSeverity ( cfg.getString ( "severity" ) ) );
 
         connect ();
+    }
+
+    /**
+     * Create the severity for this monitor based on the configuration string
+     * 
+     * @param string
+     *            the configuration string
+     * @return a {@link Severity}
+     */
+    protected Severity makeSeverity ( final String string )
+    {
+        try
+        {
+            return Severity.valueOf ( string );
+        }
+        catch ( final Exception e )
+        {
+            return Severity.ERROR;
+        }
     }
 
     protected boolean isInitialUpdate ()
@@ -163,7 +186,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         }
     }
 
-    protected int getDefaultPriority ()
+    protected int getDefaultHandlerPriority ()
     {
         return 0;
     }
@@ -297,9 +320,17 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
         reprocess ();
     }
 
-    protected boolean isError ()
+    /**
+     * Get the current active severity.
+     * <p>
+     * This should be the configured severity, but may be overriden.
+     * </p>
+     * 
+     * @return the current active severity
+     */
+    protected Severity getSeverity ()
     {
-        return false;
+        return this.severity;
     }
 
     protected boolean isActive ()
@@ -323,14 +354,39 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
 
         builder.setAttribute ( intern ( this.prefix + ".unsafe" ), Variant.valueOf ( this.unsafe ) );
 
-        if ( isError () )
+        Severity severity = getSeverity ();
+
+        // be sure we don't have a null value
+        severity = severity == null ? Severity.ERROR : severity;
+
+        switch ( severity )
         {
-            builder.setAttribute ( intern ( this.prefix + ".error" ), Variant.valueOf ( this.alarm ) );
+            case INFORMATION:
+                builder.setAttribute ( intern ( this.prefix + ".info" ), Variant.valueOf ( this.alarm ) );
+                break;
+            case WARNING:
+                builder.setAttribute ( intern ( this.prefix + ".warning" ), Variant.valueOf ( this.alarm ) );
+                break;
+            case ERROR:
+                builder.setAttribute ( intern ( this.prefix + ".alarm" ), Variant.valueOf ( this.alarm ) );
+                break;
+            case FATAL:
+                builder.setAttribute ( intern ( this.prefix + ".error" ), Variant.valueOf ( this.alarm ) );
+                break;
         }
-        else
-        {
-            builder.setAttribute ( intern ( this.prefix + ".alarm" ), Variant.valueOf ( this.alarm ) );
-        }
+    }
+
+    @Override
+    protected void buildMonitorAttributes ( final Map<String, Variant> attributes )
+    {
+        super.buildMonitorAttributes ( attributes );
+
+        Severity severity = getSeverity ();
+
+        // be sure we don't have a null value
+        severity = severity == null ? Severity.ERROR : severity;
+
+        attributes.put ( "severity", Variant.valueOf ( severity.name () ) );
     }
 
     protected String intern ( final String string )
@@ -403,6 +459,13 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     {
         super.setRequireAkn ( userInformation, state );
         this.requireAkn = state;
+        reprocess ();
+    }
+
+    public synchronized void setSeverity ( final UserInformation userInformation, final Severity severity )
+    {
+        // FIXME: we should sent out a CFG event
+        this.severity = severity;
         reprocess ();
     }
 

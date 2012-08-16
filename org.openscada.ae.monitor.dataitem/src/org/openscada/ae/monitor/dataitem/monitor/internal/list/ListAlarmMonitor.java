@@ -79,7 +79,7 @@ public class ListAlarmMonitor extends AbstractVariantMonitor implements DataItem
     }
 
     @Override
-    protected int getDefaultPriority ()
+    protected int getDefaultHandlerPriority ()
     {
         return this.defaultPriority;
     }

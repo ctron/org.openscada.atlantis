@@ -55,7 +55,7 @@ public class BooleanAlarmMonitor extends AbstractBooleanMonitor implements DataI
     }
 
     @Override
-    protected int getDefaultPriority ()
+    protected int getDefaultHandlerPriority ()
     {
         return this.defaultPriority;
     }
