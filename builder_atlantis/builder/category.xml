@@ -8,5 +8,5 @@
       <category name="org.openscada.atlantis.sdk"/>
    </feature>
    <category-def name="org.openscada.atlantis" label="openSCADA Atlantis"/>
-   <category-def name="org.openscada.atlantis.sdk" label="openSCADA Aurora SDK"/>
+   <category-def name="org.openscada.atlantis.sdk" label="openSCADA Atlantis SDK"/>
 </site>
