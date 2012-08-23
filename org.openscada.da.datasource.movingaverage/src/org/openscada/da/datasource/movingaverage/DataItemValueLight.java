@@ -25,6 +25,10 @@ import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 
+/**
+ * a light weight alternative to DataItemValue, without attributes and 
+ * exception info
+ */
 public class DataItemValueLight implements Comparable<DataItemValueLight>
 {
     public static final DataItemValueLight DISCONNECTED = new DataItemValueLight ( Variant.NULL, SubscriptionState.DISCONNECTED, Long.MIN_VALUE );

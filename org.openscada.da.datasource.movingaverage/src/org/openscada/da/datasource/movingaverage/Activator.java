@@ -47,7 +47,7 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () + ".executor" ) );
         this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () + ".scheduler" ) );
         this.factory = new MovingAverageDataSourceFactory ( context, this.executor, this.scheduler );
 
