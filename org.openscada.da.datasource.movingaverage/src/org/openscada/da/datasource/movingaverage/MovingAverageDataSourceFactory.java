@@ -37,7 +37,7 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MovingAverageDataSourceFactory extends AbstractServiceConfigurationFactory<MovingAverageDatasource>
+public class MovingAverageDataSourceFactory extends AbstractServiceConfigurationFactory<MovingAverageDataSource>
 {
     private final static Logger logger = LoggerFactory.getLogger ( MovingAverageDataSourceFactory.class );
 
@@ -47,7 +47,7 @@ public class MovingAverageDataSourceFactory extends AbstractServiceConfiguration
 
     private final ObjectPoolTracker<DataSource> poolTracker;
 
-    private final ObjectPoolImpl<MovingAverageDatasource> avgObjectPool;
+    private final ObjectPoolImpl<MovingAverageDataSource> avgObjectPool;
 
     private final ObjectPoolImpl<DataSource> dsObjectPool;
 
@@ -61,8 +61,8 @@ public class MovingAverageDataSourceFactory extends AbstractServiceConfiguration
         this.executor = executor;
         this.scheduler = scheduler;
 
-        this.avgObjectPool = new ObjectPoolImpl<MovingAverageDatasource> ();
-        this.avgPoolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.avgObjectPool, MovingAverageDatasource.class );
+        this.avgObjectPool = new ObjectPoolImpl<MovingAverageDataSource> ();
+        this.avgPoolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.avgObjectPool, MovingAverageDataSource.class );
 
         this.dsObjectPool = new ObjectPoolImpl<DataSource> ();
         this.dsPoolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.dsObjectPool, DataSource.class );
@@ -83,11 +83,11 @@ public class MovingAverageDataSourceFactory extends AbstractServiceConfiguration
     }
 
     @Override
-    protected Entry<MovingAverageDatasource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<MovingAverageDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         logger.debug ( "Creating new average source: {}", configurationId );
 
-        final MovingAverageDatasource avg = new MovingAverageDatasource ( configurationId, this.executor, this.scheduler, this.poolTracker, this.dsObjectPool );
+        final MovingAverageDataSource avg = new MovingAverageDataSource ( configurationId, this.executor, this.scheduler, this.poolTracker, this.dsObjectPool );
         avg.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
@@ -95,11 +95,11 @@ public class MovingAverageDataSourceFactory extends AbstractServiceConfiguration
 
         this.avgObjectPool.addService ( configurationId, avg, properties );
 
-        return new Entry<MovingAverageDatasource> ( configurationId, avg );
+        return new Entry<MovingAverageDataSource> ( configurationId, avg );
     }
 
     @Override
-    protected void disposeService ( final UserInformation userInformation, final String id, final MovingAverageDatasource service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final MovingAverageDataSource service )
     {
         logger.info ( "Disposing: {}", id );
 
@@ -109,7 +109,7 @@ public class MovingAverageDataSourceFactory extends AbstractServiceConfiguration
     }
 
     @Override
-    protected Entry<MovingAverageDatasource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<MovingAverageDatasource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<MovingAverageDataSource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<MovingAverageDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

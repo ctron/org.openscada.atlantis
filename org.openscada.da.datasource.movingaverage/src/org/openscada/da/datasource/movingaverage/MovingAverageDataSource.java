@@ -44,9 +44,9 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class MovingAverageDatasource implements DataSourceListener
+public class MovingAverageDataSource implements DataSourceListener
 {
-    private final static Logger logger = LoggerFactory.getLogger ( MovingAverageDatasource.class );
+    private final static Logger logger = LoggerFactory.getLogger ( MovingAverageDataSource.class );
 
     private DataItemValueRange valueRange;
 
@@ -88,7 +88,7 @@ public class MovingAverageDatasource implements DataSourceListener
 
     private final DataInputSource deviationWeightedDataSource;
 
-    public MovingAverageDatasource ( final String configurationId, final ExecutorService executor, final ScheduledExecutorService scheduler, final ObjectPoolTracker<DataSource> poolTracker, final ObjectPoolImpl<DataSource> dsObjectPool ) throws InvalidSyntaxException
+    public MovingAverageDataSource ( final String configurationId, final ExecutorService executor, final ScheduledExecutorService scheduler, final ObjectPoolTracker<DataSource> poolTracker, final ObjectPoolImpl<DataSource> dsObjectPool ) throws InvalidSyntaxException
     {
         this.executor = executor;
         this.scheduler = scheduler;
@@ -184,7 +184,7 @@ public class MovingAverageDatasource implements DataSourceListener
             {
                 try
                 {
-                    MovingAverageDatasource.this.valueRange.checkRange ();
+                    MovingAverageDataSource.this.valueRange.checkRange ();
                     updateValues ();
                 }
                 catch ( final Exception e )
