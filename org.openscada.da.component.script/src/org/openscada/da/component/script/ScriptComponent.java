@@ -19,6 +19,7 @@
 
 package org.openscada.da.component.script;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -41,7 +42,7 @@ public class ScriptComponent
 
     private final ScriptContextImpl scriptContext;
 
-    public ScriptComponent ( final Executor executor, final ObjectPoolImpl<DataItem> objectPool, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws ScriptException
+    public ScriptComponent ( final Executor executor, final ObjectPoolImpl<DataItem> objectPool, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws ScriptException, IOException
     {
         this.id = configurationId;
 
