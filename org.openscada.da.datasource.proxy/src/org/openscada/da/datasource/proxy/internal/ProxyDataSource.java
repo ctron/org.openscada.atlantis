@@ -57,13 +57,13 @@ public class ProxyDataSource extends AbstractDataSource implements ServiceListen
 
     private MultiDataSourceTracker tracker;
 
-    private final Map<DataSource, SourceHandler> sources = new HashMap<DataSource, SourceHandler> ();
+    private Map<DataSource, SourceHandler> sources = new HashMap<DataSource, SourceHandler> ( 2 );
 
     private Set<String> sourceIds;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<DataSource> poolTracker;
 
-    public ProxyDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
+    public ProxyDataSource ( final ObjectPoolTracker<DataSource> poolTracker, final Executor executor )
     {
         this.poolTracker = poolTracker;
         this.executor = executor;
@@ -81,6 +81,8 @@ public class ProxyDataSource extends AbstractDataSource implements ServiceListen
         {
             handler.dispose ();
         }
+        sources.clear ();
+        sourceIds.clear ();
         if ( this.tracker != null )
         {
             this.tracker.close ();
@@ -102,6 +104,7 @@ public class ProxyDataSource extends AbstractDataSource implements ServiceListen
         }
 
         this.sourceIds = convertSources ( str );
+        this.sources = new HashMap<DataSource, ProxyDataSource.SourceHandler> ( this.sourceIds.size () );
 
         if ( this.sourceIds.isEmpty () )
         {
@@ -279,11 +282,11 @@ public class ProxyDataSource extends AbstractDataSource implements ServiceListen
         update ();
     }
 
-    private synchronized void updateSource ( final Object service, final int priority )
+    private synchronized void updateSource ( final DataSource dataSource, final int priority )
     {
-        logger.info ( "Updating source: {} / {}", new Object[] { service, priority } );
+        logger.info ( "Updating source: {} / {}", new Object[] { dataSource, priority } );
 
-        final SourceHandler handler = this.sources.get ( service );
+        final SourceHandler handler = this.sources.get ( dataSource );
         if ( handler != null )
         {
             handler.setPriority ( priority );
@@ -291,11 +294,11 @@ public class ProxyDataSource extends AbstractDataSource implements ServiceListen
         }
     }
 
-    private synchronized void removeSource ( final DataSource service )
+    private synchronized void removeSource ( final DataSource dataSource )
     {
-        logger.info ( "Removing source: {}", service );
+        logger.info ( "Removing source: {}", dataSource );
 
-        final SourceHandler handler = this.sources.remove ( service );
+        final SourceHandler handler = this.sources.remove ( dataSource );
         if ( handler != null )
         {
             handler.dispose ();
