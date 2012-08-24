@@ -65,7 +65,6 @@ public class DataItemCounterOutput implements CounterOutput
 
         rootFolder.remove ( this.totalItem );
         hive.unregisterItem ( this.totalItem );
-
     }
 
     @Override
