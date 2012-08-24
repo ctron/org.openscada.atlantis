@@ -17,12 +17,13 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.datasource.average;
+package org.openscada.da.datasource.movingaverage;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
@@ -33,9 +34,11 @@ import org.osgi.framework.Constants;
 
 public class Activator implements BundleActivator
 {
+    private ScheduledExecutorService scheduler;
+
     private ExecutorService executor;
 
-    private AverageDataSourceFactory factory;
+    private MovingAverageDataSourceFactory factory;
 
     /*
      * (non-Javadoc)
@@ -44,11 +47,12 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
-        this.factory = new AverageDataSourceFactory ( context, executor );
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () + ".executor" ) );
+        this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () + ".scheduler" ) );
+        this.factory = new MovingAverageDataSourceFactory ( context, this.executor, this.scheduler );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( Constants.SERVICE_DESCRIPTION, "An averaging data source over multiple sources" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "An averaging data source over time" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, context.getBundle ().getSymbolicName () );
 
@@ -62,13 +66,8 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext context ) throws Exception
     {
-        if ( this.factory != null )
-        {
-            this.factory.dispose ();
-        }
-        if ( this.executor != null )
-        {
-            this.executor.shutdownNow ();
-        }
+        this.factory.dispose ();
+        this.executor.shutdown ();
+        this.scheduler.shutdown ();
     }
 }

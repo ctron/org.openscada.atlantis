@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.datasource.average;
+package org.openscada.da.datasource.movingaverage;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -44,9 +44,9 @@ import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AverageDatasource implements DataSourceListener
+public class MovingAverageDataSource implements DataSourceListener
 {
-    private final static Logger logger = LoggerFactory.getLogger ( AverageDatasource.class );
+    private final static Logger logger = LoggerFactory.getLogger ( MovingAverageDataSource.class );
 
     private DataItemValueRange valueRange;
 
@@ -88,7 +88,7 @@ public class AverageDatasource implements DataSourceListener
 
     private final DataInputSource deviationWeightedDataSource;
 
-    public AverageDatasource ( final String configurationId, final ExecutorService executor, final ScheduledExecutorService scheduler, final ObjectPoolTracker<DataSource> poolTracker, final ObjectPoolImpl<DataSource> dsObjectPool ) throws InvalidSyntaxException
+    public MovingAverageDataSource ( final String configurationId, final ExecutorService executor, final ScheduledExecutorService scheduler, final ObjectPoolTracker<DataSource> poolTracker, final ObjectPoolImpl<DataSource> dsObjectPool ) throws InvalidSyntaxException
     {
         this.executor = executor;
         this.scheduler = scheduler;
@@ -184,7 +184,7 @@ public class AverageDatasource implements DataSourceListener
             {
                 try
                 {
-                    AverageDatasource.this.valueRange.checkRange ();
+                    MovingAverageDataSource.this.valueRange.checkRange ();
                     updateValues ();
                 }
                 catch ( final Exception e )

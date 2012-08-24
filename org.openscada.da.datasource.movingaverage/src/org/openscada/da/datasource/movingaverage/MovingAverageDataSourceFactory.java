@@ -1,5 +1,4 @@
 /*
-
  * This file is part of the OpenSCADA project
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
@@ -18,10 +17,13 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.datasource.average;
+package org.openscada.da.datasource.movingaverage;
 
+import java.util.Dictionary;
+import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.da.datasource.DataSource;
 import org.openscada.sec.UserInformation;
@@ -35,15 +37,17 @@ import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AverageDataSourceFactory extends AbstractServiceConfigurationFactory<AverageDataSource>
+public class MovingAverageDataSourceFactory extends AbstractServiceConfigurationFactory<MovingAverageDataSource>
 {
-    private final static Logger logger = LoggerFactory.getLogger ( AverageDataSourceFactory.class );
+    private final static Logger logger = LoggerFactory.getLogger ( MovingAverageDataSourceFactory.class );
 
     private final ExecutorService executor;
 
+    private final ScheduledExecutorService scheduler;
+
     private final ObjectPoolTracker<DataSource> poolTracker;
 
-    private final ObjectPoolImpl<AverageDataSource> avgObjectPool;
+    private final ObjectPoolImpl<MovingAverageDataSource> avgObjectPool;
 
     private final ObjectPoolImpl<DataSource> dsObjectPool;
 
@@ -51,19 +55,19 @@ public class AverageDataSourceFactory extends AbstractServiceConfigurationFactor
 
     private final ServiceRegistration<?> dsPoolRegistration;
 
-    public AverageDataSourceFactory ( final BundleContext context, final ExecutorService executor ) throws InvalidSyntaxException
+    public MovingAverageDataSourceFactory ( final BundleContext context, final ExecutorService executor, final ScheduledExecutorService scheduler ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = executor;
+        this.scheduler = scheduler;
 
-
-        this.avgObjectPool = new ObjectPoolImpl<AverageDataSource> ();
-        this.avgPoolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.avgObjectPool, AverageDataSource.class );
+        this.avgObjectPool = new ObjectPoolImpl<MovingAverageDataSource> ();
+        this.avgPoolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.avgObjectPool, MovingAverageDataSource.class );
 
         this.dsObjectPool = new ObjectPoolImpl<DataSource> ();
         this.dsPoolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.dsObjectPool, DataSource.class );
 
-        this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
         this.poolTracker.open ();
     }
 
@@ -72,35 +76,43 @@ public class AverageDataSourceFactory extends AbstractServiceConfigurationFactor
     {
         this.dsPoolRegistration.unregister ();
         this.avgPoolRegistration.unregister ();
-
         this.dsObjectPool.dispose ();
         this.avgObjectPool.dispose ();
-
         this.poolTracker.close ();
         super.dispose ();
     }
 
     @Override
-    protected Entry<AverageDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
+    protected Entry<MovingAverageDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final AverageDataSource dataSource = new AverageDataSource (configurationId, this.poolTracker, this.executor, this.dsObjectPool  );
-        dataSource.update ( parameters );
+        logger.debug ( "Creating new average source: {}", configurationId );
 
-        this.avgObjectPool.addService ( configurationId, dataSource, null );
+        final MovingAverageDataSource avg = new MovingAverageDataSource ( configurationId, this.executor, this.scheduler, this.poolTracker, this.dsObjectPool );
+        avg.update ( parameters );
 
-        return new Entry<AverageDataSource> ( configurationId, dataSource );
+        final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
+        properties.put ( DataSource.DATA_SOURCE_ID, configurationId );
+
+        this.avgObjectPool.addService ( configurationId, avg, properties );
+
+        return new Entry<MovingAverageDataSource> ( configurationId, avg );
     }
 
     @Override
-    protected void disposeService ( final UserInformation userInformation, final String configurationId, final AverageDataSource service )
+    protected void disposeService ( final UserInformation userInformation, final String id, final MovingAverageDataSource service )
     {
-        this.avgObjectPool.removeService ( configurationId, service );
+        logger.info ( "Disposing: {}", id );
+
+        this.avgObjectPool.removeService ( id, service );
+
         service.dispose ();
     }
 
     @Override
-    protected Entry<AverageDataSource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<AverageDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<MovingAverageDataSource> updateService ( final UserInformation userInformation, final String configurationId, final Entry<MovingAverageDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;
-    }}
+    }
+
+}

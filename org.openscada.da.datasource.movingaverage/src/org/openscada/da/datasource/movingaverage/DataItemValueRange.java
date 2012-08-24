@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.datasource.average;
+package org.openscada.da.datasource.movingaverage;
 
 import java.io.Serializable;
 import java.util.SortedSet;
