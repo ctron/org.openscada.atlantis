@@ -23,7 +23,6 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
@@ -34,8 +33,6 @@ import org.osgi.framework.Constants;
 
 public class Activator implements BundleActivator
 {
-    private ScheduledExecutorService scheduler;
-
     private ExecutorService executor;
 
     private AverageDataSourceFactory factory;
@@ -48,11 +45,10 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext context ) throws Exception
     {
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
-        this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () + ".scheduler" ) );
-        this.factory = new AverageDataSourceFactory ( context, this.executor, this.scheduler );
+        this.factory = new AverageDataSourceFactory ( context, executor );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( Constants.SERVICE_DESCRIPTION, "An averaging data source" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "An averaging data source over multiple sources" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, context.getBundle ().getSymbolicName () );
 
@@ -66,8 +62,13 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext context ) throws Exception
     {
-        this.factory.dispose ();
-        this.executor.shutdown ();
-        this.scheduler.shutdown ();
+        if ( this.factory != null )
+        {
+            this.factory.dispose ();
+        }
+        if ( this.executor != null )
+        {
+            this.executor.shutdownNow ();
+        }
     }
 }
