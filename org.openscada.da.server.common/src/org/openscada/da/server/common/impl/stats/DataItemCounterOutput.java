@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,13 +31,13 @@ import org.openscada.utils.concurrent.DirectExecutor;
 public class DataItemCounterOutput implements CounterOutput
 {
 
-    private final DataItemInputChained valueItem;
+    private final DataItemInputChained averageItem;
 
     private final DataItemInputChained totalItem;
 
     public DataItemCounterOutput ( final String itemId )
     {
-        this.valueItem = new DataItemInputChained ( itemId + ".average", DirectExecutor.INSTANCE );
+        this.averageItem = new DataItemInputChained ( itemId + ".average", DirectExecutor.INSTANCE );
         this.totalItem = new DataItemInputChained ( itemId + ".total", DirectExecutor.INSTANCE );
     }
 
@@ -46,9 +46,9 @@ public class DataItemCounterOutput implements CounterOutput
     {
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
-        hive.registerItem ( this.valueItem );
+        hive.registerItem ( this.averageItem );
         attributes.put ( "description", Variant.valueOf ( description + " - Average value" ) );
-        rootFolder.add ( this.valueItem.getInformation ().getName (), this.valueItem, attributes );
+        rootFolder.add ( this.averageItem.getInformation ().getName (), this.averageItem, attributes );
 
         attributes.clear ();
 
@@ -60,8 +60,8 @@ public class DataItemCounterOutput implements CounterOutput
     @Override
     public void unregister ( final HiveCommon hive, final FolderCommon rootFolder )
     {
-        rootFolder.remove ( this.valueItem );
-        hive.unregisterItem ( this.valueItem );
+        rootFolder.remove ( this.averageItem );
+        hive.unregisterItem ( this.averageItem );
 
         rootFolder.remove ( this.totalItem );
         hive.unregisterItem ( this.totalItem );
@@ -70,7 +70,7 @@ public class DataItemCounterOutput implements CounterOutput
     @Override
     public void setTickValue ( final double average, final long total )
     {
-        this.valueItem.updateData ( Variant.valueOf ( average ), null, null );
+        this.averageItem.updateData ( Variant.valueOf ( average ), null, null );
         this.totalItem.updateData ( Variant.valueOf ( total ), null, null );
     }
 
