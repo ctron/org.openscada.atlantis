@@ -22,11 +22,12 @@ package org.openscada.da.datasource.average;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
 import org.openscada.core.Variant;
@@ -53,7 +54,7 @@ public class AverageDataSource implements ServiceListener
 
     private Set<String> sourceIds;
 
-    private final Map<DataSource, DataSourceHandler> sources = new HashMap<DataSource, DataSourceHandler> ();
+    private final ConcurrentMap<DataSource, DataSourceHandler> sources = new ConcurrentHashMap<DataSource, DataSourceHandler> ();
 
     private int noOfValidSourcesRequired = 0;
 
@@ -235,7 +236,7 @@ public class AverageDataSource implements ServiceListener
         for ( final DataSourceHandler handler : this.sources.values () )
         {
             final DataItemValue div = handler.getValue ();
-            if ( div != null && div.isConnected () && div.isError () )
+            if ( div != null && div.isConnected () && !div.isError () )
             {
                 if ( div.getValue () != null && div.getValue ().isNumber () )
                 {
@@ -258,6 +259,13 @@ public class AverageDataSource implements ServiceListener
                 dd += Math.pow ( d - mean, 2 );
             }
             deviation = Math.sqrt ( dd / validValues.size () );
+        }
+
+        if ( validValues.size () < noOfValidSourcesRequired )
+        {
+            mean = null;
+            median = null;
+            deviation = null;
         }
 
         this.minDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( min ) ).build () );
