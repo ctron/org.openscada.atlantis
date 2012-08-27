@@ -48,11 +48,9 @@ public class DataItemCounterOutput implements CounterOutput
 
     private final MBeanServer mbs;
 
-    private final CounterOutputMXBeanImpl averageExport;
+    private final CounterOutputMXBeanImpl export;
 
-    private final CounterOutputMXBeanImpl totalExport;
-
-    private ObjectInstance averageInstance;
+    private ObjectInstance exportInstance;
 
     private ObjectInstance totalInstance;
 
@@ -66,8 +64,7 @@ public class DataItemCounterOutput implements CounterOutput
 
         this.mbs = ManagementFactory.getPlatformMBeanServer ();
 
-        this.averageExport = new CounterOutputMXBeanImpl ();
-        this.totalExport = new CounterOutputMXBeanImpl ();
+        this.export = new CounterOutputMXBeanImpl ();
     }
 
     @Override
@@ -87,8 +84,7 @@ public class DataItemCounterOutput implements CounterOutput
 
         try
         {
-            this.averageInstance = this.mbs.registerMBean ( this.averageExport, makeName ( "org.openscada.da.server.common.stats", this.itemId, "average" ) );
-            this.totalInstance = this.mbs.registerMBean ( this.totalExport, makeName ( "org.openscada.da.server.common.stats", this.itemId, "total" ) );
+            this.exportInstance = this.mbs.registerMBean ( this.export, makeName ( "org.openscada.da.server.common.stats", this.itemId ) );
         }
         catch ( final Exception e )
         {
@@ -96,11 +92,10 @@ public class DataItemCounterOutput implements CounterOutput
         }
     }
 
-    private ObjectName makeName ( final String domain, final String description, final String type ) throws MalformedObjectNameException, NullPointerException
+    private ObjectName makeName ( final String domain, final String description ) throws MalformedObjectNameException, NullPointerException
     {
         final Hashtable<String, String> properties = new Hashtable<String, String> ( 2 );
         properties.put ( "value", description );
-        properties.put ( "type", type );
         return new ObjectName ( domain, properties );
     }
 
@@ -113,17 +108,17 @@ public class DataItemCounterOutput implements CounterOutput
         rootFolder.remove ( this.totalItem );
         hive.unregisterItem ( this.totalItem );
 
-        if ( this.averageInstance != null )
+        if ( this.exportInstance != null )
         {
             try
             {
-                this.mbs.unregisterMBean ( this.averageInstance.getObjectName () );
+                this.mbs.unregisterMBean ( this.exportInstance.getObjectName () );
             }
             catch ( final Exception e )
             {
                 logger.warn ( "Failed to unregister average", e );
             }
-            this.averageInstance = null;
+            this.exportInstance = null;
         }
         if ( this.totalInstance != null )
         {
@@ -144,6 +139,8 @@ public class DataItemCounterOutput implements CounterOutput
     {
         this.averageItem.updateData ( Variant.valueOf ( average ), null, null );
         this.totalItem.updateData ( Variant.valueOf ( total ), null, null );
+        this.export.setAverage ( average );
+        this.export.setTotal ( total );
     }
 
 }
