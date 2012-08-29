@@ -32,13 +32,9 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class AverageDataSourceFactory extends AbstractServiceConfigurationFactory<AverageDataSource>
 {
-    private final static Logger logger = LoggerFactory.getLogger ( AverageDataSourceFactory.class );
-
     private final ExecutorService executor;
 
     private final ObjectPoolTracker<DataSource> poolTracker;
@@ -55,7 +51,6 @@ public class AverageDataSourceFactory extends AbstractServiceConfigurationFactor
     {
         super ( context );
         this.executor = executor;
-
 
         this.avgObjectPool = new ObjectPoolImpl<AverageDataSource> ();
         this.avgPoolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.avgObjectPool, AverageDataSource.class );
@@ -83,7 +78,7 @@ public class AverageDataSourceFactory extends AbstractServiceConfigurationFactor
     @Override
     protected Entry<AverageDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final AverageDataSource dataSource = new AverageDataSource (configurationId, this.poolTracker, this.executor, this.dsObjectPool  );
+        final AverageDataSource dataSource = new AverageDataSource ( configurationId, this.poolTracker, this.executor, this.dsObjectPool );
         dataSource.update ( parameters );
 
         this.avgObjectPool.addService ( configurationId, dataSource, null );
@@ -103,4 +98,5 @@ public class AverageDataSourceFactory extends AbstractServiceConfigurationFactor
     {
         entry.getService ().update ( parameters );
         return null;
-    }}
+    }
+}
