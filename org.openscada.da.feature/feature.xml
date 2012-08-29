@@ -114,13 +114,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.openscada.da.server.simulation"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.da.server.simulation.component"
          download-size="0"
          install-size="0"
