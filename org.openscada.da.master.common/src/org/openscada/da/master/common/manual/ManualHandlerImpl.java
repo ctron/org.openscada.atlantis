@@ -226,7 +226,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
             }
 
             // inject old manual timestamp
-            if ( state.getTimestmap () != null && state.getTimestmap ().after ( currentTimestamp ) )
+            if ( state.getTimestmap () != null && ( currentTimestamp == null || state.getTimestmap ().after ( currentTimestamp ) ) )
             {
                 injectTimestamp ( builder, state );
             }
