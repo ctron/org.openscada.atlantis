@@ -62,6 +62,8 @@ public class AverageDataSource implements ServiceListener
 
     private final ObjectPoolImpl<DataSource> dsObjectPool;
 
+    private final DataInputSource sumDataSource;
+
     private final DataInputSource minDataSource;
 
     private final DataInputSource maxDataSource;
@@ -78,6 +80,7 @@ public class AverageDataSource implements ServiceListener
         this.configurationId = configurationId;
         this.dsObjectPool = dsObjectPool;
 
+        this.sumDataSource = new DataInputSource ( executor );
         this.minDataSource = new DataInputSource ( executor );
         this.maxDataSource = new DataInputSource ( executor );
         this.meanDataSource = new DataInputSource ( executor );
@@ -89,6 +92,12 @@ public class AverageDataSource implements ServiceListener
             final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
             properties.put ( DataSource.DATA_SOURCE_ID, id );
             this.dsObjectPool.addService ( id, this.minDataSource, null );
+        }
+        {
+            final String id = this.configurationId + ".sum";
+            final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
+            properties.put ( DataSource.DATA_SOURCE_ID, id );
+            this.dsObjectPool.addService ( id, this.sumDataSource, null );
         }
         {
             final String id = this.configurationId + ".max";
@@ -118,6 +127,7 @@ public class AverageDataSource implements ServiceListener
 
     public void dispose ()
     {
+        this.dsObjectPool.removeService ( this.configurationId + ".sum", this.sumDataSource );
         this.dsObjectPool.removeService ( this.configurationId + ".min", this.minDataSource );
         this.dsObjectPool.removeService ( this.configurationId + ".max", this.maxDataSource );
         this.dsObjectPool.removeService ( this.configurationId + ".mean", this.meanDataSource );
@@ -230,6 +240,7 @@ public class AverageDataSource implements ServiceListener
     {
         final ArrayList<Double> validValues = new ArrayList<Double> ( this.sources.size () );
 
+        Double sum = null;
         Double min = null;
         Double max = null;
         Double mean = null;
@@ -245,7 +256,7 @@ public class AverageDataSource implements ServiceListener
                     final Double d = div.getValue ().asDouble ( 0.0 );
                     min = min == null ? d : d < min ? d : min;
                     max = max == null ? d : d > max ? d : max;
-                    mean = mean == null ? d : mean + d;
+                    sum = sum == null ? d : sum + d;
                     validValues.add ( d );
                 }
             }
@@ -253,7 +264,7 @@ public class AverageDataSource implements ServiceListener
 
         if ( validValues.size () > 0 )
         {
-            mean = mean / validValues.size ();
+            mean = sum / validValues.size ();
             median = validValues.get ( validValues.size () / 2 );
             Double dd = 0.0;
             for ( final Double d : validValues )
@@ -265,11 +276,13 @@ public class AverageDataSource implements ServiceListener
 
         if ( validValues.size () < this.noOfValidSourcesRequired )
         {
+            sum = null;
             mean = null;
             median = null;
             deviation = null;
         }
 
+        this.sumDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( sum ) ).build () );
         this.minDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( min ) ).build () );
         this.maxDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( max ) ).build () );
         this.meanDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( mean ) ).build () );
