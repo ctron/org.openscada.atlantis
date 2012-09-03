@@ -168,10 +168,18 @@ public class MovingAverageDataSource implements DataSourceListener
         }
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.dataSourceId = cfg.getStringChecked ( "datasource.id", "'datasource.id' must be set" ); //$NON-NLS-1$
-        this.trigger = cfg.getLongChecked ( "trigger", "'trigger' must be set" ); //$NON-NLS-1$
-        this.range = cfg.getLongChecked ( "range", "'range' must be set" ); //$NON-NLS-1$
-        this.nullrange = cfg.getLongChecked ( "nullRange", "'nullRange' must be set" ); //$NON-NLS-1$
+        try
+        {
+            this.dataSourceId = cfg.getStringChecked ( "datasource.id", "'datasource.id' must be set" ); //$NON-NLS-1$
+            this.trigger = cfg.getLongChecked ( "trigger", "'trigger' must be set" ); //$NON-NLS-1$
+            this.range = cfg.getLongChecked ( "range", "'range' must be set" ); //$NON-NLS-1$
+            this.nullrange = cfg.getLongChecked ( "nullRange", "'nullRange' must be set" ); //$NON-NLS-1$
+        }
+        catch ( IllegalArgumentException e )
+        {
+            updateAverage ( new AverageValues () );
+            throw e;
+        }
 
         handleChange ();
     }
@@ -300,6 +308,11 @@ public class MovingAverageDataSource implements DataSourceListener
             }
         }
 
+        updateAverage ( average );
+    }
+
+    private void updateAverage ( final AverageValues average )
+    {
         this.minDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.min ) ).build () );
         this.maxDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.max ) ).build () );
         this.arithmeticDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.arithmetic ) ).build () );
