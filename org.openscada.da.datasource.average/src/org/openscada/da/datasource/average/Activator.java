@@ -45,7 +45,7 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext context ) throws Exception
     {
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
-        this.factory = new AverageDataSourceFactory ( context, executor );
+        this.factory = new AverageDataSourceFactory ( context, this.executor );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "An averaging data source over multiple sources" );

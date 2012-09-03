@@ -184,14 +184,14 @@ public class AverageDataSource implements ServiceListener
         // only if all items are invalid, the resultant value is also invalid
         if ( validSourcesRequired == null || validSourcesRequired.isEmpty () )
         {
-            noOfValidSourcesRequired = 0;
+            this.noOfValidSourcesRequired = 0;
             return;
         }
         // special case 100%:
         // all values must be valid to have a valid result
         if ( validSourcesRequired.equals ( "100%" ) )
         {
-            noOfValidSourcesRequired = sourceIds.size ();
+            this.noOfValidSourcesRequired = this.sourceIds.size ();
             return;
         }
         try
@@ -199,28 +199,30 @@ public class AverageDataSource implements ServiceListener
             if ( validSourcesRequired.endsWith ( "%" ) )
             {
                 // handle percentages
-                int percent = Integer.parseInt ( validSourcesRequired.replace ( "%", "" ) );
+                final int percent = Integer.parseInt ( validSourcesRequired.replace ( "%", "" ) );
                 if ( percent >= 100 )
                 {
-                    noOfValidSourcesRequired = sourceIds.size ();
+                    this.noOfValidSourcesRequired = this.sourceIds.size ();
                     return;
                 }
-                noOfValidSourcesRequired = Long.valueOf ( Math.round ( percent * sourceIds.size () / 100.0 ) ).intValue ();
+                this.noOfValidSourcesRequired = Long.valueOf ( Math.round ( percent * this.sourceIds.size () / 100.0 ) ).intValue ();
             }
             else
             {
                 // handle absolute values
-                noOfValidSourcesRequired = Integer.parseInt ( validSourcesRequired );
-                if ( noOfValidSourcesRequired > sourceIds.size () )
+                this.noOfValidSourcesRequired = Integer.parseInt ( validSourcesRequired );
+                if ( this.noOfValidSourcesRequired > this.sourceIds.size () )
                 {
-                    logger.warn ( "'validSourcesRequired' was '{}' which should be less then the number of all elements", validSourcesRequired, sourceIds.size () );
-                    noOfValidSourcesRequired = sourceIds.size ();
+                    logger.warn ( "'validSourcesRequired' was '{}' which should be less then the number of all elements", validSourcesRequired, this.sourceIds.size () );
+                    this.noOfValidSourcesRequired = this.sourceIds.size ();
                 }
             }
         }
-        catch ( NumberFormatException e )
+        catch ( final NumberFormatException e )
         {
             logger.warn ( "'validSourcesRequired' was '{}' which could not be parsed", validSourcesRequired, e );
+            // re-throw for the CA to get notified
+            throw e;
         }
     }
 
@@ -241,8 +243,8 @@ public class AverageDataSource implements ServiceListener
                 if ( div.getValue () != null && div.getValue ().isNumber () )
                 {
                     final Double d = div.getValue ().asDouble ( 0.0 );
-                    min = min == null ? d : ( d < min ? d : min );
-                    max = max == null ? d : ( d > max ? d : max );
+                    min = min == null ? d : d < min ? d : min;
+                    max = max == null ? d : d > max ? d : max;
                     mean = mean == null ? d : mean + d;
                     validValues.add ( d );
                 }
@@ -261,7 +263,7 @@ public class AverageDataSource implements ServiceListener
             deviation = Math.sqrt ( dd / validValues.size () );
         }
 
-        if ( validValues.size () < noOfValidSourcesRequired )
+        if ( validValues.size () < this.noOfValidSourcesRequired )
         {
             mean = null;
             median = null;
@@ -345,19 +347,19 @@ public class AverageDataSource implements ServiceListener
     }
 
     @Override
-    public void dataSourceAdded ( String id, Dictionary<?, ?> properties, DataSource dataSource )
+    public void dataSourceAdded ( final String id, final Dictionary<?, ?> properties, final DataSource dataSource )
     {
         addSource ( dataSource );
     }
 
     @Override
-    public void dataSourceRemoved ( String id, Dictionary<?, ?> properties, DataSource dataSource )
+    public void dataSourceRemoved ( final String id, final Dictionary<?, ?> properties, final DataSource dataSource )
     {
         updateSource ( dataSource );
     }
 
     @Override
-    public void dataSourceModified ( String id, Dictionary<?, ?> properties, DataSource dataSource )
+    public void dataSourceModified ( final String id, final Dictionary<?, ?> properties, final DataSource dataSource )
     {
         removeSource ( dataSource );
     }
