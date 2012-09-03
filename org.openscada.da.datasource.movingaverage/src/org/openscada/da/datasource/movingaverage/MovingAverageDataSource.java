@@ -161,21 +161,23 @@ public class MovingAverageDataSource implements DataSourceListener
 
     public void update ( final Map<String, String> parameters ) throws InvalidSyntaxException
     {
+        if ( this.triggerFuture != null )
+        {
+            this.triggerFuture.cancel ( false );
+            this.triggerFuture = null;
+        }
+
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.dataSourceId = cfg.getString ( "datasource.id", null ); //$NON-NLS-1$
-        this.trigger = cfg.getLong ( "trigger", 60 ); //$NON-NLS-1$
-        this.range = cfg.getLong ( "range", 60 * 60 ); //$NON-NLS-1$
-        this.nullrange = cfg.getLong ( "nullrange", 60 * 30 ); //$NON-NLS-1$
+        this.dataSourceId = cfg.getStringChecked ( "datasource.id", "'datasource.id' must be set" ); //$NON-NLS-1$
+        this.trigger = cfg.getLongChecked ( "trigger", "'trigger' must be set" ); //$NON-NLS-1$
+        this.range = cfg.getLongChecked ( "range", "'range' must be set" ); //$NON-NLS-1$
+        this.nullrange = cfg.getLongChecked ( "nullRange", "'nullRange' must be set" ); //$NON-NLS-1$
 
         handleChange ();
     }
 
     private void handleChange () throws InvalidSyntaxException
     {
-        if ( this.triggerFuture != null )
-        {
-            this.triggerFuture.cancel ( false );
-        }
         this.valueRange = new DataItemValueRange ( this.executor, this.range * 1000 );
         updateDataSource ();
         this.triggerFuture = this.scheduler.scheduleAtFixedRate ( new Runnable () {
