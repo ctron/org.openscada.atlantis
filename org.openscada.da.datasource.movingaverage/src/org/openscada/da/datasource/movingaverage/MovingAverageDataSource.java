@@ -211,7 +211,7 @@ public class MovingAverageDataSource implements DataSourceListener
             this.valueRange.add ( DataItemValueLight.valueOf ( value ) );
             updateValues ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             logger.error ( "failed to add DataItemValue or to call updateValues ()", e );
         }
@@ -240,7 +240,7 @@ public class MovingAverageDataSource implements DataSourceListener
             // ok, so we have at least one value in our list (could still be null)
             DataItemValueLight lastValue = new DataItemValueLight ( state.getFirstValue ().getValue (), state.getFirstValue ().getSubscriptionState (), state.getOldestPossibleTimestamp () );
             final Iterator<DataItemValueLight> it = state.getValues ().iterator (); // it is a set, so we have to use an iterator
-            for ( int i = 0; i < ( state.getSize () + 1 ); i++ )
+            for ( int i = 0; i < state.getSize () + 1; i++ )
             {
                 if ( i < state.getSize () )
                 {
@@ -251,7 +251,7 @@ public class MovingAverageDataSource implements DataSourceListener
                 }
                 else
                 {
-                    final long currentRange = ( state.getOldestPossibleTimestamp () + this.valueRange.getRange () ) - lastValue.getTimestamp ();
+                    final long currentRange = state.getOldestPossibleTimestamp () + this.valueRange.getRange () - lastValue.getTimestamp ();
                     calculateForRange ( average, currentRange, lastValue.getValue () );
                 }
             }
@@ -278,7 +278,7 @@ public class MovingAverageDataSource implements DataSourceListener
             {
                 double da = 0.0;
                 double dw = 0.0;
-                for ( double v : average.values )
+                for ( final double v : average.values )
                 {
                     da += Math.pow ( v - average.arithmetic, 2.0 );
                     dw += Math.pow ( v - average.weighted, 2.0 );
@@ -288,7 +288,7 @@ public class MovingAverageDataSource implements DataSourceListener
             }
 
             // handle null range
-            if ( average.nullRange >= ( this.nullrange * 1000 ) )
+            if ( average.nullRange >= this.nullrange * 1000 )
             {
                 average.arithmetic = null;
                 average.median = null;

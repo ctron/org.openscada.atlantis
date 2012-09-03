@@ -26,8 +26,7 @@ import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 
 /**
- * a light weight alternative to DataItemValue, without attributes and 
- * exception info
+ * a light weight alternative to DataItemValue, without attributes and exception info
  */
 public class DataItemValueLight implements Comparable<DataItemValueLight>
 {
@@ -52,7 +51,7 @@ public class DataItemValueLight implements Comparable<DataItemValueLight>
 
     public static DataItemValueLight valueOf ( final DataItemValue dataItemValue )
     {
-        if ( ( dataItemValue == null ) || dataItemValue.equals ( DataItemValue.DISCONNECTED ) )
+        if ( dataItemValue == null || dataItemValue.equals ( DataItemValue.DISCONNECTED ) )
         {
             return DISCONNECTED;
         }
@@ -61,7 +60,7 @@ public class DataItemValueLight implements Comparable<DataItemValueLight>
 
     public static DataItemValueLight valueOf ( final DataItemValueLight dataItemValueLight )
     {
-        if ( ( dataItemValueLight == null ) || dataItemValueLight.equals ( DISCONNECTED ) )
+        if ( dataItemValueLight == null || dataItemValueLight.equals ( DISCONNECTED ) )
         {
             return DISCONNECTED;
         }
@@ -93,9 +92,9 @@ public class DataItemValueLight implements Comparable<DataItemValueLight>
     {
         final int prime = 31;
         int result = 1;
-        result = ( prime * result ) + ( ( this.value == null ) ? 0 : this.value.hashCode () );
-        result = ( prime * result ) + ( ( this.subscriptionState == null ) ? 0 : this.subscriptionState.hashCode () );
-        result = ( prime * result ) + (int) ( this.timestamp ^ ( this.timestamp >>> 32 ) );
+        result = prime * result + ( this.value == null ? 0 : this.value.hashCode () );
+        result = prime * result + ( this.subscriptionState == null ? 0 : this.subscriptionState.hashCode () );
+        result = prime * result + (int) ( this.timestamp ^ this.timestamp >>> 32 );
         return result;
     }
 
