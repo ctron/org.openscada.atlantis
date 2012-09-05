@@ -230,6 +230,11 @@ public class DataItemValue
         return isAttribute ( "blocked", false );
     }
 
+    public boolean isWarning ()
+    {
+        return isAttribute ( "warning", false );
+    }
+
     public boolean isConnected ()
     {
         return this.subscriptionState == SubscriptionState.CONNECTED;
