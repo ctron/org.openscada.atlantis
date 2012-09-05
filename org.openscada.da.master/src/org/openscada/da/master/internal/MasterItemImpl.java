@@ -204,7 +204,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     private String dataSourceId;
 
-    private final boolean debug = true;
+    private boolean debug = false;
 
     private boolean dontOverrideSubscription = false;
 
@@ -220,9 +220,12 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
         }
     };
 
+    private final String id;
+
     public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final ObjectPoolTracker<DataSource> dataSourcePoolTracker ) throws InvalidSyntaxException
     {
         super ( dataSourcePoolTracker );
+        this.id = id;
         this.executor = executor;
         stateChanged ( initValue () );
     }
@@ -593,10 +596,17 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
         this.dataSourceId = cfg.getString ( "datasource.id" );
         this.dontOverrideSubscription = cfg.getBoolean ( "dontOverrideSubscription", false );
+        this.debug = cfg.getBoolean ( "debug", false );
 
         stateChanged ( null );
 
         setDataSource ( this.dataSourceId );
+    }
+
+    @Override
+    public String toString ()
+    {
+        return String.format ( getClass ().getSimpleName () + ": " + this.id );
     }
 
 }
