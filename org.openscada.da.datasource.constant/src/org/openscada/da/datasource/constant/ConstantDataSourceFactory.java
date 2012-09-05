@@ -60,6 +60,7 @@ public class ConstantDataSourceFactory extends AbstractServiceConfigurationFacto
     protected Entry<ConstantDataSource> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
         final ConstantDataSource service = new ConstantDataSource ( this.executor );
+        service.update ( parameters );
 
         this.objectPool.addService ( configurationId, service, null );
 
