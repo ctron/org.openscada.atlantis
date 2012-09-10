@@ -323,7 +323,7 @@ public abstract class AbstractDataItemMonitor extends AbstractStateMachineMonito
     /**
      * Get the current active severity.
      * <p>
-     * This should be the configured severity, but may be overriden.
+     * This should be the configured severity, but may be overridden.
      * </p>
      * 
      * @return the current active severity
