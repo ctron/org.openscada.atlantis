@@ -47,6 +47,15 @@ public abstract class AbstractPersistentMonitorService extends AbstractMonitorSe
         super ( id, executor );
         this.context = context;
 
+        this.storeListener = new DataListener () {
+
+            @Override
+            public void nodeChanged ( final DataNode node )
+            {
+                AbstractPersistentMonitorService.this.nodeChanged ( node );
+            }
+        };
+
         // setup hooks
         this.tracker = new ServiceTracker<DataStore, DataStore> ( this.context, DataStore.class, new ServiceTrackerCustomizer<DataStore, DataStore> () {
 
@@ -70,15 +79,6 @@ public abstract class AbstractPersistentMonitorService extends AbstractMonitorSe
                 return store;
             }
         } );
-
-        this.storeListener = new DataListener () {
-
-            @Override
-            public void nodeChanged ( final DataNode node )
-            {
-                AbstractPersistentMonitorService.this.nodeChanged ( node );
-            }
-        };
 
     }
 
