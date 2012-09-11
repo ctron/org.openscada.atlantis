@@ -33,6 +33,7 @@ import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.SingleDataSourceTracker;
@@ -175,7 +176,7 @@ public class MovingAverageDataSource implements DataSourceListener
             this.range = cfg.getLongChecked ( "range", "'range' must be set" ); //$NON-NLS-1$
             this.nullrange = cfg.getLongChecked ( "nullRange", "'nullRange' must be set" ); //$NON-NLS-1$
         }
-        catch ( IllegalArgumentException e )
+        catch ( final IllegalArgumentException e )
         {
             updateAverage ( new AverageValues () );
             throw e;
@@ -248,21 +249,21 @@ public class MovingAverageDataSource implements DataSourceListener
         else
         {
             // ok, so we have at least one value in our list (could still be null)
-            DataItemValueLight lastValue = new DataItemValueLight ( state.getFirstValue ().getValue (), state.getFirstValue ().getSubscriptionState (), state.getOldestPossibleTimestamp () );
+            DataItemValueLight lastValue = new DataItemValueLight ( state.getFirstValue ().getValue (), state.getFirstValue ().getSubscriptionState (), state.getOldestPossibleTimestamp (), state.getFirstValue ().isManual (), state.getFirstValue ().isError () );
             final Iterator<DataItemValueLight> it = state.getValues ().iterator (); // it is a set, so we have to use an iterator
-            for ( int i = 0; i < state.getSize () + 1; i++ )
+            for ( int i = 0; i < ( state.getSize () + 1 ); i++ )
             {
                 if ( i < state.getSize () )
                 {
                     final DataItemValueLight divl = it.next ();
                     final long currentRange = divl.getTimestamp () - lastValue.getTimestamp ();
-                    calculateForRange ( average, currentRange, lastValue.getValue () );
+                    calculateForRange ( average, currentRange, lastValue.getValue (), lastValue.isManual (), lastValue.isError (), lastValue.getSubscriptionState () != SubscriptionState.DISCONNECTED );
                     lastValue = divl;
                 }
                 else
                 {
-                    final long currentRange = state.getOldestPossibleTimestamp () + this.valueRange.getRange () - lastValue.getTimestamp ();
-                    calculateForRange ( average, currentRange, lastValue.getValue () );
+                    final long currentRange = ( state.getOldestPossibleTimestamp () + this.valueRange.getRange () ) - lastValue.getTimestamp ();
+                    calculateForRange ( average, currentRange, lastValue.getValue (), lastValue.isManual (), lastValue.isError (), lastValue.getSubscriptionState () != SubscriptionState.DISCONNECTED );
                 }
             }
 
@@ -298,7 +299,7 @@ public class MovingAverageDataSource implements DataSourceListener
             }
 
             // handle null range
-            if ( average.nullRange >= this.nullrange * 1000 )
+            if ( average.nullRange >= ( this.nullrange * 1000 ) )
             {
                 average.arithmetic = null;
                 average.median = null;
@@ -313,16 +314,60 @@ public class MovingAverageDataSource implements DataSourceListener
 
     private void updateAverage ( final AverageValues average )
     {
-        this.minDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.min ) ).build () );
-        this.maxDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.max ) ).build () );
-        this.arithmeticDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.arithmetic ) ).build () );
-        this.medianDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.median ) ).build () );
-        this.weightedDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.weighted ) ).build () );
-        this.deviationArithmeticDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.deviationArithmetic ) ).build () );
-        this.deviationWeightedDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.deviationWeighted ) ).build () );
+        {
+            final Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.min ) );
+            setAdditionalAttributes ( divb, average );
+            this.minDataSource.setValue ( divb.build () );
+        }
+        {
+            final Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.max ) );
+            setAdditionalAttributes ( divb, average );
+            this.maxDataSource.setValue ( divb.build () );
+        }
+        {
+            final Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.arithmetic ) );
+            setAdditionalAttributes ( divb, average );
+            this.arithmeticDataSource.setValue ( divb.build () );
+        }
+        {
+            final Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.median ) );
+            setAdditionalAttributes ( divb, average );
+            this.medianDataSource.setValue ( divb.build () );
+        }
+        {
+            final Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.weighted ) );
+            setAdditionalAttributes ( divb, average );
+            this.weightedDataSource.setValue ( divb.build () );
+        }
+        {
+            final Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.deviationArithmetic ) );
+            setAdditionalAttributes ( divb, average );
+            this.deviationArithmeticDataSource.setValue ( divb.build () );
+        }
+        {
+            final Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( average.deviationWeighted ) );
+            setAdditionalAttributes ( divb, average );
+            this.deviationWeightedDataSource.setValue ( divb.build () );
+        }
     }
 
-    private void calculateForRange ( final AverageValues average, final long currentRange, final Variant value )
+    private void setAdditionalAttributes ( final Builder divb, final AverageValues average )
+    {
+        if ( average.manualRange > 0 )
+        {
+            divb.setAttribute ( Activator.getContext ().getBundle ().getSymbolicName () + ".manual", Variant.valueOf ( true ) );
+        }
+        if ( average.errorRange > this.nullrange )
+        {
+            divb.setAttribute ( Activator.getContext ().getBundle ().getSymbolicName () + ".error", Variant.valueOf ( true ) );
+        }
+        if ( average.disconnectedRange > this.nullrange )
+        {
+            divb.setSubscriptionState ( SubscriptionState.DISCONNECTED );
+        }
+    }
+
+    private void calculateForRange ( final AverageValues average, final long currentRange, final Variant value, final boolean isManual, final boolean isError, final boolean isDisconnected )
     {
         if ( !value.isNumber () )
         {
@@ -342,6 +387,18 @@ public class MovingAverageDataSource implements DataSourceListener
             average.arithmetic += d;
             average.values.add ( d );
             average.weighted += d * currentRange;
+        }
+        if ( isManual )
+        {
+            average.manualRange += currentRange;
+        }
+        if ( isError )
+        {
+            average.errorRange += currentRange;
+        }
+        if ( isDisconnected )
+        {
+            average.disconnectedRange += currentRange;
         }
     }
 
@@ -399,6 +456,12 @@ public class MovingAverageDataSource implements DataSourceListener
         public Double deviationWeighted;
 
         public long nullRange = 0;
+
+        public long manualRange = 0;
+
+        public long errorRange = 0;
+
+        public long disconnectedRange = 0;
 
         public LinkedList<Double> values = new LinkedList<Double> ();
     }
