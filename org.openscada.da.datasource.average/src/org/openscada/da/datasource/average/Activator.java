@@ -43,6 +43,7 @@ public class Activator implements BundleActivator
     {
         return context;
     }
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)

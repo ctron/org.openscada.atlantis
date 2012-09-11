@@ -329,7 +329,7 @@ public class AverageDataSource implements ServiceListener
 
     private void setAdditionalAttributes ( final Builder divb, final int numOfManualValues, final int numOfErrorValues, final int numOfDisconnected )
     {
-        if ( numOfManualValues > 1 )
+        if ( numOfManualValues > 0 )
         {
             divb.setAttribute ( Activator.getContext ().getBundle ().getSymbolicName () + ".manual", Variant.valueOf ( true ) );
         }
