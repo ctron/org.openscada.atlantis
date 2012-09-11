@@ -19,6 +19,7 @@
 
 package org.openscada.da.datasource.constant;
 
+import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -55,6 +56,8 @@ public class ConstantDataSource extends AbstractInputDataSource
 
             // set main value
             builder.setValue ( VariantEditor.toVariant ( cfg.getStringChecked ( "value", "'value' must be provided" ) ) );
+
+            builder.setTimestamp ( Calendar.getInstance () );
 
             // set attributes
             for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "attributes." ).entrySet () )
