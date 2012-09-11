@@ -174,6 +174,10 @@ public class MonitorMessageHelper
         {
             value.put ( "lastAknTimestamp", new LongValue ( condition.getLastAknTimestamp ().getTime () ) );
         }
+        if ( condition.getLastFailTimestamp () != null )
+        {
+            value.put ( "lastFailTimestamp", new LongValue ( condition.getLastFailTimestamp ().getTime () ) );
+        }
         if ( condition.getAttributes () != null )
         {
             value.put ( "attributes", MessageHelper.attributesToMap ( condition.getAttributes () ) );
