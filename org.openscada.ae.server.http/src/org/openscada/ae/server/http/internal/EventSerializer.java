@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -45,11 +45,13 @@ public class EventSerializer
 
     private static class VariantTypeAdapter implements JsonSerializer<Variant>, JsonDeserializer<Variant>
     {
+        @Override
         public JsonElement serialize ( final Variant src, final Type typeOfSrc, final JsonSerializationContext context )
         {
             return new JsonPrimitive ( src.toString () );
         }
 
+        @Override
         public Variant deserialize ( final JsonElement json, final Type typeOfT, final JsonDeserializationContext context ) throws JsonParseException
         {
             final VariantEditor ve = new VariantEditor ();

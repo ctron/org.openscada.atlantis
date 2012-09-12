@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -38,9 +38,9 @@ public class Activator implements BundleActivator
 
     private TestingMonitor service;
 
-    private ObjectPoolImpl monitorServicePool;
+    private ObjectPoolImpl<MonitorService> monitorServicePool;
 
-    private ServiceRegistration monitorServicePoolHandler;
+    private ServiceRegistration<?> monitorServicePoolHandler;
 
     private ExecutorService executor;
 
@@ -48,6 +48,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.executor = Executors.newSingleThreadExecutor ();
@@ -55,18 +56,18 @@ public class Activator implements BundleActivator
         this.processor = new EventProcessor ( context );
         this.processor.open ();
         this.service = new TestingMonitor ( context, this.executor, this.processor, context.getBundle ().getSymbolicName () + ".test" );
-        this.service.init ();
 
-        this.monitorServicePool = new ObjectPoolImpl ();
+        this.monitorServicePool = new ObjectPoolImpl<MonitorService> ();
         this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class.getName () );
 
-        this.monitorServicePool.addService ( this.service.getId (), context, new Hashtable<String, String> () );
+        this.monitorServicePool.addService ( this.service.getId (), this.service, new Hashtable<String, String> () );
     }
 
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         this.monitorServicePoolHandler.unregister ();

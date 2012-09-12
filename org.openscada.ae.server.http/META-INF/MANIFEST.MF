@@ -4,7 +4,8 @@ Bundle-Name: openSCADA AE HTTP Interface
 Bundle-SymbolicName: org.openscada.ae.server.http
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.ae.server.http.Activator
-Import-Package: com.google.gson;version="1.4.0",
+Import-Package: com.google.common.collect;version="12.0.0",
+ com.google.gson;version="1.4.0",
  com.google.gson.annotations;version="1.4.0",
  com.google.gson.reflect;version="1.4.0",
  javax.servlet;version="2.5.0",
@@ -14,7 +15,7 @@ Import-Package: com.google.gson;version="1.4.0",
  org.openscada.ae.filter;version="0.15.0",
  org.openscada.ae.filter.internal;version="0.15.0",
  org.openscada.ae.monitor;version="0.16.0",
- org.openscada.ae.monitor.common;version="0.16.0",
+ org.openscada.ae.monitor.common;version="1.0.0",
  org.openscada.ae.server.common.akn;version="0.16.0",
  org.openscada.ca;version="0.16.0",
  org.openscada.core;version="0.15.0",

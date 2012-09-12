@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,8 +28,11 @@ import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
+import org.openscada.utils.interner.InternerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Interner;
 
 public abstract class AbstractMonitorService implements MonitorService
 {
@@ -43,10 +46,14 @@ public abstract class AbstractMonitorService implements MonitorService
 
     protected MonitorStatusInformation currentState;
 
-    public AbstractMonitorService ( final String id, final Executor executor )
+    private final Interner<String> stringInterner;
+
+    public AbstractMonitorService ( final String id, final Executor executor, final Interner<String> stringInterner )
     {
         this.executor = executor;
         this.id = id;
+
+        this.stringInterner = stringInterner == null ? InternerHelper.makeNoOpInterner () : stringInterner;
 
         this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, new Date (), null, null, null, null, null );
     }
@@ -55,6 +62,11 @@ public abstract class AbstractMonitorService implements MonitorService
     public String getId ()
     {
         return this.id;
+    }
+
+    protected String intern ( final String string )
+    {
+        return this.stringInterner.intern ( string );
     }
 
     @Override

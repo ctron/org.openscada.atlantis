@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Event Plug-in
 Bundle-SymbolicName: org.openscada.ae.event
-Bundle-Version: 0.18.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae;version="0.14.0",
@@ -14,7 +14,7 @@ Import-Package: org.openscada.ae;version="0.14.0",
  org.osgi.framework;version="1.6.0",
  org.osgi.util.tracker;version="1.5.0",
  org.slf4j;version="[1.5.0,2.0.0)"
-Export-Package: org.openscada.ae.event;version="0.18.0";
+Export-Package: org.openscada.ae.event;version="1.0.0";
   uses:="org.openscada.utils.propertyeditors,
    org.openscada.utils.filter,
    org.osgi.framework,

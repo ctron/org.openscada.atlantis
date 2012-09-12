@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,26 +25,66 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.Event;
+import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.filter.EventMatcher;
 import org.openscada.ae.filter.internal.EventMatcherImpl;
-import org.openscada.ae.monitor.common.AbstractStateMachineMonitorService;
+import org.openscada.ae.monitor.common.AbstractConfiguration;
+import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
+import org.openscada.ae.monitor.common.AbstractStateMonitor;
+import org.openscada.ae.monitor.common.Severity;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.lang.Pair;
 import org.osgi.framework.BundleContext;
 
-public class EventMonitorImpl extends AbstractStateMachineMonitorService implements EventMonitor
+public class EventMonitorImpl extends AbstractPersistentStateMonitor implements EventMonitor
 {
     private EventMatcher matcher = null;
 
     private String monitorType = Messages.getString ( "EventMonitorImpl.tag.event" ); //$NON-NLS-1$
 
+    private Configuration configuration;
+
+    private static class Configuration extends AbstractConfiguration
+    {
+        boolean active;
+
+        boolean requireAkn;
+
+        Severity severity;
+
+        public Configuration ( final Configuration currentConfiguration, final AbstractStateMonitor monitor )
+        {
+            super ( currentConfiguration, monitor );
+            if ( currentConfiguration != null )
+            {
+                this.active = currentConfiguration.active;
+                this.requireAkn = currentConfiguration.requireAkn;
+            }
+        }
+
+        public void setSeverity ( final UserInformation userInformation, final Severity severity )
+        {
+            this.severity = update ( userInformation, this.severity, severity );
+        }
+
+        public void setActive ( final UserInformation userInformation, final boolean active )
+        {
+            this.active = update ( userInformation, this.active, active );
+        }
+
+        public void setRequireAkn ( final UserInformation userInformation, final boolean requireAkn )
+        {
+            this.requireAkn = update ( userInformation, this.requireAkn, requireAkn );
+        }
+    }
+
     public EventMonitorImpl ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String id )
     {
-        super ( context, executor, eventProcessor, id );
+        super ( id, EventMonitorFactory.FACTORY_ID, executor, context, null, eventProcessor );
     }
 
     @Override
@@ -52,11 +92,21 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        setEventInformationAttributes ( userInformation, convertAttributes ( cfg ) );
-        setActive ( userInformation, cfg.getBoolean ( "active", true ) ); //$NON-NLS-1$
-        setRequireAkn ( userInformation, cfg.getBoolean ( "requireAck", true ) ); //$NON-NLS-1$
+        setAttributes ( convertAttributes ( cfg ) );
+
+        final Configuration c = new Configuration ( this.configuration, this );
+
+        c.setActive ( userInformation, cfg.getBoolean ( "active", true ) ); //$NON-NLS-1$
+        c.setRequireAkn ( userInformation, cfg.getBoolean ( "requireAkn", true ) ); //$NON-NLS-1$
+        c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ERROR ) );
+
         setEventMatcher ( userInformation, cfg.getString ( "filter", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
         setMonitorType ( userInformation, cfg.getString ( "monitorType", Messages.getString ( "EventMonitorImpl.tag.event" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+
+        this.configuration = c;
+        c.sendEvents ();
+
+        setOk ( Variant.NULL, System.currentTimeMillis () );
     }
 
     private void setEventMatcher ( final UserInformation userInformation, final String filter )
@@ -82,6 +132,13 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
     }
 
     @Override
+    protected void injectEventAttributes ( final EventBuilder builder )
+    {
+        super.injectEventAttributes ( builder );
+        builder.attribute ( Fields.MONITOR_TYPE, this.monitorType );
+    }
+
+    @Override
     public synchronized Pair<Boolean, Event> evaluate ( final Event event )
     {
         if ( this.matcher != null )
@@ -90,24 +147,27 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
             {
                 final Variant message = makeMessage ( event );
 
-                // FIXME: just for now, the real implementation should set AKN directly
-                /*
-                setFailure ( Variant.NULL, event.getSourceTimestamp (), new EventMonitorDecorator ( 1, message ) );
-                setOk ( Variant.NULL, event.getSourceTimestamp (), new EventMonitorDecorator ( 2, message ) );
-                */
-                triggerFail ( Variant.NULL, event.getSourceTimestamp (), new EventMonitorDecorator ( 1, message ) );
+                triggerFailure ( Variant.NULL, makeLong ( event.getSourceTimestamp () ), this.configuration.severity, this.configuration.requireAkn, new EventMonitorDecorator ( message ) );
 
                 final Event resultEvent = Event.create () //
                 .event ( event ) //
                 .attribute ( Fields.COMMENT, annotateCommentWithSource ( event ) ) //
                 .attribute ( Fields.SOURCE, getId () ) //
                 .attribute ( Fields.MONITOR_TYPE, this.monitorType )//
-                .attribute ( "sequence", 0 )// //$NON-NLS-1$
                 .build ();
                 return new Pair<Boolean, Event> ( true, resultEvent );
             }
         }
         return new Pair<Boolean, Event> ( false, event );
+    }
+
+    private Long makeLong ( final Date timestamp )
+    {
+        if ( timestamp == null )
+        {
+            return null;
+        }
+        return timestamp.getTime ();
     }
 
     private Variant makeMessage ( final Event event )
@@ -139,10 +199,4 @@ public class EventMonitorImpl extends AbstractStateMachineMonitorService impleme
         return Variant.valueOf ( sb.toString () );
     }
 
-    @Override
-    public void init ()
-    {
-        super.init ();
-        setOk ( Variant.NULL, new Date () );
-    }
 }

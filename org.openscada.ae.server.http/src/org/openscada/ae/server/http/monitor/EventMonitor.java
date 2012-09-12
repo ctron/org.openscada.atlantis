@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,8 +31,6 @@ public interface EventMonitor extends MonitorService
     public void update ( UserInformation userInformation, Map<String, String> parameters );
 
     public void dispose ();
-
-    public void init ();
 
     public Pair<Boolean, Event> evaluate ( Event event );
 }
