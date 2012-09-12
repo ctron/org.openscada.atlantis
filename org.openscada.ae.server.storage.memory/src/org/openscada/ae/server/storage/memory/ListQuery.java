@@ -1,10 +1,28 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.ae.server.storage.memory;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.SortedSet;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.filter.EventMatcher;
@@ -21,16 +39,16 @@ public class ListQuery implements Query
 
     private Event bufferedEvent = null;
 
-    public ListQuery ( final SortedSet<Event> events, final String filter ) throws FilterParseException
+    public ListQuery ( final List<Event> events, final String filter ) throws FilterParseException
     {
-
         this.eventMatcher = new EventMatcherImpl ( filter );
         this.iterator = events.iterator ();
     }
 
+    @Override
     public Collection<Event> getNext ( final long count ) throws Exception
     {
-        List<Event> result = new ArrayList<Event> ();
+        final List<Event> result = new ArrayList<Event> ();
 
         if ( this.bufferedEvent != null )
         {
@@ -54,9 +72,10 @@ public class ListQuery implements Query
         return result;
     }
 
+    @Override
     public boolean hasMore ()
     {
-        if ( ( this.bufferedEvent == null ) && this.iterator.hasNext () )
+        if ( this.bufferedEvent == null && this.iterator.hasNext () )
         {
             next ();
         }
@@ -67,7 +86,7 @@ public class ListQuery implements Query
     {
         while ( this.iterator.hasNext () )
         {
-            Event event = this.iterator.next ();
+            final Event event = this.iterator.next ();
             if ( this.eventMatcher.matches ( event ) )
             {
                 this.bufferedEvent = event;
@@ -77,6 +96,7 @@ public class ListQuery implements Query
         return null;
     }
 
+    @Override
     public void dispose ()
     {
     }

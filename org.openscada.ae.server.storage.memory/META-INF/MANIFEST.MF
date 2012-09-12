@@ -1,16 +1,18 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA A&E Storage In Memory Plug-in
+Bundle-Name: openSCADA AE Storage In Memory Plug-in
 Bundle-SymbolicName: org.openscada.ae.server.storage.memory
-Bundle-Version: 0.14.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: TH4 SYSTEMS GmbH
-Import-Package: org.openscada.ae,
- org.openscada.ae.filter,
- org.openscada.ae.filter.internal,
- org.openscada.ae.server.storage,
- org.openscada.core,
- org.openscada.utils.filter,
- org.openscada.utils.propertyeditors,
- org.osgi.framework
+Import-Package: org.openscada.ae;version="0.18.0",
+ org.openscada.ae.filter;version="0.18.0",
+ org.openscada.ae.filter.internal;version="0.18.0",
+ org.openscada.ae.server.storage;version="0.18.0",
+ org.openscada.core;version="0.18.0",
+ org.openscada.utils.filter;version="0.18.0",
+ org.openscada.utils.propertyeditors;version="0.18.0",
+ org.osgi.framework;version="1.6.0",
+ org.slf4j;version="1.5.0"
 Export-Package: org.openscada.ae.server.storage.memory
+Bundle-Activator: org.openscada.ae.server.storage.memory.Activator
