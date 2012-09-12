@@ -92,7 +92,7 @@ public class ListMonitor extends AbstractVariantMonitor
     }
 
     @Override
-    protected void performValueUpdate ( final Builder builder, final Variant value )
+    protected void performValueUpdate ( final Map<String, Object> context, final Builder builder, final Variant value )
     {
         if ( this.configuration == null )
         {

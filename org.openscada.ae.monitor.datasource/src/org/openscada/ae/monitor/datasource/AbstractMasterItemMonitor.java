@@ -261,7 +261,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
                 public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
                 {
                     logger.debug ( "Handle data update: {}", value );
-                    return AbstractMasterItemMonitor.this.handleDataUpdate ( value );
+                    return AbstractMasterItemMonitor.this.handleDataUpdate ( context, value );
                 }
             }, this.configuration.handlerPriority );
         }
@@ -288,7 +288,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         }
     }
 
-    private DataItemValue handleDataUpdate ( final DataItemValue value )
+    private DataItemValue handleDataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
         final DataItemValue.Builder builder = new DataItemValue.Builder ( value );
 
@@ -298,7 +298,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         }
         else
         {
-            performDataUpdate ( builder );
+            performDataUpdate ( context, builder );
         }
 
         injectAttributes ( builder );
@@ -309,7 +309,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         return newValue;
     }
 
-    protected abstract void performDataUpdate ( Builder builder );
+    protected abstract void performDataUpdate ( Map<String, Object> context, Builder builder );
 
     /**
      * Return the factory id that configured this instance

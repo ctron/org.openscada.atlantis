@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.datasource;
 
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.event.EventProcessor;
@@ -41,7 +42,7 @@ public abstract class AbstractNumericMonitor extends AbstractVariantMonitor
     protected abstract void performNumericUpdate ( final Builder builder, final Number value );
 
     @Override
-    protected void performValueUpdate ( final Builder builder, final Variant value )
+    protected void performValueUpdate ( final Map<String, Object> context, final Builder builder, final Variant value )
     {
         if ( value.isDouble () )
         {

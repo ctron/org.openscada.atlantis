@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.datasource;
 
+import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.event.EventProcessor;
@@ -40,7 +41,7 @@ public abstract class AbstractVariantMonitor extends AbstractMasterItemMonitor
     }
 
     @Override
-    protected void performDataUpdate ( final Builder builder )
+    protected void performDataUpdate ( final Map<String, Object> context, final Builder builder )
     {
         if ( builder.getSubscriptionState () != SubscriptionState.CONNECTED )
         {
@@ -66,9 +67,9 @@ public abstract class AbstractVariantMonitor extends AbstractMasterItemMonitor
             }
         }
 
-        performValueUpdate ( builder, value );
+        performValueUpdate ( context, builder, value );
     }
 
-    protected abstract void performValueUpdate ( Builder builder, Variant value );
+    protected abstract void performValueUpdate ( Map<String, Object> context, Builder builder, Variant value );
 
 }
