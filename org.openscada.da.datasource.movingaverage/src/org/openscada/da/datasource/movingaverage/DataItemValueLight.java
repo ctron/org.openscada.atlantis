@@ -30,7 +30,7 @@ import org.openscada.da.client.DataItemValue;
  */
 public class DataItemValueLight implements Comparable<DataItemValueLight>
 {
-    public static final DataItemValueLight DISCONNECTED = new DataItemValueLight ( Variant.NULL, SubscriptionState.DISCONNECTED, Long.MIN_VALUE );
+    public static final DataItemValueLight DISCONNECTED = new DataItemValueLight ( Variant.NULL, SubscriptionState.DISCONNECTED, Long.MIN_VALUE, false, false );
 
     private final Variant value;
 
@@ -38,7 +38,11 @@ public class DataItemValueLight implements Comparable<DataItemValueLight>
 
     private final long timestamp;
 
-    public DataItemValueLight ( final Variant value, final SubscriptionState subscriptionState, final long timestamp )
+    private final boolean isManual;
+
+    private final boolean isError;
+
+    public DataItemValueLight ( final Variant value, final SubscriptionState subscriptionState, final long timestamp, final boolean isManual, final boolean isError )
     {
         if ( subscriptionState == null )
         {
@@ -47,24 +51,26 @@ public class DataItemValueLight implements Comparable<DataItemValueLight>
         this.value = Variant.valueOf ( value );
         this.subscriptionState = subscriptionState;
         this.timestamp = timestamp;
+        this.isManual = isManual;
+        this.isError = isError;
     }
 
     public static DataItemValueLight valueOf ( final DataItemValue dataItemValue )
     {
-        if ( dataItemValue == null || dataItemValue.equals ( DataItemValue.DISCONNECTED ) )
+        if ( ( dataItemValue == null ) || dataItemValue.equals ( DataItemValue.DISCONNECTED ) )
         {
             return DISCONNECTED;
         }
-        return new DataItemValueLight ( dataItemValue.getValue (), dataItemValue.getSubscriptionState (), dataItemValue.getTimestamp () == null ? Long.MIN_VALUE : dataItemValue.getTimestamp ().getTimeInMillis () );
+        return new DataItemValueLight ( dataItemValue.getValue (), dataItemValue.getSubscriptionState (), dataItemValue.getTimestamp () == null ? Long.MIN_VALUE : dataItemValue.getTimestamp ().getTimeInMillis (), dataItemValue.isManual (), dataItemValue.isError () );
     }
 
     public static DataItemValueLight valueOf ( final DataItemValueLight dataItemValueLight )
     {
-        if ( dataItemValueLight == null || dataItemValueLight.equals ( DISCONNECTED ) )
+        if ( ( dataItemValueLight == null ) || dataItemValueLight.equals ( DISCONNECTED ) )
         {
             return DISCONNECTED;
         }
-        return new DataItemValueLight ( dataItemValueLight.value, dataItemValueLight.subscriptionState, dataItemValueLight.timestamp );
+        return new DataItemValueLight ( dataItemValueLight.value, dataItemValueLight.subscriptionState, dataItemValueLight.timestamp, dataItemValueLight.isManual, dataItemValueLight.isError );
     }
 
     public Variant getValue ()
@@ -87,14 +93,24 @@ public class DataItemValueLight implements Comparable<DataItemValueLight>
         return this.value.isNumber ();
     }
 
+    public boolean isManual ()
+    {
+        return this.isManual;
+    }
+
+    public boolean isError ()
+    {
+        return this.isError;
+    }
+
     @Override
     public int hashCode ()
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ( this.value == null ? 0 : this.value.hashCode () );
-        result = prime * result + ( this.subscriptionState == null ? 0 : this.subscriptionState.hashCode () );
-        result = prime * result + (int) ( this.timestamp ^ this.timestamp >>> 32 );
+        result = ( prime * result ) + ( this.value == null ? 0 : this.value.hashCode () );
+        result = ( prime * result ) + ( this.subscriptionState == null ? 0 : this.subscriptionState.hashCode () );
+        result = ( prime * result ) + (int) ( this.timestamp ^ ( this.timestamp >>> 32 ) );
         return result;
     }
 

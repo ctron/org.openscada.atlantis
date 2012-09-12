@@ -33,6 +33,7 @@ import java.util.concurrent.ExecutorService;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.MultiDataSourceTracker;
@@ -192,7 +193,7 @@ public class AverageDataSource implements ServiceListener
     {
         // special case empty:
         // only if all items are invalid, the resultant value is also invalid
-        if ( validSourcesRequired == null || validSourcesRequired.isEmpty () )
+        if ( ( validSourcesRequired == null ) || validSourcesRequired.isEmpty () )
         {
             this.noOfValidSourcesRequired = 0;
             return;
@@ -215,7 +216,7 @@ public class AverageDataSource implements ServiceListener
                     this.noOfValidSourcesRequired = this.sourceIds.size ();
                     return;
                 }
-                this.noOfValidSourcesRequired = Long.valueOf ( Math.round ( percent * this.sourceIds.size () / 100.0 ) ).intValue ();
+                this.noOfValidSourcesRequired = Long.valueOf ( Math.round ( ( percent * this.sourceIds.size () ) / 100.0 ) ).intValue ();
             }
             else
             {
@@ -239,6 +240,9 @@ public class AverageDataSource implements ServiceListener
     protected void handleChange ()
     {
         final ArrayList<Double> validValues = new ArrayList<Double> ( this.sources.size () );
+        int numOfManualValues = 0;
+        int numOfErrorValues = 0;
+        int numOfDisconnected = 0;
 
         Double sum = null;
         Double min = null;
@@ -249,16 +253,25 @@ public class AverageDataSource implements ServiceListener
         for ( final DataSourceHandler handler : this.sources.values () )
         {
             final DataItemValue div = handler.getValue ();
-            if ( div != null && div.isConnected () && !div.isError () )
+            if ( ( div != null ) && div.isConnected () && !div.isError () )
             {
-                if ( div.getValue () != null && div.getValue ().isNumber () )
+                if ( ( div.getValue () != null ) && div.getValue ().isNumber () )
                 {
                     final Double d = div.getValue ().asDouble ( 0.0 );
                     min = min == null ? d : d < min ? d : min;
                     max = max == null ? d : d > max ? d : max;
                     sum = sum == null ? d : sum + d;
                     validValues.add ( d );
+                    numOfManualValues += ( div.isManual () ? 1 : 0 );
                 }
+            }
+            else if ( ( div != null ) && div.isConnected () && div.isError () )
+            {
+                numOfErrorValues += 1;
+            }
+            else if ( ( div == null ) || !div.isConnected () )
+            {
+                numOfDisconnected += 1;
             }
         }
 
@@ -282,12 +295,52 @@ public class AverageDataSource implements ServiceListener
             deviation = null;
         }
 
-        this.sumDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( sum ) ).build () );
-        this.minDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( min ) ).build () );
-        this.maxDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( max ) ).build () );
-        this.meanDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( mean ) ).build () );
-        this.medianDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( median ) ).build () );
-        this.deviationDataSource.setValue ( new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( deviation ) ).build () );
+        {
+            final DataItemValue.Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( sum ) );
+            setAdditionalAttributes ( divb, numOfManualValues, numOfErrorValues, numOfDisconnected );
+            this.sumDataSource.setValue ( divb.build () );
+        }
+        {
+            final DataItemValue.Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( min ) );
+            setAdditionalAttributes ( divb, numOfManualValues, numOfErrorValues, numOfDisconnected );
+            this.minDataSource.setValue ( divb.build () );
+        }
+        {
+            final DataItemValue.Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( max ) );
+            setAdditionalAttributes ( divb, numOfManualValues, numOfErrorValues, numOfDisconnected );
+            this.maxDataSource.setValue ( divb.build () );
+        }
+        {
+            final DataItemValue.Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( mean ) );
+            setAdditionalAttributes ( divb, numOfErrorValues, numOfErrorValues, numOfDisconnected );
+            this.meanDataSource.setValue ( divb.build () );
+        }
+        {
+            final DataItemValue.Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( median ) );
+            setAdditionalAttributes ( divb, numOfErrorValues, numOfErrorValues, numOfDisconnected );
+            this.medianDataSource.setValue ( divb.build () );
+        }
+        {
+            final DataItemValue.Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( deviation ) );
+            setAdditionalAttributes ( divb, numOfErrorValues, numOfErrorValues, numOfDisconnected );
+            this.deviationDataSource.setValue ( divb.build () );
+        }
+    }
+
+    private void setAdditionalAttributes ( final Builder divb, final int numOfManualValues, final int numOfErrorValues, final int numOfDisconnected )
+    {
+        if ( numOfManualValues > 0 )
+        {
+            divb.setAttribute ( Activator.getContext ().getBundle ().getSymbolicName () + ".manual", Variant.valueOf ( true ) );
+        }
+        if ( ( this.sources.size () - numOfErrorValues ) < this.noOfValidSourcesRequired )
+        {
+            divb.setAttribute ( Activator.getContext ().getBundle ().getSymbolicName () + ".error", Variant.valueOf ( true ) );
+        }
+        if ( ( this.sources.size () - numOfDisconnected ) < this.noOfValidSourcesRequired )
+        {
+            divb.setSubscriptionState ( SubscriptionState.DISCONNECTED );
+        }
     }
 
     private class DataSourceHandler implements DataSourceListener

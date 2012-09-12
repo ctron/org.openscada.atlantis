@@ -37,6 +37,13 @@ public class Activator implements BundleActivator
 
     private AverageDataSourceFactory factory;
 
+    private static BundleContext context;
+
+    static BundleContext getContext ()
+    {
+        return context;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -44,6 +51,7 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
+        Activator.context = context;
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
         this.factory = new AverageDataSourceFactory ( context, this.executor );
 
@@ -70,5 +78,6 @@ public class Activator implements BundleActivator
         {
             this.executor.shutdownNow ();
         }
+        Activator.context = null;
     }
 }

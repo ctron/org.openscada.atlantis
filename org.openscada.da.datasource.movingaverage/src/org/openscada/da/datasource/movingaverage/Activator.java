@@ -40,6 +40,13 @@ public class Activator implements BundleActivator
 
     private MovingAverageDataSourceFactory factory;
 
+    private static BundleContext context;
+
+    static BundleContext getContext ()
+    {
+        return context;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -47,6 +54,7 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
+        Activator.context = context;
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () + ".executor" ) );
         this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () + ".scheduler" ) );
         this.factory = new MovingAverageDataSourceFactory ( context, this.executor, this.scheduler );
@@ -69,5 +77,6 @@ public class Activator implements BundleActivator
         this.factory.dispose ();
         this.executor.shutdown ();
         this.scheduler.shutdown ();
+        Activator.context = null;
     }
 }
