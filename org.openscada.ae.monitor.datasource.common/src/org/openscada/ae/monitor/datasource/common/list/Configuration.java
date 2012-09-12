@@ -33,8 +33,8 @@ class Configuration extends AbstractConfiguration
         OK ( null ),
         INFORMATION ( Severity.INFORMATION ),
         WARNING ( Severity.WARNING ),
-        ALARM ( Severity.ERROR ),
-        ERROR ( Severity.FATAL );
+        ALARM ( Severity.ALARM ),
+        ERROR ( Severity.ERROR );
 
         private Severity severity;
 

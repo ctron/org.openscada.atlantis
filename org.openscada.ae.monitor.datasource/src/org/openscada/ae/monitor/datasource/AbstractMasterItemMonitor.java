@@ -373,10 +373,10 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
             case WARNING:
                 builder.setAttribute ( intern ( this.prefix + ".warning" ), Variant.valueOf ( this.alarm ) );
                 break;
-            case ERROR:
+            case ALARM:
                 builder.setAttribute ( intern ( this.prefix + ".alarm" ), Variant.valueOf ( this.alarm ) );
                 break;
-            case FATAL:
+            case ERROR:
                 builder.setAttribute ( intern ( this.prefix + ".error" ), Variant.valueOf ( this.alarm ) );
                 break;
         }
@@ -385,7 +385,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
     private Severity getCurrentSeverity ()
     {
         Severity severity = getCurrentState ().getSeverity ();
-        severity = severity == null ? Severity.ERROR : severity;
+        severity = severity == null ? Severity.ALARM : severity;
         return severity;
     }
 

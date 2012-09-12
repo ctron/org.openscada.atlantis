@@ -98,7 +98,7 @@ public class EventMonitorImpl extends AbstractPersistentStateMonitor implements 
 
         c.setActive ( userInformation, cfg.getBoolean ( "active", true ) ); //$NON-NLS-1$
         c.setRequireAkn ( userInformation, cfg.getBoolean ( "requireAkn", true ) ); //$NON-NLS-1$
-        c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ERROR ) );
+        c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ALARM ) );
 
         setEventMatcher ( userInformation, cfg.getString ( "filter", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
         setMonitorType ( userInformation, cfg.getString ( "monitorType", Messages.getString ( "EventMonitorImpl.tag.event" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$

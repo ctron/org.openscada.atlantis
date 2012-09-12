@@ -28,7 +28,7 @@ class Configuration extends AbstractConfiguration
 {
     Boolean reference;
 
-    Severity severity = Severity.ERROR;
+    Severity severity = Severity.ALARM;
 
     boolean requireAck;
 

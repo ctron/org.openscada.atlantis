@@ -119,7 +119,7 @@ public class LevelMonitor extends AbstractNumericMonitor
         c.setIncludedOk ( userInformation, cfg.getBoolean ( "includedOk", true ) );
         c.setSecondPrefix ( userInformation, cfg.getString ( "prefix", null ) );
         c.setCap ( userInformation, cfg.getBoolean ( "cap", false ) );
-        c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ERROR ) );
+        c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ALARM ) );
 
         this.configuration = c;
         c.sendEvents ();

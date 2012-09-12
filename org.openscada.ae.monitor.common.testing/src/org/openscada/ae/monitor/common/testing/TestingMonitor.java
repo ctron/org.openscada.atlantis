@@ -63,7 +63,7 @@ public class TestingMonitor extends AbstractStateMonitor implements AknHandler
         }
         else
         {
-            setFailure ( Variant.FALSE, System.currentTimeMillis (), Severity.ERROR, false );
+            setFailure ( Variant.FALSE, System.currentTimeMillis (), Severity.ALARM, false );
         }
     }
 

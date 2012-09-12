@@ -23,6 +23,6 @@ public enum Severity
 {
     INFORMATION,
     WARNING,
-    ERROR,
-    FATAL;
+    ALARM,
+    ERROR;
 }

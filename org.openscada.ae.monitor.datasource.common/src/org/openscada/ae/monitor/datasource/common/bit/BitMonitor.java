@@ -78,7 +78,7 @@ public class BitMonitor extends AbstractBooleanMonitor
         final Configuration c = new Configuration ( this.configuration, this );
 
         c.setReference ( userInformation, cfg.getBoolean ( "reference" ) );
-        c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ERROR ) );
+        c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ALARM ) );
 
         c.sendEvents ();
         this.configuration = c;
