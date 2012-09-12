@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: AE Tests
 Bundle-SymbolicName: org.openscada.ae.test
-Bundle-Version: 0.17.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.junit;version="4.5.0",
  org.openscada.ae;version="0.15.0",
@@ -11,3 +11,4 @@ Import-Package: org.junit;version="4.5.0",
  org.openscada.ae.server.storage;version="0.14.0",
  org.openscada.ae.server.storage.memory,
  org.openscada.core;version="0.15.0"
+Bundle-Vendor: TH4 SYSTEMS GmbH
