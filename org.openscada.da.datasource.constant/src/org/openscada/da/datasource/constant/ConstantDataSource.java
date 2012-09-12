@@ -19,9 +19,12 @@
 
 package org.openscada.da.datasource.constant;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.VariantEditor;
@@ -57,7 +60,7 @@ public class ConstantDataSource extends AbstractInputDataSource
             // set main value
             builder.setValue ( VariantEditor.toVariant ( cfg.getStringChecked ( "value", "'value' must be provided" ) ) );
 
-            builder.setTimestamp ( Calendar.getInstance () );
+            builder.setTimestamp ( makeTimestamp ( cfg ) );
 
             // set attributes
             for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "attributes." ).entrySet () )
@@ -72,5 +75,23 @@ public class ConstantDataSource extends AbstractInputDataSource
         {
             updateData ( builder.build () );
         }
+    }
+
+    private Calendar makeTimestamp ( final ConfigurationDataHelper cfg ) throws ParseException
+    {
+        final Calendar c = Calendar.getInstance ();
+
+        final String timeString = cfg.getString ( "timeString" );
+        if ( timeString != null && !timeString.isEmpty () )
+        {
+            c.setTime ( new SimpleDateFormat ( "yyyy-MM-dd HH:mm:ss.SSS" ).parse ( timeString ) );
+        }
+
+        final long timeDiff = cfg.getLong ( "timeDiff.value", 0 );
+        final TimeUnit timeDiffUnit = TimeUnit.valueOf ( cfg.getString ( "timeDiff.unit", TimeUnit.MILLISECONDS.toString () ) );
+
+        c.add ( Calendar.MILLISECOND, (int)TimeUnit.MILLISECONDS.convert ( timeDiff, timeDiffUnit ) );
+
+        return c;
     }
 }
