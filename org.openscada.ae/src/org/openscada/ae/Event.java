@@ -94,6 +94,11 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
         public EventBuilder attributes ( final Map<String, Variant> attributes )
         {
+            if ( attributes == null )
+            {
+                return this;
+            }
+
             if ( this.allowOverrideAttributes )
             {
                 this.event.attributes.putAll ( attributes );
@@ -148,9 +153,10 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
         /**
          * Set allow override attributes flag
          * <p>
-         * Setting to <code>true</code> allows attributes to be overridden by calls to the attribute/attributes methods.
-         * Setting to <code>false</code> will not set attributes that already have been set by previous calls. 
+         * Setting to <code>true</code> allows attributes to be overridden by calls to the attribute/attributes methods. Setting to <code>false</code> will not set attributes that already have been
+         * set by previous calls.
          * </p>
+         * 
          * @param allowOverrideAttributes
          */
         public void setAllowOverrideAttributes ( final boolean allowOverrideAttributes )
