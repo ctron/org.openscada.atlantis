@@ -194,7 +194,8 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.event.logger"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.dataitem"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.datasource"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.datasource.common"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.sec"/>
   	
