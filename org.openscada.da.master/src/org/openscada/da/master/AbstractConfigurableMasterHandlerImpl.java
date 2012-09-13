@@ -133,6 +133,9 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
     /**
      * This method will be called on write request that have attributes which match our prefix.
+     * <p>
+     * All attributes that are processed must be returned in the result
+     * </p>
      * 
      * @param writeInformation
      *            the write information of the write request
@@ -144,6 +147,9 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
      */
     protected abstract WriteAttributeResults handleUpdate ( final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws Exception;
 
+    /**
+     * Process a CA update using the write attributes
+     */
     protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet, final OperationParameters operationParameters ) throws OperationException
     {
         final WriteAttributeResults result = new WriteAttributeResults ();
