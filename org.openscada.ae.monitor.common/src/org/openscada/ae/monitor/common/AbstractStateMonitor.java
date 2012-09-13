@@ -29,6 +29,7 @@ import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.StateInformation.Builder;
 import org.openscada.core.Variant;
@@ -140,6 +141,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
 
         builder.attribute ( Fields.VALUE, state.getValue () );
         builder.attribute ( Fields.EVENT_TYPE, state.getStatus () );
+        builder.attribute ( Fields.PRIORITY, state.getSeverity () );
 
         if ( decorator != null )
         {
@@ -200,7 +202,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
             attributes = this.attributes;
         }
 
-        return new MonitorStatusInformation ( getId (), status, makeDate ( this.currentState.getLastChangeTimestamp () ), this.currentState.getValue (), makeDate ( this.currentState.getLastAckTimestamp () ), this.currentState.getLastAckUser (), makeDate ( this.currentState.getLastFailTimestamp () ), attributes );
+        return new MonitorStatusInformation ( getId (), status, makeDate ( this.currentState.getLastChangeTimestamp () ), this.currentState.getSeverity (), this.currentState.getValue (), makeDate ( this.currentState.getLastAckTimestamp () ), this.currentState.getLastAckUser (), makeDate ( this.currentState.getLastFailTimestamp () ), attributes );
     }
 
     public StateInformation getCurrentState ()

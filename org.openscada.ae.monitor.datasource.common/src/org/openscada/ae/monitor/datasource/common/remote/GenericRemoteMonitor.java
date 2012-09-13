@@ -300,11 +300,11 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
         if ( this.persistentState == null )
         {
-            return new MonitorStatusInformation ( this.id, MonitorStatus.INIT, timestamp, null, this.aknTimestamp, this.lastAckUser, timestamp, getMonitorAttributes () );
+            return new MonitorStatusInformation ( this.id, MonitorStatus.INIT, timestamp, null, null, this.aknTimestamp, this.lastAckUser, timestamp, getMonitorAttributes () );
         }
         else
         {
-            return new MonitorStatusInformation ( this.id, this.state, timestamp, null, this.aknTimestamp, this.lastAckUser, timestamp, getMonitorAttributes () );
+            return new MonitorStatusInformation ( this.id, this.state, timestamp, null, null, this.aknTimestamp, this.lastAckUser, timestamp, getMonitorAttributes () );
         }
     }
 

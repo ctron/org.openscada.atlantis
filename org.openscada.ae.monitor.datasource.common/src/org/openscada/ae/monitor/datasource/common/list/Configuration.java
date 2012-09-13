@@ -21,8 +21,8 @@ package org.openscada.ae.monitor.datasource.common.list;
 
 import java.util.Map;
 
+import org.openscada.ae.Severity;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
-import org.openscada.ae.monitor.common.Severity;
 import org.openscada.ae.monitor.datasource.AbstractMasterItemMonitor;
 import org.openscada.core.Variant;
 

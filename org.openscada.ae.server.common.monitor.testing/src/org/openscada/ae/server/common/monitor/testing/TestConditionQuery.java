@@ -52,7 +52,7 @@ public class TestConditionQuery extends MonitorQuery
 
     protected void tick ()
     {
-        updateData ( new MonitorStatusInformation[] { new MonitorStatusInformation ( "test", r.nextBoolean () ? MonitorStatus.OK : MonitorStatus.NOT_OK, new Date (), Variant.NULL, new Date (), "system", null, null ) }, null );
+        updateData ( new MonitorStatusInformation[] { new MonitorStatusInformation ( "test", r.nextBoolean () ? MonitorStatus.OK : MonitorStatus.NOT_OK, new Date (), null, Variant.NULL, new Date (), "system", null, null ) }, null );
     }
 
     public void stop ()

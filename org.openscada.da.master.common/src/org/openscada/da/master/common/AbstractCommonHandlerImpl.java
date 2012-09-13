@@ -24,6 +24,7 @@ import java.util.Map;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
+import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.utils.AbstractBaseConfiguration;
 import org.openscada.ca.ConfigurationAdministrator;
@@ -66,9 +67,12 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
 
     }
 
+    private final String sourceName;
+
     public AbstractCommonHandlerImpl ( final String configurationId, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
     {
         super ( configurationId, poolTracker, priority, caTracker, prefix, factoryId );
+        this.sourceName = configurationId;
     }
 
     protected abstract DataItemValue processDataUpdate ( Map<String, Object> context, final DataItemValue value ) throws Exception;
@@ -92,6 +96,7 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
 
     protected void injectEventAttributes ( final EventBuilder builder )
     {
+        builder.attribute ( Fields.SOURCE, this.sourceName );
         builder.attributes ( this.eventAttributes );
     }
 

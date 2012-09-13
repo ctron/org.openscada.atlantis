@@ -19,8 +19,8 @@
 
 package org.openscada.ae.monitor.datasource.common.bit;
 
+import org.openscada.ae.Severity;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
-import org.openscada.ae.monitor.common.Severity;
 import org.openscada.ae.monitor.datasource.AbstractMasterItemMonitor;
 import org.openscada.sec.UserInformation;
 

@@ -49,6 +49,12 @@ public class ListMonitor extends AbstractVariantMonitor
     }
 
     @Override
+    protected int getDefaultHandlerPriority ()
+    {
+        return 600;
+    }
+
+    @Override
     public synchronized void update ( final UserInformation userInformation, final Map<String, String> properties ) throws Exception
     {
         super.update ( userInformation, properties );

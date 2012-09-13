@@ -28,6 +28,7 @@ import java.util.Set;
 
 import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.Severity;
 import org.openscada.core.Variant;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.data.ListValue;
@@ -117,6 +118,15 @@ public class MonitorMessageHelper
                 return null;
             }
 
+            Severity severity = null;
+            try
+            {
+                severity = Severity.valueOf ( ( (StringValue)value.get ( "severity" ) ).getValue () );
+            }
+            catch ( final Exception e )
+            {
+            }
+
             final Map<String, Variant> attributes;
             if ( value.get ( "attributes" ) != null )
             {
@@ -127,7 +137,7 @@ public class MonitorMessageHelper
                 attributes = null;
             }
 
-            return new MonitorStatusInformation ( id, status, statusTimestamp, currentValue, lastAknTimestamp, lastAknUser, lastFailTimestamp, attributes );
+            return new MonitorStatusInformation ( id, status, statusTimestamp, severity, currentValue, lastAknTimestamp, lastAknUser, lastFailTimestamp, attributes );
         }
         catch ( final ClassCastException e )
         {
@@ -177,6 +187,10 @@ public class MonitorMessageHelper
         if ( condition.getLastFailTimestamp () != null )
         {
             value.put ( "lastFailTimestamp", new LongValue ( condition.getLastFailTimestamp ().getTime () ) );
+        }
+        if ( condition.getSeverity () != null )
+        {
+            value.put ( "severity", new StringValue ( condition.getSeverity ().toString () ) );
         }
         if ( condition.getAttributes () != null )
         {

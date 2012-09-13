@@ -22,8 +22,8 @@ package org.openscada.ae.monitor.datasource.common.bit;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.ae.Severity;
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.common.Severity;
 import org.openscada.ae.monitor.datasource.AbstractBooleanMonitor;
 import org.openscada.ae.monitor.datasource.Helper;
 import org.openscada.ca.ConfigurationDataHelper;
@@ -46,6 +46,12 @@ public class BitMonitor extends AbstractBooleanMonitor
     public BitMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String prefix, final String defaultMonitorType )
     {
         super ( context, executor, stringInterner, poolTracker, eventProcessor, id, BitMonitorFactory.FACTORY_ID, prefix, defaultMonitorType );
+    }
+
+    @Override
+    protected int getDefaultHandlerPriority ()
+    {
+        return 600;
     }
 
     @Override

@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.Event;
+import org.openscada.ae.Severity;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
@@ -33,7 +34,6 @@ import org.openscada.ae.filter.internal.EventMatcherImpl;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
 import org.openscada.ae.monitor.common.AbstractStateMonitor;
-import org.openscada.ae.monitor.common.Severity;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.sec.UserInformation;

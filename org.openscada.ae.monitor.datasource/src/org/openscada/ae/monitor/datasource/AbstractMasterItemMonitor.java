@@ -28,12 +28,12 @@ import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
 import org.openscada.ae.monitor.common.DataItemMonitor;
 import org.openscada.ae.monitor.common.PersistentInformation;
-import org.openscada.ae.monitor.common.Severity;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -194,7 +194,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         connect ();
     }
 
-    private int getDefaultHandlerPriority ()
+    protected int getDefaultHandlerPriority ()
     {
         return 0;
     }
@@ -288,7 +288,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         }
     }
 
-    private DataItemValue handleDataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    protected DataItemValue handleDataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
         final DataItemValue.Builder builder = new DataItemValue.Builder ( value );
 

@@ -55,7 +55,7 @@ public abstract class AbstractMonitorService implements MonitorService
 
         this.stringInterner = stringInterner == null ? InternerHelper.makeNoOpInterner () : stringInterner;
 
-        this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, new Date (), null, null, null, null, null );
+        this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, new Date (), null, null, null, null, null, null );
     }
 
     @Override

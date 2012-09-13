@@ -22,6 +22,8 @@ package org.openscada.da.master.common.marker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.ae.Event.EventBuilder;
+import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
@@ -175,6 +177,13 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
         c.sendEvents ();
 
         reprocess ();
+    }
+
+    @Override
+    protected void injectEventAttributes ( final EventBuilder builder )
+    {
+        super.injectEventAttributes ( builder );
+        builder.attribute ( Fields.MONITOR_TYPE, "MARKER" );
     }
 
     @Override

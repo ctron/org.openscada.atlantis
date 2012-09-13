@@ -50,13 +50,16 @@ public class MonitorStatusInformation implements Serializable
 
     private final Date lastFailTimestamp;
 
-    public MonitorStatusInformation ( final String id, final MonitorStatus status, final Date statusTimestamp, final Variant value, final Date lastAknTimestamp, final String lastAknUser, final Date lastFailTimestamp, final Map<String, Variant> attributes )
+    private final Severity severity;
+
+    public MonitorStatusInformation ( final String id, final MonitorStatus status, final Date statusTimestamp, final Severity severity, final Variant value, final Date lastAknTimestamp, final String lastAknUser, final Date lastFailTimestamp, final Map<String, Variant> attributes )
     {
         super ();
 
         this.id = id;
         this.status = status;
         this.statusTimestamp = statusTimestamp;
+        this.severity = severity;
         this.value = value;
         this.lastAknTimestamp = lastAknTimestamp;
         this.lastAknUser = lastAknUser;
@@ -107,6 +110,11 @@ public class MonitorStatusInformation implements Serializable
     public Date getStatusTimestamp ()
     {
         return this.statusTimestamp == null ? null : (Date)this.statusTimestamp.clone ();
+    }
+
+    public Severity getSeverity ()
+    {
+        return this.severity;
     }
 
     public Date getLastFailTimestamp ()

@@ -17,8 +17,13 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae.monitor.common;
+package org.openscada.ae;
 
+/**
+ * The ascending order of severities
+ * 
+ * @author Jens Reimann
+ */
 public enum Severity
 {
     INFORMATION,

@@ -32,7 +32,7 @@ import org.osgi.framework.BundleContext;
 
 import com.google.common.collect.Interner;
 
-public abstract class AbstractVariantMonitor extends AbstractMasterItemMonitor
+public abstract class AbstractVariantMonitor extends AbstractDemotingMasterItemMonitor
 {
 
     public AbstractVariantMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String factoryId, final String prefix, final String defaultMonitorType )
