@@ -24,6 +24,8 @@ import java.util.Map;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
+import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.utils.AbstractBaseConfiguration;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -36,12 +38,40 @@ import org.osgi.util.tracker.ServiceTracker;
 public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMasterHandlerImpl
 {
 
+    public static class AbstractConfiguration extends AbstractBaseConfiguration
+    {
+
+        private final AbstractCommonHandlerImpl commonHandler;
+
+        private final EventProcessor eventProcessor;
+
+        public AbstractConfiguration ( final AbstractConfiguration currentConfiguration, final AbstractCommonHandlerImpl commonHandler, final EventProcessor eventProcessor )
+        {
+            super ( currentConfiguration );
+            this.commonHandler = commonHandler;
+            this.eventProcessor = eventProcessor;
+        }
+
+        @Override
+        protected void injectEventAttributes ( final EventBuilder builder )
+        {
+            this.commonHandler.injectEventAttributes ( builder );
+        }
+
+        @Override
+        protected void sendEvent ( final Event event )
+        {
+            this.eventProcessor.publishEvent ( event );
+        }
+
+    }
+
     public AbstractCommonHandlerImpl ( final String configurationId, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
     {
         super ( configurationId, poolTracker, priority, caTracker, prefix, factoryId );
     }
 
-    protected abstract DataItemValue processDataUpdate ( final DataItemValue value ) throws Exception;
+    protected abstract DataItemValue processDataUpdate ( Map<String, Object> context, final DataItemValue value ) throws Exception;
 
     /**
      * Create a pre-filled event builder
@@ -55,9 +85,14 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
         builder.sourceTimestamp ( new Date () );
         builder.entryTimestamp ( new Date () );
 
-        builder.attributes ( this.eventAttributes );
+        injectEventAttributes ( builder );
 
         return builder;
+    }
+
+    protected void injectEventAttributes ( final EventBuilder builder )
+    {
+        builder.attributes ( this.eventAttributes );
     }
 
     @Override
@@ -70,7 +105,7 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
 
         try
         {
-            return processDataUpdate ( value );
+            return processDataUpdate ( context, value );
         }
         catch ( final Throwable e )
         {

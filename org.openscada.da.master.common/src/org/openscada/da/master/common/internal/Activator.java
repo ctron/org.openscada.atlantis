@@ -19,8 +19,10 @@
 
 package org.openscada.da.master.common.internal;
 
+import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.LinkedList;
 
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationAdministrator;
@@ -28,10 +30,12 @@ import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.block.BlockHandlerFactoryImpl;
 import org.openscada.da.master.common.manual.ManualHandlerFactoryImpl;
+import org.openscada.da.master.common.marker.MarkerHandlerFactoryImpl;
 import org.openscada.da.master.common.negate.NegateHandlerFactoryImpl;
 import org.openscada.da.master.common.round.RoundHandlerFactoryImpl;
 import org.openscada.da.master.common.scale.ScaleHandlerFactoryImpl;
 import org.openscada.da.master.common.sum.CommonSumHandlerFactoryImpl;
+import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -43,21 +47,11 @@ public class Activator implements BundleActivator
 
     private EventProcessor eventProcessor;
 
-    private CommonSumHandlerFactoryImpl factory1;
-
     private ObjectPoolTracker<MasterItem> poolTracker;
 
     private ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker;
 
-    private ScaleHandlerFactoryImpl factory5;
-
-    private NegateHandlerFactoryImpl factory6;
-
-    private ManualHandlerFactoryImpl factory7;
-
-    private BlockHandlerFactoryImpl factory8;
-
-    private RoundHandlerFactoryImpl factory9;
+    private final Collection<AbstractServiceConfigurationFactory<?>> factories = new LinkedList<AbstractServiceConfigurationFactory<?>> ();
 
     /*
      * (non-Javadoc)
@@ -76,52 +70,74 @@ public class Activator implements BundleActivator
         this.caTracker.open ();
 
         {
-            this.factory1 = new CommonSumHandlerFactoryImpl ( context, this.poolTracker );
-            final Dictionary<String, String> properties1 = new Hashtable<String, String> ();
-            properties1.put ( Constants.SERVICE_DESCRIPTION, "An attribute sum handler" );
-            properties1.put ( ConfigurationAdministrator.FACTORY_ID, "da.master.handler.sum" );
-            context.registerService ( ConfigurationFactory.class.getName (), this.factory1, properties1 );
+            final CommonSumHandlerFactoryImpl factory = new CommonSumHandlerFactoryImpl ( context, this.poolTracker );
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( Constants.SERVICE_DESCRIPTION, "An attribute sum handler" );
+            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, "da.master.handler.sum" );
+            context.registerService ( ConfigurationFactory.class, factory, properties );
+            this.factories.add ( factory );
         }
         {
-            this.factory5 = new ScaleHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 500 );
+            final ScaleHandlerFactoryImpl factory = new ScaleHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 500 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local scaling master handler" );
+            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ScaleHandlerFactoryImpl.FACTORY_ID );
-            context.registerService ( ConfigurationFactory.class.getName (), this.factory5, properties );
+            context.registerService ( ConfigurationFactory.class, factory, properties );
+            this.factories.add ( factory );
         }
 
         {
-            this.factory6 = new NegateHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 501 );
+            final NegateHandlerFactoryImpl factory = new NegateHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 501 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local negate master handler" );
+            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, NegateHandlerFactoryImpl.FACTORY_ID );
-            context.registerService ( ConfigurationFactory.class.getName (), this.factory6, properties );
+            context.registerService ( ConfigurationFactory.class, factory, properties );
+            this.factories.add ( factory );
         }
 
         {
-            this.factory7 = new ManualHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, 1000 );
+            final ManualHandlerFactoryImpl factory = new ManualHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, 1000 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local manual override master handler" );
+            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
-            context.registerService ( ConfigurationFactory.class.getName (), this.factory7, properties );
+            context.registerService ( ConfigurationFactory.class, factory, properties );
+            this.factories.add ( factory );
         }
 
         {
-            this.factory8 = new BlockHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, Integer.MIN_VALUE );
+            final BlockHandlerFactoryImpl factory = new BlockHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, Integer.MIN_VALUE );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A blocking operation handler" );
+            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BlockHandlerFactoryImpl.FACTORY_ID );
-            context.registerService ( ConfigurationFactory.class.getName (), this.factory8, properties );
+            context.registerService ( ConfigurationFactory.class, factory, properties );
+            this.factories.add ( factory );
         }
 
         {
-            this.factory9 = new RoundHandlerFactoryImpl (  context, this.poolTracker, this.caTracker, 502);
+            final RoundHandlerFactoryImpl factory = new RoundHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 502 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A rounding operation handler" );
+            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, RoundHandlerFactoryImpl.FACTORY_ID );
-            context.registerService ( ConfigurationFactory.class.getName (), this.factory9, properties );
+            context.registerService ( ConfigurationFactory.class, factory, properties );
+            this.factories.add ( factory );
         }
-        
+
+        {
+            final MarkerHandlerFactoryImpl factory = new MarkerHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, 100 );
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( Constants.SERVICE_DESCRIPTION, "A handler which allows to injects a marker" );
+            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, MarkerHandlerFactoryImpl.FACTORY_ID );
+            context.registerService ( ConfigurationFactory.class, factory, properties );
+            this.factories.add ( factory );
+        }
+
     }
 
     /*
@@ -131,12 +147,10 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext context ) throws Exception
     {
-        this.factory1.dispose ();
-        this.factory5.dispose ();
-        this.factory6.dispose ();
-        this.factory7.dispose ();
-        this.factory8.dispose ();
-        this.factory9.dispose ();
+        for ( final AbstractServiceConfigurationFactory<?> factory : this.factories )
+        {
+            factory.dispose ();
+        }
 
         this.poolTracker.close ();
         this.poolTracker = null;
