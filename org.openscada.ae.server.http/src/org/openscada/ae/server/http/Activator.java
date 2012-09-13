@@ -97,7 +97,7 @@ public class Activator implements BundleActivator
         this.factory = new EventMonitorFactory ( this.context, this.executor, this.monitorServicePool, this.eventProcessor );
         final Hashtable<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, EventMonitorFactory.FACTORY_ID );
-        properties.put ( Constants.SERVICE_DESCRIPTION, "Reference list alarm monitor" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "Filter based http event monitor" );
         this.factoryServiceHandle = this.context.registerService ( new String[] { ConfigurationFactory.class.getName (), AknHandler.class.getName () }, this.factory, properties );
 
         this.httpServiceTracker.open ();

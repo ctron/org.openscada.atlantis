@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,40 +23,36 @@ import java.util.Map;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.monitor.common.MonitorDecoratorAdapter;
+import org.openscada.ae.monitor.common.MonitorDecorator;
 import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class EventMonitorDecorator extends MonitorDecoratorAdapter
+public class EventMonitorDecorator implements MonitorDecorator
 {
-    private final int sequence;
-
     private final Variant message;
 
-    public EventMonitorDecorator ( final int sequence, final Variant message )
+    public EventMonitorDecorator ( final Variant message )
     {
-        this.sequence = sequence;
         this.message = message;
     }
 
     @Override
-    public EventBuilder decorate ( final EventBuilder eventBuilder )
+    public void decorateEvent ( final EventBuilder builder )
     {
-        eventBuilder.attribute ( "sequence", Variant.valueOf ( this.sequence ) );
         if ( this.message != null )
         {
-            eventBuilder.attribute ( Event.Fields.MESSAGE, this.message );
+            builder.attribute ( Event.Fields.MESSAGE, this.message );
         }
-        return eventBuilder;
     }
 
     @Override
-    public void decorateMonitorStatus ( final Map<String, Variant> attributes )
+    public void decorateMonitorAttributes ( final Map<String, Variant> attributes )
     {
         if ( this.message != null )
         {
             attributes.put ( Event.Fields.MESSAGE.getName (), this.message );
         }
     }
+
 }

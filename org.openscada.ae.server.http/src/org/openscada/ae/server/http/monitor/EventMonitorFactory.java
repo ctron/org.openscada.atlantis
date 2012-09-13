@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 
 public class EventMonitorFactory extends AbstractServiceConfigurationFactory<EventMonitor> implements AknHandler, EventMonitorEvaluator
 {
-    public static final Object FACTORY_ID = "ae.monitor.ae.event.external";
+    public static final String FACTORY_ID = "ae.monitor.ae.event.external";
 
     private static final Logger logger = LoggerFactory.getLogger ( EventMonitorFactory.class );
 
@@ -67,7 +67,6 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
         final EventMonitor instance = new EventMonitorImpl ( context, this.executor, this.eventProcessor, configurationId );
 
         instance.update ( userInformation, parameters );
-        instance.init ();
 
         this.monitors.put ( configurationId, instance );
 
@@ -101,6 +100,7 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
         if ( monitor != null )
         {
             monitor.akn ( aknUser, aknTimestamp );
+            return true;
         }
 
         return false;

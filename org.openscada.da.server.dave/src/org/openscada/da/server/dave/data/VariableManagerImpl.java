@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,9 +31,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
+import org.openscada.utils.osgi.pool.ManageableObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,8 +142,8 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
         {
             switch ( this.type )
             {
-            default:
-                return String.format ( "%s:%s", this.name, this.type );
+                default:
+                    return String.format ( "%s:%s", this.name, this.type );
             }
         }
     }
@@ -155,9 +156,9 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
     private final ExecutorService executor;
 
-    private final ObjectPoolImpl itemPool;
+    private final ManageableObjectPool<DataItem> itemPool;
 
-    public VariableManagerImpl ( final Executor executor, final ObjectPoolImpl itemPool )
+    public VariableManagerImpl ( final Executor executor, final ManageableObjectPool<DataItem> itemPool )
     {
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "VariableManager" ) );
         this.itemPool = itemPool;
@@ -249,6 +250,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
     /**
      * Handle a type change and fire change events for all dependent types
+     * 
      * @param configurationId
      */
     private void handleTypeChange ( final String configurationId )
@@ -285,24 +287,24 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             {
                 switch ( entry.getType () )
                 {
-                case BIT:
-                    result.add ( new BitVariable ( entry.getName (), entry.getIndex (), entry.getSubIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
-                    break;
-                case BYTE:
-                    result.add ( new ByteVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
-                    break;
-                case FLOAT:
-                    result.add ( new FloatVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
-                    break;
-                case WORD:
-                    result.add ( new WordVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
-                    break;
-                case DINT:
-                    result.add ( new DoubleIntegerVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
-                    break;
-                case UDT:
-                    result.add ( new UdtVariable ( entry.getName (), entry.getIndex (), createVariables ( entry.getTypeName () ) ) );
-                    break;
+                    case BIT:
+                        result.add ( new BitVariable ( entry.getName (), entry.getIndex (), entry.getSubIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
+                        break;
+                    case BYTE:
+                        result.add ( new ByteVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
+                        break;
+                    case FLOAT:
+                        result.add ( new FloatVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
+                        break;
+                    case WORD:
+                        result.add ( new WordVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
+                        break;
+                    case DINT:
+                        result.add ( new DoubleIntegerVariable ( entry.getName (), entry.getIndex (), this.executor, this.itemPool, createAttributes ( entry ) ) );
+                        break;
+                    case UDT:
+                        result.add ( new UdtVariable ( entry.getName (), entry.getIndex (), createVariables ( entry.getTypeName () ) ) );
+                        break;
                 }
             }
             return result.toArray ( new Variable[result.size ()] );
@@ -321,27 +323,27 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
             switch ( attrEntry.getType () )
             {
-            case BIT:
-                result.add ( new BitAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getSubIndex (), attrEntry.getIndexes ()[2] != 0 ) );
-                break;
-            case FLOAT:
-                result.add ( new FloatAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
-                break;
-            case TRIBIT:
-                final int[] index = attrEntry.getIndexes ();
-                result.add ( new TriBitAttribute ( attrEntry.getName (), index[0], index[1], index[2], index[3], index[4], index[5], index[6] != 0, index[7] != 0 ) );
-                break;
-            case BYTE:
-                result.add ( new ByteAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
-                break;
-            case WORD:
-                result.add ( new WordAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
-                break;
-            case DINT:
-                result.add ( new DoubleIntegerAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
-                break;
-            default:
-                break;
+                case BIT:
+                    result.add ( new BitAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getSubIndex (), attrEntry.getIndexes ()[2] != 0 ) );
+                    break;
+                case FLOAT:
+                    result.add ( new FloatAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
+                    break;
+                case TRIBIT:
+                    final int[] index = attrEntry.getIndexes ();
+                    result.add ( new TriBitAttribute ( attrEntry.getName (), index[0], index[1], index[2], index[3], index[4], index[5], index[6] != 0, index[7] != 0 ) );
+                    break;
+                case BYTE:
+                    result.add ( new ByteAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
+                    break;
+                case WORD:
+                    result.add ( new WordAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
+                    break;
+                case DINT:
+                    result.add ( new DoubleIntegerAttribute ( attrEntry.getName (), attrEntry.getIndex (), attrEntry.getIndexes ()[1] != 0 ) );
+                    break;
+                default:
+                    break;
             }
         }
         return result.toArray ( new Attribute[0] );
@@ -364,24 +366,24 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
             switch ( TYPE.valueOf ( toks[0] ) )
             {
-            case BIT:
-                result.add ( new TypeEntry ( varName, Integer.parseInt ( toks[1] ), Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, varName ) ) );
-                break;
-            case BYTE:
-                result.add ( new TypeEntry ( varName, TYPE.BYTE, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
-                break;
-            case FLOAT:
-                result.add ( new TypeEntry ( varName, TYPE.FLOAT, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
-                break;
-            case WORD:
-                result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
-                break;
-            case DINT:
-                result.add ( new TypeEntry ( varName, TYPE.DINT, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
-                break;
-            case UDT:
-                result.add ( new TypeEntry ( varName, toks[1], Integer.parseInt ( toks[2] ) ) );
-                break;
+                case BIT:
+                    result.add ( new TypeEntry ( varName, Integer.parseInt ( toks[1] ), Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, varName ) ) );
+                    break;
+                case BYTE:
+                    result.add ( new TypeEntry ( varName, TYPE.BYTE, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
+                    break;
+                case FLOAT:
+                    result.add ( new TypeEntry ( varName, TYPE.FLOAT, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
+                    break;
+                case WORD:
+                    result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
+                    break;
+                case DINT:
+                    result.add ( new TypeEntry ( varName, TYPE.DINT, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
+                    break;
+                case UDT:
+                    result.add ( new TypeEntry ( varName, toks[1], Integer.parseInt ( toks[2] ) ) );
+                    break;
             }
         }
 
@@ -413,24 +415,24 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
             switch ( TYPE.valueOf ( toks[1] ) )
             {
-            case BIT:
-                result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                break;
-            case BYTE:
-                result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                break;
-            case FLOAT:
-                result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                break;
-            case WORD:
-                result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                break;
-            case DINT:
-                result.add ( new TypeEntry ( toks[0], TYPE.DINT, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                break;
-            case UDT:
-                result.add ( new TypeEntry ( toks[0], toks[2], Integer.parseInt ( toks[3] ) ) );
-                break;
+                case BIT:
+                    result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ), 0, parseAttributes ( properties, toks[0] ) ) );
+                    break;
+                case BYTE:
+                    result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
+                    break;
+                case FLOAT:
+                    result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
+                    break;
+                case WORD:
+                    result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
+                    break;
+                case DINT:
+                    result.add ( new TypeEntry ( toks[0], TYPE.DINT, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
+                    break;
+                case UDT:
+                    result.add ( new TypeEntry ( toks[0], toks[2], Integer.parseInt ( toks[3] ) ) );
+                    break;
             }
         }
 
@@ -462,32 +464,32 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
             switch ( TYPE.valueOf ( toks[1] ) )
             {
-            case BIT:
-                result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ), Integer.parseInt ( toks[4] ) ) );
-                break;
-            case FLOAT:
-                result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
-                break;
-            case TRIBIT:
-                result.add ( new TypeEntry ( toks[0], new int[] {//
-                Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ),// read bit
-                Integer.parseInt ( toks[4] ), Integer.parseInt ( toks[5] ),// write true bit
-                Integer.parseInt ( toks[6] ), Integer.parseInt ( toks[7] ),// write false bit
-                Integer.parseInt ( toks[8] ), // invert
-                Integer.parseInt ( toks[9] ), // enableTimestamp
-                } ) );
-                break;
-            case BYTE:
-                result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
-                break;
-            case WORD:
-                result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
-                break;
-            case DINT:
-                result.add ( new TypeEntry ( toks[0], TYPE.DINT, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
-                break;
-            default:
-                break;
+                case BIT:
+                    result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ), Integer.parseInt ( toks[4] ) ) );
+                    break;
+                case FLOAT:
+                    result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
+                    break;
+                case TRIBIT:
+                    result.add ( new TypeEntry ( toks[0], new int[] {//
+                    Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ),// read bit
+                    Integer.parseInt ( toks[4] ), Integer.parseInt ( toks[5] ),// write true bit
+                    Integer.parseInt ( toks[6] ), Integer.parseInt ( toks[7] ),// write false bit
+                    Integer.parseInt ( toks[8] ), // invert
+                    Integer.parseInt ( toks[9] ), // enableTimestamp
+                    } ) );
+                    break;
+                case BYTE:
+                    result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
+                    break;
+                case WORD:
+                    result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
+                    break;
+                case DINT:
+                    result.add ( new TypeEntry ( toks[0], TYPE.DINT, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
+                    break;
+                default:
+                    break;
             }
         }
         return result.toArray ( new TypeEntry[0] );

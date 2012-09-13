@@ -19,6 +19,7 @@
 
 package org.openscada.ae.server.storage;
 
+import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.UUID;
 
@@ -39,11 +40,17 @@ public abstract class BaseStorage implements Storage
     {
         final EventBuilder builder = Event.create ().event ( event ).id ( UUID.randomUUID () );
 
+        final Date now = new GregorianCalendar ().getTime ();
+
         if ( !allowEntryTimestamp || event.getEntryTimestamp () == null )
         {
             // if we are not allowed to have prefilled entryTimestamps
             // or a missing the timestamp anyway
-            builder.entryTimestamp ( new GregorianCalendar ().getTime () );
+            builder.entryTimestamp ( now );
+        }
+        if ( event.getSourceTimestamp () == null )
+        {
+            builder.sourceTimestamp ( now );
         }
 
         return builder.build ();

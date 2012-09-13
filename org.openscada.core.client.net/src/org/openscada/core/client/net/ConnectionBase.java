@@ -176,6 +176,8 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
             case CLOSING:
                 requestClose ( error );
                 break;
+            default:
+                break;
         }
     }
 
@@ -193,6 +195,8 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
             case CLOSED:
                 requestClose ( error );
                 onConnectionClosed ();
+                break;
+            default:
                 break;
         }
     }
@@ -215,6 +219,8 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
             case CLOSED:
                 requestClose ( error );
                 onConnectionClosed ();
+                break;
+            default:
                 break;
         }
     }
@@ -242,6 +248,8 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
                 this.properties = properties;
                 setState ( ConnectionState.BOUND, error );
                 onConnectionBound ();
+                break;
+            default:
                 break;
         }
     }
@@ -294,6 +302,8 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
                 requestClose ( error );
                 onConnectionClosed ();
                 break;
+            default:
+                break;
         }
     }
 
@@ -316,6 +326,8 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
                 {
                     performLookup ();
                 }
+                break;
+            default:
                 break;
         }
     }
