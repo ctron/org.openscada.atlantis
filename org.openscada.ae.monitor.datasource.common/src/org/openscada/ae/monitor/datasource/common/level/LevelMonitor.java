@@ -22,8 +22,8 @@ package org.openscada.ae.monitor.datasource.common.level;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.ae.Severity;
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.common.Severity;
 import org.openscada.ae.monitor.datasource.AbstractNumericMonitor;
 import org.openscada.ae.monitor.datasource.Helper;
 import org.openscada.ca.ConfigurationDataHelper;
@@ -49,6 +49,12 @@ public class LevelMonitor extends AbstractNumericMonitor
     {
         super ( context, executor, stringInterner, poolTracker, eventProcessor, id, LevelMonitorFactory.FACTORY_ID, prefix, defaultMonitorType );
         this.firstPrefix = prefix;
+    }
+
+    @Override
+    protected int getDefaultHandlerPriority ()
+    {
+        return 500;
     }
 
     @Override
@@ -142,8 +148,6 @@ public class LevelMonitor extends AbstractNumericMonitor
         super.injectAttributes ( builder );
 
         builder.setAttribute ( intern ( this.prefix + ".preset" ), Variant.valueOf ( this.configuration.preset ) );
-        builder.setAttribute ( intern ( this.prefix + ".lowerOk" ), Variant.valueOf ( this.configuration.lowerOk ) );
-        builder.setAttribute ( intern ( this.prefix + ".includedOk" ), Variant.valueOf ( this.configuration.includedOk ) );
     }
 
     @Override
