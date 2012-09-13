@@ -149,10 +149,30 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
     /**
      * Process a CA update using the write attributes
+     * <p>
+     * Actually calls {@link #updateConfiguration(Map, Map, boolean, OperationParameters, WriteAttributeResults)} with <code>null</code> as <code>result</code> parameter.
+     * </p>
      */
     protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet, final OperationParameters operationParameters ) throws OperationException
     {
-        final WriteAttributeResults result = new WriteAttributeResults ();
+        return updateConfiguration ( data, attributes, fullSet, operationParameters, null );
+    }
+
+    /**
+     * Process a CA update using the write attributes
+     * <p>
+     * Write attribute results will automatically be generated for attributes that match an entry in the data map.
+     * </p>
+     * <p>
+     * The <code>result</code> parameter may provide an already filled set with results for attributes that cannot be automatically filled. Note that the the attribute named must not be prefixed!
+     * </p>
+     */
+    protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet, final OperationParameters operationParameters, WriteAttributeResults result ) throws OperationException
+    {
+        if ( result == null )
+        {
+            result = new WriteAttributeResults ();
+        }
 
         if ( data.isEmpty () )
         {
@@ -171,36 +191,36 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
             }
             return result;
         }
-        else
+
+        // use the keys from the CA update and set the write status to OK for the result
+        for ( final String attr : data.keySet () )
         {
-            for ( final String attr : data.keySet () )
+            if ( attributes.containsKey ( attr ) )
             {
-                if ( attributes.containsKey ( attr ) )
+                // only add key to result if it was requested
+                result.put ( attr, WriteAttributeResult.OK );
+            }
+        }
+
+        final NotifyFuture<Configuration> future = service.updateConfiguration ( operationParameters.getUserInformation (), this.factoryId, this.configurationId, data, fullSet );
+
+        future.addListener ( new FutureListener<Configuration> () {
+
+            @Override
+            public void complete ( final Future<Configuration> future )
+            {
+                try
                 {
-                    // only add key to result if it was requested
-                    result.put ( attr, WriteAttributeResult.OK );
+                    logger.info ( "Completed applying: {}", future.get () );
+                }
+                catch ( final Exception e )
+                {
+                    logger.warn ( "Failed applying", e );
                 }
             }
+        } );
 
-            final NotifyFuture<Configuration> future = service.updateConfiguration ( operationParameters.getUserInformation (), this.factoryId, this.configurationId, data, fullSet );
+        return result;
 
-            future.addListener ( new FutureListener<Configuration> () {
-
-                @Override
-                public void complete ( final Future<Configuration> future )
-                {
-                    try
-                    {
-                        logger.info ( "Completed applying: {}", future.get () );
-                    }
-                    catch ( final Exception e )
-                    {
-                        logger.warn ( "Failed applying", e );
-                    }
-                }
-            } );
-
-            return result;
-        }
     }
 }
