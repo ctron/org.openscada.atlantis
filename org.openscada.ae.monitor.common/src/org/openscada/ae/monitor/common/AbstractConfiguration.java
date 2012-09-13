@@ -19,93 +19,34 @@
 
 package org.openscada.ae.monitor.common;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.sec.UserInformation;
+import org.openscada.ae.utils.AbstractBaseConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class AbstractConfiguration
+public class AbstractConfiguration extends AbstractBaseConfiguration
 {
+    final static Logger logger = LoggerFactory.getLogger ( AbstractConfiguration.class );
 
-    private final static Logger logger = LoggerFactory.getLogger ( AbstractConfiguration.class );
-
-    private final AbstractStateMonitor monitor;
-
-    private final List<Event> events = new LinkedList<Event> ();
-
-    private final boolean initialUpdate;
+    final AbstractStateMonitor monitor;
 
     public AbstractConfiguration ( final AbstractConfiguration currentConfiguration, final AbstractStateMonitor monitor )
     {
+        super ( currentConfiguration );
         this.monitor = monitor;
-        this.initialUpdate = currentConfiguration == null;
     }
 
-    public void sendEvents ()
+    @Override
+    protected void sendEvent ( final Event event )
     {
-        if ( !this.initialUpdate )
-        {
-            for ( final Event event : this.events )
-            {
-                logger.debug ( "Sending event: {}", event );
-                this.monitor.sendEvent ( event );
-            }
-        }
-        this.events.clear ();
+        this.monitor.sendEvent ( event );
     }
 
-    protected void addEvent ( final EventBuilder builder )
+    @Override
+    protected void injectEventAttributes ( final EventBuilder builder )
     {
-        this.events.add ( builder.build () );
-    }
-
-    protected EventBuilder create ( final Object value, final UserInformation userInformation )
-    {
-        final EventBuilder builder = Event.create ();
-
         this.monitor.injectEventAttributes ( builder );
-
-        builder.attribute ( Event.Fields.EVENT_TYPE, "CFG" );
-
-        if ( userInformation != null )
-        {
-            builder.attribute ( Event.Fields.ACTOR_TYPE, "USER" );
-            builder.attribute ( Event.Fields.ACTOR_NAME, userInformation.getName () );
-        }
-
-        builder.attribute ( Event.Fields.VALUE, value );
-
-        return builder;
-    }
-
-    protected <T> T update ( final UserInformation userInformation, final T oldValue, final T newValue )
-    {
-        if ( oldValue == newValue )
-        {
-            // both are equal ... no event
-            return newValue;
-        }
-
-        if ( oldValue == null )
-        {
-            // the old value is null but the new is not ... send event
-            addEvent ( create ( newValue, userInformation ) );
-            return newValue;
-        }
-
-        if ( oldValue.equals ( newValue ) )
-        {
-            // old value and new value are equal ... no event
-            return newValue;
-        }
-
-        // old value and new value or not equal ... send event
-        addEvent ( create ( newValue, userInformation ) );
-        return newValue;
     }
 
 }

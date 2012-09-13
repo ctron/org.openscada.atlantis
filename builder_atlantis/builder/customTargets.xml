@@ -198,6 +198,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.datasource.common"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.sec"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.utils"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common.monitor"/>

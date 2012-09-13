@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA AE Utilities
+Bundle-SymbolicName: org.openscada.ae.utils
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.ae.utils;version="1.0.0"
+Import-Package: org.openscada.ae;version="1.0.0",
+ org.openscada.core;version="1.0.0",
+ org.openscada.sec;version="1.0.0",
+ org.slf4j;version="1.5.0"
