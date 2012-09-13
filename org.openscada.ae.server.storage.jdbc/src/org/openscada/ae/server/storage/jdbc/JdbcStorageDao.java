@@ -65,9 +65,9 @@ public class JdbcStorageDao extends BaseStorageDao
     private final String insertEventSql = "INSERT INTO %sOPENSCADA_AE_EVENTS " //
             + "(ID, INSTANCE_ID, SOURCE_TIMESTAMP, ENTRY_TIMESTAMP, MONITOR_TYPE, EVENT_TYPE, " //
             + "VALUE_TYPE, VALUE_STRING, VALUE_INTEGER, VALUE_DOUBLE, MESSAGE, " //
-            + "MESSAGE_CODE, PRIORITY, SOURCE, ACTOR_NAME, ACTOR_TYPE)" //
+            + "MESSAGE_CODE, PRIORITY, SOURCE, ACTOR_NAME, ACTOR_TYPE, SEVERITY)" //
             + " VALUES " //
-            + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+            + "(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
 
     private final String insertAttributesSql = "INSERT INTO %sOPENSCADA_AE_EVENTS_ATTR " //
             + "(ID, KEY, VALUE_TYPE, VALUE_STRING, VALUE_INTEGER, VALUE_DOUBLE)" //
@@ -79,7 +79,7 @@ public class JdbcStorageDao extends BaseStorageDao
 
     private final String selectEventSql = "SELECT E.ID, E.INSTANCE_ID, E.SOURCE_TIMESTAMP, E.ENTRY_TIMESTAMP, E.MONITOR_TYPE, E.EVENT_TYPE, " //
             + "E.VALUE_TYPE, E.VALUE_STRING, E.VALUE_INTEGER, E.VALUE_DOUBLE, E.MESSAGE, " //
-            + "E.MESSAGE_CODE, E.PRIORITY, E.SOURCE, E.ACTOR_NAME, E.ACTOR_TYPE, " //
+            + "E.MESSAGE_CODE, E.PRIORITY, E.SOURCE, E.ACTOR_NAME, E.ACTOR_TYPE, E.SEVERITY" //
             + "A.KEY, A.VALUE_TYPE, A.VALUE_STRING, A.VALUE_INTEGER, A.VALUE_DOUBLE " //
             + "FROM %1$sOPENSCADA_AE_EVENTS E LEFT JOIN %1$sOPENSCADA_AE_EVENTS_ATTR A ON (A.ID = E.ID) ";
 
@@ -167,6 +167,7 @@ public class JdbcStorageDao extends BaseStorageDao
                 stm.setString ( 14, clip ( 255, Variant.valueOf ( event.getField ( Fields.SOURCE ) ).asString ( "" ) ) );
                 stm.setString ( 15, clip ( 128, Variant.valueOf ( event.getField ( Fields.ACTOR_NAME ) ).asString ( "" ) ) );
                 stm.setString ( 16, clip ( 32, Variant.valueOf ( event.getField ( Fields.ACTOR_TYPE ) ).asString ( "" ) ) );
+                stm.setString ( 17, clip ( 32, Variant.valueOf ( event.getField ( Fields.PRIORITY ) ).asString ( "" ) ) );
                 stm.addBatch ();
                 try
                 {
@@ -274,7 +275,7 @@ public class JdbcStorageDao extends BaseStorageDao
                     {
                         logger.warn ( "more distinct records found for id {}, this shouldn't happen at all", id );
                     }
-                    if ( events != null && !events.isEmpty () )
+                    if ( ( events != null ) && !events.isEmpty () )
                     {
                         return events.get ( 0 );
                     }
@@ -355,7 +356,7 @@ public class JdbcStorageDao extends BaseStorageDao
                 }
             }
             final UUID id = UUID.fromString ( rs.getString ( 1 ) );
-            if ( lastId != null && !id.equals ( lastId ) )
+            if ( ( lastId != null ) && !id.equals ( lastId ) )
             {
                 events.add ( eb.build () );
                 l += 1;
@@ -384,12 +385,13 @@ public class JdbcStorageDao extends BaseStorageDao
             final String source = intern ( rs.getString ( 14 ) );
             final String actor = intern ( rs.getString ( 15 ) );
             final String actorType = intern ( rs.getString ( 16 ) );
+            final String severity = intern ( rs.getString ( 17 ) );
 
             eb.sourceTimestamp ( sourceTimestamp );
             eb.entryTimestamp ( entryTimestamp );
             eb.attribute ( Fields.MONITOR_TYPE, monitorType );
             eb.attribute ( Fields.EVENT_TYPE, eventType );
-            if ( valueType != null && valueString != null )
+            if ( ( valueType != null ) && ( valueString != null ) )
             {
                 eb.attribute ( Fields.VALUE, VariantEditor.toVariant ( valueType + "#" + valueString ) );
             }
@@ -399,14 +401,15 @@ public class JdbcStorageDao extends BaseStorageDao
             eb.attribute ( Fields.SOURCE, source );
             eb.attribute ( Fields.ACTOR_NAME, actor );
             eb.attribute ( Fields.ACTOR_TYPE, actorType );
+            eb.attribute ( Fields.SEVERITY, severity );
 
             // other attributes
-            final String field = intern ( rs.getString ( 17 ) );
-            valueType = rs.getString ( 18 );
-            valueString = rs.getString ( 19 );
+            final String field = intern ( rs.getString ( 18 ) );
+            valueType = intern ( rs.getString ( 19 ) );
+            valueString = rs.getString ( 20 );
             if ( field != null )
             {
-                if ( valueType != null && valueString != null )
+                if ( ( valueType != null ) && ( valueString != null ) )
                 {
                     eb.attribute ( field, VariantEditor.toVariant ( valueType + "#" + valueString ) );
                 }
