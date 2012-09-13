@@ -50,6 +50,8 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
 
         private String key;
 
+        private String value;
+
         public Configuration ( final Configuration currentConfiguration, final AbstractCommonHandlerImpl commonHandler, final EventProcessor eventProcessor )
         {
             super ( currentConfiguration, commonHandler, eventProcessor );
@@ -59,7 +61,13 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
                 this.exportAttribute = currentConfiguration.exportAttribute;
                 this.key = currentConfiguration.key;
                 this.alwaysExport = currentConfiguration.alwaysExport;
+                this.value = currentConfiguration.value;
             }
+        }
+
+        public void setValue ( final String value )
+        {
+            this.value = value;
         }
 
         public void setActive ( final UserInformation userInformation, final boolean active )
@@ -116,15 +124,36 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
 
         if ( this.configuration.active )
         {
-            context.put ( this.configuration.key, true );
+            context.put ( this.configuration.key, getValue () );
         }
 
         if ( this.configuration.exportAttribute )
         {
             if ( this.configuration.active || this.configuration.alwaysExport )
             {
-                builder.setAttribute ( getPrefixed ( this.configuration.key + ".active" ), Variant.valueOf ( this.configuration.active ) ); //$NON-NLS-1$
+                builder.setAttribute ( getPrefixed ( this.configuration.key + ".active" ), Variant.valueOf ( getValue () ) ); //$NON-NLS-1$
             }
+        }
+    }
+
+    private Object getValue ()
+    {
+        if ( this.configuration == null )
+        {
+            return null;
+        }
+        if ( this.configuration.value == null )
+        {
+            return this.configuration.active;
+        }
+
+        if ( !this.configuration.active )
+        {
+            return null;
+        }
+        else
+        {
+            return this.configuration.value;
         }
     }
 
@@ -140,6 +169,7 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
         c.setExportAttribute ( cfg.getBoolean ( "exportAttribute", false ) );
         c.setAlwaysExport ( cfg.getBoolean ( "alwaysExport", false ) );
         c.setKey ( cfg.getString ( "key", this.id ) );
+        c.setValue ( cfg.getString ( "value", null ) );
 
         this.configuration = c;
         c.sendEvents ();
