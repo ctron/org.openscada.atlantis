@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.datasource.AbstractVariantMonitor;
 import org.openscada.ae.monitor.datasource.Helper;
-import org.openscada.ae.monitor.datasource.common.list.Configuration.ListSeverity;
+import org.openscada.ae.monitor.datasource.common.ListSeverity;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
@@ -68,7 +68,7 @@ public class ListMonitor extends AbstractVariantMonitor
         c.setDefaultSeverity ( cfg.getEnum ( "defaultSeverity", ListSeverity.class, ListSeverity.OK ) );
 
         // read in severities
-        final Map<Variant, ListSeverity> severityMap = new HashMap<Variant, Configuration.ListSeverity> ();
+        final Map<Variant, ListSeverity> severityMap = new HashMap<Variant, ListSeverity> ();
         for ( final ListSeverity severity : ListSeverity.values () )
         {
             for ( final String str : cfg.getPrefixed ( "values." + severity.name () + "." ).values () )

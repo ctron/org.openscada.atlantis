@@ -21,34 +21,13 @@ package org.openscada.ae.monitor.datasource.common.list;
 
 import java.util.Map;
 
-import org.openscada.ae.Severity;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
 import org.openscada.ae.monitor.datasource.AbstractMasterItemMonitor;
+import org.openscada.ae.monitor.datasource.common.ListSeverity;
 import org.openscada.core.Variant;
 
 class Configuration extends AbstractConfiguration
 {
-    public static enum ListSeverity
-    {
-        OK ( null ),
-        INFORMATION ( Severity.INFORMATION ),
-        WARNING ( Severity.WARNING ),
-        ALARM ( Severity.ALARM ),
-        ERROR ( Severity.ERROR );
-
-        private Severity severity;
-
-        private ListSeverity ( final Severity severity )
-        {
-            this.severity = severity;
-        }
-
-        public Severity getSeverity ()
-        {
-            return this.severity;
-        }
-    }
-
     ListSeverity defaultSeverity;
 
     boolean defaultAck;

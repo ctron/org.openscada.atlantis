@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae.monitor.datasource.common;
+package org.openscada.ae.monitor.datasource.common.internal;
 
 import java.util.Hashtable;
 import java.util.LinkedList;
