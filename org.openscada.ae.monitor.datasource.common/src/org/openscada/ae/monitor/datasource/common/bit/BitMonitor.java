@@ -85,6 +85,7 @@ public class BitMonitor extends AbstractBooleanMonitor
 
         c.setReference ( userInformation, cfg.getBoolean ( "reference" ) );
         c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ALARM ) );
+        c.setRequireAck ( userInformation, cfg.getBoolean ( "requireAck", false ) );
 
         c.sendEvents ();
         this.configuration = c;

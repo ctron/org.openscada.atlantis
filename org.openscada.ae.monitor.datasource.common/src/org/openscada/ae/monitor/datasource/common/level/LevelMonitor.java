@@ -126,6 +126,7 @@ public class LevelMonitor extends AbstractNumericMonitor
         c.setSecondPrefix ( userInformation, cfg.getString ( "prefix", null ) );
         c.setCap ( userInformation, cfg.getBoolean ( "cap", false ) );
         c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ALARM ) );
+        c.setRequireAck ( userInformation, cfg.getBoolean ( "requireAck", false ) );
 
         this.configuration = c;
         c.sendEvents ();
@@ -147,7 +148,10 @@ public class LevelMonitor extends AbstractNumericMonitor
     {
         super.injectAttributes ( builder );
 
-        builder.setAttribute ( intern ( this.prefix + ".preset" ), Variant.valueOf ( this.configuration.preset ) );
+        if ( this.configuration != null )
+        {
+            builder.setAttribute ( intern ( this.prefix + ".preset" ), Variant.valueOf ( this.configuration.preset ) );
+        }
     }
 
     @Override
