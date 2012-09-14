@@ -31,11 +31,15 @@ import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import com.google.common.collect.Interner;
 
 public abstract class AbstractDemotingMasterItemMonitor extends AbstractMasterItemMonitor
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( AbstractDemotingMasterItemMonitor.class );
 
     private static final String CONTEXT_KEY_DEMOTE_TO_SEVERITY_SUFFIX = "severity";
 
@@ -47,9 +51,13 @@ public abstract class AbstractDemotingMasterItemMonitor extends AbstractMasterIt
 
     private static final String CONTEXT_KEY_DEMOTE_TO_ALARM_SUFFIX = "alarm";
 
+    private static final String CONTEXT_KEY_DEMOTE_TO_ACK_SUFFIX = "ack";
+
     private Severity severityLimit;
 
     private String demotePrefix;
+
+    private boolean demoteAck;
 
     public AbstractDemotingMasterItemMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String factoryId, final String prefix, final String defaultMonitorType )
     {
@@ -60,6 +68,7 @@ public abstract class AbstractDemotingMasterItemMonitor extends AbstractMasterIt
     protected DataItemValue handleDataUpdate ( final Map<String, Object> context, final DataItemValue value )
     {
         this.severityLimit = extractSeverity ( context );
+        this.demoteAck = false;
 
         if ( this.demotePrefix != null )
         {
@@ -78,6 +87,10 @@ public abstract class AbstractDemotingMasterItemMonitor extends AbstractMasterIt
             else if ( isKey ( CONTEXT_KEY_DEMOTE_TO_ALARM_SUFFIX, context ) )
             {
                 this.severityLimit = Severity.ALARM;
+            }
+            if ( isKey ( CONTEXT_KEY_DEMOTE_TO_ACK_SUFFIX, context ) )
+            {
+                this.demoteAck = true;
             }
         }
 
@@ -129,18 +142,32 @@ public abstract class AbstractDemotingMasterItemMonitor extends AbstractMasterIt
     @Override
     protected void setFailure ( final Variant value, final Long valueTimestamp, final Severity severity, final boolean requireAck )
     {
-        final Severity result = demote ( severity );
+        final Severity result = demoteSeverity ( severity );
         if ( result == null )
         {
             setOk ( value, valueTimestamp );
         }
         else
         {
-            super.setFailure ( value, valueTimestamp, result, requireAck );
+            super.setFailure ( value, valueTimestamp, result, demoteAck ( requireAck ) );
         }
     }
 
-    protected Severity demote ( final Severity severity )
+    protected boolean demoteAck ( final boolean requireAck )
+    {
+        if ( this.demotePrefix == null )
+        {
+            return requireAck;
+        }
+
+        if ( this.demoteAck )
+        {
+            return false;
+        }
+        return requireAck;
+    }
+
+    protected Severity demoteSeverity ( final Severity severity )
     {
         if ( this.demotePrefix == null || severity == null )
         {
@@ -154,6 +181,8 @@ public abstract class AbstractDemotingMasterItemMonitor extends AbstractMasterIt
         }
 
         final int ordinal = Math.min ( this.severityLimit.ordinal (), severity.ordinal () );
+
+        logger.debug ( "Demoted severity from {} to {}", severity.ordinal (), ordinal );
 
         return Severity.values ()[ordinal];
     }
