@@ -141,7 +141,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
 
         builder.attribute ( Fields.VALUE, state.getValue () );
         builder.attribute ( Fields.EVENT_TYPE, state.getStatus () );
-        builder.attribute ( Fields.PRIORITY, state.getSeverity () );
+        builder.attribute ( Fields.SEVERITY, state.getSeverity () );
 
         if ( decorator != null )
         {
