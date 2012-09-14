@@ -31,7 +31,6 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
-import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
@@ -50,9 +49,7 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
 
         private boolean alwaysExport;
 
-        private String key;
-
-        private String value;
+        private Map<String, Object> markers;
 
         public Configuration ( final Configuration currentConfiguration, final AbstractCommonHandlerImpl commonHandler, final EventProcessor eventProcessor )
         {
@@ -61,15 +58,9 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
             {
                 this.active = currentConfiguration.active;
                 this.exportAttribute = currentConfiguration.exportAttribute;
-                this.key = currentConfiguration.key;
                 this.alwaysExport = currentConfiguration.alwaysExport;
-                this.value = currentConfiguration.value;
+                this.markers = currentConfiguration.markers;
             }
-        }
-
-        public void setValue ( final String value )
-        {
-            this.value = value;
         }
 
         public void setActive ( final UserInformation userInformation, final boolean active )
@@ -87,9 +78,9 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
             this.alwaysExport = alwaysExport;
         }
 
-        public void setKey ( final String key )
+        public void setMarkers ( final Map<String, Object> markers )
         {
-            this.key = key;
+            this.markers = markers;
         }
 
     }
@@ -98,12 +89,9 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
 
     private final EventProcessor eventProcessor;
 
-    private final String id;
-
     public MarkerHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
-        super ( configurationId, poolTracker, priority, caTracker, MarkerHandlerFactoryImpl.FACTORY_ID, MarkerHandlerFactoryImpl.FACTORY_ID );
-        this.id = configurationId;
+        super ( configurationId, poolTracker, priority, caTracker, MarkerHandlerFactoryImpl.FACTORY_ID + "." + configurationId, MarkerHandlerFactoryImpl.FACTORY_ID );
         this.eventProcessor = eventProcessor;
     }
 
@@ -126,36 +114,15 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
 
         if ( this.configuration.active )
         {
-            context.put ( this.configuration.key, getValue () );
+            context.putAll ( this.configuration.markers );
         }
 
         if ( this.configuration.exportAttribute )
         {
             if ( this.configuration.active || this.configuration.alwaysExport )
             {
-                builder.setAttribute ( getPrefixed ( this.configuration.key + ".active" ), Variant.valueOf ( getValue () ) ); //$NON-NLS-1$
+                builder.setAttribute ( getPrefixed ( "active" ), Variant.valueOf ( this.configuration.active ) ); //$NON-NLS-1$
             }
-        }
-    }
-
-    private Object getValue ()
-    {
-        if ( this.configuration == null )
-        {
-            return null;
-        }
-        if ( this.configuration.value == null )
-        {
-            return this.configuration.active;
-        }
-
-        if ( !this.configuration.active )
-        {
-            return null;
-        }
-        else
-        {
-            return this.configuration.value;
         }
     }
 
@@ -170,8 +137,22 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
         c.setActive ( userInformation, cfg.getBoolean ( "active", false ) );
         c.setExportAttribute ( cfg.getBoolean ( "exportAttribute", false ) );
         c.setAlwaysExport ( cfg.getBoolean ( "alwaysExport", false ) );
-        c.setKey ( cfg.getString ( "key", this.id ) );
-        c.setValue ( cfg.getString ( "value", null ) );
+
+        // get markers
+        final Map<String, Object> markers = new HashMap<String, Object> ();
+        for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "marker." ).entrySet () )
+        {
+            final String value = entry.getValue ();
+            if ( value == null || value.isEmpty () )
+            {
+                markers.put ( entry.getKey (), true );
+            }
+            else
+            {
+                markers.put ( entry.getKey (), value );
+            }
+        }
+        c.setMarkers ( markers );
 
         this.configuration = c;
         c.sendEvents ();
@@ -191,20 +172,17 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
     {
         final Map<String, String> data = new HashMap<String, String> ();
 
-        final WriteAttributeResults results = new WriteAttributeResults ();
-
         if ( this.configuration != null )
         {
-            final Variant active = attributes.get ( this.configuration.key + ".active" ); //$NON-NLS-1$
+            final Variant active = attributes.get ( "active" ); //$NON-NLS-1$
 
             if ( active != null && !active.isNull () )
             {
                 data.put ( "active", "" + active.asBoolean () ); //$NON-NLS-1$
-                results.put ( this.configuration.key + ".active", WriteAttributeResult.OK );
             }
         }
 
-        return updateConfiguration ( data, attributes, false, operationParameters, results );
+        return updateConfiguration ( data, attributes, false, operationParameters );
     }
 
 }
