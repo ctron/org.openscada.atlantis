@@ -534,15 +534,16 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
     private WriteRequestResult preProcessWrite ( final WriteRequest writeRequest )
     {
         final HandlerEntry[] handlers;
-        synchronized ( this )
+        synchronized ( this.itemHandler )
         {
             handlers = this.itemHandler.toArray ( new HandlerEntry[this.itemHandler.size ()] );
         }
 
         WriteRequest request = writeRequest;
         WriteRequestResult finalResult = new WriteRequestResult ( writeRequest.getValue (), writeRequest.getAttributes (), null );
-        for ( final HandlerEntry handler : handlers )
+        for ( int i = handlers.length; i > 0; i-- )
         {
+            final HandlerEntry handler = handlers[i - 1];
             final WriteRequestResult nextResult = handler.getHandler ().processWrite ( request );
 
             if ( nextResult != null )
