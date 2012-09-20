@@ -312,17 +312,17 @@ public class AverageDataSource implements ServiceListener
         }
         {
             final DataItemValue.Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( mean ) );
-            setAdditionalAttributes ( divb, numOfErrorValues, numOfErrorValues, numOfDisconnected );
+            setAdditionalAttributes ( divb, numOfManualValues, numOfErrorValues, numOfDisconnected );
             this.meanDataSource.setValue ( divb.build () );
         }
         {
             final DataItemValue.Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( median ) );
-            setAdditionalAttributes ( divb, numOfErrorValues, numOfErrorValues, numOfDisconnected );
+            setAdditionalAttributes ( divb, numOfManualValues, numOfErrorValues, numOfDisconnected );
             this.medianDataSource.setValue ( divb.build () );
         }
         {
             final DataItemValue.Builder divb = new DataItemValue.Builder ().setSubscriptionState ( SubscriptionState.CONNECTED ).setValue ( Variant.valueOf ( deviation ) );
-            setAdditionalAttributes ( divb, numOfErrorValues, numOfErrorValues, numOfDisconnected );
+            setAdditionalAttributes ( divb, numOfManualValues, numOfErrorValues, numOfDisconnected );
             this.deviationDataSource.setValue ( divb.build () );
         }
     }
