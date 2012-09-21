@@ -343,7 +343,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                                     callback.failed ( e.getMessage () );
                                 }
                             }
-
+                            break;
+                        case REQUESTED:
+                            //$FALL-THROUGH$
+                        case RUNNING:
                             break;
                     }
                 }
@@ -439,7 +442,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                                     callback.failed ( e.getMessage () );
                                 }
                             }
-
+                            break;
+                        case REQUESTED:
+                            //$FALL-THROUGH$
+                        case RUNNING:
                             break;
                     }
                 }
@@ -663,6 +669,10 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
                                     callback.failed ( e.getMessage () );
                                 }
                             }
+                            break;
+                        case REQUESTED:
+                            //$FALL-THROUGH$
+                        case RUNNING:
                             break;
                     }
                 }
