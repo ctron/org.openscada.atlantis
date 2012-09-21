@@ -155,8 +155,8 @@ public class Update
 
             // convert to positional version
             final Map<String, List<Integer>> posMap = new HashMap<String, List<Integer>> ();
-            final Object[] positionalParameters = SqlHelper.expandParameters ( posMap, parameters );
             final String positionalSql = SqlHelper.convertSql ( this.sql, posMap );
+            final Object[] positionalParameters = SqlHelper.expandParameters ( posMap, parameters );
 
             final PreparedStatement stmt = connection.prepareStatement ( positionalSql );
 
