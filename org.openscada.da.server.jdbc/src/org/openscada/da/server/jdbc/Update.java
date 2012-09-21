@@ -34,6 +34,7 @@ import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.utils.lang.Immutable;
+import org.openscada.utils.sql.SqlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
