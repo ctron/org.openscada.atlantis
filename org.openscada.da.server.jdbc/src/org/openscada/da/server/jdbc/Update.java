@@ -19,12 +19,12 @@
 
 package org.openscada.da.server.jdbc;
 
-import java.math.BigDecimal;
-import java.sql.CallableStatement;
-import java.sql.Types;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.openscada.core.Variant;
@@ -142,47 +142,51 @@ public class Update
         {
             connection.setAutoCommit ( true );
 
-            final CallableStatement statement = connection.prepareCall ( this.sql );
-
-            // set the main value
+            // create parameter map
+            final Map<String, Object> parameters = new HashMap<String, Object> ();
             for ( final Mapping mapping : this.mappings )
             {
                 if ( mapping.getAttributes () == null )
                 {
-                    switch ( value.getType () )
-                    {
-                    case BOOLEAN:
-                        statement.setBoolean ( mapping.getNamedParameter (), value.asBoolean () );
-                        break;
-                    case DOUBLE:
-                        statement.setDouble ( mapping.getNamedParameter (), value.asDouble () );
-                        break;
-                    case INT64:
-                        statement.setBigDecimal ( mapping.getNamedParameter (), BigDecimal.valueOf ( value.asLong () ) );
-                        break;
-                    case INT32:
-                        statement.setInt ( mapping.getNamedParameter (), value.asInteger () );
-                        break;
-                    case STRING:
-                        statement.setString ( mapping.getNamedParameter (), value.asString () );
-                        break;
-                    case NULL:
-                        statement.setNull ( mapping.getNamedParameter (), Types.VARCHAR );
-                        break;
-                    case UNKNOWN:
-                    default:
-                        statement.setObject ( mapping.getNamedParameter (), value.getValue () );
-                    }
+                    parameters.put ( mapping.getNamedParameter (), value.getValue () );
                 }
             }
 
-            final int result = statement.executeUpdate ();
+            // convert to positional version
+            final Map<String, List<Integer>> posMap = new HashMap<String, List<Integer>> ();
+            final Object[] positionalParameters = SqlHelper.expandParameters ( posMap, parameters );
+            final String positionalSql = SqlHelper.convertSql ( this.sql, posMap );
 
-            return result;
+            final PreparedStatement stmt = connection.prepareStatement ( positionalSql );
+
+            try
+            {
+                applyParameters ( stmt, positionalParameters );
+                return stmt.executeUpdate ();
+            }
+            finally
+            {
+                if ( stmt != null )
+                {
+                    stmt.close ();
+                }
+            }
         }
         finally
         {
             connection.close ();
+        }
+    }
+
+    private void applyParameters ( final PreparedStatement stmt, final Object... parameters ) throws SQLException
+    {
+        if ( parameters != null )
+        {
+            for ( int i = 0; i < parameters.length; i++ )
+            {
+                logger.trace ( "Set parameter #{} - {}", i + 1, parameters[i] );
+                stmt.setObject ( i + 1, parameters[i] );
+            }
         }
     }
 
