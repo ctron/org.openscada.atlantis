@@ -67,8 +67,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A datasource that calculates based on input and/or output formula
+ * 
  * @author Jens Reimann
- *
  */
 public class FormulaDataSource extends AbstractMultiSourceDataSource
 {
@@ -106,7 +106,7 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
 
     private VariantType outputDatasourceType;
 
-    public FormulaDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor )
+    public FormulaDataSource ( final BundleContext context, final ObjectPoolTracker<DataSource> poolTracker, final ScheduledExecutorService executor )
     {
         super ( poolTracker );
 
