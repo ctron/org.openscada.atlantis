@@ -19,7 +19,9 @@
 
 package org.openscada.da.server.jdbc;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
+import java.sql.Types;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
@@ -147,7 +149,30 @@ public class Update
             {
                 if ( mapping.getAttributes () == null )
                 {
-                    statement.setObject ( mapping.getNamedParameter (), value.getValue () );
+                    switch ( value.getType () )
+                    {
+                    case BOOLEAN:
+                        statement.setBoolean ( mapping.getNamedParameter (), value.asBoolean () );
+                        break;
+                    case DOUBLE:
+                        statement.setDouble ( mapping.getNamedParameter (), value.asDouble () );
+                        break;
+                    case INT64:
+                        statement.setBigDecimal ( mapping.getNamedParameter (), BigDecimal.valueOf ( value.asLong () ) );
+                        break;
+                    case INT32:
+                        statement.setInt ( mapping.getNamedParameter (), value.asInteger () );
+                        break;
+                    case STRING:
+                        statement.setString ( mapping.getNamedParameter (), value.asString () );
+                        break;
+                    case NULL:
+                        statement.setNull ( mapping.getNamedParameter (), Types.VARCHAR );
+                        break;
+                    case UNKNOWN:
+                    default:
+                        statement.setObject ( mapping.getNamedParameter (), value.getValue () );
+                    }
                 }
             }
 
