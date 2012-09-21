@@ -45,6 +45,7 @@ import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
 import org.openscada.da.datasource.base.DataSourceHandler;
 import org.openscada.utils.concurrent.FutureTask;
@@ -84,7 +85,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private final EventProcessor eventProcessor;
 
-    public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor, final EventProcessor eventProcessor )
+    public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker<DataSource> poolTracker, final ScheduledExecutorService executor, final EventProcessor eventProcessor )
     {
         super ( poolTracker );
         this.executor = executor;
