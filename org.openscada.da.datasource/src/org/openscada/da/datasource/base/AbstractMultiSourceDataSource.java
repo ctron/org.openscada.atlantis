@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -19,124 +19,65 @@
 
 package org.openscada.da.datasource.base;
 
-import java.util.Collection;
-import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.VariantType;
 import org.openscada.da.datasource.DataSource;
+import org.openscada.da.datasource.DataSourceHandler;
+import org.openscada.da.datasource.MultiDataSourceListener;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMultiSourceDataSource extends AbstractDataSource
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( AbstractMultiSourceDataSource.class );
-
-    protected final Map<String, DataSourceHandler> sources = new HashMap<String, DataSourceHandler> ();
-
-    protected final ObjectPoolTracker<DataSource> poolTracker;
-
-    private boolean disposed;
-
-    private final DataSourceHandlerListener listener;
+    private final MultiDataSourceListener listener;
 
     public AbstractMultiSourceDataSource ( final ObjectPoolTracker<DataSource> poolTracker )
     {
         super ();
-        this.poolTracker = poolTracker;
-
-        this.listener = new DataSourceHandlerListener () {
+        this.listener = new MultiDataSourceListener ( poolTracker ) {
 
             @Override
-            public void handleChange ()
+            protected void handleChange ( final Map<String, DataSourceHandler> sources )
             {
-                AbstractMultiSourceDataSource.this.triggerHandleChange ();
+                AbstractMultiSourceDataSource.this.handleChange ( sources );
             }
         };
     }
 
-    protected synchronized void setDataSources ( final Map<String, String> parameters ) throws InvalidSyntaxException
+    protected void setDataSources ( final Map<String, String> parameters ) throws InvalidSyntaxException
     {
-        clearSources ();
-
-        for ( final Map.Entry<String, String> entry : parameters.entrySet () )
-        {
-            final String key = entry.getKey ();
-            final String value = entry.getValue ();
-            if ( key.startsWith ( "datasource." ) )
-            {
-                final String name = key.substring ( "datasource.".length () );
-                final VariantType type = getType ( parameters.get ( "datasourceType." + name ) );
-                addDataSource ( name, value, type );
-            }
-        }
+        this.listener.setDataSources ( parameters );
     }
 
-    protected VariantType getType ( final String type )
-    {
-        if ( type == null || type.isEmpty () )
-        {
-            return null;
-        }
-
-        try
-        {
-            return VariantType.valueOf ( type );
-        }
-        catch ( final IllegalArgumentException e )
-        {
-            throw new IllegalArgumentException ( String.format ( "Datatype '%s' is unknown", type ), e );
-        }
-    }
-
-    protected abstract void handleChange ();
-
-    protected synchronized void addDataSource ( final String datasourceKey, final String datasourceId, final VariantType type ) throws InvalidSyntaxException
-    {
-        logger.info ( "Adding data source: {} -> {} ({})", new Object[] { datasourceKey, datasourceId, type } );
-
-        final DataSourceHandler dsHandler = new DataSourceHandler ( this.poolTracker, datasourceId, this.listener, type );
-        this.sources.put ( datasourceKey, dsHandler );
-    }
-
-    protected synchronized void triggerHandleChange ()
-    {
-        if ( this.disposed )
-        {
-            return;
-        }
-        handleChange ();
-    }
+    protected abstract void handleChange ( Map<String, DataSourceHandler> sources );
 
     /**
      * Clear all datasources
      */
-    protected synchronized void clearSources ()
+    protected void clearSources ()
     {
-        for ( final DataSourceHandler source : this.sources.values () )
-        {
-            source.dispose ();
-        }
-        this.sources.clear ();
+        this.listener.clearSources ();
     }
 
     public void dispose ()
     {
-        final Collection<DataSourceHandler> disposeSources;
+        this.listener.dispose ();
+    }
 
-        synchronized ( this )
-        {
-            disposeSources = this.sources.values ();
-            this.disposed = true;
-            this.sources.clear ();
-        }
+    public void addDataSource ( final String datasourceKey, final String datasourceId, final VariantType type ) throws InvalidSyntaxException
+    {
+        this.listener.addDataSource ( datasourceKey, datasourceId, type );
+    }
 
-        for ( final DataSourceHandler handler : disposeSources )
-        {
-            handler.dispose ();
-        }
+    public Map<String, DataSourceHandler> getSourcesCopy ()
+    {
+        return this.listener.getSourcesCopy ();
+    }
+
+    public VariantType getType ( final String type )
+    {
+        return this.listener.getType ( type );
     }
 }

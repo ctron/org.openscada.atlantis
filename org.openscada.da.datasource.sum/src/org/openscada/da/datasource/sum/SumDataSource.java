@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,8 +35,8 @@ import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
+import org.openscada.da.datasource.DataSourceHandler;
 import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
-import org.openscada.da.datasource.base.DataSourceHandler;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -111,14 +111,14 @@ public class SumDataSource extends AbstractMultiSourceDataSource
         }
 
         this.types = types;
-        handleChange ();
+        handleChange ( getSourcesCopy () );
     }
 
     @Override
-    protected synchronized void handleChange ()
+    protected synchronized void handleChange ( final Map<String, DataSourceHandler> sources )
     {
-        final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ( this.sources.size () );
-        for ( final Map.Entry<String, DataSourceHandler> entry : this.sources.entrySet () )
+        final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ( sources.size () );
+        for ( final Map.Entry<String, DataSourceHandler> entry : sources.entrySet () )
         {
             values.put ( entry.getKey (), entry.getValue ().getValue () );
         }

@@ -26,9 +26,7 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.MonitorStatus;
 import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
@@ -68,21 +66,11 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
 
     protected String prefix;
 
-    private boolean akn;
-
-    private MonitorStatus state;
-
-    private boolean alarm;
-
-    private boolean unsafe;
-
     private final String defaultMonitorType;
 
     private final ObjectPoolTracker<MasterItem> poolTracker;
 
     private final Executor executor;
-
-    private boolean active;
 
     private Configuration configuration;
 
@@ -134,6 +122,8 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
 
     }
 
+    private final MonitorStateInjector monitorStateInjector;
+
     public AbstractMasterItemMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String factoryId, final String prefix, final String defaultMonitorType )
     {
         super ( id, factoryId, executor, context, stringInterner, eventProcessor );
@@ -142,6 +132,8 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         this.poolTracker = poolTracker;
         this.prefix = prefix;
         this.defaultMonitorType = defaultMonitorType;
+
+        this.monitorStateInjector = new MonitorStateInjector ( prefix, stringInterner );
     }
 
     @Override
@@ -336,16 +328,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
     {
         super.notifyStateChange ( status );
 
-        // evaluate status bits for later use ... but only when updating
-        this.state = status.getStatus ();
-        this.active = this.state != MonitorStatus.INACTIVE;
-        this.akn = this.state == MonitorStatus.NOT_AKN || this.state == MonitorStatus.NOT_OK_NOT_AKN;
-        this.unsafe = this.state == MonitorStatus.UNSAFE;
-        this.alarm = this.state == MonitorStatus.NOT_OK || this.state == MonitorStatus.NOT_OK_AKN || this.state == MonitorStatus.NOT_OK_NOT_AKN;
-
-        // no re-process the master chain since our attributes have changed
-        // FIXME: check if this is really necessary!
-        reprocess ();
+        this.monitorStateInjector.notifyStateChange ( status );
     }
 
     /**
@@ -356,48 +339,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
      */
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( intern ( this.prefix + ".active" ), Variant.valueOf ( this.active ) );
-
-        builder.setAttribute ( intern ( this.prefix + ".ackRequired" ), Variant.valueOf ( this.akn ) );
-        builder.setAttribute ( intern ( this.prefix + ".state" ), Variant.valueOf ( this.state ) );
-
-        builder.setAttribute ( intern ( this.prefix + ".unsafe" ), Variant.valueOf ( this.unsafe ) );
-
-        // be sure we don't have a null value
-        final Severity severity = getCurrentSeverity ();
-
-        switch ( severity )
-        {
-            case INFORMATION:
-                builder.setAttribute ( intern ( this.prefix + ".info" ), Variant.valueOf ( this.alarm ) );
-                break;
-            case WARNING:
-                builder.setAttribute ( intern ( this.prefix + ".warning" ), Variant.valueOf ( this.alarm ) );
-                break;
-            case ALARM:
-                builder.setAttribute ( intern ( this.prefix + ".alarm" ), Variant.valueOf ( this.alarm ) );
-                break;
-            case ERROR:
-                builder.setAttribute ( intern ( this.prefix + ".error" ), Variant.valueOf ( this.alarm ) );
-                break;
-        }
-    }
-
-    private Severity getCurrentSeverity ()
-    {
-        Severity severity = getCurrentState ().getSeverity ();
-        severity = severity == null ? Severity.ALARM : severity;
-        return severity;
-    }
-
-    @Override
-    protected void buildMonitorAttributes ( final Map<String, Variant> attributes )
-    {
-        super.buildMonitorAttributes ( attributes );
-
-        final Severity severity = getCurrentSeverity ();
-
-        attributes.put ( "severity", Variant.valueOf ( severity.name () ) );
+        this.monitorStateInjector.injectAttributes ( builder );
     }
 
     private WriteRequestResult handleProcessWrite ( final WriteRequest request )

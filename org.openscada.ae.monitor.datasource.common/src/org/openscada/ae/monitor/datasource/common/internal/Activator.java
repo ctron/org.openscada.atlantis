@@ -96,16 +96,6 @@ public class Activator implements BundleActivator
         this.monitorServicePool = new ObjectPoolImpl<MonitorService> ();
         this.monitorServicePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.monitorServicePool, MonitorService.class );
 
-        /*
-         * priorities from default setup
-        makeLevelFactory ( context, "ceil", "MAX", true, true, 1400, true );
-        makeLevelFactory ( context, "highhigh", "HH", true, false, 1300, false );
-        makeLevelFactory ( context, "high", "H", true, false, 1300, false );
-        makeLevelFactory ( context, "low", "L", false, false, 1300, false );
-        makeLevelFactory ( context, "lowlow", "LL", false, false, 1300, false );
-        makeLevelFactory ( context, "floor", "MIN", false, true, 1400, true );
-        */
-
         {
             final LevelMonitorFactory factory = new LevelMonitorFactory ( bundleContext, this.monitorServicePool, this.eventProcessor, this.executor, this.stringInterner, this.poolTracker );
             final Hashtable<String, Object> properties = new Hashtable<String, Object> ();

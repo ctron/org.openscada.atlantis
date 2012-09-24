@@ -17,13 +17,10 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.da.datasource.base;
+package org.openscada.da.datasource;
 
 import org.openscada.core.VariantType;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.datasource.DataSource;
-import org.openscada.da.datasource.DataSourceListener;
-import org.openscada.da.datasource.SingleDataSourceTracker;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
