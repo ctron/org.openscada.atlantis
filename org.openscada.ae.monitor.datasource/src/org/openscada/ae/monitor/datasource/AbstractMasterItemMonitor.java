@@ -344,6 +344,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         this.alarm = this.state == MonitorStatus.NOT_OK || this.state == MonitorStatus.NOT_OK_AKN || this.state == MonitorStatus.NOT_OK_NOT_AKN;
 
         // no re-process the master chain since our attributes have changed
+        // FIXME: check if this is really necessary!
         reprocess ();
     }
 
