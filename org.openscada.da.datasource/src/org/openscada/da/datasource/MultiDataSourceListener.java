@@ -117,11 +117,14 @@ public abstract class MultiDataSourceListener
         this.sources.put ( datasourceKey, dsHandler );
     }
 
-    protected synchronized void triggerHandleChange ()
+    protected void triggerHandleChange ()
     {
-        if ( this.disposed )
+        synchronized ( this )
         {
-            return;
+            if ( this.disposed )
+            {
+                return;
+            }
         }
         handleChange ( this.sources );
     }
