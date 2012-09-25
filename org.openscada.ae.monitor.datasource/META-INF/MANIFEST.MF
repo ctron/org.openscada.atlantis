@@ -47,3 +47,4 @@ Export-Package: org.openscada.ae.monitor.datasource;version="1.0.0";
    org.openscada.ae.monitor,
    org.openscada.ae.monitor.common"
 Bundle-Activator: org.openscada.ae.monitor.datasource.Activator
+Bundle-ActivationPolicy: lazy
