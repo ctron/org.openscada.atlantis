@@ -154,6 +154,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
     @Override
     protected synchronized void notifyStateChange ( final MonitorStatusInformation state )
     {
+        super.notifyStateChange ( state );
         this.monitorStateInjector.notifyStateChange ( state );
     }
 
@@ -240,7 +241,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         applyState ( evaluateState ( values ) );
     }
 
-    private void applyState ( final ScriptMonitorResult evaluateState )
+    private synchronized void applyState ( final ScriptMonitorResult evaluateState )
     {
         logger.debug ( "Apply state: {}", evaluateState );
         switch ( evaluateState.monitorStatus )
