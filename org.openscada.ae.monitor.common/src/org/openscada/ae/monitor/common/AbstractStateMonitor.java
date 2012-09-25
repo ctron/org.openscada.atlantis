@@ -165,6 +165,8 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
     {
         final MonitorStatus status;
 
+        logger.debug ( "Current state - {}", this.currentState );
+
         if ( this.currentState == null || this.currentState.getState () == null )
         {
             status = MonitorStatus.INIT;
