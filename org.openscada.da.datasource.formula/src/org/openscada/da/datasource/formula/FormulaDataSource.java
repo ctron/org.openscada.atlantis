@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -426,7 +426,7 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
 
         try
         {
-            final Map<String, Integer> flags = new HashMap<String, Integer> ( 3 );
+            final Map<String, Integer> flags = new HashMap<String, Integer> ( 4 );
             final Map<String, Object> values = new HashMap<String, Object> ( sources.size () );
 
             gatherData ( sources, flags, values );
@@ -462,6 +462,10 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
             if ( value.isError () )
             {
                 incMap ( "error", flags );
+            }
+            if ( value.isWarning () )
+            {
+                incMap ( "warning", flags );
             }
             if ( value.isManual () )
             {
