@@ -32,6 +32,7 @@ import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
 import org.openscada.ae.monitor.common.DemoteImpl;
+import org.openscada.ae.monitor.common.PersistentInformation;
 import org.openscada.ae.monitor.datasource.MonitorStateInjector;
 import org.openscada.ae.monitor.script.ScriptMonitorResult.FailureBuilder;
 import org.openscada.ae.monitor.script.ScriptMonitorResult.OkBuilder;
@@ -154,10 +155,19 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
     protected synchronized void notifyStateChange ( final MonitorStatusInformation state )
     {
         this.monitorStateInjector.notifyStateChange ( state );
-    };
+    }
 
     @Override
-    public synchronized void update ( final UserInformation userInformation, final Map<String, String> properties ) throws Exception
+    protected synchronized void applyPersistentInformation ( final PersistentInformation persistentInformation )
+    {
+        super.applyPersistentInformation ( persistentInformation );
+
+        // information was updated .. now we need to update the DA attributes
+        handleChange ( this.listener.getSourcesCopy () );
+    }
+
+    @Override
+    public void update ( final UserInformation userInformation, final Map<String, String> properties ) throws Exception
     {
         logger.info ( "Changing configuration - {}", properties );
 
@@ -173,7 +183,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         handleChange ( this.listener.getSourcesCopy () );
     }
 
-    private void setScript ( final ConfigurationDataHelper cfg ) throws ScriptException
+    private synchronized void setScript ( final ConfigurationDataHelper cfg ) throws ScriptException
     {
         String engine = cfg.getString ( "engine", DEFAULT_ENGINE_NAME );
         if ( "".equals ( engine ) )
