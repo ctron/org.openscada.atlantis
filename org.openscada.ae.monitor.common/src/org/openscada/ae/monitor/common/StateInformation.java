@@ -57,6 +57,12 @@ public class StateInformation
         this.lastAckUser = lastAckUser;
     }
 
+    @Override
+    public String toString ()
+    {
+        return String.format ( "[%s: %s]", this.state, this.severity );
+    }
+
     public State getState ()
     {
         return this.state;
