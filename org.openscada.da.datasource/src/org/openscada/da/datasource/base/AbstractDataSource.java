@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -23,6 +23,8 @@ import java.util.Calendar;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
@@ -33,9 +35,9 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Basic implementation of a data source.
+ * 
  * @author Jens Reimann
  * @since 0.15.0
- *
  */
 public abstract class AbstractDataSource implements DataSource
 {
@@ -49,66 +51,100 @@ public abstract class AbstractDataSource implements DataSource
 
     private Calendar lastTimestamp = null;
 
+    private final Lock lock;
+
+    public AbstractDataSource ()
+    {
+        this.lock = new ReentrantLock ();
+    }
+
     /**
-     * Return the executor to use for sending out events 
+     * Return the executor to use for sending out events
+     * 
      * @return the executor to use, must never be <code>null</code>
      */
     protected abstract Executor getExecutor ();
 
     @Override
-    public synchronized void addListener ( final DataSourceListener listener )
+    public void addListener ( final DataSourceListener listener )
     {
-        if ( this.listeners.add ( listener ) )
+        try
         {
-            final DataItemValue value = this.value;
-            getExecutor ().execute ( new Runnable () {
+            this.lock.lock ();
 
-                @Override
-                public void run ()
-                {
-                    listener.stateChanged ( value );
-                }
-            } );
+            if ( this.listeners.add ( listener ) )
+            {
+                final DataItemValue value = this.value;
+                getExecutor ().execute ( new Runnable () {
+
+                    @Override
+                    public void run ()
+                    {
+                        listener.stateChanged ( value );
+                    }
+                } );
+            }
+        }
+        finally
+        {
+            this.lock.unlock ();
         }
     }
 
     @Override
-    public synchronized void removeListener ( final DataSourceListener listener )
+    public void removeListener ( final DataSourceListener listener )
     {
-        this.listeners.remove ( listener );
+        try
+        {
+            this.lock.lock ();
+            this.listeners.remove ( listener );
+        }
+        finally
+        {
+            this.lock.unlock ();
+        }
     }
 
     protected synchronized void updateData ( DataItemValue value )
     {
         logger.debug ( "Update data: {} -> {}", new Object[] { value, value == null ? "" : value.getAttributes () } );
 
-        if ( this.value != null )
+        try
         {
-            if ( this.value.equals ( value ) )
+            this.lock.lock ();
+
+            if ( this.value != null )
             {
-                logger.debug ( "No data change. Discarding" );
-                return;
+                if ( this.value.equals ( value ) )
+                {
+                    logger.debug ( "No data change. Discarding" );
+                    return;
+                }
+            }
+
+            value = applyAutoTimestamp ( value );
+
+            this.lastValue = value == null ? null : value.getValue ();
+            this.value = value;
+
+            final DataItemValue finalValue = value;
+
+            // fire listeners
+            for ( final DataSourceListener listener : this.listeners )
+            {
+                getExecutor ().execute ( new Runnable () {
+
+                    @Override
+                    public void run ()
+                    {
+                        listener.stateChanged ( finalValue );
+                    }
+                } );
             }
         }
-
-        value = applyAutoTimestamp ( value );
-
-        this.lastValue = value == null ? null : value.getValue ();
-        this.value = value;
-
-        final DataItemValue finalValue = value;
-
-        // fire listeners
-        for ( final DataSourceListener listener : this.listeners )
+        finally
         {
-            getExecutor ().execute ( new Runnable () {
-
-                @Override
-                public void run ()
-                {
-                    listener.stateChanged ( finalValue );
-                }
-            } );
+            this.lock.unlock ();
         }
     }
 
