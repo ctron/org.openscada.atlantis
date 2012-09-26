@@ -89,7 +89,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         }
     }
 
-    private static final String DEFAULT_ENGINE_NAME = "JavaScript";
+    private static final String DEFAULT_ENGINE_NAME = "JavaScript"; //$NON-NLS-1$
 
     private final InjectMasterHandler handler;
 
@@ -117,7 +117,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
     {
         super ( id, factoryId, executor, context, stringInterner, eventProcessor );
 
-        this.prefix = stringInterner.intern ( factoryId + ". " + id );
+        this.prefix = stringInterner.intern ( factoryId + ". " + id ); //$NON-NLS-1$
 
         this.classLoader = getClass ().getClassLoader ();
 
@@ -174,7 +174,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
     @Override
     public void update ( final UserInformation userInformation, final Map<String, String> properties ) throws Exception
     {
-        logger.info ( "Changing configuration - {}", properties );
+        logger.info ( "Changing configuration - {}", properties ); //$NON-NLS-1$
 
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
@@ -184,14 +184,14 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         this.handler.update ( userInformation, properties );
 
         this.listener.setDataSources ( properties );
-        setStringAttributes ( cfg.getPrefixed ( "info." ) );
+        setStringAttributes ( cfg.getPrefixed ( "info." ) ); //$NON-NLS-1$
 
         handleChange ( this.listener.getSourcesCopy () );
     }
 
     private synchronized void setScript ( final ConfigurationDataHelper cfg ) throws ScriptException, IOException
     {
-        String engine = cfg.getString ( "scriptEngine", DEFAULT_ENGINE_NAME );
+        String engine = cfg.getString ( "scriptEngine", DEFAULT_ENGINE_NAME ); //$NON-NLS-1$
         if ( "".equals ( engine ) ) // catches null
         {
             engine = DEFAULT_ENGINE_NAME;
@@ -206,13 +206,13 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         }
 
         // trigger init script
-        final String initScript = cfg.getString ( "init" );
+        final String initScript = cfg.getString ( "init" ); //$NON-NLS-1$
         if ( initScript != null )
         {
             new ScriptExecutor ( this.scriptEngine, initScript, this.classLoader ).execute ( this.scriptContext );
         }
 
-        this.updateCommand = makeScript ( cfg.getString ( "updateCommand" ) );
+        this.updateCommand = makeScript ( cfg.getString ( "updateCommand" ) ); //$NON-NLS-1$
     }
 
     private ScriptExecutor makeScript ( final String string ) throws ScriptException
@@ -248,7 +248,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
 
     private synchronized void applyState ( final ScriptMonitorResult evaluateState )
     {
-        logger.debug ( "Apply state: {}", evaluateState );
+        logger.debug ( "Apply state: {}", evaluateState ); //$NON-NLS-1$
         switch ( evaluateState.monitorStatus )
         {
             case UNSAFE:
@@ -270,28 +270,28 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
     {
         final Map<String, Object> scriptObjects = new HashMap<String, Object> ();
 
-        scriptObjects.put ( "values", values );
-        scriptObjects.put ( "UNSAFE", ScriptMonitorResult.UNSAFE );
-        scriptObjects.put ( "INACTIVE", ScriptMonitorResult.INACTIVE );
-        scriptObjects.put ( "OK", OkBuilder.INSTANCE );
-        scriptObjects.put ( "FAILURE", FailureBuilder.INSTANCE );
-        scriptObjects.put ( "result", this.lastResult );
+        scriptObjects.put ( "values", values ); //$NON-NLS-1$
+        scriptObjects.put ( "UNSAFE", ScriptMonitorResult.UNSAFE ); //$NON-NLS-1$
+        scriptObjects.put ( "INACTIVE", ScriptMonitorResult.INACTIVE ); //$NON-NLS-1$
+        scriptObjects.put ( "OK", OkBuilder.INSTANCE ); //$NON-NLS-1$
+        scriptObjects.put ( "FAILURE", FailureBuilder.INSTANCE ); //$NON-NLS-1$
+        scriptObjects.put ( "result", this.lastResult ); //$NON-NLS-1$
 
         try
         {
-            logger.debug ( "Running update command" );
+            logger.debug ( "Running update command - values: {}", values ); //$NON-NLS-1$
             return convertState ( this.updateCommand.execute ( this.scriptContext, scriptObjects ) );
         }
         catch ( final Exception e )
         {
-            logger.warn ( "Failed to evaluate monitor", e );
+            logger.warn ( "Failed to evaluate monitor", e ); //$NON-NLS-1$
             return ScriptMonitorResult.UNSAFE;
         }
     }
 
     private ScriptMonitorResult convertState ( final Object execute )
     {
-        logger.debug ( "Converting: {}", execute );
+        logger.debug ( "Converting: {}", execute ); //$NON-NLS-1$
 
         if ( execute == null )
         {
