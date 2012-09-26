@@ -20,6 +20,7 @@
 package org.openscada.da.datasource;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -126,7 +127,7 @@ public abstract class MultiDataSourceListener
                 return;
             }
         }
-        handleChange ( this.sources );
+        handleChange ( Collections.unmodifiableMap ( this.sources ) );
     }
 
     /**
