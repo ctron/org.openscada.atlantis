@@ -132,41 +132,41 @@ public class Variant implements Serializable, Comparable<Variant>
 
     private Serializable value;
 
-    private Variant ()
+    protected Variant ()
     {
     }
 
-    private Variant ( final Object object )
+    protected Variant ( final Object object )
     {
         setValue ( object );
     }
 
-    private Variant ( final boolean value )
+    protected Variant ( final boolean value )
     {
         setValue ( value );
     }
 
-    private Variant ( final double value )
+    protected Variant ( final double value )
     {
         setValue ( value );
     }
 
-    private Variant ( final int value )
+    protected Variant ( final int value )
     {
         setValue ( value );
     }
 
-    private Variant ( final long value )
+    protected Variant ( final long value )
     {
         setValue ( value );
     }
 
-    private Variant ( final String value )
+    protected Variant ( final String value )
     {
         setValue ( value );
     }
 
-    private Variant ( final Variant arg0 )
+    protected Variant ( final Variant arg0 )
     {
         this ( arg0 != null ? arg0.value : null );
     }
