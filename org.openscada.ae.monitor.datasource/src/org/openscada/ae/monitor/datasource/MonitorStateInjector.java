@@ -47,14 +47,25 @@ public class MonitorStateInjector
 
     private final Interner<String> stringInterner;
 
+    private String attributeActive;
+
+    private String attributeAckRequired;
+
+    private String attributeState;
+
+    private String attributeUnsafe;
+
+    private String attributeInfo;
+
+    private String attributeWarning;
+
+    private String attributeAlarm;
+
+    private String attributeError;
+
     public MonitorStateInjector ( final Interner<String> stringInterner )
     {
         this.stringInterner = stringInterner;
-    }
-
-    public void setPrefix ( final String prefix )
-    {
-        this.prefix = prefix;
     }
 
     public void notifyStateChange ( final MonitorStatusInformation status )
@@ -80,6 +91,21 @@ public class MonitorStateInjector
         }
     }
 
+    public void setPrefix ( final String prefix )
+    {
+        this.prefix = prefix;
+
+        // pre-generate attributes in order to do it only once
+        this.attributeActive = intern ( this.prefix + ".active" );
+        this.attributeAckRequired = intern ( this.prefix + ".ackRequired" );
+        this.attributeState = intern ( this.prefix + ".state" );
+        this.attributeUnsafe = intern ( this.prefix + ".unsafe" );
+        this.attributeInfo = intern ( this.prefix + ".info" );
+        this.attributeWarning = intern ( this.prefix + ".warning" );
+        this.attributeAlarm = intern ( this.prefix + ".alarm" );
+        this.attributeError = intern ( this.prefix + ".error" );
+    }
+
     /**
      * Inject attributes to the value after the value update has been performed using {@link #performDataUpdate(Builder)}
      * 
@@ -88,12 +114,12 @@ public class MonitorStateInjector
      */
     public void injectAttributes ( final DataItemValue.Builder builder )
     {
-        builder.setAttribute ( intern ( this.prefix + ".active" ), Variant.valueOf ( this.active ) );
+        builder.setAttribute ( this.attributeActive, Variant.valueOf ( this.active ) );
 
-        builder.setAttribute ( intern ( this.prefix + ".ackRequired" ), Variant.valueOf ( this.akn ) );
-        builder.setAttribute ( intern ( this.prefix + ".state" ), Variant.valueOf ( this.state ) );
+        builder.setAttribute ( this.attributeAckRequired, Variant.valueOf ( this.akn ) );
+        builder.setAttribute ( this.attributeState, Variant.valueOf ( this.state ) );
 
-        builder.setAttribute ( intern ( this.prefix + ".unsafe" ), Variant.valueOf ( this.unsafe ) );
+        builder.setAttribute ( this.attributeUnsafe, Variant.valueOf ( this.unsafe ) );
 
         // be sure we don't have a null value
         final Severity severity = this.severity == null ? Severity.ALARM : this.severity;
@@ -101,16 +127,16 @@ public class MonitorStateInjector
         switch ( severity )
         {
             case INFORMATION:
-                builder.setAttribute ( intern ( this.prefix + ".info" ), Variant.valueOf ( this.alarm ) );
+                builder.setAttribute ( this.attributeInfo, Variant.valueOf ( this.alarm ) );
                 break;
             case WARNING:
-                builder.setAttribute ( intern ( this.prefix + ".warning" ), Variant.valueOf ( this.alarm ) );
+                builder.setAttribute ( this.attributeWarning, Variant.valueOf ( this.alarm ) );
                 break;
             case ALARM:
-                builder.setAttribute ( intern ( this.prefix + ".alarm" ), Variant.valueOf ( this.alarm ) );
+                builder.setAttribute ( this.attributeAlarm, Variant.valueOf ( this.alarm ) );
                 break;
             case ERROR:
-                builder.setAttribute ( intern ( this.prefix + ".error" ), Variant.valueOf ( this.alarm ) );
+                builder.setAttribute ( this.attributeError, Variant.valueOf ( this.alarm ) );
                 break;
         }
     }
