@@ -134,11 +134,11 @@ public class LevelMonitor extends AbstractNumericMonitor
 
         if ( this.configuration.secondPrefix != null )
         {
-            this.prefix = this.firstPrefix + "." + this.configuration.secondPrefix;
+            setPrefix ( this.firstPrefix + "." + this.configuration.secondPrefix );
         }
         else
         {
-            this.prefix = this.firstPrefix;
+            setPrefix ( this.firstPrefix );
         }
 
         reprocess ();
@@ -151,7 +151,7 @@ public class LevelMonitor extends AbstractNumericMonitor
 
         if ( this.configuration != null )
         {
-            builder.setAttribute ( intern ( this.prefix + ".preset" ), Variant.valueOf ( this.configuration.preset ) );
+            builder.setAttribute ( intern ( getPrefix () + ".preset" ), Variant.valueOf ( this.configuration.preset ) );
         }
     }
 
@@ -160,11 +160,11 @@ public class LevelMonitor extends AbstractNumericMonitor
     {
         super.handleConfigUpdate ( configUpdate, attributes, result );
 
-        final Variant preset = attributes.get ( this.prefix + ".preset" ); //$NON-NLS-1$
+        final Variant preset = attributes.get ( getPrefix () + ".preset" ); //$NON-NLS-1$
         if ( preset != null )
         {
             configUpdate.put ( "preset", "" + preset.asDouble ( 0.0 ) ); //$NON-NLS-1$ //$NON-NLS-2$
-            result.put ( intern ( this.prefix + ".preset" ), WriteAttributeResult.OK ); //$NON-NLS-1$
+            result.put ( intern ( getPrefix () + ".preset" ), WriteAttributeResult.OK ); //$NON-NLS-1$
         }
     }
 }

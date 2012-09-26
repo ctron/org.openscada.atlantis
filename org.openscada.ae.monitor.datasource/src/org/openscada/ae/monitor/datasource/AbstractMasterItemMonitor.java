@@ -64,7 +64,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
 
     private MasterItemHandler handler;
 
-    protected String prefix;
+    private String prefix;
 
     private final String defaultMonitorType;
 
@@ -75,6 +75,8 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
     private Configuration configuration;
 
     private final String factoryId;
+
+    private final MonitorStateInjector monitorStateInjector;
 
     private static class Configuration extends AbstractConfiguration
     {
@@ -122,8 +124,6 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
 
     }
 
-    private final MonitorStateInjector monitorStateInjector;
-
     public AbstractMasterItemMonitor ( final BundleContext context, final Executor executor, final Interner<String> stringInterner, final ObjectPoolTracker<MasterItem> poolTracker, final EventProcessor eventProcessor, final String id, final String factoryId, final String prefix, final String defaultMonitorType )
     {
         super ( id, factoryId, executor, context, stringInterner, eventProcessor );
@@ -133,7 +133,18 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         this.prefix = prefix;
         this.defaultMonitorType = defaultMonitorType;
 
-        this.monitorStateInjector = new MonitorStateInjector ( prefix, stringInterner );
+        this.monitorStateInjector = new MonitorStateInjector ( stringInterner );
+    }
+
+    protected void setPrefix ( final String prefix )
+    {
+        this.prefix = prefix;
+        this.monitorStateInjector.setPrefix ( prefix );
+    }
+
+    protected String getPrefix ()
+    {
+        return this.prefix;
     }
 
     @Override

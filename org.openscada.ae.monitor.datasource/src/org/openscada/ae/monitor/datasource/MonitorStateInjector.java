@@ -31,7 +31,7 @@ import com.google.common.collect.Interner;
 
 public class MonitorStateInjector
 {
-    private final String prefix;
+    private String prefix;
 
     private MonitorStatus state;
 
@@ -47,10 +47,14 @@ public class MonitorStateInjector
 
     private final Interner<String> stringInterner;
 
-    public MonitorStateInjector ( final String prefix, final Interner<String> stringInterner )
+    public MonitorStateInjector ( final Interner<String> stringInterner )
+    {
+        this.stringInterner = stringInterner;
+    }
+
+    public void setPrefix ( final String prefix )
     {
         this.prefix = prefix;
-        this.stringInterner = stringInterner;
     }
 
     public void notifyStateChange ( final MonitorStatusInformation status )

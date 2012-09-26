@@ -100,7 +100,7 @@ public class BitMonitor extends AbstractBooleanMonitor
 
         if ( this.configuration != null )
         {
-            builder.setAttribute ( intern ( this.prefix + ".reference" ), Variant.valueOf ( this.configuration.reference ) );
+            builder.setAttribute ( intern ( getPrefix () + ".reference" ), Variant.valueOf ( this.configuration.reference ) );
         }
     }
 
@@ -109,11 +109,11 @@ public class BitMonitor extends AbstractBooleanMonitor
     {
         super.handleConfigUpdate ( configUpdate, attributes, result );
 
-        final Variant active = attributes.get ( this.prefix + ".reference" ); //$NON-NLS-1$
+        final Variant active = attributes.get ( getPrefix () + ".reference" ); //$NON-NLS-1$
         if ( active != null )
         {
             configUpdate.put ( "reference", "" + active.asBoolean () ); //$NON-NLS-1$ //$NON-NLS-2$
-            result.put ( intern ( this.prefix + ".reference" ), WriteAttributeResult.OK ); //$NON-NLS-1$
+            result.put ( intern ( getPrefix () + ".reference" ), WriteAttributeResult.OK ); //$NON-NLS-1$
         }
     }
 }

@@ -124,7 +124,8 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
 
         this.classLoader = getClass ().getClassLoader ();
 
-        this.monitorStateInjector = new MonitorStateInjector ( this.prefix, stringInterner );
+        this.monitorStateInjector = new MonitorStateInjector ( stringInterner );
+        this.monitorStateInjector.setPrefix ( this.prefix );
 
         final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
         try
