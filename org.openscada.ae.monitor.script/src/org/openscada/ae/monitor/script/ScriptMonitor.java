@@ -113,9 +113,12 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
 
     private final String prefix;
 
+    private final Executor executor;
+
     public ScriptMonitor ( final String id, final String factoryId, final Executor executor, final BundleContext context, final Interner<String> stringInterner, final EventProcessor eventProcessor, final ObjectPoolTracker<DataSource> dataSourcePoolTracker, final ObjectPoolTracker<MasterItem> masterItemPoolTracker, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( id, factoryId, executor, context, stringInterner, eventProcessor );
+        this.executor = executor;
 
         this.prefix = stringInterner.intern ( factoryId + ". " + id ); //$NON-NLS-1$
 
@@ -243,6 +246,18 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
             values.put ( entry.getKey (), entry.getValue ().getValue () );
         }
 
+        this.executor.execute ( new Runnable () {
+
+            @Override
+            public void run ()
+            {
+                evaluate ( values );
+            }
+        } );
+    }
+
+    protected synchronized void evaluate ( final Map<String, DataItemValue> values )
+    {
         applyState ( evaluateState ( values ) );
     }
 
