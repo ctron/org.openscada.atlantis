@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.script;
 
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -188,7 +189,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         handleChange ( this.listener.getSourcesCopy () );
     }
 
-    private synchronized void setScript ( final ConfigurationDataHelper cfg ) throws ScriptException
+    private synchronized void setScript ( final ConfigurationDataHelper cfg ) throws ScriptException, IOException
     {
         String engine = cfg.getString ( "scriptEngine", DEFAULT_ENGINE_NAME );
         if ( "".equals ( engine ) ) // catches null
@@ -208,7 +209,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         final String initScript = cfg.getString ( "init" );
         if ( initScript != null )
         {
-            this.scriptEngine.eval ( initScript, this.scriptContext );
+            new ScriptExecutor ( this.scriptEngine, initScript, this.classLoader ).execute ( this.scriptContext );
         }
 
         this.updateCommand = makeScript ( cfg.getString ( "updateCommand" ) );
