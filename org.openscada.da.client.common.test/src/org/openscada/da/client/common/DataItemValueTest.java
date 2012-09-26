@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -82,12 +82,12 @@ public class DataItemValueTest
         final Builder div1 = new Builder ();
         div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
-        div1.setAttribute ( "foo", new Variant ( "bar" ) );
+        div1.setAttribute ( "foo", Variant.valueOf ( "bar" ) );
 
         final Builder div2 = new Builder ();
         div2.setValue ( Variant.valueOf ( 1 ) );
         div2.setSubscriptionState ( SubscriptionState.CONNECTED );
-        div2.setAttribute ( "foo", new Variant ( "bar" ) );
+        div2.setAttribute ( "foo", Variant.valueOf ( "bar" ) );
 
         Assert.assertEquals ( div1.build (), div2.build () );
         Assert.assertEquals ( div2.build (), div1.build () );
@@ -99,12 +99,12 @@ public class DataItemValueTest
         final Builder div1 = new Builder ();
         div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
-        div1.setAttribute ( "foo", new Variant ( "bar" ) );
+        div1.setAttribute ( "foo", Variant.valueOf ( "bar" ) );
 
         final Builder div2 = new Builder ();
         div2.setValue ( Variant.valueOf ( 1 ) );
         div2.setSubscriptionState ( SubscriptionState.CONNECTED );
-        div2.setAttribute ( "bar", new Variant ( "foo" ) );
+        div2.setAttribute ( "bar", Variant.valueOf ( "foo" ) );
 
         Assert.assertFalse ( div1.equals ( div2 ) );
         Assert.assertFalse ( div2.equals ( div1 ) );
@@ -116,12 +116,12 @@ public class DataItemValueTest
         final Builder div1 = new Builder ();
         div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
-        div1.setAttribute ( "foo", new Variant ( "bar" ) );
+        div1.setAttribute ( "foo", Variant.valueOf ( "bar" ) );
 
         final Builder div2 = new Builder ();
         div2.setValue ( Variant.valueOf ( 1 ) );
         div2.setSubscriptionState ( SubscriptionState.DISCONNECTED );
-        div2.setAttribute ( "foo", new Variant ( "bar" ) );
+        div2.setAttribute ( "foo", Variant.valueOf ( "bar" ) );
 
         Assert.assertFalse ( div1.equals ( div2 ) );
         Assert.assertFalse ( div2.equals ( div1 ) );
@@ -133,11 +133,11 @@ public class DataItemValueTest
         final Builder div1 = new Builder ();
         div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
-        div1.setAttribute ( "foo", new Variant ( "bar" ) );
+        div1.setAttribute ( "foo", Variant.valueOf ( "bar" ) );
 
         final Builder div2 = new Builder ();
         div2.setSubscriptionState ( SubscriptionState.CONNECTED );
-        div2.setAttribute ( "foo", new Variant ( "bar" ) );
+        div2.setAttribute ( "foo", Variant.valueOf ( "bar" ) );
 
         Assert.assertFalse ( div1.equals ( div2 ) );
         Assert.assertFalse ( div2.equals ( div1 ) );
@@ -149,12 +149,12 @@ public class DataItemValueTest
         final Builder div1 = new Builder ();
         div1.setValue ( Variant.valueOf ( 1 ) );
         div1.setSubscriptionState ( SubscriptionState.CONNECTED );
-        div1.setAttribute ( "foo", new Variant ( "bar" ) );
+        div1.setAttribute ( "foo", Variant.valueOf ( "bar" ) );
 
         final Builder div2 = new Builder ();
         div2.setValue ( Variant.valueOf ( 1 ) );
         div2.setSubscriptionState ( SubscriptionState.CONNECTED );
-        div2.setAttribute ( "foo", new Variant ( "bar" ) );
+        div2.setAttribute ( "foo", Variant.valueOf ( "bar" ) );
 
         Assert.assertFalse ( div1.equals ( div2 ) );
         Assert.assertFalse ( div2.equals ( div1 ) );
