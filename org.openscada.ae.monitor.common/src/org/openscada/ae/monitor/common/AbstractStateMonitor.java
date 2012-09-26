@@ -33,7 +33,6 @@ import org.openscada.ae.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.StateInformation.Builder;
 import org.openscada.core.Variant;
-import org.openscada.core.VariantEditor;
 import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -262,7 +261,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
 
         for ( final Map.Entry<String, String> entry : attributes.entrySet () )
         {
-            convertedAttributes.put ( entry.getKey (), VariantEditor.toVariant ( entry.getValue () ) );
+            convertedAttributes.put ( entry.getKey (), Variant.valueOf ( entry.getValue () ) );
         }
 
         setAttributes ( convertedAttributes );
