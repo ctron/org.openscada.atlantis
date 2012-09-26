@@ -29,6 +29,7 @@ import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
 import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
 import org.openscada.ae.monitor.common.DemoteImpl;
@@ -188,8 +189,8 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
 
     private synchronized void setScript ( final ConfigurationDataHelper cfg ) throws ScriptException
     {
-        String engine = cfg.getString ( "engine", DEFAULT_ENGINE_NAME );
-        if ( "".equals ( engine ) )
+        String engine = cfg.getString ( "scriptEngine", DEFAULT_ENGINE_NAME );
+        if ( "".equals ( engine ) ) // catches null
         {
             engine = DEFAULT_ENGINE_NAME;
         }
@@ -302,4 +303,19 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
 
         return ScriptMonitorResult.UNSAFE;
     }
+
+    @Override
+    protected void setFailure ( final Variant value, final Long valueTimestamp, final Severity severity, final boolean requireAck )
+    {
+        final Severity result = this.demoteImpl.demoteSeverity ( severity );
+        if ( result == null )
+        {
+            setOk ( value, valueTimestamp );
+        }
+        else
+        {
+            super.setFailure ( value, valueTimestamp, result, this.demoteImpl.demoteAck ( requireAck ) );
+        }
+    }
+
 }
