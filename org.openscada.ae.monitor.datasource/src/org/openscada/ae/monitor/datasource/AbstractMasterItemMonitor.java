@@ -152,18 +152,6 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         reprocess ();
     }
 
-    protected Map<String, Variant> convertAttributes ( final ConfigurationDataHelper cfg )
-    {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-
-        for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "info." ).entrySet () )
-        {
-            attributes.put ( intern ( entry.getKey () ), Variant.valueOf ( entry.getValue () ) );
-        }
-
-        return attributes;
-    }
-
     @Override
     public synchronized void update ( final UserInformation userInformation, final Map<String, String> properties ) throws Exception
     {
@@ -181,7 +169,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         this.configuration = c;
         c.sendEvents ();
 
-        setAttributes ( convertAttributes ( cfg ) );
+        setStringAttributes ( cfg.getPrefixed ( "info." ) );
 
         connect ();
     }

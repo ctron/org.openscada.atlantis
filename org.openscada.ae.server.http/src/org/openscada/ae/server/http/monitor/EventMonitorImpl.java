@@ -20,14 +20,13 @@
 package org.openscada.ae.server.http.monitor;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.Event;
-import org.openscada.ae.Severity;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
+import org.openscada.ae.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.filter.EventMatcher;
 import org.openscada.ae.filter.internal.EventMatcherImpl;
@@ -92,7 +91,7 @@ public class EventMonitorImpl extends AbstractPersistentStateMonitor implements 
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        setAttributes ( convertAttributes ( cfg ) );
+        setStringAttributes ( cfg.getPrefixed ( "info." ) );
 
         final Configuration c = new Configuration ( this.configuration, this );
 
@@ -117,18 +116,6 @@ public class EventMonitorImpl extends AbstractPersistentStateMonitor implements 
     private void setMonitorType ( final UserInformation userInformation, final String monitorType )
     {
         this.monitorType = monitorType;
-    }
-
-    private static Map<String, Variant> convertAttributes ( final ConfigurationDataHelper cfg )
-    {
-        final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-
-        for ( final Map.Entry<String, String> entry : cfg.getPrefixed ( "info." ).entrySet () ) //$NON-NLS-1$
-        {
-            attributes.put ( entry.getKey (), Variant.valueOf ( entry.getValue () ) );
-        }
-
-        return attributes;
     }
 
     @Override
