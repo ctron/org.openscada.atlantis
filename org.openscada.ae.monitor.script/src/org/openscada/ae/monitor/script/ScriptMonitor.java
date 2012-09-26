@@ -156,6 +156,8 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
     {
         super.notifyStateChange ( state );
         this.monitorStateInjector.notifyStateChange ( state );
+
+        this.handler.reprocess ();
     }
 
     @Override
@@ -259,8 +261,6 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
                 setInactive ();
                 break;
         }
-
-        this.handler.reprocess ();
     }
 
     private ScriptMonitorResult evaluateState ( final Map<String, DataItemValue> values )
