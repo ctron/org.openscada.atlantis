@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,7 +28,6 @@ import org.openscada.utils.lang.Immutable;
  * A variant data type that can hold any scalar value type.
  * 
  * @author Jens Reimann &lt;jens.reimann@th4-systems.com&gt;
- * 
  */
 @Immutable
 public class Variant implements Serializable, Comparable<Variant>
@@ -133,82 +132,41 @@ public class Variant implements Serializable, Comparable<Variant>
 
     private Serializable value;
 
-    /**
-     * Create a variant of type <code>null</code>
-     * @deprecated Use {@link #NULL} instead
-     */
-    @Deprecated
-    public Variant ()
+    private Variant ()
     {
     }
 
-    /**
-     * Convert the object to the best matching variant type
-     * 
-     * @param object
-     *            the object to convert
-     * @deprecated Use {@link Variant#valueOf(Object)} instead
-     */
-    @Deprecated
-    public Variant ( final Object object )
+    private Variant ( final Object object )
     {
         setValue ( object );
     }
 
-    /**
-     * @deprecated Use {@link Variant#valueOf(Object)} instead
-     */
-    @Deprecated
-    public Variant ( final boolean value )
+    private Variant ( final boolean value )
     {
         setValue ( value );
     }
 
-    /**
-     * @deprecated Use {@link Variant#valueOf(Object)} instead
-     */
-    @Deprecated
-    public Variant ( final double value )
+    private Variant ( final double value )
     {
         setValue ( value );
     }
 
-    /**
-     * @deprecated Use {@link Variant#valueOf(Object)} instead
-     */
-    @Deprecated
-    public Variant ( final int value )
+    private Variant ( final int value )
     {
         setValue ( value );
     }
 
-    /**
-     * @deprecated Use {@link Variant#valueOf(Object)} instead
-     */
-    @Deprecated
-    public Variant ( final long value )
+    private Variant ( final long value )
     {
         setValue ( value );
     }
 
-    /**
-     * @deprecated Use {@link Variant#valueOf(Object)} instead
-     */
-    @Deprecated
-    public Variant ( final String value )
+    private Variant ( final String value )
     {
         setValue ( value );
     }
 
-    /**
-     * Clones a variant
-     * 
-     * @param arg0
-     *            the value to clone
-     * @deprecated Use {@link Variant#valueOf(Object)} instead
-     */
-    @Deprecated
-    public Variant ( final Variant arg0 )
+    private Variant ( final Variant arg0 )
     {
         this ( arg0 != null ? arg0.value : null );
     }
@@ -328,11 +286,9 @@ public class Variant implements Serializable, Comparable<Variant>
     }
 
     /**
-     * Get the string representation of the variant value or a default value if
-     * the variant is of type {@link VariantType#NULL}.
+     * Get the string representation of the variant value or a default value if the variant is of type {@link VariantType#NULL}.
      * 
-     * @return The string representation of the variant value or the default
-     *         value.
+     * @return The string representation of the variant value or the default value.
      */
     public String asString ( final String defaultValue )
     {
@@ -346,7 +302,8 @@ public class Variant implements Serializable, Comparable<Variant>
 
     /**
      * @since 0.14.0
-     * @param defaultValue the default value
+     * @param defaultValue
+     *            the default value
      * @return the value as a double or the default value if the value cannot be provided as a double
      */
     public Double asDouble ( final Double defaultValue )
@@ -405,7 +362,8 @@ public class Variant implements Serializable, Comparable<Variant>
 
     /**
      * @since 0.14.0
-     * @param defaultValue the default value
+     * @param defaultValue
+     *            the default value
      * @return the value as an integer or the default value if the value cannot be provided as an integer
      */
     public Integer asInteger ( final Integer defaultValue )
@@ -464,7 +422,8 @@ public class Variant implements Serializable, Comparable<Variant>
 
     /**
      * @since 0.14.0
-     * @param defaultValue the default value
+     * @param defaultValue
+     *            the default value
      * @return the value as a long or the default value if the value cannot be provided as a long
      */
     public Long asLong ( final Long defaultValue )
@@ -522,19 +481,9 @@ public class Variant implements Serializable, Comparable<Variant>
     }
 
     /**
-     * Get the value as boolean value
-     * 
-     * If the value is <code>null</code> then <code>false</code> is returned.
-     * 
-     * If the value is a boolean it will simply return the value itself.
-     * 
-     * If the value is a numeric value (double, long, integer) is will return
-     * <code>false</code> if the value zero and <code>true</code> otherwise.
-     * 
-     * If the value is a string then <code>false</code> is returned if the
-     * string is empty. If the string can be converted to a number (long or
-     * double) it will be compared to that number. Otherwise it will be compared
-     * case insensitive against the string
+     * Get the value as boolean value If the value is <code>null</code> then <code>false</code> is returned. If the value is a boolean it will simply return the value itself. If the value is a numeric
+     * value (double, long, integer) is will return <code>false</code> if the value zero and <code>true</code> otherwise. If the value is a string then <code>false</code> is returned if the string is
+     * empty. If the string can be converted to a number (long or double) it will be compared to that number. Otherwise it will be compared case insensitive against the string
      * 
      * <pre>
      * true
@@ -602,7 +551,8 @@ public class Variant implements Serializable, Comparable<Variant>
 
     /**
      * @since 0.15.0
-     * @param defaultValue the default value
+     * @param defaultValue
+     *            the default value
      * @return the value as a boolean or the default value if the value is null
      */
     public Boolean asBoolean ( final Boolean defaultValue )
@@ -617,12 +567,14 @@ public class Variant implements Serializable, Comparable<Variant>
     /**
      * Convert the variant to a java object of the type specified by the variantType parameter
      * <p>
-     * The default value must be of the type of the variant type parameter, otherwise
-     * a class cast exception will be thrown. The default value may also be null.
+     * The default value must be of the type of the variant type parameter, otherwise a class cast exception will be thrown. The default value may also be null.
      * </p>
+     * 
      * @see #as(VariantType)
-     * @param variantType the variant type to convert to (may be <code>null</code>)
-     * @param defaultValue the default value in case the conversion fails or the variant is NULL
+     * @param variantType
+     *            the variant type to convert to (may be <code>null</code>)
+     * @param defaultValue
+     *            the default value in case the conversion fails or the variant is NULL
      * @return the resulting java object
      * @since 0.16.0
      */
@@ -635,20 +587,20 @@ public class Variant implements Serializable, Comparable<Variant>
 
         switch ( variantType )
         {
-        case BOOLEAN:
-            return asBoolean ( (Boolean)defaultValue );
-        case DOUBLE:
-            return asDouble ( (Double)defaultValue );
-        case INT32:
-            return asInteger ( (Integer)defaultValue );
-        case INT64:
-            return asLong ( (Long)defaultValue );
-        case STRING:
-            return asString ( (String)defaultValue );
-        case NULL:
-            return null;
-        case UNKNOWN:
-            return getValue ();
+            case BOOLEAN:
+                return asBoolean ( (Boolean)defaultValue );
+            case DOUBLE:
+                return asDouble ( (Double)defaultValue );
+            case INT32:
+                return asInteger ( (Integer)defaultValue );
+            case INT64:
+                return asLong ( (Long)defaultValue );
+            case STRING:
+                return asString ( (String)defaultValue );
+            case NULL:
+                return null;
+            case UNKNOWN:
+                return getValue ();
         }
         return getValue ();
     }
@@ -656,8 +608,7 @@ public class Variant implements Serializable, Comparable<Variant>
     /**
      * Convert the variant to a java object of the type specified by the variantType parameter
      * <p>
-     * The method converts the current variant to a plain java {@link Serializable} of the requested type.
-     * For the list of types than can be expected see the java type field of {@link VariantType}.  
+     * The method converts the current variant to a plain java {@link Serializable} of the requested type. For the list of types than can be expected see the java type field of {@link VariantType}.
      * </p>
      * <p>
      * There are some special cases for this method:
@@ -667,10 +618,14 @@ public class Variant implements Serializable, Comparable<Variant>
      * <li>If the {@link VariantType#NULL} is requested always <code>null</code> will be returned
      * </ul>
      * </p>
-     * @param variantType the target type
+     * 
+     * @param variantType
+     *            the target type
      * @return the resulting java object
-     * @throws NullValueException in case the variant was of type null and should be converted to some other type
-     * @throws NotConvertableException in case the variant cannot be converted to the target value
+     * @throws NullValueException
+     *             in case the variant was of type null and should be converted to some other type
+     * @throws NotConvertableException
+     *             in case the variant cannot be converted to the target value
      * @since 0.16.0
      */
     public Serializable as ( final VariantType variantType ) throws NullValueException, NotConvertableException
@@ -682,20 +637,20 @@ public class Variant implements Serializable, Comparable<Variant>
 
         switch ( variantType )
         {
-        case BOOLEAN:
-            return asBoolean ();
-        case DOUBLE:
-            return asDouble ();
-        case INT32:
-            return asInteger ();
-        case INT64:
-            return asLong ();
-        case STRING:
-            return asString ();
-        case NULL:
-            return null;
-        case UNKNOWN:
-            return getValue ();
+            case BOOLEAN:
+                return asBoolean ();
+            case DOUBLE:
+                return asDouble ();
+            case INT32:
+                return asInteger ();
+            case INT64:
+                return asLong ();
+            case STRING:
+                return asString ();
+            case NULL:
+                return null;
+            case UNKNOWN:
+                return getValue ();
         }
         return getValue ();
     }
@@ -971,14 +926,12 @@ public class Variant implements Serializable, Comparable<Variant>
     }
 
     /**
-     * Get the string representation of the variant (not the variant value).
-     * This includes also the variant type.
+     * Get the string representation of the variant (not the variant value). This includes also the variant type.
      * <p>
      * The format is
      * <q>VariantType#VariantValue</q>.
      * <p>
-     * If you want to get the string representation of the variant value itself
-     * use {@link #asString()} instead.
+     * If you want to get the string representation of the variant value itself use {@link #asString()} instead.
      */
     @Override
     public String toString ()
