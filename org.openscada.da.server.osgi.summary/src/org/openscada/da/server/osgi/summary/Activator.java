@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -38,11 +38,11 @@ import org.osgi.framework.ServiceRegistration;
 
 public class Activator implements BundleActivator
 {
-    private ObjectPoolTracker tracker;
+    private ObjectPoolTracker<DataSource> tracker;
 
     private ExecutorService executor;
 
-    private ObjectPoolImpl pool;
+    private ObjectPoolImpl<DataSource> pool;
 
     private FactoryImpl factory;
 
@@ -57,10 +57,10 @@ public class Activator implements BundleActivator
     {
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
-        this.pool = new ObjectPoolImpl ();
-        ObjectPoolHelper.registerObjectPool ( context, this.pool, DataSource.class.getName () );
+        this.pool = new ObjectPoolImpl<DataSource> ();
+        ObjectPoolHelper.registerObjectPool ( context, this.pool, DataSource.class );
 
-        this.tracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.tracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
         this.tracker.open ();
 
         this.factory = new FactoryImpl ( this.executor, context, this.tracker, this.pool );

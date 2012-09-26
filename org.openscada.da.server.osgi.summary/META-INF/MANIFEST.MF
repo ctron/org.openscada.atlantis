@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA DA Server OSGi Summary Generator
+Bundle-Name: openSCADA DA Server OSGi Summary Generator
 Bundle-SymbolicName: org.openscada.da.server.osgi.summary
-Bundle-Version: 0.18.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.da.server.osgi.summary.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

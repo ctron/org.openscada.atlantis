@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -38,11 +38,11 @@ public class FactoryImpl extends AbstractServiceConfigurationFactory<AttributeDa
 
     private final Executor executor;
 
-    private final ObjectPoolTracker tracker;
+    private final ObjectPoolTracker<DataSource> tracker;
 
-    private final ManageableObjectPool pool;
+    private final ManageableObjectPool<DataSource> pool;
 
-    public FactoryImpl ( final Executor executor, final BundleContext context, final ObjectPoolTracker tracker, final ManageableObjectPool pool )
+    public FactoryImpl ( final Executor executor, final BundleContext context, final ObjectPoolTracker<DataSource> tracker, final ManageableObjectPool<DataSource> pool )
     {
         super ( context );
         this.executor = executor;
