@@ -21,7 +21,7 @@ package org.openscada.ae.monitor.datasource.monitor;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openscada.ae.monitor.datasource.common.level.LevelHelper;
+import org.openscada.ae.monitor.common.level.LevelHelper;
 
 public class LevelHelperTest
 {

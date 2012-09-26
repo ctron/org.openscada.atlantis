@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae.monitor.datasource.common.level;
+package org.openscada.ae.monitor.common.level;
 
 public class LevelHelper
 {

@@ -29,8 +29,10 @@ Export-Package: org.openscada.ae.monitor.common;version="1.0.0";
    org.openscada.ds,
    org.slf4j,
    org.openscada.ae,
+   org.openscada.da.client,
    org.openscada.sec,
    org.openscada.ae.utils,
    org.osgi.framework,
    org.openscada.core,
-   org.openscada.ae.monitor"
+   org.openscada.ae.monitor",
+ org.openscada.ae.monitor.common.level;version="1.0.0"

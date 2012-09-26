@@ -24,6 +24,7 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ae.Severity;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.common.level.LevelHelper;
 import org.openscada.ae.monitor.datasource.AbstractNumericMonitor;
 import org.openscada.ae.monitor.datasource.Helper;
 import org.openscada.ca.ConfigurationDataHelper;
