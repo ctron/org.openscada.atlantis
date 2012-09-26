@@ -183,6 +183,7 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         this.handler.update ( userInformation, properties );
 
         this.listener.setDataSources ( properties );
+        setStringAttributes ( cfg.getPrefixed ( "info." ) );
 
         handleChange ( this.listener.getSourcesCopy () );
     }
