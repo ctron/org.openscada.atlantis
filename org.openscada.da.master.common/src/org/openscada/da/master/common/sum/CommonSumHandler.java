@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -84,7 +84,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         }
 
         // sum up
-        final Set<String> matches = new HashSet<String> ();
+        int matches = 0;
         for ( final Map.Entry<String, Variant> entry : builder.getAttributes ().entrySet () )
         {
             final Variant pValue = entry.getValue ();
@@ -93,7 +93,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
             {
                 if ( !contextSet.contains ( name ) )
                 {
-                    matches.add ( name );
+                    matches++;
                     contextSet.add ( name );
                 }
             }
@@ -104,11 +104,10 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
             builder.setAttribute ( this.prefix + ".after", Variant.valueOf ( StringHelper.join ( contextSet, "," ) ) );
         }
 
-        builder.setAttribute ( this.tag, Variant.valueOf ( !matches.isEmpty () ) );
+        builder.setAttribute ( this.tag, Variant.valueOf ( matches != 0 ) );
         if ( this.debug )
         {
-            builder.setAttribute ( this.tag + ".count", Variant.valueOf ( matches.size () ) );
-            builder.setAttribute ( this.tag + ".items", Variant.valueOf ( StringHelper.join ( matches, ", " ) ) );
+            builder.setAttribute ( this.tag + ".count", Variant.valueOf ( matches ) );
         }
 
         return builder.build ();
