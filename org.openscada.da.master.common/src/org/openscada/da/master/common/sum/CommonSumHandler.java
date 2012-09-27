@@ -132,23 +132,35 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
 
     private boolean matches ( final String name, final Variant value )
     {
+        // if the value is null is will never match
         if ( value == null )
-        {
-            return false;
-        }
-        if ( !value.asBoolean () )
         {
             return false;
         }
 
         if ( this.pattern != null )
         {
-            return this.pattern.matcher ( name ).matches ();
+            // if a pattern is defined ...
+            if ( !this.pattern.matcher ( name ).matches () )
+            {
+                // ... it has to match
+                return false;
+            }
         }
         else
         {
-            return name.endsWith ( this.suffix );
+            // otherwise the suffix ...
+            if ( !name.endsWith ( this.suffix ) )
+            {
+                // ... must match
+                return false;
+            }
         }
+
+        /* finally check the value itself, this may trigger
+         * parsing the value as boolean (e.g. from a string) so we do this last
+         */
+        return value.asBoolean ();
     }
 
     @SuppressWarnings ( "unchecked" )
