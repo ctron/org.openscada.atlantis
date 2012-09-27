@@ -20,8 +20,8 @@
 package org.openscada.da.datasource.sum;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -49,9 +49,11 @@ public class SumDataSource extends AbstractMultiSourceDataSource
 
     private final Executor executor;
 
-    private Map<String, String> types;
-
     private Set<String> groups;
+
+    private Entry[] entries;
+
+    private Entry errorEntry;
 
     public SumDataSource ( final ObjectPoolTracker<DataSource> poolTracker, final Executor executor )
     {
@@ -79,8 +81,6 @@ public class SumDataSource extends AbstractMultiSourceDataSource
 
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
-        final Map<String, String> types = new HashMap<String, String> ();
-
         String groupsString = parameters.get ( "groups" );
         if ( groupsString == null )
         {
@@ -94,36 +94,40 @@ public class SumDataSource extends AbstractMultiSourceDataSource
         for ( final Map.Entry<String, String> entry : parameters.entrySet () )
         {
             final String key = entry.getKey ();
-            final String value = entry.getValue ();
 
             if ( key.startsWith ( "datasource." ) )
             {
-                final String toks[] = value.split ( "#", 2 );
-                final String id = toks[0];
+                final String id = entry.getValue ();
 
-                if ( toks.length > 1 )
-                {
-                    types.put ( key, toks[1] );
-                }
                 logger.info ( "Adding datasource: {} -> {}", key, id );
                 addDataSource ( key, id, null );
             }
         }
 
-        this.types = types;
+        // prepare groups
+        final LinkedList<Entry> localEntries = new LinkedList<Entry> ();
+        for ( final String group : this.groups )
+        {
+            localEntries.add ( new Entry ( group ) );
+        }
+        this.entries = localEntries.toArray ( new Entry[localEntries.size ()] );
+
+        this.errorEntry = null;
+        for ( final Entry entry : this.entries )
+        {
+            if ( "error".equals ( entry.name ) )
+            {
+                this.errorEntry = entry;
+            }
+        }
+
         handleChange ( getSourcesCopy () );
     }
 
     @Override
     protected synchronized void handleChange ( final Map<String, DataSourceHandler> sources )
     {
-        final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ( sources.size () );
-        for ( final Map.Entry<String, DataSourceHandler> entry : sources.entrySet () )
-        {
-            values.put ( entry.getKey (), entry.getValue ().getValue () );
-        }
-
-        updateData ( aggregate ( values ) );
+        updateData ( aggregate ( sources ) );
     }
 
     private boolean isDebug ()
@@ -131,81 +135,64 @@ public class SumDataSource extends AbstractMultiSourceDataSource
         return Boolean.getBoolean ( "org.openscada.da.datasource.sum.debug" );
     }
 
-    private synchronized DataItemValue aggregate ( final Map<String, DataItemValue> values )
+    private static class Entry
+    {
+        private final String name;
+
+        private boolean active;
+
+        public Entry ( final String name )
+        {
+            this.name = name;
+        }
+    }
+
+    private synchronized DataItemValue aggregate ( final Map<String, DataSourceHandler> values )
     {
         final Builder builder = new Builder ();
         builder.setSubscriptionState ( SubscriptionState.CONNECTED );
         builder.setValue ( Variant.valueOf ( values.size () ) );
 
-        final Map<String, Integer> counts = new HashMap<String, Integer> ();
+        final boolean debug = isDebug ();
 
-        for ( final Map.Entry<String, DataItemValue> entry : values.entrySet () )
+        // reset
+        for ( final Entry group : this.entries )
         {
-            final DataItemValue value = entry.getValue ();
+            group.active = false;
+        }
 
-            if ( value == null || !value.isConnected () )
+        for ( final Map.Entry<String, DataSourceHandler> entry : values.entrySet () )
+        {
+            final DataItemValue value = entry.getValue ().getValue ();
+
+            if ( this.errorEntry != null )
             {
-                increment ( counts, "disconnected" );
-                if ( this.groups.contains ( "error" ) )
+                if ( value == null || !value.isConnected () )
                 {
-                    increment ( counts, "error" );
+                    this.errorEntry.active = true;
+                    continue; // skip further processing on this item
                 }
-                if ( isDebug () )
-                {
-                    builder.setAttribute ( "sum.disconnected." + entry.getKey (), Variant.TRUE );
-                }
-                logger.debug ( "Skipping item {} since it is disconnected", entry.getKey () );
-                continue;
             }
 
-            // increment by group
-            for ( final String group : this.groups )
+            for ( final Entry group : this.entries )
             {
-                if ( value.isAttribute ( group, false ) )
+                if ( value.isAttribute ( group.name, false ) )
                 {
-                    if ( isDebug () )
+                    if ( debug )
                     {
                         builder.setAttribute ( "sum." + group + "." + entry.getKey (), Variant.TRUE );
                     }
-                    increment ( counts, group );
-                }
-            }
-
-            // increment by main value
-            final String type = this.types.get ( entry.getKey () );
-            if ( type != null )
-            {
-                if ( value.getValue ().asBoolean () )
-                {
-                    if ( isDebug () )
-                    {
-                        builder.setAttribute ( "sum.main." + entry.getKey (), Variant.TRUE );
-                    }
-                    increment ( counts, type );
+                    group.active = true;
                 }
             }
         }
 
-        // convert to attributes
-        for ( final Map.Entry<String, Integer> entry : counts.entrySet () )
+        for ( final Entry group : this.entries )
         {
-            builder.setAttribute ( entry.getKey (), Variant.valueOf ( entry.getValue () != 0 ) );
-            builder.setAttribute ( entry.getKey () + ".count", Variant.valueOf ( entry.getValue () ) );
+            builder.setAttribute ( group.name, Variant.valueOf ( group.active ) );
         }
 
         return builder.build ();
     }
 
-    private static void increment ( final Map<String, Integer> counts, final String group )
-    {
-        final Integer i = counts.get ( group );
-        if ( i == null )
-        {
-            counts.put ( group, 1 );
-        }
-        else
-        {
-            counts.put ( group, i + 1 );
-        }
-    }
 }
