@@ -44,6 +44,10 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
 
     private boolean debug = false;
 
+    private String suffix;
+
+    private String attributeName;
+
     public CommonSumHandler ( final ObjectPoolTracker<MasterItem> poolTracker )
     {
         super ( poolTracker );
@@ -58,9 +62,22 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         this.prefix = cfg.getString ( "prefix", "osgi.source" );
 
         this.tag = cfg.getString ( "tag" );
-        this.pattern = Pattern.compile ( cfg.getString ( "pattern", ".*\\." + Pattern.quote ( this.tag ) + "$" ) );
+
+        this.suffix = cfg.getString ( "suffix", "." + this.tag );
+        this.pattern = makePattern ( cfg.getString ( "pattern", null ) );
+
+        this.attributeName = String.format ( "%s.%s", this.prefix, this.tag );
 
         reprocess ();
+    }
+
+    private Pattern makePattern ( final String string )
+    {
+        if ( string == null )
+        {
+            return null;
+        }
+        return Pattern.compile ( string );
     }
 
     @Override
@@ -89,7 +106,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         {
             final Variant pValue = entry.getValue ();
             final String name = entry.getKey ();
-            if ( this.pattern.matcher ( name ).matches () && pValue != null && pValue.asBoolean () )
+            if ( matches ( name, pValue ) )
             {
                 if ( !contextSet.contains ( name ) )
                 {
@@ -111,6 +128,27 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         }
 
         return builder.build ();
+    }
+
+    private boolean matches ( final String name, final Variant value )
+    {
+        if ( value == null )
+        {
+            return false;
+        }
+        if ( !value.asBoolean () )
+        {
+            return false;
+        }
+
+        if ( this.pattern != null )
+        {
+            return this.pattern.matcher ( name ).matches ();
+        }
+        else
+        {
+            return name.endsWith ( this.suffix );
+        }
     }
 
     @SuppressWarnings ( "unchecked" )
@@ -136,7 +174,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         sourceValue = builder.getAttributes ().remove ( this.tag );
         if ( sourceValue != null )
         {
-            builder.setAttribute ( String.format ( "%s.%s", this.prefix, this.tag ), sourceValue );
+            builder.setAttribute ( this.attributeName, sourceValue );
         }
 
         sourceValue = builder.getAttributes ().remove ( this.tag + ".count" );
