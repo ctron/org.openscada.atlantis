@@ -207,9 +207,9 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    protected DataItemValue processDataUpdate ( final Map<String, Object> context, final DataItemValue value ) throws Exception
+    protected void processDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder ) throws Exception
     {
-        final Builder builder = new Builder ( value );
+        final Variant originalValue = builder.getValue ();
 
         injectAttributes ( builder );
 
@@ -217,7 +217,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
         if ( state.getValue ().isNull () )
         {
-            final Date currentTimestamp = makeTimestamp ( value );
+            final Date currentTimestamp = makeTimestamp ( builder );
 
             if ( currentTimestamp != null && state.getTimestmap () != null && currentTimestamp.after ( state.getTimestmap () ) )
             {
@@ -230,7 +230,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
             {
                 injectTimestamp ( builder, state );
             }
-            return builder.build ();
+            return;
         }
 
         // apply manual value : manual value is active
@@ -255,7 +255,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
             builder.setAttribute ( getPrefixed ( "error.items.original" ), originalErrorItems ); //$NON-NLS-1$
         }
 
-        builder.setAttribute ( getPrefixed ( "value.original" ), value.getValue () ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "value.original" ), originalValue ); //$NON-NLS-1$
         builder.setAttribute ( getPrefixed ( "active" ), Variant.TRUE ); //$NON-NLS-1$
         builder.setAttribute ( getPrefixed ( null ), Variant.TRUE );
 
@@ -270,11 +270,9 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
             builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( state.getReason () ) ); //$NON-NLS-1$
         }
         injectTimestamp ( builder, state );
-
-        return builder.build ();
     }
 
-    private Date makeTimestamp ( final DataItemValue value )
+    private Date makeTimestamp ( final DataItemValue.Builder value )
     {
         if ( value == null )
         {

@@ -81,14 +81,12 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
     }
 
     @Override
-    public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public void dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder )
     {
         if ( this.tag == null )
         {
-            return value;
+            return;
         }
-
-        final Builder builder = new DataItemValue.Builder ( value );
 
         // convert source errors
         convertSource ( builder );
@@ -126,8 +124,6 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         {
             builder.setAttribute ( this.tag + ".count", Variant.valueOf ( matches ) );
         }
-
-        return builder.build ();
     }
 
     private boolean matches ( final String name, final Variant value )

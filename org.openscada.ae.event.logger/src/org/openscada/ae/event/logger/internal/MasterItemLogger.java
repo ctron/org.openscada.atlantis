@@ -84,16 +84,14 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     }
 
     @Override
-    public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public void dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder value )
     {
         if ( this.logValue || this.logSubscription || this.logAttributes )
         {
-            publishDiff ( DataItemValueDiff.diff ( this.lastValue, value ) );
+            publishDiff ( DataItemValueDiff.diff ( this.lastValue, value.build () ) );
         }
 
-        this.lastValue = value;
-
-        return value;
+        this.lastValue = value.build ();
     }
 
     private void publishDiff ( final DataItemValue diff )
@@ -183,7 +181,6 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
     protected EventBuilder createEvent ( final WriteRequest request )
     {
-
         final EventBuilder builder = Event.create ();
         builder.sourceTimestamp ( new Date () );
         builder.attributes ( this.eventAttributes );

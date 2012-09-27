@@ -49,21 +49,18 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    protected DataItemValue processDataUpdate ( final Map<String, Object> context, final DataItemValue value ) throws Exception
+    protected void processDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder ) throws Exception
     {
-        final Builder builder = new Builder ( value );
-
         injectAttributes ( builder );
-        builder.setAttribute ( getPrefixed ( "value.original" ), value.getValue () ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( "value.original" ), builder.getValue () ); //$NON-NLS-1$
 
-        final Variant val = value.getValue ();
+        final Variant val = builder.getValue ();
         if ( val == null || val.isNull () )
         {
-            return builder.build ();
+            return;
         }
 
         builder.setValue ( handleDataUpdate ( builder.getValue () ) );
-        return builder.build ();
     }
 
     private Variant handleDataUpdate ( final Variant value )

@@ -390,26 +390,21 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
         final Map<String, Object> context = new HashMap<String, Object> ();
 
+        final DataItemValue.Builder builder = new Builder ( value );
+
         for ( final HandlerEntry entry : handler )
         {
             logger.debug ( "Process: {} -> {}", new Object[] { entry.getPriority (), entry.getHandler () } );
-            final DataItemValue newValue = entry.getHandler ().dataUpdate ( context, value );
-            if ( newValue != null )
-            {
-                value = newValue;
-            }
+            entry.getHandler ().dataUpdate ( context, builder );
         }
 
         if ( this.debug )
         {
-            final Builder builder = new Builder ( value );
-
             builder.setAttribute ( "master.debug.handlerCount", Variant.valueOf ( handler.size () ) );
-
             value = builder.build ();
         }
 
-        return value;
+        return builder.build ();
     }
 
     @Override

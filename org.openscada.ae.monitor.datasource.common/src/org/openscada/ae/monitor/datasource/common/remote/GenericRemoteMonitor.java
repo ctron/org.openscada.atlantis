@@ -252,7 +252,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         } );
     }
 
-    protected static Calendar getTimestamp ( final DataItemValue itemValue, final String attributeName )
+    protected static Calendar getTimestamp ( final DataItemValue.Builder itemValue, final String attributeName )
     {
         Calendar timestamp = null;
         if ( attributeName != null )
@@ -276,18 +276,19 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
         return timestamp;
     }
 
-    protected abstract DataItemValue handleUpdate ( final DataItemValue itemValue );
+    protected abstract void handleUpdate ( final DataItemValue.Builder itemValue );
 
     @Override
-    public synchronized DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public synchronized void dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder value )
     {
         if ( value == null )
         {
             setState ( MonitorStatus.UNSAFE );
-            return null;
         }
-
-        return handleUpdate ( value );
+        else
+        {
+            handleUpdate ( value );
+        }
     }
 
     private MonitorStatusInformation createStatus ()

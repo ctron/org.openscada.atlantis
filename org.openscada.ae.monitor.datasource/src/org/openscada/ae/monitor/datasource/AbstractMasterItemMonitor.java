@@ -257,10 +257,10 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
                 }
 
                 @Override
-                public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+                public void dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder value )
                 {
                     logger.debug ( "Handle data update: {}", value );
-                    return AbstractMasterItemMonitor.this.handleDataUpdate ( context, value );
+                    AbstractMasterItemMonitor.this.handleDataUpdate ( context, value );
                 }
             }, this.configuration.handlerPriority );
         }
@@ -287,10 +287,8 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         }
     }
 
-    protected DataItemValue handleDataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    protected void handleDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder )
     {
-        final DataItemValue.Builder builder = new DataItemValue.Builder ( value );
-
         if ( !this.configuration.activeState )
         {
             setInactive ();
@@ -302,10 +300,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
 
         injectAttributes ( builder );
 
-        final DataItemValue newValue = builder.build ();
-        logger.debug ( "Setting new value: {}", newValue );
-
-        return newValue;
+        logger.debug ( "Setting new value: {}", builder );
     }
 
     protected abstract void performDataUpdate ( Map<String, Object> context, Builder builder );

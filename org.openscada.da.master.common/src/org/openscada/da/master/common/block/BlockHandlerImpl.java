@@ -63,11 +63,9 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    protected DataItemValue processDataUpdate ( final Map<String, Object> context, final DataItemValue value ) throws Exception
+    protected void processDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder ) throws Exception
     {
-        final Builder builder = new Builder ( value );
         injectAttributes ( builder );
-        return builder.build ();
     }
 
     @Override

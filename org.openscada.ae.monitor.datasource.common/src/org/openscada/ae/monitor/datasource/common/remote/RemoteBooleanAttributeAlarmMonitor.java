@@ -32,7 +32,6 @@ import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
@@ -66,21 +65,21 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
     }
 
     @Override
-    protected DataItemValue handleUpdate ( final DataItemValue itemValue )
+    protected void handleUpdate ( final DataItemValue.Builder builder )
     {
-        final Builder builder = new Builder ( itemValue );
 
         final Variant value = builder.getAttributes ().get ( this.attributeValue );
         final Variant ack = builder.getAttributes ().get ( this.attributeAck );
         final Variant active = builder.getAttributes ().get ( this.attributeActive );
 
-        final Calendar timestamp = getTimestamp ( itemValue, this.attributeTimestamp );
-        final Calendar aknTimestamp = getTimestamp ( itemValue, this.attributeAckTimestamp );
+        final Calendar timestamp = getTimestamp ( builder, this.attributeTimestamp );
+        final Calendar aknTimestamp = getTimestamp ( builder, this.attributeAckTimestamp );
 
         if ( value == null )
         {
             setState ( MonitorStatus.UNSAFE );
-            return injectState ( builder ).build ();
+            injectState ( builder );
+            return;
         }
 
         final boolean alarmFlag = value.asBoolean ();
@@ -134,7 +133,7 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
 
         setState ( state, timestamp.getTime (), aknTimestamp.getTime () );
 
-        return injectState ( builder ).build ();
+        injectState ( builder );
     }
 
     @Override

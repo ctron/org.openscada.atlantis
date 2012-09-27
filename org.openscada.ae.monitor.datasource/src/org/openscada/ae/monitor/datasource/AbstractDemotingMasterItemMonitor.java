@@ -45,11 +45,11 @@ public abstract class AbstractDemotingMasterItemMonitor extends AbstractMasterIt
     }
 
     @Override
-    protected DataItemValue handleDataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    protected void handleDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder value )
     {
         this.demoteProcessor.handleDataUpdate ( context, value );
 
-        return super.handleDataUpdate ( context, value );
+        super.handleDataUpdate ( context, value );
     }
 
     @Override

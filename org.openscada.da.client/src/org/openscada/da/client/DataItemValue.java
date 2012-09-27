@@ -253,9 +253,9 @@ public class DataItemValue
      *            the attribute to get
      * @return the timestamp or <code>null</code> if the timestamp property is not set
      */
-    public Calendar getAsTimestamp ( final String attributeName )
+    public static Calendar getAsTimestamp ( final Map<String, Variant> attributes, final String attributeName )
     {
-        final Variant value = this.attributes.get ( attributeName );
+        final Variant value = attributes.get ( attributeName );
         if ( value == null )
         {
             return null;
@@ -276,6 +276,18 @@ public class DataItemValue
             return null;
         }
         return c;
+    }
+
+    /**
+     * get an attribute as timestamp
+     * 
+     * @param attributeName
+     *            the attribute to get
+     * @return the timestamp or <code>null</code> if the timestamp property is not set
+     */
+    public Calendar getAsTimestamp ( final String attributeName )
+    {
+        return getAsTimestamp ( this.attributes, attributeName );
     }
 
     /**
@@ -523,6 +535,12 @@ public class DataItemValue
             return this;
         }
 
+        public Builder setTimestamp ( final long timestamp )
+        {
+            setAttribute ( "timestamp", Variant.valueOf ( timestamp ) );
+            return this;
+        }
+
         public Builder setTimestamp ( final Calendar timestamp )
         {
             if ( timestamp == null )
@@ -534,6 +552,16 @@ public class DataItemValue
                 setAttribute ( "timestamp", Variant.valueOf ( timestamp.getTimeInMillis () ) );
             }
             return this;
+        }
+
+        public Calendar getTimestamp ()
+        {
+            return getAsTimestamp ( "timestamp" );
+        }
+
+        public Calendar getAsTimestamp ( final String attributeName )
+        {
+            return DataItemValue.getAsTimestamp ( this.attributes, attributeName );
         }
 
         public DataItemValue build ()

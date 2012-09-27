@@ -30,7 +30,6 @@ import org.openscada.ae.utils.AbstractBaseConfiguration;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.master.AbstractConfigurableMasterHandlerImpl;
 import org.openscada.da.master.MasterItem;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -75,7 +74,7 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
         this.sourceName = configurationId;
     }
 
-    protected abstract DataItemValue processDataUpdate ( Map<String, Object> context, final DataItemValue value ) throws Exception;
+    protected abstract void processDataUpdate ( Map<String, Object> context, final DataItemValue.Builder builder ) throws Exception;
 
     /**
      * Create a pre-filled event builder
@@ -101,23 +100,21 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
     }
 
     @Override
-    public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public void dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder )
     {
-        if ( value == null )
+        if ( builder == null )
         {
-            return null;
+            return;
         }
 
         try
         {
-            return processDataUpdate ( context, value );
+            processDataUpdate ( context, builder );
         }
         catch ( final Throwable e )
         {
-            final Builder builder = new Builder ( value );
             builder.setAttribute ( getPrefixed ( "error" ), Variant.TRUE );
             builder.setAttribute ( getPrefixed ( "error.message" ), Variant.valueOf ( e.getMessage () ) );
-            return builder.build ();
         }
     }
 

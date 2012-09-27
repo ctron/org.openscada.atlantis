@@ -51,7 +51,7 @@ public class DemoteImpl
 
     private boolean demoteAck;
 
-    public void handleDataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public void handleDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder value )
     {
         this.severityLimit = extractSeverity ( context );
         this.demoteAck = false;

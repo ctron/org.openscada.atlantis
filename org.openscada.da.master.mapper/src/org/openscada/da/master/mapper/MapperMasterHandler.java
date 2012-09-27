@@ -25,7 +25,6 @@ import java.util.Map;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.mapper.ValueMapper;
 import org.openscada.da.mapper.ValueMapperListener;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
@@ -101,19 +100,18 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
     }
 
     @Override
-    public synchronized DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public synchronized void dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder )
     {
         Variant sourceValue;
         if ( this.sourceAttributeName == null || this.sourceAttributeName.isEmpty () )
         {
-            sourceValue = value.getValue ();
+            sourceValue = builder.getValue ();
         }
         else
         {
-            sourceValue = value.getAttributes ().get ( this.sourceAttributeName );
+            sourceValue = builder.getAttributes ().get ( this.sourceAttributeName );
         }
         final ValueMapper mapper = getMapper ();
-        final Builder builder = new DataItemValue.Builder ( value );
         if ( mapper != null )
         {
             if ( this.targetAttributeName == null || this.targetAttributeName.isEmpty () )
@@ -129,7 +127,6 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
         {
             builder.setAttribute ( this.id + ".mapperMissing", Variant.TRUE );
         }
-        return builder.build ();
     }
 
     protected ValueMapper getMapper ()

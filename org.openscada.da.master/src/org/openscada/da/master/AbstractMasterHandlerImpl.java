@@ -195,7 +195,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
     }
 
     @Override
-    public abstract DataItemValue dataUpdate ( Map<String, Object> context, final DataItemValue value );
+    public abstract void dataUpdate ( Map<String, Object> context, final DataItemValue.Builder value );
 
     /**
      * Process the write request

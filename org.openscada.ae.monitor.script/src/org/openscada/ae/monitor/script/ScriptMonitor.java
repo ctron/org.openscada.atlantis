@@ -71,9 +71,9 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         }
 
         @Override
-        public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+        public void dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder value )
         {
-            return ScriptMonitor.this.dataUpdate ( context, value );
+            ScriptMonitor.this.dataUpdate ( context, value );
         }
 
         @Override
@@ -229,11 +229,10 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         return new ScriptExecutor ( this.scriptEngine, string, this.classLoader );
     }
 
-    public synchronized DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public synchronized DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder )
     {
-        this.demoteImpl.handleDataUpdate ( context, value );
+        this.demoteImpl.handleDataUpdate ( context, builder );
 
-        final DataItemValue.Builder builder = new DataItemValue.Builder ( value );
         this.monitorStateInjector.injectAttributes ( builder );
 
         return builder.build ();
