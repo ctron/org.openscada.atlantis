@@ -39,7 +39,7 @@ public abstract class MultiDataSourceListener
 
     private final DataSourceHandlerListener listener;
 
-    private final Map<String, DataSourceHandler> sources = new HashMap<String, DataSourceHandler> ();
+    private final Map<String, DataSourceHandlerImpl> sources = new HashMap<String, DataSourceHandlerImpl> ();
 
     private boolean disposed;
 
@@ -114,7 +114,7 @@ public abstract class MultiDataSourceListener
     {
         logger.info ( "Adding data source: {} -> {} ({})", new Object[] { datasourceKey, datasourceId, type } );
 
-        final DataSourceHandler dsHandler = new DataSourceHandler ( this.poolTracker, datasourceId, this.listener, type );
+        final DataSourceHandlerImpl dsHandler = new DataSourceHandlerImpl ( this.poolTracker, datasourceId, this.listener, type );
         this.sources.put ( datasourceKey, dsHandler );
     }
 
@@ -127,7 +127,7 @@ public abstract class MultiDataSourceListener
                 return;
             }
         }
-        handleChange ( Collections.unmodifiableMap ( this.sources ) );
+        handleChange ( Collections.<String, DataSourceHandler> unmodifiableMap ( this.sources ) );
     }
 
     /**
@@ -144,7 +144,7 @@ public abstract class MultiDataSourceListener
 
     public void dispose ()
     {
-        final Collection<DataSourceHandler> disposeSources;
+        final Collection<DataSourceHandlerImpl> disposeSources;
 
         synchronized ( this )
         {
