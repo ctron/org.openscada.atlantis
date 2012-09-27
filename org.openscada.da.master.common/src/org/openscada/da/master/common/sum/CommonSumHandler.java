@@ -48,6 +48,10 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
 
     private String attributeName;
 
+    private String attributeCountName;
+
+    private String contextAttribute;
+
     public CommonSumHandler ( final ObjectPoolTracker<MasterItem> poolTracker )
     {
         super ( poolTracker );
@@ -63,10 +67,12 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
 
         this.tag = cfg.getString ( "tag" );
 
+        this.attributeName = String.format ( "%s.%s", this.prefix, this.tag );
+        this.attributeCountName = this.tag + ".count";
+        this.contextAttribute = this.tag + ".set";
+
         this.suffix = cfg.getString ( "suffix", "." + this.tag );
         this.pattern = makePattern ( cfg.getString ( "pattern", null ) );
-
-        this.attributeName = String.format ( "%s.%s", this.prefix, this.tag );
 
         reprocess ();
     }
@@ -91,7 +97,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         // convert source errors
         convertSource ( builder );
 
-        final Set<Object> contextSet = getContextSet ( context, this.tag );
+        final Set<Object> contextSet = getContextSet ( context, this.contextAttribute );
 
         if ( this.debug )
         {
@@ -160,9 +166,9 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
     }
 
     @SuppressWarnings ( "unchecked" )
-    private static Set<Object> getContextSet ( final Map<String, Object> context, final String tag )
+    private static Set<Object> getContextSet ( final Map<String, Object> context, final String contextAttribute )
     {
-        final Object o = context.get ( tag + ".set" );
+        final Object o = context.get ( contextAttribute );
         if ( o instanceof Set<?> )
         {
             return (Set<Object>)o;
@@ -170,7 +176,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         else
         {
             final Set<Object> set = new HashSet<Object> ();
-            context.put ( tag + ".set", set );
+            context.put ( contextAttribute, set );
             return set;
         }
     }
@@ -185,7 +191,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
             builder.setAttribute ( this.attributeName, sourceValue );
         }
 
-        sourceValue = builder.getAttributes ().remove ( this.tag + ".count" );
+        sourceValue = builder.getAttributes ().remove ( this.attributeCountName );
         if ( sourceValue != null && this.debug )
         {
             builder.setAttribute ( String.format ( "%s.%s.count", this.prefix, this.tag ), sourceValue );
