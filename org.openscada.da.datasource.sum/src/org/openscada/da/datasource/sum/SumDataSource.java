@@ -198,15 +198,14 @@ public class SumDataSource extends AbstractMultiSourceDataSource
 
     private static void increment ( final Map<String, Integer> counts, final String group )
     {
-        if ( !counts.containsKey ( group ) )
+        final Integer i = counts.get ( group );
+        if ( i == null )
         {
             counts.put ( group, 1 );
         }
         else
         {
-            int i = counts.get ( group );
-            i++;
-            counts.put ( group, i );
+            counts.put ( group, i + 1 );
         }
     }
 }
