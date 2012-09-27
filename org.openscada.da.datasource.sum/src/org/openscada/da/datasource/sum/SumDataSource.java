@@ -201,14 +201,12 @@ public class SumDataSource extends AbstractMultiSourceDataSource
         if ( !counts.containsKey ( group ) )
         {
             counts.put ( group, 1 );
-            logger.debug ( "Increment group - '{}': set to 1", group );
         }
         else
         {
             int i = counts.get ( group );
             i++;
             counts.put ( group, i );
-            logger.debug ( "Increment group - '{}': {}", group, i );
         }
     }
 }
