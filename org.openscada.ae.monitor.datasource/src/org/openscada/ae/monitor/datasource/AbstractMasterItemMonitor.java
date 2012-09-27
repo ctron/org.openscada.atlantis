@@ -19,6 +19,7 @@
 
 package org.openscada.ae.monitor.datasource;
 
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
@@ -152,6 +153,13 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
     {
         super.dispose ();
         disconnect ();
+    }
+
+    @Override
+    public synchronized void akn ( final UserInformation userInformation, final Date aknTimestamp )
+    {
+        super.akn ( userInformation, aknTimestamp );
+        reprocess ();
     }
 
     @Override
