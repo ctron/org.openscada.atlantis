@@ -191,16 +191,19 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
             builder.setAttribute ( this.attributeName, sourceValue );
         }
 
-        sourceValue = builder.getAttributes ().remove ( this.attributeCountName );
-        if ( sourceValue != null && this.debug )
+        if ( this.debug )
         {
-            builder.setAttribute ( String.format ( "%s.%s.count", this.prefix, this.tag ), sourceValue );
-        }
+            sourceValue = builder.getAttributes ().remove ( this.attributeCountName );
+            if ( sourceValue != null )
+            {
+                builder.setAttribute ( String.format ( "%s.%s.count", this.prefix, this.tag ), sourceValue );
+            }
 
-        sourceValue = builder.getAttributes ().remove ( this.tag + ".items" );
-        if ( sourceValue != null && this.debug )
-        {
-            builder.setAttribute ( String.format ( "%s.%s.items", this.prefix, this.tag ), sourceValue );
+            sourceValue = builder.getAttributes ().remove ( this.tag + ".items" );
+            if ( sourceValue != null )
+            {
+                builder.setAttribute ( String.format ( "%s.%s.items", this.prefix, this.tag ), sourceValue );
+            }
         }
     }
 
