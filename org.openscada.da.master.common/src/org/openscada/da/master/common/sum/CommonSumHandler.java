@@ -135,7 +135,7 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
     private boolean matches ( final String name, final Variant value )
     {
         // if the value is null is will never match
-        if ( value == null )
+        if ( value == null || name == null )
         {
             return false;
         }
