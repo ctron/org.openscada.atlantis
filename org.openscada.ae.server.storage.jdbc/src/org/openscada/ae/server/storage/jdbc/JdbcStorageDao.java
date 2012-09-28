@@ -275,7 +275,7 @@ public class JdbcStorageDao extends BaseStorageDao
                     {
                         logger.warn ( "more distinct records found for id {}, this shouldn't happen at all", id );
                     }
-                    if ( ( events != null ) && !events.isEmpty () )
+                    if ( events != null && !events.isEmpty () )
                     {
                         return events.get ( 0 );
                     }
@@ -356,7 +356,7 @@ public class JdbcStorageDao extends BaseStorageDao
                 }
             }
             final UUID id = UUID.fromString ( rs.getString ( 1 ) );
-            if ( ( lastId != null ) && !id.equals ( lastId ) )
+            if ( lastId != null && !id.equals ( lastId ) )
             {
                 events.add ( eb.build () );
                 l += 1;
@@ -391,9 +391,9 @@ public class JdbcStorageDao extends BaseStorageDao
             eb.entryTimestamp ( entryTimestamp );
             eb.attribute ( Fields.MONITOR_TYPE, monitorType );
             eb.attribute ( Fields.EVENT_TYPE, eventType );
-            if ( ( valueType != null ) && ( valueString != null ) )
+            if ( valueType != null && valueString != null )
             {
-                eb.attribute ( Fields.VALUE, VariantEditor.toVariant ( valueType + "#" + valueString ) );
+                eb.attribute ( Fields.VALUE, VariantEditor.toVariant ( valueType, valueString ) );
             }
             eb.attribute ( Fields.MESSAGE, message );
             eb.attribute ( Fields.MESSAGE_CODE, messageCode );
@@ -409,7 +409,7 @@ public class JdbcStorageDao extends BaseStorageDao
             valueString = rs.getString ( 20 );
             if ( field != null )
             {
-                if ( ( valueType != null ) && ( valueString != null ) )
+                if ( valueType != null && valueString != null )
                 {
                     eb.attribute ( field, VariantEditor.toVariant ( valueType + "#" + valueString ) );
                 }
