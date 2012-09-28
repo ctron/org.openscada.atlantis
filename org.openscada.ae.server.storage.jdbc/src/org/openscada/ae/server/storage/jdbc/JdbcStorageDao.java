@@ -411,7 +411,7 @@ public class JdbcStorageDao extends BaseStorageDao
             {
                 if ( valueType != null && valueString != null )
                 {
-                    eb.attribute ( field, VariantEditor.toVariant ( valueType + "#" + valueString ) );
+                    eb.attribute ( field, VariantEditor.toVariant ( valueType, valueString ) );
                 }
                 else
                 {
