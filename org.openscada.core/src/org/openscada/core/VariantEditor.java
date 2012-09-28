@@ -24,6 +24,43 @@ import java.beans.PropertyEditorSupport;
 public class VariantEditor extends PropertyEditorSupport
 {
 
+    public static Variant toVariant ( final String type, final String value )
+    {
+        if ( type == null || value == null )
+        {
+            return null;
+        }
+
+        if ( type.equalsIgnoreCase ( "INT" ) || type.equalsIgnoreCase ( "INT32" ) || type.equalsIgnoreCase ( "INTEGER" ) )
+        {
+            return Variant.valueOf ( Integer.parseInt ( value ) );
+        }
+        else if ( type.equalsIgnoreCase ( "BOOLEAN" ) || type.equalsIgnoreCase ( "BOOL" ) )
+        {
+            return Variant.valueOf ( Boolean.parseBoolean ( value ) );
+        }
+        else if ( type.equalsIgnoreCase ( "DOUBLE" ) || type.equalsIgnoreCase ( "FLOAT" ) )
+        {
+            return Variant.valueOf ( Double.parseDouble ( value ) );
+        }
+        else if ( type.equalsIgnoreCase ( "LONG" ) || type.equalsIgnoreCase ( "INT64" ) )
+        {
+            return Variant.valueOf ( Long.parseLong ( value ) );
+        }
+        else if ( type.equalsIgnoreCase ( "STRING" ) || type.equalsIgnoreCase ( "UNKNOWN" ) )
+        {
+            return Variant.valueOf ( value );
+        }
+        else if ( type.equalsIgnoreCase ( "NULL" ) )
+        {
+            return Variant.NULL;
+        }
+        else
+        {
+            throw new IllegalArgumentException ( String.format ( "'%s' is not a valid variant type", type ) );
+        }
+    }
+
     public static Variant toVariant ( final String text ) throws IllegalArgumentException
     {
         if ( text == null )
@@ -34,34 +71,7 @@ public class VariantEditor extends PropertyEditorSupport
         final String[] toks = text.split ( "#", 2 );
         if ( toks.length > 1 )
         {
-            if ( toks[0].equalsIgnoreCase ( "INT" ) || toks[0].equalsIgnoreCase ( "INT32" ) || toks[0].equalsIgnoreCase ( "INTEGER" ) )
-            {
-                return Variant.valueOf ( Integer.parseInt ( toks[1] ) );
-            }
-            else if ( toks[0].equalsIgnoreCase ( "BOOLEAN" ) || toks[0].equalsIgnoreCase ( "BOOL" ) )
-            {
-                return Variant.valueOf ( Boolean.parseBoolean ( toks[1] ) );
-            }
-            else if ( toks[0].equalsIgnoreCase ( "DOUBLE" ) || toks[0].equalsIgnoreCase ( "FLOAT" ) )
-            {
-                return Variant.valueOf ( Double.parseDouble ( toks[1] ) );
-            }
-            else if ( toks[0].equalsIgnoreCase ( "LONG" ) || toks[0].equalsIgnoreCase ( "INT64" ) )
-            {
-                return Variant.valueOf ( Long.parseLong ( toks[1] ) );
-            }
-            else if ( toks[0].equalsIgnoreCase ( "STRING" ) || toks[0].equalsIgnoreCase ( "UNKNOWN" ) )
-            {
-                return Variant.valueOf ( toks[1] );
-            }
-            else if ( toks[0].equalsIgnoreCase ( "NULL" ) )
-            {
-                return Variant.NULL;
-            }
-            else
-            {
-                throw new IllegalArgumentException ( String.format ( "'%s' is not a valid variant type", toks[0] ) );
-            }
+            return toVariant ( toks[0], toks[1] );
         }
         else
         {
