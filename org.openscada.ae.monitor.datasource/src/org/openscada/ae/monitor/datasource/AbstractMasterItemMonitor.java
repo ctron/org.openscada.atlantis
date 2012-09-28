@@ -131,10 +131,12 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         this.factoryId = factoryId;
         this.executor = executor;
         this.poolTracker = poolTracker;
-        this.prefix = prefix;
+
         this.defaultMonitorType = defaultMonitorType;
 
         this.monitorStateInjector = new MonitorStateInjector ( stringInterner );
+
+        setPrefix ( prefix );
     }
 
     protected void setPrefix ( final String prefix )
