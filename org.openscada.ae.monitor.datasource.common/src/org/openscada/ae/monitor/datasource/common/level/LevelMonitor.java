@@ -122,7 +122,7 @@ public class LevelMonitor extends AbstractNumericMonitor
         final Configuration c = new Configuration ( this.configuration, this );
 
         c.setPreset ( userInformation, cfg.getDouble ( "preset" ) );
-        c.setLowerOk ( userInformation, cfg.getBoolean ( "lowerOk" ) );
+        c.setLowerOk ( userInformation, cfg.getBooleanChecked ( "lowerOk", "'lowerOk' is required" ) );
         c.setIncludedOk ( userInformation, cfg.getBoolean ( "includedOk", true ) );
         c.setSecondPrefix ( userInformation, cfg.getString ( "prefix", null ) );
         c.setCap ( userInformation, cfg.getBoolean ( "cap", false ) );
