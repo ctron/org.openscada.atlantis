@@ -23,6 +23,7 @@ import org.openscada.ae.client.Connection;
 import org.openscada.ae.client.EventManager;
 import org.openscada.ae.client.MonitorManager;
 import org.openscada.core.connection.provider.AbstractConnectionService;
+import org.openscada.core.connection.provider.info.ConnectionInformationProvider;
 
 public class ConnectionServiceImpl extends AbstractConnectionService implements ConnectionService
 {
@@ -49,7 +50,7 @@ public class ConnectionServiceImpl extends AbstractConnectionService implements 
     @Override
     public Class<?>[] getSupportedInterfaces ()
     {
-        return new Class<?>[] { org.openscada.core.connection.provider.ConnectionService.class, ConnectionService.class };
+        return new Class<?>[] { org.openscada.core.connection.provider.ConnectionService.class, ConnectionService.class, ConnectionInformationProvider.class };
     }
 
     @Override
