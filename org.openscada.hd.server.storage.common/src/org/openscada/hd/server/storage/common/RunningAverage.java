@@ -74,25 +74,25 @@ public class RunningAverage
         this.lastValue = value;
         this.lastTimestamp = timestamp;
 
-        hadValue |= ( value != Double.NaN );
+        this.hadValue = this.hadValue || ( !Double.isNaN ( value ) );
     }
 
     private void increment ( final long timestamp )
     {
         final long offset = timestamp - this.lastTimestamp;
-        final long newSumWeight = offset + sumWeight;
+        final long newSumWeight = offset + this.sumWeight;
 
         if ( offset > 0 )
         {
             if ( !Double.isNaN ( this.lastValue ) )
             {
-                final BigDecimal delta = BigDecimal.valueOf ( this.lastValue ).subtract ( mean );
-                final BigDecimal R = delta.multiply ( BigDecimal.valueOf ( offset ) ).divide ( BigDecimal.valueOf ( newSumWeight ), mathContext );
-                mean = mean.add ( R );
-                M2 = M2.add ( BigDecimal.valueOf ( sumWeight ).multiply ( delta ).multiply ( R ) );
+                final BigDecimal delta = BigDecimal.valueOf ( this.lastValue ).subtract ( this.mean );
+                final BigDecimal R = delta.multiply ( BigDecimal.valueOf ( offset ) ).divide ( BigDecimal.valueOf ( newSumWeight ), this.mathContext );
+                this.mean = this.mean.add ( R );
+                this.M2 = this.M2.add ( BigDecimal.valueOf ( this.sumWeight ).multiply ( delta ).multiply ( R ) );
             }
-            numOfIncrements += 1;
-            sumWeight = newSumWeight;
+            this.numOfIncrements += 1;
+            this.sumWeight = newSumWeight;
         }
     }
 
@@ -105,27 +105,27 @@ public class RunningAverage
     public double getAverage ( final long lastTimestamp )
     {
         increment ( lastTimestamp );
-        if ( lastTimestamp == this.firstTimestamp || !hadValue )
+        if ( ( lastTimestamp == this.firstTimestamp ) || !this.hadValue )
         {
             return Double.NaN;
         }
         else
         {
-            return mean.doubleValue ();
+            return this.mean.doubleValue ();
         }
     }
 
     public double getDeviation ( final long lastTimestamp )
     {
         increment ( lastTimestamp );
-        if ( lastTimestamp == this.firstTimestamp || !hadValue )
+        if ( ( lastTimestamp == this.firstTimestamp ) || !this.hadValue )
         {
             return Double.NaN;
         }
         else
         {
-            final BigDecimal variance_n = M2.divide ( BigDecimal.valueOf ( sumWeight ), mathContext );
-            final BigDecimal variance = variance_n.multiply ( BigDecimal.valueOf ( numOfIncrements ).divide ( BigDecimal.valueOf ( numOfIncrements - 1 ), mathContext ) );
+            final BigDecimal variance_n = this.M2.divide ( BigDecimal.valueOf ( this.sumWeight ), this.mathContext );
+            final BigDecimal variance = variance_n.multiply ( BigDecimal.valueOf ( this.numOfIncrements ).divide ( BigDecimal.valueOf ( this.numOfIncrements - 1 ), this.mathContext ) );
             return Math.sqrt ( variance.doubleValue () );
         }
     }
