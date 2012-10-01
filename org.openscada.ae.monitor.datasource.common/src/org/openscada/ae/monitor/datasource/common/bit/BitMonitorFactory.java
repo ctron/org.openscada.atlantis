@@ -54,7 +54,7 @@ public class BitMonitorFactory extends AbstractMonitorFactory
     @Override
     protected DataItemMonitor createInstance ( final String configurationId, final EventProcessor eventProcessor )
     {
-        return new BitMonitor ( this.context, this.executor, this.stringInterner, this.poolTracker, eventProcessor, configurationId, FACTORY_ID, "LEVEL" );
+        return new BitMonitor ( this.context, this.executor, this.stringInterner, this.poolTracker, eventProcessor, configurationId, FACTORY_ID, "BIT" );
     }
 
 }
