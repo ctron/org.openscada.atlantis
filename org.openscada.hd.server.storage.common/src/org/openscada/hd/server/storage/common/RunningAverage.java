@@ -100,6 +100,12 @@ public class RunningAverage
     {
         this.firstTimestamp = timestamp;
         this.lastTimestamp = timestamp;
+
+        this.M2 = BigDecimal.ZERO;
+        this.mean = BigDecimal.ZERO;
+        this.sumWeight = 0;
+        this.numOfIncrements = 0;
+        this.hadValue = false;
     }
 
     public double getAverage ( final long lastTimestamp )
