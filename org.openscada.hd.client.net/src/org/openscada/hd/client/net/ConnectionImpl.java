@@ -78,6 +78,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     protected Map<String, HistoricalItemInformation> knownItems = new HashMap<String, HistoricalItemInformation> ();
 
+    private static final Object STATS_COUNT_QUERIES = new Object ();
+
     @Override
     public String getRequiredVersion ()
     {
@@ -89,6 +91,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         super ( connectionInformantion );
 
         this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () ) );
+
+        this.statistics.setLabel ( STATS_COUNT_QUERIES, "Active queries" );
 
         init ();
     }
@@ -212,9 +216,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Fire a list change
-     * @param addedOrModified added or modified items
-     * @param removed removed item
-     * @param full indicates a full or differential transmission
+     * 
+     * @param addedOrModified
+     *            added or modified items
+     * @param removed
+     *            removed item
+     * @param full
+     *            indicates a full or differential transmission
      */
     private synchronized void fireListChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
@@ -237,9 +245,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Updates data to the cache
-     * @param addedOrModified the items that where added or modified
-     * @param removed the items that where removed
-     * @param full <code>true</code> if this is a full update and not a delta update
+     * 
+     * @param addedOrModified
+     *            the items that where added or modified
+     * @param removed
+     *            the items that where removed
+     * @param full
+     *            <code>true</code> if this is a full update and not a delta update
      */
     private void applyChange ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
@@ -274,23 +286,25 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         super.switchState ( state, error, properties );
         switch ( state )
         {
-        case BOUND:
-            sendRequestItemList ( !this.itemListListeners.isEmpty () );
-            break;
+            case BOUND:
+                sendRequestItemList ( !this.itemListListeners.isEmpty () );
+                break;
 
-        case CLOSED:
-            // clear lists
-            fireListChanged ( new HashSet<HistoricalItemInformation> (), null, true );
-            // clear queries
+            case CLOSED:
+                // clear lists
+                fireListChanged ( new HashSet<HistoricalItemInformation> (), null, true );
+                // clear queries
 
-            // make a copy to prevent a concurrent modification
-            final Collection<QueryImpl> queries = new ArrayList<QueryImpl> ( this.queries.values () );
-            for ( final QueryImpl query : queries )
-            {
-                query.close ();
-            }
-            this.queries.clear ();
-            break;
+                // make a copy to prevent a concurrent modification
+                final Collection<QueryImpl> queries = new ArrayList<QueryImpl> ( this.queries.values () );
+                for ( final QueryImpl query : queries )
+                {
+                    query.close ();
+                }
+                this.queries.clear ();
+                break;
+            default:
+                break;
         }
     }
 
@@ -351,6 +365,10 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 }
                 query.setId ( id );
                 this.queries.put ( id, query );
+
+                // update stats
+                this.statistics.setCurrentValue ( STATS_COUNT_QUERIES, this.queries.size () );
+
                 sendCreateQuery ( id, itemId, parameters, updateData );
                 return query;
             }
@@ -407,7 +425,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Close a registered query
-     * @param queryImpl the registered query to close
+     * 
+     * @param queryImpl
+     *            the registered query to close
      */
     public void closeQuery ( final QueryImpl queryImpl )
     {
@@ -420,6 +440,10 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         synchronized ( this )
         {
             final QueryImpl query = this.queries.remove ( id );
+
+            // update stats
+            this.statistics.setCurrentValue ( STATS_COUNT_QUERIES, this.queries.size () );
+
             performCloseQuery ( id, query );
         }
     }
@@ -429,8 +453,11 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
      * <p>
      * The internal queries collection is not modified by this call
      * </p>
-     * @param id the id of the query
-     * @param query the query itself
+     * 
+     * @param id
+     *            the id of the query
+     * @param query
+     *            the query itself
      */
     private void performCloseQuery ( final Long id, final QueryImpl query )
     {

@@ -98,7 +98,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
 
     private volatile Map<String, String> properties;
 
-    private final StatisticsImpl statistics = new StatisticsImpl ();
+    protected final StatisticsImpl statistics = new StatisticsImpl ();
 
     public ConnectionBase ( final ConnectionInformation connectionInformation )
     {
