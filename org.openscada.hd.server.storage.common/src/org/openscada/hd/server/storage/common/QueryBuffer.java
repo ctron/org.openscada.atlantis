@@ -314,7 +314,6 @@ public class QueryBuffer extends QueryDataBuffer
 
             for ( final Entry entry : this.data[i].getEntries () )
             {
-
                 quality.next ( entry.isError () ? 0.0 : 1.0, entry.getTimestamp ().getTime () );
                 manual.next ( entry.isManual () ? 1.0 : 0.0, entry.getTimestamp ().getTime () );
 
