@@ -91,9 +91,9 @@ public class RunningAverage
                 this.mean = this.mean.add ( R );
                 this.M2 = this.M2.add ( BigDecimal.valueOf ( this.sumWeight ).multiply ( delta ).multiply ( R ) );
                 this.hadValue = true;
+                this.sumWeight = newSumWeight;
+                this.numOfIncrements += 1;
             }
-            this.numOfIncrements += 1;
-            this.sumWeight = newSumWeight;
         }
     }
 
