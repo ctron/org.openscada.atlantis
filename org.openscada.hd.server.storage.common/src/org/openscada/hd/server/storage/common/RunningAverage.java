@@ -71,10 +71,10 @@ public class RunningAverage
     {
         increment ( timestamp );
 
+        this.hadValue = this.hadValue || ( !Double.isNaN ( this.lastValue ) );
+
         this.lastValue = value;
         this.lastTimestamp = timestamp;
-
-        this.hadValue = this.hadValue || ( !Double.isNaN ( value ) );
     }
 
     private void increment ( final long timestamp )
@@ -90,6 +90,7 @@ public class RunningAverage
                 final BigDecimal R = delta.multiply ( BigDecimal.valueOf ( offset ) ).divide ( BigDecimal.valueOf ( newSumWeight ), this.mathContext );
                 this.mean = this.mean.add ( R );
                 this.M2 = this.M2.add ( BigDecimal.valueOf ( this.sumWeight ).multiply ( delta ).multiply ( R ) );
+                this.hadValue = true;
             }
             this.numOfIncrements += 1;
             this.sumWeight = newSumWeight;
