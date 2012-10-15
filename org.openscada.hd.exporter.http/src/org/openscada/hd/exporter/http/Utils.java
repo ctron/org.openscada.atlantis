@@ -34,7 +34,7 @@ public class Utils
 
     public static final DateFormat isoDateFormat = new SimpleDateFormat ( isoDatePatterrn );
 
-    public static final Gson gson = new GsonBuilder ().setDateFormat ( DateFormat.FULL ).setDateFormat ( isoDatePatterrn ).create ();
+    public static final Gson gson = new GsonBuilder ().setDateFormat ( DateFormat.FULL ).setDateFormat ( isoDatePatterrn ).serializeNulls ().serializeSpecialFloatingPointValues ().create ();
 
     public static String toJson ( final List<DataPoint> items )
     {

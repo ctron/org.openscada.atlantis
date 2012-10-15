@@ -66,7 +66,7 @@ public class QueryBuffer extends QueryDataBuffer
         {
             final int prime = 31;
             int result = 1;
-            result = prime * result + ( this.timestamp == null ? 0 : this.timestamp.hashCode () );
+            result = ( prime * result ) + ( this.timestamp == null ? 0 : this.timestamp.hashCode () );
             return result;
         }
 
@@ -232,7 +232,7 @@ public class QueryBuffer extends QueryDataBuffer
 
         if ( timestamp.before ( this.parameters.getStartTimestamp ().getTime () ) )
         {
-            if ( this.firstEntry == null || this.firstEntry.getTimestamp ().before ( timestamp ) )
+            if ( ( this.firstEntry == null ) || this.firstEntry.getTimestamp ().before ( timestamp ) )
             {
                 logger.debug ( "Evaluating entry as first entry: {}", entry );
                 if ( !Double.isNaN ( entry.getValue () ) || this.useNaNs )
@@ -251,11 +251,11 @@ public class QueryBuffer extends QueryDataBuffer
 
             logger.debug ( "Inserting into cell: {}", i );
 
-            if ( i >= 0 && i < this.parameters.getEntries () )
+            if ( ( i >= 0 ) && ( i < this.parameters.getEntries () ) )
             {
                 this.data[i].add ( entry );
 
-                if ( this.renderWhileLoading && this.state == QueryState.LOADING )
+                if ( this.renderWhileLoading && ( this.state == QueryState.LOADING ) )
                 {
                     render ( i, i + 1 );
                 }
@@ -320,11 +320,11 @@ public class QueryBuffer extends QueryDataBuffer
                 if ( !Double.isNaN ( entry.getValue () ) || this.useNaNs )
                 {
                     avg.next ( entry.getValue (), entry.getTimestamp ().getTime () );
-                    if ( Double.isNaN ( max ) || Double.compare ( entry.getValue (), max ) > 0 )
+                    if ( Double.isNaN ( max ) || ( Double.compare ( entry.getValue (), max ) > 0 ) )
                     {
                         max = entry.getValue ();
                     }
-                    if ( Double.isNaN ( min ) || Double.compare ( entry.getValue (), min ) < 0 )
+                    if ( Double.isNaN ( min ) || ( Double.compare ( entry.getValue (), min ) < 0 ) )
                     {
                         min = entry.getValue ();
                     }
@@ -369,7 +369,7 @@ public class QueryBuffer extends QueryDataBuffer
 
     protected Entry findNextEntry ( final int i )
     {
-        if ( i + 1 >= this.parameters.getEntries () )
+        if ( ( i + 1 ) >= this.parameters.getEntries () )
         {
             return null;
         }
