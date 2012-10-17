@@ -226,7 +226,8 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
      * 
      * @param message
      *            the message
-     * @return the decoded attributes or <code>null</code> if no attribute changed
+     * @return the decoded attributes or <code>null</code> if no attribute
+     *         changed
      */
     private Map<String, Variant> decodeAttributeChange ( final Message message )
     {
@@ -527,15 +528,16 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     }
 
     @Override
-    public void subscribeItem ( final String item ) throws NoConnectionException
+    public void subscribeItem ( final String itemId ) throws NoConnectionException
     {
-        logger.debug ( "Subscribe to item: {}", item );
-        this.messenger.sendMessage ( Messages.subscribeItem ( item ) );
+        logger.debug ( "Subscribe to item: {}", itemId );
+        this.messenger.sendMessage ( Messages.subscribeItem ( itemId ) );
     }
 
     @Override
     public void unsubscribeItem ( final String itemId ) throws NoConnectionException
     {
+        logger.debug ( "Unsubscribe from item: {}", itemId );
         this.messenger.sendMessage ( Messages.unsubscribeItem ( itemId ) );
     }
 
