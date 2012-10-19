@@ -26,6 +26,7 @@ import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Severity;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.utils.interner.InternerHelper;
 
 import com.google.common.collect.Interner;
 
@@ -65,7 +66,7 @@ public class MonitorStateInjector
 
     public MonitorStateInjector ( final Interner<String> stringInterner )
     {
-        this.stringInterner = stringInterner;
+        this.stringInterner = stringInterner == null ? InternerHelper.makeNoOpInterner () : stringInterner;
     }
 
     public void notifyStateChange ( final MonitorStatusInformation status )
@@ -81,14 +82,7 @@ public class MonitorStateInjector
 
     protected String intern ( final String value )
     {
-        if ( this.stringInterner == null || value == null )
-        {
-            return value;
-        }
-        else
-        {
-            return this.stringInterner.intern ( value );
-        }
+        return this.stringInterner.intern ( value );
     }
 
     public void setPrefix ( final String prefix )
@@ -107,7 +101,8 @@ public class MonitorStateInjector
     }
 
     /**
-     * Inject attributes to the value after the value update has been performed using {@link #performDataUpdate(Builder)}
+     * Inject attributes to the value after the value update has been performed
+     * using {@link #performDataUpdate(Builder)}
      * 
      * @param builder
      *            the builder to use for changing information
