@@ -172,9 +172,11 @@ public class QueryImpl implements Query, QueryListener
         {
             switch ( state )
             {
-            case DISCONNECTED:
-                this.session.removeQuery ( this );
-                break;
+                case DISCONNECTED:
+                    this.session.removeQuery ( this );
+                    break;
+                default:
+                    break;
             }
         }
     }

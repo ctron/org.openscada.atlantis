@@ -94,7 +94,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     private final Set<Query> openQueries = new HashSet<Query> ();
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<DataSource> poolTracker;
 
     private SingleDataSourceTracker dataSourceTracker;
 
@@ -119,7 +119,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 HistoricalItemImpl.this.setStorage ( service );
             }
         } );
-        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
     }
 
     protected synchronized void setMasterItem ( final DataSource service )
