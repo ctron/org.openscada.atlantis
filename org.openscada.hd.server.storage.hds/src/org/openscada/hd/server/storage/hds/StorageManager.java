@@ -58,8 +58,6 @@ public class StorageManager
 
     private final int coreThreads = Integer.getInteger ( "org.openscada.hd.server.storage.hds.coreQueryThread", 1 );
 
-    private final boolean readOnly = Boolean.getBoolean ( "org.openscada.hd.server.storage.hds.readOnly" );
-
     public StorageManager ( final BundleContext context, final DataFilePool pool )
     {
         this.context = context;
@@ -69,10 +67,7 @@ public class StorageManager
         if ( basePath == null )
         {
             this.base = context.getDataFile ( "storage" );
-            if ( !this.readOnly )
-            {
-                this.base.mkdir ();
-            }
+            this.base.mkdir ();
             logger.warn ( "Using local data storage - {}, exists: {}", this.base, this.base.exists () );
         }
         else
@@ -278,7 +273,7 @@ public class StorageManager
         this.lock.lock ();
         try
         {
-            final StorageImpl storage = new StorageImpl ( file, this.context, this.pool, this.queryExecutor, this.updateExecutor, this.readOnly );
+            final StorageImpl storage = new StorageImpl ( file, this.context, this.pool, this.queryExecutor, this.updateExecutor );
             this.storages.put ( storage.getInformation ().getId (), storage );
         }
         finally
@@ -312,10 +307,6 @@ public class StorageManager
 
     protected void checkWriteValid ()
     {
-        if ( this.readOnly )
-        {
-            throw new IllegalStateException ( "Storage is in read only mode" );
-        }
         checkValid ();
     }
 
