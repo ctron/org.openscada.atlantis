@@ -68,7 +68,7 @@ public class StorageManager extends AbstractStorageManager
 
     private static File makeBase ( final BundleContext context )
     {
-        final String basePath = System.getProperty ( "org.openscada.hd.server.storage.hds.basePath" );
+        final String basePath = System.getProperty ( "org.openscada.hd.server.storage.master.hds.basePath", System.getProperty ( "org.openscada.hd.server.storage.hds.basePath" ) );
         if ( basePath == null )
         {
             final File base = context.getDataFile ( "storage" );
