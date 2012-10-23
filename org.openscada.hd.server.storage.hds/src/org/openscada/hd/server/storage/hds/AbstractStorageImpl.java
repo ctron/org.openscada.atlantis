@@ -209,7 +209,7 @@ public abstract class AbstractStorageImpl implements HistoricalItem, ValueSource
     @Override
     public Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
-        this.readLock.lock ();
+        this.writeLock.lock ();
 
         try
         {
@@ -227,21 +227,21 @@ public abstract class AbstractStorageImpl implements HistoricalItem, ValueSource
         }
         finally
         {
-            this.readLock.unlock ();
+            this.writeLock.unlock ();
         }
     }
 
     @Override
     public void queryClosed ( final QueryImpl query )
     {
-        this.readLock.lock ();
+        this.writeLock.lock ();
         try
         {
             this.queries.remove ( query );
         }
         finally
         {
-            this.readLock.unlock ();
+            this.writeLock.unlock ();
         }
     }
 
@@ -253,7 +253,6 @@ public abstract class AbstractStorageImpl implements HistoricalItem, ValueSource
 
     public void dispose ()
     {
-
         this.writeLock.lock ();
         try
         {
