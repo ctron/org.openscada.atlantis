@@ -1,9 +1,12 @@
 package org.openscada.hd.server.storage.slave.hds;
 
 import java.io.File;
+import java.util.Date;
 import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.storage.hds.AbstractStorageImpl;
@@ -11,9 +14,13 @@ import org.openscada.hds.DataFilePool;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StorageImpl extends AbstractStorageImpl
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( StorageImpl.class );
 
     private final ServiceRegistration<HistoricalItem> handle;
 
@@ -33,6 +40,33 @@ public class StorageImpl extends AbstractStorageImpl
     {
         this.handle.unregister ();
         super.dispose ();
+    }
+
+    private final Pattern fileNamePattern = Pattern.compile ( "([0-9a-zA-Z]+)\\.hds" );
+
+    public void fileDeleted ( final File file )
+    {
+        logger.info ( "File changed: {}", file );
+
+        final Matcher m = this.fileNamePattern.matcher ( file.getName () );
+        if ( !m.matches () )
+        {
+            logger.info ( "Filename did not match pattern" );
+            return;
+        }
+
+        final long start = Long.parseLong ( m.group ( 1 ), 16 );
+
+        final long slice = getStorageInformation ().getConfiguration ().getTimeSlice ();
+
+        logger.info ( "File change {} to {}", start, start + slice );
+        handleStoreChanged ( new Date ( start ), new Date ( start + slice ) );
+    }
+
+    public void fileChanged ( final File file )
+    {
+        // FIXME: should use file content for notification
+        fileDeleted ( file );
     }
 
 }

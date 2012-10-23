@@ -59,7 +59,12 @@ public class BaseWatcher
             baseWatcher.addWatcherMap ( path, this );
             baseWatcher.addWatcherMap ( new File ( path.toFile (), "native" ).toPath (), this );
 
-            check ();
+            final File nativeDir = new File ( path.toFile (), "native" );
+            if ( nativeDir.exists () && nativeDir.isDirectory () )
+            {
+                this.nativeKey = nativeDir.toPath ().register ( this.watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE );
+                check ();
+            }
         }
 
         public void check ()
@@ -141,6 +146,13 @@ public class BaseWatcher
                     if ( event.kind () == StandardWatchEventKinds.ENTRY_CREATE )
                     {
                         this.nativeKey = new File ( watchable.toFile (), "native" ).toPath ().register ( this.watcher, StandardWatchEventKinds.ENTRY_CREATE, StandardWatchEventKinds.ENTRY_MODIFY, StandardWatchEventKinds.ENTRY_DELETE );
+                    }
+                }
+                else if ( path.toString ().endsWith ( ".hds" ) )
+                {
+                    if ( this.id != null )
+                    {
+                        this.storageManager.fileChanged ( this.path.toFile (), this.id, path.toFile () );
                     }
                 }
             }

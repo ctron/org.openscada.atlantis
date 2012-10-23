@@ -146,4 +146,23 @@ public class StorageManager extends AbstractStorageManager
             this.lock.unlock ();
         }
     }
+
+    public void fileChanged ( final File storageDirectory, final String id, final File fileChanged )
+    {
+        this.lock.lock ();
+        try
+        {
+            final StorageImpl storage = this.storages.get ( storageDirectory );
+            if ( storage == null )
+            {
+                logger.info ( "Received change notification for unknown storage: {} / {}", storageDirectory, fileChanged );
+                return;
+            }
+            storage.fileChanged ( fileChanged );
+        }
+        finally
+        {
+            this.lock.unlock ();
+        }
+    }
 }
