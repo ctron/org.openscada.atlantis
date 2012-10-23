@@ -54,7 +54,7 @@ public class Activator implements BundleActivator
     {
         Activator.context = bundleContext;
 
-        this.pool = new DataFilePool ( 10 );
+        this.pool = new DataFilePool ( Integer.getInteger ( "org.openscada.hd.server.storage.hds.instanceCountTarget", 10 ) );
 
         this.manager = new StorageManager ( bundleContext, this.pool );
         registerConsole ();
