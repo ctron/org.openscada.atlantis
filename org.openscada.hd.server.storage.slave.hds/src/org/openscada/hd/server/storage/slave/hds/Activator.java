@@ -19,11 +19,18 @@
 
 package org.openscada.hd.server.storage.slave.hds;
 
+import java.io.File;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+
+import org.openscada.hds.DataFilePool;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
 public class Activator implements BundleActivator
 {
+    private static final String BASE_PATH_PROP = "org.openscada.hd.server.storage.slave.hds.basePath";
 
     private static BundleContext context;
 
@@ -31,6 +38,12 @@ public class Activator implements BundleActivator
     {
         return context;
     }
+
+    private ScheduledExecutorService executor;
+
+    private StorageManager storageManager;
+
+    private DataFilePool pool;
 
     /*
      * (non-Javadoc)
@@ -40,6 +53,18 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext bundleContext ) throws Exception
     {
         Activator.context = bundleContext;
+
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( BASE_PATH_PROP ) );
+
+        this.pool = new DataFilePool ( Integer.getInteger ( "org.openscada.hd.server.storage.slave.hds.instanceCountTarget", 10 ) );
+
+        final String basePath = System.getProperty ( BASE_PATH_PROP );
+        if ( basePath == null || basePath.isEmpty () )
+        {
+            throw new IllegalStateException ( String.format ( "Property '%s' must be set in order to activate bundle.", BASE_PATH_PROP ) );
+        }
+
+        this.storageManager = new StorageManager ( bundleContext, new File ( basePath ), this.pool, this.executor );
     }
 
     /*
@@ -49,6 +74,11 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext bundleContext ) throws Exception
     {
+        this.pool.dispose ();
+
+        this.storageManager.dispose ();
+
+        this.executor.shutdown ();
         Activator.context = null;
     }
 

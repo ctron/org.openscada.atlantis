@@ -96,7 +96,7 @@ public class StorageImpl extends AbstractStorageImpl implements StorageHistorica
         }, 0, getHeartbeatPeriod (), TimeUnit.MILLISECONDS );
 
         // register with OSGi
-        final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
+        final Dictionary<String, Object> properties = new Hashtable<String, Object> ( 2 );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         properties.put ( Constants.SERVICE_PID, this.id );
         this.handle = context.registerService ( StorageHistoricalItem.class, this, properties );
