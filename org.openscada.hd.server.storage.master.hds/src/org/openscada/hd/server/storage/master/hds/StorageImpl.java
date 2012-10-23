@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.storage.hds;
+package org.openscada.hd.server.storage.master.hds;
 
 import java.io.File;
 import java.util.Calendar;
@@ -32,6 +32,7 @@ import java.util.concurrent.TimeUnit;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.hd.server.common.StorageHistoricalItem;
+import org.openscada.hd.server.storage.hds.AbstractStorageImpl;
 import org.openscada.hds.DataFilePool;
 import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.FutureTask;

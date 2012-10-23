@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.storage.hds;
+package org.openscada.hd.server.storage.master.hds;
 
 import java.io.File;
 import java.util.Collection;
@@ -30,6 +30,10 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.io.FileUtils;
+import org.openscada.hd.server.storage.hds.AbstractStorageManager;
+import org.openscada.hd.server.storage.hds.StorageConfiguration;
+import org.openscada.hd.server.storage.hds.StorageHelper;
+import org.openscada.hd.server.storage.hds.StorageInformation;
 import org.openscada.hds.DataFilePool;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;

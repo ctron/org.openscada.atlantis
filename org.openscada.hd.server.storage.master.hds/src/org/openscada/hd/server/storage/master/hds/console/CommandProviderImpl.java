@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.storage.hds.console;
+package org.openscada.hd.server.storage.master.hds.console;
 
 import java.io.File;
 import java.io.PrintWriter;
@@ -27,7 +27,7 @@ import org.eclipse.osgi.framework.console.CommandInterpreter;
 import org.eclipse.osgi.framework.console.CommandProvider;
 import org.openscada.hd.server.storage.hds.StorageConfiguration;
 import org.openscada.hd.server.storage.hds.StorageInformation;
-import org.openscada.hd.server.storage.hds.StorageManager;
+import org.openscada.hd.server.storage.master.hds.StorageManager;
 
 public class CommandProviderImpl implements CommandProvider
 {

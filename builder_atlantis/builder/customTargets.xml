@@ -172,6 +172,8 @@
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.hds"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.master.hds"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.slave.hds"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.proxy"/>
   	
 	<openscada.builder.copyPlugin id="org.openscada.hd.exporter.http"/>
