@@ -89,6 +89,7 @@
   	<echo message="Building in: ${buildDirectory}"/>
   	<echo message="SkipMaps: ${skipMaps}"/>
   	<echo message="SkipFetch: ${skipFetch}"/>
+  	<echo message="Java7: ${JavaSE-1.7}"/>
   </target>
 
   <!-- ===================================================================== -->
