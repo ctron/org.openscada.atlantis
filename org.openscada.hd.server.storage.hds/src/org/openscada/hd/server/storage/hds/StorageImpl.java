@@ -99,6 +99,8 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
 
     private final int heartbeatFrequency = Integer.getInteger ( "org.openscada.hd.server.storage.hds.heartbeatFrequency", 3 );
 
+    private final boolean readOnly;
+
     private class UpdateJob implements Runnable
     {
         private final double value;
@@ -125,9 +127,10 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
 
     }
 
-    public StorageImpl ( final File file, final BundleContext context, final DataFilePool pool, final ScheduledExecutorService queryExecutor, final ScheduledExecutorService updateExecutor ) throws Exception
+    public StorageImpl ( final File file, final BundleContext context, final DataFilePool pool, final ScheduledExecutorService queryExecutor, final ScheduledExecutorService updateExecutor, final boolean readOnly ) throws Exception
     {
         this.file = file;
+        this.readOnly = readOnly;
 
         final Properties p = new Properties ();
         p.loadFromXML ( new FileInputStream ( new File ( file, "settings.xml" ) ) );
@@ -146,13 +149,20 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
         this.queryExecutor = queryExecutor;
         this.updateExecutor = updateExecutor;
 
-        this.heartbeatJob = updateExecutor.scheduleAtFixedRate ( new Runnable () {
-            @Override
-            public void run ()
-            {
-                heartbeat ();
-            }
-        }, 0, getHeartbeatPeriod (), TimeUnit.MILLISECONDS );
+        if ( !readOnly )
+        {
+            this.heartbeatJob = updateExecutor.scheduleAtFixedRate ( new Runnable () {
+                @Override
+                public void run ()
+                {
+                    heartbeat ();
+                }
+            }, 0, getHeartbeatPeriod (), TimeUnit.MILLISECONDS );
+        }
+        else
+        {
+            this.heartbeatJob = null;
+        }
 
         // register with OSGi
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
@@ -232,7 +242,10 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
 
     public void dispose ()
     {
-        this.heartbeatJob.cancel ( false );
+        if ( this.heartbeatJob != null )
+        {
+            this.heartbeatJob.cancel ( false );
+        }
 
         this.handle.unregister ();
 
@@ -327,6 +340,11 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
     public void updateData ( final DataItemValue value )
     {
         logger.debug ( "Received value update: {}", value );
+        if ( this.readOnly )
+        {
+            logger.warn ( "Skipping data update since we are in read only mode" );
+            return;
+        }
 
         this.readLock.lock ();
         try
@@ -470,6 +488,11 @@ public class StorageImpl implements StorageHistoricalItem, ValueSourceManager
     public void purge ()
     {
         logger.info ( "Purging native level" );
+        if ( this.readOnly )
+        {
+            logger.warn ( "Skipping purge ... we are in read only mode" );
+            return;
+        }
         this.nativeLevel.purge ();
     }
 

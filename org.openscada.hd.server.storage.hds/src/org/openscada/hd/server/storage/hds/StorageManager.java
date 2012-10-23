@@ -58,6 +58,8 @@ public class StorageManager
 
     private final int coreThreads = Integer.getInteger ( "org.openscada.hd.server.storage.hds.coreQueryThread", 1 );
 
+    private final boolean readOnly = Boolean.getBoolean ( "org.openscada.hd.server.storage.hds.readOnly" );
+
     public StorageManager ( final BundleContext context, final DataFilePool pool )
     {
         this.context = context;
@@ -67,7 +69,10 @@ public class StorageManager
         if ( basePath == null )
         {
             this.base = context.getDataFile ( "storage" );
-            this.base.mkdir ();
+            if ( !this.readOnly )
+            {
+                this.base.mkdir ();
+            }
             logger.warn ( "Using local data storage - {}, exists: {}", this.base, this.base.exists () );
         }
         else
@@ -273,7 +278,7 @@ public class StorageManager
         this.lock.lock ();
         try
         {
-            final StorageImpl storage = new StorageImpl ( file, this.context, this.pool, this.queryExecutor, this.updateExecutor );
+            final StorageImpl storage = new StorageImpl ( file, this.context, this.pool, this.queryExecutor, this.updateExecutor, this.readOnly );
             this.storages.put ( storage.getInformation ().getId (), storage );
         }
         finally
@@ -284,7 +289,7 @@ public class StorageManager
 
     private File createStorage ( final String id, final long time, final int count ) throws Exception
     {
-        checkValid ();
+        checkWriteValid ();
 
         final File file = new File ( this.base, makeFileName ( id ) );
 
@@ -303,6 +308,15 @@ public class StorageManager
     private StorageConfiguration makeConfiguration ( final long time, final int count )
     {
         return new StorageConfiguration ( time, count );
+    }
+
+    protected void checkWriteValid ()
+    {
+        if ( this.readOnly )
+        {
+            throw new IllegalStateException ( "Storage is in read only mode" );
+        }
+        checkValid ();
     }
 
     protected void checkValid ()

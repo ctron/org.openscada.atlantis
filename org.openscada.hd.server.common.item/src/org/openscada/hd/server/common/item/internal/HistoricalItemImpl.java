@@ -122,7 +122,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
         this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
     }
 
-    protected synchronized void setMasterItem ( final DataSource service )
+    protected synchronized void setDataSource ( final DataSource service )
     {
         logger.info ( "Set data source item: {}", service );
 
@@ -295,7 +295,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 @Override
                 public void dataSourceChanged ( final DataSource dataSource )
                 {
-                    setMasterItem ( dataSource );
+                    setDataSource ( dataSource );
                 }
             } );
             this.dataSourceTracker.open ();
