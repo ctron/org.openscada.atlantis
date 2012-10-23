@@ -20,12 +20,10 @@
 package org.openscada.hd.server.storage.hds;
 
 import java.io.File;
-import java.io.FileInputStream;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
@@ -38,13 +36,11 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class StorageManager
+public class StorageManager extends AbstractStorageManager
 {
-    private final static Logger logger = LoggerFactory.getLogger ( StorageManager.class );
+    final static Logger logger = LoggerFactory.getLogger ( StorageManager.class );
 
     private final BundleContext context;
-
-    private final File base;
 
     private final Map<String, StorageImpl> storages = new HashMap<String, StorageImpl> ();
 
@@ -52,34 +48,38 @@ public class StorageManager
 
     private final DataFilePool pool;
 
-    private final ScheduledExecutorService queryExecutor;
-
     private final ScheduledExecutorService updateExecutor;
-
-    private final int coreThreads = Integer.getInteger ( "org.openscada.hd.server.storage.hds.coreQueryThread", 1 );
 
     public StorageManager ( final BundleContext context, final DataFilePool pool )
     {
+        super ( makeBase ( context ) );
+
         this.context = context;
         this.pool = pool;
 
-        final String basePath = System.getProperty ( "org.openscada.hd.server.storage.hds.basePath" );
-        if ( basePath == null )
-        {
-            this.base = context.getDataFile ( "storage" );
-            this.base.mkdir ();
-            logger.warn ( "Using local data storage - {}, exists: {}", this.base, this.base.exists () );
-        }
-        else
-        {
-            this.base = new File ( basePath );
-            logger.warn ( "Using global data storage - {}, exists: {}", this.base, this.base.exists () );
-        }
-
-        this.queryExecutor = Executors.newScheduledThreadPool ( this.coreThreads, new NamedThreadFactory ( "HDSQuery" ) );
         this.updateExecutor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "HDSUpdate" ) );
 
         initialize ();
+    }
+
+    private static File makeBase ( final BundleContext context )
+    {
+        final String basePath = System.getProperty ( "org.openscada.hd.server.storage.hds.basePath" );
+        if ( basePath == null )
+        {
+            final File base = context.getDataFile ( "storage" );
+            base.mkdir ();
+
+            logger.warn ( "Using local data storage - {}, exists: {}", base, base.exists () );
+
+            return base;
+        }
+        else
+        {
+            final File base = new File ( basePath );
+            logger.warn ( "Using global data storage - {}, exists: {}", base, base.exists () );
+            return base;
+        }
     }
 
     private void initialize ()
@@ -95,62 +95,6 @@ public class StorageManager
             {
                 logger.error ( String.format ( "Failed to load storage - id: %s, location: %s", entry.getKey (), entry.getValue () ), e );
             }
-        }
-    }
-
-    private Map<String, File> findStorages ()
-    {
-        logger.info ( "Scanning for storages: {}", this.base );
-
-        final Map<String, File> storages = new HashMap<String, File> ();
-
-        for ( final File file : this.base.listFiles () )
-        {
-            logger.debug ( "Found entry - file: {}, dir: {}", file, file.isDirectory () );
-            if ( !file.isDirectory () )
-            {
-                continue;
-            }
-
-            final String id = probe ( file );
-            if ( id != null )
-            {
-                if ( !storages.containsKey ( id ) )
-                {
-                    storages.put ( id, file );
-                }
-                else
-                {
-                    logger.error ( "Duplicate data store id ({}) found in {}", id, file );
-                }
-            }
-        }
-
-        return storages;
-    }
-
-    private String probe ( final File file )
-    {
-        final File settingsFile = new File ( file, "settings.xml" );
-        if ( !settingsFile.isFile () )
-        {
-            return null;
-        }
-        if ( !settingsFile.canRead () )
-        {
-            return null;
-        }
-
-        final Properties p = new Properties ();
-        try
-        {
-            p.loadFromXML ( new FileInputStream ( settingsFile ) );
-            return p.getProperty ( "id" );
-        }
-        catch ( final Exception e )
-        {
-            logger.warn ( String.format ( "Failed to load settings: %s", settingsFile ), e );
-            return null;
         }
     }
 
@@ -310,14 +254,7 @@ public class StorageManager
         checkValid ();
     }
 
-    protected void checkValid ()
-    {
-        if ( !this.base.isDirectory () )
-        {
-            throw new IllegalStateException ( String.format ( "'%s' is not a valid base directory (not a directory)", this.base ) );
-        }
-    }
-
+    @Override
     public void dispose ()
     {
         this.lock.lock ();
@@ -334,7 +271,8 @@ public class StorageManager
             this.lock.unlock ();
         }
 
-        this.queryExecutor.shutdown ();
+        super.dispose ();
+
         this.updateExecutor.shutdown ();
     }
 
