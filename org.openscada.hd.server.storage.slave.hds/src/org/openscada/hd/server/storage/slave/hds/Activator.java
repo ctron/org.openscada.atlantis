@@ -20,6 +20,8 @@
 package org.openscada.hd.server.storage.slave.hds;
 
 import java.io.File;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -41,7 +43,7 @@ public class Activator implements BundleActivator
 
     private ScheduledExecutorService executor;
 
-    private StorageManager storageManager;
+    private final List<StorageManager> storageManagers = new LinkedList<> ();
 
     private DataFilePool pool;
 
@@ -58,13 +60,26 @@ public class Activator implements BundleActivator
 
         this.pool = new DataFilePool ( Integer.getInteger ( "org.openscada.hd.server.storage.slave.hds.instanceCountTarget", 10 ) );
 
-        final String basePath = System.getProperty ( BASE_PATH_PROP );
-        if ( basePath == null || basePath.isEmpty () )
+        final String basePaths = System.getProperty ( BASE_PATH_PROP );
+        if ( basePaths == null || basePaths.isEmpty () )
         {
             throw new IllegalStateException ( String.format ( "Property '%s' must be set in order to activate bundle.", BASE_PATH_PROP ) );
         }
 
-        this.storageManager = new StorageManager ( bundleContext, new File ( basePath ), this.pool, this.executor );
+        for ( final String path : basePaths.split ( ":" ) )
+        {
+            if ( path.startsWith ( "@" ) )
+            {
+                for ( final File child : new File ( path.substring ( 1 ) ).listFiles () )
+                {
+                    this.storageManagers.add ( new StorageManager ( bundleContext, child, this.pool, this.executor ) );
+                }
+            }
+            else
+            {
+                this.storageManagers.add ( new StorageManager ( bundleContext, new File ( path ), this.pool, this.executor ) );
+            }
+        }
     }
 
     /*
@@ -76,7 +91,10 @@ public class Activator implements BundleActivator
     {
         this.pool.dispose ();
 
-        this.storageManager.dispose ();
+        for ( final StorageManager manager : this.storageManagers )
+        {
+            manager.dispose ();
+        }
 
         this.executor.shutdown ();
         Activator.context = null;
