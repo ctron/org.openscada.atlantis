@@ -230,7 +230,9 @@
   	<openscada.builder.copyPlugin id="org.openscada.spring.server"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.core.client.connection.service"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.client.connection.service"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.service"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.client.connection.service"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.core.connection.provider"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.connection.provider"/>
