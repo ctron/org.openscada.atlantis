@@ -57,7 +57,7 @@ public class QueryServiceFactory extends AbstractServiceConfigurationFactory<Bun
         properties.put ( Constants.SERVICE_PID, configurationId );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
 
-        return new Entry<BundleMonitorQuery> ( configurationId, query, context.registerService ( MonitorQuery.class.getName (), query, properties ) );
+        return new Entry<BundleMonitorQuery> ( configurationId, query, context.registerService ( MonitorQuery.class, query, properties ) );
     }
 
     @Override
