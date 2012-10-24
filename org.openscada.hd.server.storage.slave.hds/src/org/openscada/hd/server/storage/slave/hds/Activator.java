@@ -66,19 +66,53 @@ public class Activator implements BundleActivator
             throw new IllegalStateException ( String.format ( "Property '%s' must be set in order to activate bundle.", BASE_PATH_PROP ) );
         }
 
-        for ( final String path : basePaths.split ( ":" ) )
+        try
         {
-            if ( path.startsWith ( "@" ) )
+            for ( final String path : basePaths.split ( ":" ) )
             {
-                for ( final File child : new File ( path.substring ( 1 ) ).listFiles () )
+                if ( path.startsWith ( "@" ) )
                 {
-                    this.storageManagers.add ( new StorageManager ( bundleContext, child, this.pool, this.executor ) );
+                    final File dir = new File ( path.substring ( 1 ) );
+                    if ( !dir.isDirectory () )
+                    {
+                        throw new IllegalStateException ( String.format ( "'%s' is not a directory", dir ) );
+                    }
+                    for ( final File child : dir.listFiles () )
+                    {
+                        this.storageManagers.add ( new StorageManager ( bundleContext, child, this.pool, this.executor ) );
+                    }
+                }
+                else
+                {
+                    this.storageManagers.add ( new StorageManager ( bundleContext, new File ( path ), this.pool, this.executor ) );
                 }
             }
-            else
-            {
-                this.storageManagers.add ( new StorageManager ( bundleContext, new File ( path ), this.pool, this.executor ) );
-            }
+        }
+        catch ( final Exception e )
+        {
+            dispose ();
+            throw new Exception ( "Failed to start up bundle", e );
+        }
+    }
+
+    private void dispose ()
+    {
+        if ( this.pool != null )
+        {
+            this.pool.dispose ();
+            this.pool = null;
+        }
+
+        for ( final StorageManager manager : this.storageManagers )
+        {
+            manager.dispose ();
+        }
+        this.storageManagers.clear ();
+
+        if ( this.executor != null )
+        {
+            this.executor.shutdown ();
+            this.executor = null;
         }
     }
 
@@ -89,14 +123,7 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext bundleContext ) throws Exception
     {
-        this.pool.dispose ();
-
-        for ( final StorageManager manager : this.storageManagers )
-        {
-            manager.dispose ();
-        }
-
-        this.executor.shutdown ();
+        dispose ();
         Activator.context = null;
     }
 
