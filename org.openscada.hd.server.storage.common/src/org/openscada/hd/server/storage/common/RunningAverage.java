@@ -131,6 +131,12 @@ public class RunningAverage
         }
         else
         {
+            // if numOfIncrements is only 1, then a division by 0 could happen
+            // in this case the deviation is 0 anyway, so return this early
+            if ( this.numOfIncrements < 2 )
+            {
+                return 0.0;
+            }
             final BigDecimal variance_n = this.M2.divide ( BigDecimal.valueOf ( this.sumWeight ), this.mathContext );
             final BigDecimal variance = variance_n.multiply ( BigDecimal.valueOf ( this.numOfIncrements ).divide ( BigDecimal.valueOf ( this.numOfIncrements - 1 ), this.mathContext ) );
             return Math.sqrt ( variance.doubleValue () );
