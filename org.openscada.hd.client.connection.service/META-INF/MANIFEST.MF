@@ -1,0 +1,20 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA HD Client Connection Service
+Bundle-SymbolicName: org.openscada.hd.client.connection.service
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.openscada.hd.client.connection.service.Activator
+Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.openscada.hd;version="1.0.0",
+ org.openscada.hd.client;version="1.0.0",
+ org.openscada.hd.connection.provider;version="1.0.0",
+ org.openscada.ca;version="1.0.0",
+ org.openscada.core;version="1.0.0",
+ org.openscada.core.client;version="1.0.0",
+ org.openscada.core.client.connection.service;version="1.0.0",
+ org.openscada.core.connection.provider;version="1.0.0",
+ org.openscada.sec;version="1.0.0",
+ org.openscada.utils.osgi;version="1.0.0",
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.0"
