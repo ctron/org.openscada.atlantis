@@ -39,11 +39,10 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-
         this.service = new ServiceImpl ( context );
         this.service.start ();
 
-        this.serviceRegistration = context.registerService ( Service.class, this.service, new Hashtable<String, String> () );
+        this.serviceRegistration = context.registerService ( Service.class, this.service, new Hashtable<String, String> ( 1 ) );
     }
 
     /*
