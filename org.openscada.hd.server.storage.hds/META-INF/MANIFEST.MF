@@ -3,19 +3,14 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA HDS Implemenation of HD
 Bundle-SymbolicName: org.openscada.hd.server.storage.hds
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.openscada.hd.server.storage.hds.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.commons.io;version="2.3.0",
- org.eclipse.osgi.framework.console;version="1.1.0";resolution:=optional,
- org.openscada.core;version="0.17.0",
- org.openscada.da.client;version="0.16.0",
- org.openscada.hd;version="0.15.0",
- org.openscada.hd.server;version="0.15.0",
- org.openscada.hd.server.common;version="0.14.0",
- org.openscada.hd.server.storage.common;version="0.17.0",
- org.openscada.hds;version="0.1.0",
- org.openscada.utils.concurrent;version="0.16.0",
- org.openscada.utils.lang;version="0.16.0",
- org.osgi.framework;version="1.6.0",
+Import-Package: org.openscada.core;version="1.0.0",
+ org.openscada.hd;version="1.0.0",
+ org.openscada.hd.server.common;version="1.0.0",
+ org.openscada.hd.server.storage.common;version="1.0.0",
+ org.openscada.hds;version="1.0.0",
+ org.openscada.utils.concurrent;version="1.0.0",
+ org.openscada.utils.lang;version="1.0.0",
  org.slf4j;version="1.5.0"
+Export-Package: org.openscada.hd.server.storage.hds;version="1.0.0"

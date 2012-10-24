@@ -29,20 +29,24 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A automatic reconnect controller which keeps connection in the requested state
+ * A automatic reconnect controller which keeps connection in the requested
+ * state
  * <p>
- * In order to use the reconnect controller put the connection in the constructor and call {@link #connect()}.
+ * In order to use the reconnect controller put the connection in the
+ * constructor and call {@link #connect()}.
  * 
- * <pre><code>
+ * <pre>
+ * <code>
  * Connection connection = ...;
  * AutoReconnectController controller = new AutoReconnectController ( connection );
  * controller.connect ();
- * </code></pre> 
+ * </code>
+ * </pre>
  * <p>
  * The {@link AutoReconnectController} needs to be disposed since 0.17.0
+ * 
  * @since 0.12.0
  * @author Jens Reimann
- *
  */
 public class AutoReconnectController implements ConnectionStateListener
 {
@@ -68,8 +72,11 @@ public class AutoReconnectController implements ConnectionStateListener
     private long lastStateChange;
 
     /**
-     * Create a new reconnect controller for the provided connection using the default reconnect delay
-     * @param connection the connection to manage
+     * Create a new reconnect controller for the provided connection using the
+     * default reconnect delay
+     * 
+     * @param connection
+     *            the connection to manage
      */
     public AutoReconnectController ( final Connection connection )
     {
@@ -78,8 +85,11 @@ public class AutoReconnectController implements ConnectionStateListener
 
     /**
      * Create a new reconnect controller for the provided connection
-     * @param connection the connection to manage
-     * @param reconnectDelay the minimum delay between reconnect attempts
+     * 
+     * @param connection
+     *            the connection to manage
+     * @param reconnectDelay
+     *            the minimum delay between reconnect attempts
      */
     public AutoReconnectController ( final Connection connection, long reconnectDelay )
     {
@@ -159,7 +169,9 @@ public class AutoReconnectController implements ConnectionStateListener
 
     /**
      * Dispose controller forcibly
-     * @param disconnect if <code>true</code> the connection will also be disconnected
+     * 
+     * @param disconnect
+     *            if <code>true</code> the connection will also be disconnected
      */
     public void dispose ( final boolean disconnect )
     {
@@ -258,7 +270,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
     private void performUpdate ( final ConnectionState state )
     {
-        logger.debug ( "Performing update: " + state );
+        logger.debug ( "Performing update: {}", state );
 
         final long now = System.currentTimeMillis ();
         final long diff = now - this.lastTimestamp;
@@ -272,7 +284,7 @@ public class AutoReconnectController implements ConnectionStateListener
         else
         {
             final long delay = this.reconnectDelay - diff;
-            logger.info ( String.format ( "Delaying next check by %s milliseconds", delay ) );
+            logger.info ( "Delaying next check by {} milliseconds", delay );
             this.executor.schedule ( new Runnable () {
 
                 @Override
@@ -301,26 +313,26 @@ public class AutoReconnectController implements ConnectionStateListener
 
         switch ( currentState )
         {
-        case CLOSED:
-            if ( connect )
-            {
-                logger.info ( "Trigger connect" );
-                this.connection.connect ();
-            }
-            break;
-        case LOOKUP:
-        case CONNECTING:
-        case CONNECTED:
-        case BOUND:
-            if ( !connect )
-            {
-                logger.info ( "Trigger disconnect" );
-                this.connection.disconnect ();
-            }
-            break;
-        default:
-            logger.info ( "Do nothing" );
-            break;
+            case CLOSED:
+                if ( connect )
+                {
+                    logger.info ( "Trigger connect" );
+                    this.connection.connect ();
+                }
+                break;
+            case LOOKUP:
+            case CONNECTING:
+            case CONNECTED:
+            case BOUND:
+                if ( !connect )
+                {
+                    logger.info ( "Trigger disconnect" );
+                    this.connection.disconnect ();
+                }
+                break;
+            default:
+                logger.info ( "Do nothing" );
+                break;
         }
     }
 

@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Historical Data
 Bundle-SymbolicName: org.openscada.hd
-Bundle-Version: 0.17.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core;version="0.14.0",
@@ -11,6 +11,6 @@ Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.utils.lang;version="0.14.0",
  org.openscada.utils.lifecycle;version="0.14.0",
  org.openscada.utils.statuscodes;version="0.14.0"
-Export-Package: org.openscada.hd;version="0.15.0";uses:="org.openscada.utils.statuscodes",
- org.openscada.hd.client;version="0.15.0";uses:="org.openscada.core.client,org.openscada.hd",
- org.openscada.hd.server;version="0.15.0";uses:="org.openscada.hd,org.openscada.core.server"
+Export-Package: org.openscada.hd;version="1.0.0";uses:="org.openscada.utils.statuscodes",
+ org.openscada.hd.client;version="1.0.0";uses:="org.openscada.core.client,org.openscada.hd",
+ org.openscada.hd.server;version="1.0.0";uses:="org.openscada.hd,org.openscada.core.server"

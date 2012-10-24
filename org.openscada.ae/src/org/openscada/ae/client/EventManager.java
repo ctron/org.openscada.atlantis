@@ -50,28 +50,30 @@ public class EventManager implements ConnectionStateListener
         }
     }
 
+    @Override
     public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case BOUND:
-            if ( !this.connected )
-            {
-                this.connected = true;
-            }
-            break;
-        case CLOSED:
-            for ( final EventSyncController controller : this.eventListeners.values () )
-            {
-                controller.dispose ();
-            }
-            this.eventListeners.clear ();
-        default:
-            if ( this.connected )
-            {
-                this.connected = false;
-            }
-            break;
+            case BOUND:
+                if ( !this.connected )
+                {
+                    this.connected = true;
+                }
+                break;
+            case CLOSED:
+                for ( final EventSyncController controller : this.eventListeners.values () )
+                {
+                    controller.dispose ();
+                }
+                this.eventListeners.clear ();
+                //$FALL-THROUGH$
+            default:
+                if ( this.connected )
+                {
+                    this.connected = false;
+                }
+                break;
         }
     }
 

@@ -89,6 +89,7 @@
   	<echo message="Building in: ${buildDirectory}"/>
   	<echo message="SkipMaps: ${skipMaps}"/>
   	<echo message="SkipFetch: ${skipFetch}"/>
+  	<echo message="Java7: ${JavaSE-1.7}"/>
   </target>
 
   <!-- ===================================================================== -->
@@ -171,8 +172,9 @@
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.net"/>
 	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.hsdb"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.hds"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.master.hds"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.slave.hds"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.proxy"/>
   	
 	<openscada.builder.copyPlugin id="org.openscada.hd.exporter.http"/>

@@ -26,6 +26,7 @@ import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Severity;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.utils.interner.InternerHelper;
 
 import com.google.common.collect.Interner;
 
@@ -49,8 +50,6 @@ public class MonitorStateInjector
 
     private String attributeActive;
 
-    private String attributeAckRequired;
-
     private String attributeState;
 
     private String attributeUnsafe;
@@ -63,9 +62,17 @@ public class MonitorStateInjector
 
     private String attributeError;
 
+    private String attributeInfoAckRequired;
+
+    private String attributeWarningAckRequired;
+
+    private String attributeAlarmAckRequired;
+
+    private String attributeErrorAckRequired;
+
     public MonitorStateInjector ( final Interner<String> stringInterner )
     {
-        this.stringInterner = stringInterner;
+        this.stringInterner = stringInterner == null ? InternerHelper.makeNoOpInterner () : stringInterner;
     }
 
     public void notifyStateChange ( final MonitorStatusInformation status )
@@ -81,14 +88,7 @@ public class MonitorStateInjector
 
     protected String intern ( final String value )
     {
-        if ( this.stringInterner == null || value == null )
-        {
-            return value;
-        }
-        else
-        {
-            return this.stringInterner.intern ( value );
-        }
+        return this.stringInterner.intern ( value );
     }
 
     public void setPrefix ( final String prefix )
@@ -97,17 +97,24 @@ public class MonitorStateInjector
 
         // pre-generate attributes in order to do it only once
         this.attributeActive = intern ( this.prefix + ".active" );
-        this.attributeAckRequired = intern ( this.prefix + ".ackRequired" );
+
         this.attributeState = intern ( this.prefix + ".state" );
         this.attributeUnsafe = intern ( this.prefix + ".unsafe" );
+
         this.attributeInfo = intern ( this.prefix + ".info" );
         this.attributeWarning = intern ( this.prefix + ".warning" );
         this.attributeAlarm = intern ( this.prefix + ".alarm" );
         this.attributeError = intern ( this.prefix + ".error" );
+
+        this.attributeInfoAckRequired = intern ( this.prefix + ".info.ackRequired" );
+        this.attributeWarningAckRequired = intern ( this.prefix + ".warning.ackRequired" );
+        this.attributeAlarmAckRequired = intern ( this.prefix + ".alarm.ackRequired" );
+        this.attributeErrorAckRequired = intern ( this.prefix + ".error.ackRequired" );
     }
 
     /**
-     * Inject attributes to the value after the value update has been performed using {@link #performDataUpdate(Builder)}
+     * Inject attributes to the value after the value update has been performed
+     * using {@link #performDataUpdate(Builder)}
      * 
      * @param builder
      *            the builder to use for changing information
@@ -116,7 +123,6 @@ public class MonitorStateInjector
     {
         builder.setAttribute ( this.attributeActive, Variant.valueOf ( this.active ) );
 
-        builder.setAttribute ( this.attributeAckRequired, Variant.valueOf ( this.akn ) );
         builder.setAttribute ( this.attributeState, Variant.valueOf ( this.state ) );
 
         builder.setAttribute ( this.attributeUnsafe, Variant.valueOf ( this.unsafe ) );
@@ -128,15 +134,19 @@ public class MonitorStateInjector
         {
             case INFORMATION:
                 builder.setAttribute ( this.attributeInfo, Variant.valueOf ( this.alarm ) );
+                builder.setAttribute ( this.attributeInfoAckRequired, Variant.valueOf ( this.akn ) );
                 break;
             case WARNING:
                 builder.setAttribute ( this.attributeWarning, Variant.valueOf ( this.alarm ) );
+                builder.setAttribute ( this.attributeWarningAckRequired, Variant.valueOf ( this.akn ) );
                 break;
             case ALARM:
                 builder.setAttribute ( this.attributeAlarm, Variant.valueOf ( this.alarm ) );
+                builder.setAttribute ( this.attributeAlarmAckRequired, Variant.valueOf ( this.akn ) );
                 break;
             case ERROR:
                 builder.setAttribute ( this.attributeError, Variant.valueOf ( this.alarm ) );
+                builder.setAttribute ( this.attributeErrorAckRequired, Variant.valueOf ( this.akn ) );
                 break;
         }
     }

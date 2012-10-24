@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -33,6 +33,7 @@ import java.util.concurrent.Executors;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.net.SessionConnectionBase;
 import org.openscada.core.net.MessageHelper;
@@ -226,7 +227,8 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
      * 
      * @param message
      *            the message
-     * @return the decoded attributes or <code>null</code> if no attribute changed
+     * @return the decoded attributes or <code>null</code> if no attribute
+     *         changed
      */
     private Map<String, Variant> decodeAttributeChange ( final Message message )
     {
@@ -527,16 +529,23 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     }
 
     @Override
-    public void subscribeItem ( final String item ) throws NoConnectionException
+    public void subscribeItem ( final String itemId ) throws NoConnectionException
     {
-        logger.debug ( "Subscribe to item: {}", item );
-        this.messenger.sendMessage ( Messages.subscribeItem ( item ) );
+        logger.debug ( "Subscribe to item: {}", itemId );
+        if ( getState () == ConnectionState.BOUND )
+        {
+            this.messenger.sendMessage ( Messages.subscribeItem ( itemId ) );
+        }
     }
 
     @Override
     public void unsubscribeItem ( final String itemId ) throws NoConnectionException
     {
-        this.messenger.sendMessage ( Messages.unsubscribeItem ( itemId ) );
+        logger.debug ( "Unsubscribe from item: {}", itemId );
+        if ( getState () == ConnectionState.BOUND )
+        {
+            this.messenger.sendMessage ( Messages.unsubscribeItem ( itemId ) );
+        }
     }
 
     @Override
