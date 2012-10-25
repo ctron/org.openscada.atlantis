@@ -40,7 +40,7 @@ public class ProxyMonitorQuery extends MonitorQuery
 
     private final static Logger logger = LoggerFactory.getLogger ( ProxyMonitorQuery.class );
 
-    private final Map<String, MonitorQueryListener> listenerMap = new HashMap<String, MonitorQueryListener> ();
+    private final Map<String, RemoteMonitorQueryListener> listenerMap = new HashMap<String, RemoteMonitorQueryListener> ();
 
     private final BundleContext context;
 
@@ -57,7 +57,7 @@ public class ProxyMonitorQuery extends MonitorQuery
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
         final Set<String> queryStrings = new HashSet<String> ();
-        for ( final Map.Entry<String, String> query : cfg.getPrefixed ( "queries." ).entrySet () )
+        for ( final Map.Entry<String, String> query : cfg.getPrefixed ( "remote.queries." ).entrySet () )
         {
             queryStrings.add ( query.getValue () );
         }
@@ -65,7 +65,7 @@ public class ProxyMonitorQuery extends MonitorQuery
         this.lock.lock ();
         try
         {
-            setSourceQueries ( queryStrings );
+            setRemoteQueries ( queryStrings );
         }
         finally
         {
@@ -73,14 +73,14 @@ public class ProxyMonitorQuery extends MonitorQuery
         }
     }
 
-    private void setSourceQueries ( final Set<String> queryStrings )
+    private void setRemoteQueries ( final Set<String> queryStrings )
     {
         // remove all which are missing
         final Set<String> current = new HashSet<String> ( this.listenerMap.keySet () );
         current.removeAll ( queryStrings );
         for ( final String queryString : current )
         {
-            final MonitorQueryListener queryListener = this.listenerMap.remove ( queryString );
+            final RemoteMonitorQueryListener queryListener = this.listenerMap.remove ( queryString );
             if ( queryListener != null )
             {
                 logger.info ( "Disposing query: {}", queryString );
@@ -93,14 +93,14 @@ public class ProxyMonitorQuery extends MonitorQuery
         {
             logger.info ( "Adding query: {}", queryString );
             final String[] tok = queryString.split ( "#", 2 );
-            final MonitorQueryListener MonitorQueryListener = createQueryListener ( tok[0], tok[1] );
+            final RemoteMonitorQueryListener MonitorQueryListener = createQueryListener ( tok[0], tok[1] );
             this.listenerMap.put ( queryString, MonitorQueryListener );
         }
     }
 
-    private MonitorQueryListener createQueryListener ( final String connectionId, final String monitorQueryId )
+    private RemoteMonitorQueryListener createQueryListener ( final String connectionId, final String monitorQueryId )
     {
-        return new MonitorQueryListener ( this.context, connectionId, monitorQueryId, this, this.lock );
+        return new RemoteMonitorQueryListener ( this.context, connectionId, monitorQueryId, this, this.lock );
     }
 
     public void handleDataUpdate ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )

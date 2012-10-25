@@ -33,10 +33,10 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class MonitorQueryListener implements Listener, MonitorListener
+class RemoteMonitorQueryListener implements Listener, MonitorListener
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( MonitorQueryListener.class );
+    private final static Logger logger = LoggerFactory.getLogger ( RemoteMonitorQueryListener.class );
 
     private final ConnectionIdTracker tracker;
 
@@ -52,7 +52,7 @@ class MonitorQueryListener implements Listener, MonitorListener
 
     private final String info;
 
-    public MonitorQueryListener ( final BundleContext context, final String connectionId, final String monitorQueryId, final ProxyMonitorQuery proxyMonitorQuery, final Lock lock )
+    public RemoteMonitorQueryListener ( final BundleContext context, final String connectionId, final String monitorQueryId, final ProxyMonitorQuery proxyMonitorQuery, final Lock lock )
     {
         logger.info ( "Creating new listener - connection: {}, query: {}", connectionId, monitorQueryId );
 
