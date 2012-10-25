@@ -218,6 +218,7 @@
   		
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.event.proxy"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.monitor.proxy"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.akn.proxy"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.http"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.info"/>
