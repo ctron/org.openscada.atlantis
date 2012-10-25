@@ -19,8 +19,6 @@
 
 package org.openscada.ae.server.monitor.proxy;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 
 import org.openscada.ae.MonitorStatusInformation;
@@ -33,7 +31,7 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-class RemoteMonitorQueryListener implements Listener, MonitorListener
+class RemoteMonitorQueryListener extends AbstractMonitorQueryListener implements Listener, MonitorListener
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( RemoteMonitorQueryListener.class );
@@ -44,30 +42,23 @@ class RemoteMonitorQueryListener implements Listener, MonitorListener
 
     private final String monitorQueryId;
 
-    private final Map<String, MonitorStatusInformation> dataCache = new HashMap<String, MonitorStatusInformation> ();
-
-    private final Lock lock;
-
-    private final ProxyMonitorQuery proxyMonitorQuery;
-
-    private final String info;
-
     public RemoteMonitorQueryListener ( final BundleContext context, final String connectionId, final String monitorQueryId, final ProxyMonitorQuery proxyMonitorQuery, final Lock lock )
     {
+        super ( proxyMonitorQuery, lock, connectionId + "#" + monitorQueryId );
         logger.info ( "Creating new listener - connection: {}, query: {}", connectionId, monitorQueryId );
 
-        this.info = connectionId + "#" + monitorQueryId;
-
-        this.lock = lock;
         this.monitorQueryId = monitorQueryId;
-        this.proxyMonitorQuery = proxyMonitorQuery;
+
         this.tracker = new ConnectionIdTracker ( context, connectionId, this, ConnectionService.class );
         this.tracker.open ();
     }
 
+    @Override
     public void dispose ()
     {
         this.tracker.close ();
+
+        super.dispose ();
     }
 
     @Override
@@ -113,53 +104,9 @@ class RemoteMonitorQueryListener implements Listener, MonitorListener
         }
     }
 
-    private void clearAll ()
-    {
-        this.lock.lock ();
-        try
-        {
-            final String[] removed = this.dataCache.keySet ().toArray ( new String[0] );
-            this.dataCache.clear ();
-            notifyChange ( null, removed );
-        }
-        finally
-        {
-            this.lock.unlock ();
-        }
-    }
-
     @Override
     public void dataChanged ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
     {
-        logger.debug ( "Data of {} changed - added: @{}, removed: @{}", new Object[] { this.info, addedOrUpdated == null ? -1 : addedOrUpdated.length, removed == null ? -1 : removed.length } );
-
-        this.lock.lock ();
-        try
-        {
-            if ( addedOrUpdated != null )
-            {
-                for ( final MonitorStatusInformation info : addedOrUpdated )
-                {
-                    this.dataCache.put ( info.getId (), info );
-                }
-            }
-            if ( removed != null )
-            {
-                for ( final String id : removed )
-                {
-                    this.dataCache.remove ( id );
-                }
-            }
-            notifyChange ( addedOrUpdated, removed );
-        }
-        finally
-        {
-            this.lock.unlock ();
-        }
-    }
-
-    private void notifyChange ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
-    {
-        this.proxyMonitorQuery.handleDataUpdate ( addedOrUpdated, removed );
+        handleDataChanged ( addedOrUpdated, removed );
     }
 }

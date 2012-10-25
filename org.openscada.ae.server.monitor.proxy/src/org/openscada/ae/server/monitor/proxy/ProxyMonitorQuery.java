@@ -32,6 +32,7 @@ import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -40,7 +41,9 @@ public class ProxyMonitorQuery extends MonitorQuery
 
     private final static Logger logger = LoggerFactory.getLogger ( ProxyMonitorQuery.class );
 
-    private final Map<String, RemoteMonitorQueryListener> listenerMap = new HashMap<String, RemoteMonitorQueryListener> ();
+    private final Map<String, RemoteMonitorQueryListener> removeListenerMap = new HashMap<String, RemoteMonitorQueryListener> ();
+
+    private final Map<String, LocalMonitorQueryListener> localListenerMap = new HashMap<String, LocalMonitorQueryListener> ();
 
     private final BundleContext context;
 
@@ -52,20 +55,27 @@ public class ProxyMonitorQuery extends MonitorQuery
         this.context = context;
     }
 
-    public void update ( final UserInformation userInformation, final Map<String, String> parameters )
+    public void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
-        final Set<String> queryStrings = new HashSet<String> ();
+        final Set<String> remoteQueryStrings = new HashSet<String> ();
         for ( final Map.Entry<String, String> query : cfg.getPrefixed ( "remote.queries." ).entrySet () )
         {
-            queryStrings.add ( query.getValue () );
+            remoteQueryStrings.add ( query.getValue () );
+        }
+
+        final Set<String> localQueryStrings = new HashSet<String> ();
+        for ( final Map.Entry<String, String> query : cfg.getPrefixed ( "local.queries." ).entrySet () )
+        {
+            localQueryStrings.add ( query.getValue () );
         }
 
         this.lock.lock ();
         try
         {
-            setRemoteQueries ( queryStrings );
+            setRemoteQueries ( remoteQueryStrings );
+            setLocalQueries ( localQueryStrings );
         }
         finally
         {
@@ -73,14 +83,38 @@ public class ProxyMonitorQuery extends MonitorQuery
         }
     }
 
-    private void setRemoteQueries ( final Set<String> queryStrings )
+    private void setLocalQueries ( final Set<String> queryStrings ) throws InvalidSyntaxException
     {
         // remove all which are missing
-        final Set<String> current = new HashSet<String> ( this.listenerMap.keySet () );
+        final Set<String> current = new HashSet<String> ( this.localListenerMap.keySet () );
         current.removeAll ( queryStrings );
         for ( final String queryString : current )
         {
-            final RemoteMonitorQueryListener queryListener = this.listenerMap.remove ( queryString );
+            final LocalMonitorQueryListener queryListener = this.localListenerMap.remove ( queryString );
+            if ( queryListener != null )
+            {
+                logger.info ( "Disposing query: {}", queryString );
+                queryListener.dispose ();
+            }
+        }
+
+        // now add the new ones
+        for ( final String queryString : queryStrings )
+        {
+            logger.info ( "Adding query: {}", queryString );
+            final LocalMonitorQueryListener MonitorQueryListener = createLocalQueryListener ( queryString );
+            this.localListenerMap.put ( queryString, MonitorQueryListener );
+        }
+    }
+
+    private void setRemoteQueries ( final Set<String> queryStrings )
+    {
+        // remove all which are missing
+        final Set<String> current = new HashSet<String> ( this.removeListenerMap.keySet () );
+        current.removeAll ( queryStrings );
+        for ( final String queryString : current )
+        {
+            final RemoteMonitorQueryListener queryListener = this.removeListenerMap.remove ( queryString );
             if ( queryListener != null )
             {
                 logger.info ( "Disposing query: {}", queryString );
@@ -94,13 +128,18 @@ public class ProxyMonitorQuery extends MonitorQuery
             logger.info ( "Adding query: {}", queryString );
             final String[] tok = queryString.split ( "#", 2 );
             final RemoteMonitorQueryListener MonitorQueryListener = createQueryListener ( tok[0], tok[1] );
-            this.listenerMap.put ( queryString, MonitorQueryListener );
+            this.removeListenerMap.put ( queryString, MonitorQueryListener );
         }
     }
 
     private RemoteMonitorQueryListener createQueryListener ( final String connectionId, final String monitorQueryId )
     {
         return new RemoteMonitorQueryListener ( this.context, connectionId, monitorQueryId, this, this.lock );
+    }
+
+    private LocalMonitorQueryListener createLocalQueryListener ( final String monitorQueryId ) throws InvalidSyntaxException
+    {
+        return new LocalMonitorQueryListener ( this.context, monitorQueryId, this, this.lock );
     }
 
     public void handleDataUpdate ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
