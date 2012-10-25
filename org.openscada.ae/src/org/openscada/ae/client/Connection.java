@@ -27,17 +27,17 @@ import org.openscada.ae.QueryListener;
 
 /**
  * Interface for client connection
+ * 
  * @author Jens Reimann
  * @since 0.15.0
- *
  */
 public interface Connection extends org.openscada.core.client.Connection
 {
-    // Conditions
+    // Monitors
     /**
      * Set the listener that should receive condition updates
      */
-    public void setConditionListener ( String conditionQueryId, MonitorListener listener );
+    public void setConditionListener ( String monitorQueryId, MonitorListener listener );
 
     // Event - online
     /**
@@ -50,16 +50,22 @@ public interface Connection extends org.openscada.core.client.Connection
 
     /**
      * Add browser listener
-     * @param listener the listener to add
+     * 
+     * @param listener
+     *            the listener to add
      */
     public void addBrowserListener ( BrowserListener listener );
 
     public void removeBrowserListener ( BrowserListener listener );
 
     /**
-     * Acknowledge the condition if the akn state was reached at or before the provided timestamp
-     * @param conditionId the id of the condition
-     * @param aknTimestamp the timestamp up to which the state may be acknowledged
+     * Acknowledge the condition if the akn state was reached at or before the
+     * provided timestamp
+     * 
+     * @param monitorId
+     *            the id of the condition
+     * @param aknTimestamp
+     *            the timestamp up to which the state may be acknowledged
      */
-    public void acknowledge ( String conditionId, Date aknTimestamp );
+    public void acknowledge ( String monitorId, Date aknTimestamp );
 }
