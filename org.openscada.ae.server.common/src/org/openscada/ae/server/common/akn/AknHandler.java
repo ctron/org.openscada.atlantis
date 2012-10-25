@@ -25,5 +25,17 @@ import org.openscada.sec.UserInformation;
 
 public interface AknHandler
 {
+    /**
+     * Perform acknowledge of monitor
+     * 
+     * @param monitorId
+     *            the monitor to acknowledge
+     * @param userInformation
+     *            the user which performs the operation
+     * @param aknTimestamp
+     *            the timestamp until which the state is acknowledged
+     * @return <code>true</code> if the monitor was found and processed,
+     *         <code>false</code> otherwise
+     */
     public boolean acknowledge ( String monitorId, UserInformation userInformation, Date aknTimestamp );
 }
