@@ -41,7 +41,7 @@ public class ProxyMonitorQuery extends MonitorQuery
 
     private final static Logger logger = LoggerFactory.getLogger ( ProxyMonitorQuery.class );
 
-    private final Map<String, RemoteMonitorQueryListener> removeListenerMap = new HashMap<String, RemoteMonitorQueryListener> ();
+    private final Map<String, RemoteMonitorQueryListener> remoteListenerMap = new HashMap<String, RemoteMonitorQueryListener> ();
 
     private final Map<String, LocalMonitorQueryListener> localListenerMap = new HashMap<String, LocalMonitorQueryListener> ();
 
@@ -53,6 +53,31 @@ public class ProxyMonitorQuery extends MonitorQuery
     {
         super ( executor );
         this.context = context;
+    }
+
+    @Override
+    public synchronized void dispose ()
+    {
+        this.lock.lock ();
+        try
+        {
+            for ( final RemoteMonitorQueryListener listener : this.remoteListenerMap.values () )
+            {
+                listener.dispose ();
+            }
+            this.remoteListenerMap.clear ();
+            for ( final LocalMonitorQueryListener listener : this.localListenerMap.values () )
+            {
+                listener.dispose ();
+            }
+            this.localListenerMap.clear ();
+        }
+        finally
+        {
+            this.lock.unlock ();
+        }
+
+        super.dispose ();
     }
 
     public void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
@@ -110,11 +135,11 @@ public class ProxyMonitorQuery extends MonitorQuery
     private void setRemoteQueries ( final Set<String> queryStrings )
     {
         // remove all which are missing
-        final Set<String> current = new HashSet<String> ( this.removeListenerMap.keySet () );
+        final Set<String> current = new HashSet<String> ( this.remoteListenerMap.keySet () );
         current.removeAll ( queryStrings );
         for ( final String queryString : current )
         {
-            final RemoteMonitorQueryListener queryListener = this.removeListenerMap.remove ( queryString );
+            final RemoteMonitorQueryListener queryListener = this.remoteListenerMap.remove ( queryString );
             if ( queryListener != null )
             {
                 logger.info ( "Disposing query: {}", queryString );
@@ -128,7 +153,7 @@ public class ProxyMonitorQuery extends MonitorQuery
             logger.info ( "Adding query: {}", queryString );
             final String[] tok = queryString.split ( "#", 2 );
             final RemoteMonitorQueryListener MonitorQueryListener = createQueryListener ( tok[0], tok[1] );
-            this.removeListenerMap.put ( queryString, MonitorQueryListener );
+            this.remoteListenerMap.put ( queryString, MonitorQueryListener );
         }
     }
 
