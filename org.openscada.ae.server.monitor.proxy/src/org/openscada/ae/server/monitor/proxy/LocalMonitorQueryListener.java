@@ -97,7 +97,7 @@ class LocalMonitorQueryListener extends AbstractMonitorQueryListener
 
             if ( this.service != null )
             {
-
+                service.addListener ( this.monitorQueryListener );
             }
         }
         finally
