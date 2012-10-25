@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,6 +34,11 @@ import org.openscada.utils.collection.BoundedPriorityQueueSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Subscription source for events
+ * 
+ * @author Jens Reimann
+ */
 public class EventQuerySource implements SubscriptionSource, org.openscada.ae.event.EventListener
 {
 
@@ -52,6 +57,7 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
         this.id = id;
         this.eventQuery = query;
         this.cachedData = new BoundedPriorityQueueSet<Event> ( query.getCapacity (), new Comparator<Event> () {
+            @Override
             public int compare ( final Event o1, final Event o2 )
             {
                 return Event.comparator.compare ( o2, o1 );
@@ -59,6 +65,7 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
         } );
     }
 
+    @Override
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
     {
         final boolean wasEmpty = this.listeners.isEmpty ();
@@ -80,6 +87,7 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
         }
     }
 
+    @Override
     public synchronized void removeListener ( final Collection<SubscriptionInformation> listeners )
     {
         for ( final SubscriptionInformation information : listeners )
@@ -95,11 +103,13 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
         }
     }
 
+    @Override
     public boolean supportsListener ( final SubscriptionInformation information )
     {
         return information.getListener () instanceof EventListener;
     }
 
+    @Override
     public synchronized void handleEvent ( final Event[] event )
     {
         this.cachedData.addAll ( Arrays.asList ( event ) );
