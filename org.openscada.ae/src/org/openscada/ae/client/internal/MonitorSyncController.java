@@ -54,7 +54,7 @@ public class MonitorSyncController implements MonitorListener
         }
         this.connection = connection;
         this.id = id;
-        this.connection.setConditionListener ( this.id, this );
+        this.connection.setMonitorListener ( this.id, this );
     }
 
     @Override
@@ -134,6 +134,6 @@ public class MonitorSyncController implements MonitorListener
 
     public void dispose ()
     {
-        this.connection.setConditionListener ( this.id, null );
+        this.connection.setMonitorListener ( this.id, null );
     }
 }

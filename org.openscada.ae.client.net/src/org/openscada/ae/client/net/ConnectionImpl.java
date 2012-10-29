@@ -544,7 +544,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
-    public synchronized void setConditionListener ( final String conditionQueryId, final MonitorListener listener )
+    public synchronized void setMonitorListener ( final String conditionQueryId, final MonitorListener listener )
     {
         if ( listener == null )
         {

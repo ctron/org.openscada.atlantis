@@ -35,9 +35,9 @@ public interface Connection extends org.openscada.core.client.Connection
 {
     // Monitors
     /**
-     * Set the listener that should receive condition updates
+     * Set the listener that should receive monitor updates
      */
-    public void setConditionListener ( String monitorQueryId, MonitorListener listener );
+    public void setMonitorListener ( String monitorQueryId, MonitorListener listener );
 
     // Event - online
     /**
@@ -59,7 +59,7 @@ public interface Connection extends org.openscada.core.client.Connection
     public void removeBrowserListener ( BrowserListener listener );
 
     /**
-     * Acknowledge the condition if the akn state was reached at or before the
+     * Acknowledge the monitor if the akn state was reached at or before the
      * provided timestamp
      * 
      * @param monitorId

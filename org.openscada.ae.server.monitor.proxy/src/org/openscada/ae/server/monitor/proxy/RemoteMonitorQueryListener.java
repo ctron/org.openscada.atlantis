@@ -71,7 +71,7 @@ class RemoteMonitorQueryListener extends AbstractMonitorQueryListener implements
         {
             if ( this.connection != null )
             {
-                this.connection.getConnection ().setConditionListener ( this.monitorQueryId, null );
+                this.connection.getConnection ().setMonitorListener ( this.monitorQueryId, null );
                 clearAll ();
             }
 
@@ -79,7 +79,7 @@ class RemoteMonitorQueryListener extends AbstractMonitorQueryListener implements
 
             if ( this.connection != null )
             {
-                this.connection.getConnection ().setConditionListener ( this.monitorQueryId, this );
+                this.connection.getConnection ().setMonitorListener ( this.monitorQueryId, this );
             }
         }
         finally
