@@ -117,6 +117,12 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
             }
             return true;
         }
+
+        @Override
+        public String toString ()
+        {
+            return String.format ( "[%s: %s, %s, %s -> %s]", this.id, this.pattern, this.authorative, this.priority, this.connectionId );
+        }
     }
 
     private final List<Entry> entries = new LinkedList<Entry> ();
@@ -195,12 +201,14 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
         {
             for ( final Entry entry : this.entries )
             {
+                logger.debug ( "Checking entry: {}", entry );
                 if ( entry.pattern.matcher ( monitorId ).matches () )
                 {
                     matches++;
                     akn ( entry.connectionId, monitorId, userInformation, aknTimestamp );
                     if ( entry.authorative )
                     {
+                        logger.debug ( "Entry is authorative" );
                         break;
                     }
                 }
