@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,12 +27,17 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.client.MonitorListener;
 import org.openscada.ae.client.Connection;
+import org.openscada.ae.client.MonitorListener;
 import org.openscada.core.subscription.SubscriptionState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MonitorSyncController implements MonitorListener
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( MonitorSyncController.class );
+
     private final List<MonitorListener> listeners = new CopyOnWriteArrayList<MonitorListener> ();
 
     private final Connection connection;
@@ -52,6 +57,7 @@ public class MonitorSyncController implements MonitorListener
         this.connection.setConditionListener ( this.id, this );
     }
 
+    @Override
     public void dataChanged ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
     {
         if ( addedOrUpdated != null )
@@ -93,18 +99,36 @@ public class MonitorSyncController implements MonitorListener
         return this.listeners.size () == 0;
     }
 
+    @Override
     public void statusChanged ( final SubscriptionState state )
     {
+        fireStateChange ( state );
+
         switch ( state )
         {
-        case CONNECTED:
-            for ( final MonitorListener listener : this.listeners )
+            case CONNECTED:
+                for ( final MonitorListener listener : this.listeners )
+                {
+                    listener.dataChanged ( this.cachedMonitors.toArray ( new MonitorStatusInformation[] {} ), null );
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void fireStateChange ( final SubscriptionState state )
+    {
+        for ( final MonitorListener listener : this.listeners )
+        {
+            try
             {
-                listener.dataChanged ( this.cachedMonitors.toArray ( new MonitorStatusInformation[] {} ), null );
+                listener.statusChanged ( state );
             }
-            break;
-        default:
-            break;
+            catch ( final Exception e )
+            {
+                logger.debug ( "Failed to notify subscription change", e );
+            }
         }
     }
 
