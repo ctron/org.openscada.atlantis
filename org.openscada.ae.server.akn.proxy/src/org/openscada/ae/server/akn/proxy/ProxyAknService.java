@@ -26,6 +26,8 @@ import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Pattern;
 
 import org.openscada.ae.connection.provider.ConnectionService;
@@ -121,9 +123,17 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
 
     private final BundleContext context;
 
+    private final Lock readLock;
+
+    private final Lock writeLock;
+
     public ProxyAknService ( final BundleContext context )
     {
         this.context = context;
+
+        final ReentrantReadWriteLock rw = new ReentrantReadWriteLock ();
+        this.readLock = rw.readLock ();
+        this.writeLock = rw.writeLock ();
     }
 
     @Override
@@ -135,23 +145,39 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
         final Entry entry = new Entry ( configurationId, cfg.getIntegerChecked ( "priority", "'priority' must be set" ), Pattern.compile ( cfg.getStringNonEmpty ( "pattern" ) ), cfg.getBoolean ( "authorative", true ), cfg.getStringNonEmpty ( "connection.id" ) );
 
         // now modify
-        // FIXME: write lock
-        delete ( userInformation, configurationId );
-        this.entries.add ( entry );
-        Collections.sort ( this.entries, EntryPriorityComparator.INSTANCE );
+        this.writeLock.lock ();
+
+        try
+        {
+            delete ( userInformation, configurationId );
+            this.entries.add ( entry );
+            Collections.sort ( this.entries, EntryPriorityComparator.INSTANCE );
+        }
+        finally
+        {
+            this.writeLock.unlock ();
+        }
     }
 
     @Override
     public void delete ( final UserInformation userInformation, final String configurationId ) throws Exception
     {
-        // FIXME: write lock
-        final Iterator<Entry> i = this.entries.iterator ();
-        while ( i.hasNext () )
+        this.writeLock.lock ();
+
+        try
         {
-            if ( i.next ().id.equals ( configurationId ) )
+            final Iterator<Entry> i = this.entries.iterator ();
+            while ( i.hasNext () )
             {
-                i.remove ();
+                if ( i.next ().id.equals ( configurationId ) )
+                {
+                    i.remove ();
+                }
             }
+        }
+        finally
+        {
+            this.writeLock.unlock ();
         }
     }
 
@@ -162,21 +188,28 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
 
         int matches = 0;
 
-        // FIXME: read lock
-        for ( final Entry entry : this.entries )
+        this.readLock.lock ();
+        try
         {
-            if ( entry.pattern.matcher ( monitorId ).matches () )
+            for ( final Entry entry : this.entries )
             {
-                matches++;
-                akn ( entry.connectionId, monitorId, userInformation, aknTimestamp );
-                if ( entry.authorative )
+                if ( entry.pattern.matcher ( monitorId ).matches () )
                 {
-                    break;
+                    matches++;
+                    akn ( entry.connectionId, monitorId, userInformation, aknTimestamp );
+                    if ( entry.authorative )
+                    {
+                        break;
+                    }
                 }
             }
-        }
 
-        return matches > 0;
+            return matches > 0;
+        }
+        finally
+        {
+            this.readLock.unlock ();
+        }
     }
 
     private void akn ( final String connectionId, final String monitorId, final UserInformation userInformation, final Date aknTimestamp )
