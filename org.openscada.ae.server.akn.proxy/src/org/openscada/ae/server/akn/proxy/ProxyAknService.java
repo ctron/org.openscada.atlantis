@@ -132,7 +132,7 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
         // first parse
-        final Entry entry = new Entry ( configurationId, cfg.getIntegerChecked ( "priority", "'priority' must be set" ), Pattern.compile ( cfg.getStringNonEmpty ( "pattern" ) ), cfg.getBoolean ( "authorative", true ), cfg.getStringNonEmpty ( "connectionId" ) );
+        final Entry entry = new Entry ( configurationId, cfg.getIntegerChecked ( "priority", "'priority' must be set" ), Pattern.compile ( cfg.getStringNonEmpty ( "pattern" ) ), cfg.getBoolean ( "authorative", true ), cfg.getStringNonEmpty ( "connection.id" ) );
 
         // now modify
         // FIXME: write lock
