@@ -152,6 +152,8 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
             delete ( userInformation, configurationId );
             this.entries.add ( entry );
             Collections.sort ( this.entries, EntryPriorityComparator.INSTANCE );
+
+            logger.info ( "{} entries in processing table", this.entries.size () );
         }
         finally
         {
