@@ -14,7 +14,7 @@ Export-Package: org.openscada.ae.server.net;version="1.0.0";
    org.openscada.core,
    org.openscada.core.subscription,
    org.openscada.ae"
-Import-Package: com.google.common.collect;version="1.0.0.rc6",
+Import-Package: com.google.common.collect;version="1.0.0",
  org.apache.mina.core.session;version="2.0.0",
  org.apache.mina.handler.multiton;version="2.0.0",
  org.openscada.ae;version="0.15.0",
@@ -31,7 +31,8 @@ Import-Package: com.google.common.collect;version="1.0.0.rc6",
  org.openscada.net.base.data;version="0.14.0",
  org.openscada.net.mina;version="0.14.0",
  org.openscada.net.utils;version="0.14.0",
+ org.openscada.sec;version="1.0.0",
  org.openscada.utils.concurrent;version="0.15.0",
  org.openscada.utils.concurrent.task;version="0.15.0",
  org.openscada.utils.lifecycle;version="0.15.0",
- org.slf4j;version="1.5.8"
+ org.slf4j;version="1.5.0"

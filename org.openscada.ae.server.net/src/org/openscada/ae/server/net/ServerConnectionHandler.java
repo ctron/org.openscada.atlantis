@@ -58,6 +58,7 @@ import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.concurrent.ResultHandler;
 import org.openscada.utils.concurrent.task.DefaultTaskHandler;
@@ -348,11 +349,31 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             }
         }
 
+        UserInformation userInformation = null;
+        {
+            final Value value = message.getValues ().get ( "user" );
+            if ( value instanceof StringValue )
+            {
+                final String user = value.toString ();
+                String password;
+                final Value passwordValue = message.getValues ().get ( "password" );
+                if ( passwordValue instanceof StringValue )
+                {
+                    password = passwordValue.toString ();
+                }
+                else
+                {
+                    password = null;
+                }
+                userInformation = new UserInformation ( user, password );
+            }
+        }
+
         if ( monitorId != null && aknTimestamp != null )
         {
             try
             {
-                this.service.acknowledge ( this.session, monitorId, aknTimestamp );
+                this.service.acknowledge ( this.session, monitorId, aknTimestamp, userInformation );
             }
             catch ( final Throwable e )
             {
