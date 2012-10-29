@@ -24,6 +24,7 @@ import java.util.Date;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
+import org.openscada.sec.UserInformation;
 
 /**
  * Interface for client connection
@@ -66,6 +67,13 @@ public interface Connection extends org.openscada.core.client.Connection
      *            the id of the condition
      * @param aknTimestamp
      *            the timestamp up to which the state may be acknowledged
+     * @param userInformation
+     *            optionally provide some user information which performs the
+     *            aknowledgement. If the information is not provided the current
+     *            logged in user will be used. If the information is present but
+     *            the current logged in user is not allowed to change the user
+     *            performing acknowledgement the server may fall back to use the
+     *            actual information of the logged in user instead.
      */
-    public void acknowledge ( String monitorId, Date aknTimestamp );
+    public void acknowledge ( String monitorId, Date aknTimestamp, UserInformation userInformation );
 }
