@@ -59,6 +59,7 @@ public class EventSyncController implements EventListener
 
     /**
      * returns true if no listeners left
+     * 
      * @param listener
      * @return
      */
@@ -68,6 +69,7 @@ public class EventSyncController implements EventListener
         return this.listeners.size () == 0;
     }
 
+    @Override
     public void dataChanged ( final Event[] addedEvents )
     {
         this.cachedEvents.removeAll ( Arrays.asList ( addedEvents ) );
@@ -78,18 +80,19 @@ public class EventSyncController implements EventListener
         }
     }
 
+    @Override
     public void statusChanged ( final SubscriptionState state )
     {
         switch ( state )
         {
-        case CONNECTED:
-            for ( final EventListener listener : this.listeners )
-            {
-                listener.dataChanged ( this.cachedEvents.toArray ( new Event[] {} ) );
-            }
-            break;
-        default:
-            break;
+            case CONNECTED:
+                for ( final EventListener listener : this.listeners )
+                {
+                    listener.dataChanged ( this.cachedEvents.toArray ( new Event[] {} ) );
+                }
+                break;
+            default:
+                break;
         }
     }
 
