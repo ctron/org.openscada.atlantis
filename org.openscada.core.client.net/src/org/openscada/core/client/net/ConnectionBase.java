@@ -384,7 +384,8 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
      * 
      * @param connectionState
      * @param error
-     *            additional error information or <code>null</code> if we don't have an error.
+     *            additional error information or <code>null</code> if we don't
+     *            have an error.
      */
     private void setState ( final ConnectionState connectionState, final Throwable error )
     {
@@ -410,7 +411,8 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
      * @param connectionState
      *            new state
      * @param error
-     *            additional error information or <code>null</code> if we don't have an error.
+     *            additional error information or <code>null</code> if we don't
+     *            have an error.
      */
     private void notifyStateChange ( final ConnectionState connectionState, final Throwable error )
     {
@@ -473,7 +475,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
         logger.debug ( "Completed resolving remote address: {}", address );
         if ( e != null )
         {
-            logger.warn ( "Failed to resolve", e );
+            logger.warn ( "Failed to resolve: " + address, e );
         }
 
         if ( this.connectionState != ConnectionState.LOOKUP )
