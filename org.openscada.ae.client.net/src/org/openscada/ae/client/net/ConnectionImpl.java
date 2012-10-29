@@ -54,6 +54,7 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -842,12 +843,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
-    public void acknowledge ( final String conditionId, final Date aknTimestamp )
+    public void acknowledge ( final String monitorId, final Date aknTimestamp, final UserInformation userInformation )
     {
-        logger.debug ( "Sending ACK: {} / {}", new Object[] { conditionId, aknTimestamp } );
+        logger.debug ( "Sending ACK: {} / {}", new Object[] { monitorId, aknTimestamp } );
 
         final Message message = new Message ( Messages.CC_CONDITION_AKN );
-        message.getValues ().put ( "id", new StringValue ( conditionId ) );
+        message.getValues ().put ( "id", new StringValue ( monitorId ) );
         // if we don't have a timestamp provided use current time
         if ( aknTimestamp != null )
         {
@@ -857,6 +858,19 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             message.getValues ().put ( "aknTimestamp", new LongValue ( System.currentTimeMillis () ) );
         }
+
+        if ( userInformation != null )
+        {
+            if ( userInformation.getName () != null )
+            {
+                message.getValues ().put ( "user", new StringValue ( userInformation.getName () ) );
+                if ( userInformation.getPassword () != null )
+                {
+                    message.getValues ().put ( "password", new StringValue ( userInformation.getPassword () ) );
+                }
+            }
+        }
+
         this.messenger.sendMessage ( message );
     }
 
