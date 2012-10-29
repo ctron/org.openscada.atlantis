@@ -221,7 +221,7 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
         try
         {
             final ConnectionService connection = (ConnectionService)tracker.waitForService ( 1000 );
-            connection.getConnection ().acknowledge ( monitorId, aknTimestamp );
+            connection.getConnection ().acknowledge ( monitorId, aknTimestamp, userInformation );
         }
         catch ( final InterruptedException e )
         {
