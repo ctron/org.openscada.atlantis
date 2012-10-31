@@ -26,9 +26,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
@@ -90,7 +89,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
 
     private final WriteAttributesOperationController writeAttributesController;
 
-    private final ExecutorService executor;
+    private final ScheduledExecutorService executor;
 
     @Override
     public String getRequiredVersion ()
@@ -102,7 +101,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     {
         super ( connectionInformantion );
 
-        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + connectionInformantion.toMaskedString () ) );
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + connectionInformantion.toMaskedString () ) );
 
         // setup messaging
         this.messenger.setHandler ( Messages.CC_NOTIFY_DATA, new MessageListener () {
@@ -695,7 +694,7 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     }
 
     @Override
-    public Executor getExecutor ()
+    public ScheduledExecutorService getExecutor ()
     {
         return this.executor;
     }

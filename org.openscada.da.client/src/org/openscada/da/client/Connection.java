@@ -20,7 +20,7 @@
 package org.openscada.da.client;
 
 import java.util.Map;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
@@ -38,7 +38,8 @@ import org.openscada.da.core.browser.Entry;
 public interface Connection extends org.openscada.core.client.Connection
 {
     /**
-     * Browse a server folder for items. The operation will block until the result is available, an error occurred or the connection failed.
+     * Browse a server folder for items. The operation will block until the
+     * result is available, an error occurred or the connection failed.
      * 
      * @param location
      *            The path to browse
@@ -51,7 +52,9 @@ public interface Connection extends org.openscada.core.client.Connection
     public abstract Entry[] browse ( Location location ) throws NoConnectionException, OperationException;
 
     /**
-     * Browse a server folder for items. The operation will block until the result is available, an error occurred, the timeout expired or the connection failed.
+     * Browse a server folder for items. The operation will block until the
+     * result is available, an error occurred, the timeout expired or the
+     * connection failed.
      * 
      * @param location
      *            The path to browse
@@ -98,7 +101,8 @@ public interface Connection extends org.openscada.core.client.Connection
      *            The location for which to set the listener
      * @param listener
      *            The listener to set
-     * @return The previous set listener or <code>null</code> if there was no previous listener
+     * @return The previous set listener or <code>null</code> if there was no
+     *         previous listener
      */
     public abstract FolderListener setFolderListener ( Location location, FolderListener listener );
 
@@ -113,14 +117,16 @@ public interface Connection extends org.openscada.core.client.Connection
      *            The item for which to set the listener
      * @param listener
      *            The listener to set
-     * @return The previous set listener or <code>null</code> if there was no previous listener
+     * @return The previous set listener or <code>null</code> if there was no
+     *         previous listener
      */
     public abstract ItemUpdateListener setItemUpdateListener ( String itemId, ItemUpdateListener listener );
 
     /**
      * Retrieve the executor that is currently set
      * 
-     * @return the currently used executor. Implementations must never return <code>null</code>
+     * @return the currently used executor. Implementations must never return
+     *         <code>null</code>
      */
-    public abstract Executor getExecutor ();
+    public abstract ScheduledExecutorService getExecutor ();
 }

@@ -24,7 +24,8 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
@@ -48,10 +49,11 @@ import org.openscada.da.core.browser.Entry;
 
 public abstract class LazyConnectionWrapper implements Connection, StatisticsProvider
 {
-
     private static final Object STATS_REQUEST_OPEN = new Object ();
 
     private static final Object STATS_ITEM_SUBSCRIPTIONS = new Object ();
+
+    private static final Object STATS_LINGERING_CLOSE = new Object ();
 
     private final Set<String> subscribedItems = new HashSet<String> ();
 
@@ -59,11 +61,28 @@ public abstract class LazyConnectionWrapper implements Connection, StatisticsPro
 
     private final StatisticsImpl statistics = new StatisticsImpl ();
 
-    public LazyConnectionWrapper ( final Connection connection )
+    private final Integer lingeringTimeout;
+
+    private long disconnectTimestamp;
+
+    private final Runnable performConnectionCheck = new Runnable () {
+        @Override
+        public void run ()
+        {
+            synchronized ( LazyConnectionWrapper.this )
+            {
+                checkConnection ();
+            }
+        }
+    };
+
+    public LazyConnectionWrapper ( final Connection connection, final Integer lingeringTimeout )
     {
         this.connection = connection;
+        this.lingeringTimeout = lingeringTimeout;
         this.statistics.setLabel ( STATS_REQUEST_OPEN, "Requesting connection" );
         this.statistics.setLabel ( STATS_ITEM_SUBSCRIPTIONS, "Item subscriptions" );
+        this.statistics.setLabel ( STATS_LINGERING_CLOSE, "Lingering close active" );
     }
 
     @Override
@@ -212,13 +231,37 @@ public abstract class LazyConnectionWrapper implements Connection, StatisticsPro
     {
         if ( this.subscribedItems.isEmpty () )
         {
-            this.statistics.setCurrentValue ( STATS_REQUEST_OPEN, 0 );
-            performDisconnect ();
+            if ( this.lingeringTimeout == null )
+            {
+                // no lingering ... close
+                this.statistics.setCurrentValue ( STATS_REQUEST_OPEN, 0 );
+                performDisconnect ();
+            }
+            else if ( this.disconnectTimestamp != 0 && this.disconnectTimestamp + this.lingeringTimeout <= System.currentTimeMillis () )
+            {
+                // we lingered long enough ... close
+                this.statistics.setCurrentValue ( STATS_REQUEST_OPEN, 0 );
+                this.statistics.setCurrentValue ( STATS_LINGERING_CLOSE, 0 );
+                this.disconnectTimestamp = 0;
+                performDisconnect ();
+            }
+            else
+            {
+                // start lingering ... 
+                this.disconnectTimestamp = System.currentTimeMillis ();
+                this.statistics.setCurrentValue ( STATS_LINGERING_CLOSE, 1 );
+                this.connection.getExecutor ().schedule ( this.performConnectionCheck, this.lingeringTimeout, TimeUnit.MILLISECONDS );
+            }
         }
         else
         {
             this.statistics.setCurrentValue ( STATS_REQUEST_OPEN, 1 );
             performConnect ();
+            if ( this.lingeringTimeout != null )
+            {
+                this.disconnectTimestamp = 0;
+                this.statistics.setCurrentValue ( STATS_LINGERING_CLOSE, 0 );
+            }
         }
     }
 
@@ -233,7 +276,7 @@ public abstract class LazyConnectionWrapper implements Connection, StatisticsPro
     }
 
     @Override
-    public Executor getExecutor ()
+    public ScheduledExecutorService getExecutor ()
     {
         return this.connection.getExecutor ();
     }

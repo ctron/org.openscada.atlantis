@@ -44,7 +44,8 @@ public class ConnectionServiceImpl extends AbstractConnectionService implements 
     {
         super ( autoReconnectController, lazyActivation );
 
-        this.connection = lazyActivation ? new LazyConnectionWrapper ( connection ) {
+        // for now we are using the autoReconnectController timeout as lingering timeout ...
+        this.connection = lazyActivation ? new LazyConnectionWrapper ( connection, autoReconnectController ) {
 
             @Override
             protected void performDisconnect ()
