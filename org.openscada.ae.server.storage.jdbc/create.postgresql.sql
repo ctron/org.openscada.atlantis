@@ -19,6 +19,8 @@ CREATE TABLE openscada_ae_events
   source                       VARCHAR(255),
   actor_name                   VARCHAR(128),
   actor_type                   VARCHAR(32),
+  severity                     VARCHAR(32),
+  replicated                   SMALLINT,
   CONSTRAINT openscada_ae_events_pkey PRIMARY KEY (id)
 );
 
@@ -60,6 +62,9 @@ CREATE INDEX openscada_ae_events_idx_14 ON openscada_ae_events (actor_name);
 CREATE INDEX openscada_ae_events_idx_14l ON openscada_ae_events (lower(actor_name));
 CREATE INDEX openscada_ae_events_idx_15 ON openscada_ae_events (actor_type);
 CREATE INDEX openscada_ae_events_idx_15l ON openscada_ae_events (lower(actor_type));
+CREATE INDEX openscada_ae_events_idx_16 ON openscada_ae_events (severity);
+CREATE INDEX openscada_ae_events_idx_16l ON openscada_ae_events (lower(severity));
+CREATE INDEX openscada_ae_events_idx_17 ON openscada_ae_events (replicated);
 
 CREATE INDEX openscada_ae_events_attr_idx_1 ON openscada_ae_events_attr (id, key);
 CREATE INDEX openscada_ae_events_attr_idx_2 ON openscada_ae_events_attr (value_type);
