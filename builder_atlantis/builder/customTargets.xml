@@ -215,6 +215,11 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.memory"/>
+  		
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.event.proxy"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.monitor.proxy"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.akn.proxy"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.http"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.info"/>
   	
@@ -229,7 +234,10 @@
   	<openscada.builder.copyPlugin id="org.openscada.spring.client"/>
   	<openscada.builder.copyPlugin id="org.openscada.spring.server"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.core.client.connection.service"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.client.connection.service"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.service"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.client.connection.service"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.core.connection.provider"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.connection.provider"/>

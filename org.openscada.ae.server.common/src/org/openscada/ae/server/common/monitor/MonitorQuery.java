@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,6 +22,7 @@ package org.openscada.ae.server.common.monitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -44,7 +45,7 @@ public class MonitorQuery
     {
         this.executor = executor;
         this.cachedData = new HashMap<String, MonitorStatusInformation> ();
-        this.listeners = new HashSet<MonitorQueryListener> ();
+        this.listeners = new LinkedHashSet<MonitorQueryListener> ();
     }
 
     /**
@@ -53,9 +54,12 @@ public class MonitorQuery
      * If the listener was already added this operation has no effect
      * </p>
      * <p>
-     * The listener will receive all current known elements in a first update call.
+     * The listener will receive all current known elements in a first update
+     * call.
      * </p>
-     * @param listener the listener to add
+     * 
+     * @param listener
+     *            the listener to add
      */
     public synchronized void addListener ( final MonitorQueryListener listener )
     {
@@ -124,7 +128,9 @@ public class MonitorQuery
 
     /**
      * Set current data set. Will handle notifications accordingly.
-     * @param data the new data set
+     * 
+     * @param data
+     *            the new data set
      */
     protected synchronized void setData ( final MonitorStatusInformation[] data )
     {

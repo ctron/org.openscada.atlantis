@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,5 +25,17 @@ import org.openscada.sec.UserInformation;
 
 public interface AknHandler
 {
-    public boolean acknowledge ( String conditionId, UserInformation userInformation, Date aknTimestamp );
+    /**
+     * Perform acknowledge of monitor
+     * 
+     * @param monitorId
+     *            the monitor to acknowledge
+     * @param userInformation
+     *            the user which performs the operation
+     * @param aknTimestamp
+     *            the timestamp until which the state is acknowledged
+     * @return <code>true</code> if the monitor was found and processed,
+     *         <code>false</code> otherwise
+     */
+    public boolean acknowledge ( String monitorId, UserInformation userInformation, Date aknTimestamp );
 }

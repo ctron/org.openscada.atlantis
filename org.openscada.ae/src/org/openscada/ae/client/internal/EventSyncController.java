@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,9 +29,14 @@ import org.openscada.ae.Event;
 import org.openscada.ae.client.Connection;
 import org.openscada.ae.client.EventListener;
 import org.openscada.core.subscription.SubscriptionState;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EventSyncController implements EventListener
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( EventSyncController.class );
+
     private final List<EventListener> listeners = new CopyOnWriteArrayList<EventListener> ();
 
     private final Connection connection;
@@ -59,6 +64,7 @@ public class EventSyncController implements EventListener
 
     /**
      * returns true if no listeners left
+     * 
      * @param listener
      * @return
      */
@@ -68,6 +74,7 @@ public class EventSyncController implements EventListener
         return this.listeners.size () == 0;
     }
 
+    @Override
     public void dataChanged ( final Event[] addedEvents )
     {
         this.cachedEvents.removeAll ( Arrays.asList ( addedEvents ) );
@@ -78,18 +85,36 @@ public class EventSyncController implements EventListener
         }
     }
 
+    @Override
     public void statusChanged ( final SubscriptionState state )
     {
+        fireStateChange ( state );
+
         switch ( state )
         {
-        case CONNECTED:
-            for ( final EventListener listener : this.listeners )
+            case CONNECTED:
+                for ( final EventListener listener : this.listeners )
+                {
+                    listener.dataChanged ( this.cachedEvents.toArray ( new Event[] {} ) );
+                }
+                break;
+            default:
+                break;
+        }
+    }
+
+    private void fireStateChange ( final SubscriptionState state )
+    {
+        for ( final EventListener listener : this.listeners )
+        {
+            try
             {
-                listener.dataChanged ( this.cachedEvents.toArray ( new Event[] {} ) );
+                listener.statusChanged ( state );
             }
-            break;
-        default:
-            break;
+            catch ( final Exception e )
+            {
+                logger.debug ( "Failed to notify subscription change", e );
+            }
         }
     }
 

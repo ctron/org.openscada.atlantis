@@ -77,7 +77,7 @@ public class Activator implements BundleActivator
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, context.getBundle ().getSymbolicName () + ".all" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
-        properties.put ( Constants.SERVICE_DESCRIPTION, "A condition query containing all condition services" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "A monitor query containing all monitor services" );
 
         this.handle = this.context.registerService ( MonitorQuery.class, this.allQuery, properties );
 

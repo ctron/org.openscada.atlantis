@@ -54,6 +54,7 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -235,21 +236,21 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             }
             switch ( state )
             {
-            case DISCONNECTED:
-                // dispose if we are disconnected
-                this.queries.remove ( queryId );
-                this.executor.execute ( new Runnable () {
+                case DISCONNECTED:
+                    // dispose if we are disconnected
+                    this.queries.remove ( queryId );
+                    this.executor.execute ( new Runnable () {
 
-                    @Override
-                    public void run ()
-                    {
-                        query.dispose ();
-                    }
-                } );
-                break;
-            default:
-                fireQueryStateChange ( query, state, error != null ? new RuntimeException ( error ).fillInStackTrace () : null );
-                break;
+                        @Override
+                        public void run ()
+                        {
+                            query.dispose ();
+                        }
+                    } );
+                    break;
+                default:
+                    fireQueryStateChange ( query, state, error != null ? new RuntimeException ( error ).fillInStackTrace () : null );
+                    break;
             }
 
         }
@@ -257,7 +258,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Extract the query state from the message
-     * @param message the message
+     * 
+     * @param message
+     *            the message
      * @return the extracted query state or <code>null</code> if there was none
      */
     private QueryState queryStateFromMessage ( final Message message )
@@ -275,7 +278,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Extract the query id from the message
-     * @param message the message
+     * 
+     * @param message
+     *            the message
      * @return the extracted query id or <code>null</code> if there was none
      */
     private Long queryIdFromMessage ( final Message message )
@@ -540,7 +545,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
-    public synchronized void setConditionListener ( final String conditionQueryId, final MonitorListener listener )
+    public synchronized void setMonitorListener ( final String conditionQueryId, final MonitorListener listener )
     {
         if ( listener == null )
         {
@@ -594,8 +599,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Send a message to request (un)subscription
-     * @param conditionQueryId the condition query id
-     * @param flag <code>true</code> for subscription, <code>false</code> otherwise
+     * 
+     * @param conditionQueryId
+     *            the condition query id
+     * @param flag
+     *            <code>true</code> for subscription, <code>false</code>
+     *            otherwise
      */
     private void sendSubscribeConditions ( final String conditionQueryId, final boolean flag )
     {
@@ -667,7 +676,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         final EventListener oldListener = this.eventListeners.remove ( eventQueryId );
         if ( oldListener != null )
         {
-            sendSubscribeConditions ( eventQueryId, false );
+            sendSubscribeEventQuery ( eventQueryId, false );
         }
         if ( oldListener != null )
         {
@@ -694,8 +703,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Send a message to request (un)subscription
-     * @param eventQueryId the event query id
-     * @param flag <code>true</code> for subscription, <code>false</code> otherwise
+     * 
+     * @param eventQueryId
+     *            the event query id
+     * @param flag
+     *            <code>true</code> for subscription, <code>false</code>
+     *            otherwise
      */
     private void sendSubscribeEventQuery ( final String eventQueryId, final boolean flag )
     {
@@ -830,12 +843,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
-    public void acknowledge ( final String conditionId, final Date aknTimestamp )
+    public void acknowledge ( final String monitorId, final Date aknTimestamp, final UserInformation userInformation )
     {
-        logger.debug ( "Sending ACK: {} / {}", new Object[] { conditionId, aknTimestamp } );
+        logger.debug ( "Sending ACK: {} / {}", new Object[] { monitorId, aknTimestamp } );
 
         final Message message = new Message ( Messages.CC_CONDITION_AKN );
-        message.getValues ().put ( "id", new StringValue ( conditionId ) );
+        message.getValues ().put ( "id", new StringValue ( monitorId ) );
         // if we don't have a timestamp provided use current time
         if ( aknTimestamp != null )
         {
@@ -845,6 +858,19 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             message.getValues ().put ( "aknTimestamp", new LongValue ( System.currentTimeMillis () ) );
         }
+
+        if ( userInformation != null )
+        {
+            if ( userInformation.getName () != null )
+            {
+                message.getValues ().put ( "user", new StringValue ( userInformation.getName () ) );
+                if ( userInformation.getPassword () != null )
+                {
+                    message.getValues ().put ( "password", new StringValue ( userInformation.getPassword () ) );
+                }
+            }
+        }
+
         this.messenger.sendMessage ( message );
     }
 

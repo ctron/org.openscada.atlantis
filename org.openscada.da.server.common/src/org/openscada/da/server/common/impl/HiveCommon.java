@@ -212,6 +212,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     /**
      * Get the root folder
+     * 
      * @return the root folder or <code>null</code> if browsing is not supported
      */
     @Override
@@ -267,10 +268,14 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     }
 
     /**
-     * Validate a session and return the session common instance if the session is valid
-     * @param session the session to validate
+     * Validate a session and return the session common instance if the session
+     * is valid
+     * 
+     * @param session
+     *            the session to validate
      * @return the session common instance
-     * @throws InvalidSessionException in the case of an invalid session
+     * @throws InvalidSessionException
+     *             in the case of an invalid session
      */
     public SessionCommon validateSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
     {
@@ -313,9 +318,8 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     /**
      * Close a session.
-     * 
      * The session will be invalid after it has been closed. All subscriptions
-     * will become invalid. All pending operation will get canceled. 
+     * will become invalid. All pending operation will get canceled.
      */
     @Override
     public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
@@ -371,7 +375,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     /**
      * Register a new item with the hive
-     * @param item the item to register
+     * 
+     * @param item
+     *            the item to register
      */
     @Override
     public void registerItem ( final DataItem item )
@@ -425,7 +431,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     /**
      * Remove an item from the hive.
-     * @param item the item to remove
+     * 
+     * @param item
+     *            the item to remove
      */
     public void unregisterItem ( final DataItem item )
     {
@@ -472,8 +480,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
      * The hive will perform several methods to check if the item id is valid.
      * <p>
      * Implementations must not create items based an a validation check!
-     *  
-     * @return <code>true</code> if the item id is valid <code>false</code> otherwise
+     * 
+     * @return <code>true</code> if the item id is valid <code>false</code>
+     *         otherwise
      */
     @Override
     public boolean validateItem ( final String id )
@@ -606,55 +615,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private OperationParameters makeOperationParameters ( final SessionCommon session, final OperationParameters operationParameters ) throws PermissionDeniedException
     {
-        UserInformation sessionInformation = session.getUserInformation ();
-        if ( sessionInformation == null )
-        {
-            logger.debug ( "Session has no user information. Using anonymous" );
-            sessionInformation = UserInformation.ANONYMOUS;
-        }
-
-        if ( operationParameters == null )
-        {
-            logger.debug ( "No operation parameters provided. Creating default for user ({}).", sessionInformation );
-            return new OperationParameters ( sessionInformation );
-        }
-
-        final UserInformation userInformation;
-
-        if ( operationParameters.getUserInformation () != null && operationParameters.getUserInformation ().getName () != null )
-        {
-            final String proxyUser = operationParameters.getUserInformation ().getName ();
-
-            // check if user differs
-            if ( !proxyUser.equals ( sessionInformation.getName () ) )
-            {
-                logger.debug ( "Trying to set proxy user: {}", proxyUser );
-
-                // try to set proxy user
-                final AuthorizationResult result = authorize ( "SESSION", proxyUser, "PROXY_USER", session.getUserInformation (), null );
-                if ( !result.isGranted () )
-                {
-                    logger.info ( "Proxy user is not allowed" );
-                    // not allowed to use proxy user
-                    throw new PermissionDeniedException ( result.getErrorCode (), result.getMessage () );
-                }
-
-                userInformation = new UserInformation ( operationParameters.getUserInformation ().getName (), operationParameters.getUserInformation ().getPassword (), sessionInformation.getRoles () );
-
-            }
-            else
-            {
-                logger.debug ( "Session user and proxy user match ... using session user" );
-                // session is already is proxy user
-                userInformation = sessionInformation;
-            }
-        }
-        else
-        {
-            userInformation = sessionInformation;
-        }
-
-        return new OperationParameters ( userInformation );
+        return new OperationParameters ( makeEffectiveUserInformation ( session, operationParameters == null ? null : operationParameters.getUserInformation () ) );
     }
 
     @Override
@@ -741,8 +702,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     }
 
     /**
-     * Will re-check all items in granted state. Call when your list of known items
-     * has changed in order to give granted but not connected subscriptions a chance
+     * Will re-check all items in granted state. Call when your list of known
+     * items
+     * has changed in order to give granted but not connected subscriptions a
+     * chance
      * to be created by the factories.
      */
     public void recheckGrantedItems ()
@@ -757,6 +720,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     /**
      * Gets a set of all items in granted state.
+     * 
      * @return The list of granted items.
      */
     public Set<String> getGrantedItems ()
@@ -798,8 +762,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     }
 
     /**
-     * This will disable the automatic generation of the stats module when setting
+     * This will disable the automatic generation of the stats module when
+     * setting
      * the root folder. Must be called before {@link #setRootFolder(Folder)}
+     * 
      * @param autoEnableStats
      */
     public void setAutoEnableStats ( final boolean autoEnableStats )

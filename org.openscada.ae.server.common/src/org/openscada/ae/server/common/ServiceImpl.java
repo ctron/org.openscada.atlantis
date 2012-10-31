@@ -52,6 +52,7 @@ import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.ValidationException;
 import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthorizationResult;
+import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.osgi.AuthenticationHelper;
 import org.openscada.utils.concurrent.NamedThreadFactory;
@@ -123,13 +124,13 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
     }
 
     @Override
-    public void acknowledge ( final Session session, final String conditionId, final Date aknTimestamp ) throws InvalidSessionException
+    public void acknowledge ( final Session session, final String conditionId, final Date aknTimestamp, final UserInformation providedUserInformation ) throws InvalidSessionException, PermissionDeniedException
     {
         final SessionImpl sessionImpl = validateSession ( session );
 
-        logger.debug ( "Request akn: {} ({})", conditionId, aknTimestamp );
+        logger.debug ( "Request akn: {} ({}): sessionUser: {}, requestUser: {}", new Object[] { conditionId, aknTimestamp, sessionImpl.getUserInformation (), providedUserInformation } );
 
-        final UserInformation userInformation = sessionImpl.getUserInformation ();
+        final UserInformation userInformation = makeEffectiveUserInformation ( sessionImpl, providedUserInformation );
 
         final AuthorizationResult result = this.authorizationHelper.authorize ( "MONITOR", conditionId, "AKN", userInformation, null );
         if ( !result.isGranted () )
@@ -449,25 +450,25 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         {
             switch ( event.getType () )
             {
-            case ServiceEvent.REGISTERED:
-                checkAddConditionQuery ( ref );
-                checkAddEventQuery ( ref );
-                break;
-            case ServiceEvent.UNREGISTERING:
-                final String id = getQueryId ( ref );
-                final MonitorQuery query = this.conditionQueryRefs.remove ( id );
-                if ( query != null )
-                {
-                    removeConditionQuery ( id, query );
-                    this.context.ungetService ( ref );
-                }
-                final EventQuery eventQuery = this.eventQueryRefs.remove ( id );
-                if ( eventQuery != null )
-                {
-                    removeEventQuery ( id, eventQuery );
-                    this.context.ungetService ( ref );
-                }
-                break;
+                case ServiceEvent.REGISTERED:
+                    checkAddConditionQuery ( ref );
+                    checkAddEventQuery ( ref );
+                    break;
+                case ServiceEvent.UNREGISTERING:
+                    final String id = getQueryId ( ref );
+                    final MonitorQuery query = this.conditionQueryRefs.remove ( id );
+                    if ( query != null )
+                    {
+                        removeConditionQuery ( id, query );
+                        this.context.ungetService ( ref );
+                    }
+                    final EventQuery eventQuery = this.eventQueryRefs.remove ( id );
+                    if ( eventQuery != null )
+                    {
+                        removeEventQuery ( id, eventQuery );
+                        this.context.ungetService ( ref );
+                    }
+                    break;
             }
         }
         catch ( final Exception e )

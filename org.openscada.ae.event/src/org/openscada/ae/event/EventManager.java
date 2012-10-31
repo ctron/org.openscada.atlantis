@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,9 +20,10 @@
 package org.openscada.ae.event;
 
 /**
- * A manager which generates events and provided the interformation to its listeners
+ * A manager which generates events and provides the information to its
+ * listeners
+ * 
  * @author Jens Reimann
- *
  */
 public interface EventManager
 {
@@ -32,11 +33,12 @@ public interface EventManager
      * If the listener was already added the request will be ignored.
      * </p>
      * <p>
-     * If the listener was added to the manager, all current known events
-     * have to be provided to the listener.
+     * If the listener was added to the manager, all current known events have
+     * to be provided to the listener.
      * </p>
      * 
-     * @param listener the listener to add
+     * @param listener
+     *            the listener to add
      */
     public void addEventListener ( EventListener listener );
 

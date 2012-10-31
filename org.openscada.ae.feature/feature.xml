@@ -235,4 +235,31 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.openscada.ae.client.connection.service"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.ae.server.event.proxy"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.ae.server.monitor.proxy"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.ae.server.akn.proxy"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
 </feature>
