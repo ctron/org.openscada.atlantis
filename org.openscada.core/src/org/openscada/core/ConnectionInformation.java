@@ -76,6 +76,12 @@ public class ConnectionInformation implements Cloneable
             final ConnectionInformation ci = new ConnectionInformation ();
             ci.interfaceName = uri.getScheme ();
             ci.driver = subUri.getScheme ();
+
+            if ( subUri.getHost () == null )
+            {
+                return null;
+            }
+
             ci.target = URLDecoder.decode ( subUri.getHost (), URI_ENCODING );
 
             if ( subUri.getPort () >= 0 )
@@ -157,7 +163,8 @@ public class ConnectionInformation implements Cloneable
      * Set the user name
      * 
      * @param user
-     *            the user name to set, can be <code>null</code> in order to reset the password
+     *            the user name to set, can be <code>null</code> in order to
+     *            reset the password
      */
     public void setUser ( final String user )
     {
@@ -175,7 +182,8 @@ public class ConnectionInformation implements Cloneable
      * Set the password
      * 
      * @param password
-     *            the password to set, can be <code>null</code> in order to reset the password
+     *            the password to set, can be <code>null</code> in order to
+     *            reset the password
      */
     public void setPassword ( final String password )
     {
@@ -479,11 +487,14 @@ public class ConnectionInformation implements Cloneable
     /**
      * Returns a string with the password masked out if one is set.
      * <p>
-     * The method actually replaces the password with the mask if it is set and calls {@link #toString()} on the result. The current instance is not altered in the process.
+     * The method actually replaces the password with the mask if it is set and
+     * calls {@link #toString()} on the result. The current instance is not
+     * altered in the process.
      * </p>
      * 
      * @param mask
-     *            The mask to use instead of the password or <code>null</code> if the password should simply be removed
+     *            The mask to use instead of the password or <code>null</code>
+     *            if the password should simply be removed
      * @return the masked string
      * @see #toString()
      */
