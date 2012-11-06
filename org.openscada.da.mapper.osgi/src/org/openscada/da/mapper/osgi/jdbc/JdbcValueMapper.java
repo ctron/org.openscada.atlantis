@@ -35,6 +35,8 @@ import org.openscada.core.VariantEditor;
 import org.openscada.da.mapper.AbstractValueMapper;
 import org.openscada.da.mapper.ValueMapper;
 import org.openscada.da.server.common.DataItem;
+import org.openscada.da.server.common.DataItemCommand;
+import org.openscada.da.server.common.DataItemCommand.Listener;
 import org.openscada.da.server.common.exporter.ObjectExporter;
 import org.openscada.da.server.common.osgi.factory.ObjectPoolDataItemFactory;
 import org.openscada.utils.concurrent.NamedThreadFactory;
@@ -146,6 +148,16 @@ public class JdbcValueMapper extends AbstractValueMapper implements ValueMapper
         this.itemFactory = new ObjectPoolDataItemFactory ( this.executor, this.objectPool, this.configuration.statePrefix );
         this.exporter = new ObjectExporter ( this.itemFactory, false, false );
         this.exporter.attachTarget ( this.state );
+
+        final DataItemCommand reloadCommand = this.itemFactory.createCommand ( "reload", null );
+        reloadCommand.addListener ( new Listener () {
+
+            @Override
+            public void command ( final Variant value ) throws Exception
+            {
+                startUpdate ();
+            }
+        } );
     }
 
     private void disposeStateExporter ()
