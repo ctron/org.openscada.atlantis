@@ -29,6 +29,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.item.ChainCreator;
+import org.openscada.da.server.common.item.factory.ItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,13 +40,13 @@ public class SimpleObjectExporter<T>
 
     private final Class<? extends T> objectClass;
 
-    private final DataItemFactory factory;
+    private final ItemFactory factory;
 
     private final String prefix;
 
     private final Map<String, DataItemInputChained> itemMap = new HashMap<String, DataItemInputChained> ();
 
-    public SimpleObjectExporter ( final Class<? extends T> objectClass, final DataItemFactory factory, final String prefix )
+    public SimpleObjectExporter ( final Class<? extends T> objectClass, final ItemFactory factory, final String prefix )
     {
         this.objectClass = objectClass;
         this.factory = factory;
@@ -57,7 +58,9 @@ public class SimpleObjectExporter<T>
 
     /**
      * Set the current value with default timestamp handling
-     * @param value the new value to set
+     * 
+     * @param value
+     *            the new value to set
      */
     public void setValue ( final T value )
     {
@@ -69,8 +72,11 @@ public class SimpleObjectExporter<T>
      * <p>
      * All values will receive exactly the same timestamp
      * </p>
-     * @param value the new value
-     * @param forceTimestamp the flag whether to force a timestamp update for all values
+     * 
+     * @param value
+     *            the new value
+     * @param forceTimestamp
+     *            the flag whether to force a timestamp update for all values
      */
     public void setValue ( final T value, final boolean forceTimestamp )
     {

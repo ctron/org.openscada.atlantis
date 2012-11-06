@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
@@ -63,26 +64,26 @@ public class ObjectPoolDataItemFactory implements ItemFactory
     }
 
     @Override
-    public synchronized DataItemCommand createCommand ( final String localId )
+    public synchronized DataItemCommand createCommand ( final String localId, final Map<String, Variant> properties )
     {
-        return registerItem ( new DataItemCommand ( getId ( localId ), this.executor ) );
+        return registerItem ( new DataItemCommand ( getId ( localId ), this.executor ), properties );
     }
 
     @Override
-    public synchronized DataItemInputChained createInput ( final String localId )
+    public synchronized DataItemInputChained createInput ( final String localId, final Map<String, Variant> properties )
     {
-        return registerItem ( new DataItemInputChained ( getId ( localId ), this.executor ) );
+        return registerItem ( new DataItemInputChained ( getId ( localId ), this.executor ), properties );
     }
 
     @Override
-    public synchronized WriteHandlerItem createInputOutput ( final String localId, final WriteHandler writeHandler )
+    public synchronized WriteHandlerItem createInputOutput ( final String localId, final Map<String, Variant> properties, final WriteHandler writeHandler )
     {
-        return registerItem ( new WriteHandlerItem ( getId ( localId ), writeHandler, this.executor ) );
+        return registerItem ( new WriteHandlerItem ( getId ( localId ), writeHandler, this.executor ), properties );
     }
 
-    private <T extends DataItem> T registerItem ( final T item )
+    private <T extends DataItem> T registerItem ( final T item, final Map<String, Variant> properties )
     {
-        final Dictionary<String, String> properties = new Hashtable<String, String> ( 0 );
+        final Dictionary<?, ?> localProperties = new Hashtable<Object, Object> ( 0 );
 
         final String itemId = item.getInformation ().getName ();
 
@@ -94,7 +95,8 @@ public class ObjectPoolDataItemFactory implements ItemFactory
         }
 
         this.items.put ( itemId, item );
-        this.objectPool.addService ( itemId, item, properties );
+
+        this.objectPool.addService ( itemId, item, localProperties );
 
         return item;
     }

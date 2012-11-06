@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -37,7 +37,6 @@ import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
- *
  */
 public class ProxySubConnection implements ConnectionStateListener
 {
@@ -67,8 +66,8 @@ public class ProxySubConnection implements ConnectionStateListener
      * @param connection
      * @param id
      * @param prefix
-     * @param connectionFolder 
-     * @param hive 
+     * @param connectionFolder
+     * @param hive
      */
     public ProxySubConnection ( final Connection connection, final ProxyPrefixName parentName, final ProxySubConnectionId id, final ProxyPrefixName prefix, final Hive hive, final FolderCommon connectionFolder )
     {
@@ -81,10 +80,10 @@ public class ProxySubConnection implements ConnectionStateListener
         this.itemFactory = new FolderItemFactory ( this.hive, connectionFolder, parentName.getName () + ".connections." + id, id.getName () );
 
         // setup state watcher
-        this.stateItem = this.itemFactory.createInput ( "state" );
+        this.stateItem = this.itemFactory.createInput ( "state", null );
         this.connection.addConnectionStateListener ( this );
 
-        this.connectItem = this.itemFactory.createCommand ( "connect" );
+        this.connectItem = this.itemFactory.createCommand ( "connect", null );
         this.connectItem.addListener ( new DataItemCommand.Listener () {
 
             @Override
@@ -94,7 +93,7 @@ public class ProxySubConnection implements ConnectionStateListener
             }
         } );
 
-        this.disconnectItem = this.itemFactory.createCommand ( "disconnect" );
+        this.disconnectItem = this.itemFactory.createCommand ( "disconnect", null );
         this.disconnectItem.addListener ( new DataItemCommand.Listener () {
 
             @Override

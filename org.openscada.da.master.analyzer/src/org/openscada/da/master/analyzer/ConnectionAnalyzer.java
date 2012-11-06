@@ -38,8 +38,8 @@ import org.openscada.da.core.OperationParameters;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
+import org.openscada.da.server.common.exporter.StaticObjectExporter;
 import org.openscada.da.server.common.osgi.factory.DataItemFactory;
-import org.openscada.da.server.common.osgi.factory.SimpleObjectExporter;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -53,7 +53,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
 
     private final DataItemFactory factory;
 
-    private final SimpleObjectExporter<ConnectionAnalyzerStatus> exporter;
+    private final StaticObjectExporter<ConnectionAnalyzerStatus> exporter;
 
     private final ConnectionAnalyzerStatus value;
 
@@ -66,15 +66,15 @@ public class ConnectionAnalyzer implements ConnectionStateListener
     public ConnectionAnalyzer ( final ScheduledExecutorService executor, final BundleContext context, final ServiceReference<?> reference, final ConnectionService service )
     {
         this.factory = new DataItemFactory ( context, executor, "org.openscada.da.master.analyzer.connectionService." + makeId ( reference ) );
-        this.exporter = new SimpleObjectExporter<ConnectionAnalyzerStatus> ( ConnectionAnalyzerStatus.class, this.factory, "state" );
+        this.exporter = new StaticObjectExporter<ConnectionAnalyzerStatus> ( this.factory, ConnectionAnalyzerStatus.class, false, false );
 
-        this.statisticsItem = this.factory.createInput ( "statistics" );
+        this.statisticsItem = this.factory.createInput ( "statistics", null );
 
         this.value = new ConnectionAnalyzerStatus ();
 
         this.value.setUri ( makeUri ( service ) );
 
-        this.exporter.setValue ( this.value );
+        this.exporter.setTarget ( this.value );
 
         this.job = executor.scheduleWithFixedDelay ( new Runnable () {
             @Override
@@ -129,7 +129,6 @@ public class ConnectionAnalyzer implements ConnectionStateListener
             }
             this.statisticsItem.updateData ( makeJson ( statistics ), result, AttributeMode.SET );
         }
-
     }
 
     private Variant makeJson ( final Collection<StatisticEntry> statistics )
@@ -204,7 +203,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
     {
         this.value.setState ( state );
         this.value.setConnected ( state == ConnectionState.BOUND );
-        this.exporter.setValue ( this.value );
+        this.exporter.setTarget ( this.value );
     }
 
 }

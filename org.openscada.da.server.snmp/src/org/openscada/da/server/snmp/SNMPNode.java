@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -64,9 +64,9 @@ public class SNMPNode
 
     private FolderCommon nodeFolder = null;
 
-    private FolderCommon _mibFolder = null;
+    private FolderCommon mibFolder = null;
 
-    private GroupFolder _oidGroupFolder = null;
+    private GroupFolder oidGroupFolder = null;
 
     private GroupFolder mibGroupFolder = null;
 
@@ -82,7 +82,7 @@ public class SNMPNode
 
     private SNMPBulkReader bulkReader = null;
 
-    private ScheduledFuture<?> _bulkReaderJob = null;
+    private ScheduledFuture<?> bulkReaderJob = null;
 
     private final Map<OID, SNMPItem> itemMap = new HashMap<OID, SNMPItem> ();
 
@@ -123,10 +123,10 @@ public class SNMPNode
         this.hive.addItemFactory ( this.itemFactory );
         this.dataItemFactory = new DefaultFolderItemFactory ( this.hive, this.rootFolder, this.connectionInformation.getName (), this.connectionInformation.getName () );
 
-        this.connectionInfoItem = this.dataItemFactory.createInput ( "connection" );
-        this.itemRewalkState = this.dataItemFactory.createInput ( "rewalkState" );
-        this.itemRewalkCount = this.dataItemFactory.createInput ( "rewalkCount" );
-        this.itemRewalkCommand = this.dataItemFactory.createCommand ( "rewalk" );
+        this.connectionInfoItem = this.dataItemFactory.createInput ( "connection", null );
+        this.itemRewalkState = this.dataItemFactory.createInput ( "rewalkState", null );
+        this.itemRewalkCount = this.dataItemFactory.createInput ( "rewalkCount", null );
+        this.itemRewalkCommand = this.dataItemFactory.createCommand ( "rewalk", null );
         this.itemRewalkCommand.addListener ( new DataItemCommand.Listener () {
 
             @Override
@@ -140,15 +140,15 @@ public class SNMPNode
         this.nodeFolder = this.dataItemFactory.getFolder ();
 
         // oid group folder
-        this._oidGroupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "snmp.oid" ), "\\." ), new NameProvider () {
+        this.oidGroupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "snmp.oid" ), "\\." ), new NameProvider () {
             @Override
             public String getName ( final ItemDescriptor descriptor )
             {
                 return "value";
             }
         } );
-        this.nodeFolder.add ( "numeric", this._oidGroupFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Auto grouping by OID" ) ).getMap () );
-        this.storage.addChild ( this._oidGroupFolder );
+        this.nodeFolder.add ( "numeric", this.oidGroupFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Auto grouping by OID" ) ).getMap () );
+        this.storage.addChild ( this.oidGroupFolder );
         // mib group folder
         this.mibGroupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "snmp.oid.symbolic" ), "\\." ), new NameProvider () {
             @Override
@@ -168,7 +168,7 @@ public class SNMPNode
             this.connection.start ();
             this.registered = true;
 
-            this._bulkReaderJob = this.scheduler.scheduleAtFixedRate ( new Runnable () {
+            this.bulkReaderJob = this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
                 @Override
                 public void run ()
@@ -179,8 +179,8 @@ public class SNMPNode
 
             this.connectionInfoItem.updateData ( Variant.valueOf ( "CONFIGURED" ), new MapBuilder<String, Variant> ().put ( "address", Variant.valueOf ( this.connectionInformation.getAddress () ) ).getMap (), AttributeMode.UPDATE );
 
-            this._mibFolder = new FolderCommon ();
-            this.nodeFolder.add ( "MIB", this._mibFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Contains entries of all MIBs that are loaded" ) ).getMap () );
+            this.mibFolder = new FolderCommon ();
+            this.nodeFolder.add ( "MIB", this.mibFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Contains entries of all MIBs that are loaded" ) ).getMap () );
 
             rewalk ( Variant.NULL );
             buildMIBFolders ();
@@ -206,14 +206,14 @@ public class SNMPNode
 
         this.dataItemFactory.dispose ();
 
-        this._bulkReaderJob.cancel ( false );
+        this.bulkReaderJob.cancel ( false );
 
-        this.storage.removeChild ( this._oidGroupFolder );
+        this.storage.removeChild ( this.oidGroupFolder );
 
         this.nodeFolder = null;
-        this._oidGroupFolder = null;
+        this.oidGroupFolder = null;
         this.mibGroupFolder = null;
-        this._mibFolder = null;
+        this.mibFolder = null;
 
         this.scheduler.shutdown ();
     }
@@ -268,7 +268,9 @@ public class SNMPNode
 
     /**
      * Fetch the SNMP item and create one on the fly if necessary
-     * @param oid the oid for which this snmp item should be created
+     * 
+     * @param oid
+     *            the oid for which this snmp item should be created
      * @return the snmp item
      */
     public void createSNMPItem ( final OID oid )
@@ -347,7 +349,7 @@ public class SNMPNode
 
             populateMIBFolder ( mib.getRootSymbol (), mibBaseFolder );
 
-            this._mibFolder.add ( mib.getName (), mibBaseFolder, attributes.getMap () );
+            this.mibFolder.add ( mib.getName (), mibBaseFolder, attributes.getMap () );
 
         }
     }

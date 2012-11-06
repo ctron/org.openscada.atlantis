@@ -59,16 +59,15 @@ public class DataItemFactory implements ItemFactory
         this.globalId = globalId;
     }
 
+    @Override
     public synchronized DataItemInputChained createInput ( final String localId, final Map<String, Variant> properties )
     {
-        final Map<String, Variant> localProperties = fixProperties ( properties );
-
         final DataItem item = this.items.get ( localId );
         if ( item == null )
         {
             final String id = getId ( localId );
             final DataItemInputChained newItem = new DataItemInputChained ( id, this.executor );
-            registerItem ( newItem, localId, localProperties );
+            registerItem ( newItem, localId, fixProperties ( properties ) );
             return newItem;
         }
         else
@@ -86,14 +85,12 @@ public class DataItemFactory implements ItemFactory
 
     public synchronized WriteHandlerItem createOutput ( final String localId, final Map<String, Variant> properties, final WriteHandler writeHandler )
     {
-        final Map<String, Variant> localProperties = fixProperties ( properties );
-
         final DataItem item = this.items.get ( localId );
         if ( item == null )
         {
             final String id = getId ( localId );
             final WriteHandlerItem newItem = new WriteHandlerItem ( id, writeHandler, this.executor );
-            registerItem ( newItem, localId, localProperties );
+            registerItem ( newItem, localId, fixProperties ( properties ) );
             return newItem;
         }
         else
@@ -111,14 +108,12 @@ public class DataItemFactory implements ItemFactory
 
     public synchronized AttributeWriteHandlerItem createOutput ( final String localId, final Map<String, Variant> properties, final AttributeWriteHandler writeHandler )
     {
-        final Map<String, Variant> localProperties = fixProperties ( properties );
-
         final DataItem item = this.items.get ( localId );
         if ( item == null )
         {
             final String id = getId ( localId );
             final AttributeWriteHandlerItem newItem = new AttributeWriteHandlerItem ( id, writeHandler, this.executor );
-            registerItem ( newItem, localId, localProperties );
+            registerItem ( newItem, localId, fixProperties ( properties ) );
             return newItem;
         }
         else if ( item instanceof AttributeWriteHandlerItem )
@@ -132,13 +127,13 @@ public class DataItemFactory implements ItemFactory
     }
 
     @Override
-    public synchronized DataItemCommand createCommand ( final String localId )
+    public synchronized DataItemCommand createCommand ( final String localId, final Map<String, Variant> properties )
     {
         final DataItem item = this.items.get ( localId );
         if ( item == null )
         {
             final DataItemCommand newItem = new DataItemCommand ( getId ( localId ), this.executor );
-            registerItem ( item, localId, fixProperties ( null ) );
+            registerItem ( item, localId, fixProperties ( properties ) );
             return newItem;
         }
         else if ( item instanceof DataItemCommand )
@@ -150,15 +145,9 @@ public class DataItemFactory implements ItemFactory
     }
 
     @Override
-    public DataItemInputChained createInput ( final String localId )
+    public WriteHandlerItem createInputOutput ( final String localId, final Map<String, Variant> properties, final WriteHandler writeHandler )
     {
-        return createInput ( localId, null );
-    }
-
-    @Override
-    public WriteHandlerItem createInputOutput ( final String localId, final WriteHandler writeHandler )
-    {
-        return createOutput ( localId, null, writeHandler );
+        return createOutput ( localId, properties, writeHandler );
     }
 
     private Map<String, Variant> fixProperties ( final Map<String, Variant> properties )

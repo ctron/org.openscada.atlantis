@@ -21,36 +21,36 @@ Import-Package: org.apache.xmlbeans;version="2.4.0",
  org.openscada.utils.statuscodes;version="0.13.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.exec;version="0.18.0";
+Export-Package: org.openscada.da.server.exec;version="1.0.0";
   uses:="org.openscada.da.server.exec.configuration.model,
    org.openscada.da.server.common.impl,
    org.openscada.utils.statuscodes,
    org.openscada.da.server.exec.command,
    org.w3c.dom",
- org.openscada.da.server.exec.command;version="0.18.0";
+ org.openscada.da.server.exec.command;version="1.0.0";
   uses:="org.openscada.da.server.common,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common.item.factory,
    org.openscada.da.server.exec,
    org.openscada.core,
    org.openscada.da.server.exec.splitter",
- org.openscada.da.server.exec.configuration;version="0.18.0";
+ org.openscada.da.server.exec.configuration;version="1.0.0";
   uses:="org.openscada.da.server.exec.configuration.model,
    org.openscada.da.server.exec,
    org.openscada.utils.statuscodes,
    org.w3c.dom",
- org.openscada.da.server.exec.configuration.model;version="0.18.0";
+ org.openscada.da.server.exec.configuration.model;version="1.0.0";
   uses:="javax.xml.stream,
    org.apache.xmlbeans,
    org.w3c.dom,
    org.apache.xmlbeans.xml.stream",
- org.openscada.da.server.exec.extractor;version="0.18.0";
+ org.openscada.da.server.exec.extractor;version="1.0.0";
   uses:="org.openscada.da.server.common.chain,
    org.openscada.da.server.common.item.factory,
    org.openscada.da.server.exec,
    org.openscada.da.server.exec.command",
- org.openscada.da.server.exec.splitter;version="0.18.0",
- org.openscada.da.server.exec.util;version="0.18.0";
+ org.openscada.da.server.exec.splitter;version="1.0.0",
+ org.openscada.da.server.exec.util;version="1.0.0";
   uses:="org.openscada.da.server.common.chain,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common.impl,

@@ -37,26 +37,25 @@ Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.openscada.utils.lifecycle;version="0.13.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.proxy;version="0.18.0";
+Export-Package: org.openscada.da.server.proxy;version="1.0.0";
   uses:="org.openscada.da.server.proxy.connection,
    org.openscada.da.server.common.impl,
    org.openscada.da.server.proxy.utils,
    org.w3c.dom,
    org.openscada.da.server.proxy.configuration",
- org.openscada.da.server.proxy.configuration;version="0.18.0";uses:="org.openscada.da.server.proxy,org.openscada.da.proxy.configuration",
- org.openscada.da.server.proxy.connection;version="0.18.0";
+ org.openscada.da.server.proxy.configuration;version="1.0.0";uses:="org.openscada.da.server.proxy,org.openscada.da.proxy.configuration",
+ org.openscada.da.server.proxy.connection;version="1.0.0";
   uses:="org.openscada.core.client,
-   org.openscada.da.server.common,
+   org.openscada.da.server.common.chain,
    org.openscada.da.server.browser.common,
+   org.openscada.da.server.proxy,
+   org.openscada.da.server.proxy.utils,
    org.openscada.da.server.common.factory,
    org.openscada.da.server.proxy.item,
+   org.openscada.da.client,
    org.openscada.da.core,
-   org.openscada.utils.lifecycle,
-   org.openscada.da.server.common.chain,
-   org.openscada.da.server.proxy.utils,
-   org.openscada.da.server.proxy,
-   org.openscada.da.client",
- org.openscada.da.server.proxy.item;version="0.18.0";
+   org.openscada.utils.lifecycle",
+ org.openscada.da.server.proxy.item;version="1.0.0";
   uses:="org.openscada.da.server.common,
    org.openscada.da.server.proxy.connection,
    org.openscada.utils.concurrent,
@@ -66,8 +65,8 @@ Export-Package: org.openscada.da.server.proxy;version="0.18.0";
    org.openscada.da.server.proxy.utils,
    org.openscada.da.client,
    org.openscada.core",
- org.openscada.da.server.proxy.utils;version="0.18.0"
-Bundle-Version: 0.18.0.qualifier
+ org.openscada.da.server.proxy.utils;version="1.0.0"
+Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Proxy Server
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-SymbolicName: org.openscada.da.server.proxy

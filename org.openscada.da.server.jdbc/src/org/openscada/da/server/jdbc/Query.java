@@ -189,7 +189,7 @@ public class Query
             return item;
         }
 
-        item = this.itemFactory.createInput ( key );
+        item = this.itemFactory.createInput ( key, null );
         this.items.put ( key, item );
 
         return null;

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -70,8 +70,6 @@ public class OPCConnection implements PropertyChangeListener
 
     private DataItemCommand disconnectDataItem;
 
-    private DataItemCommand reconnectDataItem;
-
     private DataItemCommand suicideCommandDataItem;
 
     private DataItemInputOutputChained loopDelayDataItem;
@@ -122,8 +120,9 @@ public class OPCConnection implements PropertyChangeListener
     /**
      * Get the device tag prefix.
      * <p>
-     * This is either the alias or, if no alias is set, the host + class or prog id
-     * of the remote server
+     * This is either the alias or, if no alias is set, the host + class or prog
+     * id of the remote server
+     * 
      * @return the device tag
      */
     protected String getDeviceTag ()
@@ -149,19 +148,19 @@ public class OPCConnection implements PropertyChangeListener
         logger.info ( "User: {}", this.connectionSetup.getConnectionInformation ().getUser () );
         logger.info ( "Domain: {} ", this.connectionSetup.getConnectionInformation ().getDomain () );
 
-        this.serverStateItem = this.connectionItemFactory.createInput ( "serverState" );
+        this.serverStateItem = this.connectionItemFactory.createInput ( "serverState", null );
 
-        this.connectedItem = this.connectionItemFactory.createInput ( "connected" );
+        this.connectedItem = this.connectionItemFactory.createInput ( "connected", null );
 
-        this.connectingItem = this.connectionItemFactory.createInput ( "connecting" );
+        this.connectingItem = this.connectionItemFactory.createInput ( "connecting", null );
 
-        this.lastConnectionError = this.connectionItemFactory.createInput ( "lastConnectionError" );
+        this.lastConnectionError = this.connectionItemFactory.createInput ( "lastConnectionError", null );
 
-        this.numDisposersRunningDataItem = this.connectionItemFactory.createInput ( "numDisposersRunning" );
+        this.numDisposersRunningDataItem = this.connectionItemFactory.createInput ( "numDisposersRunning", null );
 
-        this.controllerStateDataItem = this.connectionItemFactory.createInput ( "controllerStateDataItem" );
+        this.controllerStateDataItem = this.connectionItemFactory.createInput ( "controllerStateDataItem", null );
 
-        this.connectDataItem = this.connectionItemFactory.createCommand ( "connect" );
+        this.connectDataItem = this.connectionItemFactory.createCommand ( "connect", null );
         this.connectDataItem.addListener ( new DataItemCommand.Listener () {
 
             @Override
@@ -171,7 +170,7 @@ public class OPCConnection implements PropertyChangeListener
             }
         } );
 
-        this.disconnectDataItem = this.connectionItemFactory.createCommand ( "disconnect" );
+        this.disconnectDataItem = this.connectionItemFactory.createCommand ( "disconnect", null );
         this.disconnectDataItem.addListener ( new DataItemCommand.Listener () {
 
             @Override
@@ -181,19 +180,9 @@ public class OPCConnection implements PropertyChangeListener
             }
         } );
 
-        this.reconnectDataItem = this.connectionItemFactory.createCommand ( "reconnect" );
-        this.reconnectDataItem.addListener ( new DataItemCommand.Listener () {
+        this.lastConnectDataItem = this.connectionItemFactory.createInput ( "lastConnect", null );
 
-            @Override
-            public void command ( final Variant value )
-            {
-                OPCConnection.this.reconnect ();
-            }
-        } );
-
-        this.lastConnectDataItem = this.connectionItemFactory.createInput ( "lastConnect" );
-
-        this.loopDelayDataItem = this.connectionItemFactory.createInputOutput ( "loopDelay", new WriteHandler () {
+        this.loopDelayDataItem = this.connectionItemFactory.createInputOutput ( "loopDelay", null, new WriteHandler () {
 
             @Override
             public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -202,7 +191,7 @@ public class OPCConnection implements PropertyChangeListener
             }
         } );
 
-        this.loopDelayDataItem = this.connectionItemFactory.createInputOutput ( "defaultTimeout", new WriteHandler () {
+        this.loopDelayDataItem = this.connectionItemFactory.createInputOutput ( "defaultTimeout", null, new WriteHandler () {
 
             @Override
             public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -218,7 +207,7 @@ public class OPCConnection implements PropertyChangeListener
             }
         } );
 
-        this.suicideCommandDataItem = this.connectionItemFactory.createCommand ( "suicide" );
+        this.suicideCommandDataItem = this.connectionItemFactory.createCommand ( "suicide", null );
         this.suicideCommandDataItem.addListener ( new DataItemCommand.Listener () {
 
             @Override
@@ -287,12 +276,6 @@ public class OPCConnection implements PropertyChangeListener
         this.itemSourcesFactory.dispose ();
     }
 
-    protected void reconnect ()
-    {
-        // FIXME: not implemented
-        logger.warn ( "Somebody triggered a reconnect ... which is a no-op" );
-    }
-
     protected void setLoopDelay ( final Variant value )
     {
         try
@@ -337,7 +320,7 @@ public class OPCConnection implements PropertyChangeListener
 
     /**
      * Stop the connection. This will completely remove the connection
-     * from the server 
+     * from the server
      */
     public synchronized void stop ()
     {
@@ -366,7 +349,9 @@ public class OPCConnection implements PropertyChangeListener
 
     /**
      * Dispose the connection
-     * <p>The connection become invalid and will be stopped automatically. It cannot be restarted.
+     * <p>
+     * The connection become invalid and will be stopped automatically. It
+     * cannot be restarted.
      */
     public synchronized void dispose ()
     {

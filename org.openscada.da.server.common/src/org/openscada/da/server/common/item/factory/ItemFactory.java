@@ -19,6 +19,9 @@
 
 package org.openscada.da.server.common.item.factory;
 
+import java.util.Map;
+
+import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
@@ -27,26 +30,34 @@ import org.openscada.da.server.common.chain.WriteHandlerItem;
 
 public interface ItemFactory
 {
-    public abstract DataItemCommand createCommand ( String localId );
+    public abstract DataItemCommand createCommand ( String localId, Map<String, Variant> properties );
 
-    public abstract DataItemInputChained createInput ( String localId );
+    public abstract DataItemInputChained createInput ( String localId, Map<String, Variant> properties );
 
-    public abstract WriteHandlerItem createInputOutput ( String localId, WriteHandler writeHandler );
+    public abstract WriteHandlerItem createInputOutput ( String localId, Map<String, Variant> properties, WriteHandler writeHandler );
 
     /**
      * Dispose an item if it was created by this factory
      * <p>
-     * If the item was not created by this factory or was already disposed this is no error and no exception is thrown
+     * If the item was not created by this factory or was already disposed this
+     * is no error and no exception is thrown
      * </p>
-     * @param dataItem data item to dispose
+     * 
+     * @param dataItem
+     *            data item to dispose
      */
     public abstract void disposeItem ( DataItem dataItem );
 
     /**
      * Dispose the factory
-     * <p>All items that where created by this factory and where not disposed up to now are being disposed</p>
      * <p>
-     * After a call to this method it is not possible to create new items. Multiple calls to {@link #dispose()} or calls to {@link #disposeAllItems()} are possible.
+     * All items that where created by this factory and where not disposed up to
+     * now are being disposed
+     * </p>
+     * <p>
+     * After a call to this method it is not possible to create new items.
+     * Multiple calls to {@link #dispose()} or calls to
+     * {@link #disposeAllItems()} are possible.
      * </p>
      */
     public abstract void dispose ();

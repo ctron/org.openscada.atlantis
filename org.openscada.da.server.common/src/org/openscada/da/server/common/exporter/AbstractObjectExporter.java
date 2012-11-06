@@ -63,9 +63,13 @@ public abstract class AbstractObjectExporter implements Disposable
      * Create a new object factory
      * <p>
      * </p>
-     * @param itemFactory the item factory to use
-     * @param readOnly flag if all properties should be created read-only
-     * @param nullIsError flag whether controls if <code>null</code> mean <q>error</q>
+     * 
+     * @param itemFactory
+     *            the item factory to use
+     * @param readOnly
+     *            flag if all properties should be created read-only
+     * @param nullIsError
+     *            flag whether controls if <code>null</code> mean <q>error</q>
      */
     public AbstractObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
     {
@@ -138,6 +142,7 @@ public abstract class AbstractObjectExporter implements Disposable
 
     /**
      * read the initial value of the property
+     * 
      * @param pd
      */
     protected void initAttribute ( final PropertyDescriptor pd )
@@ -192,14 +197,17 @@ public abstract class AbstractObjectExporter implements Disposable
      * <p>
      * The following search order processed
      * <ol>
-     * <li>Check the field with the same name as the property, process through all superclasses</li>
+     * <li>Check the field with the same name as the property, process through
+     * all superclasses</li>
      * <li>Check the read method</li>
      * <li>Check the write method</li>
      * </ol>
-     * 
      * </p>
-     * @param pd the property descriptor to check
-     * @param clazz class instance
+     * 
+     * @param pd
+     *            the property descriptor to check
+     * @param clazz
+     *            class instance
      * @return the annotation or <code>null</code> if none was found
      */
     protected ItemName findAnnotation ( final PropertyDescriptor pd, final Class<?> clazz )
@@ -276,9 +284,16 @@ public abstract class AbstractObjectExporter implements Disposable
 
         final String itemName = makeItemName ( pd, clazz );
 
+        final Map<String, Variant> properties = new HashMap<String, Variant> ();
+
+        if ( pd.getShortDescription () != null )
+        {
+            properties.put ( "description", Variant.valueOf ( pd.getShortDescription () ) );
+        }
+
         if ( writeable && readable )
         {
-            return this.factory.createInputOutput ( itemName, new WriteHandler () {
+            return this.factory.createInputOutput ( itemName, properties, new WriteHandler () {
 
                 @Override
                 public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -289,11 +304,11 @@ public abstract class AbstractObjectExporter implements Disposable
         }
         else if ( readable )
         {
-            return this.factory.createInput ( itemName );
+            return this.factory.createInput ( itemName, properties );
         }
         else if ( writeable )
         {
-            final DataItemCommand item = this.factory.createCommand ( itemName );
+            final DataItemCommand item = this.factory.createCommand ( itemName, properties );
             item.addListener ( new DataItemCommand.Listener () {
 
                 @Override
@@ -342,6 +357,7 @@ public abstract class AbstractObjectExporter implements Disposable
 
     /**
      * Get the current target or <code>null</code> if there is none
+     * 
      * @return the current target
      */
     protected abstract Object getTarget ();
@@ -380,12 +396,15 @@ public abstract class AbstractObjectExporter implements Disposable
 
     /**
      * Convert the value to the target type if possible.
-     * @param targetType The expected target type
-     * @param value the source value
+     * 
+     * @param targetType
+     *            The expected target type
+     * @param value
+     *            the source value
      * @return an instance of the source value in the target type (if possible)
-     * or <code>null</code> otherwise 
-     * @throws NotConvertableException 
-     * @throws NullValueException 
+     *         or <code>null</code> otherwise
+     * @throws NotConvertableException
+     * @throws NullValueException
      */
     private Object convertWriteType ( final Class<?> targetType, final Variant value ) throws NullValueException, NotConvertableException
     {

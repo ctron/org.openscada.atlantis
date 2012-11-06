@@ -61,7 +61,9 @@ public class Update
 
         /**
          * The constructor that maps the main value to a named parameter
-         * @param namedParameter the name of the SQL parameter
+         * 
+         * @param namedParameter
+         *            the name of the SQL parameter
          */
         public Mapping ( final String namedParameter )
         {
@@ -73,11 +75,14 @@ public class Update
          * A mapping that maps the specified attribute name to the
          * provided named parameter.
          * <p>
-         * Note that if the attribute is <code>null</code> then is defines the main
-         * value instead.
+         * Note that if the attribute is <code>null</code> then is defines the
+         * main value instead.
          * </p>
-         * @param attribute the name of the attribute
-         * @param namedParameter the name of the SQL parameter
+         * 
+         * @param attribute
+         *            the name of the attribute
+         * @param namedParameter
+         *            the name of the SQL parameter
          */
         public Mapping ( final String attribute, final String namedParameter )
         {
@@ -108,7 +113,7 @@ public class Update
     public void register ( final DataItemFactory parentItemFactory )
     {
         this.itemFactory = parentItemFactory.createSubFolderFactory ( this.id );
-        this.item = this.itemFactory.createInputOutput ( "START", new WriteHandler () {
+        this.item = this.itemFactory.createInputOutput ( "START", null, new WriteHandler () {
 
             @Override
             public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -200,11 +205,13 @@ public class Update
     /**
      * Add a mapping.
      * <p>
-     * Note that the mappings are not unique and adding multiple mappings
-     * for the same attribute is not allowed and will result in an
-     * undefined behavior.
+     * Note that the mappings are not unique and adding multiple mappings for
+     * the same attribute is not allowed and will result in an undefined
+     * behavior.
      * </p>
-     * @param mapping the mapping to add
+     * 
+     * @param mapping
+     *            the mapping to add
      */
     public void addMapping ( final Mapping mapping )
     {

@@ -106,7 +106,7 @@ public class HiveProcessCommand extends AbstractContinuousCommand
             final String itemId = toks[1];
             if ( !this.items.containsKey ( itemId ) )
             {
-                final DataItemInputChained item = this.processItemFactory.createInput ( itemId );
+                final DataItemInputChained item = this.processItemFactory.createInput ( itemId, null );
                 this.items.put ( itemId, item );
             }
         }
