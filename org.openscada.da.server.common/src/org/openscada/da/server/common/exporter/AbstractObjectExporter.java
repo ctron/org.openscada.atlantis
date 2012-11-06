@@ -55,6 +55,8 @@ public abstract class AbstractObjectExporter implements Disposable
 
     protected final Map<String, DataItem> items = new HashMap<String, DataItem> ();
 
+    protected final Map<String, Map<String, Variant>> attributes = new HashMap<String, Map<String, Variant>> ();
+
     private final boolean readOnly;
 
     private final boolean nullIsError;
@@ -96,6 +98,11 @@ public abstract class AbstractObjectExporter implements Disposable
             {
                 final DataItem item = createItem ( pd, targetClazz );
                 this.items.put ( pd.getName (), item );
+
+                final Map<String, Variant> itemAttributes = new HashMap<String, Variant> ();
+                fillAttributes ( pd, itemAttributes );
+                this.attributes.put ( pd.getName (), itemAttributes );
+
                 initAttribute ( pd );
             }
         }
@@ -333,6 +340,13 @@ public abstract class AbstractObjectExporter implements Disposable
         if ( item instanceof DataItemInputChained )
         {
             final Map<String, Variant> attributes = new HashMap<String, Variant> ();
+
+            final Map<String, Variant> itemAttributes = this.attributes.get ( propertyName );
+
+            if ( itemAttributes != null )
+            {
+                attributes.putAll ( itemAttributes );
+            }
 
             if ( additionalAttributes != null )
             {
