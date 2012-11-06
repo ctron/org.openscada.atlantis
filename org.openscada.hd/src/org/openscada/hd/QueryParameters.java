@@ -27,7 +27,7 @@ import org.openscada.utils.lang.Immutable;
 @Immutable
 public final class QueryParameters implements Serializable
 {
-    private static final long serialVersionUID = -7843048077890250710L;
+    private static final long serialVersionUID = 1L;
 
     private final Calendar startTimestamp;
 
