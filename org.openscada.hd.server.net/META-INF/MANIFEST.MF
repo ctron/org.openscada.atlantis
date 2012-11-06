@@ -3,7 +3,6 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA HD Server NET
 Bundle-SymbolicName: org.openscada.hd.server.net
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.openscada.hd.server.net.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core.session;version="2.0.0",
