@@ -126,7 +126,7 @@ public class JdbcValueMapper extends AbstractValueMapper implements ValueMapper
             configuration.jdbcProperties.putAll ( cfg.getPrefixed ( "properties." ) );
             configuration.loginTimeout = cfg.getInteger ( "loginTimeout", 5 );
             configuration.serviceTimeout = cfg.getInteger ( "serviceTimeout", 1000 );
-            configuration.statePrefix = cfg.getString ( "statePrefix", String.format ( "datamapper.%s", this.id ) );
+            configuration.statePrefix = cfg.getString ( "statePrefix", String.format ( "datamapper.%s.", this.id ) );
             configuration.sql = cfg.getStringChecked ( "sql", "'sql' is required" );
 
             this.configuration = configuration;
