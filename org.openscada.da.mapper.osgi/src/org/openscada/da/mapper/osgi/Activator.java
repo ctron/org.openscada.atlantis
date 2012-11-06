@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.mapper.ValueMapper;
+import org.openscada.da.mapper.osgi.ca.ConfiguredValueMapperFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
