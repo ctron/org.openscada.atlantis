@@ -188,7 +188,7 @@ public abstract class AbstractObjectExporter implements Disposable
         attributes.put ( "property.constrained", Variant.valueOf ( pd.isConstrained () ) );
         attributes.put ( "property.label", Variant.valueOf ( pd.getDisplayName () ) );
         attributes.put ( "property.type", Variant.valueOf ( pd.getPropertyType ().getName () ) );
-        attributes.put ( "proptery.name", Variant.valueOf ( pd.getName () ) );
+        attributes.put ( "property.name", Variant.valueOf ( pd.getName () ) );
         attributes.put ( "description", Variant.valueOf ( pd.getShortDescription () ) );
     }
 
