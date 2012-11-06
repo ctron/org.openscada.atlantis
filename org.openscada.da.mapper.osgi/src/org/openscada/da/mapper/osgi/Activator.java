@@ -26,6 +26,8 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.mapper.ValueMapper;
 import org.openscada.da.mapper.osgi.ca.ConfiguredValueMapperFactory;
+import org.openscada.da.mapper.osgi.jdbc.JdbcValueMapperFactory;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -36,11 +38,17 @@ import org.osgi.framework.ServiceRegistration;
 public class Activator implements BundleActivator
 {
 
-    private ObjectPoolImpl<ValueMapper> pool;
+    private ObjectPoolImpl<ValueMapper> mapperPool;
 
-    private ServiceRegistration<?> poolRegistration;
+    private ServiceRegistration<?> mapperPoolRegistration;
 
-    private ConfiguredValueMapperFactory factory;
+    private ConfiguredValueMapperFactory factory1;
+
+    private ObjectPoolImpl<DataItem> itemPool;
+
+    private ServiceRegistration<?> itemPoolRegistration;
+
+    private JdbcValueMapperFactory factory2;
 
     /*
      * (non-Javadoc)
@@ -49,14 +57,27 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.pool = new ObjectPoolImpl<ValueMapper> ();
-        this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.pool, ValueMapper.class );
+        this.mapperPool = new ObjectPoolImpl<ValueMapper> ();
+        this.mapperPoolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.mapperPool, ValueMapper.class );
 
-        this.factory = new ConfiguredValueMapperFactory ( context, this.pool );
-        final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( Constants.SERVICE_DESCRIPTION, "A value mapper based on its configuration" );
-        properties.put ( ConfigurationAdministrator.FACTORY_ID, ConfiguredValueMapperFactory.FACTORY_ID );
-        context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );
+        this.itemPool = new ObjectPoolImpl<DataItem> ();
+        this.itemPoolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class );
+
+        this.factory1 = new ConfiguredValueMapperFactory ( context, this.mapperPool );
+        {
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( Constants.SERVICE_DESCRIPTION, "A value mapper based on its configuration" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, ConfiguredValueMapperFactory.FACTORY_ID );
+            context.registerService ( ConfigurationFactory.class.getName (), this.factory1, properties );
+        }
+
+        this.factory2 = new JdbcValueMapperFactory ( context, this.mapperPool, this.itemPool );
+        {
+            final Dictionary<String, String> properties = new Hashtable<String, String> ();
+            properties.put ( Constants.SERVICE_DESCRIPTION, "A value mapper based on a jdbc sql query" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, JdbcValueMapperFactory.FACTORY_ID );
+            context.registerService ( ConfigurationFactory.class.getName (), this.factory2, properties );
+        }
     }
 
     /*
@@ -66,10 +87,14 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext bundleContext ) throws Exception
     {
-        this.factory.dispose ();
+        this.factory1.dispose ();
+        this.factory2.dispose ();
 
-        this.poolRegistration.unregister ();
-        this.pool.dispose ();
+        this.mapperPoolRegistration.unregister ();
+        this.mapperPool.dispose ();
+
+        this.itemPoolRegistration.unregister ();
+        this.itemPool.dispose ();
     }
 
 }

@@ -164,5 +164,4 @@ public abstract class AbstractValueMapper implements ValueMapper
             this.writeLock.unlock ();
         }
     }
-
 }
