@@ -19,58 +19,24 @@
 
 package org.openscada.da.mapper.osgi;
 
-import java.util.HashMap;
-import java.util.LinkedHashSet;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
+import org.openscada.da.mapper.AbstractValueMapper;
 import org.openscada.da.mapper.ValueMapper;
-import org.openscada.da.mapper.ValueMapperListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public class ConfiguredValueMapper implements ValueMapper
+public class ConfiguredValueMapper extends AbstractValueMapper implements ValueMapper
 {
-
-    private final ReentrantReadWriteLock readWriteLock = new ReentrantReadWriteLock ( false );
-
-    private final Lock readLock = this.readWriteLock.readLock ();
-
-    private final Lock writeLock = this.readWriteLock.writeLock ();
-
-    private final static Logger logger = LoggerFactory.getLogger ( ConfiguredValueMapper.class );
-
-    private final Map<String, String> data = new HashMap<String, String> ();
-
-    private final Set<ValueMapperListener> listeners = new LinkedHashSet<ValueMapperListener> ();
-
-    private Variant defaultValue = Variant.NULL;
 
     public void update ( final Map<String, String> parameters )
     {
-        ValueMapperListener[] listeners;
-        try
-        {
-            this.writeLock.lock ();
-            final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-            this.data.clear ();
-            this.data.putAll ( cfg.getPrefixed ( "data." ) );
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+        final Map<String, String> newData = cfg.getPrefixed ( "data." );
+        final Variant newDefaultValue = makeDefaultValue ( cfg );
 
-            this.defaultValue = makeDefaultValue ( cfg );
-
-            listeners = this.listeners.toArray ( new ValueMapperListener[this.listeners.size ()] );
-        }
-        finally
-        {
-            this.writeLock.unlock ();
-        }
-
-        fireStateChange ( listeners );
+        configure ( newData, newDefaultValue );
     }
 
     private Variant makeDefaultValue ( final ConfigurationDataHelper cfg )
@@ -81,95 +47,6 @@ public class ConfiguredValueMapper implements ValueMapper
             return null;
         }
         return VariantEditor.toVariant ( stringValue );
-    }
-
-    private void fireStateChange ( final ValueMapperListener[] listeners )
-    {
-        for ( final ValueMapperListener listener : listeners )
-        {
-            try
-            {
-                listener.stateChanged ();
-            }
-            catch ( final Exception e )
-            {
-                logger.warn ( "Failed to handle state change", e );
-            }
-        }
-    }
-
-    protected Variant defaultValue ( final Variant currentValue )
-    {
-        if ( this.defaultValue != null )
-        {
-            return this.defaultValue;
-        }
-        else
-        {
-            return currentValue;
-        }
-    }
-
-    @Override
-    public Variant mapValue ( final Variant value )
-    {
-        if ( value == null )
-        {
-            return defaultValue ( value );
-        }
-
-        try
-        {
-            this.readLock.lock ();
-            final String result = this.data.get ( value.asString ( null ) );
-            if ( result == null )
-            {
-                return defaultValue ( value );
-            }
-            return Variant.valueOf ( result );
-        }
-        catch ( final Exception e )
-        {
-            logger.info ( "Failed to map value", e );
-            return defaultValue ( value );
-        }
-        finally
-        {
-            this.readLock.unlock ();
-        }
-    }
-
-    public void dispose ()
-    {
-        this.listeners.clear ();
-    }
-
-    @Override
-    public void addListener ( final ValueMapperListener listener )
-    {
-        try
-        {
-            this.writeLock.lock ();
-            this.listeners.add ( listener );
-        }
-        finally
-        {
-            this.writeLock.unlock ();
-        }
-    }
-
-    @Override
-    public void removeListener ( final ValueMapperListener listener )
-    {
-        try
-        {
-            this.writeLock.lock ();
-            this.listeners.remove ( listener );
-        }
-        finally
-        {
-            this.writeLock.unlock ();
-        }
     }
 
 }
