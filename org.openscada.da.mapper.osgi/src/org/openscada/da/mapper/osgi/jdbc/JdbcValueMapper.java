@@ -243,8 +243,8 @@ public class JdbcValueMapper extends AbstractValueMapper implements ValueMapper
             @Override
             public void processRow ( final ResultSet resultSet ) throws SQLException
             {
-                final String key = resultSet.getString ( 0 );
-                final String value = resultSet.getString ( 1 );
+                final String key = resultSet.getString ( 1 );
+                final String value = resultSet.getString ( 2 );
                 result.put ( key, value );
             }
         }, configuration.sql );
