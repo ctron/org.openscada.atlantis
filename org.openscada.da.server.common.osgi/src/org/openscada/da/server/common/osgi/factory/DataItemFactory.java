@@ -170,7 +170,7 @@ public class DataItemFactory implements ItemFactory
         }
         else
         {
-            localProperties = new HashMap<String, Variant> ();
+            localProperties = new HashMap<String, Variant> ( 0 );
         }
         return localProperties;
     }
