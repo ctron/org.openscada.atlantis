@@ -87,9 +87,14 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
      *            set to <code>true</code> to mark fields that are
      *            <code>null</code> with an error attribute
      */
+    public ObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError, final String prefix )
+    {
+        super ( itemFactory, readOnly, nullIsError, prefix );
+    }
+
     public ObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
     {
-        super ( itemFactory, readOnly, nullIsError );
+        this ( itemFactory, readOnly, nullIsError, null );
     }
 
     /**
