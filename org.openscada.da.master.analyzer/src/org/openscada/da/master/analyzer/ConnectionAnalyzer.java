@@ -66,7 +66,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
     public ConnectionAnalyzer ( final ScheduledExecutorService executor, final BundleContext context, final ServiceReference<?> reference, final ConnectionService service )
     {
         this.factory = new DataItemFactory ( context, executor, "org.openscada.da.master.analyzer.connectionService." + makeId ( reference ) );
-        this.exporter = new StaticObjectExporter<ConnectionAnalyzerStatus> ( this.factory, ConnectionAnalyzerStatus.class, false, false );
+        this.exporter = new StaticObjectExporter<ConnectionAnalyzerStatus> ( this.factory, ConnectionAnalyzerStatus.class, false, false, "state." );
 
         this.statisticsItem = this.factory.createInput ( "statistics", null );
 

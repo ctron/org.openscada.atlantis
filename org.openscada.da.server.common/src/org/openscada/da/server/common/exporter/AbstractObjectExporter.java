@@ -61,6 +61,8 @@ public abstract class AbstractObjectExporter implements Disposable
 
     private final boolean nullIsError;
 
+    private final String prefix;
+
     /**
      * Create a new object factory
      * <p>
@@ -72,12 +74,15 @@ public abstract class AbstractObjectExporter implements Disposable
      *            flag if all properties should be created read-only
      * @param nullIsError
      *            flag whether controls if <code>null</code> mean <q>error</q>
+     * @param prefix
+     *            a local item prefix
      */
-    public AbstractObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
+    public AbstractObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError, final String prefix )
     {
         this.factory = itemFactory;
         this.readOnly = readOnly;
         this.nullIsError = nullIsError;
+        this.prefix = prefix;
     }
 
     @Override
@@ -254,16 +259,28 @@ public abstract class AbstractObjectExporter implements Disposable
             final ItemName itemName = findAnnotation ( pd, clazz );
             if ( itemName == null )
             {
-                return pd.getName ();
+                return addPrefix ( pd.getName () );
             }
             else
             {
-                return itemName.value ();
+                return addPrefix ( itemName.value () );
             }
         }
         catch ( final Exception e )
         {
-            return pd.getName ();
+            return addPrefix ( pd.getName () );
+        }
+    }
+
+    private String addPrefix ( final String name )
+    {
+        if ( this.prefix == null )
+        {
+            return name;
+        }
+        else
+        {
+            return this.prefix + name;
         }
     }
 
