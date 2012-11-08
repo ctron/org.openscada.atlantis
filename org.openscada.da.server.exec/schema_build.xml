@@ -27,6 +27,7 @@
           target: eclipse.main
          ================================= -->
 	<target name="eclipse.main" depends="clean">
+		<echo message="Target folder: ${target.folder}"/>
 		<xmlbean
 			failonerror="true"
 			download="false"
