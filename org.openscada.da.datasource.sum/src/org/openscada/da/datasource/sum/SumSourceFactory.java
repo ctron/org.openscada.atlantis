@@ -78,7 +78,7 @@ public class SumSourceFactory extends AbstractServiceConfigurationFactory<SumDat
         final SumDataSource source = new SumDataSource ( this.poolTracker, this.executor );
         source.update ( parameters );
 
-        final Dictionary<String, String> properties = new Hashtable<String, String> ();
+        final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
         properties.put ( DataSource.DATA_SOURCE_ID, configurationId );
 
         this.objectPool.addService ( configurationId, source, properties );

@@ -59,7 +59,7 @@ public class DataItemSourceFactoryImpl extends AbstractServiceConfigurationFacto
 
         service.update ( parameters );
 
-        final Dictionary<?, ?> properties = new Hashtable<String, String> ();
+        final Dictionary<?, ?> properties = new Hashtable<String, String> ( 1 );
         this.objectPool.addService ( configurationId, service, properties );
 
         return new Entry<DataItemSourceImpl> ( configurationId, service );
