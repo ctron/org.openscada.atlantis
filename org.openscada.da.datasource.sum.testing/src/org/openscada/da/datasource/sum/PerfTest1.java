@@ -19,6 +19,7 @@
 
 package org.openscada.da.datasource.sum;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
@@ -138,7 +139,7 @@ public class PerfTest1
     {
         for ( final Map<String, DataSourceHandler> update : updates )
         {
-            ds.handleChange ( update );
+            ds.aggregate ( update, Collections.<String, DataSourceHandler> emptyMap () );
         }
     }
 

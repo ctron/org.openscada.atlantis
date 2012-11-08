@@ -36,14 +36,15 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceHandler;
-import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
+import org.openscada.da.datasource.MultiDataSourceListener;
+import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SumDataSource extends AbstractMultiSourceDataSource
+public class SumDataSource extends AbstractDataSource
 {
     private final static Logger logger = LoggerFactory.getLogger ( SumDataSource.class );
 
@@ -55,10 +56,37 @@ public class SumDataSource extends AbstractMultiSourceDataSource
 
     private Entry errorEntry;
 
+    private final MultiDataSourceListener itemListener;
+
+    private final MultiDataSourceListener subItemListener;
+
     public SumDataSource ( final ObjectPoolTracker<DataSource> poolTracker, final Executor executor )
     {
-        super ( poolTracker );
         this.executor = executor;
+
+        this.itemListener = new MultiDataSourceListener ( poolTracker ) {
+
+            @Override
+            protected void handleChange ( final Map<String, DataSourceHandler> sources )
+            {
+                SumDataSource.this.handleChange ();
+            }
+        };
+
+        this.subItemListener = new MultiDataSourceListener ( poolTracker ) {
+
+            @Override
+            protected void handleChange ( final Map<String, DataSourceHandler> sources )
+            {
+                SumDataSource.this.handleChange ();
+            }
+        };
+    }
+
+    public void dispose ()
+    {
+        this.itemListener.dispose ();
+        this.subItemListener.dispose ();
     }
 
     @Override
@@ -81,26 +109,34 @@ public class SumDataSource extends AbstractMultiSourceDataSource
 
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
-        String groupsString = parameters.get ( "groups" );
+        String groupsString = parameters.get ( "groups" ); //$NON-NLS-1$
         if ( groupsString == null )
         {
-            groupsString = "";
+            groupsString = ""; //$NON-NLS-1$
         }
 
-        clearSources ();
+        this.itemListener.clearSources ();
+        this.subItemListener.clearSources ();
 
-        this.groups = new HashSet<String> ( Arrays.asList ( groupsString.split ( ", ?" ) ) );
+        this.groups = new HashSet<String> ( Arrays.asList ( groupsString.split ( ", ?" ) ) ); //$NON-NLS-1$
 
         for ( final Map.Entry<String, String> entry : parameters.entrySet () )
         {
             final String key = entry.getKey ();
 
-            if ( key.startsWith ( "datasource." ) )
+            if ( key.startsWith ( "datasource." ) ) //$NON-NLS-1$
             {
                 final String id = entry.getValue ();
 
-                logger.info ( "Adding datasource: {} -> {}", key, id );
-                addDataSource ( key, id, null );
+                logger.info ( "Adding datasource: {} -> {}", key, id ); //$NON-NLS-1$
+                this.itemListener.addDataSource ( key, id, null );
+            }
+            else if ( key.startsWith ( "subDatasource." ) ) //$NON-NLS-1$
+            {
+                final String id = entry.getValue ();
+
+                logger.info ( "Adding sub datasource: {} -> {}", key, id ); //$NON-NLS-1$
+                this.subItemListener.addDataSource ( key, id, null );
             }
         }
 
@@ -115,24 +151,23 @@ public class SumDataSource extends AbstractMultiSourceDataSource
         this.errorEntry = null;
         for ( final Entry entry : this.entries )
         {
-            if ( "error".equals ( entry.name ) )
+            if ( "error".equals ( entry.name ) ) //$NON-NLS-1$
             {
                 this.errorEntry = entry;
             }
         }
 
-        handleChange ( getSourcesCopy () );
+        handleChange ();
     }
 
-    @Override
-    protected synchronized void handleChange ( final Map<String, DataSourceHandler> sources )
+    protected synchronized void handleChange ()
     {
-        updateData ( aggregate ( sources ) );
+        updateData ( aggregate ( this.itemListener.getSourcesCopy (), this.subItemListener.getSourcesCopy () ) );
     }
 
     private boolean isDebug ()
     {
-        return Boolean.getBoolean ( "org.openscada.da.datasource.sum.debug" );
+        return Boolean.getBoolean ( "org.openscada.da.datasource.sum.debug" ); //$NON-NLS-1$
     }
 
     private static class Entry
@@ -147,19 +182,45 @@ public class SumDataSource extends AbstractMultiSourceDataSource
         }
     }
 
-    private synchronized DataItemValue aggregate ( final Map<String, DataSourceHandler> values )
+    protected synchronized DataItemValue aggregate ( final Map<String, DataSourceHandler> values, final Map<String, DataSourceHandler> subValues )
     {
+        // setup builder
+
         final Builder builder = new Builder ();
         builder.setSubscriptionState ( SubscriptionState.CONNECTED );
-        builder.setValue ( Variant.valueOf ( values.size () ) );
+
+        int count = values.size ();
 
         final boolean debug = isDebug ();
 
         // reset
+
         for ( final Entry group : this.entries )
         {
             group.active = false;
         }
+
+        // aggregate states
+
+        aggregateValues ( values, builder, debug, false );
+        count += aggregateValues ( subValues, builder, debug, true );
+
+        // apply attributes
+
+        for ( final Entry group : this.entries )
+        {
+            builder.setAttribute ( group.name, Variant.valueOf ( group.active ) );
+        }
+
+        // set the main value to the count of items
+        builder.setValue ( Variant.valueOf ( count ) );
+
+        return builder.build ();
+    }
+
+    private int aggregateValues ( final Map<String, DataSourceHandler> values, final Builder builder, final boolean debug, final boolean doCount )
+    {
+        int result = 0;
 
         for ( final Map.Entry<String, DataSourceHandler> entry : values.entrySet () )
         {
@@ -174,25 +235,25 @@ public class SumDataSource extends AbstractMultiSourceDataSource
                 }
             }
 
+            if ( doCount )
+            {
+                result += value.getValue ().asInteger ( 0 );
+            }
+
             for ( final Entry group : this.entries )
             {
                 if ( value.isAttribute ( group.name, false ) )
                 {
                     if ( debug )
                     {
-                        builder.setAttribute ( "sum." + group + "." + entry.getKey (), Variant.TRUE );
+                        builder.setAttribute ( String.format ( "sum.%s.%s", group, entry.getKey () ), Variant.TRUE ); //$NON-NLS-1$
                     }
                     group.active = true;
                 }
             }
         }
 
-        for ( final Entry group : this.entries )
-        {
-            builder.setAttribute ( group.name, Variant.valueOf ( group.active ) );
-        }
-
-        return builder.build ();
+        return result;
     }
 
 }
