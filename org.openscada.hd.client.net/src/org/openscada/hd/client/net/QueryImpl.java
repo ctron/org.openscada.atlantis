@@ -129,6 +129,11 @@ public class QueryImpl implements Query
     {
         synchronized ( this )
         {
+            if ( this.closed )
+            {
+                return;
+            }
+
             if ( this.parameters == parameters )
             {
                 return;
@@ -153,6 +158,11 @@ public class QueryImpl implements Query
     {
         synchronized ( this )
         {
+            if ( this.closed )
+            {
+                return;
+            }
+
             fireStateChange ( this.listener, state );
         }
     }
@@ -161,6 +171,11 @@ public class QueryImpl implements Query
     {
         synchronized ( this )
         {
+            if ( this.closed )
+            {
+                return;
+            }
+
             fireDataChange ( this.listener, index, values, valueInformation );
         }
     }
@@ -169,6 +184,11 @@ public class QueryImpl implements Query
     {
         synchronized ( this )
         {
+            if ( this.closed )
+            {
+                return;
+            }
+
             fireParameterChange ( this.listener, parameters, valueTypes );
         }
     }
