@@ -64,6 +64,7 @@ public class QueryImpl implements Query
         }
     }
 
+    @Override
     public void close ()
     {
         synchronized ( this )
@@ -76,21 +77,21 @@ public class QueryImpl implements Query
 
             logger.info ( "Closing query: {} ({})", new Object[] { this.itemId, this.parameters } );
 
-            // request close
-            this.connection.closeQuery ( this );
-
             // disconnect
             fireStateChange ( this.listener, QueryState.DISCONNECTED );
             this.listener = null;
             this.id = null;
-
         }
+
+        // request close
+        this.connection.closeQuery ( this );
     }
 
     private void fireStateChange ( final QueryListener listener, final QueryState state )
     {
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 listener.updateState ( state );
@@ -102,6 +103,7 @@ public class QueryImpl implements Query
     {
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 listener.updateParameters ( parameters, valueTypes );
@@ -113,6 +115,7 @@ public class QueryImpl implements Query
     {
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 logger.debug ( "Data update: {} (v: {}, vi: {})", new Object[] { index, values.size (), valueInformation.length } );
@@ -121,6 +124,7 @@ public class QueryImpl implements Query
         } );
     }
 
+    @Override
     public void changeParameters ( final QueryParameters parameters )
     {
         synchronized ( this )
