@@ -22,11 +22,10 @@ package org.openscada.hd.server.storage.slave.hds;
 import java.io.File;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.hds.DataFilePool;
-import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -56,7 +55,7 @@ public class Activator implements BundleActivator
     {
         Activator.context = bundleContext;
 
-        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( BASE_PATH_PROP ) );
+        this.executor = new ScheduledExportedExecutorService ( BASE_PATH_PROP, 1 );
 
         this.pool = new DataFilePool ( Integer.getInteger ( "org.openscada.hd.server.storage.slave.hds.instanceCountTarget", 10 ) );
 

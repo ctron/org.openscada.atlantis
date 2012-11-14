@@ -24,10 +24,9 @@ import java.io.FileInputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +42,7 @@ public class AbstractStorageManager
     public AbstractStorageManager ( final File base )
     {
         this.base = base;
-        this.queryExecutor = Executors.newScheduledThreadPool ( Integer.getInteger ( "org.openscada.hd.server.storage.hds.coreQueryThread", 1 ), new NamedThreadFactory ( "HDSQuery" ) );
+        this.queryExecutor = new ScheduledExportedExecutorService ( "HDSQuery", Integer.getInteger ( "org.openscada.hd.server.storage.hds.coreQueryThread", 1 ) );
     }
 
     public void dispose ()
