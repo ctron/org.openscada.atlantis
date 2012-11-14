@@ -101,9 +101,11 @@ public class QueryImpl implements Query
      * @param updateData
      *            request data updates
      * @param fixedStartDate
-     *            an optional fixed start date before which all query data is invalid
+     *            an optional fixed start date before which all query data is
+     *            invalid
      * @param fixedEndDate
-     *            an optional fixed end date after which all query data is invalid
+     *            an optional fixed end date after which all query data is
+     *            invalid
      */
     public QueryImpl ( final ValueSourceManager storage, final ScheduledExecutorService executor, final QueryParameters parameters, final QueryListener listener, final boolean updateData, final Date fixedStartDate, final Date fixedEndDate )
     {
@@ -150,7 +152,8 @@ public class QueryImpl implements Query
     /**
      * Request a close of the query
      * 
-     * @return <code>true</code> if the close was requested, <code>false</code> if the close already was requested by someone else
+     * @return <code>true</code> if the close was requested, <code>false</code>
+     *         if the close already was requested by someone else
      */
     private boolean requestClose ()
     {
@@ -238,15 +241,18 @@ public class QueryImpl implements Query
             expect = this.state.get ();
             if ( expect.isLoading () )
             {
+                // someone else started loading data ... we can stop
                 logger.debug ( "Found loading state. Bye!" );
                 return;
             }
             if ( expect.isClosed () )
             {
+                // the query got closed .. we can stop
                 logger.debug ( "Found closed state. Bye!" );
                 return;
             }
 
+            // the new state would be that we are loading, try to set and be the first
             update = new LoadState ( false, true, expect.getParameters () );
         } while ( !this.state.compareAndSet ( expect, update ) );
 
@@ -262,7 +268,9 @@ public class QueryImpl implements Query
                 public boolean value ( final double value, final Date date, final boolean error, final boolean manual )
                 {
                     QueryImpl.this.buffer.insertData ( value, date, error, manual );
-                    return shouldContinue ( current.getParameters () );
+                    final boolean result = shouldContinue ( current.getParameters () );
+                    logger.info ( "Requesting early stop" );
+                    return result;
                 }
             } );
             this.buffer.complete ();
@@ -303,7 +311,8 @@ public class QueryImpl implements Query
      * 
      * @param loadingParameters
      *            the current loading parameters
-     * @return <code>true</code> if the provided loading parameters are different to the current state parameters
+     * @return <code>true</code> if the provided loading parameters are
+     *         different to the current state parameters
      */
     private boolean hasChanged ( final QueryParameters loadingParameters )
     {
