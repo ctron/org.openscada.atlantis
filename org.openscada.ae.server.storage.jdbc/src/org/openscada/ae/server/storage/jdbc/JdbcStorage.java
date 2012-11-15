@@ -63,7 +63,7 @@ public class JdbcStorage extends BaseStorage
     {
         this.queueSize.incrementAndGet ();
         final Event eventToStore = createEvent ( event );
-        logger.debug ( "Save Event to database: " + event );
+        logger.debug ( "Save Event to database: {}", event );
         this.executor.submit ( new Runnable () {
             @Override
             public void run ()
