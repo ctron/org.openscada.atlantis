@@ -75,3 +75,15 @@ CREATE INDEX openscada_ae_events_attr_idx_5 ON openscada_ae_events_attr (value_d
 
 -- ALTER TABLE openscada_ae_events OWNER TO openscada;
 -- ALTER TABLE openscada_ae_events_attr OWNER TO openscada;
+
+-- for replication table ( blob mode )
+
+CREATE TABLE OPENSCADA_AE_REP
+(
+	ID			CHAR(36) NOT NULL,
+	ENTRY_TIMESTAMP		TIMESTAMP,
+	NODE_ID			VARCHAR(32),
+	DATA			BLOB,
+
+	CONSTRAINT OPENSCADA_AE_REP_PK PRIMARY KEY ( ID )	
+);

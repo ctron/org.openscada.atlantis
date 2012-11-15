@@ -19,7 +19,12 @@
 
 package org.openscada.ae.server.storage.jdbc;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.net.InetAddress;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -59,6 +64,12 @@ public class JdbcStorageDao extends BaseStorageDao
 
     private static final Logger logger = LoggerFactory.getLogger ( JdbcStorageDao.class );
 
+    private static enum ReplicationDataFormat
+    {
+        BLOB,
+        BYTES;
+    }
+
     private final String cleanupArchiveSql = "DELETE FROM %sOPENSCADA_AE_EVENTS " //
             + "WHERE ENTRY_TIMESTAMP < ?";
 
@@ -83,13 +94,24 @@ public class JdbcStorageDao extends BaseStorageDao
             + "A.KEY, A.VALUE_TYPE, A.VALUE_STRING, A.VALUE_INTEGER, A.VALUE_DOUBLE " //
             + "FROM %1$sOPENSCADA_AE_EVENTS E LEFT JOIN %1$sOPENSCADA_AE_EVENTS_ATTR A ON (A.ID = E.ID) ";
 
+    private final String insertReplicationEventSql = "INSERT INTO %sOPENSCADA_AE_REP " //
+            + "(ID, ENTRY_TIMESTAMP, NODE_ID, DATA)" //
+            + " VALUES " // 
+            + "(?, ?, ?, ?)";
+
     private final String whereSql = " WHERE E.INSTANCE_ID = ? ";
 
     private final String defaultOrder = " ORDER BY E.SOURCE_TIMESTAMP DESC, E.ENTRY_TIMESTAMP DESC";
 
+    private static final int nodeIdLength = Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.fields.nodeId.length", 32 );
+
     private final ScheduledExecutorService executor;
 
     private final Interner<String> stringInterner;
+
+    private final ReplicationDataFormat dataFormat = makeDataFormat ();
+
+    private String hostName;
 
     public JdbcStorageDao ( final DataSourceFactory dataSourceFactory, final Properties properties, final boolean usePool, final Interner<String> stringInterner ) throws SQLException
     {
@@ -104,6 +126,23 @@ public class JdbcStorageDao extends BaseStorageDao
                 cleanupArchive ();
             }
         }, getCleanupPeriod (), getCleanupPeriod (), TimeUnit.SECONDS );
+    }
+
+    private ReplicationDataFormat makeDataFormat ()
+    {
+        try
+        {
+            return ReplicationDataFormat.valueOf ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.replicationDataFormat", ReplicationDataFormat.BYTES.name () ) ); //$NON-NLS-1$
+        }
+        catch ( final Exception e )
+        {
+            return ReplicationDataFormat.BYTES;
+        }
+    }
+
+    protected boolean isReplication ()
+    {
+        return Boolean.getBoolean ( "org.openscada.ae.server.storage.jdbc.enableReplication" );
     }
 
     @Override
@@ -131,44 +170,202 @@ public class JdbcStorageDao extends BaseStorageDao
 
         try
         {
-            Statement stm1 = null;
-            Statement stm2 = null;
+            storeEventData ( event, con );
+            if ( isReplication () )
             {
-                final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertEventSql, getSchema () ) );
+                storeReplicationEvent ( event, con );
+            }
+        }
+        finally
+        {
+            closeConnection ( con );
+        }
+    }
+
+    private void storeReplicationEvent ( final Event event, final Connection con ) throws Exception
+    {
+        final PreparedStatement stmt = con.prepareStatement ( String.format ( this.insertReplicationEventSql, getSchema () ) );
+        try
+        {
+            stmt.setString ( 1, event.getId ().toString () );
+            stmt.setTimestamp ( 2, new java.sql.Timestamp ( event.getEntryTimestamp ().getTime () ) );
+            stmt.setString ( 3, clip ( nodeIdLength, getNodeId () ) );
+
+            switch ( this.dataFormat )
+            {
+                case BLOB:
+                    setReplicationDataBlob ( stmt, event );
+                    break;
+
+                case BYTES:
+                    //$FALL-THROUGH$
+                default:
+                    setReplicationDataBytes ( stmt, event );
+                    break;
+            }
+        }
+        finally
+        {
+            stmt.close ();
+        }
+    }
+
+    private String getNodeId ()
+    {
+        final String nodeId = System.getProperty ( "org.openscada.ae.server.storage.jdbc.replicationNodeId", null );
+        if ( nodeId != null && !nodeId.isEmpty () )
+        {
+            return nodeId;
+        }
+        if ( nodeId != null && nodeId.isEmpty () )
+        {
+            return null;
+        }
+
+        if ( this.hostName == null )
+        {
+            // get hostname - by OS
+
+            this.hostName = System.getenv ( "HOSTNAME" );
+            if ( this.hostName != null )
+            {
+                return this.hostName;
+            }
+
+            // get hostname - by java
+
+            try
+            {
+                this.hostName = InetAddress.getLocalHost ().getHostName ();
+                return this.hostName;
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to lookup hostname", e );
+
+            }
+            this.hostName = "<unknown>";
+            return this.hostName;
+        }
+        else
+        {
+            return this.hostName;
+        }
+    }
+
+    private byte[] serializeEvent ( final Event event ) throws IOException
+    {
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream ();
+        final ObjectOutputStream oos = new ObjectOutputStream ( bos );
+        oos.writeObject ( event );
+        bos.close ();
+        return bos.toByteArray ();
+    }
+
+    private void setReplicationDataBytes ( final PreparedStatement stmt, final Event event ) throws IOException, SQLException
+    {
+        stmt.setBytes ( 4, serializeEvent ( event ) );
+    }
+
+    private void setReplicationDataBlob ( final PreparedStatement stmt, final Event event ) throws SQLException, IOException
+    {
+        final Blob blob = stmt.getConnection ().createBlob ();
+
+        final ObjectOutputStream oos = new ObjectOutputStream ( blob.setBinaryStream ( 1 ) );
+        oos.writeObject ( event );
+        oos.close ();
+
+        stmt.setBlob ( 4, blob );
+    }
+
+    private void storeEventData ( final Event event, final Connection con ) throws SQLException
+    {
+        Statement stm1 = null;
+        Statement stm2 = null;
+        {
+            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertEventSql, getSchema () ) );
+            stm.setString ( 1, event.getId ().toString () );
+            stm.setString ( 2, getInstance () );
+            stm.setTimestamp ( 3, new java.sql.Timestamp ( event.getSourceTimestamp ().getTime () ) );
+            stm.setTimestamp ( 4, new java.sql.Timestamp ( event.getEntryTimestamp ().getTime () ) );
+            stm.setString ( 5, clip ( 32, Variant.valueOf ( event.getField ( Fields.MONITOR_TYPE ) ).asString ( "" ) ) );
+            stm.setString ( 6, clip ( 32, Variant.valueOf ( event.getField ( Fields.EVENT_TYPE ) ).asString ( "" ) ) );
+            stm.setString ( 7, clip ( 32, Variant.valueOf ( event.getField ( Fields.VALUE ) ).getType ().name () ) );
+            stm.setString ( 8, clip ( getMaxLength (), Variant.valueOf ( event.getField ( Fields.VALUE ) ).asString ( "" ) ) );
+            final Long longValue = Variant.valueOf ( event.getField ( Fields.VALUE ) ).asLong ( null );
+            if ( longValue == null )
+            {
+                stm.setNull ( 9, Types.BIGINT );
+            }
+            else
+            {
+                stm.setLong ( 9, longValue );
+            }
+            final Double doubleValue = Variant.valueOf ( event.getField ( Fields.VALUE ) ).asDouble ( null );
+            if ( doubleValue == null )
+            {
+                stm.setNull ( 10, Types.DOUBLE );
+            }
+            else
+            {
+                stm.setDouble ( 10, longValue );
+            }
+            stm.setString ( 11, clip ( getMaxLength (), Variant.valueOf ( event.getField ( Fields.MESSAGE ) ).asString ( "" ) ) );
+            stm.setString ( 12, clip ( 255, Variant.valueOf ( event.getField ( Fields.MESSAGE_CODE ) ).asString ( "" ) ) );
+            stm.setInt ( 13, Variant.valueOf ( event.getField ( Fields.PRIORITY ) ).asInteger ( 50 ) );
+            stm.setString ( 14, clip ( 255, Variant.valueOf ( event.getField ( Fields.SOURCE ) ).asString ( "" ) ) );
+            stm.setString ( 15, clip ( 128, Variant.valueOf ( event.getField ( Fields.ACTOR_NAME ) ).asString ( "" ) ) );
+            stm.setString ( 16, clip ( 32, Variant.valueOf ( event.getField ( Fields.ACTOR_TYPE ) ).asString ( "" ) ) );
+            stm.setString ( 17, clip ( 32, Variant.valueOf ( event.getField ( Fields.PRIORITY ) ).asString ( "" ) ) );
+            stm.addBatch ();
+            try
+            {
+                stm.executeBatch ();
+            }
+            catch ( final SQLException e )
+            {
+                logSQLError ( e );
+                throw e;
+            }
+            stm1 = stm;
+        }
+
+        {
+            final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertAttributesSql, getSchema () ) );
+            boolean hasAttr = false;
+            for ( final String attr : event.getAttributes ().keySet () )
+            {
+                if ( SqlConverter.inlinedAttributes.contains ( attr ) )
+                {
+                    continue;
+                }
                 stm.setString ( 1, event.getId ().toString () );
-                stm.setString ( 2, getInstance () );
-                stm.setTimestamp ( 3, new java.sql.Timestamp ( event.getSourceTimestamp ().getTime () ) );
-                stm.setTimestamp ( 4, new java.sql.Timestamp ( event.getEntryTimestamp ().getTime () ) );
-                stm.setString ( 5, clip ( 32, Variant.valueOf ( event.getField ( Fields.MONITOR_TYPE ) ).asString ( "" ) ) );
-                stm.setString ( 6, clip ( 32, Variant.valueOf ( event.getField ( Fields.EVENT_TYPE ) ).asString ( "" ) ) );
-                stm.setString ( 7, clip ( 32, Variant.valueOf ( event.getField ( Fields.VALUE ) ).getType ().name () ) );
-                stm.setString ( 8, clip ( getMaxLength (), Variant.valueOf ( event.getField ( Fields.VALUE ) ).asString ( "" ) ) );
-                final Long longValue = Variant.valueOf ( event.getField ( Fields.VALUE ) ).asLong ( null );
+                stm.setString ( 2, attr );
+                stm.setString ( 3, clip ( 32, event.getAttributes ().get ( attr ).getType ().name () ) );
+                stm.setString ( 4, clip ( getMaxLength (), event.getAttributes ().get ( attr ).asString ( "" ) ) );
+                final Long longValue = Variant.valueOf ( event.getAttributes ().get ( attr ) ).asLong ( null );
                 if ( longValue == null )
                 {
-                    stm.setNull ( 9, Types.BIGINT );
+                    stm.setNull ( 5, Types.BIGINT );
                 }
                 else
                 {
-                    stm.setLong ( 9, longValue );
+                    stm.setLong ( 5, longValue );
                 }
-                final Double doubleValue = Variant.valueOf ( event.getField ( Fields.VALUE ) ).asDouble ( null );
+                final Double doubleValue = Variant.valueOf ( event.getAttributes ().get ( attr ) ).asDouble ( null );
                 if ( doubleValue == null )
                 {
-                    stm.setNull ( 10, Types.DOUBLE );
+                    stm.setNull ( 6, Types.DOUBLE );
                 }
                 else
                 {
-                    stm.setDouble ( 10, longValue );
+                    stm.setDouble ( 6, doubleValue );
                 }
-                stm.setString ( 11, clip ( getMaxLength (), Variant.valueOf ( event.getField ( Fields.MESSAGE ) ).asString ( "" ) ) );
-                stm.setString ( 12, clip ( 255, Variant.valueOf ( event.getField ( Fields.MESSAGE_CODE ) ).asString ( "" ) ) );
-                stm.setInt ( 13, Variant.valueOf ( event.getField ( Fields.PRIORITY ) ).asInteger ( 50 ) );
-                stm.setString ( 14, clip ( 255, Variant.valueOf ( event.getField ( Fields.SOURCE ) ).asString ( "" ) ) );
-                stm.setString ( 15, clip ( 128, Variant.valueOf ( event.getField ( Fields.ACTOR_NAME ) ).asString ( "" ) ) );
-                stm.setString ( 16, clip ( 32, Variant.valueOf ( event.getField ( Fields.ACTOR_TYPE ) ).asString ( "" ) ) );
-                stm.setString ( 17, clip ( 32, Variant.valueOf ( event.getField ( Fields.PRIORITY ) ).asString ( "" ) ) );
                 stm.addBatch ();
+                hasAttr = true;
+            }
+            if ( hasAttr )
+            {
                 try
                 {
                     stm.executeBatch ();
@@ -178,65 +375,12 @@ public class JdbcStorageDao extends BaseStorageDao
                     logSQLError ( e );
                     throw e;
                 }
-                stm1 = stm;
             }
-
-            {
-                final PreparedStatement stm = con.prepareStatement ( String.format ( this.insertAttributesSql, getSchema () ) );
-                boolean hasAttr = false;
-                for ( final String attr : event.getAttributes ().keySet () )
-                {
-                    if ( SqlConverter.inlinedAttributes.contains ( attr ) )
-                    {
-                        continue;
-                    }
-                    stm.setString ( 1, event.getId ().toString () );
-                    stm.setString ( 2, attr );
-                    stm.setString ( 3, clip ( 32, event.getAttributes ().get ( attr ).getType ().name () ) );
-                    stm.setString ( 4, clip ( getMaxLength (), event.getAttributes ().get ( attr ).asString ( "" ) ) );
-                    final Long longValue = Variant.valueOf ( event.getAttributes ().get ( attr ) ).asLong ( null );
-                    if ( longValue == null )
-                    {
-                        stm.setNull ( 5, Types.BIGINT );
-                    }
-                    else
-                    {
-                        stm.setLong ( 5, longValue );
-                    }
-                    final Double doubleValue = Variant.valueOf ( event.getAttributes ().get ( attr ) ).asDouble ( null );
-                    if ( doubleValue == null )
-                    {
-                        stm.setNull ( 6, Types.DOUBLE );
-                    }
-                    else
-                    {
-                        stm.setDouble ( 6, doubleValue );
-                    }
-                    stm.addBatch ();
-                    hasAttr = true;
-                }
-                if ( hasAttr )
-                {
-                    try
-                    {
-                        stm.executeBatch ();
-                    }
-                    catch ( final SQLException e )
-                    {
-                        logSQLError ( e );
-                        throw e;
-                    }
-                }
-                stm2 = stm;
-            }
-            con.commit ();
-            closeStatement ( stm1 );
-            closeStatement ( stm2 );
+            stm2 = stm;
         }
-        finally
-        {
-            closeConnection ( con );
-        }
+        con.commit ();
+        closeStatement ( stm1 );
+        closeStatement ( stm2 );
     }
 
     protected void logSQLError ( final SQLException e )
@@ -463,7 +607,8 @@ public class JdbcStorageDao extends BaseStorageDao
      * 
      * @param days
      *            days in the past that should remain in the archive
-     * @return the number of entries deleted or -1 if the parameters <q>days</q> was negative or zero.
+     * @return the number of entries deleted or -1 if the parameters <q>days</q>
+     *         was negative or zero.
      */
     protected int cleanupArchive ( final int days ) throws Exception
     {
