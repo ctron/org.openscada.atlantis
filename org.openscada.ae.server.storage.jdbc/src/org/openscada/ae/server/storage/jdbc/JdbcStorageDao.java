@@ -203,6 +203,8 @@ public class JdbcStorageDao extends BaseStorageDao
                     setReplicationDataBytes ( stmt, event );
                     break;
             }
+
+            stmt.executeUpdate ();
         }
         finally
         {
