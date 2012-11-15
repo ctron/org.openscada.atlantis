@@ -175,6 +175,7 @@ public class JdbcStorageDao extends BaseStorageDao
             {
                 storeReplicationEvent ( event, con );
             }
+            con.commit ();
         }
         finally
         {
@@ -380,7 +381,6 @@ public class JdbcStorageDao extends BaseStorageDao
             }
             stm2 = stm;
         }
-        con.commit ();
         closeStatement ( stm1 );
         closeStatement ( stm2 );
     }
