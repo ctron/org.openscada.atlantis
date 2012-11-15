@@ -34,7 +34,7 @@ import org.openscada.utils.lang.Immutable;
 @Immutable
 public class Event implements Cloneable, Comparable<Event>, Serializable
 {
-    private static final long serialVersionUID = 1133904558084283872L;
+    private static final long serialVersionUID = 1L;
 
     public static class EventComparator implements Comparator<Event>
     {
@@ -153,8 +153,10 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
         /**
          * Set allow override attributes flag
          * <p>
-         * Setting to <code>true</code> allows attributes to be overridden by calls to the attribute/attributes methods. Setting to <code>false</code> will not set attributes that already have been
-         * set by previous calls.
+         * Setting to <code>true</code> allows attributes to be overridden by
+         * calls to the attribute/attributes methods. Setting to
+         * <code>false</code> will not set attributes that already have been set
+         * by previous calls.
          * </p>
          * 
          * @param allowOverrideAttributes
@@ -274,7 +276,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = ( prime * result ) + ( this.id == null ? 0 : this.id.hashCode () );
+        result = prime * result + ( this.id == null ? 0 : this.id.hashCode () );
         return result;
     }
 
