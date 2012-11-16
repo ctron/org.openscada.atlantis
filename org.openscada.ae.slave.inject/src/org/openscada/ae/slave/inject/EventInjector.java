@@ -48,22 +48,7 @@ public class EventInjector
             @Override
             public void run ()
             {
-                try
-                {
-                    final int result = EventInjector.this.storage.runOnce ();
-                    if ( result > 0 )
-                    {
-                        logger.info ( "Processed {} entries", result );
-                    }
-                    else
-                    {
-                        logger.debug ( "Processed {} entries", result );
-                    }
-                }
-                catch ( final Exception e )
-                {
-                    logger.warn ( "Failed to process", e );
-                }
+                process ();
             }
         }, 0, delay, TimeUnit.MILLISECONDS );
     }
@@ -76,6 +61,26 @@ public class EventInjector
         this.storage.dispose ();
 
         logger.info ( "Disposing event injector ... done!" ); //$NON-NLS-1$
+    }
+
+    private void process ()
+    {
+        try
+        {
+            final int result = EventInjector.this.storage.runOnce ();
+            if ( result > 0 )
+            {
+                logger.info ( "Processed {} entries", result );
+            }
+            else
+            {
+                logger.debug ( "Processed {} entries", result );
+            }
+        }
+        catch ( final Exception e )
+        {
+            logger.warn ( "Failed to process", e );
+        }
     }
 
 }
