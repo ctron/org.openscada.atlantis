@@ -19,6 +19,10 @@
 
 package org.openscada.ca.client.jaxws;
 
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -203,7 +207,27 @@ public class ConnectionImpl implements Connection
 
     protected RemoteConfigurationClient createPort () throws Exception
     {
-        return new RemoteConfigurationClient ( this.connectionInformation.getTarget (), this.connectionInformation.getSecondaryTarget () );
+        return new RemoteConfigurationClient ( makeUrl () );
+    }
+
+    private URL makeUrl () throws MalformedURLException, URISyntaxException
+    {
+        final String scheme = "http";
+
+        String userInfo = this.connectionInformation.getUser ();
+        if ( userInfo != null && this.connectionInformation.getPassword () != null )
+        {
+            userInfo += ":" + this.connectionInformation.getPassword ();
+        }
+
+        final String host = this.connectionInformation.getTarget ();
+        Integer port = this.connectionInformation.getSecondaryTarget ();
+        if ( port == null )
+        {
+            port = -1;
+        }
+
+        return new URI ( scheme, userInfo, host, port, "/org.openscada.ca.servlet.jaxws", "WSDL", null ).toURL ();
     }
 
     @Override

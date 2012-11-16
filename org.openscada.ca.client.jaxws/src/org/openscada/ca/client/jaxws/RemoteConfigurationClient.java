@@ -21,9 +21,15 @@ package org.openscada.ca.client.jaxws;
 
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.xml.namespace.QName;
+import javax.xml.ws.BindingProvider;
 import javax.xml.ws.Service;
+import javax.xml.ws.handler.MessageContext;
 
 import org.openscada.ca.servlet.jaxws.RemoteConfigurationAdministrator;
 
@@ -53,11 +59,45 @@ public class RemoteConfigurationClient
         this ( new URL ( "http://localhost:9999/org.openscada.ca.servlet.jaxws?WSDL" ), serviceName );
     }
 
+    public RemoteConfigurationClient ( final URL url ) throws MalformedURLException
+    {
+        this ( url, serviceName );
+    }
+
     public RemoteConfigurationClient ( final URL url, final QName serviceName )
+    {
+        this.port = createPort ( url );
+    }
+
+    protected RemoteConfigurationAdministrator createPort ( final URL url )
     {
         final Service service = javax.xml.ws.Service.create ( url, serviceName );
 
-        this.port = service.getPort ( RemoteConfigurationAdministrator.class );
+        final RemoteConfigurationAdministrator port = service.getPort ( RemoteConfigurationAdministrator.class );
+
+        // adding "Accept-Encoding"
+        final Map<String, List<String>> httpHeaders = new HashMap<String, List<String>> ();
+        httpHeaders.put ( "Accept-Encoding", Collections.singletonList ( "gzip" ) );
+
+        final Map<String, Object> requestContext = ( (BindingProvider)port ).getRequestContext ();
+        requestContext.put ( MessageContext.HTTP_REQUEST_HEADERS, httpHeaders );
+
+        // security 
+
+        final String user = url.getUserInfo ();
+
+        final int findColon = user.indexOf ( ':' );
+        if ( findColon > 0 && findColon + 1 < user.length () )
+        {
+            requestContext.put ( BindingProvider.USERNAME_PROPERTY, user.substring ( 0, findColon ) );
+            requestContext.put ( BindingProvider.PASSWORD_PROPERTY, user.substring ( findColon + 1 ) );
+        }
+        else
+        {
+            requestContext.put ( BindingProvider.USERNAME_PROPERTY, user );
+        }
+
+        return port;
     }
 
     public RemoteConfigurationAdministrator getPort ()
