@@ -207,6 +207,11 @@ public class ConnectionInformation implements Cloneable
         return this.properties.get ( PROP_PASSWORD );
     }
 
+    public String getUser ()
+    {
+        return this.properties.get ( PROP_USER );
+    }
+
     public URI toUri ()
     {
         final Map<String, String> properties = new HashMap<String, String> ( this.properties );
