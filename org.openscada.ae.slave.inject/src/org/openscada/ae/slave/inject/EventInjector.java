@@ -51,7 +51,14 @@ public class EventInjector
                 try
                 {
                     final int result = EventInjector.this.storage.runOnce ();
-                    logger.info ( "Processed {} entries", result );
+                    if ( result > 0 )
+                    {
+                        logger.info ( "Processed {} entries", result );
+                    }
+                    else
+                    {
+                        logger.debug ( "Processed {} entries", result );
+                    }
                 }
                 catch ( final Exception e )
                 {
