@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,10 +22,7 @@ package org.openscada.core;
 public class NullValueException extends Exception
 {
 
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -198014812983830196L;
+    private static final long serialVersionUID = 1L;
 
     public NullValueException ()
     {

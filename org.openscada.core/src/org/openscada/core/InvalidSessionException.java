@@ -23,12 +23,12 @@ import org.openscada.utils.statuscodes.CodedException;
 
 /**
  * An exception indicating an invalid (e.g. closed) session
+ * 
  * @author Jens Reimann
- *
  */
 public class InvalidSessionException extends CodedException
 {
-    private static final long serialVersionUID = 6189065814886204302L;
+    private static final long serialVersionUID = 1L;
 
     public InvalidSessionException ()
     {

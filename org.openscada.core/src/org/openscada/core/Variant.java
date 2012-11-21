@@ -33,7 +33,7 @@ import org.openscada.utils.lang.Immutable;
 public class Variant implements Serializable, Comparable<Variant>
 {
 
-    private static final long serialVersionUID = 5391870904474545783L;
+    private static final long serialVersionUID = 1L;
 
     /**
      * A default NULL instance
@@ -286,9 +286,11 @@ public class Variant implements Serializable, Comparable<Variant>
     }
 
     /**
-     * Get the string representation of the variant value or a default value if the variant is of type {@link VariantType#NULL}.
+     * Get the string representation of the variant value or a default value if
+     * the variant is of type {@link VariantType#NULL}.
      * 
-     * @return The string representation of the variant value or the default value.
+     * @return The string representation of the variant value or the default
+     *         value.
      */
     public String asString ( final String defaultValue )
     {
@@ -304,7 +306,8 @@ public class Variant implements Serializable, Comparable<Variant>
      * @since 0.14.0
      * @param defaultValue
      *            the default value
-     * @return the value as a double or the default value if the value cannot be provided as a double
+     * @return the value as a double or the default value if the value cannot be
+     *         provided as a double
      */
     public Double asDouble ( final Double defaultValue )
     {
@@ -364,7 +367,8 @@ public class Variant implements Serializable, Comparable<Variant>
      * @since 0.14.0
      * @param defaultValue
      *            the default value
-     * @return the value as an integer or the default value if the value cannot be provided as an integer
+     * @return the value as an integer or the default value if the value cannot
+     *         be provided as an integer
      */
     public Integer asInteger ( final Integer defaultValue )
     {
@@ -424,7 +428,8 @@ public class Variant implements Serializable, Comparable<Variant>
      * @since 0.14.0
      * @param defaultValue
      *            the default value
-     * @return the value as a long or the default value if the value cannot be provided as a long
+     * @return the value as a long or the default value if the value cannot be
+     *         provided as a long
      */
     public Long asLong ( final Long defaultValue )
     {
@@ -481,9 +486,15 @@ public class Variant implements Serializable, Comparable<Variant>
     }
 
     /**
-     * Get the value as boolean value If the value is <code>null</code> then <code>false</code> is returned. If the value is a boolean it will simply return the value itself. If the value is a numeric
-     * value (double, long, integer) is will return <code>false</code> if the value zero and <code>true</code> otherwise. If the value is a string then <code>false</code> is returned if the string is
-     * empty. If the string can be converted to a number (long or double) it will be compared to that number. Otherwise it will be compared case insensitive against the string
+     * Get the value as boolean value If the value is <code>null</code> then
+     * <code>false</code> is returned. If the value is a boolean it will simply
+     * return the value itself. If the value is a numeric
+     * value (double, long, integer) is will return <code>false</code> if the
+     * value zero and <code>true</code> otherwise. If the value is a string then
+     * <code>false</code> is returned if the string is
+     * empty. If the string can be converted to a number (long or double) it
+     * will be compared to that number. Otherwise it will be compared case
+     * insensitive against the string
      * 
      * <pre>
      * true
@@ -565,16 +576,20 @@ public class Variant implements Serializable, Comparable<Variant>
     }
 
     /**
-     * Convert the variant to a java object of the type specified by the variantType parameter
+     * Convert the variant to a java object of the type specified by the
+     * variantType parameter
      * <p>
-     * The default value must be of the type of the variant type parameter, otherwise a class cast exception will be thrown. The default value may also be null.
+     * The default value must be of the type of the variant type parameter,
+     * otherwise a class cast exception will be thrown. The default value may
+     * also be null.
      * </p>
      * 
      * @see #as(VariantType)
      * @param variantType
      *            the variant type to convert to (may be <code>null</code>)
      * @param defaultValue
-     *            the default value in case the conversion fails or the variant is NULL
+     *            the default value in case the conversion fails or the variant
+     *            is NULL
      * @return the resulting java object
      * @since 0.16.0
      */
@@ -606,16 +621,22 @@ public class Variant implements Serializable, Comparable<Variant>
     }
 
     /**
-     * Convert the variant to a java object of the type specified by the variantType parameter
+     * Convert the variant to a java object of the type specified by the
+     * variantType parameter
      * <p>
-     * The method converts the current variant to a plain java {@link Serializable} of the requested type. For the list of types than can be expected see the java type field of {@link VariantType}.
+     * The method converts the current variant to a plain java
+     * {@link Serializable} of the requested type. For the list of types than
+     * can be expected see the java type field of {@link VariantType}.
      * </p>
      * <p>
      * There are some special cases for this method:
      * <ul>
-     * <li>If the parameter variantType is null the java object currently set will be returned without any conversion</li>
-     * <li>If the variant type {@link VariantType#UNKNOWN} is requested the java object currently set will be returned without any conversion</li>
-     * <li>If the {@link VariantType#NULL} is requested always <code>null</code> will be returned
+     * <li>If the parameter variantType is null the java object currently set
+     * will be returned without any conversion</li>
+     * <li>If the variant type {@link VariantType#UNKNOWN} is requested the java
+     * object currently set will be returned without any conversion</li>
+     * <li>If the {@link VariantType#NULL} is requested always <code>null</code>
+     * will be returned
      * </ul>
      * </p>
      * 
@@ -623,7 +644,8 @@ public class Variant implements Serializable, Comparable<Variant>
      *            the target type
      * @return the resulting java object
      * @throws NullValueException
-     *             in case the variant was of type null and should be converted to some other type
+     *             in case the variant was of type null and should be converted
+     *             to some other type
      * @throws NotConvertableException
      *             in case the variant cannot be converted to the target value
      * @since 0.16.0
@@ -926,12 +948,14 @@ public class Variant implements Serializable, Comparable<Variant>
     }
 
     /**
-     * Get the string representation of the variant (not the variant value). This includes also the variant type.
+     * Get the string representation of the variant (not the variant value).
+     * This includes also the variant type.
      * <p>
      * The format is
      * <q>VariantType#VariantValue</q>.
      * <p>
-     * If you want to get the string representation of the variant value itself use {@link #asString()} instead.
+     * If you want to get the string representation of the variant value itself
+     * use {@link #asString()} instead.
      */
     @Override
     public String toString ()
