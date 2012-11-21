@@ -24,7 +24,7 @@ import org.openscada.utils.statuscodes.CodedException;
 public class UnableToCreateSessionException extends CodedException
 {
 
-    private static final long serialVersionUID = -3211208282862897815L;
+    private static final long serialVersionUID = 1L;
 
     public UnableToCreateSessionException ( final String message )
     {

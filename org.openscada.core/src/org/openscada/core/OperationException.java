@@ -22,7 +22,7 @@ package org.openscada.core;
 public class OperationException extends Exception
 {
 
-    private static final long serialVersionUID = 1241419652332950862L;
+    private static final long serialVersionUID = 1L;
 
     public OperationException ( final String message, final Throwable cause )
     {
