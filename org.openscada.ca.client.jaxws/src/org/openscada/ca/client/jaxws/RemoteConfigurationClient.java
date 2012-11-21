@@ -86,15 +86,18 @@ public class RemoteConfigurationClient
 
         final String user = url.getUserInfo ();
 
-        final int findColon = user.indexOf ( ':' );
-        if ( findColon > 0 && findColon + 1 < user.length () )
+        if ( user != null )
         {
-            requestContext.put ( BindingProvider.USERNAME_PROPERTY, user.substring ( 0, findColon ) );
-            requestContext.put ( BindingProvider.PASSWORD_PROPERTY, user.substring ( findColon + 1 ) );
-        }
-        else
-        {
-            requestContext.put ( BindingProvider.USERNAME_PROPERTY, user );
+            final int findColon = user.indexOf ( ':' );
+            if ( ( findColon > 0 ) && ( ( findColon + 1 ) < user.length () ) )
+            {
+                requestContext.put ( BindingProvider.USERNAME_PROPERTY, user.substring ( 0, findColon ) );
+                requestContext.put ( BindingProvider.PASSWORD_PROPERTY, user.substring ( findColon + 1 ) );
+            }
+            else
+            {
+                requestContext.put ( BindingProvider.USERNAME_PROPERTY, user );
+            }
         }
 
         return port;
