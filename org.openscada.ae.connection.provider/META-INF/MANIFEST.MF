@@ -11,7 +11,8 @@ Import-Package: org.openscada.ae.client;version="0.14.0",
  org.openscada.core.client;version="0.14.0",
  org.openscada.core.connection.provider;version="0.14.0",
  org.openscada.core.connection.provider.info;version="1.0.0",
+ org.openscada.core.info;version="1.0.0",
  org.openscada.utils.osgi;version="0.14.0",
  org.osgi.framework;version="1.3.0",
- org.slf4j
+ org.slf4j;version="1.5.0"
 Export-Package: org.openscada.ae.connection.provider;version="1.0.0";uses:="org.openscada.core.connection.provider,org.osgi.framework"

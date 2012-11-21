@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA Core Subscription
+Bundle-SymbolicName: org.openscada.core.subscription
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.core.subscription;version="1.0.0"
