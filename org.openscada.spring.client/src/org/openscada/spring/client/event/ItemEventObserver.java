@@ -23,9 +23,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.logging.Level;
 
+import org.openscada.core.AttributesHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.slf4j.Logger;

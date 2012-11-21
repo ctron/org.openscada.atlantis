@@ -17,7 +17,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.core.utils;
+package org.openscada.core;
 
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,7 +25,6 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.core.Variant;
 
 public class AttributesHelper
 {

@@ -24,12 +24,12 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.core.AttributesHelper;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.connection.provider.ConnectionIdTracker;
 import org.openscada.core.connection.provider.ConnectionTracker;
 import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.client.ItemUpdateListener;

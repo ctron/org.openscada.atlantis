@@ -6,7 +6,6 @@ import java.util.Map;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openscada.core.utils.AttributesHelper;
 
 public class AttributeHelperTest
 {
