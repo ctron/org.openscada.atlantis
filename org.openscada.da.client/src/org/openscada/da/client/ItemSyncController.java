@@ -23,9 +23,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.core.AttributesHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.core.utils.AttributesHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

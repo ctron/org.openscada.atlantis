@@ -19,7 +19,7 @@
 
 package org.openscada.ae.event.logger.internal;
 
-import org.openscada.core.utils.AttributesHelper;
+import org.openscada.core.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 

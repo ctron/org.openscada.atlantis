@@ -45,13 +45,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.openscada.core"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.core.net"
          download-size="0"
          install-size="0"
@@ -95,6 +88,20 @@
 
    <plugin
          id="org.openscada.core.client.connection.service"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.info"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.subscription"
          download-size="0"
          install-size="0"
          version="0.0.0"

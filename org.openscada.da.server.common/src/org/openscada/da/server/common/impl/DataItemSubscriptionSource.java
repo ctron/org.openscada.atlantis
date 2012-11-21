@@ -26,10 +26,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.openscada.core.AttributesHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.subscription.SubscriptionInformation;
 import org.openscada.core.subscription.SubscriptionSource;
-import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ItemListener;
 import org.openscada.da.server.common.impl.stats.HiveEventListener;
