@@ -41,7 +41,7 @@ public class Activator implements BundleActivator
 
     private BundleContext context;
 
-    private final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( System.getProperty ( "openscada.hd.net.exportUri", "ae:net://0.0.0.0:1402" ) );
+    private final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( System.getProperty ( "openscada.hd.net.exportUri", "hd:net://0.0.0.0:1402" ) );
 
     private Exporter exporter;
 
@@ -113,7 +113,7 @@ public class Activator implements BundleActivator
         {
             try
             {
-                logger.info ( "Exporting: " + serviceReference );
+                logger.info ( "Exporting: {} ", serviceReference );
                 this.currentService = (Service)o;
                 this.exporter = new Exporter ( this.currentService, this.connectionInformation );
                 this.exporter.start ();
