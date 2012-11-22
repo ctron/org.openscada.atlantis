@@ -45,7 +45,7 @@ public class Activator implements BundleActivator
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( org.openscada.core.client.DriverFactory.INTERFACE_NAME, "hd" );
         properties.put ( org.openscada.core.client.DriverFactory.DRIVER_NAME, "net" );
-        properties.put ( Constants.SERVICE_DESCRIPTION, "OpenSCADA HD NET Adapter" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "openSCADA HD NET Adapter" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
         this.handle = context.registerService ( org.openscada.core.client.DriverFactory.class, this.factory, properties );
     }
