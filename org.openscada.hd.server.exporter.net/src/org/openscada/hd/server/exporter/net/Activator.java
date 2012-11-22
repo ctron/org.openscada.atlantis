@@ -89,7 +89,7 @@ public class Activator implements BundleActivator
         }
         catch ( final Throwable e )
         {
-            e.printStackTrace ();
+            logger.warn ( "Failed to stop exporter", e );
         }
         finally
         {
@@ -120,7 +120,7 @@ public class Activator implements BundleActivator
             }
             catch ( final Throwable e )
             {
-                e.printStackTrace ();
+                logger.warn ( "Failed to start exporter", e );
                 this.exporter = null;
                 this.currentService = null;
                 this.context.ungetService ( serviceReference );
