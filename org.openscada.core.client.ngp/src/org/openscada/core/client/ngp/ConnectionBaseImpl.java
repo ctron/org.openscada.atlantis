@@ -24,7 +24,6 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.data.message.CreateSession;
 import org.openscada.core.data.message.SessionAccepted;
 import org.openscada.core.data.message.SessionRejected;
-import org.openscada.protocol.ngp.client.ClientBaseConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

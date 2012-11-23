@@ -30,7 +30,6 @@ import org.openscada.core.data.message.SessionAccepted;
 import org.openscada.core.data.message.SessionRejected;
 import org.openscada.core.server.Service;
 import org.openscada.core.server.Session;
-import org.openscada.protocol.ngp.server.ServerConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

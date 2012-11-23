@@ -17,32 +17,23 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.ngp;
+package org.openscada.core.client.ngp.test;
 
-import java.net.InetSocketAddress;
-import java.util.Collection;
+import org.openscada.core.client.Connection;
+import org.openscada.core.client.ConnectionState;
+import org.openscada.core.client.ConnectionStateListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import org.apache.mina.core.session.IoSession;
-import org.openscada.core.server.ngp.ServerBase;
-import org.openscada.core.server.ngp.ServerConnection;
-import org.openscada.hd.server.Service;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
-
-public class Server extends ServerBase
+public class DumpingStateListener implements ConnectionStateListener
 {
 
-    private final Service service;
-
-    public Server ( final Collection<InetSocketAddress> addresses, final ProtocolConfiguration protocolConfiguration, final Service service ) throws Exception
-    {
-        super ( addresses, protocolConfiguration );
-        this.service = service;
-    }
+    private final static Logger logger = LoggerFactory.getLogger ( DumpingStateListener.class );
 
     @Override
-    public ServerConnection createNewConnection ( final IoSession session )
+    public void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )
     {
-        return new ServerConnectionImpl ( session, this.service );
+        logger.info ( "Connection state changed - {} -> {}: {}", new Object[] { connection, state, error } );
     }
 
 }

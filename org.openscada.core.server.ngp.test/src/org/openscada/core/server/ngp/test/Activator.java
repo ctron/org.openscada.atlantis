@@ -17,32 +17,39 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.ngp;
+package org.openscada.core.server.ngp.test;
 
-import java.net.InetSocketAddress;
-import java.util.Collection;
+import org.osgi.framework.BundleActivator;
+import org.osgi.framework.BundleContext;
 
-import org.apache.mina.core.session.IoSession;
-import org.openscada.core.server.ngp.ServerBase;
-import org.openscada.core.server.ngp.ServerConnection;
-import org.openscada.hd.server.Service;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
-
-public class Server extends ServerBase
+public class Activator implements BundleActivator
 {
 
-    private final Service service;
+    private static BundleContext context;
 
-    public Server ( final Collection<InetSocketAddress> addresses, final ProtocolConfiguration protocolConfiguration, final Service service ) throws Exception
+    static BundleContext getContext ()
     {
-        super ( addresses, protocolConfiguration );
-        this.service = service;
+        return context;
     }
 
+    /*
+     * (non-Javadoc)
+     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
+     */
     @Override
-    public ServerConnection createNewConnection ( final IoSession session )
+    public void start ( final BundleContext bundleContext ) throws Exception
     {
-        return new ServerConnectionImpl ( session, this.service );
+        Activator.context = bundleContext;
+    }
+
+    /*
+     * (non-Javadoc)
+     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
+     */
+    @Override
+    public void stop ( final BundleContext bundleContext ) throws Exception
+    {
+        Activator.context = null;
     }
 
 }

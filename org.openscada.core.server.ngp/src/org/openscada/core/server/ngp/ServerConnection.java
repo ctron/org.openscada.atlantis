@@ -17,32 +17,42 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.hd.server.ngp;
-
-import java.net.InetSocketAddress;
-import java.util.Collection;
+package org.openscada.core.server.ngp;
 
 import org.apache.mina.core.session.IoSession;
-import org.openscada.core.server.ngp.ServerBase;
-import org.openscada.core.server.ngp.ServerConnection;
-import org.openscada.hd.server.Service;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class Server extends ServerBase
+public abstract class ServerConnection
 {
 
-    private final Service service;
+    private final static Logger logger = LoggerFactory.getLogger ( ServerConnection.class );
 
-    public Server ( final Collection<InetSocketAddress> addresses, final ProtocolConfiguration protocolConfiguration, final Service service ) throws Exception
+    private final IoSession session;
+
+    public ServerConnection ( final IoSession session )
     {
-        super ( addresses, protocolConfiguration );
-        this.service = service;
+        logger.info ( "Creating new server connection: {}", session );
+
+        this.session = session;
     }
 
-    @Override
-    public ServerConnection createNewConnection ( final IoSession session )
+    public void dispose ()
     {
-        return new ServerConnectionImpl ( session, this.service );
+        logger.info ( "Disposing server connection: {}", this.session );
+        requestClose ( true );
     }
 
+    protected void sendMessage ( final Object message )
+    {
+        logger.trace ( "Sending message: {}", message );
+        this.session.write ( message );
+    }
+
+    public void requestClose ( final boolean immediately )
+    {
+        this.session.close ( immediately );
+    }
+
+    public abstract void messageReceived ( Object message ) throws Exception;
 }
