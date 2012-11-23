@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.openscada.core.net.MessageHelper;
-import org.openscada.hd.HistoricalItemInformation;
+import org.openscada.hd.data.HistoricalItemInformation;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
@@ -113,7 +113,7 @@ public class ItemListHelper
     {
         final MapValue value = new MapValue ();
 
-        value.put ( "id", new StringValue ( entry.getId () ) );
+        value.put ( "id", new StringValue ( entry.getItemId () ) );
         value.put ( "attributes", MessageHelper.attributesToMap ( entry.getAttributes () ) );
 
         return value;

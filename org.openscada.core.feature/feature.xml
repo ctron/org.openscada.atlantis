@@ -107,4 +107,18 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.openscada.core.server.ngp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.client.ngp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>

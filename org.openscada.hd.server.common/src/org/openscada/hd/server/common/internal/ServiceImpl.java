@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -33,11 +33,11 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.server.common.ServiceCommon;
-import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
+import org.openscada.hd.data.HistoricalItemInformation;
+import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
 import org.openscada.hd.server.common.HistoricalItem;
@@ -55,7 +55,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.profiler.Profiler;
 
-public class ServiceImpl extends ServiceCommon implements Service, ServiceTrackerCustomizer<HistoricalItem, HistoricalItem>
+public class ServiceImpl extends ServiceCommon<Session> implements Service, ServiceTrackerCustomizer<HistoricalItem, HistoricalItem>
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ServiceImpl.class );
@@ -86,7 +86,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
     }
 
     @Override
-    public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
+    public void closeSession ( final Session session ) throws InvalidSessionException
     {
         SessionImpl sessionImpl = null;
 
@@ -111,7 +111,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
     }
 
     @Override
-    public org.openscada.core.server.Session createSession ( final Properties properties ) throws UnableToCreateSessionException
+    public Session createSession ( final Properties properties ) throws UnableToCreateSessionException
     {
         final Map<String, String> sessionResultProperties = new HashMap<String, String> ();
         final UserInformation user = createUserInformation ( properties, sessionResultProperties );
@@ -267,23 +267,23 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceTracke
         final HistoricalItem item = this.context.getService ( reference );
         final HistoricalItemInformation info = item.getInformation ();
 
-        if ( !itemId.equals ( info.getId () ) )
+        if ( !itemId.equals ( info.getItemId () ) )
         {
-            logger.warn ( "Unable to register item since {} ({}) and item id ({}) don't match", new Object[] { Constants.SERVICE_PID, itemId, info.getId () } );
+            logger.warn ( "Unable to register item since {} ({}) and item id ({}) don't match", new Object[] { Constants.SERVICE_PID, itemId, info.getItemId () } );
             this.context.ungetService ( reference );
             return null;
         }
 
         synchronized ( this )
         {
-            if ( this.items.containsKey ( info.getId () ) )
+            if ( this.items.containsKey ( info.getItemId () ) )
             {
                 this.context.ungetService ( reference );
                 return null;
             }
             else
             {
-                this.items.put ( info.getId (), item );
+                this.items.put ( info.getItemId (), item );
                 this.itemInformations.add ( info );
                 fireListChanged ( new HashSet<HistoricalItemInformation> ( Arrays.asList ( info ) ), null, false );
                 return item;

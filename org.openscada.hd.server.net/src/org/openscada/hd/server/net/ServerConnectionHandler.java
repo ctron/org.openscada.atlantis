@@ -20,6 +20,7 @@
 package org.openscada.hd.server.net;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -32,13 +33,13 @@ import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
-import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.HistoricalItemInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.openscada.hd.net.ItemListHelper;
 import org.openscada.hd.net.Messages;
 import org.openscada.hd.net.QueryHelper;
@@ -271,7 +272,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
     }
 
-    public void sendQueryData ( final long queryId, final int index, final Map<String, org.openscada.hd.Value[]> values, final ValueInformation[] valueInformation )
+    public void sendQueryData ( final long queryId, final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         synchronized ( this )
         {
@@ -280,7 +281,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                 return;
             }
 
-            final int len = valueInformation.length;
+            final int len = valueInformation.size ();
 
             if ( len < MAX_DATA_SIZE )
             {
@@ -299,15 +300,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                     logger.debug ( "Sending - query-id: {}, index: {}, size: {}", new Object[] { queryId, count, size } );
 
                     // copy vi
-                    final ValueInformation[] vi = new ValueInformation[size];
-                    System.arraycopy ( valueInformation, count, vi, 0, size );
+                    final List<ValueInformation> vi = valueInformation.subList ( count, count + size );
 
                     // copy values
-                    final Map<String, org.openscada.hd.Value[]> v = new HashMap<String, org.openscada.hd.Value[]> ();
-                    for ( final Map.Entry<String, org.openscada.hd.Value[]> entry : values.entrySet () )
+                    final Map<String, List<Double>> v = new HashMap<String, List<Double>> ();
+                    for ( final Map.Entry<String, List<Double>> entry : values.entrySet () )
                     {
-                        final org.openscada.hd.Value[] vs = new org.openscada.hd.Value[size];
-                        System.arraycopy ( entry.getValue (), count, vs, 0, size );
+                        final List<Double> vs = entry.getValue ().subList ( count, count + size );
                         v.put ( entry.getKey (), vs );
                     }
 
@@ -319,7 +318,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
     }
 
-    private void sendQueryDataPacket ( final long queryId, final int index, final Map<String, org.openscada.hd.Value[]> values, final ValueInformation[] valueInformation )
+    private void sendQueryDataPacket ( final long queryId, final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_DATA );
         message.getValues ().put ( "id", new LongValue ( queryId ) );

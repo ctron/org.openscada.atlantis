@@ -66,7 +66,7 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceImpl extends ServiceCommon implements Service, ServiceListener
+public class ServiceImpl extends ServiceCommon<Session> implements Service, ServiceListener
 {
     private final static Logger logger = LoggerFactory.getLogger ( ServiceImpl.class );
 
@@ -288,7 +288,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
     }
 
     @Override
-    public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
+    public void closeSession ( final Session session ) throws InvalidSessionException
     {
         SessionImpl sessionImpl = null;
         synchronized ( this )
@@ -310,7 +310,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
     }
 
     @Override
-    public synchronized org.openscada.core.server.Session createSession ( final Properties properties ) throws UnableToCreateSessionException
+    public synchronized Session createSession ( final Properties properties ) throws UnableToCreateSessionException
     {
         if ( this.eventExecutor == null )
         {

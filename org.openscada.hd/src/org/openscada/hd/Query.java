@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,16 +19,16 @@
 
 package org.openscada.hd;
 
+import org.openscada.hd.data.QueryParameters;
+
 /**
  * An interface for querying historical value data
- * 
  * <p>
- * See {@link QueryListener} for implementation requirements
- * on data notification.
+ * See {@link QueryListener} for implementation requirements on data
+ * notification.
  * </p>
  * 
  * @see QueryListener
- *  
  * @author Jens Reimann &lt;jens.reimann@th4-systems.com&gt;
  * @since 0.14.0
  */
@@ -41,7 +41,9 @@ public interface Query
 
     /**
      * Request a change of parameters
-     * @param parameters the new requested parameters
+     * 
+     * @param parameters
+     *            the new requested parameters
      */
     public void changeParameters ( QueryParameters parameters );
 }

@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicReference;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
+import org.openscada.hd.data.QueryParameters;
 import org.openscada.hds.ValueVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

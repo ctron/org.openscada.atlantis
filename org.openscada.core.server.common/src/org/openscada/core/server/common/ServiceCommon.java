@@ -25,6 +25,7 @@ import java.util.Properties;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.server.Service;
+import org.openscada.core.server.Session;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthorizationResult;
@@ -33,7 +34,7 @@ import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ServiceCommon implements Service
+public abstract class ServiceCommon<S extends Session> implements Service<S>
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ServiceCommon.class );

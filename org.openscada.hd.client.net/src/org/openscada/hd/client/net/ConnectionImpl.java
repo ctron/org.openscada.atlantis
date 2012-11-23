@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -33,14 +34,13 @@ import java.util.concurrent.Executors;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.SessionConnectionBase;
-import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.HistoricalItemInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.openscada.hd.net.ItemListHelper;
 import org.openscada.hd.net.Messages;
 import org.openscada.hd.net.QueryHelper;
@@ -191,8 +191,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             if ( query != null )
             {
                 final int index = ( (IntegerValue)message.getValues ().get ( "index" ) ).getValue ();
-                final Map<String, Value[]> values = QueryHelper.fromValueData ( message.getValues ().get ( "values" ) );
-                final ValueInformation[] valueInformation = QueryHelper.fromValueInfo ( message.getValues ().get ( "valueInformation" ) );
+                final Map<String, List<Double>> values = QueryHelper.fromValueData ( message.getValues ().get ( "values" ) );
+                final List<ValueInformation> valueInformation = QueryHelper.fromValueInfo ( message.getValues ().get ( "valueInformation" ) );
                 if ( index >= 0 && values != null && valueInformation != null )
                 {
                     query.handleUpdateData ( index, values, valueInformation );
@@ -251,7 +251,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
      * @param removed
      *            the items that where removed
      * @param full
-     *            <code>true</code> if this is a full update and not a delta update
+     *            <code>true</code> if this is a full update and not a delta
+     *            update
      */
     private void applyChange ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
@@ -270,7 +271,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             for ( final HistoricalItemInformation item : addedOrModified )
             {
-                this.knownItems.put ( item.getId (), item );
+                this.knownItems.put ( item.getItemId (), item );
             }
         }
     }
@@ -420,7 +421,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private QueryParameters checkParameters ( final QueryParameters parameters )
     {
-        return new QueryParameters ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), Math.min ( parameters.getEntries (), MAX_QUERY_ENTRIES ) );
+        return new QueryParameters ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), Math.min ( parameters.getNumberOfEntries (), MAX_QUERY_ENTRIES ) );
     }
 
     /**

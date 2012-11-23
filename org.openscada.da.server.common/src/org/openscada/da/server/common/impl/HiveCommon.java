@@ -73,7 +73,7 @@ import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive, HiveServiceRegistry
+public class HiveCommon extends ServiceCommon<Session> implements Hive, ConfigurableHive, HiveServiceRegistry
 {
     private final static Logger logger = LoggerFactory.getLogger ( HiveCommon.class );
 
@@ -322,7 +322,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
      * will become invalid. All pending operation will get canceled.
      */
     @Override
-    public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
+    public void closeSession ( final Session session ) throws InvalidSessionException
     {
         final SessionCommon sessionCommon = validateSession ( session );
 

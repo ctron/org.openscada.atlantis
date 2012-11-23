@@ -222,7 +222,7 @@ public class StorageManager extends AbstractStorageManager
         try
         {
             final StorageImpl storage = new StorageImpl ( file, this.context, this.pool, this.queryExecutor, this.updateExecutor );
-            this.storages.put ( storage.getInformation ().getId (), storage );
+            this.storages.put ( storage.getInformation ().getItemId (), storage );
         }
         finally
         {

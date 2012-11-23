@@ -19,14 +19,15 @@
 
 package org.openscada.hd.server.importer.hsdb;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
+import org.openscada.hd.data.HistoricalItemInformation;
+import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.storage.common.QueryImpl;
 import org.openscada.hd.server.storage.common.ValueSourceManager;
@@ -101,7 +102,7 @@ public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
     @Override
     public void visit ( final QueryParameters parameters, final ValueVisitor visitor )
     {
-        this.source.visit ( visitor, parameters.getStartTimestamp ().getTime (), parameters.getEndTimestamp ().getTime () );
+        this.source.visit ( visitor, new Date ( parameters.getStartTimestamp () ), new Date ( parameters.getEndTimestamp () ) );
     }
 
 }

@@ -31,8 +31,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
+import org.openscada.hd.data.QueryParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +66,7 @@ public class QueryBuffer extends QueryDataBuffer
         {
             final int prime = 31;
             int result = 1;
-            result = ( prime * result ) + ( this.timestamp == null ? 0 : this.timestamp.hashCode () );
+            result = prime * result + ( this.timestamp == null ? 0 : this.timestamp.hashCode () );
             return result;
         }
 
@@ -204,7 +204,7 @@ public class QueryBuffer extends QueryDataBuffer
         // clear
         this.entries.clear ();
         this.firstEntry = null;
-        this.data = new Data[parameters.getEntries ()];
+        this.data = new Data[parameters.getNumberOfEntries ()];
 
         fillDataCells ( this.data, parameters.getStartTimestamp (), parameters.getEndTimestamp (), new DataFactory () {
 
@@ -230,9 +230,9 @@ public class QueryBuffer extends QueryDataBuffer
         final Date timestamp = entry.getTimestamp ();
         logger.debug ( "Received new data: {}", entry );
 
-        if ( timestamp.before ( this.parameters.getStartTimestamp ().getTime () ) )
+        if ( timestamp.before ( new Date ( this.parameters.getStartTimestamp () ) ) )
         {
-            if ( ( this.firstEntry == null ) || this.firstEntry.getTimestamp ().before ( timestamp ) )
+            if ( this.firstEntry == null || this.firstEntry.getTimestamp ().before ( timestamp ) )
             {
                 logger.debug ( "Evaluating entry as first entry: {}", entry );
                 if ( !Double.isNaN ( entry.getValue () ) || this.useNaNs )
@@ -242,7 +242,7 @@ public class QueryBuffer extends QueryDataBuffer
                 }
             }
         }
-        else if ( !timestamp.after ( this.parameters.getEndTimestamp ().getTime () ) )
+        else if ( !timestamp.after ( new Date ( this.parameters.getEndTimestamp () ) ) )
         {
             logger.debug ( "Adding entry: {}", entry );
             this.entries.add ( entry );
@@ -251,11 +251,11 @@ public class QueryBuffer extends QueryDataBuffer
 
             logger.debug ( "Inserting into cell: {}", i );
 
-            if ( ( i >= 0 ) && ( i < this.parameters.getEntries () ) )
+            if ( i >= 0 && i < this.parameters.getNumberOfEntries () )
             {
                 this.data[i].add ( entry );
 
-                if ( this.renderWhileLoading && ( this.state == QueryState.LOADING ) )
+                if ( this.renderWhileLoading && this.state == QueryState.LOADING )
                 {
                     render ( i, i + 1 );
                 }
@@ -284,7 +284,7 @@ public class QueryBuffer extends QueryDataBuffer
      */
     private void render ( final int startIndex, int endIndex )
     {
-        endIndex = Math.min ( endIndex, this.parameters.getEntries () );
+        endIndex = Math.min ( endIndex, this.parameters.getNumberOfEntries () );
 
         Entry currentEntry = findPreviousEntry ( startIndex );
 
@@ -320,11 +320,11 @@ public class QueryBuffer extends QueryDataBuffer
                 if ( !Double.isNaN ( entry.getValue () ) || this.useNaNs )
                 {
                     avg.next ( entry.getValue (), entry.getTimestamp ().getTime () );
-                    if ( Double.isNaN ( max ) || ( Double.compare ( entry.getValue (), max ) > 0 ) )
+                    if ( Double.isNaN ( max ) || Double.compare ( entry.getValue (), max ) > 0 )
                     {
                         max = entry.getValue ();
                     }
-                    if ( Double.isNaN ( min ) || ( Double.compare ( entry.getValue (), min ) < 0 ) )
+                    if ( Double.isNaN ( min ) || Double.compare ( entry.getValue (), min ) < 0 )
                     {
                         min = entry.getValue ();
                     }
@@ -369,7 +369,7 @@ public class QueryBuffer extends QueryDataBuffer
 
     protected Entry findNextEntry ( final int i )
     {
-        if ( ( i + 1 ) >= this.parameters.getEntries () )
+        if ( i + 1 >= this.parameters.getNumberOfEntries () )
         {
             return null;
         }
@@ -388,21 +388,21 @@ public class QueryBuffer extends QueryDataBuffer
 
     private int getDataIndex ( final Date timestamp )
     {
-        if ( timestamp.before ( this.parameters.getStartTimestamp ().getTime () ) )
+        if ( timestamp.before ( new Date ( this.parameters.getStartTimestamp () ) ) )
         {
             return -1;
         }
 
         final double period = getPeriod ();
 
-        final long offset = timestamp.getTime () - this.parameters.getStartTimestamp ().getTimeInMillis ();
+        final long offset = timestamp.getTime () - this.parameters.getStartTimestamp ();
 
         return (int) ( offset / period );
     }
 
     private double getPeriod ()
     {
-        return (double) ( this.parameters.getEndTimestamp ().getTimeInMillis () - this.parameters.getStartTimestamp ().getTimeInMillis () ) / (double)this.parameters.getEntries ();
+        return (double) ( this.parameters.getEndTimestamp () - this.parameters.getStartTimestamp () ) / (double)this.parameters.getNumberOfEntries ();
     }
 
     public synchronized void complete ()

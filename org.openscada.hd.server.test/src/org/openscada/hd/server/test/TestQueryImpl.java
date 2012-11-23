@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,10 +32,9 @@ import java.util.concurrent.Executors;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,7 +66,7 @@ public class TestQueryImpl implements Query
     {
         this.listener.updateState ( QueryState.LOADING );
 
-        if ( parameters.getEntries () == 0 )
+        if ( parameters.getNumberOfEntries () == 0 )
         {
             this.listener.updateState ( QueryState.COMPLETE );
             return;
@@ -75,6 +74,7 @@ public class TestQueryImpl implements Query
 
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 loadData ( parameters, 10 );
@@ -86,11 +86,11 @@ public class TestQueryImpl implements Query
     {
         this.listener.updateParameters ( parameters, new HashSet<String> ( Arrays.asList ( "AVG", "MIN", "MAX" ) ) );
 
-        final long startTix = parameters.getStartTimestamp ().getTimeInMillis ();
-        final long endTix = parameters.getEndTimestamp ().getTimeInMillis ();
+        final long startTix = parameters.getStartTimestamp ();
+        final long endTix = parameters.getEndTimestamp ();
         final long countMillis = endTix - startTix;
 
-        final double step = (double)countMillis / parameters.getEntries ();
+        final double step = (double)countMillis / parameters.getNumberOfEntries ();
 
         long currentTix = startTix;
         final List<ValueInformation> next = new ArrayList<ValueInformation> ();
@@ -109,7 +109,7 @@ public class TestQueryImpl implements Query
             }
             end.setTimeInMillis ( nextTix );
 
-            next.add ( new ValueInformation ( start, end, /*100% good*/1.0, 0.0, nextTix - currentTix ) );
+            next.add ( new ValueInformation ( /*100% good*/1.0, 0.0, start.getTimeInMillis (), end.getTimeInMillis (), nextTix - currentTix ) );
 
             count++;
             if ( nextTix == endTix )
@@ -138,34 +138,31 @@ public class TestQueryImpl implements Query
             logger.info ( "Sending {} entries: {} - {}", new Object[] { count, next.get ( 0 ), next.get ( count - 1 ) } );
         }
 
-        final ValueInformation[] valueInformation = new ValueInformation[count];
+        final List<ValueInformation> valueInformation = new ArrayList<ValueInformation> ( count );
 
-        final Map<String, Value[]> values = new HashMap<String, Value[]> ();
-        values.put ( "AVG", new Value[count] );
-        values.put ( "MIN", new Value[count] );
-        values.put ( "MAX", new Value[count] );
-
-        int index = 0;
+        final Map<String, List<Double>> values = new HashMap<String, List<Double>> ( 3 );
+        values.put ( "AVG", new ArrayList<Double> ( count ) );
+        values.put ( "MIN", new ArrayList<Double> ( count ) );
+        values.put ( "MAX", new ArrayList<Double> ( count ) );
 
         for ( final ValueInformation info : next )
         {
-            final double quality = generateValues ( index, values, info );
-            valueInformation[index] = new ValueInformation ( info.getStartTimestamp (), info.getEndTimestamp (), quality, 0.0, info.getSourceValues () );
-            index++;
+            final double quality = generateValues ( values, info );
+            valueInformation.add ( new ValueInformation ( quality, 0.0, info.getStartTimestamp (), info.getEndTimestamp (), info.getSourceValues () ) );
         }
 
         this.listener.updateData ( sendIndex, values, valueInformation );
 
     }
 
-    private double generateValues ( final int index, final Map<String, Value[]> values, final ValueInformation vi )
+    private double generateValues ( final Map<String, List<Double>> values, final ValueInformation vi )
     {
         double min = Double.MAX_VALUE;
         double max = -Double.MAX_VALUE;
         BigDecimal avg = new BigDecimal ( 0.0 );
 
-        final long start = vi.getStartTimestamp ().getTimeInMillis ();
-        final long count = vi.getEndTimestamp ().getTimeInMillis () - start;
+        final long start = vi.getStartTimestamp ();
+        final long count = vi.getEndTimestamp () - start;
 
         int good = 0;
         for ( long i = 0; i < count; i++ )
@@ -191,13 +188,14 @@ public class TestQueryImpl implements Query
             avg = new BigDecimal ( 0.0 );
         }
 
-        values.get ( "AVG" )[index] = new Value ( avg.doubleValue () );
-        values.get ( "MIN" )[index] = new Value ( min );
-        values.get ( "MAX" )[index] = new Value ( max );
+        values.get ( "AVG" ).add ( avg.doubleValue () );
+        values.get ( "MIN" ).add ( min );
+        values.get ( "MAX" ).add ( max );
 
         return (double)good / (double)count;
     }
 
+    @Override
     public void close ()
     {
         logger.info ( "Close query" );
@@ -209,6 +207,7 @@ public class TestQueryImpl implements Query
         this.item.remove ( this );
     }
 
+    @Override
     public void changeParameters ( final QueryParameters parameters )
     {
         startLoadData ( parameters );

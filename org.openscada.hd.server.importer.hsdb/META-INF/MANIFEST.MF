@@ -8,6 +8,7 @@ Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core;version="0.17.0",
  org.openscada.hd;version="0.15.0",
+ org.openscada.hd.data;version="1.0.0",
  org.openscada.hd.server.common;version="0.14.0",
  org.openscada.hd.server.storage.common;version="0.17.0",
  org.openscada.hds;version="0.1.0",

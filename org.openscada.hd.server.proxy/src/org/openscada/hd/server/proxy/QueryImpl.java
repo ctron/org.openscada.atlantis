@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,6 +20,7 @@
 package org.openscada.hd.server.proxy;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -31,10 +32,9 @@ import java.util.concurrent.Executor;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.proxy.ProxyHistoricalItem.ItemListener;
 import org.openscada.hd.server.proxy.ProxyValueSource.ServiceEntry;
@@ -69,9 +69,9 @@ public class QueryImpl implements Query, ItemListener
 
         private QueryParameters parameters;
 
-        private HashMap<String, Value[]> values;
+        private HashMap<String, List<Double>> values;
 
-        private ValueInformation[] valueInformation;
+        private List<ValueInformation> valueInformation;
 
         private final int priority;
 
@@ -104,13 +104,13 @@ public class QueryImpl implements Query, ItemListener
         }
 
         @Override
-        public ValueInformation[] getValueInformation ()
+        public List<ValueInformation> getValueInformation ()
         {
             return this.valueInformation;
         }
 
         @Override
-        public HashMap<String, Value[]> getValues ()
+        public HashMap<String, List<Double>> getValues ()
         {
             return this.values;
         }
@@ -129,26 +129,31 @@ public class QueryImpl implements Query, ItemListener
             this.parameters = parameters;
             this.valueTypes = valueTypes;
 
-            final int size = parameters.getEntries ();
-            this.values = new HashMap<String, Value[]> ();
+            final int size = parameters.getNumberOfEntries ();
+            this.values = new HashMap<String, List<Double>> ();
             for ( final String type : valueTypes )
             {
-                this.values.put ( type, new Value[size] );
+                this.values.put ( type, new ArrayList<Double> ( Arrays.asList ( new Double[size] ) ) );
             }
-            this.valueInformation = new ValueInformation[size];
+            this.valueInformation = new ArrayList<ValueInformation> ( Arrays.asList ( new ValueInformation[size] ) );
 
             render ();
         }
 
         @Override
-        public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
+        public void updateData ( final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
         {
-            System.arraycopy ( valueInformation, 0, this.valueInformation, index, valueInformation.length );
+            final List<ValueInformation> subVi = this.valueInformation.subList ( index, index + valueInformation.size () );
+            subVi.clear ();
+            subVi.addAll ( valueInformation );
 
-            for ( final Map.Entry<String, Value[]> entry : values.entrySet () )
+            for ( final Map.Entry<String, List<Double>> entry : values.entrySet () )
             {
-                final Value[] valueArray = this.values.get ( entry.getKey () );
-                System.arraycopy ( entry.getValue (), 0, valueArray, index, entry.getValue ().length );
+                final List<Double> valueArray = this.values.get ( entry.getKey () );
+
+                final List<Double> subVs = valueArray.subList ( index, index + valueInformation.size () );
+                subVs.clear ();
+                subVs.addAll ( entry.getValue () );
             }
 
             render ();

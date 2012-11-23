@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,15 +19,15 @@
 
 package org.openscada.hd.server.net;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 
 public class QueryHandler implements QueryListener
 {
@@ -44,16 +44,19 @@ public class QueryHandler implements QueryListener
         this.connectionHandler = connectionHandler;
     }
 
-    public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
+    @Override
+    public void updateData ( final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         this.connectionHandler.sendQueryData ( this.id, index, values, valueInformation );
     }
 
+    @Override
     public void updateParameters ( final QueryParameters parameters, final Set<String> valueTypes )
     {
         this.connectionHandler.sendQueryParameters ( this.id, parameters, valueTypes );
     }
 
+    @Override
     public void updateState ( final QueryState state )
     {
         this.connectionHandler.sendQueryState ( this.id, state );

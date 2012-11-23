@@ -28,7 +28,7 @@ import org.openscada.core.InvalidSessionException;
 import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
 
-public interface Service extends org.openscada.core.server.Service
+public interface Service extends org.openscada.core.server.Service<Session>
 {
     // Event methods - online
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
+import org.openscada.hd.data.HistoricalItemInformation;
 import org.openscada.hd.server.Session;
 import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
@@ -66,6 +66,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, ItemLis
         }
     }
 
+    @Override
     public void setItemListListener ( final ItemListListener itemListListener )
     {
         synchronized ( this )
@@ -78,6 +79,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, ItemLis
         }
     }
 
+    @Override
     public void listChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
         synchronized ( this )
@@ -97,7 +99,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, ItemLis
             {
                 for ( final HistoricalItemInformation item : addedOrModified )
                 {
-                    this.itemCache.put ( item.getId (), item );
+                    this.itemCache.put ( item.getItemId (), item );
                 }
             }
             fireListChanged ( addedOrModified, removed, full );

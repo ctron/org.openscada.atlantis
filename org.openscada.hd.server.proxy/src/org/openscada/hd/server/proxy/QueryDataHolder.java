@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,11 +20,11 @@
 package org.openscada.hd.server.proxy;
 
 import java.util.HashMap;
+import java.util.List;
 
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 
 public interface QueryDataHolder
 {
@@ -33,8 +33,8 @@ public interface QueryDataHolder
 
     public QueryState getState ();
 
-    public ValueInformation[] getValueInformation ();
+    public List<ValueInformation> getValueInformation ();
 
-    public HashMap<String, Value[]> getValues ();
+    public HashMap<String, List<Double>> getValues ();
 
 }

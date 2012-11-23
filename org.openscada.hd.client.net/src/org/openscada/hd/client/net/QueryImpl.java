@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,16 +19,16 @@
 
 package org.openscada.hd.client.net;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -111,14 +111,14 @@ public class QueryImpl implements Query
         } );
     }
 
-    private void fireDataChange ( final QueryListener listener, final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
+    private void fireDataChange ( final QueryListener listener, final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         this.executor.execute ( new Runnable () {
 
             @Override
             public void run ()
             {
-                logger.debug ( "Data update: {} (v: {}, vi: {})", new Object[] { index, values.size (), valueInformation.length } );
+                logger.debug ( "Data update: {} (v: {}, vi: {})", new Object[] { index, values.size (), valueInformation.size () } );
                 QueryImpl.this.listener.updateData ( index, values, valueInformation );
             }
         } );
@@ -167,7 +167,7 @@ public class QueryImpl implements Query
         }
     }
 
-    public void handleUpdateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
+    public void handleUpdateData ( final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         synchronized ( this )
         {

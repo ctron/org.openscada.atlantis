@@ -21,14 +21,15 @@ package org.openscada.hd.server.test;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.ValueInformation;
 
 public class ValueBuffer
 {
@@ -89,20 +90,22 @@ public class ValueBuffer
         startCal.setTimeInMillis ( this.start );
         final Calendar endCal = Calendar.getInstance ();
         endCal.setTimeInMillis ( this.end );
-        final ValueInformation info = new ValueInformation ( startCal, endCal, quality, 0.0, this.values.size () );
 
-        final Map<String, Value[]> values = new HashMap<String, Value[]> ();
+        final ValueInformation info = new ValueInformation ( quality, 0.0, this.start, this.end, this.values.size () );
+
+        final Map<String, List<Double>> values = new HashMap<String, List<Double>> ();
         if ( avg == null )
         {
-            values.put ( "AVG", new Value[] { new Value ( Double.NaN ) } );
+            values.put ( "AVG", Arrays.asList ( Double.NaN ) );
         }
         else
         {
-            values.put ( "AVG", new Value[] { new Value ( avg.doubleValue () ) } );
+            values.put ( "AVG", Arrays.asList ( avg.doubleValue () ) );
         }
-        values.put ( "MIN", new Value[] { new Value ( min ) } );
-        values.put ( "MAX", new Value[] { new Value ( max ) } );
-        this.listener.updateData ( this.index, values, new ValueInformation[] { info } );
+        values.put ( "MIN", Arrays.asList ( min ) );
+        values.put ( "MAX", Arrays.asList ( max ) );
+
+        this.listener.updateData ( this.index, values, Arrays.asList ( info ) );
     }
 
 }
