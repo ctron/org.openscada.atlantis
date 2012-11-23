@@ -35,7 +35,7 @@ import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 public class CommonSumHandler extends AbstractMasterHandlerImpl
 {
 
-    private final List<Entry> entries = new LinkedList<Entry> ();
+    private volatile List<Entry> entries = new LinkedList<Entry> ();
 
     public CommonSumHandler ( final ObjectPoolTracker<MasterItem> poolTracker )
     {
@@ -50,15 +50,19 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
 
         final boolean debug = cfg.getBoolean ( "debug", false );
 
-        this.entries.clear ();
+        final List<Entry> entries = new LinkedList<Entry> ();
+
         final String[] tags = cfg.getStringChecked ( "tag", "'tag' must be set" ).split ( ", ?" );
         for ( final String tag : tags )
         {
             final String prefix = cfg.getString ( String.format ( "tag.%s.prefix", tag ), "osgi.source" );
             final String suffix = cfg.getString ( String.format ( "tag.%s.suffix", tag ) );
             final String pattern = cfg.getString ( String.format ( "tag.%s.pattern", tag ) );
-            this.entries.add ( new Entry ( tag, prefix, suffix, pattern, debug ) );
+            entries.add ( new Entry ( tag, prefix, suffix, pattern, debug ) );
         }
+
+        // now assign
+        this.entries = entries;
 
         reprocess ();
     }
@@ -90,7 +94,6 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
         {
             entry.end ( context, builder );
         }
-
     }
 
     private void convertSource ( final Builder builder )
