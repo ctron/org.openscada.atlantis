@@ -19,7 +19,13 @@
 
 package org.openscada.core.server.ngp;
 
+import java.util.Collection;
+
 import org.apache.mina.core.session.IoSession;
+import org.openscada.core.info.StatisticEntry;
+import org.openscada.core.info.StatisticsImpl;
+import org.openscada.core.server.common.stats.ManagedConnection;
+import org.openscada.protocol.ngp.common.StatisticsFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,24 +34,63 @@ public abstract class ServerConnection
 
     private final static Logger logger = LoggerFactory.getLogger ( ServerConnection.class );
 
+    private static final Object STATS_MESSAGES_SENT = new Object ();
+
+    private static final Object STATS_MESSAGES_RECEIVED = new Object ();
+
     private final IoSession session;
+
+    protected final StatisticsImpl statistics;
+
+    private ManagedConnection mxBean;
 
     public ServerConnection ( final IoSession session )
     {
         logger.info ( "Creating new server connection: {}", session );
 
+        this.statistics = new StatisticsImpl ();
+
         this.session = session;
+
+        this.mxBean = ManagedConnection.register ( new ManagedConnection () {
+            @Override
+            protected Collection<StatisticEntry> getEntries ()
+            {
+                return ServerConnection.this.statistics.getEntries ();
+            }
+
+            @Override
+            public void close ()
+            {
+                ServerConnection.this.session.close ( false );
+            }
+        }, session.getRemoteAddress () );
+
+        this.statistics.setLabel ( STATS_MESSAGES_SENT, "Messages sent" );
+        this.statistics.setLabel ( STATS_MESSAGES_RECEIVED, "Messages received" );
+
+        session.setAttribute ( StatisticsFilter.STATS_KEY, this.statistics );
     }
 
     public void dispose ()
     {
         logger.info ( "Disposing server connection: {}", this.session );
+
+        if ( this.mxBean != null )
+        {
+            this.mxBean.dispose ();
+            this.mxBean = null;
+        }
+
         requestClose ( true );
     }
 
     protected void sendMessage ( final Object message )
     {
         logger.trace ( "Sending message: {}", message );
+
+        this.statistics.changeCurrentValue ( STATS_MESSAGES_SENT, 1 );
+
         this.session.write ( message );
     }
 
@@ -55,4 +100,10 @@ public abstract class ServerConnection
     }
 
     public abstract void messageReceived ( Object message ) throws Exception;
+
+    public void handleMessageReceived ( final Object message ) throws Exception
+    {
+        this.statistics.changeCurrentValue ( STATS_MESSAGES_RECEIVED, 1 );
+        messageReceived ( message );
+    }
 }

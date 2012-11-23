@@ -36,6 +36,7 @@ import org.openscada.protocol.ngp.common.BaseConnection;
 import org.openscada.protocol.ngp.common.FilterChainBuilder;
 import org.openscada.protocol.ngp.common.ProtocolConfiguration;
 import org.openscada.protocol.ngp.common.SslHelper;
+import org.openscada.protocol.ngp.common.StatisticsFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +44,16 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ClientBaseConnection.class );
+
+    private static final Object STATS_CURRENT_STATE = new Object ();
+
+    private static final Object STATS_CONNECT_CALLS = new Object ();
+
+    private static final Object STATS_DISCONNECT_CALLS = new Object ();
+
+    private static final Object STATS_MESSAGES_SENT = new Object ();
+
+    private static final Object STATS_MESSAGES_RECEIVED = new Object ();
 
     private final NioSocketConnector connector;
 
@@ -81,6 +92,14 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
         this.connector.setFilterChainBuilder ( this.chainBuilder );
         this.connector.setHandler ( this.handler );
+
+        this.statistics.setLabel ( STATS_CURRENT_STATE, "Numeric connection state" );
+        this.statistics.setLabel ( STATS_CONNECT_CALLS, "Calls to connect" );
+        this.statistics.setLabel ( STATS_DISCONNECT_CALLS, "Calls to disconnect" );
+
+        this.statistics.setLabel ( STATS_MESSAGES_SENT, "Messages sent" );
+        this.statistics.setLabel ( STATS_MESSAGES_RECEIVED, "Messages received" );
+
     }
 
     private SslContextFactory makeSslContextFactory ( final ConnectionInformation connectionInformation ) throws Exception
@@ -91,12 +110,14 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
     @Override
     public void connect ()
     {
+        this.statistics.changeCurrentValue ( STATS_CONNECT_CALLS, 1 );
         switchState ( ConnectionState.CONNECTING, null );
     }
 
     @Override
     public void disconnect ()
     {
+        this.statistics.changeCurrentValue ( STATS_DISCONNECT_CALLS, 1 );
         switchState ( ConnectionState.CLOSING, null );
     }
 
@@ -260,6 +281,7 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
         if ( this.session != null )
         {
             this.session.close ( true );
+            this.session.removeAttribute ( StatisticsFilter.STATS_KEY );
             this.session = null;
         }
         setState ( ConnectionState.CLOSED, error );
@@ -336,6 +358,7 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
             logger.warn ( "Failed to set session ... there is still one set" );
         }
         this.session = session;
+        this.session.setAttribute ( StatisticsFilter.STATS_KEY, this.statistics );
     }
 
     private void beginLookup ()
@@ -414,6 +437,8 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
     {
         logger.debug ( "Setting state - {} -> {}", this.connectionState, connectionState );
 
+        this.statistics.setCurrentValue ( STATS_CURRENT_STATE, connectionState.ordinal () );
+
         if ( this.connectionState == connectionState )
         {
             return;
@@ -473,6 +498,7 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
             logger.warn ( "Received 'message' from wrong session" );
             return;
         }
+        this.statistics.changeCurrentValue ( STATS_MESSAGES_RECEIVED, 1 );
         handleMessage ( message );
     }
 
@@ -503,6 +529,8 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
             logger.warn ( "Tried to send message in wrong connection state ({}): {}", getState (), message );
             return;
         }
+
+        this.statistics.changeCurrentValue ( STATS_MESSAGES_SENT, 1 );
 
         this.session.write ( message );
     }

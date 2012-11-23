@@ -35,6 +35,7 @@ import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.core.net.ConnectionHelper;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.core.server.common.stats.ManagedConnection;
 import org.openscada.net.Constants;
 import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;

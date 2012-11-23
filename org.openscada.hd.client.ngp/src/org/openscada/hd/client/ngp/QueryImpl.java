@@ -70,6 +70,7 @@ public class QueryImpl implements Query
     @Override
     public void close ()
     {
+        Long queryId;
         synchronized ( this )
         {
             if ( this.closed )
@@ -83,11 +84,15 @@ public class QueryImpl implements Query
             // disconnect
             fireStateChange ( this.listener, QueryState.DISCONNECTED );
             this.listener = null;
+            queryId = this.queryId;
             this.queryId = null;
         }
 
         // request close
-        this.connection.closeQuery ( this );
+        if ( queryId != null )
+        {
+            this.connection.closeQuery ( queryId );
+        }
     }
 
     private void fireStateChange ( final QueryListener listener, final QueryState state )

@@ -57,7 +57,7 @@ public class ServerBaseHandler implements IoHandler
         final Object o = session.getAttribute ( "connection" );
         if ( o instanceof ServerConnection )
         {
-            ( (ServerConnection)o ).messageReceived ( message );
+            ( (ServerConnection)o ).handleMessageReceived ( message );
         }
     }
 

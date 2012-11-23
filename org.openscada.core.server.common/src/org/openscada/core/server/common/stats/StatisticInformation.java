@@ -1,4 +1,4 @@
-package org.openscada.core.server.net;
+package org.openscada.core.server.common.stats;
 
 import java.beans.ConstructorProperties;
 

@@ -51,6 +51,8 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 {
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
+    private static final Object STATS_OPEN_QUERIES = new Object ();
+
     private final ItemManager itemManager;
 
     private final Map<Long, QueryImpl> queries = new HashMap<Long, QueryImpl> ();
@@ -61,6 +63,8 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     {
         super ( connectionInformation );
         this.itemManager = new ItemManager ( this.executor, this );
+
+        this.statistics.setLabel ( STATS_OPEN_QUERIES, "Open queries" );
     }
 
     @Override
@@ -85,6 +89,8 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
         final Collection<QueryImpl> queries = new ArrayList<QueryImpl> ( this.queries.values () );
         // clear the list now so that the closeQuery calls will see that the query is already closed
         this.queries.clear ();
+
+        this.statistics.setCurrentValue ( STATS_OPEN_QUERIES, this.queries.size () );
 
         // close all queries
         for ( final QueryImpl query : queries )
@@ -113,6 +119,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
             final QueryImpl query = new QueryImpl ( this.executor, this, queryId, itemId, parameters, listener );
             this.queries.put ( queryId, query );
+            this.statistics.setCurrentValue ( STATS_OPEN_QUERIES, this.queries.size () );
 
             sendCreateQuery ( queryId, itemId, parameters, updateData );
 
@@ -142,19 +149,19 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
         this.itemManager.removeListListener ( listener );
     }
 
-    protected void closeQuery ( final QueryImpl query )
+    protected void closeQuery ( final Long queryId )
     {
-        final Long id = query.getId ();
-        if ( id == null )
+        if ( queryId == null )
         {
             return;
         }
 
         synchronized ( this )
         {
-            if ( this.queries.remove ( id ) != null )
+            if ( this.queries.remove ( queryId ) != null )
             {
-                sendCloseQuery ( id );
+                sendCloseQuery ( queryId );
+                this.statistics.setCurrentValue ( STATS_OPEN_QUERIES, this.queries.size () );
             }
         }
     }
