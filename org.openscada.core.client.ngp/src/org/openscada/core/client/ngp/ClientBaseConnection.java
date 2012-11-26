@@ -77,11 +77,9 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
         this.stateNotifier = new StateNotifier ( this.executor, this );
 
-        final ProtocolConfiguration configuration = new ProtocolConfiguration ();
+        final ProtocolConfiguration configuration = new ProtocolConfiguration ( getClass ().getClassLoader () );
         configuration.setStreamCompressionLevel ( CompressionFilter.COMPRESSION_MAX );
         configuration.setSslContextFactory ( makeSslContextFactory ( connectionInformation ) );
-
-        configuration.setClassLoader ( getClass ().getClassLoader () );
 
         this.handler = new ClientConnectionHandler ( this, configuration );
 

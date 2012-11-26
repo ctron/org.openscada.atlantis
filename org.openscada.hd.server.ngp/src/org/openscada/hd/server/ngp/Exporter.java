@@ -61,9 +61,8 @@ public class Exporter implements LifecycleAware
 
     private static ProtocolConfiguration makeProtocolConfiguration ( final ConnectionInformation connectionInformation ) throws Exception
     {
-        final ProtocolConfiguration protocolConfiguration = new ProtocolConfiguration ();
+        final ProtocolConfiguration protocolConfiguration = new ProtocolConfiguration ( Exporter.class.getClassLoader () );
         protocolConfiguration.setSslContextFactory ( makeSslContextFactory ( connectionInformation.getProperties () ) );
-        protocolConfiguration.setClassLoader ( Exporter.class.getClassLoader () );
         return protocolConfiguration;
     }
 
