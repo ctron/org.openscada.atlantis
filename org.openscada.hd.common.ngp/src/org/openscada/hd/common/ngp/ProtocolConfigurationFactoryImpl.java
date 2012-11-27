@@ -29,6 +29,7 @@ import org.openscada.protocol.ngp.common.ProtocolConfiguration;
 
 public class ProtocolConfigurationFactoryImpl extends DefaultProtocolConfigurationFactory
 {
+    private static final String PROTOCOL_VERSION = "hd.v1";
 
     public ProtocolConfigurationFactoryImpl ( final ConnectionInformation connectionInformation )
     {
@@ -41,18 +42,18 @@ public class ProtocolConfigurationFactoryImpl extends DefaultProtocolConfigurati
         // check if we prefer the binary protocol
         if ( preferJava () )
         {
-            addJavaProtocol ( configuration, ProtocolConfigurationFactoryImpl.class.getClassLoader () );
+            addJavaProtocol ( PROTOCOL_VERSION, configuration, ProtocolConfigurationFactoryImpl.class.getClassLoader () );
             addProtocol ( configuration, ProtocolFactory.createProtocolDescriptor () );
         }
         else
         {
             addProtocol ( configuration, ProtocolFactory.createProtocolDescriptor () );
-            addJavaProtocol ( configuration, ProtocolConfigurationFactoryImpl.class.getClassLoader () );
+            addJavaProtocol ( PROTOCOL_VERSION, configuration, ProtocolConfigurationFactoryImpl.class.getClassLoader () );
         }
 
         if ( preferJava () )
         {
-            configuration.setPreferredProtocols ( Arrays.asList ( "java" ) );
+            configuration.setPreferredProtocols ( Arrays.asList ( "java." + PROTOCOL_VERSION ) );
         }
     }
 
