@@ -21,7 +21,10 @@ package org.openscada.core.server.ngp;
 
 import java.util.Collection;
 
+import javax.net.ssl.SSLSession;
+
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.filter.ssl.SslFilter;
 import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.core.server.common.stats.ManagedConnection;
@@ -106,4 +109,24 @@ public abstract class ServerConnection
         this.statistics.changeCurrentValue ( STATS_MESSAGES_RECEIVED, 1 );
         messageReceived ( message );
     }
+
+    public SSLSession getSslSession ()
+    {
+        final IoSession session = this.session;
+        if ( session == null )
+        {
+            return null;
+        }
+        final Object sslSession = session.getAttribute ( SslFilter.SSL_SESSION );
+
+        if ( sslSession instanceof SSLSession )
+        {
+            return (SSLSession)sslSession;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 }

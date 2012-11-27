@@ -130,5 +130,4 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
         }
         super.dispose ();
     }
-
 }

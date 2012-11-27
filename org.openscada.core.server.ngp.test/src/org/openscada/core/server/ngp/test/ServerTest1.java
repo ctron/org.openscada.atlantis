@@ -41,7 +41,7 @@ public class ServerTest1 implements IApplication
 
     private static ProtocolConfiguration makeProtocolConfiguration () throws Exception
     {
-        final ProtocolConfiguration protocolConfiguration = new ProtocolConfiguration ();
+        final ProtocolConfiguration protocolConfiguration = new ProtocolConfiguration ( ServerTest1.class.getClassLoader () );
         protocolConfiguration.setSslContextFactory ( makeSslContextFactory ( System.getProperties () ) );
         return protocolConfiguration;
     }

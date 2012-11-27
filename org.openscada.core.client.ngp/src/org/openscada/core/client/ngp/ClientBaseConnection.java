@@ -22,11 +22,14 @@ package org.openscada.core.client.ngp;
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 
+import javax.net.ssl.SSLSession;
+
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.compression.CompressionFilter;
 import org.apache.mina.filter.ssl.SslContextFactory;
+import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
@@ -77,11 +80,9 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
         this.stateNotifier = new StateNotifier ( this.executor, this );
 
-        final ProtocolConfiguration configuration = new ProtocolConfiguration ();
+        final ProtocolConfiguration configuration = new ProtocolConfiguration ( getClass ().getClassLoader () );
         configuration.setStreamCompressionLevel ( CompressionFilter.COMPRESSION_MAX );
         configuration.setSslContextFactory ( makeSslContextFactory ( connectionInformation ) );
-
-        configuration.setClassLoader ( getClass ().getClassLoader () );
 
         this.handler = new ClientConnectionHandler ( this, configuration );
 
@@ -534,4 +535,24 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
         this.session.write ( message );
     }
+
+    public SSLSession getSslSession ()
+    {
+        final IoSession session = this.session;
+        if ( session == null )
+        {
+            return null;
+        }
+        final Object sslSession = session.getAttribute ( SslFilter.SSL_SESSION );
+
+        if ( sslSession instanceof SSLSession )
+        {
+            return (SSLSession)sslSession;
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 }
