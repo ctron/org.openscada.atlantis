@@ -26,16 +26,16 @@ import org.apache.mina.core.session.IoSession;
 import org.openscada.core.server.ngp.ServerBase;
 import org.openscada.core.server.ngp.ServerConnection;
 import org.openscada.hd.server.Service;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
+import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 
 public class Server extends ServerBase
 {
 
     private final Service service;
 
-    public Server ( final Collection<InetSocketAddress> addresses, final ProtocolConfiguration protocolConfiguration, final Service service ) throws Exception
+    public Server ( final Collection<InetSocketAddress> addresses, final ProtocolConfigurationFactory protocolConfigurationFactory, final Service service ) throws Exception
     {
-        super ( addresses, protocolConfiguration );
+        super ( addresses, protocolConfigurationFactory );
         this.service = service;
     }
 

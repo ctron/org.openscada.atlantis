@@ -27,8 +27,6 @@ import javax.net.ssl.SSLSession;
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.session.IoSession;
-import org.apache.mina.filter.compression.CompressionFilter;
-import org.apache.mina.filter.ssl.SslContextFactory;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.openscada.core.ConnectionInformation;
@@ -37,8 +35,7 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.protocol.ngp.common.BaseConnection;
 import org.openscada.protocol.ngp.common.FilterChainBuilder;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
-import org.openscada.protocol.ngp.common.SslHelper;
+import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.protocol.ngp.common.StatisticsFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,17 +71,13 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private final FilterChainBuilder chainBuilder;
 
-    public ClientBaseConnection ( final ConnectionInformation connectionInformation ) throws Exception
+    public ClientBaseConnection ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( connectionInformation );
 
         this.stateNotifier = new StateNotifier ( this.executor, this );
 
-        final ProtocolConfiguration configuration = new ProtocolConfiguration ( getClass ().getClassLoader () );
-        configuration.setStreamCompressionLevel ( CompressionFilter.COMPRESSION_MAX );
-        configuration.setSslContextFactory ( makeSslContextFactory ( connectionInformation ) );
-
-        this.handler = new ClientConnectionHandler ( this, configuration );
+        this.handler = new ClientConnectionHandler ( this, protocolConfigurationFactory.createConfiguration ( true ) );
 
         this.connector = new NioSocketConnector ();
 
@@ -100,12 +93,6 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
         this.statistics.setLabel ( STATS_MESSAGES_SENT, "Messages sent" );
         this.statistics.setLabel ( STATS_MESSAGES_RECEIVED, "Messages received" );
-
-    }
-
-    private SslContextFactory makeSslContextFactory ( final ConnectionInformation connectionInformation ) throws Exception
-    {
-        return SslHelper.createDefaultSslFactory ( connectionInformation.getProperties (), true );
     }
 
     @Override

@@ -167,18 +167,22 @@
   	
   	<openscada.builder.copyPlugin id="org.openscada.hd"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.client.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.client.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.client.ngp"/>
-	<openscada.builder.copyPlugin id="org.openscada.hd.net"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.common.item"/>
 
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter"/>
-	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.ngp"/>
-
-	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
+	
+  	<openscada.builder.copyPlugin id="org.openscada.hd.common.ngp"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.client.ngp"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.ngp"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.ngp"/>
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.hd.net"/>
+	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.client.net"/>
+  	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.net"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.hds"/>
   	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.master.hds"/>

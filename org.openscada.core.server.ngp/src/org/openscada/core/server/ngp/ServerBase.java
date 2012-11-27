@@ -26,7 +26,7 @@ import java.util.Collection;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
 import org.openscada.protocol.ngp.common.FilterChainBuilder;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
+import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +41,7 @@ public abstract class ServerBase
 
     private final FilterChainBuilder chainBuilder;
 
-    public ServerBase ( final Collection<InetSocketAddress> addresses, final ProtocolConfiguration protocolConfiguration ) throws Exception
+    public ServerBase ( final Collection<InetSocketAddress> addresses, final ProtocolConfigurationFactory protocolConfigurationFactory ) throws Exception
     {
         this.addresses = addresses;
 
@@ -52,7 +52,7 @@ public abstract class ServerBase
         this.chainBuilder.setLoggerName ( ServerBase.class.getName () + ".protocol" );
 
         this.acceptor.setFilterChainBuilder ( this.chainBuilder );
-        this.acceptor.setHandler ( new ServerBaseHandler ( this, protocolConfiguration ) );
+        this.acceptor.setHandler ( new ServerBaseHandler ( this, protocolConfigurationFactory.createConfiguration ( false ) ) );
     }
 
     public void start () throws IOException

@@ -24,6 +24,7 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.data.message.CreateSession;
 import org.openscada.core.data.message.SessionAccepted;
 import org.openscada.core.data.message.SessionRejected;
+import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,9 +35,9 @@ public class ConnectionBaseImpl extends ClientBaseConnection
 
     private long sequenceNumber = 0;
 
-    public ConnectionBaseImpl ( final ConnectionInformation connectionInformation ) throws Exception
+    public ConnectionBaseImpl ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
     {
-        super ( connectionInformation );
+        super ( protocolConfigurationFactory, connectionInformation );
     }
 
     @Override

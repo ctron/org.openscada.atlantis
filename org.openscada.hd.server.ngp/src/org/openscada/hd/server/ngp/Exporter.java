@@ -23,35 +23,33 @@ import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
-import java.util.Map;
 
-import org.apache.mina.filter.ssl.SslContextFactory;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.hd.common.ngp.ProtocolConfigurationFactoryImpl;
 import org.openscada.hd.server.Service;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
-import org.openscada.protocol.ngp.common.SslHelper;
+import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.utils.lifecycle.LifecycleAware;
 
 public class Exporter implements LifecycleAware
 {
     private Server server;
 
-    private final ProtocolConfiguration protocolConfiguration;
+    private final ProtocolConfigurationFactory protocolConfigurationFactory;
 
     private Collection<InetSocketAddress> addresses = new LinkedList<InetSocketAddress> ();
 
     private final Service service;
 
-    public Exporter ( final Service service, final ProtocolConfiguration protocolConfiguration, final Collection<InetSocketAddress> addresses )
+    public Exporter ( final Service service, final ProtocolConfigurationFactory protocolConfigurationFactory, final Collection<InetSocketAddress> addresses )
     {
         this.service = service;
-        this.protocolConfiguration = protocolConfiguration;
+        this.protocolConfigurationFactory = protocolConfigurationFactory;
         this.addresses = addresses;
     }
 
     public Exporter ( final Service service, final ConnectionInformation connectionInformation ) throws Exception
     {
-        this ( service, makeProtocolConfiguration ( connectionInformation ), Collections.singletonList ( new InetSocketAddress ( connectionInformation.getTarget (), connectionInformation.getSecondaryTarget () ) ) );
+        this ( service, new ProtocolConfigurationFactoryImpl ( connectionInformation ), Collections.singletonList ( new InetSocketAddress ( connectionInformation.getTarget (), connectionInformation.getSecondaryTarget () ) ) );
     }
 
     public Class<? extends Service> getServiceClass ()
@@ -59,21 +57,9 @@ public class Exporter implements LifecycleAware
         return this.service.getClass ();
     }
 
-    private static ProtocolConfiguration makeProtocolConfiguration ( final ConnectionInformation connectionInformation ) throws Exception
-    {
-        final ProtocolConfiguration protocolConfiguration = new ProtocolConfiguration ( Exporter.class.getClassLoader () );
-        protocolConfiguration.setSslContextFactory ( makeSslContextFactory ( connectionInformation.getProperties () ) );
-        return protocolConfiguration;
-    }
-
-    private static SslContextFactory makeSslContextFactory ( final Map<String, String> properties ) throws Exception
-    {
-        return SslHelper.createDefaultSslFactory ( properties, false );
-    }
-
     private void createServer () throws Exception
     {
-        this.server = new Server ( this.addresses, this.protocolConfiguration, this.service );
+        this.server = new Server ( this.addresses, this.protocolConfigurationFactory, this.service );
         this.server.start ();
     }
 

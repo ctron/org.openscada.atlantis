@@ -34,6 +34,7 @@ import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryState;
 import org.openscada.hd.client.Connection;
+import org.openscada.hd.common.ngp.ProtocolConfigurationFactoryImpl;
 import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.data.message.ChangeQueryParameters;
 import org.openscada.hd.data.message.CloseQuery;
@@ -61,7 +62,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
     public ConnectionImpl ( final ConnectionInformation connectionInformation ) throws Exception
     {
-        super ( connectionInformation );
+        super ( new ProtocolConfigurationFactoryImpl ( connectionInformation ), connectionInformation );
         this.itemManager = new ItemManager ( this.executor, this );
 
         this.statistics.setLabel ( STATS_OPEN_QUERIES, "Open queries" );
@@ -206,6 +207,8 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
     private void handleListUpdate ( final ListUpdate message )
     {
+        logger.debug ( "List update - addedOrModified: {}, removed: {}, full: {}", new Object[] { message.getAddedOrModified (), message.getRemoved (), message.isFullUpdate () } );
+
         this.itemManager.handleListUpdate ( message.getAddedOrModified (), message.getRemoved (), message.isFullUpdate () );
     }
 
@@ -262,6 +265,8 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
     protected void sendBrowseRequestState ( final boolean state )
     {
+        logger.debug ( "Requesting browse state: {}", state );
+
         if ( state )
         {
             sendMessage ( new StartBrowse () );

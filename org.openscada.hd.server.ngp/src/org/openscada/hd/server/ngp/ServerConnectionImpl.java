@@ -125,16 +125,20 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
 
     private void handelStopBrowse ()
     {
+        logger.debug ( "Stopping browser" );
         this.session.setItemListListener ( null );
     }
 
     private void handleStartBrowse ()
     {
+        logger.debug ( "Starting browser" );
         this.session.setItemListListener ( this.listener );
     }
 
     protected void handleListChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
+        logger.debug ( "List changed - addedOrModified: {}, removed: {}, full: {}", new Object[] { addedOrModified, removed, full } );
+
         sendMessage ( new ListUpdate ( addedOrModified, removed, full ) );
     }
 

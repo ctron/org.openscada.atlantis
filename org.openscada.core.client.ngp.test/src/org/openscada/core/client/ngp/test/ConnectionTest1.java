@@ -23,6 +23,9 @@ import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ngp.ClientBaseConnection;
+import org.openscada.protocol.ngp.common.DefaultProtocolConfigurationFactory;
+import org.openscada.protocol.ngp.common.ProtocolConfiguration;
+import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -38,8 +41,18 @@ public class ConnectionTest1 implements IApplication
     {
         final String uri = System.getProperty ( "connectionUri", "da:ngp://localhost:1202" );
 
+        final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( uri );
+
+        final ProtocolConfigurationFactory protocolConfigurationFactory = new DefaultProtocolConfigurationFactory ( connectionInformation ) {
+            @Override
+            protected void customizeConfiguration ( final ProtocolConfiguration configuration, final boolean clientMode )
+            {
+                addJavaProtocol ( configuration, ConnectionTest1.class.getClassLoader () );
+            }
+        };
+
         logger.info ( "Start - Begin" );
-        this.connection = new ClientBaseConnection ( ConnectionInformation.fromURI ( uri ) ) {
+        this.connection = new ClientBaseConnection ( protocolConfigurationFactory, connectionInformation ) {
             @Override
             protected void handleMessage ( final Object message )
             {

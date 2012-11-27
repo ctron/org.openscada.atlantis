@@ -32,6 +32,7 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.openscada.core.server.ngp.ServerBase;
 import org.openscada.core.server.ngp.ServerConnection;
 import org.openscada.protocol.ngp.common.ProtocolConfiguration;
+import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.protocol.ngp.common.SslHelper;
 
 public class ServerTest1 implements IApplication
@@ -59,7 +60,15 @@ public class ServerTest1 implements IApplication
     @Override
     public Object start ( final IApplicationContext context ) throws Exception
     {
-        this.server = new ServerBase ( Arrays.asList ( new InetSocketAddress ( 1202 ) ), makeProtocolConfiguration () ) {
+        final ProtocolConfigurationFactory factory = new ProtocolConfigurationFactory () {
+            @Override
+            public ProtocolConfiguration createConfiguration ( final boolean clientMode ) throws Exception
+            {
+                return makeProtocolConfiguration ();
+            }
+        };
+
+        this.server = new ServerBase ( Arrays.asList ( new InetSocketAddress ( 1202 ) ), factory ) {
             @Override
             public org.openscada.core.server.ngp.ServerConnection createNewConnection ( final IoSession session )
             {
