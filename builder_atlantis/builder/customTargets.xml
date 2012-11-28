@@ -259,6 +259,8 @@
   	<openscada.builder.copyPlugin id="org.openscada.ca.file" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.jdbc" />
   	
+  	<openscada.builder.copyPlugin id="org.openscada.ca.common.ngp" />
+  	
   	<openscada.builder.copyPlugin id="org.openscada.ca.server" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.server.osgi" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.server.ngp" />
