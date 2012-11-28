@@ -64,13 +64,6 @@ authority.
          unpack="false"/>
 
    <plugin
-         id="org.openscada.ca.servlet.jaxws"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.ca.jdbc"
          download-size="0"
          install-size="0"
@@ -100,13 +93,6 @@ authority.
 
    <plugin
          id="org.openscada.ca.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.ca.client.jaxws"
          download-size="0"
          install-size="0"
          version="0.0.0"
