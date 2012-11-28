@@ -244,6 +244,8 @@
   	
   	<openscada.builder.copyPlugin id="org.openscada.ca.client"/>
   	<openscada.builder.copyPlugin id="org.openscada.ca.client.jaxws"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ca.client.ngp"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.ca.connection.provider"/>
 
   	<openscada.builder.copyPlugin id="org.openscada.ca" />
@@ -256,6 +258,12 @@
   	
   	<openscada.builder.copyPlugin id="org.openscada.ca.file" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.jdbc" />
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.ca.server" />
+  	<openscada.builder.copyPlugin id="org.openscada.ca.server.osgi" />
+  	<openscada.builder.copyPlugin id="org.openscada.ca.server.ngp" />
+  	<openscada.builder.copyPlugin id="org.openscada.ca.server.exporter.ngp" />
+  	
   	<!-- SEC stuff for Master -->
   	
   	<openscada.builder.copyPlugin id="org.openscada.sec.provider.script" />
