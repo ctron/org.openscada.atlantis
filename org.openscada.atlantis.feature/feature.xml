@@ -52,7 +52,6 @@
       <import plugin="org.springframework.beans"/>
       <import plugin="org.springframework.core"/>
       <import plugin="org.openscada.ca"/>
-      <import plugin="org.openscada.ca.servlet.jaxws"/>
       <import plugin="org.openscada.core.connection.provider"/>
       <import plugin="org.eclipse.osgi"/>
       <import feature="org.openscada.external" version="0.16.0.qualifier"/>
