@@ -1,0 +1,24 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA CA Server OSGi
+Bundle-SymbolicName: org.openscada.ca.server.osgi
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.openscada.ca.server.osgi.Activator
+Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.openscada.ae.sec;version="1.0.0",
+ org.openscada.ca;version="1.0.0",
+ org.openscada.ca.data;version="1.0.0",
+ org.openscada.ca.server;version="1.0.0",
+ org.openscada.core;version="1.0.0",
+ org.openscada.core.server;version="1.0.0",
+ org.openscada.core.server.common;version="1.0.0",
+ org.openscada.core.server.common.session;version="1.0.0",
+ org.openscada.sec;version="1.0.0",
+ org.openscada.sec.osgi;version="1.0.0",
+ org.openscada.utils.concurrent;version="1.0.0",
+ org.openscada.utils.lifecycle;version="1.0.0",
+ org.openscada.utils.osgi;version="1.0.0",
+ org.openscada.utils.statuscodes;version="1.0.0",
+ org.osgi.framework;version="1.3.0",
+ org.slf4j;version="1.5.0"

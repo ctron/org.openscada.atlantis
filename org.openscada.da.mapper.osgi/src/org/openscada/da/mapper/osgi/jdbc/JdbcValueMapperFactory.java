@@ -21,10 +21,10 @@ package org.openscada.da.mapper.osgi.jdbc;
 
 import java.util.Map;
 
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.mapper.ValueMapper;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ManageableObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;

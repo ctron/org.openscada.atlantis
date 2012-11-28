@@ -84,6 +84,8 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     @Override
     protected void onConnectionClosed ()
     {
+        super.onConnectionClosed ();
+
         this.itemManager.onConnectionClosed ();
 
         // make a copy in order to prevent a ConcurrentModificationException

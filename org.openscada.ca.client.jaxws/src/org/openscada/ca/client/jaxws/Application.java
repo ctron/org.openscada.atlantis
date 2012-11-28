@@ -21,8 +21,8 @@ package org.openscada.ca.client.jaxws;
 
 import java.net.MalformedURLException;
 
-import org.openscada.ca.ConfigurationInformation;
-import org.openscada.ca.FactoryInformation;
+import org.openscada.ca.data.ConfigurationInformation;
+import org.openscada.ca.data.FactoryInformation;
 import org.openscada.ca.servlet.jaxws.RemoteConfigurationAdministrator;
 
 public class Application

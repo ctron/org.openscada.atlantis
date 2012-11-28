@@ -1,12 +1,13 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA CA Client
+Bundle-Name: openSCADA CA Client
 Bundle-SymbolicName: org.openscada.ca.client
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ca;version="0.15.0",
- org.openscada.core.client;version="0.15.0",
- org.openscada.utils.concurrent;version="0.15.0",
- org.openscada.utils.concurrent.task;version="0.15.0"
-Export-Package: org.openscada.ca.client;version="0.15.0"
+Import-Package: org.openscada.ca;version="1.0.0",
+ org.openscada.ca.data;version="1.0.0",
+ org.openscada.core.client;version="1.0.0",
+ org.openscada.utils.concurrent;version="1.0.0",
+ org.openscada.utils.concurrent.task;version="1.0.0"
+Export-Package: org.openscada.ca.client;version="1.0.0";uses:="org.openscada.core.client,org.openscada.utils.concurrent"

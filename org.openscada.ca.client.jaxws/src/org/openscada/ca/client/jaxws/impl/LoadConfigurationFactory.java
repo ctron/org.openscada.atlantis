@@ -21,8 +21,8 @@ package org.openscada.ca.client.jaxws.impl;
 
 import java.util.concurrent.Callable;
 
-import org.openscada.ca.ConfigurationInformation;
 import org.openscada.ca.client.jaxws.RemoteConfigurationClient;
+import org.openscada.ca.data.ConfigurationInformation;
 
 public class LoadConfigurationFactory implements Callable<ConfigurationInformation>
 {

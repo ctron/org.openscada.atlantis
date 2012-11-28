@@ -22,8 +22,8 @@ package org.openscada.ca.client.jaxws.impl;
 import java.util.Collection;
 import java.util.concurrent.Callable;
 
-import org.openscada.ca.DiffEntry;
 import org.openscada.ca.client.jaxws.RemoteConfigurationClient;
+import org.openscada.ca.data.DiffEntry;
 
 public class ApplyDiff implements Callable<Void>
 {
@@ -38,6 +38,7 @@ public class ApplyDiff implements Callable<Void>
         this.changeSet = changeSet;
     }
 
+    @Override
     public Void call () throws Exception
     {
         this.port.getPort ().applyDiff ( this.changeSet, 0 );

@@ -22,9 +22,9 @@ package org.openscada.da.datasource.constant;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
@@ -74,7 +74,7 @@ public class ConstantDataSourceFactory extends AbstractServiceConfigurationFacto
     }
 
     @Override
-    protected Entry<ConstantDataSource> updateService ( final UserInformation userInformation, final String configurationId, final org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory.Entry<ConstantDataSource> entry, final Map<String, String> parameters ) throws Exception
+    protected Entry<ConstantDataSource> updateService ( final UserInformation userInformation, final String configurationId, final org.openscada.ca.common.factory.AbstractServiceConfigurationFactory.Entry<ConstantDataSource> entry, final Map<String, String> parameters ) throws Exception
     {
         entry.getService ().update ( parameters );
         return null;

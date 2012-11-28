@@ -17,6 +17,6 @@ Import-Package: org.openscada.ae;version="1.0.0",
  org.openscada.da.datasource;version="1.0.0",
  org.openscada.da.master;version="1.0.0",
  org.openscada.sec;version="1.0.0",
- org.openscada.utils.osgi.ca.factory;version="1.0.0",
+ org.openscada.ca.common.factory;version="1.0.0",
  org.openscada.utils.osgi.pool;version="1.0.0",
  org.osgi.framework;version="1.6.0"

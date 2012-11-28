@@ -5,12 +5,19 @@ Bundle-SymbolicName: org.openscada.ca.client.jaxws
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ca;version="0.16.0",
- org.openscada.ca.client;version="0.15.0",
- org.openscada.ca.servlet.jaxws;version="0.15.0",
- org.openscada.core;version="0.15.0",
- org.openscada.core.client;version="0.15.0",
- org.openscada.utils.concurrent;version="0.15.0",
- org.openscada.utils.concurrent.task;version="0.15.0",
+Import-Package: org.openscada.ca;version="1.0.0",
+ org.openscada.ca.client;version="1.0.0",
+ org.openscada.ca.data;version="1.0.0",
+ org.openscada.ca.servlet.jaxws;version="1.0.0",
+ org.openscada.core;version="1.0.0",
+ org.openscada.core.client;version="1.0.0",
+ org.openscada.utils.concurrent;version="1.0.0",
+ org.openscada.utils.concurrent.task;version="1.0.0",
  org.slf4j;version="1.5.0"
-Export-Package: org.openscada.ca.client.jaxws;version="0.15.0";uses:="org.openscada.ca.servelt.jaxws,javax.xml.namespace"
+Export-Package: org.openscada.ca.client.jaxws;version="1.0.0";
+  uses:="org.openscada.core.client,
+   org.openscada.ca.servlet.jaxws,
+   org.openscada.ca.client,
+   org.openscada.utils.concurrent,
+   org.openscada.core,
+   javax.xml.namespace"

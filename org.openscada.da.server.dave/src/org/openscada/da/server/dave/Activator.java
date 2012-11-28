@@ -26,12 +26,12 @@ import java.util.concurrent.Executors;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.ca.common.factory.BeanConfigurationFactory;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.dave.data.VariableManager;
 import org.openscada.da.server.dave.data.VariableManagerImpl;
 import org.openscada.da.server.dave.factory.ConfigurationFactoryImpl;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.ca.factory.BeanConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;

@@ -33,6 +33,10 @@
          id="org.openscada.hd"
          version="0.0.0"/>
 
+   <includes
+         id="org.openscada.ca"
+         version="0.0.0"/>
+
    <requires>
       <import plugin="org.apache.mina.core"/>
       <import plugin="org.apache.mina.transport.socket.apr"/>
@@ -97,6 +101,20 @@
 
    <plugin
          id="org.openscada.spring.server"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.sec.provider.jdbc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.sec.provider.script"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -23,7 +23,6 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -34,15 +33,15 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.ca.ConfigurationInformation;
-import org.openscada.ca.DiffEntry;
-import org.openscada.ca.FactoryInformation;
 import org.openscada.ca.client.Connection;
 import org.openscada.ca.client.FactoriesListener;
 import org.openscada.ca.client.jaxws.impl.ApplyDiff;
 import org.openscada.ca.client.jaxws.impl.LoadConfigurationFactory;
 import org.openscada.ca.client.jaxws.impl.QueryFactory;
 import org.openscada.ca.client.jaxws.impl.QueryFactoryList;
+import org.openscada.ca.data.ConfigurationInformation;
+import org.openscada.ca.data.DiffEntry;
+import org.openscada.ca.data.FactoryInformation;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.client.ConnectionState;
@@ -333,7 +332,7 @@ public class ConnectionImpl implements Connection
     }
 
     @Override
-    public synchronized NotifyFuture<Void> applyDiff ( final Collection<DiffEntry> changeSet )
+    public synchronized NotifyFuture<Void> applyDiff ( final List<DiffEntry> changeSet )
     {
         if ( this.executor == null )
         {

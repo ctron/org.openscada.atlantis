@@ -25,8 +25,8 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ae.server.common.event.EventQuery;
 import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;

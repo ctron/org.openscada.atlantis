@@ -239,10 +239,27 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.info"/>
   	
   	<!-- OpenSCADA CA -->
+
+  	<openscada.builder.copyFeature id="org.openscada.ca" />
   	
   	<openscada.builder.copyPlugin id="org.openscada.ca.client"/>
   	<openscada.builder.copyPlugin id="org.openscada.ca.client.jaxws"/>
   	<openscada.builder.copyPlugin id="org.openscada.ca.connection.provider"/>
+
+  	<openscada.builder.copyPlugin id="org.openscada.ca" />
+  	<openscada.builder.copyPlugin id="org.openscada.ca.servlet" />
+  	<openscada.builder.copyPlugin id="org.openscada.ca.servlet.jaxws" />
+  	<openscada.builder.copyPlugin id="org.openscada.ca.servlet.json" />
+  	<openscada.builder.copyPlugin id="org.openscada.ca.common" />
+	<openscada.builder.copyPlugin id="org.openscada.ca.console" />
+  	<openscada.builder.copyPlugin id="org.openscada.ca.oscar" />
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.ca.file" />
+  	<openscada.builder.copyPlugin id="org.openscada.ca.jdbc" />
+  	<!-- SEC stuff for Master -->
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.sec.provider.script" />
+  	<openscada.builder.copyPlugin id="org.openscada.sec.provider.jdbc" />
   	
   	<!-- Additional stuff -->
   	

@@ -21,8 +21,8 @@ package org.openscada.ca.client.jaxws.impl;
 
 import java.util.concurrent.Callable;
 
-import org.openscada.ca.FactoryInformation;
 import org.openscada.ca.client.jaxws.RemoteConfigurationClient;
+import org.openscada.ca.data.FactoryInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

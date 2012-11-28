@@ -26,8 +26,8 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
