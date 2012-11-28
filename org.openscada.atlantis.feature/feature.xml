@@ -79,27 +79,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.openscada.ca.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.ca.client.jaxws"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.ca.connection.provider"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.spring.server"
          download-size="0"
          install-size="0"
