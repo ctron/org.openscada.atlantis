@@ -25,7 +25,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Application to export a storage using the OpenSCADA NET protocol
+ * Application to export a storage using the OpenSCADA NGP protocol
  * 
  * @author Jens Reimann
  */
@@ -50,7 +50,7 @@ public class Application
             }
             if ( ci == null )
             {
-                ci = ConnectionInformation.fromURI ( "hd:ngp://0.0.0.0:" + System.getProperty ( "openscada.hd.net.server.port", "1402" ) );
+                ci = ConnectionInformation.fromURI ( "hd:ngp://0.0.0.0:" + System.getProperty ( "openscada.hd.ngp.server.port", "2301" ) );
             }
 
             // create exporter
