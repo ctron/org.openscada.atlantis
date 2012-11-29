@@ -295,7 +295,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
     public void sendLoadMore ( final long queryId, final int count )
     {
-        sendMessage ( new LoadMore ( queryId ) );
+        sendMessage ( new LoadMore ( queryId, count ) );
     }
 
     public void sendCreateQuery ( final long queryId, final String queryType, final String queryData )

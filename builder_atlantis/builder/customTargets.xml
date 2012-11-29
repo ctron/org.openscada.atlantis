@@ -205,6 +205,8 @@
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.common.ngp"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.client.ngp"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.ngp"/>
+  	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter.ngp"/>
   	
 	<openscada.builder.copyPlugin id="org.openscada.ae.connection.provider"/>
   	
