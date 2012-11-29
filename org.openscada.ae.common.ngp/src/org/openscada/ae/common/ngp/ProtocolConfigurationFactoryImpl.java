@@ -22,7 +22,7 @@ package org.openscada.ae.common.ngp;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.openscada.ca.protocol.ngp.codec.ProtocolFactory;
+import org.openscada.ae.protocol.ngp.codec.ProtocolFactory;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.protocol.ngp.common.DefaultProtocolConfigurationFactory;
 import org.openscada.protocol.ngp.common.ProtocolConfiguration;
