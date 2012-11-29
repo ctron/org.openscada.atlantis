@@ -159,7 +159,7 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
         }
         else if ( message instanceof StopBrowse )
         {
-            handelStopBrowse ();
+            handleStopBrowse ();
         }
         else if ( message instanceof SubscribeMonitorPool )
         {
@@ -297,7 +297,7 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
         this.service.unsubscribeEventQuery ( this.session, message.getEventPoolId () );
     }
 
-    private void handelStopBrowse ()
+    private void handleStopBrowse ()
     {
         if ( this.browserListenerManager == null )
         {
