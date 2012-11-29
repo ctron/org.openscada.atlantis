@@ -32,6 +32,7 @@ import org.openscada.ae.client.MonitorListener;
 import org.openscada.ae.common.ngp.ProtocolConfigurationFactoryImpl;
 import org.openscada.ae.data.QueryState;
 import org.openscada.ae.data.message.AcknowledgeRequest;
+import org.openscada.ae.data.message.BrowseData;
 import org.openscada.ae.data.message.CloseQuery;
 import org.openscada.ae.data.message.CreateQuery;
 import org.openscada.ae.data.message.EventPoolDataUpdate;
@@ -207,10 +208,19 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
         {
             handleUpdateQueryState ( (UpdateQueryState)message );
         }
+        else if ( message instanceof BrowseData )
+        {
+            handleBrowseData ( (BrowseData)message );
+        }
         else
         {
             super.handleMessage ( message );
         }
+    }
+
+    private void handleBrowseData ( final BrowseData message )
+    {
+        this.browserManager.updateData ( message.getAddedOrUpdated (), message.getRemoved () );
     }
 
     private void handleUpdateQueryState ( final UpdateQueryState message )

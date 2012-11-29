@@ -122,4 +122,9 @@ public class BrowserManager
             } );
         }
     }
+
+    public void updateData ( final List<BrowserEntry> addedOrUpdated, final Set<String> removed )
+    {
+        setCurrentEntries ( addedOrUpdated, removed, false );
+    }
 }
