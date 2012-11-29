@@ -22,14 +22,14 @@ package org.openscada.ae.common.ngp;
 import java.util.Arrays;
 import java.util.Map;
 
-import org.openscada.core.ConnectionInformation;
 import org.openscada.ca.protocol.ngp.codec.ProtocolFactory;
+import org.openscada.core.ConnectionInformation;
 import org.openscada.protocol.ngp.common.DefaultProtocolConfigurationFactory;
 import org.openscada.protocol.ngp.common.ProtocolConfiguration;
 
 public class ProtocolConfigurationFactoryImpl extends DefaultProtocolConfigurationFactory
 {
-    private static final String PROTOCOL_VERSION = "hd.v1";
+    private static final String PROTOCOL_VERSION = "ae.v1";
 
     public ProtocolConfigurationFactoryImpl ( final ConnectionInformation connectionInformation )
     {
