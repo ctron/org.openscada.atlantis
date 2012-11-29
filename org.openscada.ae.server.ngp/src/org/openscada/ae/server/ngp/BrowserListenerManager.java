@@ -24,9 +24,14 @@ import java.util.Set;
 
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.data.BrowserEntry;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BrowserListenerManager implements BrowserListener
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( BrowserListenerManager.class );
+
     private final ServerConnectionImpl connection;
 
     public BrowserListenerManager ( final ServerConnectionImpl connection )
@@ -37,6 +42,8 @@ public class BrowserListenerManager implements BrowserListener
     @Override
     public void dataChanged ( final List<BrowserEntry> addedOrUpdated, final Set<String> removed, final boolean full )
     {
+        logger.debug ( "Browser data changed: {}, {}, {}", new Object[] { addedOrUpdated, removed, full } );
+
         this.connection.handleBrowseDataChanged ( this, addedOrUpdated, removed, full );
     }
 
