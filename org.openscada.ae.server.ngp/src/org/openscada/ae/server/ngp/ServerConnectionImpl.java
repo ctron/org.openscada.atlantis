@@ -97,7 +97,7 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
     protected Session createSession ( final Properties properties ) throws UnableToCreateSessionException
     {
         final Session session = super.createSession ( properties );
-        session.setConditionListener ( new MonitorListener () {
+        session.setMonitorListener ( new MonitorListener () {
 
             @Override
             public void dataChanged ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )

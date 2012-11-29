@@ -536,7 +536,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                 ServerConnectionHandler.this.statusChangedEvents ( topic.toString (), state );
             }
         } );
-        this.session.setConditionListener ( this.monitorListener = new MonitorListener () {
+        this.session.setMonitorListener ( this.monitorListener = new MonitorListener () {
 
             @Override
             public void dataChanged ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
@@ -572,7 +572,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             this.session = null;
             try
             {
-                session.setConditionListener ( null );
+                session.setMonitorListener ( null );
                 session.setEventListener ( null );
                 session.setBrowserListener ( null );
                 this.service.closeSession ( session );

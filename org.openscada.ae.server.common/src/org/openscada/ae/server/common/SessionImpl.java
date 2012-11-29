@@ -48,7 +48,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
 
     private final MonitorListener monitorListener;
 
-    private volatile MonitorListener clientConditionListener;
+    private volatile MonitorListener clientMonitorListener;
 
     private volatile EventListener clientEventListener;
 
@@ -84,29 +84,29 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
             @Override
             public void dataChanged ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
             {
-                SessionImpl.this.conditionDataChanged ( subscriptionId, addedOrUpdated, removed, full );
+                SessionImpl.this.monitorDataChanged ( subscriptionId, addedOrUpdated, removed, full );
             }
 
             @Override
             public void updateStatus ( final Object poolId, final SubscriptionState state )
             {
-                SessionImpl.this.conditionStatusChanged ( poolId.toString (), state );
+                SessionImpl.this.monitorStatusChanged ( poolId.toString (), state );
             }
         };
     }
 
-    protected void conditionStatusChanged ( final String string, final SubscriptionState state )
+    protected void monitorStatusChanged ( final String string, final SubscriptionState state )
     {
-        final MonitorListener listener = this.clientConditionListener;
+        final MonitorListener listener = this.clientMonitorListener;
         if ( listener != null )
         {
             listener.updateStatus ( string, state );
         }
     }
 
-    protected void conditionDataChanged ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
+    protected void monitorDataChanged ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
-        final MonitorListener listener = this.clientConditionListener;
+        final MonitorListener listener = this.clientMonitorListener;
         if ( listener != null )
         {
             logger.info ( String.format ( "Condition Data Change: %s - %s - %s", subscriptionId, addedOrUpdated != null ? addedOrUpdated.size () : "none", removed != null ? removed.size () : "none" ) );
@@ -145,9 +145,9 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
     }
 
     @Override
-    public void setConditionListener ( final MonitorListener listener )
+    public void setMonitorListener ( final MonitorListener listener )
     {
-        this.clientConditionListener = listener;
+        this.clientMonitorListener = listener;
     }
 
     @Override
@@ -172,12 +172,12 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         this.queries.clear ();
 
         // clear listeners
-        this.clientConditionListener = null;
+        this.clientMonitorListener = null;
         this.clientEventListener = null;
         this.clientBrowserListener = null;
     }
 
-    public MonitorListener getConditionListener ()
+    public MonitorListener getMonitorListener ()
     {
         return this.monitorListener;
     }

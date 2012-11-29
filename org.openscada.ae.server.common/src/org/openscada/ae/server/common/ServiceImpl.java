@@ -76,7 +76,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
 
     private final Set<SessionImpl> sessions = new CopyOnWriteArraySet<SessionImpl> ();
 
-    private final SubscriptionManager conditionSubscriptions;
+    private final SubscriptionManager monitorSubscriptions;
 
     private final SubscriptionManager eventSubscriptions;
 
@@ -105,7 +105,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         this.context = context;
-        this.conditionSubscriptions = new SubscriptionManager ();
+        this.monitorSubscriptions = new SubscriptionManager ();
         this.eventSubscriptions = new SubscriptionManager ();
 
         // create akn handler
@@ -154,10 +154,10 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
         }
     }
 
-    protected void addConditionQuery ( final String id, final MonitorQuery query )
+    protected void addMonitorQuery ( final String id, final MonitorQuery query )
     {
         logger.info ( "Adding new query: {}", id );
-        this.conditionSubscriptions.setSource ( id, new MonitorQuerySource ( id, query ) );
+        this.monitorSubscriptions.setSource ( id, new MonitorQuerySource ( id, query ) );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.MONITORS ), attributes );
@@ -165,10 +165,10 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
         triggerBrowserChange ( Arrays.asList ( entry ), null, false );
     }
 
-    protected void removeConditionQuery ( final String id, final MonitorQuery query )
+    protected void removeMonitorQuery ( final String id, final MonitorQuery query )
     {
         logger.info ( "Removing query: {}", id );
-        this.conditionSubscriptions.setSource ( id, null );
+        this.monitorSubscriptions.setSource ( id, null );
 
         triggerBrowserChange ( null, Collections.singleton ( id ), false );
     }
@@ -196,6 +196,11 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
 
     protected synchronized void triggerBrowserChange ( final List<BrowserEntry> entries, final Set<String> removed, final boolean full )
     {
+        if ( full )
+        {
+            this.browserCache.clear ();
+        }
+
         if ( removed != null )
         {
             for ( final String id : removed )
@@ -247,7 +252,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
 
         try
         {
-            this.conditionSubscriptions.subscribe ( queryId, sessionImpl.getConditionListener () );
+            this.monitorSubscriptions.subscribe ( queryId, sessionImpl.getMonitorListener () );
         }
         catch ( final ValidationException e )
         {
@@ -262,7 +267,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
         final SessionImpl sessionImpl = validateSession ( session );
 
         logger.info ( "Request condition unsubscription: " + queryId );
-        this.conditionSubscriptions.unsubscribe ( queryId, sessionImpl.getConditionListener () );
+        this.monitorSubscriptions.unsubscribe ( queryId, sessionImpl.getMonitorListener () );
     }
 
     @Override
@@ -308,7 +313,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
 
         if ( sessionImpl != null )
         {
-            this.conditionSubscriptions.unsubscribeAll ( sessionImpl.getConditionListener () );
+            this.monitorSubscriptions.unsubscribeAll ( sessionImpl.getMonitorListener () );
             this.eventSubscriptions.unsubscribeAll ( sessionImpl.getEventListener () );
         }
     }
@@ -463,7 +468,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
                     final MonitorQuery query = this.conditionQueryRefs.remove ( id );
                     if ( query != null )
                     {
-                        removeConditionQuery ( id, query );
+                        removeMonitorQuery ( id, query );
                         this.context.ungetService ( ref );
                     }
                     final EventQuery eventQuery = this.eventQueryRefs.remove ( id );
@@ -493,7 +498,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
             if ( id != null )
             {
                 this.conditionQueryRefs.put ( id, query );
-                addConditionQuery ( id, query );
+                addMonitorQuery ( id, query );
             }
         }
         else
