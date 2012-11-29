@@ -19,7 +19,7 @@
 
 package org.openscada.ae.monitor;
 
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 
 public interface MonitorListener
 {

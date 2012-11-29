@@ -27,8 +27,8 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.openscada.ae.MonitorStatus;
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatus;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.core.Variant;

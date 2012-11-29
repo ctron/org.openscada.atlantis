@@ -19,10 +19,11 @@
 
 package org.openscada.ae.server.common.event;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
@@ -77,7 +78,7 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
 
             if ( !this.cachedData.isEmpty () )
             {
-                listener.dataChanged ( this.id, this.cachedData.toArray ( new Event[this.cachedData.size ()] ) );
+                listener.dataChanged ( this.id, new ArrayList<Event> ( this.cachedData ) );
             }
         }
 
@@ -110,9 +111,9 @@ public class EventQuerySource implements SubscriptionSource, org.openscada.ae.ev
     }
 
     @Override
-    public synchronized void handleEvent ( final Event[] event )
+    public synchronized void handleEvent ( final List<Event> event )
     {
-        this.cachedData.addAll ( Arrays.asList ( event ) );
+        this.cachedData.addAll ( event );
 
         for ( final EventListener listener : this.listeners )
         {

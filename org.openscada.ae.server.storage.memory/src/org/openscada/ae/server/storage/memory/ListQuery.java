@@ -20,7 +20,6 @@
 package org.openscada.ae.server.storage.memory;
 
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 
@@ -46,7 +45,7 @@ public class ListQuery implements Query
     }
 
     @Override
-    public Collection<Event> getNext ( final long count ) throws Exception
+    public List<Event> getNext ( final long count ) throws Exception
     {
         final List<Event> result = new ArrayList<Event> ();
 

@@ -23,11 +23,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -65,8 +66,7 @@ public class MonitorQuery
     {
         if ( this.listeners.add ( listener ) )
         {
-            final MonitorStatusInformation[] data = this.cachedData.values ().toArray ( new MonitorStatusInformation[0] );
-            listener.dataChanged ( data, null );
+            listener.dataChanged ( new ArrayList<MonitorStatusInformation> ( this.cachedData.values () ), null, true );
         }
     }
 
@@ -75,7 +75,7 @@ public class MonitorQuery
         this.listeners.remove ( listener );
     }
 
-    private synchronized void fireListener ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    private synchronized void fireListener ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         for ( final MonitorQueryListener listener : this.listeners )
         {
@@ -86,7 +86,7 @@ public class MonitorQuery
                 {
                     try
                     {
-                        listener.dataChanged ( addedOrUpdated, removed );
+                        listener.dataChanged ( addedOrUpdated, removed, full );
                     }
                     catch ( final Exception e )
                     {
@@ -97,7 +97,7 @@ public class MonitorQuery
         }
     }
 
-    protected synchronized void updateData ( final MonitorStatusInformation[] data, final String[] removed )
+    protected synchronized void updateData ( final List<MonitorStatusInformation> data, final Set<String> removed, final boolean full )
     {
         if ( data != null )
         {
@@ -117,7 +117,7 @@ public class MonitorQuery
                 }
             }
         }
-        fireListener ( data, removedItems.toArray ( new String[removedItems.size ()] ) );
+        fireListener ( data, removedItems, full );
     }
 
     public synchronized void dispose ()
@@ -148,12 +148,12 @@ public class MonitorQuery
                 newData.remove ( oldCi );
             }
         }
-        fireListener ( newData.toArray ( new MonitorStatusInformation[newData.size ()] ), null );
+        fireListener ( newData, null, true );
     }
 
     protected synchronized void clear ()
     {
-        fireListener ( null, this.cachedData.keySet ().toArray ( new String[this.cachedData.size ()] ) );
+        fireListener ( null, null, true );
         this.cachedData.clear ();
     }
 }

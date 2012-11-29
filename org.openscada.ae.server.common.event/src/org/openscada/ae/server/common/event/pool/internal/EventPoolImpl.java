@@ -133,7 +133,7 @@ public class EventPoolImpl extends AbstractEventQueryImpl implements EventListen
                         while ( it.hasNext () )
                         {
                             final List<org.openscada.ae.Event> chunk = it.next ();
-                            notifyEvent ( chunk.toArray ( new Event[chunk.size ()] ) );
+                            notifyEvent ( chunk );
                         }
                     }
                 }
@@ -155,7 +155,7 @@ public class EventPoolImpl extends AbstractEventQueryImpl implements EventListen
     }
 
     @Override
-    public synchronized void handleEvent ( final Event[] events )
+    public synchronized void handleEvent ( final List<Event> events )
     {
         addEvents ( events, this.matcher );
     }

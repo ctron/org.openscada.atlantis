@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.utils.lang.Immutable;
 
 /**

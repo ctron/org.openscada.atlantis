@@ -20,15 +20,14 @@
 package org.openscada.ae.net;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.ae.MonitorStatus;
-import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.Severity;
+import org.openscada.ae.data.MonitorStatus;
+import org.openscada.ae.data.MonitorStatusInformation;
+import org.openscada.ae.data.Severity;
 import org.openscada.core.Variant;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.data.ListValue;
@@ -41,7 +40,7 @@ import org.openscada.net.base.data.VoidValue;
 public class MonitorMessageHelper
 {
 
-    public static MonitorStatusInformation[] fromValue ( final Value baseValue )
+    public static List<MonitorStatusInformation> fromValue ( final Value baseValue )
     {
         if ( ! ( baseValue instanceof ListValue ) )
         {
@@ -61,12 +60,7 @@ public class MonitorMessageHelper
             }
         }
 
-        if ( result.isEmpty () )
-        {
-            return null;
-        }
-
-        return result.toArray ( new MonitorStatusInformation[result.size ()] );
+        return result;
     }
 
     private static MonitorStatusInformation fromValueEntry ( final Value entryValue )
@@ -83,11 +77,11 @@ public class MonitorMessageHelper
             final String id = ( (StringValue)value.get ( "id" ) ).getValue ();
             final Variant currentValue = MessageHelper.valueToVariant ( value.get ( "value" ), null );
 
-            Date lastAknTimestamp = null;
+            Long lastAknTimestamp = null;
             final LongValue lastAknTimestampValue = (LongValue)value.get ( "lastAknTimestamp" );
             if ( lastAknTimestampValue != null )
             {
-                lastAknTimestamp = new Date ( lastAknTimestampValue.getValue () );
+                lastAknTimestamp = lastAknTimestampValue.getValue ();
             }
 
             String lastAknUser = null;
@@ -97,18 +91,18 @@ public class MonitorMessageHelper
                 lastAknUser = lastAknUserValue.getValue ();
             }
 
-            Date statusTimestamp = null;
+            Long statusTimestamp = null;
             final LongValue statusTimestampValue = (LongValue)value.get ( "statusTimestamp" );
             if ( statusTimestampValue != null )
             {
-                statusTimestamp = new Date ( statusTimestampValue.getValue () );
+                statusTimestamp = statusTimestampValue.getValue ();
             }
 
-            Date lastFailTimestamp = null;
+            Long lastFailTimestamp = null;
             final LongValue lastFailTimestampValue = (LongValue)value.get ( "lastFailTimestamp" );
             if ( lastFailTimestampValue != null )
             {
-                lastFailTimestamp = new Date ( lastFailTimestampValue.getValue () );
+                lastFailTimestamp = lastFailTimestampValue.getValue ();
             }
 
             // get status
@@ -149,7 +143,7 @@ public class MonitorMessageHelper
         }
     }
 
-    public static Value toValue ( final MonitorStatusInformation[] added )
+    public static Value toValue ( final List<MonitorStatusInformation> added )
     {
         final ListValue result = new ListValue ();
 
@@ -176,17 +170,14 @@ public class MonitorMessageHelper
             value.put ( "value", currentValue );
         }
         value.put ( "lastAknUser", new StringValue ( condition.getLastAknUser () ) );
-        if ( condition.getStatusTimestamp () != null )
-        {
-            value.put ( "statusTimestamp", new LongValue ( condition.getStatusTimestamp ().getTime () ) );
-        }
+        value.put ( "statusTimestamp", new LongValue ( condition.getStatusTimestamp () ) );
         if ( condition.getLastAknTimestamp () != null )
         {
-            value.put ( "lastAknTimestamp", new LongValue ( condition.getLastAknTimestamp ().getTime () ) );
+            value.put ( "lastAknTimestamp", new LongValue ( condition.getLastAknTimestamp () ) );
         }
         if ( condition.getLastFailTimestamp () != null )
         {
-            value.put ( "lastFailTimestamp", new LongValue ( condition.getLastFailTimestamp ().getTime () ) );
+            value.put ( "lastFailTimestamp", new LongValue ( condition.getLastFailTimestamp () ) );
         }
         if ( condition.getSeverity () != null )
         {
@@ -200,7 +191,7 @@ public class MonitorMessageHelper
         return value;
     }
 
-    public static Value toValue ( final String[] removed )
+    public static Value toValue ( final Set<String> removed )
     {
         if ( removed == null )
         {
@@ -217,7 +208,7 @@ public class MonitorMessageHelper
         return result;
     }
 
-    public static String[] fromValueRemoved ( final Value value )
+    public static Set<String> fromValueRemoved ( final Value value )
     {
         if ( ! ( value instanceof ListValue ) )
         {
@@ -233,13 +224,6 @@ public class MonitorMessageHelper
             }
         }
 
-        if ( removed.isEmpty () )
-        {
-            return null;
-        }
-        else
-        {
-            return removed.toArray ( new String[0] );
-        }
+        return removed;
     }
 }

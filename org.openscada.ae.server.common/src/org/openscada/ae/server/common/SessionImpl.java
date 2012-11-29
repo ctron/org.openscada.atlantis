@@ -22,18 +22,19 @@ package org.openscada.ae.server.common;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Event;
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.BrowserEntry;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.server.EventListener;
 import org.openscada.ae.server.MonitorListener;
 import org.openscada.ae.server.Session;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -67,7 +68,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         this.eventListener = new EventListener () {
 
             @Override
-            public void dataChanged ( final String poolId, final Event[] addedEvents )
+            public void dataChanged ( final String poolId, final List<Event> addedEvents )
             {
                 SessionImpl.this.eventDataChanged ( poolId, addedEvents );
             }
@@ -81,9 +82,9 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         this.monitorListener = new MonitorListener () {
 
             @Override
-            public void dataChanged ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+            public void dataChanged ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
             {
-                SessionImpl.this.conditionDataChanged ( subscriptionId, addedOrUpdated, removed );
+                SessionImpl.this.conditionDataChanged ( subscriptionId, addedOrUpdated, removed, full );
             }
 
             @Override
@@ -103,13 +104,13 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         }
     }
 
-    protected void conditionDataChanged ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    protected void conditionDataChanged ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         final MonitorListener listener = this.clientConditionListener;
         if ( listener != null )
         {
-            logger.info ( String.format ( "Condition Data Change: %s - %s - %s", subscriptionId, addedOrUpdated != null ? addedOrUpdated.length : "none", removed != null ? removed.length : "none" ) );
-            listener.dataChanged ( subscriptionId, addedOrUpdated, removed );
+            logger.info ( String.format ( "Condition Data Change: %s - %s - %s", subscriptionId, addedOrUpdated != null ? addedOrUpdated.size () : "none", removed != null ? removed.size () : "none" ) );
+            listener.dataChanged ( subscriptionId, addedOrUpdated, removed, full );
         }
     }
 
@@ -122,7 +123,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         }
     }
 
-    protected void eventDataChanged ( final String poolId, final Event[] addedEvents )
+    protected void eventDataChanged ( final String poolId, final List<Event> addedEvents )
     {
         final EventListener listener = this.clientEventListener;
         if ( listener != null )
@@ -133,10 +134,12 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
 
     /**
      * Translate the events into the current session language
-     * @param events the events to translate
+     * 
+     * @param events
+     *            the events to translate
      * @return a new array of translated events
      */
-    protected Event[] translateEvents ( final Event[] events )
+    protected List<Event> translateEvents ( final List<Event> events )
     {
         return events;
     }
@@ -153,6 +156,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         this.clientEventListener = listener;
     }
 
+    @Override
     public synchronized void dispose ()
     {
         logger.info ( "Disposing session" );
@@ -191,13 +195,13 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
             this.clientBrowserListener = listener;
             if ( this.clientBrowserListener != null )
             {
-                this.clientBrowserListener.dataChanged ( this.browserCache.values ().toArray ( new BrowserEntry[0] ), null, true );
+                this.clientBrowserListener.dataChanged ( new ArrayList<BrowserEntry> ( this.browserCache.values () ), null, true );
             }
         }
     }
 
     @Override
-    public void dataChanged ( final BrowserEntry[] addedOrUpdated, final String[] removed, final boolean full )
+    public void dataChanged ( final List<BrowserEntry> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         synchronized ( this.browserCache )
         {

@@ -19,7 +19,7 @@
 
 package org.openscada.da.datasource.script;
 
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 
 /**

@@ -19,9 +19,11 @@
 
 package org.openscada.ae.server.monitor.proxy;
 
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ae.server.common.monitor.MonitorQueryListener;
 import org.openscada.utils.osgi.FilterUtil;
@@ -54,9 +56,9 @@ class LocalMonitorQueryListener extends AbstractMonitorQueryListener
     private final MonitorQueryListener monitorQueryListener = new MonitorQueryListener () {
 
         @Override
-        public void dataChanged ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+        public void dataChanged ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
         {
-            handleDataChanged ( addedOrUpdated, removed );
+            handleDataChanged ( addedOrUpdated, removed, full );
         }
     };
 

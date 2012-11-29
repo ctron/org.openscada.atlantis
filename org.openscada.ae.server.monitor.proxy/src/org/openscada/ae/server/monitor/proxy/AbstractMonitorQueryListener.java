@@ -20,10 +20,12 @@
 package org.openscada.ae.server.monitor.proxy;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -53,9 +55,8 @@ public class AbstractMonitorQueryListener
         this.lock.lock ();
         try
         {
-            final String[] removed = this.dataCache.keySet ().toArray ( new String[0] );
             this.dataCache.clear ();
-            notifyChange ( null, removed );
+            notifyChange ( null, null, true );
         }
         finally
         {
@@ -63,14 +64,19 @@ public class AbstractMonitorQueryListener
         }
     }
 
-    public void handleDataChanged ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    public void handleDataChanged ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
-        logger.debug ( "Data of {} changed - added: @{}, removed: @{}", new Object[] { this.info, addedOrUpdated == null ? -1 : addedOrUpdated.length, removed == null ? -1 : removed.length } );
+        logger.debug ( "Data of {} changed - added: @{}, removed: @{}", new Object[] { this.info, addedOrUpdated == null ? -1 : addedOrUpdated.size (), removed == null ? -1 : removed.size () } );
 
         this.lock.lock ();
 
         try
         {
+            if ( full )
+            {
+                this.dataCache.clear ();
+            }
+
             if ( addedOrUpdated != null )
             {
                 for ( final MonitorStatusInformation info : addedOrUpdated )
@@ -85,7 +91,7 @@ public class AbstractMonitorQueryListener
                     this.dataCache.remove ( id );
                 }
             }
-            notifyChange ( addedOrUpdated, removed );
+            notifyChange ( addedOrUpdated, removed, full );
         }
         finally
         {
@@ -93,7 +99,7 @@ public class AbstractMonitorQueryListener
         }
     }
 
-    protected void notifyChange ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    protected void notifyChange ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         if ( this.disposed )
         {
@@ -101,7 +107,7 @@ public class AbstractMonitorQueryListener
             return;
         }
 
-        this.proxyMonitorQuery.handleDataUpdate ( addedOrUpdated, removed );
+        this.proxyMonitorQuery.handleDataUpdate ( addedOrUpdated, removed, full );
     }
 
     public void dispose ()

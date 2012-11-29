@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -22,14 +22,13 @@ package org.openscada.core.subscription;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openscada.core.subscription.SubscriptionListener;
-import org.openscada.core.subscription.SubscriptionSource;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 
 public class SubscriptionRecorder implements SubscriptionListener
 {
     private List<Object> _list = new LinkedList<Object> ();
 
+    @Override
     public void updateStatus ( final Object topic, final SubscriptionState subscriptionState )
     {
         this._list.add ( new SubscriptionStateEvent ( subscriptionState ) );

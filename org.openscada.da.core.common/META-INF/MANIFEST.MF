@@ -6,9 +6,9 @@ Import-Package: org.apache.commons.beanutils;version="1.8.0",
  org.openscada.utils.lang;version="0.13.0",
  org.openscada.utils.str;version="0.13.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.core;version="0.18.0";uses:="org.openscada.sec,org.openscada.core",
- org.openscada.da.core.browser;version="0.18.0"
-Bundle-Version: 0.18.0.qualifier
+Export-Package: org.openscada.da.core;version="1.0.0";uses:="org.openscada.sec,org.openscada.core",
+ org.openscada.da.core.browser;version="1.0.0"
+Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Core Common
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2

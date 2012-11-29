@@ -22,7 +22,7 @@ package org.openscada.ae.monitor.datasource.common.remote;
 import java.io.Serializable;
 import java.util.Date;
 
-import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.data.MonitorStatus;
 
 public class PersistentState implements Serializable
 {

@@ -7,6 +7,7 @@ Bundle-Activator: org.openscada.ae.server.common.monitor.internal.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae;version="1.0.0",
+ org.openscada.ae.data;version="1.0.0",
  org.openscada.ae.monitor;version="1.0.0",
  org.openscada.ae.server.common.monitor;version="1.0.0",
  org.openscada.ca;version="1.0.0",

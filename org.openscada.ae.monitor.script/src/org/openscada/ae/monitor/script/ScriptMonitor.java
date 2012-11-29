@@ -29,8 +29,8 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
-import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.Severity;
+import org.openscada.ae.data.MonitorStatusInformation;
+import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
 import org.openscada.ae.monitor.common.DemoteImpl;

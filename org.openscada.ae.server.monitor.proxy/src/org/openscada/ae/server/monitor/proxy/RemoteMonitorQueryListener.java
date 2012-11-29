@@ -19,14 +19,16 @@
 
 package org.openscada.ae.server.monitor.proxy;
 
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.client.MonitorListener;
 import org.openscada.ae.connection.provider.ConnectionService;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.core.connection.provider.ConnectionIdTracker;
 import org.openscada.core.connection.provider.ConnectionTracker.Listener;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -105,8 +107,8 @@ class RemoteMonitorQueryListener extends AbstractMonitorQueryListener implements
     }
 
     @Override
-    public void dataChanged ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    public void dataChanged ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
-        handleDataChanged ( addedOrUpdated, removed );
+        handleDataChanged ( addedOrUpdated, removed, full );
     }
 }

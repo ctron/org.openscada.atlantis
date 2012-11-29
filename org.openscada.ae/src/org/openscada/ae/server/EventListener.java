@@ -19,10 +19,12 @@
 
 package org.openscada.ae.server;
 
+import java.util.List;
+
 import org.openscada.ae.Event;
 import org.openscada.core.subscription.SubscriptionListener;
 
 public interface EventListener extends SubscriptionListener
 {
-    public void dataChanged ( String poolId, Event[] addedEvents );
+    public void dataChanged ( String poolId, List<Event> addedEvents );
 }

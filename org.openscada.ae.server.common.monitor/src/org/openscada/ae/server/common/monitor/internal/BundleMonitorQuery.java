@@ -20,6 +20,8 @@
 package org.openscada.ae.server.common.monitor.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
@@ -96,7 +98,7 @@ public class BundleMonitorQuery extends MonitorQuery implements MonitorListener
             service.removeStatusListener ( this );
 
             this.cachedData.remove ( service.getId () );
-            updateData ( null, new String[] { service.getId () } );
+            updateData ( null, Collections.singleton ( service.getId () ), false );
         }
     }
 
@@ -171,11 +173,11 @@ public class BundleMonitorQuery extends MonitorQuery implements MonitorListener
 
         if ( matchesFilter ( status ) )
         {
-            updateData ( new MonitorStatusInformation[] { status }, null );
+            updateData ( Arrays.asList ( status ), null, false );
         }
         else
         {
-            updateData ( null, new String[] { status.getId () } );
+            updateData ( null, Collections.singleton ( status.getId () ), false );
         }
     }
 }

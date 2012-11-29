@@ -27,8 +27,8 @@ import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.FolderListener;

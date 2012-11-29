@@ -19,6 +19,7 @@
 
 package org.openscada.ae.server.event.proxy;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 import org.openscada.ae.Event;
@@ -26,7 +27,7 @@ import org.openscada.ae.client.EventListener;
 import org.openscada.ae.connection.provider.ConnectionService;
 import org.openscada.core.connection.provider.ConnectionIdTracker;
 import org.openscada.core.connection.provider.ConnectionTracker.Listener;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +94,7 @@ class RemoteEventQueryListener extends AbstractEventQueryListener implements Lis
     }
 
     @Override
-    public void dataChanged ( final Event[] addedEvents )
+    public void dataChanged ( final List<Event> addedEvents )
     {
         addEvents ( addedEvents );
     }

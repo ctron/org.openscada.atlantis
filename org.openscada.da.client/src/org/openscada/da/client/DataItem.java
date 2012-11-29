@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,7 +27,7 @@ import java.util.Observable;
 
 import org.openscada.core.AttributesHelper;
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,9 @@ public class DataItem extends Observable
      * create a new data item structure.
      * <p>
      * Note that the item is initially unconnected
-     * @param itemId the id of the item to register later
+     * 
+     * @param itemId
+     *            the id of the item to register later
      */
     public DataItem ( final String itemId )
     {
@@ -87,10 +89,14 @@ public class DataItem extends Observable
     /**
      * create a new data item structure.
      * <p>
-     * Note that the item is initially connected to the item manager provided. You must call {@link #unregister()}
-     * when you want to clear the subscription with the item on the server.
-     * @param itemId the id of the item to register
-     * @param connection the item manager to which the item will register
+     * Note that the item is initially connected to the item manager provided.
+     * You must call {@link #unregister()} when you want to clear the
+     * subscription with the item on the server.
+     * 
+     * @param itemId
+     *            the id of the item to register
+     * @param connection
+     *            the item manager to which the item will register
      */
     public DataItem ( final String itemId, final ItemManager connection )
     {
@@ -202,7 +208,8 @@ public class DataItem extends Observable
 
     /**
      * Get the complete state of the current data item in an atomic operation
-     * @return the current state of the data item 
+     * 
+     * @return the current state of the data item
      */
     public DataItemValue getSnapshotValue ()
     {
@@ -211,11 +218,11 @@ public class DataItem extends Observable
 
     /**
      * Fetch the current cached attributes.
-     * 
      * <b>Note:</b> The returned object may not be modified!
-     *  
+     * 
      * @return the current attributes
-     * @deprecated You should use {@link #getSnapshotValue()} instead to get a consistent value
+     * @deprecated You should use {@link #getSnapshotValue()} instead to get a
+     *             consistent value
      */
     @Deprecated
     public Map<String, Variant> getAttributes ()
@@ -225,8 +232,10 @@ public class DataItem extends Observable
 
     /**
      * Get the subscription state
+     * 
      * @return the subscription state
-     * @deprecated You should use {@link #getSnapshotValue()} instead to get a consistent value
+     * @deprecated You should use {@link #getSnapshotValue()} instead to get a
+     *             consistent value
      */
     @Deprecated
     public SubscriptionState getSubscriptionState ()
@@ -236,6 +245,7 @@ public class DataItem extends Observable
 
     /**
      * Get the item ID
+     * 
      * @return the item Id
      */
     public String getItemId ()
@@ -245,8 +255,10 @@ public class DataItem extends Observable
 
     /**
      * Get the subscription error or <code>null</code> if there was none
+     * 
      * @return the subscription error
-     * @deprecated You should use {@link #getSnapshotValue()} instead to get a consistent value
+     * @deprecated You should use {@link #getSnapshotValue()} instead to get a
+     *             consistent value
      */
     @Deprecated
     public Throwable getSubscriptionError ()

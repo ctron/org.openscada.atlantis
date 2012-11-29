@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2009 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -21,12 +21,10 @@ package org.openscada.core.subscription;
 
 import java.util.Collection;
 
-import org.openscada.core.subscription.SubscriptionInformation;
-import org.openscada.core.subscription.SubscriptionSource;
-
 public class SubscriptionSourceTestImpl implements SubscriptionSource
 {
 
+    @Override
     public void addListener ( final Collection<SubscriptionInformation> listeners )
     {
         for ( final SubscriptionInformation information : listeners )
@@ -36,6 +34,7 @@ public class SubscriptionSourceTestImpl implements SubscriptionSource
         }
     }
 
+    @Override
     public void removeListener ( final Collection<SubscriptionInformation> listeners )
     {
         for ( final SubscriptionInformation information : listeners )
@@ -45,6 +44,7 @@ public class SubscriptionSourceTestImpl implements SubscriptionSource
         }
     }
 
+    @Override
     public boolean supportsListener ( final SubscriptionInformation information )
     {
         return information.getListener () instanceof SubscriptionRecorder;

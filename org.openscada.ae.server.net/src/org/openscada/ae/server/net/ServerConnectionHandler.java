@@ -19,7 +19,6 @@
 
 package org.openscada.ae.server.net;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -29,13 +28,13 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.apache.mina.core.session.IoSession;
-import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Event;
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Query;
-import org.openscada.ae.QueryState;
 import org.openscada.ae.UnknownQueryException;
+import org.openscada.ae.data.BrowserEntry;
+import org.openscada.ae.data.MonitorStatusInformation;
+import org.openscada.ae.data.QueryState;
 import org.openscada.ae.net.BrowserMessageHelper;
 import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
@@ -47,9 +46,9 @@ import org.openscada.ae.server.Session;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
-import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
@@ -507,7 +506,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            this.session = (Session)this.service.createSession ( props );
+            this.session = this.service.createSession ( props );
         }
         catch ( final UnableToCreateSessionException e )
         {
@@ -526,7 +525,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.session.setEventListener ( this.eventListener = new EventListener () {
 
             @Override
-            public void dataChanged ( final String poolId, final Event[] addedEvents )
+            public void dataChanged ( final String poolId, final List<Event> addedEvents )
             {
                 ServerConnectionHandler.this.dataChangedEvents ( poolId, addedEvents );
             }
@@ -540,9 +539,9 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.session.setConditionListener ( this.monitorListener = new MonitorListener () {
 
             @Override
-            public void dataChanged ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+            public void dataChanged ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
             {
-                dataChangedConditions ( subscriptionId, addedOrUpdated, removed );
+                dataChangedConditions ( subscriptionId, addedOrUpdated, removed, full );
             }
 
             @Override
@@ -605,11 +604,9 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
     }
 
-    public void dataChangedEvents ( final String poolId, final Event[] addedEvents )
+    public void dataChangedEvents ( final String poolId, final List<Event> addedEvents )
     {
-        final List<Event> list = Arrays.asList ( addedEvents );
-
-        for ( final List<Event> chunk : Lists.partition ( list, getChunkSize () ) )
+        for ( final List<Event> chunk : Lists.partition ( addedEvents, getChunkSize () ) )
         {
             final Message message = new Message ( Messages.CC_EVENT_POOL_DATA );
 
@@ -635,13 +632,17 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.messenger.sendMessage ( message );
     }
 
-    public void dataChangedConditions ( final String subscriptionId, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    public void dataChangedConditions ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         final Message message = new Message ( Messages.CC_CONDITIONS_DATA );
 
         message.getValues ().put ( MESSAGE_QUERY_ID, new StringValue ( subscriptionId ) );
         message.getValues ().put ( "conditions.addedOrUpdated", MonitorMessageHelper.toValue ( addedOrUpdated ) );
         message.getValues ().put ( "conditions.removed", MonitorMessageHelper.toValue ( removed ) );
+        if ( full )
+        {
+            message.getValues ().put ( "full", VoidValue.INSTANCE );
+        }
 
         this.messenger.sendMessage ( message );
     }
@@ -657,7 +658,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     }
 
     @Override
-    public void dataChanged ( final BrowserEntry[] addedOrUpdated, final String[] removed, final boolean full )
+    public void dataChanged ( final List<BrowserEntry> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         final Message message = new Message ( Messages.CC_BROWSER_UPDATE );
 
@@ -671,13 +672,11 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.messenger.sendMessage ( message );
     }
 
-    public void sendQueryData ( final QueryImpl queryImpl, final Event[] events )
+    public void sendQueryData ( final QueryImpl queryImpl, final List<Event> events )
     {
         // TODO: check if query is still active
 
-        final List<Event> list = Arrays.asList ( events );
-
-        for ( final List<Event> chunk : Lists.partition ( list, getChunkSize () ) )
+        for ( final List<Event> chunk : Lists.partition ( events, getChunkSize () ) )
         {
             final Message message = new Message ( Messages.CC_QUERY_DATA );
             message.getValues ().put ( "data", EventMessageHelper.toValue ( chunk ) );

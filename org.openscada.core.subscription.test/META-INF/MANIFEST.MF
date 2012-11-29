@@ -7,3 +7,4 @@ Bundle-Vendor: TH4 SYSTEMS GmbH
 Fragment-Host: org.openscada.core.subscription;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit;bundle-version="4.8.0"
+Import-Package: org.openscada.core.data;version="1.0.0"

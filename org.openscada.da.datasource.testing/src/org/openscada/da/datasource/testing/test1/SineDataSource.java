@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.testing.DefaultDataSource;
 

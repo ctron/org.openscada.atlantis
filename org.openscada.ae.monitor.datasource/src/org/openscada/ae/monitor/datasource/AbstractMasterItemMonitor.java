@@ -27,7 +27,7 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;

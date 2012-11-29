@@ -21,7 +21,7 @@ package org.openscada.ae.monitor.common;
 
 import java.util.Map;
 
-import org.openscada.ae.Severity;
+import org.openscada.ae.data.Severity;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.sec.UserInformation;

@@ -27,7 +27,7 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;

@@ -1,5 +1,6 @@
 Manifest-Version: 1.0
 Import-Package: org.openscada.core;version="0.14.0",
+ org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="0.14.0",
  org.openscada.core.subscription;version="0.14.0",
  org.openscada.da.core;version="0.14.0",
@@ -10,20 +11,19 @@ Import-Package: org.openscada.core;version="0.14.0",
  org.openscada.utils.statuscodes;version="0.13.0",
  org.openscada.utils.str;version="0.13.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.core.server;version="0.16.0";
+Export-Package: org.openscada.da.core.server;version="1.0.0";
   uses:="org.openscada.core.server,
    org.openscada.utils.concurrent,
    org.openscada.da.core.server.browser,
    org.openscada.core,
-   org.openscada.da.core,
-   org.openscada.core.subscription",
- org.openscada.da.core.server.browser;version="0.16.0";
+   org.openscada.da.core",
+ org.openscada.da.core.server.browser;version="1.0.0";
   uses:="org.openscada.da.core.server,
    org.openscada.utils.concurrent,
    org.openscada.utils.statuscodes,
    org.openscada.da.core"
-Bundle-Version: 0.16.0.qualifier
-Bundle-Name: OpenSCADA DA Core Server
+Bundle-Version: 1.0.0.qualifier
+Bundle-Name: openSCADA DA Core Server
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: TH4 SYSTEMS GmbH

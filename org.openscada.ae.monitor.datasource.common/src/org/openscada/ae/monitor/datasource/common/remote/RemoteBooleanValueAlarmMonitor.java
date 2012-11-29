@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.MonitorStatus;
+import org.openscada.ae.data.MonitorStatus;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.DataItemMonitor;
 import org.openscada.ca.ConfigurationDataHelper;

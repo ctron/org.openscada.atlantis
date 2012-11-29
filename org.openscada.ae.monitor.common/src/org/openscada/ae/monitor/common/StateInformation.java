@@ -19,7 +19,7 @@
 
 package org.openscada.ae.monitor.common;
 
-import org.openscada.ae.Severity;
+import org.openscada.ae.data.Severity;
 import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
 

@@ -22,7 +22,7 @@ package org.openscada.ae.monitor.datasource.common.level;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.Severity;
+import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.level.LevelHelper;
 import org.openscada.ae.monitor.datasource.AbstractNumericMonitor;

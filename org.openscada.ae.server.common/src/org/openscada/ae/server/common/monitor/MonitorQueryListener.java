@@ -19,9 +19,12 @@
 
 package org.openscada.ae.server.common.monitor;
 
-import org.openscada.ae.MonitorStatusInformation;
+import java.util.List;
+import java.util.Set;
+
+import org.openscada.ae.data.MonitorStatusInformation;
 
 public interface MonitorQueryListener
 {
-    public void dataChanged ( MonitorStatusInformation[] addedOrUpdated, String[] removed );
+    public void dataChanged ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, boolean full );
 }

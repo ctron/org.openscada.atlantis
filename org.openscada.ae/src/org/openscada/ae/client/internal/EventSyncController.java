@@ -19,7 +19,7 @@
 
 package org.openscada.ae.client.internal;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -28,7 +28,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import org.openscada.ae.Event;
 import org.openscada.ae.client.Connection;
 import org.openscada.ae.client.EventListener;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,7 +59,7 @@ public class EventSyncController implements EventListener
     public synchronized void addListener ( final EventListener listener )
     {
         this.listeners.add ( listener );
-        listener.dataChanged ( this.cachedEvents.toArray ( new Event[] {} ) );
+        listener.dataChanged ( new ArrayList<Event> ( this.cachedEvents ) );
     }
 
     /**
@@ -75,10 +75,10 @@ public class EventSyncController implements EventListener
     }
 
     @Override
-    public void dataChanged ( final Event[] addedEvents )
+    public void dataChanged ( final List<Event> addedEvents )
     {
-        this.cachedEvents.removeAll ( Arrays.asList ( addedEvents ) );
-        this.cachedEvents.addAll ( Arrays.asList ( addedEvents ) );
+        this.cachedEvents.removeAll ( addedEvents );
+        this.cachedEvents.addAll ( addedEvents );
         for ( final EventListener listener : this.listeners )
         {
             listener.dataChanged ( addedEvents );
@@ -95,7 +95,7 @@ public class EventSyncController implements EventListener
             case CONNECTED:
                 for ( final EventListener listener : this.listeners )
                 {
-                    listener.dataChanged ( this.cachedEvents.toArray ( new Event[] {} ) );
+                    listener.dataChanged ( new ArrayList<Event> ( this.cachedEvents ) );
                 }
                 break;
             default:

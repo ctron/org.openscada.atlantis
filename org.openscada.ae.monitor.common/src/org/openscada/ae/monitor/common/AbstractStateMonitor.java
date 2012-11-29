@@ -27,9 +27,9 @@ import java.util.concurrent.Executor;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
-import org.openscada.ae.MonitorStatus;
-import org.openscada.ae.MonitorStatusInformation;
-import org.openscada.ae.Severity;
+import org.openscada.ae.data.MonitorStatus;
+import org.openscada.ae.data.MonitorStatusInformation;
+import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.StateInformation.Builder;
 import org.openscada.core.Variant;
@@ -204,7 +204,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
             attributes = this.attributes;
         }
 
-        return new MonitorStatusInformation ( getId (), status, makeDate ( this.currentState.getLastChangeTimestamp () ), this.currentState.getSeverity (), this.currentState.getValue (), makeDate ( this.currentState.getLastAckTimestamp () ), this.currentState.getLastAckUser (), makeDate ( this.currentState.getLastFailTimestamp () ), attributes );
+        return new MonitorStatusInformation ( getId (), status, this.currentState.getLastChangeTimestamp (), this.currentState.getSeverity (), this.currentState.getValue (), this.currentState.getLastAckTimestamp (), this.currentState.getLastAckUser (), this.currentState.getLastFailTimestamp (), attributes );
     }
 
     public StateInformation getCurrentState ()

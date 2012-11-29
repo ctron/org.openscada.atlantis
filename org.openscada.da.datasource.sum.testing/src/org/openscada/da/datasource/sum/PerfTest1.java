@@ -31,7 +31,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantType;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;

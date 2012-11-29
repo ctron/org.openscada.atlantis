@@ -19,7 +19,7 @@
 
 package org.openscada.ae.monitor.script;
 
-import org.openscada.ae.Severity;
+import org.openscada.ae.data.Severity;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 

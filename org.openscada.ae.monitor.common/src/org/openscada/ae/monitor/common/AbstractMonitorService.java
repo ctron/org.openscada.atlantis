@@ -19,13 +19,12 @@
 
 package org.openscada.ae.monitor.common;
 
-import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.MonitorStatus;
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatus;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.utils.interner.InternerHelper;
@@ -55,7 +54,7 @@ public abstract class AbstractMonitorService implements MonitorService
 
         this.stringInterner = stringInterner == null ? InternerHelper.makeNoOpInterner () : stringInterner;
 
-        this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, new Date (), null, null, null, null, null, null );
+        this.currentState = new MonitorStatusInformation ( id, MonitorStatus.INIT, System.currentTimeMillis (), null, null, null, null, null, null );
     }
 
     @Override

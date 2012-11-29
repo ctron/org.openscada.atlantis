@@ -19,6 +19,7 @@
 
 package org.openscada.ae.server.common.event;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
@@ -62,7 +63,7 @@ public abstract class AbstractEventQueryImpl implements EventQuery
         } );
     }
 
-    protected void notifyEvent ( final Event[] event )
+    protected void notifyEvent ( final List<Event> event )
     {
         final EventListener[] listeners = this.listeners.toArray ( new EventListener[this.listeners.size ()] );
         this.executor.execute ( new Runnable () {
@@ -92,16 +93,16 @@ public abstract class AbstractEventQueryImpl implements EventQuery
                 @Override
                 public void run ()
                 {
-                    eventListener.handleEvent ( chunk.toArray ( new Event[chunk.size ()] ) );
+                    eventListener.handleEvent ( chunk );
                 }
             } );
         }
 
     }
 
-    protected synchronized void addEvents ( final Event[] events, final EventMatcher matcher )
+    protected synchronized void addEvents ( final List<Event> events, final EventMatcher matcher )
     {
-        final Set<Event> toNotify = new HashSet<Event> ( events.length );
+        final List<Event> toNotify = new ArrayList<Event> ( events.size () );
         for ( final Event event : events )
         {
             if ( matcher == null || matcher.matches ( event ) )
@@ -113,7 +114,7 @@ public abstract class AbstractEventQueryImpl implements EventQuery
             }
         }
         logger.debug ( "new event pool size: {}", this.events.size () );
-        notifyEvent ( toNotify.toArray ( new Event[toNotify.size ()] ) );
+        notifyEvent ( toNotify );
     }
 
     @Override

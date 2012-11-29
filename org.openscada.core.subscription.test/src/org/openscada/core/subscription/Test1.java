@@ -27,6 +27,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
+import org.openscada.core.data.SubscriptionState;
 
 public class Test1
 {

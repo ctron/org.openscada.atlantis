@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,7 +22,7 @@ package org.openscada.da.client.samples;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemManagerImpl;
 import org.openscada.da.client.ItemUpdateListener;
@@ -62,6 +62,7 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
         this.itemManager.removeItemUpdateListener ( this.itemName, this );
     }
 
+    @Override
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         if ( value != null )
@@ -76,7 +77,7 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
             // Attributes have changed
             // If it is an "initial" transmission it is a complete set. Otherwise it is only
             // the set of changed attributes.
-            System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), ( cache ? " (cache read)" : "" ) ) );
+            System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), cache ? " (cache read)" : "" ) );
             for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
             {
                 System.out.println ( String.format ( "'%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
@@ -84,6 +85,7 @@ public class GCTest1 extends SampleBase implements ItemUpdateListener
         }
     }
 
+    @Override
     public void notifySubscriptionChange ( final SubscriptionState state, final Throwable subscriptionError )
     {
         System.out.println ( "Subscription state: " + state.name () + " Error: " + ( subscriptionError == null ? "<none>" : subscriptionError.getMessage () ) );

@@ -38,7 +38,7 @@ import org.openscada.net.base.data.VoidValue;
 public class EventMessageHelper
 {
 
-    public static Event[] fromValue ( final Value baseValue )
+    public static List<Event> fromValue ( final Value baseValue )
     {
         if ( ! ( baseValue instanceof ListValue ) )
         {
@@ -56,11 +56,7 @@ public class EventMessageHelper
             }
         }
 
-        if ( result.isEmpty () )
-        {
-            return null;
-        }
-        return result.toArray ( new Event[result.size ()] );
+        return result;
     }
 
     public static Event fromValueEvent ( final Value entryValue )

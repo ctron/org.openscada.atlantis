@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,6 +24,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.openscada.core.data.SubscriptionState;
+
 public class Subscription
 {
     private final Map<SubscriptionInformation, Object> listeners = new HashMap<SubscriptionInformation, Object> ( 1 );
@@ -40,11 +42,12 @@ public class Subscription
 
     /**
      * Check if the subscription is empty or nor.
-     * 
-     * A subscription is empty if it neither has a subscription source set nor listeners
+     * A subscription is empty if it neither has a subscription source set nor
+     * listeners
      * attached to it.
      * 
-     * @return <code>true</code> if the subscription is empty, <code>false</code> otherwise
+     * @return <code>true</code> if the subscription is empty,
+     *         <code>false</code> otherwise
      */
     public synchronized boolean isEmpty ()
     {
@@ -54,7 +57,9 @@ public class Subscription
     /**
      * Check if the subscription is in granted state. This means that no source
      * is connected but there are listeners attached.
-     * @return <code>true</code> if the subscription is in granted state, <code>false</code> otherwise
+     * 
+     * @return <code>true</code> if the subscription is in granted state,
+     *         <code>false</code> otherwise
      */
     public synchronized boolean isGranted ()
     {

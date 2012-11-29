@@ -19,10 +19,14 @@
 
 package org.openscada.ae.server.common;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -30,11 +34,11 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.openscada.ae.BrowserEntry;
-import org.openscada.ae.BrowserType;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.UnknownQueryException;
+import org.openscada.ae.data.BrowserEntry;
+import org.openscada.ae.data.BrowserType;
 import org.openscada.ae.sec.AuthorizationHelper;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
@@ -152,45 +156,45 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
 
     protected void addConditionQuery ( final String id, final MonitorQuery query )
     {
-        logger.info ( "Adding new query: " + id );
+        logger.info ( "Adding new query: {}", id );
         this.conditionSubscriptions.setSource ( id, new MonitorQuerySource ( id, query ) );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.CONDITIONS ), attributes );
+        final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.MONITORS ), attributes );
 
-        triggerBrowserChange ( new BrowserEntry[] { entry }, null, false );
+        triggerBrowserChange ( Arrays.asList ( entry ), null, false );
     }
 
     protected void removeConditionQuery ( final String id, final MonitorQuery query )
     {
-        logger.info ( "Removing query: " + id );
+        logger.info ( "Removing query: {}", id );
         this.conditionSubscriptions.setSource ( id, null );
 
-        triggerBrowserChange ( null, new String[] { id }, false );
+        triggerBrowserChange ( null, Collections.singleton ( id ), false );
     }
 
     protected void addEventQuery ( final String id, final EventQuery query )
     {
-        logger.info ( "Adding new event query: " + id );
+        logger.info ( "Adding new event query: {}", id );
         this.eventSubscriptions.setSource ( id, new EventQuerySource ( id, query ) );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.EVENTS ), attributes );
 
-        triggerBrowserChange ( new BrowserEntry[] { entry }, null, false );
+        triggerBrowserChange ( Arrays.asList ( entry ), null, false );
     }
 
     protected void removeEventQuery ( final String id, final EventQuery query )
     {
-        logger.info ( "Removing event query: " + id );
+        logger.info ( "Removing event query: {}", id );
         this.eventSubscriptions.setSource ( id, null );
 
-        triggerBrowserChange ( null, new String[] { id }, false );
+        triggerBrowserChange ( null, Collections.singleton ( id ), false );
 
-        logger.info ( "Removed event query: " + id );
+        logger.info ( "Removed event query: {}", id );
     }
 
-    protected synchronized void triggerBrowserChange ( final BrowserEntry[] entries, final String[] removed, final boolean full )
+    protected synchronized void triggerBrowserChange ( final List<BrowserEntry> entries, final Set<String> removed, final boolean full )
     {
         if ( removed != null )
         {
@@ -323,9 +327,9 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
         this.sessions.add ( session );
 
         // copy data
-        final BrowserEntry[] browserCache = this.browserCache.values ().toArray ( new BrowserEntry[0] );
+        final List<BrowserEntry> browserCache = new ArrayList<BrowserEntry> ( this.browserCache.values () );
 
-        if ( browserCache.length > 0 )
+        if ( !browserCache.isEmpty () )
         {
             // notify current data if we have some
             this.eventExecutor.execute ( new Runnable () {

@@ -19,6 +19,7 @@
 
 package org.openscada.ae.server.event.proxy;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 import org.openscada.ae.Event;
@@ -54,7 +55,7 @@ class LocalEventQueryListener extends AbstractEventQueryListener
     private final EventListener eventQueryListener = new EventListener () {
 
         @Override
-        public void handleEvent ( final Event[] event )
+        public void handleEvent ( final List<Event> event )
         {
             LocalEventQueryListener.this.addEvents ( event );
         }

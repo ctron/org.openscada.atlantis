@@ -21,13 +21,14 @@ package org.openscada.ae.server.monitor.proxy;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.sec.UserInformation;
@@ -167,9 +168,9 @@ public class ProxyMonitorQuery extends MonitorQuery
         return new LocalMonitorQueryListener ( this.context, monitorQueryId, this, this.lock );
     }
 
-    public void handleDataUpdate ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    public void handleDataUpdate ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
-        logger.debug ( "handleDataUpdate - added: @{}, removed: @{}", new Object[] { addedOrUpdated == null ? -1 : addedOrUpdated.length, removed == null ? -1 : removed.length } );
-        updateData ( addedOrUpdated, removed );
+        logger.debug ( "handleDataUpdate - added: @{}, removed: @{}", new Object[] { addedOrUpdated == null ? -1 : addedOrUpdated.size (), removed == null ? -1 : removed.size () } );
+        updateData ( addedOrUpdated, removed, full );
     }
 }

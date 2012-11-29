@@ -30,8 +30,8 @@ import java.util.concurrent.Executor;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
-import org.openscada.ae.MonitorStatus;
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatus;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
@@ -301,11 +301,23 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
 
         if ( this.persistentState == null )
         {
-            return new MonitorStatusInformation ( this.id, MonitorStatus.INIT, timestamp, null, null, this.aknTimestamp, this.lastAckUser, timestamp, getMonitorAttributes () );
+            return new MonitorStatusInformation ( this.id, MonitorStatus.INIT, makeTimestamp ( timestamp ), null, null, makeTimestamp ( this.aknTimestamp ), this.lastAckUser, makeTimestamp ( timestamp ), getMonitorAttributes () );
         }
         else
         {
-            return new MonitorStatusInformation ( this.id, this.state, timestamp, null, null, this.aknTimestamp, this.lastAckUser, timestamp, getMonitorAttributes () );
+            return new MonitorStatusInformation ( this.id, this.state, makeTimestamp ( timestamp ), null, null, makeTimestamp ( this.aknTimestamp ), this.lastAckUser, makeTimestamp ( timestamp ), getMonitorAttributes () );
+        }
+    }
+
+    public Long makeTimestamp ( final Date date )
+    {
+        if ( date == null )
+        {
+            return null;
+        }
+        else
+        {
+            return date.getTime ();
         }
     }
 
@@ -335,7 +347,7 @@ public abstract class GenericRemoteMonitor extends AbstractMasterHandlerImpl imp
     {
         final EventBuilder builder = createEventBuilder ();
 
-        builder.sourceTimestamp ( info.getStatusTimestamp () );
+        builder.sourceTimestamp ( new Date ( info.getStatusTimestamp () ) );
         builder.entryTimestamp ( new Date () );
         builder.attribute ( Fields.SOURCE, this.id );
         builder.attribute ( Fields.EVENT_TYPE, eventType );

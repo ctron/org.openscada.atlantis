@@ -19,6 +19,7 @@
 
 package org.openscada.ae.server.event.proxy;
 
+import java.util.List;
 import java.util.concurrent.locks.Lock;
 
 import org.openscada.ae.Event;
@@ -44,14 +45,14 @@ public class AbstractEventQueryListener
         this.info = info;
     }
 
-    protected void addEvents ( final Event[] events )
+    protected void addEvents ( final List<Event> events )
     {
         if ( events == null )
         {
             return;
         }
 
-        logger.debug ( "adding events: {}", events.length );
+        logger.debug ( "adding events: {}", events.size () );
 
         this.lock.lock ();
         try

@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA NextGenerationProtocol AE Common
+Bundle-SymbolicName: org.openscada.ae.common.ngp
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.openscada.ca.protocol.ngp.codec;version="1.0.0",
+ org.openscada.core;version="1.0.0",
+ org.openscada.protocol.ngp.common;version="1.0.0"
+Export-Package: org.openscada.ae.common.ngp;version="1.0.0";uses:="org.openscada.protocol.ngp.common,org.openscada.core"

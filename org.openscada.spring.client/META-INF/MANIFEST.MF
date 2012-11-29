@@ -2,6 +2,7 @@ Manifest-Version: 1.0
 Import-Package: org.apache.commons.beanutils;version="1.8.0",
  org.openscada.core;version="0.13.0",
  org.openscada.core.client;version="0.13.0",
+ org.openscada.core.data;version="1.0.0",
  org.openscada.core.server.common.session;version="0.15.0",
  org.openscada.core.subscription;version="0.13.0",
  org.openscada.da.client;version="0.13.0",

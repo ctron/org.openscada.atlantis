@@ -26,7 +26,7 @@ import java.util.concurrent.Executor;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
-import org.openscada.ae.Severity;
+import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.filter.EventMatcher;
 import org.openscada.ae.filter.internal.EventMatcherImpl;

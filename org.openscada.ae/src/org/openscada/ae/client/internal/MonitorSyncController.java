@@ -19,17 +19,17 @@
 
 package org.openscada.ae.client.internal;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.client.Connection;
 import org.openscada.ae.client.MonitorListener;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.ae.data.MonitorStatusInformation;
+import org.openscada.core.data.SubscriptionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,20 +58,23 @@ public class MonitorSyncController implements MonitorListener
     }
 
     @Override
-    public void dataChanged ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    public void dataChanged ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
+        if ( full )
+        {
+            this.cachedMonitors.clear ();
+        }
         if ( addedOrUpdated != null )
         {
-            this.cachedMonitors.removeAll ( Arrays.asList ( addedOrUpdated ) );
-            this.cachedMonitors.addAll ( Arrays.asList ( addedOrUpdated ) );
+            this.cachedMonitors.removeAll ( addedOrUpdated );
+            this.cachedMonitors.addAll ( addedOrUpdated );
         }
         if ( removed != null )
         {
             final Set<MonitorStatusInformation> toRemove = new HashSet<MonitorStatusInformation> ();
-            final List<String> removedList = Arrays.asList ( removed );
             for ( final MonitorStatusInformation monitor : this.cachedMonitors )
             {
-                if ( removedList.contains ( monitor.getId () ) )
+                if ( removed.contains ( monitor.getId () ) )
                 {
                     toRemove.add ( monitor );
                 }
@@ -81,16 +84,18 @@ public class MonitorSyncController implements MonitorListener
                 this.cachedMonitors.remove ( monitor );
             }
         }
+
+        // forward events
         for ( final MonitorListener listener : this.listeners )
         {
-            listener.dataChanged ( addedOrUpdated, removed );
+            listener.dataChanged ( addedOrUpdated, removed, full );
         }
     }
 
     public synchronized void addListener ( final MonitorListener listener )
     {
         this.listeners.add ( listener );
-        listener.dataChanged ( this.cachedMonitors.toArray ( new MonitorStatusInformation[] {} ), null );
+        listener.dataChanged ( new ArrayList<MonitorStatusInformation> ( this.cachedMonitors ), null, true );
     }
 
     public synchronized boolean removeListener ( final MonitorListener listener )
@@ -109,7 +114,7 @@ public class MonitorSyncController implements MonitorListener
             case CONNECTED:
                 for ( final MonitorListener listener : this.listeners )
                 {
-                    listener.dataChanged ( this.cachedMonitors.toArray ( new MonitorStatusInformation[] {} ), null );
+                    listener.dataChanged ( new ArrayList<MonitorStatusInformation> ( this.cachedMonitors ), null, true );
                 }
                 break;
             default:

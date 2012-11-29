@@ -19,12 +19,14 @@
 
 package org.openscada.ae.client;
 
+import java.util.List;
+
 import org.openscada.ae.Event;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 
 public interface EventListener
 {
     public void statusChanged ( SubscriptionState state );
 
-    public void dataChanged ( Event[] addedEvents );
+    public void dataChanged ( List<Event> addedEvents );
 }

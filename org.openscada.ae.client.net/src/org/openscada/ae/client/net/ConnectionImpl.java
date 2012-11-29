@@ -19,9 +19,11 @@
 
 package org.openscada.ae.client.net;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
@@ -31,22 +33,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.mina.core.session.IoSession;
-import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Event;
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
-import org.openscada.ae.QueryState;
 import org.openscada.ae.client.EventListener;
 import org.openscada.ae.client.MonitorListener;
+import org.openscada.ae.data.BrowserEntry;
+import org.openscada.ae.data.MonitorStatusInformation;
+import org.openscada.ae.data.QueryState;
 import org.openscada.ae.net.BrowserMessageHelper;
 import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
 import org.openscada.ae.net.MonitorMessageHelper;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.net.SessionConnectionBase;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
@@ -298,8 +300,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     protected synchronized void handleBrowserUpdate ( final Message message )
     {
-        final BrowserEntry[] added = BrowserMessageHelper.fromValue ( message.getValues ().get ( "added" ) );
-        final String[] removed = BrowserMessageHelper.fromValueRemoved ( message.getValues ().get ( "removed" ) );
+        final List<BrowserEntry> added = BrowserMessageHelper.fromValue ( message.getValues ().get ( "added" ) );
+        final Set<String> removed = BrowserMessageHelper.fromValueRemoved ( message.getValues ().get ( "removed" ) );
         final boolean full = message.getValues ().containsKey ( "full" );
 
         // perform update
@@ -335,7 +337,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             }
         }
 
-        final Event[] data = EventMessageHelper.fromValue ( message.getValues ().get ( "events" ) );
+        final List<Event> data = EventMessageHelper.fromValue ( message.getValues ().get ( "events" ) );
 
         if ( queryId != null && data != null )
         {
@@ -350,9 +352,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.messenger.sendMessage ( MessageCreator.createACK ( message ) );
     }
 
-    private void fireEventDataChange ( final EventListener listener, final Event[] data )
+    private void fireEventDataChange ( final EventListener listener, final List<Event> data )
     {
-        logger.debug ( "Received: {} events", data.length );
+        logger.debug ( "Received: {} events", data.size () );
 
         if ( listener == null )
         {
@@ -392,13 +394,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 }
             }
 
-            final MonitorStatusInformation[] data = MonitorMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
-            final String[] removed = MonitorMessageHelper.fromValueRemoved ( message.getValues ().get ( "conditions.removed" ) );
+            final List<MonitorStatusInformation> data = MonitorMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
+            final Set<String> removed = MonitorMessageHelper.fromValueRemoved ( message.getValues ().get ( "conditions.removed" ) );
 
             if ( queryId != null && ( data != null || removed != null ) )
             {
                 final MonitorListener listener = this.monitorListeners.get ( queryId );
-                fireConditionDataChange ( listener, data, removed );
+                fireConditionDataChange ( listener, data, removed, false );
             }
             else
             {
@@ -412,7 +414,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     }
 
-    private void fireConditionDataChange ( final MonitorListener listener, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    private void fireConditionDataChange ( final MonitorListener listener, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         if ( listener == null )
         {
@@ -428,7 +430,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 @Override
                 public void run ()
                 {
-                    listener.dataChanged ( addedOrUpdated, removed );
+                    listener.dataChanged ( addedOrUpdated, removed, full );
                 }
             } );
 
@@ -787,7 +789,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         if ( this.browserListeners.add ( listener ) )
         {
-            final BrowserEntry[] addedOrChanged = this.browserCache.values ().toArray ( new BrowserEntry[0] );
+            final List<BrowserEntry> addedOrChanged = new ArrayList<BrowserEntry> ( this.browserCache.values () );
 
             this.executor.execute ( new Runnable () {
 
@@ -811,7 +813,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.browserListeners.remove ( listener );
     }
 
-    protected void fireBrowserListener ( final BrowserEntry[] added, final String[] removed, final boolean full )
+    protected void fireBrowserListener ( final List<BrowserEntry> added, final Set<String> removed, final boolean full )
     {
         final Set<BrowserListener> listeners = new HashSet<BrowserListener> ( this.browserListeners );
 

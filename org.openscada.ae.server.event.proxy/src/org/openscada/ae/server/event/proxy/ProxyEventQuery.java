@@ -21,6 +21,7 @@ package org.openscada.ae.server.event.proxy;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
@@ -166,9 +167,9 @@ public class ProxyEventQuery extends AbstractEventQueryImpl
         return new LocalEventQueryListener ( this.context, monitorQueryId, this, this.lock );
     }
 
-    public void addEvents ( final Event[] events )
+    public void addEvents ( final List<Event> events )
     {
-        logger.debug ( "Adding events: {}", events.length );
+        logger.debug ( "Adding events: {}", events.size () );
         addEvents ( events, null );
     }
 }
