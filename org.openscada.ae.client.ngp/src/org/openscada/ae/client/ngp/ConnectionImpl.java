@@ -230,7 +230,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
     private void handleMonitorPoolDataUpdate ( final MonitorPoolDataUpdate message )
     {
-        this.monitorManager.handleDataUpdate ( message.getMonitorPoolId (), message.getAddedOrUpdated (), message.getRemoved (), false );
+        this.monitorManager.handleDataUpdate ( message.getMonitorPoolId (), message.getAddedOrUpdated (), message.getRemoved (), message.isFull () );
     }
 
     private void handleEventPoolStatusUpdate ( final EventPoolStatusUpdate message )

@@ -24,32 +24,45 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.Event;
 import org.openscada.ae.Query;
+import org.openscada.ae.UnknownQueryException;
 import org.openscada.ae.data.BrowserEntry;
 import org.openscada.ae.data.EventInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.data.QueryState;
 import org.openscada.ae.data.message.AcknowledgeRequest;
 import org.openscada.ae.data.message.AcknowledgeResponse;
 import org.openscada.ae.data.message.BrowseData;
 import org.openscada.ae.data.message.CloseQuery;
 import org.openscada.ae.data.message.CreateQuery;
+import org.openscada.ae.data.message.EventPoolDataUpdate;
+import org.openscada.ae.data.message.EventPoolStatusUpdate;
 import org.openscada.ae.data.message.LoadMore;
+import org.openscada.ae.data.message.MonitorPoolDataUpdate;
+import org.openscada.ae.data.message.MonitorPoolStatusUpdate;
 import org.openscada.ae.data.message.StartBrowse;
 import org.openscada.ae.data.message.StopBrowse;
+import org.openscada.ae.data.message.SubscribeEventPool;
 import org.openscada.ae.data.message.SubscribeMonitorPool;
+import org.openscada.ae.data.message.UnsubscribeEventPool;
 import org.openscada.ae.data.message.UnsubscribeMonitorPool;
 import org.openscada.ae.data.message.UpdateQueryData;
 import org.openscada.ae.data.message.UpdateQueryState;
+import org.openscada.ae.server.EventListener;
+import org.openscada.ae.server.MonitorListener;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
 import org.openscada.core.InvalidSessionException;
+import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.data.ErrorInformation;
 import org.openscada.core.data.OperationParameters;
 import org.openscada.core.data.Response;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.ngp.ServiceServerConnection;
 import org.openscada.sec.PermissionDeniedException;
 import org.openscada.utils.ExceptionHelper;
@@ -81,6 +94,61 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
     }
 
     @Override
+    protected Session createSession ( final Properties properties ) throws UnableToCreateSessionException
+    {
+        final Session session = super.createSession ( properties );
+        session.setConditionListener ( new MonitorListener () {
+
+            @Override
+            public void dataChanged ( final String subscriptionId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
+            {
+                handleMonitorDataChanged ( subscriptionId, addedOrUpdated, removed, full );
+            }
+
+            @Override
+            public void updateStatus ( final Object topic, final SubscriptionState subscriptionState )
+            {
+                handleMonitorStatusChange ( topic.toString (), subscriptionState );
+            }
+        } );
+        session.setEventListener ( new EventListener () {
+
+            @Override
+            public void dataChanged ( final String poolId, final List<Event> addedEvents )
+            {
+                handleEventDataChange ( poolId, addedEvents );
+            }
+
+            @Override
+            public void updateStatus ( final Object topic, final SubscriptionState subscriptionState )
+            {
+                handleEventStatusChange ( topic.toString (), subscriptionState );
+            }
+        } );
+        return session;
+    }
+
+    protected void handleEventDataChange ( final String eventPoolId, final List<Event> addedEvents )
+    {
+        sendMessage ( new EventPoolDataUpdate ( eventPoolId, convert ( addedEvents ) ) );
+    }
+
+    protected void handleMonitorDataChanged ( final String monitorPoolId, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
+    {
+        sendMessage ( new MonitorPoolDataUpdate ( monitorPoolId, addedOrUpdated, removed, full ) );
+    }
+
+    protected void handleEventStatusChange ( final String eventPoolId, final SubscriptionState state )
+    {
+        sendMessage ( new EventPoolStatusUpdate ( eventPoolId, state ) );
+    }
+
+    protected void handleMonitorStatusChange ( final String monitorPoolId, final SubscriptionState state )
+    {
+        sendMessage ( new MonitorPoolStatusUpdate ( monitorPoolId, state ) );
+    }
+
+    @Override
     public synchronized void messageReceived ( final Object message ) throws Exception
     {
         logger.trace ( "Received message: {}", message );
@@ -100,6 +168,14 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
         else if ( message instanceof UnsubscribeMonitorPool )
         {
             handleUnsubscribeMonitorPool ( (UnsubscribeMonitorPool)message );
+        }
+        else if ( message instanceof SubscribeEventPool )
+        {
+            handleSubscribeEventPool ( (SubscribeEventPool)message );
+        }
+        else if ( message instanceof UnsubscribeEventPool )
+        {
+            handleUnsubscribeEventPool ( (UnsubscribeEventPool)message );
         }
         else if ( message instanceof CloseQuery )
         {
@@ -187,12 +263,38 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
         query.close ();
     }
 
-    private void handleSubscribeMonitorPool ( final SubscribeMonitorPool message )
+    private void handleSubscribeMonitorPool ( final SubscribeMonitorPool message ) throws Exception
     {
+        try
+        {
+            this.service.subscribeConditionQuery ( this.session, message.getMonitorPoolId () );
+        }
+        catch ( final UnknownQueryException e )
+        {
+            logger.warn ( "Subscribe to unknwn query", e );
+        }
     }
 
-    private void handleUnsubscribeMonitorPool ( final UnsubscribeMonitorPool message )
+    private void handleUnsubscribeMonitorPool ( final UnsubscribeMonitorPool message ) throws Exception
     {
+        this.service.unsubscribeConditionQuery ( this.session, message.getMonitorPoolId () );
+    }
+
+    private void handleSubscribeEventPool ( final SubscribeEventPool message ) throws Exception
+    {
+        try
+        {
+            this.service.subscribeEventQuery ( this.session, message.getEventPoolId () );
+        }
+        catch ( final UnknownQueryException e )
+        {
+            logger.warn ( "Subscribe to unknwn query", e );
+        }
+    }
+
+    private void handleUnsubscribeEventPool ( final UnsubscribeEventPool message ) throws Exception
+    {
+        this.service.unsubscribeEventQuery ( this.session, message.getEventPoolId () );
     }
 
     private void handelStopBrowse ()
