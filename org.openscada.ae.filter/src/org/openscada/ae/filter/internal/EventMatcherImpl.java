@@ -75,6 +75,7 @@ public class EventMatcherImpl implements EventMatcher
         this.filter = filter;
     }
 
+    @Override
     public boolean matches ( final Event event )
     {
         return matches ( this.filter, event );
@@ -148,7 +149,7 @@ public class EventMatcherImpl implements EventMatcher
         return compareVariant ( assertion, event.getAttributes ().get ( assertion.getAttribute () ) );
     }
 
-    @SuppressWarnings ( "unchecked" )
+    @SuppressWarnings ( { "unchecked", "incomplete-switch" } )
     private static boolean compareId ( final FilterAssertion assertion, final UUID left )
     {
         if ( assertion.getAssertion () == Assertion.PRESENCE )
@@ -159,7 +160,7 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
-        if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof UUID ) || ( assertion.getValue () instanceof Collection<?> ) ) )
+        if ( ! ( assertion.getValue () instanceof String || assertion.getValue () instanceof UUID || assertion.getValue () instanceof Collection<?> ) )
         {
             return false;
         }
@@ -170,23 +171,23 @@ public class EventMatcherImpl implements EventMatcher
         final UUID right = UUID.fromString ( assertion.getValue ().toString () );
         switch ( assertion.getAssertion () )
         {
-        case LESSTHAN:
-            return left.compareTo ( right ) == -1;
-        case LESSEQ:
-            return ( left.compareTo ( right ) == -1 ) || ( left.compareTo ( right ) == 0 );
-        case EQUALITY:
-            return left.compareTo ( right ) == 0;
-        case GREATEREQ:
-            return ( left.compareTo ( right ) == 1 ) || ( left.compareTo ( right ) == 0 );
-        case GREATERTHAN:
-            return left.compareTo ( right ) == 1;
-        case APPROXIMATE:
-            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ApproximateNotSupported") ); //$NON-NLS-1$
+            case LESSTHAN:
+                return left.compareTo ( right ) == -1;
+            case LESSEQ:
+                return left.compareTo ( right ) == -1 || left.compareTo ( right ) == 0;
+            case EQUALITY:
+                return left.compareTo ( right ) == 0;
+            case GREATEREQ:
+                return left.compareTo ( right ) == 1 || left.compareTo ( right ) == 0;
+            case GREATERTHAN:
+                return left.compareTo ( right ) == 1;
+            case APPROXIMATE:
+                throw new IllegalArgumentException ( Messages.getString ( "EventMatcherImpl.Error.ApproximateNotSupported" ) ); //$NON-NLS-1$
         }
         return false;
     }
 
-    @SuppressWarnings ( "unchecked" )
+    @SuppressWarnings ( { "unchecked", "incomplete-switch" } )
     private static boolean compareTimestamp ( final FilterAssertion assertion, final Date left )
     {
         if ( assertion.getAssertion () == Assertion.PRESENCE )
@@ -197,7 +198,7 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
-        if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof Date ) || ( assertion.getValue () instanceof Collection<?> ) ) )
+        if ( ! ( assertion.getValue () instanceof String || assertion.getValue () instanceof Date || assertion.getValue () instanceof Collection<?> ) )
         {
             return false;
         }
@@ -218,27 +219,27 @@ public class EventMatcherImpl implements EventMatcher
         }
         else
         {
-            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ValueTypeNotSupported") ); //$NON-NLS-1$
+            throw new IllegalArgumentException ( Messages.getString ( "EventMatcherImpl.Error.ValueTypeNotSupported" ) ); //$NON-NLS-1$
         }
         switch ( assertion.getAssertion () )
         {
-        case LESSTHAN:
-            return left.compareTo ( right ) == -1;
-        case LESSEQ:
-            return ( left.compareTo ( right ) == -1 ) || ( left.compareTo ( right ) == 0 );
-        case EQUALITY:
-            return left.compareTo ( right ) == 0;
-        case GREATEREQ:
-            return ( left.compareTo ( right ) == 1 ) || ( left.compareTo ( right ) == 0 );
-        case GREATERTHAN:
-            return left.compareTo ( right ) == 1;
-        case APPROXIMATE:
-            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ApproximateNotSupported") ); //$NON-NLS-1$
+            case LESSTHAN:
+                return left.compareTo ( right ) == -1;
+            case LESSEQ:
+                return left.compareTo ( right ) == -1 || left.compareTo ( right ) == 0;
+            case EQUALITY:
+                return left.compareTo ( right ) == 0;
+            case GREATEREQ:
+                return left.compareTo ( right ) == 1 || left.compareTo ( right ) == 0;
+            case GREATERTHAN:
+                return left.compareTo ( right ) == 1;
+            case APPROXIMATE:
+                throw new IllegalArgumentException ( Messages.getString ( "EventMatcherImpl.Error.ApproximateNotSupported" ) ); //$NON-NLS-1$
         }
         return false;
     }
 
-    @SuppressWarnings ( "unchecked" )
+    @SuppressWarnings ( { "unchecked", "incomplete-switch" } )
     private static boolean compareVariant ( final FilterAssertion assertion, final Variant left )
     {
         if ( assertion.getAssertion () == Assertion.PRESENCE )
@@ -253,7 +254,7 @@ public class EventMatcherImpl implements EventMatcher
         {
             return false;
         }
-        if ( ! ( ( assertion.getValue () instanceof String ) || ( assertion.getValue () instanceof Date ) || ( assertion.getValue () instanceof Collection<?> ) ) )
+        if ( ! ( assertion.getValue () instanceof String || assertion.getValue () instanceof Date || assertion.getValue () instanceof Collection<?> ) )
         {
             return false;
         }
@@ -274,22 +275,22 @@ public class EventMatcherImpl implements EventMatcher
         }
         else
         {
-            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ValueTypeNotSupported") ); //$NON-NLS-1$
+            throw new IllegalArgumentException ( Messages.getString ( "EventMatcherImpl.Error.ValueTypeNotSupported" ) ); //$NON-NLS-1$
         }
         switch ( assertion.getAssertion () )
         {
-        case LESSTHAN:
-            return left.compareTo ( right ) == -1;
-        case LESSEQ:
-            return ( left.compareTo ( right ) == -1 ) || ( left.compareTo ( right ) == 0 );
-        case EQUALITY:
-            return left.compareTo ( right ) == 0;
-        case GREATEREQ:
-            return ( left.compareTo ( right ) == 1 ) || ( left.compareTo ( right ) == 0 );
-        case GREATERTHAN:
-            return left.compareTo ( right ) == 1;
-        case APPROXIMATE:
-            throw new IllegalArgumentException ( Messages.getString("EventMatcherImpl.Error.ApproximateNotSupported") ); //$NON-NLS-1$
+            case LESSTHAN:
+                return left.compareTo ( right ) == -1;
+            case LESSEQ:
+                return left.compareTo ( right ) == -1 || left.compareTo ( right ) == 0;
+            case EQUALITY:
+                return left.compareTo ( right ) == 0;
+            case GREATEREQ:
+                return left.compareTo ( right ) == 1 || left.compareTo ( right ) == 0;
+            case GREATERTHAN:
+                return left.compareTo ( right ) == 1;
+            case APPROXIMATE:
+                throw new IllegalArgumentException ( Messages.getString ( "EventMatcherImpl.Error.ApproximateNotSupported" ) ); //$NON-NLS-1$
         }
         return false;
     }
@@ -297,6 +298,7 @@ public class EventMatcherImpl implements EventMatcher
     private static String toRegEx ( final Collection<String> parts )
     {
         return StringHelper.join ( parts, ".*", new Apply<String> () { //$NON-NLS-1$
+            @Override
             public String apply ( final String parameter )
             {
                 return Pattern.quote ( parameter );
