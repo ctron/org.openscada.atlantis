@@ -75,6 +75,8 @@ public class MovingAverageDataSource implements DataSourceListener
 
     private long nullrange;
 
+    private boolean triggerOnly = false;
+
     private final DataInputSource minDataSource;
 
     private final DataInputSource maxDataSource;
@@ -175,6 +177,7 @@ public class MovingAverageDataSource implements DataSourceListener
             this.trigger = cfg.getLongChecked ( "trigger", "'trigger' must be set" ); //$NON-NLS-1$
             this.range = cfg.getLongChecked ( "range", "'range' must be set" ); //$NON-NLS-1$
             this.nullrange = cfg.getLongChecked ( "nullRange", "'nullRange' must be set" ); //$NON-NLS-1$
+            this.triggerOnly = cfg.getBoolean ( "triggerOnly", false ); //$NON-NLS-1$
         }
         catch ( final IllegalArgumentException e )
         {
@@ -220,7 +223,10 @@ public class MovingAverageDataSource implements DataSourceListener
         try
         {
             this.valueRange.add ( DataItemValueLight.valueOf ( value ) );
-            updateValues ();
+            if ( !this.triggerOnly )
+            {
+                updateValues ();
+            }
         }
         catch ( final Exception e )
         {
