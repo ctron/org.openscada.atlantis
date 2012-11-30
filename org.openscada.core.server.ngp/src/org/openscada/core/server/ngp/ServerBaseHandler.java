@@ -69,6 +69,8 @@ public class ServerBaseHandler implements IoHandler
     @Override
     public void sessionClosed ( final IoSession session ) throws Exception
     {
+        logger.info ( "Session closed" );
+
         final Object o = session.getAttribute ( "connection" );
         if ( o instanceof ServerConnection )
         {

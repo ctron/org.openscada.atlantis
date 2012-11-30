@@ -42,6 +42,8 @@ public class EventManager
 
     private void updateEventListener ( final String eventQueryId, final EventListener listener )
     {
+        logger.debug ( "Update event listener for {}", eventQueryId );
+
         EventListener oldListener;
 
         oldListener = this.eventListeners.put ( eventQueryId, listener );
@@ -67,6 +69,8 @@ public class EventManager
 
     private void clearEventListener ( final String eventQueryId )
     {
+        logger.debug ( "Clear event listener for {}", eventQueryId );
+
         EventListener oldListener;
 
         oldListener = this.eventListeners.remove ( eventQueryId );
@@ -139,6 +143,9 @@ public class EventManager
 
     public void dispose ()
     {
+        logger.debug ( "Dispose" );
+
+        onClosed ();
         this.eventListeners.clear ();
     }
 

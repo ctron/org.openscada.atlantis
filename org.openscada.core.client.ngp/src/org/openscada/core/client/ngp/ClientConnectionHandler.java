@@ -23,9 +23,13 @@ import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.openscada.protocol.ngp.common.ProtocolConfiguration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ClientConnectionHandler implements IoHandler
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ClientConnectionHandler.class );
 
     private final ClientBaseConnection connection;
 
@@ -40,6 +44,8 @@ public class ClientConnectionHandler implements IoHandler
     @Override
     public void exceptionCaught ( final IoSession session, final Throwable error ) throws Exception
     {
+        logger.info ( "exceptionCaught - session: " + session, error );
+
         this.connection.performClosed ( session, error );
     }
 
