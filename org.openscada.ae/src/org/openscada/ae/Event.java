@@ -31,6 +31,13 @@ import java.util.UUID;
 import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
 
+/**
+ * A class holding the AE event information
+ * <p>
+ * Keys and values of the events attributes must not be null. If null is
+ * inserted it will simply be ignored.
+ * </p>
+ */
 @Immutable
 public class Event implements Cloneable, Comparable<Event>, Serializable
 {
@@ -101,13 +108,23 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
             if ( this.allowOverrideAttributes )
             {
+                for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
+                {
+                    if ( entry.getValue () != null && entry.getKey () != null )
+                    {
+                        this.event.attributes.put ( entry.getKey (), entry.getValue () );
+                    }
+                }
                 this.event.attributes.putAll ( attributes );
             }
             else
             {
                 for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
                 {
-                    attribute ( entry.getKey (), entry.getValue () );
+                    if ( entry.getValue () != null && entry.getKey () != null )
+                    {
+                        attribute ( entry.getKey (), entry.getValue () );
+                    }
                 }
             }
             return this;
@@ -115,6 +132,10 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
         public EventBuilder attribute ( final String key, final Variant value )
         {
+            if ( key == null || value == null )
+            {
+                return this;
+            }
             if ( this.allowOverrideAttributes || !this.event.attributes.containsKey ( key ) )
             {
                 this.event.attributes.put ( key, value );
@@ -359,7 +380,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
     public void setField ( final Fields field, final Variant value )
     {
-        if ( field == null )
+        if ( field == null || value == null )
         {
             return;
         }
