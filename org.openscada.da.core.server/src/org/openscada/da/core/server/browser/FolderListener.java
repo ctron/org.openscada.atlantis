@@ -19,12 +19,13 @@
 
 package org.openscada.da.core.server.browser;
 
-import java.util.Collection;
+import java.util.List;
+import java.util.Set;
 
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
 
 public interface FolderListener
 {
-    void folderChanged ( Location location, Collection<Entry> added, Collection<String> removed, boolean full );
+    void folderChanged ( Location location, List<Entry> added, Set<String> removed, boolean full );
 }

@@ -26,6 +26,7 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.server.arduino.ArduinoDevice;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
@@ -34,11 +35,11 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
 {
     private final BundleContext context;
 
-    private final ObjectPoolImpl itemPool;
+    private final ObjectPoolImpl<DataItem> itemPool;
 
     private final Executor executor;
 
-    public ConfigurationFactoryImpl ( final BundleContext context, final ObjectPoolImpl itemPool, final Executor executor )
+    public ConfigurationFactoryImpl ( final BundleContext context, final ObjectPoolImpl<DataItem> itemPool, final Executor executor )
     {
         super ( context );
         this.context = context;

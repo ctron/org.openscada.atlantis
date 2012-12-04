@@ -27,8 +27,6 @@ import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.OperationParameters;
-import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.core.browser.Entry;
 
 /**
  * A DataAccess (DA) connection.
@@ -37,36 +35,6 @@ import org.openscada.da.core.browser.Entry;
  */
 public interface Connection extends org.openscada.core.client.Connection
 {
-    /**
-     * Browse a server folder for items. The operation will block until the
-     * result is available, an error occurred or the connection failed.
-     * 
-     * @param location
-     *            The path to browse
-     * @return The entries of the server folder
-     * @throws NoConnectionException
-     *             Raised if there is currently no connect to the server
-     * @throws OperationException
-     *             Raised if the operation failed
-     */
-    public abstract Entry[] browse ( Location location ) throws NoConnectionException, OperationException;
-
-    /**
-     * Browse a server folder for items. The operation will block until the
-     * result is available, an error occurred, the timeout expired or the
-     * connection failed.
-     * 
-     * @param location
-     *            The path to browse
-     * @param timeout
-     *            Timeout of the operation in milliseconds
-     * @return The entries of the server folder
-     * @throws NoConnectionException
-     *             Raised if there is currently no connect to the server
-     * @throws OperationException
-     *             Raised if the operation failed
-     */
-    public abstract Entry[] browse ( Location location, int timeout ) throws NoConnectionException, OperationException;
 
     /**
      * Browse a server folder for items. The operation will return immediately.
@@ -78,15 +46,7 @@ public interface Connection extends org.openscada.core.client.Connection
      */
     public abstract void browse ( Location location, BrowseOperationCallback callback );
 
-    public abstract void write ( String itemId, Variant value, OperationParameters operationParameters ) throws NoConnectionException, OperationException;
-
-    public abstract void write ( String itemId, Variant value, OperationParameters operationParameters, int timeout ) throws NoConnectionException, OperationException;
-
     public abstract void write ( String itemId, Variant value, OperationParameters operationParameters, WriteOperationCallback callback );
-
-    public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes, OperationParameters operationParameters ) throws NoConnectionException, OperationException;
-
-    public abstract WriteAttributeResults writeAttributes ( String itemId, Map<String, Variant> attributes, OperationParameters operationParameters, int timeout ) throws NoConnectionException, OperationException;
 
     public abstract void writeAttributes ( String itemId, Map<String, Variant> attributes, OperationParameters operationParameters, WriteAttributeOperationCallback callback );
 

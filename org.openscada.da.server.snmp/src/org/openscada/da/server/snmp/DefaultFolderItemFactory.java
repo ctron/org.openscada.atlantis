@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.snmp;
 
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;

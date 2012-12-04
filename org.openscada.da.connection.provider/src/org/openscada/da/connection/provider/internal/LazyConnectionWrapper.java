@@ -44,8 +44,6 @@ import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.OperationParameters;
-import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.core.browser.Entry;
 
 public abstract class LazyConnectionWrapper implements Connection, StatisticsProvider
 {
@@ -116,12 +114,6 @@ public abstract class LazyConnectionWrapper implements Connection, StatisticsPro
     }
 
     @Override
-    public Entry[] browse ( final Location location ) throws NoConnectionException, OperationException
-    {
-        return this.connection.browse ( location );
-    }
-
-    @Override
     public ConnectionInformation getConnectionInformation ()
     {
         return this.connection.getConnectionInformation ();
@@ -134,45 +126,15 @@ public abstract class LazyConnectionWrapper implements Connection, StatisticsPro
     }
 
     @Override
-    public Entry[] browse ( final Location location, final int timeout ) throws NoConnectionException, OperationException
-    {
-        return this.connection.browse ( location, timeout );
-    }
-
-    @Override
     public void browse ( final Location location, final BrowseOperationCallback callback )
     {
         this.connection.browse ( location, callback );
     }
 
     @Override
-    public void write ( final String itemId, final Variant value, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
-    {
-        this.connection.write ( itemId, value, operationParameters );
-    }
-
-    @Override
-    public void write ( final String itemId, final Variant value, final OperationParameters operationParameters, final int timeout ) throws NoConnectionException, OperationException
-    {
-        this.connection.write ( itemId, value, operationParameters, timeout );
-    }
-
-    @Override
     public void write ( final String itemId, final Variant value, final OperationParameters operationParameters, final WriteOperationCallback callback )
     {
         this.connection.write ( itemId, value, operationParameters, callback );
-    }
-
-    @Override
-    public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
-    {
-        return this.connection.writeAttributes ( itemId, attributes, operationParameters );
-    }
-
-    @Override
-    public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final int timeout ) throws NoConnectionException, OperationException
-    {
-        return this.connection.writeAttributes ( itemId, attributes, operationParameters, timeout );
     }
 
     @Override

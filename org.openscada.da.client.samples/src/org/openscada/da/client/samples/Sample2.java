@@ -27,12 +27,12 @@ import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
 
 /**
- * Sample showing how to write to a data item
- * <br>
- * The example shows how to create a new connection, connect, and write the main value
- * and some attributes.
- * <br>
- * Since we are using the <em>test-1</em> item of the test server it is no problem
+ * Sample showing how to write to a data item <br>
+ * The example shows how to create a new connection, connect, and write the main
+ * value
+ * and some attributes. <br>
+ * Since we are using the <em>test-1</em> item of the test server it is no
+ * problem
  * writing any value and any attribute to it. If the item is an "input onyl"
  * item you cannot write the main value. And attributes might be restricted
  * to data item specific attributes that are available.
@@ -49,13 +49,13 @@ public class Sample2 extends SampleBase
     public void run () throws NoConnectionException, OperationException
     {
         // set the main value
-        this.connection.write ( "test-1", Variant.valueOf ( "Hello World" ), null );
+        this.connection.write ( "test-1", Variant.valueOf ( "Hello World" ), null, null );
 
         // set some attributes
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( "hello", Variant.valueOf ( "world" ) );
         attributes.put ( "foo", Variant.valueOf ( "bar" ) );
-        this.connection.writeAttributes ( "test-1", attributes, null );
+        this.connection.writeAttributes ( "test-1", attributes, null, null );
     }
 
     public static void main ( final String[] args ) throws Exception

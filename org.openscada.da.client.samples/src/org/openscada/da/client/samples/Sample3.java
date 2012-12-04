@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,14 +20,15 @@
 package org.openscada.da.client.samples;
 
 import org.openscada.core.OperationException;
+import org.openscada.da.client.BrowseOperationCallback;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.FolderEntry;
 
 /**
- * Sample showing how to browse once
- * <br> 
+ * Sample showing how to browse once <br>
+ * 
  * @author Jens Reimann <jens.reimann@th4-systems.com>
  */
 public class Sample3 extends SampleBase
@@ -38,8 +39,10 @@ public class Sample3 extends SampleBase
     }
 
     /**
-     * Show one folder entry. 
-     * @param entry A folder entry which can be an item or a sub-folder
+     * Show one folder entry.
+     * 
+     * @param entry
+     *            A folder entry which can be an item or a sub-folder
      */
     protected void showEntry ( final Entry entry )
     {
@@ -56,8 +59,17 @@ public class Sample3 extends SampleBase
         System.out.println ();
     }
 
+    protected void dumpEntries ( final Entry[] entries )
+    {
+        for ( final Entry entry : entries )
+        {
+            showEntry ( entry );
+        }
+    }
+
     /**
      * browse once through a predefined folder named "test"
+     * 
      * @throws InterruptedException
      * @throws OperationException
      */
@@ -65,10 +77,26 @@ public class Sample3 extends SampleBase
     {
         try
         {
-            for ( final Entry entry : this.connection.browse ( new Location ( "test" ) ) )
-            {
-                showEntry ( entry );
-            }
+            this.connection.browse ( new Location ( "test" ), new BrowseOperationCallback () {
+
+                @Override
+                public void failed ( final String error )
+                {
+                    System.err.println ( "Error: " + error );
+                }
+
+                @Override
+                public void error ( final Throwable e )
+                {
+                    e.printStackTrace ();
+                }
+
+                @Override
+                public void complete ( final Entry[] entries )
+                {
+                    dumpEntries ( entries );
+                }
+            } );
         }
         catch ( final Exception e )
         {

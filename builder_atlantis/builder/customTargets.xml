@@ -161,6 +161,11 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.mapper.osgi"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.master.mapper"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.da.common.ngp"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.ngp"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.ngp"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter.ngp"/>
+  	
   	<!-- OpenSCADA HD -->
   	
   	<openscada.builder.copyFeature id="org.openscada.hd"/>

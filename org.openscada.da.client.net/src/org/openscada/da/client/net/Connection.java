@@ -150,6 +150,13 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         super.finalize ();
     }
 
+    @Override
+    public void dispose ()
+    {
+        super.dispose ();
+        this.executor.shutdown ();
+    }
+
     private void fireBrowseEvent ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
     {
         final FolderListener listener = this.folderListeners.get ( location );
@@ -288,28 +295,6 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     // write operation
 
     @Override
-    public void write ( final String item, final Variant value, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
-    {
-        write ( item, value, operationParameters, null );
-    }
-
-    @Override
-    public void write ( final String item, final Variant value, final OperationParameters operationParameters, final int timeout ) throws NoConnectionException, OperationException
-    {
-        final LongRunningOperation op = this.writeController.start ( item, value, operationParameters, null );
-        try
-        {
-            op.waitForCompletion ( timeout );
-        }
-        catch ( final InterruptedException e )
-        {
-            logger.debug ( "Interrupted", e );
-            throw new OperationException ( e );
-        }
-        completeWrite ( op );
-    }
-
-    @Override
     public void write ( final String item, final Variant value, final OperationParameters operationParameters, final WriteOperationCallback callback )
     {
         try
@@ -387,26 +372,6 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     }
 
     // write attributes operation
-    @Override
-    public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws NoConnectionException, OperationException
-    {
-        return writeAttributes ( itemId, attributes, operationParameters, 0 );
-    }
-
-    @Override
-    public WriteAttributeResults writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final int timeout ) throws NoConnectionException, OperationException
-    {
-        final LongRunningOperation op = this.writeAttributesController.start ( itemId, attributes, operationParameters, null );
-        try
-        {
-            op.waitForCompletion ();
-        }
-        catch ( final InterruptedException e )
-        {
-            throw new OperationException ( e );
-        }
-        return completeWriteAttributes ( op );
-    }
 
     @Override
     public void writeAttributes ( final String item, final Map<String, Variant> attributes, final OperationParameters operationParameters, final WriteAttributeOperationCallback callback )
@@ -621,13 +586,6 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
         }
     }
 
-    @Override
-    public Entry[] browse ( final Location location ) throws NoConnectionException, OperationException
-    {
-        return browse ( location, 0 );
-    }
-
-    @Override
     public Entry[] browse ( final Location location, final int timeout ) throws NoConnectionException, OperationException
     {
         final LongRunningOperation op = this.browseController.start ( location.asArray (), null );

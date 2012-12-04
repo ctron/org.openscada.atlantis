@@ -336,7 +336,8 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
     }
 
     /**
-     * Inject attributes to the value after the value update has been performed using {@link #performDataUpdate(Builder)}
+     * Inject attributes to the value after the value update has been performed
+     * using {@link #performDataUpdate(Builder)}
      * 
      * @param builder
      *            the builder to use for changing information

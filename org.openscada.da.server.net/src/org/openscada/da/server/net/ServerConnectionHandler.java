@@ -19,8 +19,8 @@
 
 package org.openscada.da.server.net;
 
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -196,7 +196,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            this.session = (Session)this.hive.createSession ( props );
+            this.session = this.hive.createSession ( props );
         }
         catch ( final UnableToCreateSessionException e )
         {
@@ -513,7 +513,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     }
 
     @Override
-    public void folderChanged ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
+    public void folderChanged ( final Location location, final List<Entry> added, final Set<String> removed, final boolean full )
     {
         logger.debug ( "Got folder change event from hive for folder: {}", location );
         this.messenger.sendMessage ( ListBrowser.createEvent ( location.asArray (), added, removed, full ) );

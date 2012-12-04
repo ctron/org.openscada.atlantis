@@ -21,7 +21,7 @@ package org.openscada.da.server.common.chain;
 
 import java.util.EnumSet;
 
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 
 public class ChainProcessEntry
 {

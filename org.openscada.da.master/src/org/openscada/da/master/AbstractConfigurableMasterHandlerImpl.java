@@ -132,7 +132,8 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
     }
 
     /**
-     * This method will be called on write request that have attributes which match our prefix.
+     * This method will be called on write request that have attributes which
+     * match our prefix.
      * <p>
      * All attributes that are processed must be returned in the result
      * </p>
@@ -150,7 +151,9 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
     /**
      * Process a CA update using the write attributes
      * <p>
-     * Actually calls {@link #updateConfiguration(Map, Map, boolean, OperationParameters, WriteAttributeResults)} with <code>null</code> as <code>result</code> parameter.
+     * Actually calls
+     * {@link #updateConfiguration(Map, Map, boolean, OperationParameters, WriteAttributeResults)}
+     * with <code>null</code> as <code>result</code> parameter.
      * </p>
      */
     protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet, final OperationParameters operationParameters ) throws OperationException
@@ -161,10 +164,13 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
     /**
      * Process a CA update using the write attributes
      * <p>
-     * Write attribute results will automatically be generated for attributes that match an entry in the data map.
+     * Write attribute results will automatically be generated for attributes
+     * that match an entry in the data map.
      * </p>
      * <p>
-     * The <code>result</code> parameter may provide an already filled set with results for attributes that cannot be automatically filled. Note that the the attribute named must not be prefixed!
+     * The <code>result</code> parameter may provide an already filled set with
+     * results for attributes that cannot be automatically filled. Note that the
+     * the attribute named must not be prefixed!
      * </p>
      */
     protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet, final OperationParameters operationParameters, WriteAttributeResults result ) throws OperationException

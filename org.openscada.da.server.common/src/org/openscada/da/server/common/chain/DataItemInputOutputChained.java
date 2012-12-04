@@ -27,9 +27,9 @@ import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.utils.concurrent.NotifyFuture;
 

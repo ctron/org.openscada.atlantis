@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.exec.util;
 
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.DataItemInputChained;

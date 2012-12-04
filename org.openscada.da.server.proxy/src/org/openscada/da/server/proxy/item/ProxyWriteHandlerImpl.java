@@ -25,6 +25,8 @@ import java.util.Map;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
+import org.openscada.da.client.WriteAttributeOperationCallback;
+import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
@@ -32,9 +34,52 @@ import org.openscada.da.server.proxy.connection.ProxySubConnection;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.da.server.proxy.utils.ProxyUtils;
+import org.openscada.utils.concurrent.AbstractFuture;
 
 public class ProxyWriteHandlerImpl extends ProxyItemSupport implements ProxyWriteHandler
 {
+    public static class AttributeResultHandler extends AbstractFuture<WriteAttributeResults> implements WriteAttributeOperationCallback
+    {
+        @Override
+        public void failed ( final String error )
+        {
+            setError ( new RuntimeException ( error ).fillInStackTrace () );
+        }
+
+        @Override
+        public void error ( final Throwable e )
+        {
+            setError ( e );
+        }
+
+        @Override
+        public void complete ( final WriteAttributeResults result )
+        {
+            setResult ( result );
+        }
+    }
+
+    public static class ValueResultHandler extends AbstractFuture<Void> implements WriteOperationCallback
+    {
+        @Override
+        public void failed ( final String error )
+        {
+            setError ( new RuntimeException ( error ).fillInStackTrace () );
+        }
+
+        @Override
+        public void error ( final Throwable e )
+        {
+            setError ( e );
+        }
+
+        @Override
+        public void complete ()
+        {
+            setResult ( null );
+        }
+    }
+
     protected final Map<ProxySubConnectionId, ProxySubConnection> subConnections;
 
     public ProxyWriteHandlerImpl ( final String separator, final ProxyPrefixName prefix, final Map<ProxySubConnectionId, ProxySubConnection> subConnections, final ProxySubConnectionId currentConnection, final String proxyItemId )
@@ -51,7 +96,17 @@ public class ProxyWriteHandlerImpl extends ProxyItemSupport implements ProxyWrit
     {
         final ProxySubConnection subConnection = this.subConnections.get ( this.currentConnection );
         final String actualItemId = ProxyUtils.originalItemId ( itemId, this.separator, this.prefix, subConnection.getPrefix () );
-        subConnection.getConnection ().write ( actualItemId, value, operationParameters );
+
+        final ValueResultHandler callback = new ValueResultHandler ();
+        subConnection.getConnection ().write ( actualItemId, value, operationParameters, callback );
+        try
+        {
+            callback.get ();
+        }
+        catch ( final Exception e )
+        {
+            throw new OperationException ( e );
+        }
     }
 
     /* (non-Javadoc)
@@ -62,16 +117,16 @@ public class ProxyWriteHandlerImpl extends ProxyItemSupport implements ProxyWrit
     {
         final ProxySubConnection subConnection = this.subConnections.get ( this.currentConnection );
         final String actualItemId = ProxyUtils.originalItemId ( itemId, this.separator, this.prefix, subConnection.getPrefix () );
+
+        final AttributeResultHandler callback = new AttributeResultHandler ();
+
         WriteAttributeResults actualWriteAttributeResults;
         try
         {
-            actualWriteAttributeResults = subConnection.getConnection ().writeAttributes ( actualItemId, attributes, operationParameters );
+            subConnection.getConnection ().writeAttributes ( actualItemId, attributes, operationParameters, callback );
+            actualWriteAttributeResults = callback.get ();
         }
-        catch ( final NoConnectionException e )
-        {
-            actualWriteAttributeResults = attributesCouldNotBeWritten ( attributes, e );
-        }
-        catch ( final OperationException e )
+        catch ( final Exception e )
         {
             actualWriteAttributeResults = attributesCouldNotBeWritten ( attributes, e );
         }
@@ -79,8 +134,9 @@ public class ProxyWriteHandlerImpl extends ProxyItemSupport implements ProxyWrit
     }
 
     /**
-     * creates a WriteAttributeResults object for given attributes filled 
+     * creates a WriteAttributeResults object for given attributes filled
      * with given exception for each attribute
+     * 
      * @param attributes
      * @param e
      * @return

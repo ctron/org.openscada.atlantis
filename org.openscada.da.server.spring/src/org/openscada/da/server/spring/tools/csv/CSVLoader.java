@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.browser.common.query.ItemStorage;
 import org.openscada.da.server.spring.Loader;
 import org.slf4j.Logger;

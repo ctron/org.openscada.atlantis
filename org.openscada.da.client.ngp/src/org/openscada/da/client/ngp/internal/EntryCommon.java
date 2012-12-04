@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -17,10 +17,35 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.core;
+package org.openscada.da.client.ngp.internal;
 
-public enum IODirection
+import java.util.Map;
+
+import org.openscada.core.Variant;
+import org.openscada.da.core.browser.Entry;
+
+public class EntryCommon implements Entry
 {
-    INPUT,
-    OUTPUT;
+    private final String name;
+
+    private final Map<String, Variant> attributes;
+
+    public EntryCommon ( final String name, final Map<String, Variant> attributes )
+    {
+        this.name = name;
+        this.attributes = attributes;
+    }
+
+    @Override
+    public Map<String, Variant> getAttributes ()
+    {
+        return this.attributes;
+    }
+
+    @Override
+    public String getName ()
+    {
+        return this.name;
+    }
+
 }

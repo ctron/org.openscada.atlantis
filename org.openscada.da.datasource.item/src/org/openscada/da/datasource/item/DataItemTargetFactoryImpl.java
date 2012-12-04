@@ -27,7 +27,7 @@ import java.util.Set;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;

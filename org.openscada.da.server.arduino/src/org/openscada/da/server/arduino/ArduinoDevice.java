@@ -27,7 +27,8 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.protocols.arduino.ArduinoDeviceListener;
@@ -39,7 +40,7 @@ public class ArduinoDevice
 {
     private final org.openscada.protocols.arduino.ArduinoDevice device;
 
-    private final ObjectPoolImpl itemPool;
+    private final ObjectPoolImpl<DataItem> itemPool;
 
     private final Executor executor;
 
@@ -51,7 +52,7 @@ public class ArduinoDevice
 
     private ArduinoDataItem[] items;
 
-    public ArduinoDevice ( final BundleContext context, final String configurationId, final Map<String, String> parameters, final ObjectPoolImpl itemPool, final Executor executor )
+    public ArduinoDevice ( final BundleContext context, final String configurationId, final Map<String, String> parameters, final ObjectPoolImpl<DataItem> itemPool, final Executor executor )
     {
 
         this.itemPool = itemPool;

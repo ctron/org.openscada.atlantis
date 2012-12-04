@@ -19,9 +19,10 @@
 
 package org.openscada.da.server.common.impl;
 
-import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -154,7 +155,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
     }
 
     @Override
-    public void changed ( final Object tag, final Collection<Entry> added, final Collection<String> removed, final boolean full )
+    public void changed ( final Object tag, final List<Entry> added, final Set<String> removed, final boolean full )
     {
         final SessionCommon session = this.subscriberMap.get ( tag );
         if ( session != null )

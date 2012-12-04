@@ -25,9 +25,9 @@ import java.util.concurrent.Executor;
 
 import org.apache.mina.core.buffer.IoBuffer;
 import org.openscada.core.Variant;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;

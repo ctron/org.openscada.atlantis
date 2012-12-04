@@ -28,10 +28,10 @@ import java.util.Set;
 
 import org.openscada.core.Variant;
 import org.openscada.core.net.MessageHelper;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.FolderEntry;
+import org.openscada.da.data.IODirection;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;

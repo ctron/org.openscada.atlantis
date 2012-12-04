@@ -29,7 +29,7 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.SuspendableDataItem;
 import org.openscada.utils.concurrent.NotifyFuture;

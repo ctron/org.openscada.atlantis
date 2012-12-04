@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.query.AttributeNameProvider;
 import org.openscada.da.server.browser.common.query.GroupFolder;

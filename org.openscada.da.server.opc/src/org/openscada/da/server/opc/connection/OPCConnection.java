@@ -29,8 +29,8 @@ import java.util.Map;
 
 import org.jinterop.dcom.common.JIException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.OperationParameters;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemCommand;

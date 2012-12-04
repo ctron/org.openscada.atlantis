@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,12 +21,14 @@ package org.openscada.da.core;
 
 import java.util.Set;
 
+import org.openscada.da.data.IODirection;
+
 /**
  * Data item information
  * <p>
  * Data items information objects must be equal on their name!
+ * 
  * @author Jens Reimann
- *
  */
 public interface DataItemInformation
 {
@@ -35,8 +37,9 @@ public interface DataItemInformation
     /**
      * Get the ID of the data item
      * <p>
-     * Although the getter is called <em>name</em> it returns the <em>id</em> since
-     * somewhere in the past "name" was renamed to "id".
+     * Although the getter is called <em>name</em> it returns the <em>id</em>
+     * since somewhere in the past "name" was renamed to "id".
+     * 
      * @return the id of the data item
      */
     public abstract String getName ();

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,8 +25,8 @@ import java.util.Set;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.browser.DataItemEntry;
+import org.openscada.da.data.IODirection;
 
 public class DataItemEntryCommon implements DataItemEntry
 {
@@ -52,21 +52,25 @@ public class DataItemEntryCommon implements DataItemEntry
         }
     }
 
+    @Override
     public String getId ()
     {
         return this.itemInformation.getName ();
     }
 
+    @Override
     public String getName ()
     {
         return this.name;
     }
 
+    @Override
     public Map<String, Variant> getAttributes ()
     {
         return this.attributes;
     }
 
+    @Override
     public Set<IODirection> getIODirections ()
     {
         return Collections.unmodifiableSet ( this.itemInformation.getIODirection () );
