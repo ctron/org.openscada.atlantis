@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -873,21 +873,36 @@ public abstract class AbstractConfigurationAdministrator implements FreezableCon
             switch ( entry.getOperation () )
             {
                 case ADD:
-                    future.addChild ( createConfiguration ( userInformation, entry.getFactoryId (), entry.getConfigurationId (), entry.getNewData () ) );
+                    future.addChild ( createConfiguration ( userInformation, entry.getFactoryId (), entry.getConfigurationId (), entry.getAddedOrUpdatedData () ) );
                     break;
                 case DELETE:
                     future.addChild ( deleteConfiguration ( userInformation, entry.getFactoryId (), entry.getConfigurationId () ) );
                     break;
                 case UPDATE_SET:
-                    future.addChild ( updateConfiguration ( userInformation, entry.getFactoryId (), entry.getConfigurationId (), entry.getNewData (), true ) );
+                    future.addChild ( updateConfiguration ( userInformation, entry.getFactoryId (), entry.getConfigurationId (), entry.getAddedOrUpdatedData (), true ) );
                     break;
                 case UPDATE_DIFF:
-                    future.addChild ( updateConfiguration ( userInformation, entry.getFactoryId (), entry.getConfigurationId (), entry.getNewData (), false ) );
+                    future.addChild ( updateConfiguration ( userInformation, entry.getFactoryId (), entry.getConfigurationId (), mergeUpdateData ( entry.getAddedOrUpdatedData (), entry.getRemovedData () ), false ) );
                     break;
             }
         }
 
         future.setComplete ();
         return future;
+    }
+
+    private Map<String, String> mergeUpdateData ( final Map<String, String> addedOrUpdatedData, final Set<String> removedData )
+    {
+        if ( removedData == null || removedData.isEmpty () )
+        {
+            return addedOrUpdatedData;
+        }
+
+        final Map<String, String> result = new HashMap<String, String> ( addedOrUpdatedData );
+        for ( final String removed : removedData )
+        {
+            result.put ( removed, null );
+        }
+        return result;
     }
 }

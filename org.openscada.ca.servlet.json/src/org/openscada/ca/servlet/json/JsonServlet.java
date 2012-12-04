@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.concurrent.Future;
 
 import javax.servlet.ServletException;
@@ -44,6 +45,7 @@ import org.openscada.sec.UserInformation;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonDeserializationContext;
 import com.google.gson.JsonDeserializer;
 import com.google.gson.JsonElement;
@@ -80,19 +82,19 @@ public class JsonServlet extends HttpServlet
 
             {
                 final JsonObject map = new JsonObject ();
-                for ( final Entry<?, ?> entry : config.getOldData ().entrySet () )
+                for ( final Entry<?, ?> entry : config.getAddedOrUpdatedData ().entrySet () )
                 {
                     map.addProperty ( String.valueOf ( entry.getKey () ), String.valueOf ( entry.getValue () ) );
                 }
-                obj.add ( "oldData", map );
+                obj.add ( "addedOrUpdatedData", map );
             }
             {
-                final JsonObject map = new JsonObject ();
-                for ( final Entry<?, ?> entry : config.getNewData ().entrySet () )
+                final JsonArray array = new JsonArray ();
+                for ( final String removed : config.getRemovedData () )
                 {
-                    map.addProperty ( String.valueOf ( entry.getKey () ), String.valueOf ( entry.getValue () ) );
+                    array.add ( context.serialize ( removed ) );
                 }
-                obj.add ( "newData", map );
+                obj.add ( "removedData", array );
             }
 
             return obj;
@@ -104,9 +106,9 @@ public class JsonServlet extends HttpServlet
             final String factoryId = element.getAsJsonObject ().get ( "factoryId" ).getAsString ();
             final String configurationId = element.getAsJsonObject ().get ( "configurationId" ).getAsString ();
             final String operation = element.getAsJsonObject ().get ( "operation" ).getAsString ();
-            final Map<String, String> oldData = context.deserialize ( element.getAsJsonObject ().getAsJsonObject ( "oldData" ), new TypeToken<Map<String, String>> () {}.getType () );
-            final Map<String, String> newData = context.deserialize ( element.getAsJsonObject ().getAsJsonObject ( "newData" ), new TypeToken<Map<String, String>> () {}.getType () );
-            return new DiffEntry ( factoryId, configurationId, Operation.valueOf ( operation ), oldData, newData );
+            final Map<String, String> newData = context.deserialize ( element.getAsJsonObject ().getAsJsonObject ( "addedOrUpdatedData" ), new TypeToken<Map<String, String>> () {}.getType () );
+            final Set<String> removed = context.deserialize ( element.getAsJsonObject ().getAsJsonArray ( "removedData" ), new TypeToken<Set<String>> () {}.getType () );
+            return new DiffEntry ( factoryId, configurationId, Operation.valueOf ( operation ), null, newData, removed );
         }
     }
 
@@ -329,15 +331,15 @@ public class JsonServlet extends HttpServlet
                 final Map<String, String> data = config.getValue ();
                 if ( existingConfigs == null )
                 {
-                    diff.add ( new DiffEntry ( factoryId, id, Operation.ADD, null, new HashMap ( data ) ) );
+                    diff.add ( new DiffEntry ( factoryId, id, Operation.ADD, null, new HashMap ( data ), null ) );
                 }
                 else if ( !existingConfigs.containsKey ( id ) )
                 {
-                    diff.add ( new DiffEntry ( factoryId, id, Operation.ADD, null, new HashMap ( data ) ) );
+                    diff.add ( new DiffEntry ( factoryId, id, Operation.ADD, null, new HashMap ( data ), null ) );
                 }
                 else if ( !data.equals ( existingConfigs.get ( id ) ) )
                 {
-                    diff.add ( new DiffEntry ( factoryId, id, Operation.UPDATE_SET, null, new HashMap ( data ) ) );
+                    diff.add ( new DiffEntry ( factoryId, id, Operation.UPDATE_SET, null, new HashMap ( data ), null ) );
                 }
             }
         }
@@ -351,11 +353,11 @@ public class JsonServlet extends HttpServlet
                 final String id = config.getKey ();
                 if ( newConfigs == null )
                 {
-                    diff.add ( new DiffEntry ( factoryId, id, Operation.DELETE, null, new HashMap () ) );
+                    diff.add ( new DiffEntry ( factoryId, id, Operation.DELETE, null, null, null ) );
                 }
                 else if ( !newConfigs.containsKey ( id ) )
                 {
-                    diff.add ( new DiffEntry ( factoryId, id, Operation.DELETE, null, new HashMap () ) );
+                    diff.add ( new DiffEntry ( factoryId, id, Operation.DELETE, null, null, null ) );
                 }
             }
         }
@@ -383,8 +385,8 @@ public class JsonServlet extends HttpServlet
         final Object o = req.getParameterMap ().get ( key );
         if ( o == null )
         {
-            resp.getWriter ().print ( "parameter " + key + " must not be null" );
-            throw new ServletException ( "parameter " + key + " must not be null" );
+            resp.getWriter ().print ( String.format ( "parameter %s must not be null", key ) );
+            throw new ServletException ( String.format ( "parameter %s must not be null", key ) );
         }
         return ( (String[])o )[0];
     }
