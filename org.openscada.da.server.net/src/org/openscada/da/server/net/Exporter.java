@@ -30,10 +30,13 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.server.net.Server;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.impl.ExporterBase;
+import org.openscada.utils.lifecycle.LifecycleAware;
 
-public class Exporter extends ExporterBase
+public class Exporter extends ExporterBase implements LifecycleAware
 {
     private Server server;
+
+    private Collection<ConnectionInformation> startedConnections;
 
     public Exporter ( final Hive hive, final ConnectionInformation connectionInformation ) throws Exception
     {
@@ -59,9 +62,14 @@ public class Exporter extends ExporterBase
     }
 
     @Override
-    public Collection<ConnectionInformation> start () throws Exception
+    public void start () throws Exception
     {
-        return createServer ();
+        this.startedConnections = createServer ();
+    }
+
+    public Collection<ConnectionInformation> getStartedConnections ()
+    {
+        return this.startedConnections;
     }
 
     @Override

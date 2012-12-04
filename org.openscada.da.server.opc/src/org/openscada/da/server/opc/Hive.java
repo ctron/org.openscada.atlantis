@@ -74,6 +74,12 @@ public class Hive extends HiveCommon
         configurator.configure ( this );
     }
 
+    @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.opc";
+    }
+
     private void initJInterop ()
     {
         logger.warn ( "rpc.socketTimeout = {}", System.getProperty ( "rpc.socketTimeout" ) );

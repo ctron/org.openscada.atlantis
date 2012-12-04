@@ -86,6 +86,12 @@ public class HiveImpl extends HiveCommon
     }
 
     @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.osgi";
+    }
+
+    @Override
     public void start () throws Exception
     {
         this.authenticationManager.open ();

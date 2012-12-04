@@ -57,9 +57,10 @@ public class Hive extends HiveCommon
 
     /**
      * Default Constructor
+     * 
      * @throws XmlException
      * @throws IOException
-     * @throws ConfigurationException 
+     * @throws ConfigurationException
      */
     public Hive () throws XmlException, IOException, ConfigurationException
     {
@@ -68,9 +69,10 @@ public class Hive extends HiveCommon
 
     /**
      * Constructor
+     * 
      * @param node
      * @throws XmlException
-     * @throws ConfigurationException 
+     * @throws ConfigurationException
      */
     public Hive ( final Node node ) throws XmlException, ConfigurationException
     {
@@ -79,8 +81,10 @@ public class Hive extends HiveCommon
 
     /**
      * Set up the hive and start the command queues
-     * @param document Configuration
-     * @throws ConfigurationException 
+     * 
+     * @param document
+     *            Configuration
+     * @throws ConfigurationException
      */
     public Hive ( final RootDocument document ) throws ConfigurationException
     {
@@ -96,6 +100,12 @@ public class Hive extends HiveCommon
 
         // Setup and start the queues
         startQueues ();
+    }
+
+    @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.exec";
     }
 
     /**
@@ -149,7 +159,9 @@ public class Hive extends HiveCommon
 
     /**
      * Add a new trigger command
-     * @param command the new trigger command
+     * 
+     * @param command
+     *            the new trigger command
      */
     public void addTrigger ( final TriggerCommand command )
     {

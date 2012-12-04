@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,10 +19,6 @@
 
 package org.openscada.da.server.common.impl;
 
-import java.util.Collection;
-
-import org.openscada.core.ConnectionInformation;
-
 /**
  * A hive exporter interface
  * 
@@ -30,7 +26,4 @@ import org.openscada.core.ConnectionInformation;
  */
 public interface HiveExporter
 {
-    public Collection<ConnectionInformation> start () throws Exception;
-
-    public void stop () throws Exception;
 }

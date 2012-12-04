@@ -73,7 +73,7 @@ import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HiveCommon extends ServiceCommon<Session> implements Hive, ConfigurableHive, HiveServiceRegistry
+public abstract class HiveCommon extends ServiceCommon<Session> implements Hive, ConfigurableHive, HiveServiceRegistry
 {
     private final static Logger logger = LoggerFactory.getLogger ( HiveCommon.class );
 
@@ -138,6 +138,13 @@ public class HiveCommon extends ServiceCommon<Session> implements Hive, Configur
 
         this.operationService = Executors.newFixedThreadPool ( 1, new NamedThreadFactory ( "HiveCommon" ) );
     }
+
+    /**
+     * Get a unique ID for you hive type
+     * 
+     * @return a unique id of you hive type
+     */
+    public abstract String getHiveId ();
 
     @Override
     public void stop () throws Exception

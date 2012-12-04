@@ -84,7 +84,7 @@ public class DataItemCounterOutput implements CounterOutput
 
         try
         {
-            this.exportInstance = this.mbs.registerMBean ( this.export, makeName ( "org.openscada.da.server.common.stats", this.itemId ) );
+            this.exportInstance = this.mbs.registerMBean ( this.export, makeName ( hive.getHiveId () + ".stats", this.itemId ) );
         }
         catch ( final Exception e )
         {
@@ -94,7 +94,7 @@ public class DataItemCounterOutput implements CounterOutput
 
     private ObjectName makeName ( final String domain, final String description ) throws MalformedObjectNameException, NullPointerException
     {
-        final Hashtable<String, String> properties = new Hashtable<String, String> ( 2 );
+        final Hashtable<String, String> properties = new Hashtable<String, String> ( 1 );
         properties.put ( "value", description );
         return new ObjectName ( domain, properties );
     }

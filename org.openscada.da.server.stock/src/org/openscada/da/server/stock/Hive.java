@@ -93,6 +93,12 @@ public class Hive extends HiveCommon
     }
 
     @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.stock";
+    }
+
+    @Override
     public void stop () throws Exception
     {
         this.scheduler.shutdown ();

@@ -280,6 +280,12 @@ public class Hive extends HiveCommon
         }
     }
 
+    @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.test";
+    }
+
     private void setupExporter ( final FolderCommon rootFolder )
     {
         this.objectExporter = new ObjectExporter ( new FolderItemFactory ( this, rootFolder, "objectExporter", "objectExporter" ) );

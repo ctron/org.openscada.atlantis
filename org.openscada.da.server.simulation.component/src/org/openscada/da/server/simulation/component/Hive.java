@@ -64,6 +64,7 @@ public class Hive extends HiveCommon
 
         final QueryFolder queryFolder = new QueryFolder ( new Matcher () {
 
+            @Override
             public boolean matches ( final ItemDescriptor desc )
             {
                 return true;
@@ -75,6 +76,12 @@ public class Hive extends HiveCommon
         final GroupFolder groupFolder = new GroupFolder ( new SplitGroupProvider ( new AttributeNameProvider ( "tag" ), "\\." ), new IDNameProvider () );
         rootFolder.add ( "components", groupFolder, new HashMap<String, Variant> () );
         this._storage.addChild ( groupFolder );
+    }
+
+    @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.simulation.component";
     }
 
     public ScheduledExecutorService getExecutor ()
