@@ -42,7 +42,7 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.factory = new DriverFactory ();
+        this.factory = new DriverFactoryImpl ();
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( org.openscada.core.client.DriverFactory.INTERFACE_NAME, "da" );

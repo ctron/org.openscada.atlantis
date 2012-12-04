@@ -23,7 +23,7 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.DriverInformation;
 
-public class DriverFactory implements org.openscada.core.client.DriverFactory
+public class DriverFactoryImpl implements org.openscada.core.client.DriverFactory
 {
     @Override
     public DriverInformation getDriverInformation ( final ConnectionInformation connectionInformation )
@@ -47,6 +47,6 @@ public class DriverFactory implements org.openscada.core.client.DriverFactory
 
     public static void registerDriver ()
     {
-        ConnectionFactory.registerDriverFactory ( new DriverFactory () );
+        ConnectionFactory.registerDriverFactory ( new DriverFactoryImpl () );
     }
 }

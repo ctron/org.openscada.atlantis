@@ -22,3 +22,4 @@ Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.5.0"
+Export-Package: org.openscada.da.client.ngp;version="1.0.0"
