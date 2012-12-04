@@ -7,13 +7,12 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.core.server;version="1.0.0",
  org.openscada.da.core.server;version="1.0.0",
  org.openscada.da.server.common.configuration;version="1.0.0",
- org.openscada.da.server.exporter;version="1.0.0",
  org.openscada.da.server.net;version="1.0.0",
  org.openscada.da.server.ngp;version="1.0.0",
  org.openscada.utils.lifecycle;version="1.0.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.exporter;version="0.15.0";
+Export-Package: org.openscada.da.server.exporter;version="1.0.0";
   uses:="org.openscada.da.core.server,
    org.openscada.core,
    org.w3c.dom,
