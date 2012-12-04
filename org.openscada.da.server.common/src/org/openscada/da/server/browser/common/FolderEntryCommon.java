@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,35 +27,37 @@ import org.openscada.da.core.browser.FolderEntry;
 
 public class FolderEntryCommon implements FolderEntry
 {
-    private String _name = null;
+    private final String name;
 
-    private Folder _folder = null;
+    private final Folder folder;
 
-    private Map<String, Variant> _attributes = null;
+    private Map<String, Variant> attributes;
 
     public FolderEntryCommon ( final String name, final Folder folder, final Map<String, Variant> attributes )
     {
-        this._name = name;
-        this._folder = folder;
-        this._attributes = attributes;
-        if ( this._attributes == null )
+        this.name = name;
+        this.folder = folder;
+        this.attributes = attributes;
+        if ( this.attributes == null )
         {
-            this._attributes = Collections.emptyMap ();
+            this.attributes = Collections.emptyMap ();
         }
     }
 
+    @Override
     public String getName ()
     {
-        return this._name;
+        return this.name;
     }
 
     public Folder getFolder ()
     {
-        return this._folder;
+        return this.folder;
     }
 
+    @Override
     public Map<String, Variant> getAttributes ()
     {
-        return this._attributes;
+        return this.attributes;
     }
 }
