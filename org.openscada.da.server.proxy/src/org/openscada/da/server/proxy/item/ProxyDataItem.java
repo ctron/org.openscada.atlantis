@@ -51,14 +51,14 @@ public class ProxyDataItem extends DataItemInputOutputChained
 {
     private final ProxyValueHolder proxyValueHolder;
 
-    private final ProxyWriteHandler writeHandler;
+    private final ProxyWriteHandlerImpl writeHandler;
 
     /**
      * @param id
      * @param proxyValueHolder
      * @param executor the executor to use for write calls
      */
-    public ProxyDataItem ( final String id, final ProxyValueHolder proxyValueHolder, final ProxyWriteHandler writeHandler, final Executor executor )
+    public ProxyDataItem ( final String id, final ProxyValueHolder proxyValueHolder, final ProxyWriteHandlerImpl writeHandler, final Executor executor )
     {
         super ( new DataItemInformationBase ( id, EnumSet.allOf ( IODirection.class ) ), executor );
         this.proxyValueHolder = proxyValueHolder;
@@ -85,6 +85,11 @@ public class ProxyDataItem extends DataItemInputOutputChained
     public ProxyValueHolder getProxyValueHolder ()
     {
         return this.proxyValueHolder;
+    }
+
+    public ProxyWriteHandlerImpl getWriteHandler ()
+    {
+        return this.writeHandler;
     }
 
     @Override
