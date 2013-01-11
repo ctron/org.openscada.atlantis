@@ -62,6 +62,9 @@ public interface Connection
     /**
      * Dispose the connection
      * <p>
+     * A dispose will also act as a disconnect.
+     * </p>
+     * <p>
      * Connections must be disposed in order to clean up all resources. In the
      * past the {@link #disconnect()} call was enough and, if possible, most
      * resources (sockets) should be closed when disconnecting. Still some

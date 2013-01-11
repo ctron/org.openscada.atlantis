@@ -823,6 +823,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
     @Override
     public void dispose ()
     {
+        disconnect ( null );
         this.lookupExecutor.shutdown ();
     }
 
