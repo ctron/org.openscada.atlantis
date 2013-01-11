@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,8 +32,8 @@ import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.browser.FolderEntry;
 
 /**
- * Sample showing how to browse using subscriptions
- * <br> 
+ * Sample showing how to browse using subscriptions <br>
+ * 
  * @author Jens Reimann <jens.reimann@th4-systems.com>
  */
 public class Sample4 extends SampleBase
@@ -69,6 +71,7 @@ public class Sample4 extends SampleBase
     {
         this.folderManager.addFolderListener ( new FolderListener () {
 
+            @Override
             public void folderChanged ( final Collection<Entry> added, final Collection<String> removed, final boolean full )
             {
                 System.out.println ( String.format ( "Added: %d Removed: %d, Full: %s", added.size (), removed.size (), full ) );
@@ -114,7 +117,7 @@ public class Sample4 extends SampleBase
         {
             if ( s != null )
             {
-                s.disconnect ();
+                s.dispose ();
             }
         }
     }
