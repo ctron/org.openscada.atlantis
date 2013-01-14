@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schema targetNamespace="http://openscada.org/DA/Modbus/Configuration"
+	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:components="http://openscada.org/DA/Modbus/Configuration" xmlns:hive="http://openscada.org/DA/Hive">
+
+	<import schemaLocation="../../org.openscada.da.server.common/schema/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
+
+	<element name="root" type="components:RootType"></element>
+
+	<complexType name="RootType">
+		<sequence>
+			<element name="devices" type="components:DevicesType"
+				maxOccurs="1" minOccurs="1">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="DevicesType">
+		<sequence>
+			<element name="device" type="components:DeviceType"
+				maxOccurs="unbounded" minOccurs="0">
+			</element>
+		</sequence>
+	</complexType>
+
+	<complexType name="DeviceType">
+		<sequence maxOccurs="unbounded" minOccurs="1">
+			<element name="slave" type="components:ModbusSlave"></element>
+		</sequence>
+		<attribute name="host" use="required">
+			<annotation>
+				<documentation>
+					The hostname or IP address of the device
+				</documentation>
+			</annotation>
+			<simpleType>
+				<restriction base="string">
+					<whiteSpace value="collapse"></whiteSpace>
+					<pattern value="([0-9a-zA-Z]+)(\.[0-9a-zA-Z]+)*"></pattern>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="port" type="short" use="required">
+			<annotation>
+				<documentation>
+					The port number of the device
+				</documentation>
+			</annotation>
+		</attribute>
+		<attribute name="id" use="required">
+			<annotation>
+				<documentation>The ID of the device</documentation>
+			</annotation>
+			<simpleType>
+				<restriction base="string">
+					<pattern value="[a-zA-Z0-9]+"></pattern>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="baudRate" type="int" use="optional"
+			default="19200">
+		</attribute>
+		<attribute name="parity" use="optional" default="NONE">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="NONE"></enumeration>
+					<enumeration value="EVEN"></enumeration>
+					<enumeration value="ODD"></enumeration>
+					<enumeration value="MARK"></enumeration>
+					<enumeration value="SPACE"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="dataBits" default="8" use="optional">
+			<simpleType>
+				<restriction base="int">
+					<whiteSpace value="collapse"></whiteSpace>
+					<minInclusive value="1"></minInclusive>
+					<maxInclusive value="8"></maxInclusive>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="stopBits" use="optional" default="1">
+			<simpleType>
+				<restriction base="float">
+					<enumeration value="1"></enumeration>
+					<enumeration value="1.5"></enumeration>
+					<enumeration value="2"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+
+		<attribute name="interCharacterTimeout" use="optional" default="1.5"
+			type="float">
+		</attribute>
+		<attribute name="interFrameDelay" type="float" use="optional"
+			default="3.5">
+		</attribute>
+		<attribute name="protocol" use="optional" default="TCP">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="TCP"></enumeration>
+					<enumeration value="RTU"></enumeration>
+					<enumeration value="ASCII"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+	<complexType name="ModbusSlave">
+		<sequence minOccurs="0" maxOccurs="1">
+			<sequence minOccurs="0" maxOccurs="unbounded">
+				<element name="discreteInput" type="components:ItemType">
+				</element>
+			</sequence>
+			<sequence minOccurs="0" maxOccurs="unbounded">
+				<element name="coil" type="components:ItemType">
+				</element>
+			</sequence>
+			<sequence minOccurs="0" maxOccurs="unbounded">
+				<element name="inputRegister" type="components:ItemType">
+				</element>
+			</sequence>
+			<sequence minOccurs="0" maxOccurs="unbounded">
+				<element name="holdingRegister" type="components:ItemType">
+				</element>
+			</sequence>
+		</sequence>
+		<attribute name="id" use="required">
+			<simpleType>
+				<restriction base="int">
+					<whiteSpace value="collapse"></whiteSpace>
+					<minInclusive value="1"></minInclusive>
+					<maxInclusive value="255"></maxInclusive>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="name" type="string" use="optional"></attribute>
+		<attribute name="discreteInputOffset" type="int" use="optional" default="0"></attribute>
+		<attribute name="coilOffset" type="int" use="optional" default="0"></attribute>
+		<attribute name="inputRegisterOffset" type="int" use="optional" default="0"></attribute>
+		<attribute name="holdingRegisterOffset" type="int" use="optional" default="0"></attribute>
+	</complexType>
+
+	<complexType name="ItemType">
+		<attribute name="name" type="string" use="optional"></attribute>
+		<attribute name="startAddress" use="optional">
+			<simpleType>
+				<restriction base="string">
+					<pattern value="(0x[0-9a-fA-F]{4}|[0-9]{1,5})"></pattern>
+				</restriction>
+			</simpleType>
+		</attribute>
+		<attribute name="quantity" type="int" default="1" use="optional">
+		</attribute>
+		<attribute name="priority" type="int" default="1" use="optional">
+		</attribute>
+		<attribute name="type" use="optional" default="DEFAULT">
+			<simpleType>
+				<restriction base="string">
+					<enumeration value="DEFAULT"></enumeration>
+					<enumeration value="BOOLEAN"></enumeration>
+					<enumeration value="INT16"></enumeration>
+					<enumeration value="INT32"></enumeration>
+					<enumeration value="INT64"></enumeration>
+					<enumeration value="FLOAT16"></enumeration>
+					<enumeration value="FLOAT32"></enumeration>
+					<enumeration value="FLOAT64"></enumeration>
+				</restriction>
+			</simpleType>
+		</attribute>
+	</complexType>
+
+</schema>
