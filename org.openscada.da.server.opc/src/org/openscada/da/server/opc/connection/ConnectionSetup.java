@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,21 +25,21 @@ import org.openscada.opc.lib.common.ConnectionInformation;
 
 public class ConnectionSetup
 {
-    private ConnectionInformation _connectionInformation = null;
+    private ConnectionInformation connectionInformation = null;
 
-    private boolean _initialConnect = true;
+    private boolean initialConnect = true;
 
-    private AccessMethod _accessMethod = AccessMethod.ASYNC20;
+    private AccessMethod accessMethod = AccessMethod.SYNC;
 
-    private int _refreshTimeout = 500;
+    private int refreshTimeout = 500;
 
-    private boolean _flatBrowser = true;
+    private boolean flatBrowser = true;
 
-    private boolean _treeBrowser = true;
+    private boolean treeBrowser = true;
 
-    private String deviceTag = null;
+    private String deviceTag;
 
-    private String itemIdPrefix = null;
+    private String itemIdPrefix;
 
     private boolean ignoreTimestampOnlyChange = false;
 
@@ -53,7 +55,7 @@ public class ConnectionSetup
     public ConnectionSetup ( final ConnectionInformation connectionInformation )
     {
         super ();
-        this._connectionInformation = connectionInformation;
+        this.connectionInformation = connectionInformation;
     }
 
     public int getReconnectDelay ()
@@ -78,62 +80,62 @@ public class ConnectionSetup
 
     public AccessMethod getAccessMethod ()
     {
-        return this._accessMethod;
+        return this.accessMethod;
     }
 
     public void setAccessMethod ( final AccessMethod accessMethod )
     {
-        this._accessMethod = accessMethod;
+        this.accessMethod = accessMethod;
     }
 
     public ConnectionInformation getConnectionInformation ()
     {
-        return this._connectionInformation;
+        return this.connectionInformation;
     }
 
     public void setConnectionInformation ( final ConnectionInformation connectionInformation )
     {
-        this._connectionInformation = connectionInformation;
+        this.connectionInformation = connectionInformation;
     }
 
     public boolean isInitialConnect ()
     {
-        return this._initialConnect;
+        return this.initialConnect;
     }
 
     public void setInitialConnect ( final boolean initialConnect )
     {
-        this._initialConnect = initialConnect;
+        this.initialConnect = initialConnect;
     }
 
     public int getRefreshTimeout ()
     {
-        return this._refreshTimeout;
+        return this.refreshTimeout;
     }
 
     public void setRefreshTimeout ( final int refreshTimeout )
     {
-        this._refreshTimeout = refreshTimeout;
+        this.refreshTimeout = refreshTimeout;
     }
 
     public boolean isFlatBrowser ()
     {
-        return this._flatBrowser;
+        return this.flatBrowser;
     }
 
     public void setFlatBrowser ( final boolean flatBrowser )
     {
-        this._flatBrowser = flatBrowser;
+        this.flatBrowser = flatBrowser;
     }
 
     public boolean isTreeBrowser ()
     {
-        return this._treeBrowser;
+        return this.treeBrowser;
     }
 
     public void setTreeBrowser ( final boolean treeBrowser )
     {
-        this._treeBrowser = treeBrowser;
+        this.treeBrowser = treeBrowser;
     }
 
     public String getDeviceTag ()
