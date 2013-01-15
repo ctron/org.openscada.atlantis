@@ -825,6 +825,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
     {
         disconnect ( null );
         this.lookupExecutor.shutdown ();
+        this.connector.dispose ();
     }
 
     @Override
