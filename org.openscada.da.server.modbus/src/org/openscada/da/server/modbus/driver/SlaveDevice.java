@@ -448,11 +448,11 @@ public class SlaveDevice
             case INT64:
                 this.tagsByAddress.get ( registerType ).put ( address + 3, tag );
                 this.tagsByAddress.get ( registerType ).put ( address + 2, tag );
-                break;
+                //$FALL-THROUGH$
             case FLOAT32:
             case INT32:
                 this.tagsByAddress.get ( registerType ).put ( address + 1, tag );
-                break;
+                //$FALL-THROUGH$
             case FLOAT16:
             case INT16:
             case BOOLEAN:
