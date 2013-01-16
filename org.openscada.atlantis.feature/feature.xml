@@ -44,7 +44,6 @@
       <import feature="org.openscada.aurora" version="0.15.0.qualifier"/>
       <import feature="org.openscada.oxygen" version="0.1.0.qualifier"/>
       <import feature="org.openscada.utgard" version="0.7.0.qualifier"/>
-      <import feature="org.openscada.jinterop" version="1.0.0.qualifier"/>
    </requires>
 
    <plugin
