@@ -124,7 +124,6 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
         this.suspended = true;
         this.controller.getIoManager ().suspendItem ( this.opcItemId );
-        this.controller.getIoManager ().unrequestItem ( this.opcItemId );
     }
 
     @Override

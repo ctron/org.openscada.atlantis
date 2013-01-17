@@ -144,6 +144,10 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         for ( final ItemRegistrationRequest itemDef : items )
         {
             final String itemId = itemDef.getItemDefinition ().getItemID ();
+
+            // remove from un-registrations ... just in case
+            this.itemUnregistrations.remove ( itemId );
+
             if ( this.requestMap.containsKey ( itemId ) )
             {
                 logger.info ( "Item already in request queue" ); //$NON-NLS-1$
@@ -373,6 +377,8 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     {
         this.activationRequestMap.put ( item, Boolean.FALSE );
         this.activeSet.remove ( item );
+
+        unrequestItem ( item );
     }
 
     public synchronized OPCIoContext prepareProcessing ()
