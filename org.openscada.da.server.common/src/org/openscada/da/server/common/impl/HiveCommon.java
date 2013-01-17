@@ -136,7 +136,7 @@ public abstract class HiveCommon extends ServiceCommon<Session> implements Hive,
     {
         logger.info ( "Starting Hive" );
 
-        this.operationService = Executors.newFixedThreadPool ( 1, new NamedThreadFactory ( "HiveCommon" ) );
+        this.operationService = Executors.newFixedThreadPool ( 1, new NamedThreadFactory ( "HiveCommon/" + getHiveId () ) );
     }
 
     /**
@@ -357,10 +357,10 @@ public abstract class HiveCommon extends ServiceCommon<Session> implements Hive,
         // subscribe using the new item subscription manager
         try
         {
-            // subscribe to item
-            this.itemSubscriptionManager.subscribe ( itemId, sessionCommon );
-            // and request realization
+            // request realization
             retrieveItem ( itemId );
+            // and subscribe to item
+            this.itemSubscriptionManager.subscribe ( itemId, sessionCommon );
         }
         catch ( final ValidationException e )
         {
@@ -558,19 +558,20 @@ public abstract class HiveCommon extends ServiceCommon<Session> implements Hive,
 
     protected DataItem retrieveItem ( final String id )
     {
-        DataItem dataItem = lookupItem ( id );
-        if ( dataItem == null )
+        final DataItem dataItem = lookupItem ( id );
+        if ( dataItem != null )
         {
-            // let it create
-            factoryCreate ( id );
-
-            // and refetch
-            dataItem = lookupItem ( id );
+            return dataItem;
         }
-        return dataItem;
+
+        // let it create
+        factoryCreate ( id );
+
+        // and refetch
+        return lookupItem ( id );
     }
 
-    private static final String DATA_ITEM_OBJECT_TYPE = "ITEM";
+    private static final String DATA_ITEM_OBJECT_TYPE = "ITEM"; //$NON-NLS-1$
 
     @Override
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Session session, final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
