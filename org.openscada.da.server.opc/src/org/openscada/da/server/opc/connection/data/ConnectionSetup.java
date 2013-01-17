@@ -19,7 +19,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.server.opc.connection;
+package org.openscada.da.server.opc.connection.data;
 
 import org.openscada.opc.lib.common.ConnectionInformation;
 

@@ -24,8 +24,8 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.openscada.da.server.opc.Hive;
-import org.openscada.da.server.opc.connection.ConnectionSetup;
 import org.openscada.da.server.opc.connection.OPCModel;
+import org.openscada.da.server.opc.connection.data.ConnectionSetup;
 import org.openscada.da.server.opc.job.Worker;
 import org.openscada.da.server.opc.job.impl.BrowseJob;
 import org.openscada.utils.beans.AbstractPropertyChange;
