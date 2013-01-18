@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,8 +30,6 @@ import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
@@ -50,7 +50,6 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.VoidValue;
-import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,8 +69,6 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private static final int MAX_QUERY_ENTRIES = Integer.getInteger ( "org.openscada.hd.client.net.maxQuerySize", 4096 );
 
-    private final ExecutorService executor;
-
     private final Set<ItemListListener> itemListListeners = new HashSet<ItemListListener> ();
 
     private final Map<Long, QueryImpl> queries = new HashMap<Long, QueryImpl> ();
@@ -90,18 +87,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         super ( connectionInformantion );
 
-        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () ) );
-
         this.statistics.setLabel ( STATS_COUNT_QUERIES, "Active queries" );
 
         init ();
-    }
-
-    @Override
-    protected void finalize () throws Throwable
-    {
-        this.executor.shutdown ();
-        super.finalize ();
     }
 
     protected void init ()

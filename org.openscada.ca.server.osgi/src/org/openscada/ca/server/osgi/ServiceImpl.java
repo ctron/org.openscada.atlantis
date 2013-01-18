@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,6 +24,7 @@ package org.openscada.ca.server.osgi;
 import java.util.Collection;
 import java.util.Map;
 import java.util.concurrent.Callable;
+import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
 import org.openscada.ca.Configuration;
@@ -32,21 +35,22 @@ import org.openscada.ca.server.FactoryWithData;
 import org.openscada.ca.server.Service;
 import org.openscada.ca.server.Session;
 import org.openscada.core.InvalidSessionException;
+import org.openscada.core.server.common.osgi.AbstractServiceImpl;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.ExportedExecutorService;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
 
-public class ServiceImpl extends AbstractServiceImpl<Session> implements Service
+public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> implements Service
 {
     private final ConfigurationAdministrator service;
 
     private final ExportedExecutorService executor;
 
-    public ServiceImpl ( final ConfigurationAdministrator service, final BundleContext context ) throws Exception
+    public ServiceImpl ( final ConfigurationAdministrator service, final BundleContext context, final Executor executor ) throws Exception
     {
-        super ( context );
+        super ( context, executor );
         this.service = service;
         this.executor = new ExportedExecutorService ( "org.openscada.ca.server.osgi.ServiceImpl", 1, 1, 1, TimeUnit.MINUTES );
     }
@@ -67,7 +71,7 @@ public class ServiceImpl extends AbstractServiceImpl<Session> implements Service
     @Override
     public synchronized NotifyFuture<Void> applyDiff ( final Session session, final Collection<DiffEntry> changeSet ) throws InvalidSessionException
     {
-        final SessionImpl sessionImpl = getSessionImpl ( session, SessionImpl.class );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
         return this.service.applyDiff ( sessionImpl.getUserInformation (), changeSet );
     }
@@ -75,7 +79,7 @@ public class ServiceImpl extends AbstractServiceImpl<Session> implements Service
     @Override
     public synchronized NotifyFuture<FactoryWithData> getFactory ( final Session session, final String factoryId ) throws InvalidSessionException
     {
-        getSessionImpl ( session, SessionImpl.class );
+        validateSession ( session, SessionImpl.class );
 
         final FutureTask<FactoryWithData> task = new FutureTask<FactoryWithData> ( new Callable<FactoryWithData> () {
 
@@ -95,7 +99,7 @@ public class ServiceImpl extends AbstractServiceImpl<Session> implements Service
     @Override
     public synchronized NotifyFuture<Factory[]> getKnownFactories ( final Session session ) throws InvalidSessionException
     {
-        getSessionImpl ( session, SessionImpl.class );
+        validateSession ( session, SessionImpl.class );
 
         final FutureTask<Factory[]> task = new FutureTask<Factory[]> ( new Callable<Factory[]> () {
 
@@ -112,7 +116,7 @@ public class ServiceImpl extends AbstractServiceImpl<Session> implements Service
     @Override
     public NotifyFuture<Configuration[]> getConfigurations ( final Session session, final String factoryId ) throws InvalidSessionException
     {
-        getSessionImpl ( session, SessionImpl.class );
+        validateSession ( session, SessionImpl.class );
 
         final FutureTask<Configuration[]> task = new FutureTask<Configuration[]> ( new Callable<Configuration[]> () {
 
@@ -129,7 +133,7 @@ public class ServiceImpl extends AbstractServiceImpl<Session> implements Service
     @Override
     public synchronized NotifyFuture<Configuration> getConfiguration ( final Session session, final String factoryId, final String configurationId ) throws InvalidSessionException
     {
-        getSessionImpl ( session, SessionImpl.class );
+        validateSession ( session, SessionImpl.class );
 
         final FutureTask<Configuration> task = new FutureTask<Configuration> ( new Callable<Configuration> () {
 

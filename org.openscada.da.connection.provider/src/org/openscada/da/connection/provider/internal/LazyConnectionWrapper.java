@@ -35,6 +35,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.NoConnectionException;
+import org.openscada.core.client.PrivilegeListener;
 import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.core.info.StatisticsProvider;
@@ -131,6 +132,18 @@ public abstract class LazyConnectionWrapper implements Connection, StatisticsPro
     public Map<String, String> getSessionProperties ()
     {
         return this.connection.getSessionProperties ();
+    }
+
+    @Override
+    public void addPrivilegeListener ( final PrivilegeListener listener )
+    {
+        this.connection.addPrivilegeListener ( listener );
+    }
+
+    @Override
+    public void removePrivilegeListener ( final PrivilegeListener listener )
+    {
+        this.connection.removePrivilegeListener ( listener );
     }
 
     @Override

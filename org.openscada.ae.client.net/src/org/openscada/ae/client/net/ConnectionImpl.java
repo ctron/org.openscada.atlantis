@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,8 +31,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.BrowserListener;
@@ -57,7 +57,6 @@ import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.utils.MessageCreator;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -74,8 +73,6 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     public static final String VERSION = "0.1.0";
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
-
-    private final ExecutorService executor;
 
     private final Map<String, MonitorListener> monitorListeners = new HashMap<String, MonitorListener> ();
 
@@ -99,15 +96,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         super ( connectionInformantion );
 
-        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () ) );
         init ();
-    }
-
-    @Override
-    protected void finalize () throws Throwable
-    {
-        this.executor.shutdown ();
-        super.finalize ();
     }
 
     protected void init ()

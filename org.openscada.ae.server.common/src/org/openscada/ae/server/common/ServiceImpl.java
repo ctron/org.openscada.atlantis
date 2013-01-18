@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,9 +30,8 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -39,7 +40,6 @@ import org.openscada.ae.QueryListener;
 import org.openscada.ae.UnknownQueryException;
 import org.openscada.ae.data.BrowserEntry;
 import org.openscada.ae.data.BrowserType;
-import org.openscada.ae.sec.AuthorizationHelper;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
 import org.openscada.ae.server.common.akn.AknHandler;
@@ -47,18 +47,14 @@ import org.openscada.ae.server.common.event.EventQuery;
 import org.openscada.ae.server.common.event.EventQuerySource;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ae.server.common.monitor.MonitorQuerySource;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.ServiceCommon;
+import org.openscada.core.server.common.osgi.AbstractServiceImpl;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.ValidationException;
-import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
-import org.openscada.sec.osgi.AuthenticationHelper;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -70,11 +66,9 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceImpl extends ServiceCommon<Session> implements Service, ServiceListener
+public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> implements Service, ServiceListener
 {
     private final static Logger logger = LoggerFactory.getLogger ( ServiceImpl.class );
-
-    private final Set<SessionImpl> sessions = new CopyOnWriteArraySet<SessionImpl> ();
 
     private final SubscriptionManager monitorSubscriptions;
 
@@ -98,45 +92,28 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
 
     private ServiceListener eventServiceListener;
 
-    private final AuthenticationHelper authenticationManager;
-
-    private final AuthorizationHelper authorizationHelper;
-
-    public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
+    public ServiceImpl ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
+        super ( context, executor );
+
         this.context = context;
         this.monitorSubscriptions = new SubscriptionManager ();
         this.eventSubscriptions = new SubscriptionManager ();
 
         // create akn handler
         this.aknTracker = new ServiceTracker<AknHandler, AknHandler> ( context, AknHandler.class, null );
-
-        this.authenticationManager = new AuthenticationHelper ( context );
-        this.authorizationHelper = new AuthorizationHelper ( context );
-    }
-
-    @Override
-    protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
-    {
-        return this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
-    }
-
-    @Override
-    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
-    {
-        return this.authorizationHelper.authorize ( objectType, objectId, action, userInformation, context, defaultResult );
     }
 
     @Override
     public void acknowledge ( final Session session, final String conditionId, final Date aknTimestamp, final UserInformation providedUserInformation ) throws InvalidSessionException, PermissionDeniedException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
         logger.debug ( "Request akn: {} ({}): sessionUser: {}, requestUser: {}", new Object[] { conditionId, aknTimestamp, sessionImpl.getUserInformation (), providedUserInformation } );
 
         final UserInformation userInformation = makeEffectiveUserInformation ( sessionImpl, providedUserInformation );
 
-        final AuthorizationResult result = this.authorizationHelper.authorize ( "MONITOR", conditionId, "AKN", userInformation, null );
+        final AuthorizationResult result = authorize ( "MONITOR", conditionId, "AKN", userInformation, null );
         if ( !result.isGranted () )
         {
             return;
@@ -225,7 +202,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     public Query createQuery ( final Session session, final String queryType, final String queryData, final QueryListener listener ) throws InvalidSessionException
     {
         // validate the session
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
         final QueryImpl query = new QueryImpl ( this.context, sessionImpl, this.eventExecutor, this.queryLoadExecutor, queryType, queryData, listener );
 
@@ -247,7 +224,8 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     @Override
     public void subscribeConditionQuery ( final Session session, final String queryId ) throws InvalidSessionException, UnknownQueryException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
+
         logger.info ( "Request condition subscription: " + queryId );
 
         try
@@ -264,7 +242,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     @Override
     public void unsubscribeConditionQuery ( final Session session, final String queryId ) throws InvalidSessionException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
         logger.info ( "Request condition unsubscription: " + queryId );
         this.monitorSubscriptions.unsubscribe ( queryId, sessionImpl.getMonitorListener () );
@@ -273,7 +251,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     @Override
     public void subscribeEventQuery ( final Session session, final String queryId ) throws InvalidSessionException, UnknownQueryException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
         logger.info ( "Request event subscription: " + queryId );
 
         try
@@ -290,7 +268,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     @Override
     public void unsubscribeEventQuery ( final Session session, final String queryId ) throws InvalidSessionException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
         logger.info ( "Request event unsubscription: " + queryId );
         this.eventSubscriptions.unsubscribe ( queryId, sessionImpl.getEventListener () );
@@ -319,15 +297,8 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     }
 
     @Override
-    public synchronized Session createSession ( final Properties properties ) throws UnableToCreateSessionException
+    protected SessionImpl createSessionInstance ( final UserInformation user, final Map<String, String> sessionProperties )
     {
-        if ( this.eventExecutor == null )
-        {
-            throw new UnableToCreateSessionException ( "Service disposed" );
-        }
-
-        final Map<String, String> sessionProperties = new HashMap<String, String> ();
-        final UserInformation user = createUserInformation ( properties, sessionProperties );
         final SessionImpl session = new SessionImpl ( user, sessionProperties );
         this.sessions.add ( session );
 
@@ -354,12 +325,10 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     public synchronized void start () throws Exception
     {
         logger.info ( "Staring new service" );
+        super.start ();
 
         this.queryLoadExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ServiceImpl/QueryLoad" ) );
         this.eventExecutor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ServiceImpl/Event" ) );
-
-        this.authenticationManager.open ();
-        this.authorizationHelper.open ();
 
         // create monitor query listener
         synchronized ( this )
@@ -432,21 +401,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
         this.eventExecutor.shutdown ();
         this.eventExecutor = null;
 
-        this.authorizationHelper.close ();
-        this.authenticationManager.close ();
-    }
-
-    protected SessionImpl validateSession ( final Session session ) throws InvalidSessionException
-    {
-        if ( ! ( session instanceof Session ) )
-        {
-            throw new InvalidSessionException ();
-        }
-        if ( !this.sessions.contains ( session ) )
-        {
-            throw new InvalidSessionException ();
-        }
-        return (SessionImpl)session;
+        super.stop ();
     }
 
     @Override

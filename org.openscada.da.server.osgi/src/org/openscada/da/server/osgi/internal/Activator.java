@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,9 +24,11 @@ package org.openscada.da.server.osgi.internal;
 import java.util.Collection;
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.DataItem;
+import org.openscada.utils.concurrent.ExportedExecutorService;
 import org.openscada.utils.osgi.pool.AllObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.ObjectPoolListener;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -49,6 +53,8 @@ public class Activator implements BundleActivator
 
     private AllObjectPoolServiceTracker<DataItem> itemTracker;
 
+    private ExportedExecutorService executor;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -56,7 +62,9 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.service = new HiveImpl ( context );
+        this.executor = new ExportedExecutorService ( "org.openscada.da.server.osgi", 1, 1, 1, TimeUnit.MINUTES );
+
+        this.service = new HiveImpl ( context, this.executor );
         this.service.start ();
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
@@ -145,6 +153,7 @@ public class Activator implements BundleActivator
         this.service.stop ();
         this.service = null;
 
+        this.executor.shutdown ();
     }
 
 }

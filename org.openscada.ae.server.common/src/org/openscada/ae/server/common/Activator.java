@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,8 +22,10 @@
 package org.openscada.ae.server.common;
 
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.ae.server.Service;
+import org.openscada.utils.concurrent.ExportedExecutorService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
@@ -32,6 +36,8 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration<Service> serviceRegistration;
 
+    private ExportedExecutorService executor;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -39,7 +45,9 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.service = new ServiceImpl ( context );
+        this.executor = new ExportedExecutorService ( "org.openscada.ae.server.common", 1, 1, 1, TimeUnit.MINUTES );
+
+        this.service = new ServiceImpl ( context, this.executor );
         this.service.start ();
 
         this.serviceRegistration = context.registerService ( Service.class, this.service, new Hashtable<String, String> ( 1 ) );
@@ -57,6 +65,7 @@ public class Activator implements BundleActivator
         this.service.stop ();
         this.service = null;
 
+        this.executor.shutdown ();
     }
 
 }

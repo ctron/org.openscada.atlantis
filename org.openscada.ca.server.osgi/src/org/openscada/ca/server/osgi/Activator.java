@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,9 +23,11 @@ package org.openscada.ca.server.osgi;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.server.Service;
+import org.openscada.utils.concurrent.ExportedExecutorService;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleActivator;
@@ -52,6 +56,8 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration<Service> handle;
 
+    private ExportedExecutorService executor;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -59,6 +65,8 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext bundleContext ) throws Exception
     {
+        this.executor = new ExportedExecutorService ( "org.openscada.ca.server.osgi", 1, 1, 1, TimeUnit.MINUTES );
+
         Activator.context = bundleContext;
         this.tracker = new SingleServiceTracker<ConfigurationAdministrator> ( bundleContext, ConfigurationAdministrator.class, new SingleServiceListener<ConfigurationAdministrator> () {
 
@@ -96,7 +104,7 @@ public class Activator implements BundleActivator
         {
             try
             {
-                final ServiceImpl newService = new ServiceImpl ( service, context );
+                final ServiceImpl newService = new ServiceImpl ( service, context, this.executor );
 
                 newService.start ();
                 this.service = newService;
@@ -123,6 +131,8 @@ public class Activator implements BundleActivator
     {
         this.tracker.close ();
         Activator.context = null;
+
+        this.executor.shutdown ();
     }
 
 }

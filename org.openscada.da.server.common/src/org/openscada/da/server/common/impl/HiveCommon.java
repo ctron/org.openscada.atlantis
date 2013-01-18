@@ -75,7 +75,7 @@ import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class HiveCommon extends ServiceCommon<Session> implements Hive, ConfigurableHive, HiveServiceRegistry
+public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> implements Hive, ConfigurableHive, HiveServiceRegistry
 {
     private final static Logger logger = LoggerFactory.getLogger ( HiveCommon.class );
 
@@ -316,6 +316,8 @@ public abstract class HiveCommon extends ServiceCommon<Session> implements Hive,
         final UserInformation user = createUserInformation ( props, sessionProperties );
         final SessionCommon session = new SessionCommon ( this, user, sessionProperties );
 
+        handleSessionCreated ( session, props, user );
+
         synchronized ( this.sessions )
         {
             this.sessions.add ( session );
@@ -323,6 +325,10 @@ public abstract class HiveCommon extends ServiceCommon<Session> implements Hive,
         }
 
         return session;
+    }
+
+    protected void handleSessionCreated ( final SessionCommon session, final Properties properties, final UserInformation userInformation )
+    {
     }
 
     /**

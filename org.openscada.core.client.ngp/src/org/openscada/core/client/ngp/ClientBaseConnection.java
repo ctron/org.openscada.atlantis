@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,6 +23,8 @@ package org.openscada.core.client.ngp;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import javax.net.ssl.SSLSession;
 
@@ -33,6 +37,7 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.core.client.PrivilegeListener;
 import org.openscada.protocol.ngp.common.BaseConnection;
 import org.openscada.protocol.ngp.common.FilterChainBuilder;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
@@ -542,4 +547,50 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
         }
     }
 
+    private final Set<PrivilegeListener> privilegeListeners = new LinkedHashSet<PrivilegeListener> ();
+
+    private Set<String> currentPrivileges;
+
+    @Override
+    public synchronized void addPrivilegeListener ( final PrivilegeListener listener )
+    {
+        if ( this.privilegeListeners.add ( listener ) )
+        {
+            final Set<String> granted = this.currentPrivileges;
+            // send current state
+            this.executor.execute ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    listener.privilegesChanged ( granted );
+                }
+            } );
+        }
+    }
+
+    @Override
+    public synchronized void removePrivilegeListener ( final PrivilegeListener listener )
+    {
+        this.privilegeListeners.remove ( listener );
+    }
+
+    /*
+     * Must only be called from the IO loop
+     */
+    protected synchronized void firePrivilegeChange ( final Set<String> granted )
+    {
+        this.currentPrivileges = granted;
+
+        for ( final PrivilegeListener listener : this.privilegeListeners )
+        {
+            this.executor.execute ( new Runnable () {
+                @Override
+                public void run ()
+                {
+                    listener.privilegesChanged ( granted );
+                }
+            } );
+        }
+    }
 }

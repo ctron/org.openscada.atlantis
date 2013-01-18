@@ -17,13 +17,14 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ca.server.osgi;
+package org.openscada.core.server.common.osgi;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executor;
 
 import org.openscada.ae.sec.AuthorizationHelper;
 import org.openscada.core.ConnectionInformation;
@@ -32,26 +33,35 @@ import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.server.Session;
 import org.openscada.core.server.common.ServiceCommon;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
+import org.openscada.core.server.common.session.AbstractSessionImpl.DisposeListener;
+import org.openscada.core.server.common.session.PrivilegeListenerImpl;
 import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.osgi.AuthenticationHelper;
+import org.openscada.sec.osgi.AuthorizationTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 
-public abstract class AbstractServiceImpl<S extends Session> extends ServiceCommon<S>
+public abstract class AbstractServiceImpl<S extends Session, SI extends AbstractSessionImpl> extends ServiceCommon<S, SI>
 {
 
     private final AuthenticationHelper authenticationManager;
 
     private final AuthorizationHelper authorizationHelper;
 
-    private final Set<S> sessions = new CopyOnWriteArraySet<S> ();
+    protected final Set<SI> sessions = new CopyOnWriteArraySet<SI> ();
 
-    public AbstractServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
+    private final AuthorizationTracker authorizationTracker;
+
+    private final Executor executor;
+
+    public AbstractServiceImpl ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
+        this.executor = executor;
         this.authenticationManager = new AuthenticationHelper ( context );
         this.authorizationHelper = new AuthorizationHelper ( context );
+        this.authorizationTracker = new AuthorizationTracker ( context, executor );
     }
 
     @Override
@@ -71,6 +81,7 @@ public abstract class AbstractServiceImpl<S extends Session> extends ServiceComm
     {
         this.authenticationManager.open ();
         this.authorizationHelper.open ();
+        this.authorizationTracker.open ();
     }
 
     @Override
@@ -78,61 +89,76 @@ public abstract class AbstractServiceImpl<S extends Session> extends ServiceComm
     {
         this.authenticationManager.close ();
         this.authorizationHelper.close ();
+        this.authorizationTracker.close ();
 
         // close sessions
-        for ( final S session : this.sessions )
+        for ( final SI session : this.sessions )
         {
-            ( (AbstractSessionImpl)session ).dispose ();
+            session.dispose ();
         }
     }
 
+    @SuppressWarnings ( "unchecked" )
     @Override
     public void closeSession ( final S session ) throws InvalidSessionException
     {
-        S sessionImpl = null;
+        SI sessionImpl = null;
         synchronized ( this )
         {
             if ( this.sessions.remove ( session ) )
             {
-                sessionImpl = session;
+                sessionImpl = (SI)session;
             }
         }
 
         if ( sessionImpl != null )
         {
             // now dispose
-            ( (AbstractSessionImpl)sessionImpl ).dispose ();
+            sessionImpl.dispose ();
 
             handleSessionClosed ( sessionImpl );
         }
     }
 
-    protected void handleSessionClosed ( final S session )
+    protected void handleSessionClosed ( final SI session )
     {
     }
 
+    @SuppressWarnings ( "unchecked" )
     @Override
     public synchronized S createSession ( final Properties properties ) throws UnableToCreateSessionException
     {
         final Map<String, String> sessionProperties = new HashMap<String, String> ();
         final UserInformation user = createUserInformation ( properties, sessionProperties );
 
-        final S session = createSessionInstance ( user, sessionProperties );
+        final SI session = createSessionInstance ( user, sessionProperties );
 
-        handleSessionCreated ( session );
+        final Set<String> privileges = extractPrivileges ( properties );
+        final SessionPrivilegeTracker privTracker = new SessionPrivilegeTracker ( this.executor, new PrivilegeListenerImpl ( session ), this.authorizationTracker, privileges, user );
+
+        session.addDisposeListener ( new DisposeListener () {
+
+            @Override
+            public void disposed ()
+            {
+                privTracker.dispose ();
+            }
+        } );
 
         this.sessions.add ( session );
 
-        return session;
+        handleSessionCreated ( session );
+
+        return (S)session;
     }
 
-    protected void handleSessionCreated ( final S session )
+    protected void handleSessionCreated ( final SI session )
     {
     }
 
-    protected abstract S createSessionInstance ( UserInformation user, Map<String, String> sessionProperties );
+    protected abstract SI createSessionInstance ( UserInformation user, Map<String, String> sessionProperties );
 
-    protected synchronized <SI> SI getSessionImpl ( final S session, final Class<SI> sessionImplClazz ) throws InvalidSessionException
+    protected synchronized SI validateSession ( final S session, final Class<SI> sessionImplClazz ) throws InvalidSessionException
     {
         if ( !this.sessions.contains ( session ) )
         {

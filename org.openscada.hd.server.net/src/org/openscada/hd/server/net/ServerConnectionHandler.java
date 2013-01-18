@@ -32,6 +32,7 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.core.server.Session.SessionListener;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.ItemListListener;
@@ -413,7 +414,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            this.session = (Session)this.service.createSession ( props );
+            this.session = this.service.createSession ( props );
         }
         catch ( final UnableToCreateSessionException e )
         {
@@ -430,6 +431,16 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         // send success
         replySessionCreated ( props, message, this.session.getProperties () );
+
+        // hook up privs
+        this.session.addSessionListener ( new SessionListener () {
+
+            @Override
+            public void privilegeChange ()
+            {
+                sendPrivilegeChange ( ServerConnectionHandler.this.session.getPrivileges () );
+            }
+        } );
     }
 
     @Override

@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,26 +23,30 @@ package org.openscada.core.server.ngp;
 
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.data.message.CreateSession;
 import org.openscada.core.data.message.SessionAccepted;
+import org.openscada.core.data.message.SessionPrivilegesChanged;
 import org.openscada.core.data.message.SessionRejected;
 import org.openscada.core.server.Service;
 import org.openscada.core.server.Session;
+import org.openscada.core.server.Session.SessionListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class ServiceServerConnection<T extends Session, S extends Service<T>> extends ServerConnection
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( ServiceServerConnection.class );
 
     protected final S service;
 
     protected T session;
+
+    private boolean enablePrivs;
 
     public ServiceServerConnection ( final IoSession session, final S service )
     {
@@ -63,8 +69,18 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
     {
         try
         {
+            this.enablePrivs = message.getProperties ().containsKey ( "feature.core.message.SessionPrivilegesChanged" );
+
             performCreateSession ( message.getProperties () );
             sendMessage ( makeSuccessMessage ( this.session.getProperties () ) );
+            this.session.addSessionListener ( new SessionListener () {
+
+                @Override
+                public void privilegeChange ()
+                {
+                    handlePrivilegeChange ();
+                }
+            } );
         }
         catch ( final UnableToCreateSessionException e )
         {
@@ -77,6 +93,11 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
             sendMessage ( makeRejectMessage ( e ) );
             requestClose ( false );
         }
+    }
+
+    protected SessionPrivilegesChanged makePrivilegeChangeMessage ( final Set<String> privileges )
+    {
+        return new SessionPrivilegesChanged ( privileges );
     }
 
     private SessionAccepted makeSuccessMessage ( final Map<String, String> properties )
@@ -129,5 +150,13 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
             }
         }
         super.dispose ();
+    }
+
+    private void handlePrivilegeChange ()
+    {
+        if ( this.enablePrivs )
+        {
+            sendMessage ( makePrivilegeChangeMessage ( ServiceServerConnection.this.session.getPrivileges () ) );
+        }
     }
 }

@@ -19,8 +19,10 @@
 
 package org.openscada.core.server.common;
 
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.UnableToCreateSessionException;
@@ -34,7 +36,7 @@ import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ServiceCommon<S extends Session> implements Service<S>
+public abstract class ServiceCommon<S extends Session, SI extends AbstractSessionImpl> implements Service<S>
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ServiceCommon.class );
@@ -94,6 +96,26 @@ public abstract class ServiceCommon<S extends Session> implements Service<S>
         }
     }
 
+    protected Set<String> extractPrivileges ( final Properties properties )
+    {
+        final Set<String> result = new HashSet<String> ();
+
+        for ( final Map.Entry<Object, Object> entry : properties.entrySet () )
+        {
+            if ( entry.getKey () instanceof String && entry.getValue () instanceof String )
+            {
+                final String key = (String)entry.getKey ();
+                if ( key.startsWith ( "session.privilege." ) ) //$NON-NLS-1$
+                {
+                    final String priv = key.substring ( "session.privilege.".length () ); //$NON-NLS-1$
+                    result.add ( priv );
+                }
+            }
+        }
+
+        return result;
+    }
+
     /**
      * Wraps the call to {@link #authenticate(Properties)} so that the correct
      * exceptions are thrown for a {@link #createSession(Properties)} call.
@@ -114,8 +136,6 @@ public abstract class ServiceCommon<S extends Session> implements Service<S>
             final UserInformation result = authenticate ( properties, sessionResultProperties );
 
             logger.debug ( "Authenticated as {}", result ); //$NON-NLS-1$
-
-            authorizeSessionPriviliges ( properties, result, sessionResultProperties );
 
             if ( result != null && result.getRoles () != null )
             {
@@ -162,32 +182,6 @@ public abstract class ServiceCommon<S extends Session> implements Service<S>
     {
         logger.debug ( "Requesting authorization - objectType: {}, objectId: {}, action: {}, userInformation: {}, context: {}, defaultResult: {} ... defaulting to GRANTED", new Object[] { objectType, objectId, action, userInformation, context, defaultResult } ); //$NON-NLS-1$
         return AuthorizationResult.GRANTED;
-    }
-
-    protected void authorizeSessionPriviliges ( final Properties properties, final UserInformation user, final Map<String, String> sessionResultProperties )
-    {
-        for ( final Map.Entry<Object, Object> entry : properties.entrySet () )
-        {
-            if ( entry.getKey () instanceof String && entry.getValue () instanceof String )
-            {
-                final String key = (String)entry.getKey ();
-                final String value = (String)entry.getValue ();
-                if ( key.startsWith ( "session.privilege." ) ) //$NON-NLS-1$
-                {
-                    final String priv = key.substring ( "session.privilege.".length () ); //$NON-NLS-1$
-                    if ( authorizeSessionPrivilege ( user, priv, value ) )
-                    {
-                        sessionResultProperties.put ( key, "true" ); //$NON-NLS-1$
-                    }
-                }
-            }
-        }
-    }
-
-    protected boolean authorizeSessionPrivilege ( final UserInformation user, final String key, final String value )
-    {
-        final AuthorizationResult result = authorize ( "SESSION", key, "PRIV", user, null ); //$NON-NLS-1$ //$NON-NLS-2$
-        return result.isGranted ();
     }
 
     protected UserInformation makeEffectiveUserInformation ( final AbstractSessionImpl session, final UserInformation userInformation ) throws PermissionDeniedException

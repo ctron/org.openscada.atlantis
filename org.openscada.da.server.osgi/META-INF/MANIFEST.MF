@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA DA OSGi Hive
 Bundle-SymbolicName: org.openscada.da.server.osgi
-Bundle-Version: 0.18.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.da.server.osgi.internal.Activator
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -10,6 +10,8 @@ Import-Package: org.openscada.ae.sec;version="0.15.0",
  org.openscada.core;version="0.17.0",
  org.openscada.core.server;version="0.14.0",
  org.openscada.core.server.common;version="0.15.0",
+ org.openscada.core.server.common.osgi;version="1.0.0",
+ org.openscada.core.server.common.session;version="1.0.0",
  org.openscada.da.core;version="0.15.0",
  org.openscada.da.core.server;version="0.14.0",
  org.openscada.da.server.browser.common;version="0.14.0",
@@ -22,6 +24,7 @@ Import-Package: org.openscada.ae.sec;version="0.15.0",
  org.openscada.sec.osgi;version="0.1.0",
  org.openscada.utils;version="0.15.0",
  org.openscada.utils.collection;version="0.15.0",
+ org.openscada.utils.concurrent;version="1.0.0",
  org.openscada.utils.osgi.pool;version="0.15.0",
  org.openscada.utils.statuscodes;version="0.15.0",
  org.osgi.framework;version="1.3.0",

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -48,6 +50,7 @@ import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.core.server.Session.SessionListener;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.IntegerValue;
@@ -554,6 +557,16 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         // send success
         replySessionCreated ( props, message, this.session.getProperties () );
+
+        // hook up privs
+        this.session.addSessionListener ( new SessionListener () {
+
+            @Override
+            public void privilegeChange ()
+            {
+                sendPrivilegeChange ( ServerConnectionHandler.this.session.getPrivileges () );
+            }
+        } );
     }
 
     @Override

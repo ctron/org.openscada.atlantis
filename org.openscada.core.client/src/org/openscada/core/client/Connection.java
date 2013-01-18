@@ -60,6 +60,19 @@ public interface Connection
     public Map<String, String> getSessionProperties ();
 
     /**
+     * Add a listener to the privileges of the session
+     * <p>
+     * When adding a new listener it will receive an initial call with the
+     * current privileges.
+     * </p>
+     * 
+     * @param listener
+     */
+    public void addPrivilegeListener ( PrivilegeListener listener );
+
+    public void removePrivilegeListener ( PrivilegeListener listener );
+
+    /**
      * Dispose the connection
      * <p>
      * A dispose will also act as a disconnect.

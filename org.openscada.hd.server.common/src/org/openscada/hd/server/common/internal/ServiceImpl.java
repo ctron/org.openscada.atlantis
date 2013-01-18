@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,16 +25,11 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
+import java.util.concurrent.Executor;
 
-import org.openscada.ae.sec.AuthorizationHelper;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
-import org.openscada.core.server.common.ServiceCommon;
+import org.openscada.core.server.common.osgi.AbstractServiceImpl;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -41,10 +38,7 @@ import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
 import org.openscada.hd.server.common.HistoricalItem;
-import org.openscada.sec.AuthenticationException;
-import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
-import org.openscada.sec.osgi.AuthenticationHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -55,14 +49,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.profiler.Profiler;
 
-public class ServiceImpl extends ServiceCommon<Session> implements Service, ServiceTrackerCustomizer<HistoricalItem, HistoricalItem>
+public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> implements Service, ServiceTrackerCustomizer<HistoricalItem, HistoricalItem>
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ServiceImpl.class );
-
-    private final ReadWriteLock sessionLock = new ReentrantReadWriteLock ();
-
-    private final Set<SessionImpl> sessions = new HashSet<SessionImpl> ();
 
     private final BundleContext context;
 
@@ -72,65 +62,21 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
 
     private final Set<HistoricalItemInformation> itemInformations = new HashSet<HistoricalItemInformation> ();
 
-    private final AuthenticationHelper authenticationManager;
-
-    private final AuthorizationHelper authorizationManager;
-
-    public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
+    public ServiceImpl ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
+        super ( context, executor );
+
         this.context = context;
         this.tracker = new ServiceTracker<HistoricalItem, HistoricalItem> ( this.context, HistoricalItem.class, this );
-
-        this.authenticationManager = new AuthenticationHelper ( context );
-        this.authorizationManager = new AuthorizationHelper ( context );
     }
 
     @Override
-    public void closeSession ( final Session session ) throws InvalidSessionException
+    protected SessionImpl createSessionInstance ( final UserInformation user, final Map<String, String> sessionProperties )
     {
-        SessionImpl sessionImpl = null;
+        final SessionImpl session = new SessionImpl ( user, sessionProperties );
 
-        try
-        {
-            this.sessionLock.writeLock ().lock ();
-            if ( this.sessions.remove ( session ) )
-            {
-                sessionImpl = (SessionImpl)session;
+        session.listChanged ( this.itemInformations, null, true );
 
-                sessionImpl.dispose ();
-            }
-        }
-        finally
-        {
-            this.sessionLock.writeLock ().unlock ();
-        }
-
-        if ( sessionImpl != null )
-        {
-        }
-    }
-
-    @Override
-    public Session createSession ( final Properties properties ) throws UnableToCreateSessionException
-    {
-        final Map<String, String> sessionResultProperties = new HashMap<String, String> ();
-        final UserInformation user = createUserInformation ( properties, sessionResultProperties );
-        final SessionImpl session = new SessionImpl ( user, sessionResultProperties );
-        try
-        {
-            this.sessionLock.writeLock ().lock ();
-            synchronized ( this )
-            {
-                // bad locking strategy ...
-                this.sessions.add ( session );
-                logger.info ( "Sending known items: {}", this.itemInformations.size () );
-                session.listChanged ( this.itemInformations, null, true );
-            }
-        }
-        finally
-        {
-            this.sessionLock.writeLock ().unlock ();
-        }
         return session;
     }
 
@@ -138,10 +84,10 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     public void start () throws Exception
     {
         logger.info ( "Staring new service" );
-        this.tracker.open ();
 
-        this.authenticationManager.open ();
-        this.authorizationManager.open ();
+        super.start ();
+
+        this.tracker.open ();
     }
 
     @Override
@@ -149,33 +95,9 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
     {
         logger.info ( "Stopping service" );
 
-        this.authenticationManager.close ();
-        this.authorizationManager.close ();
-
         this.tracker.close ();
-    }
 
-    protected SessionImpl validateSession ( final Session session ) throws InvalidSessionException
-    {
-        if ( ! ( session instanceof Session ) )
-        {
-            throw new InvalidSessionException ();
-        }
-
-        try
-        {
-            this.sessionLock.readLock ().lock ();
-            if ( !this.sessions.contains ( session ) )
-            {
-                throw new InvalidSessionException ();
-            }
-        }
-        finally
-        {
-            this.sessionLock.readLock ().unlock ();
-        }
-
-        return (SessionImpl)session;
+        super.stop ();
     }
 
     public static final String CREATE_QUERY_PROFILER = "CREATE_QUERY";
@@ -187,7 +109,7 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
         p.setLogger ( logger );
 
         p.start ( "Validate session" );
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
         try
         {
@@ -224,31 +146,11 @@ public class ServiceImpl extends ServiceCommon<Session> implements Service, Serv
         }
     }
 
-    @Override
-    protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
+    protected synchronized void fireListChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
-        return this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
-    }
-
-    @Override
-    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
-    {
-        return this.authorizationManager.authorize ( objectType, objectId, action, userInformation, context, defaultResult );
-    }
-
-    protected void fireListChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
-    {
-        try
+        for ( final SessionImpl session : this.sessions )
         {
-            this.sessionLock.readLock ().lock ();
-            for ( final SessionImpl session : this.sessions )
-            {
-                session.listChanged ( addedOrModified, removed, full );
-            }
-        }
-        finally
-        {
-            this.sessionLock.readLock ().unlock ();
+            session.listChanged ( addedOrModified, removed, full );
         }
     }
 

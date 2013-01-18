@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,6 +33,7 @@ import org.openscada.core.data.Response;
 import org.openscada.core.data.ResponseMessage;
 import org.openscada.core.data.message.CreateSession;
 import org.openscada.core.data.message.SessionAccepted;
+import org.openscada.core.data.message.SessionPrivilegesChanged;
 import org.openscada.core.data.message.SessionRejected;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.utils.concurrent.ExecutorFuture;
@@ -51,16 +54,27 @@ public class ConnectionBaseImpl extends ClientBaseConnection
     public ConnectionBaseImpl ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( protocolConfigurationFactory, connectionInformation );
-        this.statistics.setLabel ( STATS_OPEN_REQUESTS, "Open requests" );
+        this.statistics.setLabel ( STATS_OPEN_REQUESTS, "Open requests" ); //$NON-NLS-1$
     }
 
     @Override
     protected void onConnectionConnected ()
     {
         // send create session request
-        logger.info ( "Requesting new session" );
+        final Map<String, String> properties = makeProperties ();
 
-        sendMessage ( new CreateSession ( this.connectionInformation.getProperties () ) );
+        logger.info ( "Requesting new session: {}", properties ); //$NON-NLS-1$
+
+        sendMessage ( new CreateSession ( properties ) );
+    }
+
+    private Map<String, String> makeProperties ()
+    {
+        final Map<String, String> result = new HashMap<String, String> ( this.connectionInformation.getProperties () );
+
+        result.put ( "feature.core.message.SessionPrivilegesChanged", "true" ); //$NON-NLS-1$ //$NON-NLS-2$
+
+        return result;
     }
 
     @Override
@@ -83,6 +97,10 @@ public class ConnectionBaseImpl extends ClientBaseConnection
             // failure
             performDisconnected ( new IllegalStateException ( String.format ( "Failed to create session. Reply: %s", ( (SessionRejected)message ).getErrorReason () ) ).fillInStackTrace () );
         }
+        else if ( message instanceof SessionPrivilegesChanged )
+        {
+            handlePrivilegeChange ( (SessionPrivilegesChanged)message );
+        }
         else if ( message instanceof ResponseMessage )
         {
             handleResponse ( (ResponseMessage)message );
@@ -90,6 +108,11 @@ public class ConnectionBaseImpl extends ClientBaseConnection
     }
 
     // requests
+
+    private void handlePrivilegeChange ( final SessionPrivilegesChanged message )
+    {
+        firePrivilegeChange ( message.getGranted () );
+    }
 
     protected void handleResponse ( final ResponseMessage message )
     {
