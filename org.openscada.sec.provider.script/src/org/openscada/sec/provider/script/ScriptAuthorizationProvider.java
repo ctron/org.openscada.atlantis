@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +27,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
@@ -39,15 +42,15 @@ import javax.script.ScriptException;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.ca.ConfigurationFactory;
+import org.openscada.sec.AbstractNotifyingAuthorizationService;
 import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.AuthorizationService;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.statuscodes.SeverityLevel;
 import org.openscada.utils.statuscodes.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ScriptAuthorizationProvider implements AuthorizationService, ConfigurationFactory
+public class ScriptAuthorizationProvider extends AbstractNotifyingAuthorizationService implements ConfigurationFactory
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ScriptAuthorizationProvider.class );
@@ -260,8 +263,12 @@ public class ScriptAuthorizationProvider implements AuthorizationService, Config
 
     private final ClassLoader classLoader;
 
-    public ScriptAuthorizationProvider ()
+    private final ScheduledExecutorService executor;
+
+    public ScriptAuthorizationProvider ( final ScheduledExecutorService executor )
     {
+        this.executor = executor;
+
         final ReadWriteLock lock = new ReentrantReadWriteLock ();
         this.readLock = lock.readLock ();
         this.writeLock = lock.writeLock ();
@@ -322,6 +329,13 @@ public class ScriptAuthorizationProvider implements AuthorizationService, Config
         {
             this.writeLock.unlock ();
         }
+        triggerNotify ();
+    }
+
+    private void triggerNotify ()
+    {
+        // FIXME: could try to trigger less often when multiple updates come in fast
+        fireChange ( this.executor );
     }
 
     private void internalDelete ( final UserInformation userInformation, final String configurationId )
@@ -351,6 +365,7 @@ public class ScriptAuthorizationProvider implements AuthorizationService, Config
         {
             this.writeLock.unlock ();
         }
+        triggerNotify ();
     }
 
     private AuthorizationEntry createEntry ( final UserInformation userInformation, final String id, final ConfigurationDataHelper cfg ) throws Exception
