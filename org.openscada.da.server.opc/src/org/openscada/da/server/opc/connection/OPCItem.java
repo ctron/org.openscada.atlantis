@@ -115,7 +115,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     @Override
     public synchronized void suspend ()
     {
-        logger.info ( "Suspend item: {}", getInformation ().getName () );
+        logger.info ( "Suspend item: {} - currentState: {}", getInformation ().getName (), this.suspended );
 
         if ( this.suspended )
         {
@@ -129,13 +129,14 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     @Override
     public synchronized void wakeup ()
     {
-        logger.info ( "Wakeup item: {}", getInformation ().getName () );
+        logger.info ( "Wakeup item: {} - currentState: {}", getInformation ().getName (), this.suspended );
 
         if ( !this.suspended )
         {
-            this.suspended = false;
+            return;
         }
 
+        this.suspended = false;
         this.controller.getIoManager ().wakeupItem ( this.opcItemId );
     }
 
@@ -149,6 +150,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         final ValueData state = entry.getValue ();
+
+        // reset connection error in any case
         attributes.put ( "opc.connection.error", null );
 
         if ( entry.isFailed () )
@@ -189,6 +192,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             }
             catch ( final Throwable e )
             {
+                logger.trace ( "Failed to get type" );
             }
 
             Variant value = Helper.theirs2ours ( state.getValue () );
@@ -258,6 +262,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
     public void itemUnrealized ()
     {
+        logger.debug ( "Item got unrealized" );
+
         final Map<String, Variant> attributes = Helper.clearAttributes ();
         attributes.put ( "opc.connection.error", Variant.TRUE );
         updateData ( null, attributes, AttributeMode.UPDATE );

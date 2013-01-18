@@ -78,10 +78,13 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     private final AtomicLong writeRequestTotal = new AtomicLong ();
 
     /**
-     * The request queue
+     * Holds item that are to be requested in the next run
      */
     private final Map<String, ItemRegistrationRequest> requestMap = new HashMap<String, ItemRegistrationRequest> ();
 
+    /**
+     * Holds items which are either already realized or will be in the next run
+     */
     private final Map<String, ItemRegistrationRequest> requestedMap = new HashMap<String, ItemRegistrationRequest> ();
 
     protected final Map<String, Integer> clientHandleMap = new HashMap<String, Integer> ();
@@ -145,6 +148,8 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         {
             final String itemId = itemDef.getItemDefinition ().getItemID ();
 
+            logger.debug ( "Requsting item: {}", itemId );
+
             // remove from un-registrations ... just in case
             this.itemUnregistrations.remove ( itemId );
 
@@ -164,6 +169,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     public synchronized void unrequestItem ( final String itemId )
     {
+        logger.debug ( "Adding item to unrequest queue: {}", itemId );
         this.itemUnregistrations.add ( itemId );
     }
 
@@ -197,19 +203,24 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         {
             this.connected = false;
 
+            // all unregistrations are done anyway
             this.itemUnregistrations.clear ();
 
+            // all write requests will fail now
             copyWriteRequests = new ArrayList<FutureTask<Result<WriteRequest>>> ( this.writeRequests );
             this.writeRequests.clear ();
 
             firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
 
+            // all client and server handles are invalid with a disconnect
             this.clientHandleMap.clear ();
             this.clientHandleMapRev.clear ();
 
             this.serverHandleMap.clear ();
             this.serverHandleMapRev.clear ();
             firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
+
+            // we don't kill the requestedMap since we will need to re-add the items once the connection is established
         }
 
         logger.info ( "Discarding {} write requests", copyWriteRequests.size () );
@@ -366,6 +377,8 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     public synchronized void wakeupItem ( final String item )
     {
+        logger.debug ( "Waking up item: {}", item );
+
         // request the item in any way
         requestItemById ( item );
 
@@ -375,6 +388,8 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     public synchronized void suspendItem ( final String item )
     {
+        logger.debug ( "Suspending item: {}", item );
+
         this.activationRequestMap.put ( item, Boolean.FALSE );
         this.activeSet.remove ( item );
 
@@ -426,8 +441,11 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         {
             ctx.setUnregistrations ( new HashSet<String> ( this.itemUnregistrations ) );
             this.itemUnregistrations.clear ();
+
+            // remove all unregistration items from the list of items which are actively being requested
             for ( final String itemId : ctx.getUnregistrations () )
             {
+                logger.debug ( "Removing item {} from requestedMap", itemId );
                 this.requestedMap.remove ( itemId );
             }
         }
