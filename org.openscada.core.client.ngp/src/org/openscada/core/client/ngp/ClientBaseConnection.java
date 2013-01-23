@@ -23,6 +23,7 @@ package org.openscada.core.client.ngp;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
+import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -207,6 +208,7 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
      */
     protected void onConnectionClosed ()
     {
+        firePrivilegeChange ( Collections.<String> emptySet () );
     }
 
     private void switchFromBound ( final ConnectionState state, final Throwable error )

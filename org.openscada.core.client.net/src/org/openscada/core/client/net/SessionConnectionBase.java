@@ -89,6 +89,13 @@ public abstract class SessionConnectionBase extends ConnectionBase
         requestSession ();
     }
 
+    @Override
+    protected void onConnectionClosed ()
+    {
+        super.onConnectionClosed ();
+        handlePrivChange ( Collections.<String> emptySet () );
+    }
+
     protected void requestSession ()
     {
         final Properties props = new Properties ();
