@@ -77,6 +77,8 @@ public class ConnectionHelper
 
     public static void injectCompression ( final IoSession session, final String compressionMode )
     {
+        logger.debug ( "Prepare for compression filter injections: {}", compressionMode );
+
         final CompressionFilter compressionFilter = createCompressionFilter ( compressionMode );
         if ( compressionFilter == null )
         {
@@ -85,6 +87,7 @@ public class ConnectionHelper
 
         if ( !session.getFilterChain ().contains ( "compress" ) )
         {
+            logger.debug ( "Injecting compression filter: {}", compressionFilter );
             session.getFilterChain ().addFirst ( "compress", compressionFilter );
         }
     }

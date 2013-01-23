@@ -27,9 +27,6 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.apache.mina.core.future.IoFuture;
-import org.apache.mina.core.future.IoFutureListener;
-import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
@@ -109,9 +106,10 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
 
     protected void sessionConfigured ( final Map<String, String> properties )
     {
-        logger.info ( "Session configured" );
+        logger.info ( "Configure session" );
 
         modifyFilterChain ( this.ioSession, properties );
+
         this.pingService.start ();
     }
 
@@ -157,16 +155,15 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
 
     protected void replySessionCreated ( final Properties originalProperties, final Message originalMessage, final Map<String, String> sessionProperties )
     {
+        logger.debug ( "Reply session created: {}", originalMessage );
+
         final Map<String, String> transportProperties = getTransportProperties ( originalProperties );
 
-        final WriteFuture future = this.messenger.sendMessage ( MessageHelper.createSessionACK ( originalMessage, sessionProperties, transportProperties ) );
-        future.addListener ( new IoFutureListener<IoFuture> () {
-            @Override
-            public void operationComplete ( final IoFuture future )
-            {
-                sessionConfigured ( transportProperties );
-            };
-        } );
+        logger.debug ( "Transport properties: {}", transportProperties );
+
+        this.messenger.sendMessage ( MessageHelper.createSessionACK ( originalMessage, sessionProperties, transportProperties ) );
+
+        sessionConfigured ( transportProperties );
     }
 
     @Override

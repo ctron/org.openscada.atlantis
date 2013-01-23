@@ -614,6 +614,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
      */
     public void setBound ( final Properties properties )
     {
+        logger.debug ( "Request BOUND state" );
         this.pingService.start ();
         switchState ( ConnectionState.BOUND, null, convertProperties ( properties ) );
     }

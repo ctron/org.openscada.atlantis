@@ -143,9 +143,11 @@ public abstract class SessionConnectionBase extends ConnectionBase
         {
             final Properties properties = new Properties ();
             MessageHelper.getProperties ( properties, message.getValues ().get ( MessageHelper.FIELD_SESSION_PROPERTIES ) );
+            logger.debug ( "Session properties: {}", properties );
 
             final Properties transportProperties = new Properties ();
             MessageHelper.getProperties ( transportProperties, message.getValues ().get ( MessageHelper.FIELD_TRANSPORT_PROPERTIES ) );
+            logger.debug ( "Transport properties: {}", transportProperties );
 
             modifyFilterChain ( this.session, transportProperties );
 
