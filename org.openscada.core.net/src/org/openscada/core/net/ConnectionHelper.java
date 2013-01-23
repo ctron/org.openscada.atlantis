@@ -77,7 +77,7 @@ public class ConnectionHelper
 
     public static void injectCompression ( final IoSession session, final String compressionMode )
     {
-        logger.debug ( "Prepare for compression filter injections: {}", compressionMode );
+        logger.debug ( "Prepare for compression filter injection: {}", compressionMode );
 
         final CompressionFilter compressionFilter = createCompressionFilter ( compressionMode );
         if ( compressionFilter == null )
