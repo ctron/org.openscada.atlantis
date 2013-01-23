@@ -19,9 +19,9 @@
 
 package org.openscada.sec.provider.jdbc;
 
-import java.security.NoSuchAlgorithmException;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -34,10 +34,10 @@ import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthenticationService;
 import org.openscada.sec.StatusCodes;
 import org.openscada.sec.UserInformation;
-import org.openscada.sec.utils.password.DigestValidator;
-import org.openscada.sec.utils.password.HexCodec;
+import org.openscada.sec.UserManagerService;
+import org.openscada.sec.utils.password.PasswordEncoder;
+import org.openscada.sec.utils.password.PasswordType;
 import org.openscada.sec.utils.password.PasswordValidator;
-import org.openscada.sec.utils.password.PlainValidator;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.jdbc.DataSourceConnectionAccessor;
@@ -55,7 +55,7 @@ import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class JdbcAuthenticationService implements AuthenticationService
+public class JdbcAuthenticationService implements AuthenticationService, UserManagerService
 {
 
     private static final StatusCode NO_ACCESSOR = new StatusCode ( "OSSEC", "JDBC", 0x0001, SeverityLevel.ERROR );
@@ -115,45 +115,6 @@ public class JdbcAuthenticationService implements AuthenticationService
         }
     }
 
-    private static enum PasswordType
-    {
-        PLAIN
-        {
-            @Override
-            public PasswordValidator createValdiator ()
-            {
-                return new PlainValidator ( false );
-            }
-        },
-        PLAIN_IGNORE_CASE
-        {
-            @Override
-            public PasswordValidator createValdiator ()
-            {
-                return new PlainValidator ( true );
-            }
-        },
-        MD5_HEX
-        {
-            @Override
-            public PasswordValidator createValdiator () throws NoSuchAlgorithmException
-            {
-                return new DigestValidator ( "MD5", "UTF-8", new HexCodec () );
-            }
-        },
-        SHA1_HEX
-        {
-            @Override
-            public PasswordValidator createValdiator () throws NoSuchAlgorithmException
-            {
-                return new DigestValidator ( "SHA1", "UTF-8", new HexCodec () );
-            }
-        };
-
-        public abstract PasswordValidator createValdiator () throws Exception;
-
-    }
-
     /**
      * Mark this service as authoritative.
      */
@@ -164,6 +125,10 @@ public class JdbcAuthenticationService implements AuthenticationService
     private String findUserSql;
 
     private String findRolesForUserSql;
+
+    private String updatePasswordSql;
+
+    private PasswordEncoder passwordEncoder;
 
     public JdbcAuthenticationService ( final BundleContext context, final String id )
     {
@@ -284,9 +249,11 @@ public class JdbcAuthenticationService implements AuthenticationService
         this.connectionProperties.putAll ( cfg.getPrefixed ( "jdbc.properties." ) );
         final PasswordType passwordType = cfg.getEnumChecked ( "passwordType", PasswordType.class, String.format ( "Need 'passwordType' to be one of (%s)", StringHelper.join ( PasswordType.values (), ", " ) ) );
         this.passwordValidator = passwordType.createValdiator ();
+        this.passwordEncoder = passwordType.createEncoder ();
         this.authoritative = cfg.getBoolean ( "authoritative", true );
         this.findUserSql = cfg.getStringChecked ( "findUserSql", "Need 'findUserSql' to be set" );
         this.findRolesForUserSql = cfg.getString ( "findRolesForUserSql" );
+        this.updatePasswordSql = cfg.getString ( "updatePasswordSql" );
 
         // now attach
 
@@ -344,6 +311,60 @@ public class JdbcAuthenticationService implements AuthenticationService
         finally
         {
             this.writeLock.unlock ();
+        }
+    }
+
+    public boolean isUserManager ()
+    {
+        return this.updatePasswordSql != null && !this.updatePasswordSql.isEmpty ();
+    }
+
+    @Override
+    public void setPassword ( final String user, final String password )
+    {
+
+        try
+        {
+            this.readLock.lock ();
+
+            if ( this.accessor == null )
+            {
+                logger.info ( "We don't have any accessor" );
+                throw new IllegalStateException ( "User manager does not have a database connection" );
+            }
+
+            this.accessor.doWithConnection ( new CommonConnectionTask<Void> () {
+
+                @Override
+                protected Void performTask ( final ConnectionContext connection ) throws Exception
+                {
+                    connection.setAutoCommit ( false );
+                    handleSetPassword ( connection, user, password );
+                    connection.commit ();
+                    return null;
+                }
+            } );
+
+        }
+        finally
+        {
+            this.readLock.unlock ();
+        }
+    }
+
+    protected void handleSetPassword ( final ConnectionContext connection, final String user, final String password ) throws SQLException
+    {
+        final String encodedPassword = this.passwordEncoder.encodePassword ( password );
+
+        final Map<String, String> parameters = new HashMap<String, String> ();
+        parameters.put ( "USER_NAME", user );
+        parameters.put ( "PASSWORD", encodedPassword );
+
+        final int count = connection.update ( this.updatePasswordSql, parameters );
+        logger.info ( "Updated password for user {} => {}", user, count );
+        if ( count != 1 )
+        {
+            throw new IllegalStateException ( count < 1 ? String.format ( "User '%s' was not found", user ) : "Too many entries" );
         }
     }
 }
