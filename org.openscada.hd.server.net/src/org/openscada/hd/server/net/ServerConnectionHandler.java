@@ -325,6 +325,8 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     private void sendQueryDataPacket ( final long queryId, final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
+        logger.debug ( "Sending data - queryId: {}, index: {}, @values: {}, @informations: {}", new Object[] { queryId, index, values.size (), valueInformation.size () } );
+
         final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_DATA );
         message.getValues ().put ( "id", new LongValue ( queryId ) );
         message.getValues ().put ( "index", new IntegerValue ( index ) );
