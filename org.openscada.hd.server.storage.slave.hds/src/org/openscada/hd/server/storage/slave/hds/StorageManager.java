@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -54,12 +56,15 @@ public class StorageManager extends AbstractStorageManager
 
     private final DataFilePool pool;
 
-    public StorageManager ( final BundleContext context, final File base, final DataFilePool pool, final ScheduledExecutorService executor )
+    private final ScheduledExecutorService eventExecutor;
+
+    public StorageManager ( final BundleContext context, final File base, final DataFilePool pool, final ScheduledExecutorService executor, final ScheduledExecutorService eventExecutor )
     {
         super ( base );
         this.context = context;
         this.pool = pool;
         this.executor = executor;
+        this.eventExecutor = eventExecutor;
 
         this.checkBaseJob = this.executor.scheduleWithFixedDelay ( new Runnable () {
 
@@ -120,7 +125,7 @@ public class StorageManager extends AbstractStorageManager
         this.lock.lock ();
         try
         {
-            final StorageImpl storage = new StorageImpl ( this.context, storageDirectory, this.pool, this.queryExecutor );
+            final StorageImpl storage = new StorageImpl ( this.context, storageDirectory, this.pool, this.queryExecutor, this.eventExecutor );
             this.storages.put ( storageDirectory, storage );
         }
         finally

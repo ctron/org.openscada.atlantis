@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -81,9 +83,9 @@ public class StorageImpl extends AbstractStorageImpl implements StorageHistorica
 
     }
 
-    public StorageImpl ( final File file, final BundleContext context, final DataFilePool pool, final ScheduledExecutorService queryExecutor, final ScheduledExecutorService updateExecutor ) throws Exception
+    public StorageImpl ( final File file, final BundleContext context, final DataFilePool pool, final ScheduledExecutorService queryExecutor, final ScheduledExecutorService updateExecutor, final ScheduledExecutorService eventExecutor ) throws Exception
     {
-        super ( file, pool, queryExecutor );
+        super ( file, pool, queryExecutor, eventExecutor );
 
         this.updateExecutor = updateExecutor;
 

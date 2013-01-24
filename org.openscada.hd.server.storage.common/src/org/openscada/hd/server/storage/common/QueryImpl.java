@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -94,6 +96,7 @@ public class QueryImpl implements Query
      *            the value source manager
      * @param executor
      *            a single threaded executor for posting events
+     * @param eventExecutor
      * @param parameters
      *            the initial query parameters
      * @param listener
@@ -107,14 +110,14 @@ public class QueryImpl implements Query
      *            an optional fixed end date after which all query data is
      *            invalid
      */
-    public QueryImpl ( final ValueSourceManager storage, final ScheduledExecutorService executor, final QueryParameters parameters, final QueryListener listener, final boolean updateData, final Date fixedStartDate, final Date fixedEndDate )
+    public QueryImpl ( final ValueSourceManager storage, final ScheduledExecutorService executor, final ScheduledExecutorService eventExecutor, final QueryParameters parameters, final QueryListener listener, final boolean updateData, final Date fixedStartDate, final Date fixedEndDate )
     {
         this.storage = storage;
         this.executor = executor;
         this.listener = listener;
         this.updateData = updateData;
 
-        this.buffer = new QueryBuffer ( this.listener, executor, fixedStartDate, fixedEndDate );
+        this.buffer = new QueryBuffer ( this.listener, eventExecutor, fixedStartDate, fixedEndDate );
 
         this.state.set ( new LoadState ( false, false, parameters ) );
 
@@ -267,9 +270,23 @@ public class QueryImpl implements Query
                 @Override
                 public boolean value ( final double value, final Date date, final boolean error, final boolean manual )
                 {
+                    try
+                    {
+                        System.out.println ( "Sleeping" );
+                        Thread.sleep ( 100 );
+                    }
+                    catch ( final InterruptedException e )
+                    {
+                        // TODO Auto-generated catch block
+                        e.printStackTrace ();
+                    }
+
                     QueryImpl.this.buffer.insertData ( value, date, error, manual );
                     final boolean result = shouldContinue ( current.getParameters () );
-                    logger.info ( "Requesting early stop" );
+                    if ( !result )
+                    {
+                        logger.info ( "Requesting early stop" );
+                    }
                     return result;
                 }
             } );
@@ -336,11 +353,13 @@ public class QueryImpl implements Query
         final LoadState currentState = this.state.get ();
         if ( currentState.isClosed () )
         {
+            logger.debug ( "Detected closed query" );
             return false;
         }
 
         if ( hasChanged ( queryParameters ) )
         {
+            logger.debug ( "Detected parameter change" );
             return false;
         }
 

@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -36,6 +38,7 @@ import org.openscada.hd.server.storage.hds.StorageHelper;
 import org.openscada.hd.server.storage.hds.StorageInformation;
 import org.openscada.hds.DataFilePool;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,6 +57,8 @@ public class StorageManager extends AbstractStorageManager
 
     private final ScheduledExecutorService updateExecutor;
 
+    private final ScheduledExportedExecutorService eventExecutor;
+
     public StorageManager ( final BundleContext context, final DataFilePool pool )
     {
         super ( makeBase ( context ) );
@@ -62,6 +67,7 @@ public class StorageManager extends AbstractStorageManager
         this.pool = pool;
 
         this.updateExecutor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "HDSUpdate" ) );
+        this.eventExecutor = new ScheduledExportedExecutorService ( "org.openscada.hd.server.storage.master.hds.events", 1 );
 
         initialize ();
     }
@@ -221,7 +227,7 @@ public class StorageManager extends AbstractStorageManager
         this.lock.lock ();
         try
         {
-            final StorageImpl storage = new StorageImpl ( file, this.context, this.pool, this.queryExecutor, this.updateExecutor );
+            final StorageImpl storage = new StorageImpl ( file, this.context, this.pool, this.queryExecutor, this.updateExecutor, this.eventExecutor );
             this.storages.put ( storage.getInformation ().getItemId (), storage );
         }
         finally
@@ -278,6 +284,7 @@ public class StorageManager extends AbstractStorageManager
         super.dispose ();
 
         this.updateExecutor.shutdown ();
+        this.eventExecutor.shutdown ();
     }
 
     public Collection<StorageInformation> list ()

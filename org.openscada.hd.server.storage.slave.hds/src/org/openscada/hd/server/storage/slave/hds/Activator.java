@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -46,6 +48,8 @@ public class Activator implements BundleActivator
 
     private DataFilePool pool;
 
+    private ScheduledExportedExecutorService eventExecutor;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -56,6 +60,7 @@ public class Activator implements BundleActivator
         Activator.context = bundleContext;
 
         this.executor = new ScheduledExportedExecutorService ( BASE_PATH_PROP, 1 );
+        this.eventExecutor = new ScheduledExportedExecutorService ( "org.openscada.hd.server.storage.slave.hds.events", 1 );
 
         this.pool = new DataFilePool ( Integer.getInteger ( "org.openscada.hd.server.storage.slave.hds.instanceCountTarget", 10 ) );
 
@@ -78,12 +83,12 @@ public class Activator implements BundleActivator
                     }
                     for ( final File child : dir.listFiles () )
                     {
-                        this.storageManagers.add ( new StorageManager ( bundleContext, child, this.pool, this.executor ) );
+                        this.storageManagers.add ( new StorageManager ( bundleContext, child, this.pool, this.executor, this.eventExecutor ) );
                     }
                 }
                 else
                 {
-                    this.storageManagers.add ( new StorageManager ( bundleContext, new File ( path ), this.pool, this.executor ) );
+                    this.storageManagers.add ( new StorageManager ( bundleContext, new File ( path ), this.pool, this.executor, this.eventExecutor ) );
                 }
             }
         }
@@ -112,6 +117,12 @@ public class Activator implements BundleActivator
         {
             this.executor.shutdown ();
             this.executor = null;
+        }
+
+        if ( this.eventExecutor != null )
+        {
+            this.eventExecutor.shutdown ();
+            this.eventExecutor = null;
         }
     }
 

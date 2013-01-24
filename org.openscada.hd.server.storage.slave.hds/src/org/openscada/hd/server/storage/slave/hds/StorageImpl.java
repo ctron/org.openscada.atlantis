@@ -1,3 +1,24 @@
+/*
+ * This file is part of the openSCADA project
+ * 
+ * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.hd.server.storage.slave.hds;
 
 import java.io.File;
@@ -24,9 +45,9 @@ public class StorageImpl extends AbstractStorageImpl
 
     private final ServiceRegistration<HistoricalItem> handle;
 
-    public StorageImpl ( final BundleContext context, final File file, final DataFilePool pool, final ScheduledExecutorService queryExecutor ) throws Exception
+    public StorageImpl ( final BundleContext context, final File file, final DataFilePool pool, final ScheduledExecutorService queryExecutor, final ScheduledExecutorService eventExecutor ) throws Exception
     {
-        super ( file, pool, queryExecutor );
+        super ( file, pool, queryExecutor, eventExecutor );
 
         // register with OSGi
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ( 2 );

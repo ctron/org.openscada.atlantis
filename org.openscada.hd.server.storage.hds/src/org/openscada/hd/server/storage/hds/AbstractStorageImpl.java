@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -81,11 +83,14 @@ public abstract class AbstractStorageImpl implements HistoricalItem, ValueSource
 
     private final Condition jobCondition = this.jobLock.newCondition ();
 
-    public AbstractStorageImpl ( final File file, final DataFilePool pool, final ScheduledExecutorService queryExecutor ) throws Exception
+    private final ScheduledExecutorService eventExecutor;
+
+    public AbstractStorageImpl ( final File file, final DataFilePool pool, final ScheduledExecutorService queryExecutor, final ScheduledExecutorService eventExecutor ) throws Exception
     {
         this.file = file;
 
         this.queryExecutor = queryExecutor;
+        this.eventExecutor = eventExecutor;
 
         final Properties p = new Properties ();
         p.loadFromXML ( new FileInputStream ( new File ( file, "settings.xml" ) ) );
@@ -219,7 +224,7 @@ public abstract class AbstractStorageImpl implements HistoricalItem, ValueSource
                 return null;
             }
 
-            final QueryImpl query = new QueryImpl ( this, this.queryExecutor, parameters, listener, updateData, null, null );
+            final QueryImpl query = new QueryImpl ( this, this.queryExecutor, this.eventExecutor, parameters, listener, updateData, null, null );
 
             this.queries.add ( query );
 
