@@ -153,12 +153,16 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         // get the query id
         final long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
 
+        final QueryParameters parameters = QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) );
+
+        logger.debug ( "Request parameter change: {}", parameters );
+
         synchronized ( this )
         {
             final QueryHandler handler = this.queries.get ( queryId );
             if ( handler != null )
             {
-                handler.changeParameters ( QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) ) );
+                handler.changeParameters ( parameters );
             }
         }
     }
