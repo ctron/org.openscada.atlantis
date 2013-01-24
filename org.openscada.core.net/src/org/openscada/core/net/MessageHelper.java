@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -47,11 +49,15 @@ public class MessageHelper
 
     public static final int CC_PRIV_CHANGE = 0x00010003;
 
+    public static final int CC_START_SESSION = 0x00010004;
+
     public static final String FIELD_SESSION_PROPERTIES = "properties";
 
     public static final String FIELD_TRANSPORT_PROPERTIES = "transport.properties";
 
     public static final String FIELD_PRIVS = "privileges";
+
+    public static final Object PROP_USING_SESSION_START = "using.sessionStart";
 
     /**
      * Convert a MapValue to a attributes map

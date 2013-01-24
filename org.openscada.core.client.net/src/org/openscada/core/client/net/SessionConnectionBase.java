@@ -158,6 +158,8 @@ public abstract class SessionConnectionBase extends ConnectionBase
 
             modifyFilterChain ( this.session, transportProperties );
 
+            this.messenger.sendMessage ( new Message ( MessageHelper.CC_START_SESSION ) );
+
             setBound ( properties );
         }
     }

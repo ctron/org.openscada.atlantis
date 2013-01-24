@@ -55,6 +55,8 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
 
     private static final Object STATS_SESSION_BYTES_WRITTEN = new Object ();
 
+    private static final Object STATS_SESSION_STARTED = new Object ();
+
     private static final int DEFAULT_TIMEOUT = 10000;
 
     protected IoSession ioSession;
@@ -68,6 +70,10 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
     private final StatisticsImpl statistics;
 
     private ManagedConnection mxBean;
+
+    private boolean sessionStarted;
+
+    private Set<String> privileges;
 
     public AbstractServerConnectionHandler ( final IoSession ioSession, final ConnectionInformation connectionInformation )
     {
@@ -102,6 +108,7 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         this.statistics.setLabel ( STATS_PINGS_SENT, "Pings sent" );
         this.statistics.setLabel ( STATS_SESSION_BYTES_READ, "Bytes read in session" );
         this.statistics.setLabel ( STATS_SESSION_BYTES_WRITTEN, "Bytes written in session" );
+        this.statistics.setLabel ( STATS_SESSION_STARTED, "Session started" );
     }
 
     protected void sessionConfigured ( final Map<String, String> properties )
@@ -109,13 +116,15 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         logger.info ( "Configure session" );
 
         modifyFilterChain ( this.ioSession, properties );
-
-        this.pingService.start ();
     }
 
     protected void sendPrivilegeChange ( final Set<String> privileges )
     {
-        this.messenger.sendMessage ( MessageHelper.createPrivilegeChange ( privileges ) );
+        this.privileges = privileges;
+        if ( this.sessionStarted && privileges != null )
+        {
+            this.messenger.sendMessage ( MessageHelper.createPrivilegeChange ( privileges ) );
+        }
     }
 
     protected void modifyFilterChain ( final IoSession ioSession, final Map<String, String> properties )
@@ -164,6 +173,13 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         this.messenger.sendMessage ( MessageHelper.createSessionACK ( originalMessage, sessionProperties, transportProperties ) );
 
         sessionConfigured ( transportProperties );
+
+        if ( !originalProperties.containsKey ( MessageHelper.PROP_USING_SESSION_START ) )
+        {
+            logger.debug ( "Starting session directly" );
+            // we are using an old version, start directly 
+            startSession ();
+        }
     }
 
     @Override
@@ -178,8 +194,32 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         if ( message instanceof Message )
         {
             this.statistics.setCurrentValue ( STATS_SESSION_BYTES_READ, this.ioSession.getReadBytes () );
-            this.messenger.messageReceived ( (Message)message );
+
+            if ( ( (Message)message ).getCommandCode () == MessageHelper.CC_START_SESSION )
+            {
+                startSession ();
+            }
+            else
+            {
+                this.messenger.messageReceived ( (Message)message );
+            }
         }
+    }
+
+    protected void startSession ()
+    {
+        logger.info ( "Received request to start session" ); //$NON-NLS-1$
+
+        this.sessionStarted = true;
+        this.statistics.changeCurrentValue ( STATS_SESSION_STARTED, 1.0 );
+
+        // re-send current known privileges
+        if ( this.privileges != null && !this.privileges.isEmpty () )
+        {
+            sendPrivilegeChange ( this.privileges );
+        }
+
+        this.pingService.start ();
     }
 
     @Override
