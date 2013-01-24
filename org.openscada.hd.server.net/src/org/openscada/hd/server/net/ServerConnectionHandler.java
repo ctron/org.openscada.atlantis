@@ -63,7 +63,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public final static String VERSION = "0.1.0";
 
-    public final static int MAX_DATA_SIZE = 1024;
+    public final static int MAX_DATA_SIZE = Integer.getInteger ( "org.openscada.hd.server.net.maxDataSize", 1024 );
 
     private final static Logger logger = LoggerFactory.getLogger ( ServerConnectionHandler.class );
 
