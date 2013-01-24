@@ -109,13 +109,17 @@
   	<openscada.builder.copyPlugin id="org.openscada.core.server.common"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.net"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.core.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.server.net"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.client.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.server.exporter"/>
+  	
+  	<openscada.builder.copyPlugin id="org.openscada.core.ngp"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.server.ngp"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.client.ngp"/>
-  		
+  	
+	<openscada.builder.copyPlugin id="org.openscada.core.server.exporter"/>
+  	
   	<!-- OpenSCADA DA -->
   	
   	<openscada.builder.copyFeature id="org.openscada.da"/>

@@ -35,6 +35,7 @@ import org.openscada.core.data.message.CreateSession;
 import org.openscada.core.data.message.SessionAccepted;
 import org.openscada.core.data.message.SessionPrivilegesChanged;
 import org.openscada.core.data.message.SessionRejected;
+import org.openscada.core.ngp.Features;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.utils.concurrent.ExecutorFuture;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -68,11 +69,11 @@ public class ConnectionBaseImpl extends ClientBaseConnection
         sendMessage ( new CreateSession ( properties ) );
     }
 
-    private Map<String, String> makeProperties ()
+    protected Map<String, String> makeProperties ()
     {
         final Map<String, String> result = new HashMap<String, String> ( this.connectionInformation.getProperties () );
 
-        result.put ( "feature.core.message.SessionPrivilegesChanged", "true" ); //$NON-NLS-1$ //$NON-NLS-2$
+        result.put ( Features.FEATURE_SESSION_PRIVILEGES, "true" ); //$NON-NLS-1$
 
         return result;
     }
@@ -89,8 +90,7 @@ public class ConnectionBaseImpl extends ClientBaseConnection
     {
         if ( message instanceof SessionAccepted )
         {
-            setSessionProperties ( ( (SessionAccepted)message ).getProperties () );
-            switchState ( ConnectionState.BOUND, null );
+            handleSessionAccepted ( (SessionAccepted)message );
         }
         else if ( message instanceof SessionRejected )
         {
@@ -105,6 +105,14 @@ public class ConnectionBaseImpl extends ClientBaseConnection
         {
             handleResponse ( (ResponseMessage)message );
         }
+    }
+
+    private void handleSessionAccepted ( final SessionAccepted message )
+    {
+        final Map<String, String> properties = message.getProperties ();
+
+        setSessionProperties ( properties );
+        switchState ( ConnectionState.BOUND, null );
     }
 
     // requests

@@ -1,0 +1,8 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA Core NGP
+Bundle-SymbolicName: org.openscada.core.ngp
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: openSCADA.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.core.ngp;version="1.0.0"

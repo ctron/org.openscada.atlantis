@@ -32,6 +32,7 @@ import org.openscada.core.data.message.CreateSession;
 import org.openscada.core.data.message.SessionAccepted;
 import org.openscada.core.data.message.SessionPrivilegesChanged;
 import org.openscada.core.data.message.SessionRejected;
+import org.openscada.core.ngp.Features;
 import org.openscada.core.server.Service;
 import org.openscada.core.server.Session;
 import org.openscada.core.server.Session.SessionListener;
@@ -69,7 +70,8 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
     {
         try
         {
-            this.enablePrivs = message.getProperties ().containsKey ( "feature.core.message.SessionPrivilegesChanged" );
+            this.enablePrivs = message.getProperties ().containsKey ( Features.FEATURE_SESSION_PRIVILEGES );
+            logger.debug ( "Enable privileges: {}", this.enablePrivs );
 
             performCreateSession ( message.getProperties () );
             sendMessage ( makeSuccessMessage ( this.session.getProperties () ) );
