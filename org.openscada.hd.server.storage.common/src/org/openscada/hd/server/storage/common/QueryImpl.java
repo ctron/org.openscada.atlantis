@@ -270,17 +270,6 @@ public class QueryImpl implements Query
                 @Override
                 public boolean value ( final double value, final Date date, final boolean error, final boolean manual )
                 {
-                    try
-                    {
-                        System.out.println ( "Sleeping" );
-                        Thread.sleep ( 100 );
-                    }
-                    catch ( final InterruptedException e )
-                    {
-                        // TODO Auto-generated catch block
-                        e.printStackTrace ();
-                    }
-
                     QueryImpl.this.buffer.insertData ( value, date, error, manual );
                     final boolean result = shouldContinue ( current.getParameters () );
                     if ( !result )
