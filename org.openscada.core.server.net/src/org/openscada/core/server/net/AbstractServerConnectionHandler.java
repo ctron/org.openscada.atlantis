@@ -210,8 +210,14 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
     {
         logger.info ( "Received request to start session" ); //$NON-NLS-1$
 
+        if ( this.sessionStarted )
+        {
+            logger.warn ( "Received session start multiple times" );
+            return;
+        }
+
         this.sessionStarted = true;
-        this.statistics.changeCurrentValue ( STATS_SESSION_STARTED, 1.0 );
+        this.statistics.setCurrentValue ( STATS_SESSION_STARTED, 1.0 );
 
         // re-send current known privileges
         if ( this.privileges != null && !this.privileges.isEmpty () )

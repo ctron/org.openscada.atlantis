@@ -102,6 +102,7 @@ public abstract class SessionConnectionBase extends ConnectionBase
         props.putAll ( this.connectionInformation.getProperties () );
 
         props.setProperty ( SESSION_CLIENT_VERSION, getRequiredVersion () );
+        props.put ( MessageHelper.PROP_USING_SESSION_START, "true" );
 
         final String username = getConnectionInformation ().getProperties ().get ( ConnectionInformation.PROP_USER );
         final String password = getConnectionInformation ().getProperties ().get ( ConnectionInformation.PROP_PASSWORD );
