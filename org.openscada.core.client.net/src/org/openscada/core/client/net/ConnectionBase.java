@@ -651,7 +651,7 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
     @Override
     public synchronized void exceptionCaught ( final IoSession session, final Throwable cause ) throws Exception
     {
-        logger.error ( "Connection exception", cause );
+        logger.error ( String.format ( "Connection exception for connection: %s", this.connectionInformation != null ? this.connectionInformation.toMaskedString () : "<null>" ), cause );
         if ( session == this.session )
         {
             requestClose ( cause );
