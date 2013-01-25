@@ -20,6 +20,7 @@
 package org.openscada.core.server.ngp;
 
 import java.util.Collection;
+import java.util.Map;
 
 import javax.net.ssl.SSLSession;
 
@@ -29,6 +30,7 @@ import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.core.server.common.stats.ManagedConnection;
 import org.openscada.protocol.ngp.common.StatisticsFilter;
+import org.openscada.protocol.ngp.common.mc.MessageChannelFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,6 +68,20 @@ public abstract class ServerConnection
             public void close ()
             {
                 ServerConnection.this.session.close ( false );
+            }
+
+            @Override
+            public Map<String, String> getTransportProperties ()
+            {
+                final MessageChannelFilter mcf = (MessageChannelFilter)session.getFilterChain ().get ( MessageChannelFilter.class );
+                if ( mcf != null )
+                {
+                    return mcf.getAcceptedProperties ();
+                }
+                else
+                {
+                    return null;
+                }
             }
         }, session.getRemoteAddress () );
 

@@ -19,9 +19,13 @@
 
 package org.openscada.core.server.common.stats;
 
+import java.util.Map;
+
 public interface ManagedConnectionMXBean
 {
     public StatisticInformation[] getStatistics ();
+
+    public Map<String, String> getTransportProperties ();
 
     public void close ();
 }

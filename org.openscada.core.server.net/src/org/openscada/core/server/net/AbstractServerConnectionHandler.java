@@ -99,6 +99,12 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
             }
 
             @Override
+            public Map<String, String> getTransportProperties ()
+            {
+                return null;
+            }
+
+            @Override
             public void close ()
             {
                 AbstractServerConnectionHandler.this.ioSession.close ( false );

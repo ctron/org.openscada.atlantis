@@ -51,7 +51,7 @@ public class ProtocolConfigurationFactoryImpl extends DefaultProtocolConfigurati
 
         if ( preferJava () )
         {
-            configuration.setPreferredProtocols ( Arrays.asList ( "java." + ProtocolFactory.VERSION ) );
+            configuration.setPreferredProtocols ( Arrays.asList ( "java/" + ProtocolFactory.VERSION ) );
         }
     }
 

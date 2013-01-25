@@ -47,7 +47,7 @@ public class ConnectionTest1 implements IApplication
             @Override
             protected void customizeConfiguration ( final ProtocolConfiguration configuration, final boolean clientMode )
             {
-                addJavaProtocol ( (short)1, configuration, ConnectionTest1.class.getClassLoader () );
+                addJavaProtocol ( "1", configuration, ConnectionTest1.class.getClassLoader () );
             }
         };
 
