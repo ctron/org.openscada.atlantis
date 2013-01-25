@@ -420,6 +420,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
      */
     public void closeQuery ( final QueryImpl queryImpl )
     {
+        logger.debug ( "Request to close query: {}" );
+
         final Long id = queryImpl.getId ();
         if ( id == null )
         {
