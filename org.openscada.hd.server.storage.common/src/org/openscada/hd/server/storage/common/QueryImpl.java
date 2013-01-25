@@ -264,6 +264,9 @@ public class QueryImpl implements Query
         try
         {
             final LoadState current = expect;
+
+            logger.debug ( "Processing: {}", current );
+
             this.buffer.changeParameters ( current.getParameters () );
             this.storage.visit ( current.getParameters (), new ValueVisitor () {
 
