@@ -121,7 +121,7 @@ public class QueryImpl implements Query
 
         this.state.set ( new LoadState ( false, false, parameters ) );
 
-        changeParameters ( parameters );
+        changeParameters ( parameters, true );
     }
 
     @Override
@@ -182,6 +182,13 @@ public class QueryImpl implements Query
     @Override
     public void changeParameters ( final QueryParameters parameters )
     {
+        changeParameters ( parameters, false );
+    }
+
+    public void changeParameters ( final QueryParameters parameters, final boolean force )
+    {
+        logger.debug ( "Change parameters to - force: {}, parameters: {}", force, parameters );
+
         int i = 0;
         LoadState update;
         LoadState expect;
@@ -189,12 +196,18 @@ public class QueryImpl implements Query
         boolean shouldStart;
         do
         {
-            logger.debug ( "Try parameter update - {}", i );
             expect = this.state.get ();
+            logger.debug ( "Try parameter update - {} - {}", i, expect );
 
             if ( expect.isClosed () )
             {
                 logger.info ( "Query is closed. Bye!" );
+                return;
+            }
+
+            if ( !force && parameterEquals ( expect.getParameters (), parameters ) )
+            {
+                logger.info ( "This is not an actual parameter change. Aborting..." );
                 return;
             }
 
@@ -212,6 +225,33 @@ public class QueryImpl implements Query
 
         logger.debug ( "State applied: {}", update );
 
+    }
+
+    private static boolean parameterEquals ( final QueryParameters first, final QueryParameters second )
+    {
+        if ( first == second )
+        {
+            return true;
+        }
+        if ( first == null )
+        {
+            return false;
+        }
+
+        // now both are non-null
+        if ( first.getStartTimestamp () != second.getStartTimestamp () )
+        {
+            return false;
+        }
+        if ( first.getEndTimestamp () != second.getEndTimestamp () )
+        {
+            return false;
+        }
+        if ( first.getNumberOfEntries () != second.getNumberOfEntries () )
+        {
+            return false;
+        }
+        return true;
     }
 
     public void reload ()
@@ -248,10 +288,17 @@ public class QueryImpl implements Query
                 logger.debug ( "Found loading state. Bye!" );
                 return;
             }
+
             if ( expect.isClosed () )
             {
                 // the query got closed .. we can stop
                 logger.debug ( "Found closed state. Bye!" );
+                return;
+            }
+
+            if ( parameterEquals ( this.buffer.getParameters (), expect.getParameters () ) )
+            {
+                logger.debug ( "Target state is no change from current state" );
                 return;
             }
 
@@ -260,15 +307,14 @@ public class QueryImpl implements Query
         } while ( !this.state.compareAndSet ( expect, update ) );
 
         // now we are the only running loader
-        boolean needStart = false;
+        final LoadState current = expect;
+
         try
         {
-            final LoadState current = expect;
-
             logger.debug ( "Processing: {}", current );
 
             this.buffer.changeParameters ( current.getParameters () );
-            this.storage.visit ( current.getParameters (), new ValueVisitor () {
+            final boolean complete = this.storage.visit ( current.getParameters (), new ValueVisitor () {
 
                 @Override
                 public boolean value ( final double value, final Date date, final boolean error, final boolean manual )
@@ -282,18 +328,18 @@ public class QueryImpl implements Query
                     return result;
                 }
             } );
-            this.buffer.complete ();
+
+            if ( complete )
+            {
+                // only complete the buffer if it was a complete run
+                this.buffer.complete ();
+            }
 
             if ( this.state.get ().isClosed () )
             {
                 logger.info ( "Query closed. Bye" );
                 // query is close ... quick goodbye
                 return;
-            }
-
-            if ( hasChanged ( current.getParameters () ) )
-            {
-                needStart = true;
             }
         }
         catch ( final Exception e )
@@ -303,15 +349,13 @@ public class QueryImpl implements Query
         }
         finally
         {
-            endLoading ();
+            logger.debug ( "End loading" );
+            if ( endLoading ( current ) )
+            {
+                logger.debug ( "Triggering loading restart" );
+                startLoad ();
+            }
             logger.debug ( "Loading ended" );
-        }
-
-        if ( needStart )
-        {
-            logger.debug ( "Triggering loading restart" );
-            // we are done here but need another round for the changed parameters
-            startLoad ();
         }
     }
 
@@ -358,16 +402,29 @@ public class QueryImpl implements Query
         return true;
     }
 
-    private void endLoading ()
+    /**
+     * @return <code>true</code> if another load run is needed
+     */
+    private boolean endLoading ( final LoadState ours )
     {
+        logger.debug ( "End loading - our state: {}", ours );
+
         LoadState expect;
         LoadState update;
 
+        boolean needStart;
         do
         {
             expect = this.state.get ();
             update = new LoadState ( expect.isClosed (), false, expect.getParameters () );
+
+            needStart = !update.isClosed () && !parameterEquals ( ours.getParameters (), update.getParameters () );
+
         } while ( !this.state.compareAndSet ( expect, update ) );
+
+        logger.debug ( "State after loading - restart: {}, {}", needStart, update );
+
+        return needStart;
     }
 
     public boolean isUpdateData ()

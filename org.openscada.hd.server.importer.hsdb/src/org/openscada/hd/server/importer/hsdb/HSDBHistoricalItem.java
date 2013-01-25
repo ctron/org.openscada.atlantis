@@ -102,9 +102,9 @@ public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
     }
 
     @Override
-    public void visit ( final QueryParameters parameters, final ValueVisitor visitor )
+    public boolean visit ( final QueryParameters parameters, final ValueVisitor visitor )
     {
-        this.source.visit ( visitor, new Date ( parameters.getStartTimestamp () ), new Date ( parameters.getEndTimestamp () ) );
+        return this.source.visit ( visitor, new Date ( parameters.getStartTimestamp () ), new Date ( parameters.getEndTimestamp () ) );
     }
 
 }

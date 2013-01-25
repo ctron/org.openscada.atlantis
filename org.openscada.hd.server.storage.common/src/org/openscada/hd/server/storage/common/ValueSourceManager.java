@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassid.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,6 +29,16 @@ public interface ValueSourceManager
 
     public void queryClosed ( QueryImpl query );
 
-    public void visit ( QueryParameters parameters, ValueVisitor visitor );
+    /**
+     * Visit values
+     * 
+     * @param parameters
+     *            the parameters to visit
+     * @param visitor
+     *            the visitor
+     * @return <code>true</code> if the run was complete, <code>false</code> if
+     *         is was aborted by the visitor
+     */
+    public boolean visit ( QueryParameters parameters, ValueVisitor visitor );
 
 }
