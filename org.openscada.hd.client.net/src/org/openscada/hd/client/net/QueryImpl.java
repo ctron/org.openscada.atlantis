@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -50,6 +52,8 @@ public class QueryImpl implements Query
 
     private Long id;
 
+    private Long closeId;
+
     public QueryImpl ( final Executor executor, final ConnectionImpl connection, final String itemId, final QueryParameters parameters, final QueryListener listener )
     {
         this.executor = executor;
@@ -80,6 +84,7 @@ public class QueryImpl implements Query
             // disconnect
             fireStateChange ( this.listener, QueryState.DISCONNECTED );
             this.listener = null;
+            this.closeId = this.id;
             this.id = null;
         }
 
@@ -152,6 +157,21 @@ public class QueryImpl implements Query
     public Long getId ()
     {
         return this.id;
+    }
+
+    /**
+     * The id of the query used for closing it.
+     * <p>
+     * Since the ID will be set to <code>null</code> once the query gets closed,
+     * this id will be used to close the query. It must be the same value as the
+     * original id, but only set when the query gets closed.
+     * </p>
+     * 
+     * @return the id of the query when closing
+     */
+    public Long getCloseId ()
+    {
+        return this.closeId;
     }
 
     public void handleUpdateStatus ( final QueryState state )

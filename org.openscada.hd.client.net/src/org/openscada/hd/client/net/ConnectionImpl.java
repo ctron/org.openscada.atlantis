@@ -420,9 +420,10 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
      */
     public void closeQuery ( final QueryImpl queryImpl )
     {
-        logger.debug ( "Request to close query: {}" );
+        final Long id = queryImpl.getCloseId ();
 
-        final Long id = queryImpl.getId ();
+        logger.debug ( "Request to close query: {}", id );
+
         if ( id == null )
         {
             return;
@@ -431,6 +432,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         synchronized ( this )
         {
             final QueryImpl query = this.queries.remove ( id );
+
+            logger.debug ( "Removed query: {}", query );
 
             // update stats
             this.statistics.setCurrentValue ( STATS_COUNT_QUERIES, this.queries.size () );
