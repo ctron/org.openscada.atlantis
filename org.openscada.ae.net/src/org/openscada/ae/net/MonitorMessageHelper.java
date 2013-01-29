@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -76,6 +78,7 @@ public class MonitorMessageHelper
 
             final String id = ( (StringValue)value.get ( "id" ) ).getValue ();
             final Variant currentValue = MessageHelper.valueToVariant ( value.get ( "value" ), null );
+            final Variant lastFailValue = MessageHelper.valueToVariant ( value.get ( "lastFailValue" ), null );
 
             Long lastAknTimestamp = null;
             final LongValue lastAknTimestampValue = (LongValue)value.get ( "lastAknTimestamp" );
@@ -131,7 +134,7 @@ public class MonitorMessageHelper
                 attributes = null;
             }
 
-            return new MonitorStatusInformation ( id, status, statusTimestamp, severity, currentValue, lastAknTimestamp, lastAknUser, lastFailTimestamp, attributes );
+            return new MonitorStatusInformation ( id, status, statusTimestamp, severity, currentValue, lastAknTimestamp, lastAknUser, lastFailTimestamp, lastFailValue, attributes );
         }
         catch ( final ClassCastException e )
         {
@@ -168,6 +171,11 @@ public class MonitorMessageHelper
         if ( currentValue != null )
         {
             value.put ( "value", currentValue );
+        }
+        final Value lastFailValue = MessageHelper.variantToValue ( condition.getLastFailValue () );
+        if ( lastFailValue != null )
+        {
+            value.put ( "lastFailValue", lastFailValue );
         }
         value.put ( "lastAknUser", new StringValue ( condition.getLastAknUser () ) );
         value.put ( "statusTimestamp", new LongValue ( condition.getStatusTimestamp () ) );

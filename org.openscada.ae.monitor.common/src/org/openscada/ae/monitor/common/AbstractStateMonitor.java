@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -44,7 +46,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
 
     private final static Logger logger = LoggerFactory.getLogger ( AbstractStateMonitor.class );
 
-    private StateInformation currentState = new StateInformation ( null, null, null, null, null, null, null, null, null );
+    private StateInformation currentState = new StateInformation ( null, null, null, null, null, null, null, null, null, null );
 
     private final PersistentInformation persistentInformation = new PersistentInformation ();
 
@@ -204,7 +206,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
             attributes = this.attributes;
         }
 
-        return new MonitorStatusInformation ( getId (), status, this.currentState.getLastChangeTimestamp (), this.currentState.getSeverity (), this.currentState.getValue (), this.currentState.getLastAckTimestamp (), this.currentState.getLastAckUser (), this.currentState.getLastFailTimestamp (), attributes );
+        return new MonitorStatusInformation ( getId (), status, this.currentState.getLastChangeTimestamp (), this.currentState.getSeverity (), this.currentState.getValue (), this.currentState.getLastAckTimestamp (), this.currentState.getLastAckUser (), this.currentState.getLastFailTimestamp (), this.currentState.getLastFailValue (), attributes );
     }
 
     public StateInformation getCurrentState ()
@@ -239,15 +241,6 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
             return true;
         }
         return state.getLastAckRequiredTimestamp () > state.getLastAckTimestamp ();
-    }
-
-    private Date makeDate ( final Long timestamp )
-    {
-        if ( timestamp == null )
-        {
-            return null;
-        }
-        return new Date ( timestamp );
     }
 
     protected synchronized void setAttributes ( final Map<String, Variant> attributes )
@@ -323,6 +316,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
         builder.setValue ( value );
         builder.setLastValueTimestamp ( valueTimestamp );
         builder.setLastFailTimestamp ( now );
+        builder.setLastFailValue ( value );
 
         setState ( builder, now, decorator );
     }
@@ -353,11 +347,12 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
             return;
         }
 
-        // we are only interested in the inital alarm state
+        // we are only interested in the initial alarm state
         builder.setValue ( value );
         builder.setLastValueTimestamp ( valueTimestamp );
 
         builder.setLastFailTimestamp ( now );
+        builder.setLastFailValue ( value );
 
         if ( this.persistentInformation == null )
         {
@@ -411,6 +406,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
         if ( this.currentState.getLastFailTimestamp () == null )
         {
             builder.setLastFailTimestamp ( persistentInformation.getLastFailTimestamp () );
+            builder.setLastFailValue ( persistentInformation.getLastFailValue () );
             this.persistentInformation.setLastFailTimestamp ( persistentInformation.getLastFailTimestamp () );
         }
 

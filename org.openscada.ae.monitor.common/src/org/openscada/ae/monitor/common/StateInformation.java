@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -44,7 +46,9 @@ public class StateInformation
 
     private final Variant value;
 
-    public StateInformation ( final State state, final Severity severity, final Long lastChangeTimestamp, final Variant value, final Long lastValueTimestamp, final Long lastFailTimestamp, final Long lastAckRequiredTimestamp, final Long lastAckTimestamp, final String lastAckUser )
+    private final Variant lastFailValue;
+
+    public StateInformation ( final State state, final Severity severity, final Long lastChangeTimestamp, final Variant value, final Long lastValueTimestamp, final Long lastFailTimestamp, final Long lastAckRequiredTimestamp, final Long lastAckTimestamp, final String lastAckUser, final Variant lastFailValue )
     {
         this.state = state;
         this.severity = severity;
@@ -55,6 +59,7 @@ public class StateInformation
         this.lastAckRequiredTimestamp = lastAckRequiredTimestamp;
         this.lastAckTimestamp = lastAckTimestamp;
         this.lastAckUser = lastAckUser;
+        this.lastFailValue = lastFailValue;
     }
 
     @Override
@@ -108,6 +113,11 @@ public class StateInformation
         return this.lastAckUser;
     }
 
+    public Variant getLastFailValue ()
+    {
+        return this.lastFailValue;
+    }
+
     public static class Builder
     {
         private State state;
@@ -128,6 +138,8 @@ public class StateInformation
 
         private String lastAckUser;
 
+        private Variant lastFailValue;
+
         public Builder ( final StateInformation other )
         {
             this.state = other.state;
@@ -139,11 +151,12 @@ public class StateInformation
             this.lastAckRequiredTimestamp = other.lastAckRequiredTimestamp;
             this.lastAckTimestamp = other.lastAckTimestamp;
             this.lastAckUser = other.lastAckUser;
+            this.lastFailValue = other.lastFailValue;
         }
 
         public StateInformation build ()
         {
-            return new StateInformation ( this.state, this.severity, this.lastChangeTimestamp, this.value, this.lastValueTimestamp, this.lastFailTimestamp, this.lastAckRequiredTimestamp, this.lastAckTimestamp, this.lastAckUser );
+            return new StateInformation ( this.state, this.severity, this.lastChangeTimestamp, this.value, this.lastValueTimestamp, this.lastFailTimestamp, this.lastAckRequiredTimestamp, this.lastAckTimestamp, this.lastAckUser, this.lastFailValue );
         }
 
         public Builder setLastAckRequiredTimestamp ( final Long lastAckRequiredTimestamp )
@@ -197,6 +210,12 @@ public class StateInformation
         public Builder setValue ( final Variant value )
         {
             this.value = value;
+            return this;
+        }
+
+        public Builder setLastFailValue ( final Variant lastFailValue )
+        {
+            this.lastFailValue = lastFailValue;
             return this;
         }
 
