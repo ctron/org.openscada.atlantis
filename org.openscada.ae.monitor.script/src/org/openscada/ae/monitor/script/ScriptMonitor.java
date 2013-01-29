@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -188,6 +190,8 @@ public class ScriptMonitor extends AbstractPersistentStateMonitor
         this.handler.update ( userInformation, properties );
 
         this.listener.setDataSources ( properties );
+
+        setSuppressEvents ( cfg.getBoolean ( "suppressEvents", false ) ); //$NON-NLS-1$
         setStringAttributes ( cfg.getPrefixed ( "info." ) ); //$NON-NLS-1$
 
         handleChange ( this.listener.getSourcesCopy () );

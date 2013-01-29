@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -55,14 +57,23 @@ public class EventMonitorImpl extends AbstractPersistentStateMonitor implements 
 
         Severity severity;
 
+        boolean suppressEvents;
+
         public Configuration ( final Configuration currentConfiguration, final AbstractStateMonitor monitor )
         {
             super ( currentConfiguration, monitor );
             if ( currentConfiguration != null )
             {
+                this.severity = currentConfiguration.severity;
                 this.active = currentConfiguration.active;
                 this.requireAkn = currentConfiguration.requireAkn;
+                this.suppressEvents = currentConfiguration.suppressEvents;
             }
+        }
+
+        public void setSuppressEvents ( final UserInformation userInformation, final boolean suppressEvents )
+        {
+            this.suppressEvents = update ( userInformation, this.suppressEvents, suppressEvents );
         }
 
         public void setSeverity ( final UserInformation userInformation, final Severity severity )
@@ -91,13 +102,14 @@ public class EventMonitorImpl extends AbstractPersistentStateMonitor implements 
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        setStringAttributes ( cfg.getPrefixed ( "info." ) );
+        setStringAttributes ( cfg.getPrefixed ( "info." ) ); //$NON-NLS-1$
 
         final Configuration c = new Configuration ( this.configuration, this );
 
         c.setActive ( userInformation, cfg.getBoolean ( "active", true ) ); //$NON-NLS-1$
         c.setRequireAkn ( userInformation, cfg.getBoolean ( "requireAkn", true ) ); //$NON-NLS-1$
         c.setSeverity ( userInformation, cfg.getEnum ( "severity", Severity.class, Severity.ALARM ) );
+        c.setSuppressEvents ( userInformation, cfg.getBoolean ( "suppressEvents", false ) ); //$NON-NLS-1$
 
         setEventMatcher ( userInformation, cfg.getString ( "filter", "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
         setMonitorType ( userInformation, cfg.getString ( "monitorType", Messages.getString ( "EventMonitorImpl.tag.event" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -105,6 +117,7 @@ public class EventMonitorImpl extends AbstractPersistentStateMonitor implements 
         this.configuration = c;
         c.sendEvents ();
 
+        setSuppressEvents ( c.suppressEvents );
         setOk ( Variant.NULL, System.currentTimeMillis () );
     }
 

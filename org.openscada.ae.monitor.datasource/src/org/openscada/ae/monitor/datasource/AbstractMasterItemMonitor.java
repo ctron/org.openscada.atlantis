@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -90,6 +92,8 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
 
         private boolean activeState;
 
+        private boolean suppressEvents;
+
         public Configuration ( final Configuration configuration, final AbstractMasterItemMonitor monitor )
         {
             super ( configuration, monitor );
@@ -100,6 +104,7 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
                 this.handlerPriority = configuration.handlerPriority;
                 this.monitorType = configuration.monitorType;
                 this.activeState = configuration.activeState;
+                this.suppressEvents = configuration.suppressEvents;
             }
         }
 
@@ -116,6 +121,11 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
         public void setMonitorType ( final String monitorType )
         {
             this.monitorType = monitorType;
+        }
+
+        public void setSuppressEvents ( final UserInformation userInformation, final boolean suppressEvents )
+        {
+            this.suppressEvents = update ( userInformation, this.suppressEvents, suppressEvents );
         }
 
         public void setActiveState ( final UserInformation userInformation, final boolean activeState )
@@ -182,15 +192,17 @@ public abstract class AbstractMasterItemMonitor extends AbstractPersistentStateM
 
         final Configuration c = new Configuration ( this.configuration, this );
         c.setMasterId ( intern ( cfg.getStringChecked ( MasterItem.MASTER_ID, String.format ( "'%s' must be set", MasterItem.MASTER_ID ) ) ) );
-        c.setHandlerPriority ( cfg.getInteger ( "handlerPriority", getDefaultHandlerPriority () ) );
-        c.setMonitorType ( intern ( cfg.getString ( "monitorType", this.defaultMonitorType ) ) );
+        c.setHandlerPriority ( cfg.getInteger ( "handlerPriority", getDefaultHandlerPriority () ) ); //$NON-NLS-1$
+        c.setMonitorType ( intern ( cfg.getString ( "monitorType", this.defaultMonitorType ) ) ); //$NON-NLS-1$
 
-        c.setActiveState ( userInformation, cfg.getBoolean ( "active", true ) );
+        c.setActiveState ( userInformation, cfg.getBoolean ( "active", true ) ); //$NON-NLS-1$
+        c.setSuppressEvents ( userInformation, cfg.getBoolean ( "suppressEvents", false ) ); //$NON-NLS-1$
 
         this.configuration = c;
         c.sendEvents ();
 
-        setStringAttributes ( cfg.getPrefixed ( "info." ) );
+        setSuppressEvents ( c.suppressEvents );
+        setStringAttributes ( cfg.getPrefixed ( "info." ) ); //$NON-NLS-1$
 
         connect ();
     }

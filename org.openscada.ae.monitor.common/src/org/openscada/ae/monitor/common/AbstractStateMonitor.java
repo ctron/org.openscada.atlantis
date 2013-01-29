@@ -54,6 +54,8 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
 
     private final EventProcessor eventProcessor;
 
+    private boolean suppressEvents;
+
     public AbstractStateMonitor ( final String id, final Executor executor, final Interner<String> stringInterner, final EventProcessor eventProcessor )
     {
         super ( id, executor, stringInterner );
@@ -92,8 +94,16 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
 
     protected void sendEvent ( final Event event )
     {
-        logger.debug ( "Sending event: {}", event );
-        this.eventProcessor.publishEvent ( event );
+        sendEvent ( event, false );
+    }
+
+    protected void sendEvent ( final Event event, final boolean force )
+    {
+        logger.debug ( "Sending event: {} - suppressEvents: {}, force: {}", new Object[] { event, this.suppressEvents, force } );
+        if ( !this.suppressEvents || force )
+        {
+            this.eventProcessor.publishEvent ( event );
+        }
     }
 
     private String extractUser ( final UserInformation userInformation )
@@ -241,6 +251,16 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
             return true;
         }
         return state.getLastAckRequiredTimestamp () > state.getLastAckTimestamp ();
+    }
+
+    public synchronized void setSuppressEvents ( final boolean suppressEvents )
+    {
+        this.suppressEvents = suppressEvents;
+    }
+
+    public boolean isSuppressEvents ()
+    {
+        return this.suppressEvents;
     }
 
     protected synchronized void setAttributes ( final Map<String, Variant> attributes )
