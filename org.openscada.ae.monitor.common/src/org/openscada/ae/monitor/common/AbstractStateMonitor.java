@@ -52,7 +52,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
 
     private Map<String, Variant> attributes;
 
-    protected final EventProcessor eventProcessor;
+    private final EventProcessor eventProcessor;
 
     public AbstractStateMonitor ( final String id, final Executor executor, final Interner<String> stringInterner, final EventProcessor eventProcessor )
     {
@@ -120,7 +120,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
         final MonitorStatusInformation newState = renderState ( decorator );
         notifyStateChange ( newState );
 
-        this.eventProcessor.publishEvent ( createStateEvent ( newState, decorator ) );
+        sendEvent ( createStateEvent ( newState, decorator ) );
     }
 
     protected EventBuilder createEvent ( final UserInformation userInformation )
