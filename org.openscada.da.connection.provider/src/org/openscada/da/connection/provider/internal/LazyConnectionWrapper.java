@@ -147,6 +147,12 @@ public abstract class LazyConnectionWrapper implements Connection, StatisticsPro
     }
 
     @Override
+    public Set<String> getPrivileges ()
+    {
+        return this.connection.getPrivileges ();
+    }
+
+    @Override
     public void browse ( final Location location, final BrowseOperationCallback callback )
     {
         this.connection.browse ( location, callback );

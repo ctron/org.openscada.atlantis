@@ -22,6 +22,7 @@
 package org.openscada.core.client;
 
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.core.ConnectionInformation;
 
@@ -71,6 +72,14 @@ public interface Connection
     public void addPrivilegeListener ( PrivilegeListener listener );
 
     public void removePrivilegeListener ( PrivilegeListener listener );
+
+    /**
+     * Return the list of currently granted privileges.
+     * 
+     * @return the list of current privileges. Must never return
+     *         <code>null</code>.
+     */
+    public Set<String> getPrivileges ();
 
     /**
      * Dispose the connection

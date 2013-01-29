@@ -53,7 +53,7 @@ public abstract class SessionConnectionBase extends ConnectionBase
 
     private final Set<PrivilegeListener> privilegeListeners = new LinkedHashSet<PrivilegeListener> ();
 
-    private Set<String> currentPrivileges;
+    private volatile Set<String> currentPrivileges;
 
     public SessionConnectionBase ( final ConnectionInformation connectionInformation )
     {
@@ -213,6 +213,12 @@ public abstract class SessionConnectionBase extends ConnectionBase
     public synchronized void removePrivilegeListener ( final PrivilegeListener listener )
     {
         this.privilegeListeners.remove ( listener );
+    }
+
+    @Override
+    public Set<String> getPrivileges ()
+    {
+        return Collections.unmodifiableSet ( this.currentPrivileges );
     }
 
 }

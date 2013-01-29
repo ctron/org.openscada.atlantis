@@ -77,6 +77,10 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private final FilterChainBuilder chainBuilder;
 
+    private final Set<PrivilegeListener> privilegeListeners = new LinkedHashSet<PrivilegeListener> ();
+
+    private volatile Set<String> currentPrivileges;
+
     public ClientBaseConnection ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( connectionInformation );
@@ -549,10 +553,6 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
         }
     }
 
-    private final Set<PrivilegeListener> privilegeListeners = new LinkedHashSet<PrivilegeListener> ();
-
-    private Set<String> currentPrivileges;
-
     @Override
     public synchronized void addPrivilegeListener ( final PrivilegeListener listener )
     {
@@ -575,6 +575,12 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
     public synchronized void removePrivilegeListener ( final PrivilegeListener listener )
     {
         this.privilegeListeners.remove ( listener );
+    }
+
+    @Override
+    public Set<String> getPrivileges ()
+    {
+        return Collections.unmodifiableSet ( this.currentPrivileges );
     }
 
     /*
