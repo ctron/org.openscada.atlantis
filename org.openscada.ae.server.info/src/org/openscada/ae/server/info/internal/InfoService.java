@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -39,11 +41,10 @@ import org.openscada.da.datasource.base.DataInputOutputSource;
 import org.openscada.da.datasource.base.DataInputSource;
 import org.openscada.da.datasource.base.WriteHandler;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.pool.ObjectPool;
+import org.openscada.utils.osgi.pool.AllObjectPoolServiceTracker;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolListener;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker.ObjectPoolServiceListener;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -73,6 +74,8 @@ public class InfoService
     private final Map<MonitorStatus, AtomicInteger> aggregatedMonitors = new HashMap<MonitorStatus, AtomicInteger> ();
 
     private volatile boolean alertDisabled = false;
+
+    private final AllObjectPoolServiceTracker<MonitorService> tracker;
 
     ///////////////////////////////////////////////////////////////////////
     // constructor
@@ -109,7 +112,7 @@ public class InfoService
             @Override
             public void handleWrite ( final UserInformation userInformation, final Variant value ) throws Exception
             {
-                setAlertDisabled ( Variant.valueOf ( value ).asBoolean ( false ) );
+                setAlertDisabled ( value.asBoolean ( false ) );
             }
         } );
 
@@ -140,6 +143,7 @@ public class InfoService
             public void serviceRemoved ( final MonitorService service, final Dictionary<?, ?> properties )
             {
                 service.removeStatusListener ( ml );
+                triggerRemoveMonitor ( service );
             }
 
             @Override
@@ -150,33 +154,28 @@ public class InfoService
             }
         };
 
-        // listener for all monitor pools
-        monitorPoolTracker.addListener ( new ObjectPoolServiceListener<MonitorService> () {
-            @Override
-            public void poolAdded ( final ObjectPool<MonitorService> objectPool, final int priority )
-            {
-                objectPool.addListener ( objectPoolListener );
-            }
+        this.tracker = new AllObjectPoolServiceTracker<MonitorService> ( monitorPoolTracker, objectPoolListener );
 
-            @Override
-            public void poolRemoved ( final ObjectPool<MonitorService> objectPool )
-            {
-                objectPool.removeListener ( objectPoolListener );
-            }
-
-            @Override
-            public void poolModified ( final ObjectPool<MonitorService> objectPool, final int newPriority )
-            {
-                objectPool.removeListener ( objectPoolListener );
-                objectPool.addListener ( objectPoolListener );
-            }
-        } );
         logger.debug ( "InfoService created" );
 
         // set default values
         notifyChanges ();
         setValue ( this.alertActiveItem, false );
         setValue ( this.alertDisabledItem, this.alertDisabled );
+
+        // open at last
+        this.tracker.open ();
+    }
+
+    protected void triggerRemoveMonitor ( final MonitorService service )
+    {
+        this.executor.execute ( new Runnable () {
+            @Override
+            public void run ()
+            {
+                handleRemoveMonitor ( service );
+            }
+        } );
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -198,18 +197,10 @@ public class InfoService
         } );
     }
 
-    /**
-     * 
-     */
     public void dispose ()
     {
-        this.executor.execute ( new Runnable () {
-            @Override
-            public void run ()
-            {
-                unregisterItems ( InfoService.this.prefix );
-            }
-        } );
+        unregisterItems ( InfoService.this.prefix );
+        InfoService.this.tracker.close ();
     }
 
     ///////////////////////////////////////////////////////////////////////
@@ -265,7 +256,7 @@ public class InfoService
     {
         if ( msi == null )
         {
-            throw new IllegalArgumentException ( "'monitorInformation' must not be null" );
+            throw new IllegalArgumentException ( "'monitorInformation' must not be null" ); //$NON-NLS-1$
         }
 
         Boolean active = null;
@@ -274,13 +265,14 @@ public class InfoService
         if ( oldMsi != null )
         {
             this.aggregatedMonitors.get ( oldMsi.getStatus () ).decrementAndGet ();
-            if ( oldMsi.getStatus () == MonitorStatus.NOT_OK_NOT_AKN || oldMsi.getStatus () == MonitorStatus.NOT_AKN )
+            if ( requireAkn ( oldMsi.getStatus () ) )
             {
+                // removing one from AKN means that the alarm was acknowledged, so we can silence the alarm
                 active = false;
             }
         }
         this.aggregatedMonitors.get ( msi.getStatus () ).incrementAndGet ();
-        if ( msi.getStatus () == MonitorStatus.NOT_OK_NOT_AKN || msi.getStatus () == MonitorStatus.NOT_AKN )
+        if ( requireAkn ( msi.getStatus () ) )
         {
             active = true;
         }
@@ -299,9 +291,45 @@ public class InfoService
         notifyChanges ();
     }
 
-    /**
-     * 
-     */
+    private boolean requireAkn ( final MonitorStatus status )
+    {
+        return status == MonitorStatus.NOT_OK_NOT_AKN || status == MonitorStatus.NOT_AKN;
+    }
+
+    protected void handleRemoveMonitor ( final MonitorService service )
+    {
+        logger.debug ( "Removing monitor service: {}", service.getId () );
+
+        final MonitorStatusInformation msi = this.cachedMonitors.remove ( service.getId () );
+        if ( msi == null )
+        {
+            // don't know about this one
+            return;
+        }
+
+        logger.debug ( "Monitor service got removed, cleaning up..." );
+
+        // got removed
+        this.aggregatedMonitors.get ( msi.getStatus () ).decrementAndGet ();
+
+        logger.debug ( "Monitor state was: {}", msi );
+
+        if ( requireAkn ( msi.getStatus () ) )
+        {
+            // only removing an item from the list will not silence the alarm
+            final boolean active = this.aggregatedMonitors.get ( MonitorStatus.NOT_AKN ).get () <= 0 && this.aggregatedMonitors.get ( MonitorStatus.NOT_OK_NOT_AKN ).get () <= 0;
+            if ( !active )
+            {
+                logger.debug ( "We can silence the alarm" );
+                // nothing is active anymore, now we can silence the alarm
+                silenceAlert ();
+            }
+        }
+
+        // notify
+        notifyChanges ();
+    }
+
     private void alert ()
     {
         logger.info ( "alert enabled" );
@@ -311,9 +339,6 @@ public class InfoService
         }
     }
 
-    /**
-     * 
-     */
     private void silenceAlert ()
     {
         logger.info ( "alert disabled" );
