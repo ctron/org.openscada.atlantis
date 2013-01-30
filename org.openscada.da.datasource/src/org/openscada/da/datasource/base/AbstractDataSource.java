@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  * 
  * This library is free software; you can redistribute it and/or
  * modify it under the terms of the GNU Lesser General Public
@@ -105,7 +107,7 @@ public abstract class AbstractDataSource implements DataSource
         }
     }
 
-    protected synchronized void updateData ( DataItemValue value )
+    protected void updateData ( DataItemValue value )
     {
         logger.debug ( "Update data: {} -> {}", new Object[] { value, value == null ? "" : value.getAttributes () } );
 
