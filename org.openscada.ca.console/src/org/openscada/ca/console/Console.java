@@ -49,6 +49,5 @@ public class Console
         this.admin.thaw ();
 
         System.out.println ( "done!" );
-
     }
 }
