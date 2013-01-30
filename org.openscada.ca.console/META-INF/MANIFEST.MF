@@ -1,12 +1,9 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA CA Equinox Console Handler
+Bundle-Name: openSCADA CA Console Handler
 Bundle-SymbolicName: org.openscada.ca.console
-Bundle-Version: 0.18.0.qualifier
-Bundle-Activator: org.openscada.ca.console.Activator
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: TH4 SYSTEMS GmbH
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.osgi.framework.console;version="1.0.0",
- org.openscada.ca;version="0.15.0",
- org.osgi.framework;version="1.6.0",
- org.osgi.util.tracker;version="1.5.0"
+Import-Package: org.openscada.ca;version="1.0.0"
+Service-Component: OSGI-INF/console.xml

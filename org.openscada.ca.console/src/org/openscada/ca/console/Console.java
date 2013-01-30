@@ -1,6 +1,7 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,35 +20,35 @@
 
 package org.openscada.ca.console;
 
-import org.osgi.framework.BundleActivator;
-import org.osgi.framework.BundleContext;
+import org.openscada.ca.FreezableConfigurationAdministrator;
 
-public class Activator implements BundleActivator
+public class Console
 {
+    private FreezableConfigurationAdministrator admin;
 
-    private final CommandProviderImpl service;
-
-    public Activator ()
+    public void setAdmin ( final FreezableConfigurationAdministrator admin )
     {
-        this.service = new CommandProviderImpl ();
+        this.admin = admin;
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
-     */
-    public void start ( final BundleContext context ) throws Exception
+    public void freeze () throws Exception
     {
-        this.service.start ( context );
+        System.out.print ( "Freezing..." );
+        System.out.flush ();
+
+        this.admin.freeze ();
+
+        System.out.println ( "done!" );
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
-     */
-    public void stop ( final BundleContext context ) throws Exception
+    public void thaw () throws Exception
     {
-        this.service.stop ( context );
-    }
+        System.out.print ( "Thawing..." );
+        System.out.flush ();
 
+        this.admin.thaw ();
+
+        System.out.println ( "done!" );
+
+    }
 }
