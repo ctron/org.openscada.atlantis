@@ -43,7 +43,6 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.slf4j.profiler.Profiler;
 
 import com.google.common.collect.Interner;
 
@@ -138,7 +137,10 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
     public synchronized void start () throws Exception
     {
         super.start ();
+
+        final long start = System.currentTimeMillis ();
         performInitialLoad ();
+        logger.info ( "Took {} seconds to initial load CA", ( System.currentTimeMillis () - start ) / 1000 );
     }
 
     protected void performInitialLoad ()
@@ -259,12 +261,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
     {
         logger.info ( "Loading from: {}", configurationRoot.getName () );
 
-        final Profiler p = new Profiler ( "Loading" );
-        p.setLogger ( logger );
-
         final List<ConfigurationImpl> configurations = new LinkedList<ConfigurationImpl> ();
-
-        p.start ( "Load files" );
 
         for ( final File file : configurationRoot.listFiles ( new DataFilenameFilter () ) )
         {
@@ -278,15 +275,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
             }
         }
 
-        p.start ( "Apply" );
-
         addStoredFactory ( factoryId, configurations.toArray ( new ConfigurationImpl[configurations.size ()] ) );
-
-        p.stop ();
-        if ( logger.isDebugEnabled () )
-        {
-            p.log ();
-        }
     }
 
     private ConfigurationImpl loadConfiguration ( final String factoryId, final String configurationId, final File file )
