@@ -160,7 +160,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
                 final File path = new File ( this.root, pathName );
                 if ( path.isDirectory () )
                 {
-                    logger.debug ( "Checking for path: " + path.getName () );
+                    logger.debug ( "Checking for path: {}", path.getName () );
                     final String factoryId = detectFactory ( path );
                     if ( factoryId != null )
                     {
@@ -223,7 +223,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
     {
         if ( !factoryRoot.mkdir () )
         {
-            logger.warn ( "Failed to create store: " + factoryRoot );
+            logger.warn ( "Failed to create store: {}", factoryRoot );
             return;
         }
         final File meta = new File ( factoryRoot, META_FILE );
@@ -239,7 +239,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         }
         catch ( final Exception e )
         {
-            logger.warn ( "Failed to initialize store: " + factoryRoot );
+            logger.warn ( "Failed to initialize store: {}", factoryRoot );
         }
         finally
         {
@@ -259,13 +259,13 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
 
     private void loadAll ( final File configurationRoot, final String factoryId ) throws UnsupportedEncodingException
     {
-        logger.info ( "Loading from: {}", configurationRoot.getName () );
+        logger.debug ( "Loading from: {}", configurationRoot.getName () );
 
         final List<ConfigurationImpl> configurations = new LinkedList<ConfigurationImpl> ();
 
         for ( final File file : configurationRoot.listFiles ( new DataFilenameFilter () ) )
         {
-            logger.info ( "Loading file: {}", file.getName () );
+            logger.trace ( "Loading file: {}", file.getName () );
             final String id = idFromFile ( file );
             final ConfigurationImpl cfg = loadConfiguration ( factoryId, id, file );
 
@@ -339,7 +339,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
 
         for ( final File file : path.listFiles ( new DataFilenameFilter () ) )
         {
-            logger.info ( "Delete file: " + file.getName () );
+            logger.info ( "Delete file: {}", file.getName () );
             final String id = idFromFile ( file );
 
             final ConfigurationFuture subFuture = new ConfigurationFuture ();
@@ -372,7 +372,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         final File path = getFactoryPath ( factoryId );
         final File file = new File ( path, encode ( configurationId ) );
 
-        logger.info ( String.format ( "Storing %s to %s", configurationId, file ) );
+        logger.info ( "Storing {} to {}", configurationId, file );
 
         final Map<String, String> newProperties = new HashMap<String, String> ();
 
@@ -425,7 +425,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         final File path = new File ( this.root, getPath ( factoryId ) );
         if ( !path.exists () )
         {
-            logger.info ( String.format ( "Store for factory (%s) does not exist", factoryId ) );
+            logger.info ( "Store for factory ({}) does not exist", factoryId );
             createStore ( path, factoryId );
         }
         return path;
