@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -43,18 +45,26 @@ public class ItemManager
 
     private final ConnectionImpl connection;
 
+    private boolean disposed;
+
     public ItemManager ( final Executor executor, final ConnectionImpl connection )
     {
         this.executor = executor;
         this.connection = connection;
     }
 
-    public void dispose ()
+    public synchronized void dispose ()
     {
+        if ( this.disposed )
+        {
+            return;
+        }
+
         onConnectionClosed ();
+        this.disposed = true;
     }
 
-    public void addListListener ( final ItemListListener listener )
+    public synchronized void addListListener ( final ItemListListener listener )
     {
         // we are empty and adding an element
         if ( this.itemListeners.isEmpty () )
@@ -112,6 +122,11 @@ public class ItemManager
 
     private void fireListChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean fullUpdate )
     {
+        if ( this.disposed )
+        {
+            return;
+        }
+
         applyChange ( addedOrModified, removed, fullUpdate );
 
         // make a clone copy
@@ -130,7 +145,7 @@ public class ItemManager
         } );
     }
 
-    public void removeListListener ( final ItemListListener listener )
+    public synchronized void removeListListener ( final ItemListListener listener )
     {
         this.itemListeners.remove ( listener );
         if ( this.itemListeners.isEmpty () )
@@ -140,7 +155,7 @@ public class ItemManager
         }
     }
 
-    public void onConnectionBound ()
+    public synchronized void onConnectionBound ()
     {
         if ( !this.itemListeners.isEmpty () )
         {
@@ -148,12 +163,12 @@ public class ItemManager
         }
     }
 
-    public void onConnectionClosed ()
+    public synchronized void onConnectionClosed ()
     {
         fireListChanged ( null, null, true );
     }
 
-    public void handleListUpdate ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean fullUpdate )
+    public synchronized void handleListUpdate ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean fullUpdate )
     {
         fireListChanged ( addedOrModified, removed, fullUpdate );
     }
