@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -83,7 +85,7 @@ public abstract class ServerConnection
                     return null;
                 }
             }
-        }, session.getRemoteAddress () );
+        }, session.getRemoteAddress (), "org.openscada.core.server.ngp" );
 
         this.statistics.setLabel ( STATS_MESSAGES_SENT, "Messages sent" );
         this.statistics.setLabel ( STATS_MESSAGES_RECEIVED, "Messages received" );

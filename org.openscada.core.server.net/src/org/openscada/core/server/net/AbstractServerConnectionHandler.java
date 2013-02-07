@@ -109,7 +109,7 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
             {
                 AbstractServerConnectionHandler.this.ioSession.close ( false );
             }
-        }, ioSession.getRemoteAddress () );
+        }, ioSession.getRemoteAddress (), "org.openscada.core.server.net" );
 
         this.statistics.setLabel ( STATS_PINGS_SENT, "Pings sent" );
         this.statistics.setLabel ( STATS_SESSION_BYTES_READ, "Bytes read in session" );

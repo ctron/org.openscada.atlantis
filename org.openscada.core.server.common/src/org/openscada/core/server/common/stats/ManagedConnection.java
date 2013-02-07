@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -91,7 +93,7 @@ public abstract class ManagedConnection implements ManagedConnectionMXBean
 
     protected abstract Collection<StatisticEntry> getEntries ();
 
-    public static ManagedConnection register ( final ManagedConnection connection, final SocketAddress socketAddress )
+    public static ManagedConnection register ( final ManagedConnection connection, final SocketAddress socketAddress, final String baseName )
     {
         try
         {
@@ -100,7 +102,7 @@ public abstract class ManagedConnection implements ManagedConnectionMXBean
 
             final String remote = URLEncoder.encode ( socketAddress.toString (), "UTF-8" );
 
-            final ObjectName name = new ObjectName ( "org.openscada.core.server.net", "remote", remote );
+            final ObjectName name = new ObjectName ( baseName, "remote", remote );
             connection.setName ( name );
             mbs.registerMBean ( connection, name );
             return connection;
