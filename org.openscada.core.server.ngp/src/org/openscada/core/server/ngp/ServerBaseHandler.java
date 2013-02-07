@@ -45,7 +45,7 @@ public class ServerBaseHandler implements IoHandler
     @Override
     public void exceptionCaught ( final IoSession session, final Throwable error ) throws Exception
     {
-        logger.warn ( "Session failed. Closing!", error );
+        logger.warn ( String.format ( "Session (%s) failed. Closing!", session ), error );
         session.close ( true );
     }
 
