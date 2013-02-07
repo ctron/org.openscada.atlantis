@@ -38,6 +38,7 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.PrivilegeListener;
 import org.openscada.protocol.ngp.common.BaseConnection;
 import org.openscada.protocol.ngp.common.FilterChainBuilder;
@@ -492,9 +493,11 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     public synchronized void messageReceived ( final IoSession session, final Object message )
     {
+        logger.trace ( "Received message: {}", message );
+
         if ( this.session != session )
         {
-            logger.warn ( "Received 'message' from wrong session" );
+            logger.warn ( "Received 'message' from wrong session (current: {}, message: {})", this.session, session );
             return;
         }
         this.statistics.changeCurrentValue ( STATS_MESSAGES_RECEIVED, 1 );
@@ -513,6 +516,38 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
      */
     protected abstract void handleMessage ( final Object message );
 
+    /**
+     * Send a message if a connection exists
+     * <p>
+     * Works like {@link #sendMessage(Object)}, but the connection is not
+     * established it will throw an exception instead of silently ignoring the
+     * fact.
+     * </p>
+     * 
+     * @param message
+     *            the message to send
+     * @throws NoConnectionException
+     *             thrown in case no connection currently exists
+     */
+    protected synchronized void sendMessageChecked ( final Object message ) throws NoConnectionException
+    {
+        logger.debug ( "Sending message: {}", message );
+
+        if ( this.session == null )
+        {
+            logger.warn ( "Failed to send message without connection: {}", message );
+            throw new NoConnectionException ();
+        }
+
+        if ( getState () != ConnectionState.BOUND && getState () != ConnectionState.CONNECTED )
+        {
+            logger.warn ( "Tried to send message in wrong connection state ({}): {}", getState (), message );
+            throw new NoConnectionException ();
+        }
+
+        processSendMessage ( message );
+    }
+
     protected synchronized void sendMessage ( final Object message )
     {
         logger.debug ( "Sending message: {}", message );
@@ -529,6 +564,11 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
             return;
         }
 
+        processSendMessage ( message );
+    }
+
+    private void processSendMessage ( final Object message )
+    {
         this.statistics.changeCurrentValue ( STATS_MESSAGES_SENT, 1 );
 
         this.session.write ( message );

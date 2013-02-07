@@ -124,6 +124,8 @@ public abstract class ServerConnection
 
     public void handleMessageReceived ( final Object message ) throws Exception
     {
+        logger.trace ( "Message received: {}", message );
+
         this.statistics.changeCurrentValue ( STATS_MESSAGES_RECEIVED, 1 );
         messageReceived ( message );
     }

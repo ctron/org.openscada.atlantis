@@ -212,18 +212,18 @@ public class ItemSyncController implements ItemUpdateListener
         {
             logger.debug ( "Syncing listen state: inactive" );
             this.subscribed = false;
-            this.connection.unsubscribeItem ( this.itemId );
             notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
+            this.connection.unsubscribeItem ( this.itemId );
         }
         catch ( final Throwable e )
         {
-            handleError ( e );
+            logger.warn ( "Failed to handle unsubscribe", e );
         }
     }
 
     private synchronized void handleError ( final Throwable e )
     {
-        logger.warn ( "Failed to subscribe", e );
+        logger.warn ( "Failed to change subscription state", e );
         this.subscribed = false;
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }

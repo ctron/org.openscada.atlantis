@@ -109,7 +109,7 @@ public class SessionImpl extends AbstractSessionImpl implements Session, Browser
         final MonitorListener listener = this.clientMonitorListener;
         if ( listener != null )
         {
-            logger.info ( String.format ( "Condition Data Change: %s - %s - %s", subscriptionId, addedOrUpdated != null ? addedOrUpdated.size () : "none", removed != null ? removed.size () : "none" ) );
+            logger.info ( String.format ( "Monitor Data Change: %s - %s - %s", subscriptionId, addedOrUpdated != null ? addedOrUpdated.size () : "none", removed != null ? removed.size () : "none" ) );
             listener.dataChanged ( subscriptionId, addedOrUpdated, removed, full );
         }
     }

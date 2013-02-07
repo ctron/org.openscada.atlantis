@@ -42,8 +42,11 @@ public class ItemManagerImpl implements ConnectionStateListener, ItemManager
     /**
      * Create a new item manager.
      * <p>
-     * Only one item manager should be created per connection since the item manager acquires the listeners for data items using {@link Connection#setItemUpdateListener(String, ItemUpdateListener)}
-     * which directs all further updates to this item manager an disconnects all other item managers. So item managers should be shared.
+     * Only one item manager should be created per connection since the item
+     * manager acquires the listeners for data items using
+     * {@link Connection#setItemUpdateListener(String, ItemUpdateListener)}
+     * which directs all further updates to this item manager an disconnects all
+     * other item managers. So item managers should be shared.
      * </p>
      * 
      * @param connection
@@ -115,7 +118,7 @@ public class ItemManagerImpl implements ConnectionStateListener, ItemManager
      */
     protected synchronized void resyncAllItems ()
     {
-        logger.debug ( "Syncing all items" );
+        logger.debug ( "Syncing all items ({})", this.itemListeners.size () );
 
         for ( final Map.Entry<String, ItemSyncController> entry : this.itemListeners.entrySet () )
         {

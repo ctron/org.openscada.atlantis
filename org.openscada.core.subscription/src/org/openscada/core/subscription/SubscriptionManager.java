@@ -29,7 +29,6 @@ import java.util.Map;
  * Manage subscriptions.
  * 
  * @author Jens Reimann &lt;jens.reimann@th4-systems.com&gt;
- *
  */
 public class SubscriptionManager
 {
@@ -39,7 +38,9 @@ public class SubscriptionManager
 
     /**
      * Unsibscribe from all subscriptions that the listener has subscribed to
-     * @param listener the listener to unsubscribe
+     * 
+     * @param listener
+     *            the listener to unsubscribe
      */
     public synchronized void unsubscribeAll ( final SubscriptionListener listener )
     {
@@ -57,9 +58,14 @@ public class SubscriptionManager
 
     /**
      * Subscribe to a topic.
-     * @param topic The topic to which the subscription should be made
-     * @param listener The listener which will receive the events
-     * @throws ValidationException thrown if the subscription cannot be establed (e.g. the topic is invalid)
+     * 
+     * @param topic
+     *            The topic to which the subscription should be made
+     * @param listener
+     *            The listener which will receive the events
+     * @throws ValidationException
+     *             thrown if the subscription cannot be established (e.g. the
+     *             topic is invalid)
      */
     public synchronized void subscribe ( final Object topic, final SubscriptionListener listener ) throws ValidationException
     {
@@ -68,10 +74,16 @@ public class SubscriptionManager
 
     /**
      * Subscribe to a topic with a hint
-     * @param topic The topic to which the subscription should be made
-     * @param listener The listener which will receive the events
-     * @param hint The hint is specific to the topic
-     * @throws ValidationException thrown if the subscription cannot be established (e.g. the topic is invalid)
+     * 
+     * @param topic
+     *            The topic to which the subscription should be made
+     * @param listener
+     *            The listener which will receive the events
+     * @param hint
+     *            The hint is specific to the topic
+     * @throws ValidationException
+     *             thrown if the subscription cannot be established (e.g. the
+     *             topic is invalid)
      */
     public synchronized void subscribe ( final Object topic, final SubscriptionListener listener, final Object hint ) throws ValidationException
     {
@@ -120,10 +132,13 @@ public class SubscriptionManager
 
     /**
      * Set a source for a topic.
+     * This will cause all granted subscriptions to switch to connected for this
+     * source
      * 
-     * This will cause all granted subscriptions to switch to connected for this source
-     * @param topic the topic
-     * @param source the source to set
+     * @param topic
+     *            the topic
+     * @param source
+     *            the source to set
      */
     public synchronized void setSource ( final Object topic, final SubscriptionSource source )
     {
@@ -149,6 +164,7 @@ public class SubscriptionManager
 
     /**
      * Get the number of subscriptions currently registered
+     * 
      * @return the number of subscriptions
      */
     public int getSubscriptionCount ()
@@ -158,6 +174,7 @@ public class SubscriptionManager
 
     /**
      * Get all topic whose subscription is in granted state.
+     * 
      * @return The list of topics whose subscription is in granted state.
      */
     public synchronized List<Object> getAllGrantedTopics ()

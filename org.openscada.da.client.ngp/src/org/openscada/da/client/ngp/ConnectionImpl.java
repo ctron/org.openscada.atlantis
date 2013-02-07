@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -68,9 +70,13 @@ import org.openscada.da.data.message.WriteValueResult;
 import org.openscada.utils.concurrent.ExecutorFuture;
 import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
     public static class WriteFuture extends ExecutorFuture<Void> implements FutureListener<ResponseMessage>
     {
@@ -325,6 +331,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     @Override
     public void subscribeItem ( final String itemId ) throws NoConnectionException, OperationException
     {
+        logger.debug ( "Subscribe item: {}", itemId );
         sendMessage ( new SubscribeItem ( itemId ) );
     }
 

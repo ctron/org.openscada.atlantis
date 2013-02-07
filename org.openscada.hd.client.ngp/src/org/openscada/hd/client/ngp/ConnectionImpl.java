@@ -183,8 +183,6 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     @Override
     protected synchronized void handleMessage ( final Object message )
     {
-        logger.trace ( "Received message: {}", message );
-
         if ( message instanceof UpdateQueryState )
         {
             handleUpdateQueryState ( (UpdateQueryState)message );
