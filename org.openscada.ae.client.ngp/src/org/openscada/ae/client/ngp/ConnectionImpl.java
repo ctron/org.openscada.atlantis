@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -177,7 +179,17 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     @Override
     public void acknowledge ( final String monitorId, final Date aknTimestamp, final UserInformation userInformation )
     {
-        final OperationParameters operationParameters = new OperationParameters ( new org.openscada.core.data.UserInformation ( userInformation.getName () ), Collections.<String, String> emptyMap () );
+        org.openscada.core.data.UserInformation coreUserInformation;
+        if ( userInformation == null )
+        {
+            coreUserInformation = null;
+        }
+        else
+        {
+            coreUserInformation = new org.openscada.core.data.UserInformation ( userInformation.getName () );
+        }
+
+        final OperationParameters operationParameters = new OperationParameters ( coreUserInformation, Collections.<String, String> emptyMap () );
         sendMessage ( new AcknowledgeRequest ( nextRequest (), monitorId, makeTimestamp ( aknTimestamp ), operationParameters ) );
     }
 
