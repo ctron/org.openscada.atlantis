@@ -136,6 +136,8 @@ public class ItemSyncController implements ItemUpdateListener
             final Variant value = this.cachedValue;
             final Map<String, Variant> attributes = new HashMap<String, Variant> ( this.cachedAttributes );
 
+            logger.trace ( "Sending out cache values - itemId: {}, state: {}, value: {}, attributes: {}", new Object[] { this.itemId, state, value, attributes } );
+
             // send the initial update
             this.itemManager.getExecutor ().execute ( new Runnable () {
 
@@ -147,7 +149,7 @@ public class ItemSyncController implements ItemUpdateListener
                 }
             } );
 
-            triggerSync ();
+            sync ( false );
         }
     }
 
@@ -156,20 +158,8 @@ public class ItemSyncController implements ItemUpdateListener
         final ListenerInfo result = this.listeners.remove ( listener );
         if ( result != null )
         {
-            triggerSync ();
+            sync ( false );
         }
-    }
-
-    public synchronized void triggerSync ()
-    {
-        this.itemManager.getExecutor ().execute ( new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                sync ( false );
-            }
-        } );
     }
 
     public synchronized void sync ( final boolean force )
@@ -212,6 +202,10 @@ public class ItemSyncController implements ItemUpdateListener
         {
             logger.debug ( "Syncing listen state: inactive" );
             this.subscribed = false;
+
+            this.cachedValue = null;
+            this.cachedAttributes.clear ();
+
             notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
             this.connection.unsubscribeItem ( this.itemId );
         }
