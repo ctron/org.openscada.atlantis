@@ -82,6 +82,8 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private volatile Set<String> currentPrivileges;
 
+    private final Object writeLock = new Object ();
+
     public ClientBaseConnection ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( connectionInformation );
@@ -571,7 +573,12 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
     {
         this.statistics.changeCurrentValue ( STATS_MESSAGES_SENT, 1 );
 
-        this.session.write ( message );
+        synchronized ( this.writeLock )
+        {
+            // only one thread may write at a time, otherwise MINA's filters may get corrupted
+            // also see https://issues.apache.org/jira/browse/DIRMINA-653
+            this.session.write ( message );
+        }
     }
 
     public SSLSession getSslSession ()

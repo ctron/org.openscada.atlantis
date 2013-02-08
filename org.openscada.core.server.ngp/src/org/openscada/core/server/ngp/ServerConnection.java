@@ -51,6 +51,8 @@ public abstract class ServerConnection
 
     private ManagedConnection mxBean;
 
+    private final Object writeLock = new Object ();
+
     public ServerConnection ( final IoSession session )
     {
         logger.info ( "Creating new server connection: {}", session );
@@ -112,7 +114,12 @@ public abstract class ServerConnection
 
         this.statistics.changeCurrentValue ( STATS_MESSAGES_SENT, 1 );
 
-        this.session.write ( message );
+        synchronized ( this.writeLock )
+        {
+            // only one thread may write at a time, otherwise MINA's filters may get corrupted
+            // also see https://issues.apache.org/jira/browse/DIRMINA-653
+            this.session.write ( message );
+        }
     }
 
     public void requestClose ( final boolean immediately )
