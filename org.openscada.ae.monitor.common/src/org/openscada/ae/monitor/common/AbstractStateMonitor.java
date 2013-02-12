@@ -343,6 +343,11 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
 
     protected void setFailure ( final Variant value, final Long valueTimestamp, final Severity severity, final boolean requireAck )
     {
+        setFailure ( value, valueTimestamp, severity, requireAck, null );
+    }
+
+    protected void setFailure ( final Variant value, final Long valueTimestamp, final Severity severity, final boolean requireAck, final MonitorDecorator decorator )
+    {
         final Builder builder = new Builder ( this.currentState );
 
         builder.setState ( State.NOT_OK );
@@ -389,7 +394,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
             builder.setLastAckRequiredTimestamp ( null );
         }
 
-        setState ( builder, now, null );
+        setState ( builder, now, decorator );
     }
 
     protected void setInactive ()
@@ -406,7 +411,7 @@ public abstract class AbstractStateMonitor extends AbstractMonitorService
             return;
         }
 
-        logger.debug ( "Applying peristsent information : {}", persistentInformation );
+        logger.debug ( "Applying persistent information : {}", persistentInformation );
 
         final StateInformation.Builder builder = new Builder ( this.currentState );
 

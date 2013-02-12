@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -36,6 +38,8 @@ class Configuration extends AbstractConfiguration
 
     Map<Variant, Boolean> ackMap;
 
+    String messageAttribute;
+
     public Configuration ( final Configuration currentConfiguration, final AbstractMasterItemMonitor monitor )
     {
         super ( currentConfiguration, monitor );
@@ -45,7 +49,13 @@ class Configuration extends AbstractConfiguration
             this.defaultAck = currentConfiguration.defaultAck;
             this.severityMap = currentConfiguration.severityMap;
             this.ackMap = currentConfiguration.ackMap;
+            this.messageAttribute = currentConfiguration.messageAttribute;
         }
+    }
+
+    public void setMessageAttribute ( final String messageAttribute )
+    {
+        this.messageAttribute = messageAttribute;
     }
 
     public void setDefaultAck ( final boolean defaultAck )

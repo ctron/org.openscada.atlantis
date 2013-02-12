@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.common.MessageDecorator;
 import org.openscada.ae.monitor.datasource.AbstractVariantMonitor;
 import org.openscada.ae.monitor.datasource.Helper;
 import org.openscada.ae.monitor.datasource.common.ListSeverity;
@@ -66,6 +69,7 @@ public class ListMonitor extends AbstractVariantMonitor
         // parse configuration
         c.setDefaultAck ( cfg.getBoolean ( "defaultAck", false ) );
         c.setDefaultSeverity ( cfg.getEnum ( "defaultSeverity", ListSeverity.class, ListSeverity.OK ) );
+        c.setMessageAttribute ( cfg.getString ( "messageAttribute" ) );
 
         // read in severities
         final Map<Variant, ListSeverity> severityMap = new HashMap<Variant, ListSeverity> ();
@@ -124,7 +128,17 @@ public class ListMonitor extends AbstractVariantMonitor
         }
         else
         {
-            setFailure ( value, Helper.getTimestamp ( builder ), severity.getSeverity (), requireAck );
+            setFailure ( value, Helper.getTimestamp ( builder ), severity.getSeverity (), requireAck, extractMessage ( builder ) );
         }
+    }
+
+    private MessageDecorator extractMessage ( final Builder builder )
+    {
+        if ( this.configuration.messageAttribute == null )
+        {
+            return null;
+        }
+
+        return new MessageDecorator ( builder.getAttributes ().get ( this.configuration.messageAttribute ) );
     }
 }

@@ -35,6 +35,7 @@ import org.openscada.ae.filter.internal.EventMatcherImpl;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
 import org.openscada.ae.monitor.common.AbstractStateMonitor;
+import org.openscada.ae.monitor.common.MessageDecorator;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.sec.UserInformation;
@@ -147,7 +148,7 @@ public class EventMonitorImpl extends AbstractPersistentStateMonitor implements 
             {
                 final Variant message = makeMessage ( event );
 
-                triggerFailure ( Variant.NULL, makeLong ( event.getSourceTimestamp () ), this.configuration.severity, this.configuration.requireAkn, new EventMonitorDecorator ( message ) );
+                triggerFailure ( Variant.NULL, makeLong ( event.getSourceTimestamp () ), this.configuration.severity, this.configuration.requireAkn, new MessageDecorator ( message ) );
 
                 final Event resultEvent = Event.create () //
                 .event ( event ) //

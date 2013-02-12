@@ -17,22 +17,21 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae.server.http.monitor;
+package org.openscada.ae.monitor.common;
 
 import java.util.Map;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.monitor.common.MonitorDecorator;
 import org.openscada.core.Variant;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
-public class EventMonitorDecorator implements MonitorDecorator
+public class MessageDecorator implements MonitorDecorator
 {
     private final Variant message;
 
-    public EventMonitorDecorator ( final Variant message )
+    public MessageDecorator ( final Variant message )
     {
         this.message = message;
     }
