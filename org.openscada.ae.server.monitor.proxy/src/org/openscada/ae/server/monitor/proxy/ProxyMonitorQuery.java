@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -168,9 +170,10 @@ public class ProxyMonitorQuery extends MonitorQuery
         return new LocalMonitorQueryListener ( this.context, monitorQueryId, this, this.lock );
     }
 
-    public void handleDataUpdate ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
+    void handleDataUpdate ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed )
     {
         logger.debug ( "handleDataUpdate - added: @{}, removed: @{}", new Object[] { addedOrUpdated == null ? -1 : addedOrUpdated.size (), removed == null ? -1 : removed.size () } );
-        updateData ( addedOrUpdated, removed, full );
+        // we may only send updates
+        updateData ( addedOrUpdated, removed, false );
     }
 }

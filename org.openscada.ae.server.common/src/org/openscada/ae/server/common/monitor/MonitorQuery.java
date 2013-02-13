@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -99,6 +101,11 @@ public class MonitorQuery
 
     protected synchronized void updateData ( final List<MonitorStatusInformation> data, final Set<String> removed, final boolean full )
     {
+        if ( full )
+        {
+            this.cachedData.clear ();
+        }
+
         if ( data != null )
         {
             for ( final MonitorStatusInformation info : data )
@@ -106,6 +113,7 @@ public class MonitorQuery
                 this.cachedData.put ( info.getId (), info );
             }
         }
+
         final Set<String> removedItems = new HashSet<String> ();
         if ( removed != null )
         {
@@ -117,6 +125,7 @@ public class MonitorQuery
                 }
             }
         }
+
         fireListener ( data, removedItems, full );
     }
 

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,6 +22,7 @@
 package org.openscada.ae.server.monitor.proxy;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -55,8 +58,7 @@ public class AbstractMonitorQueryListener
         this.lock.lock ();
         try
         {
-            this.dataCache.clear ();
-            notifyChange ( null, null, true );
+            performClearAll ();
         }
         finally
         {
@@ -64,7 +66,14 @@ public class AbstractMonitorQueryListener
         }
     }
 
-    public void handleDataChanged ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
+    private void performClearAll ()
+    {
+        final Set<String> removed = new HashSet<String> ( this.dataCache.keySet () );
+        this.dataCache.clear ();
+        notifyChange ( null, removed );
+    }
+
+    protected void handleDataChanged ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         logger.debug ( "Data of {} changed - added: @{}, removed: @{}", new Object[] { this.info, addedOrUpdated == null ? -1 : addedOrUpdated.size (), removed == null ? -1 : removed.size () } );
 
@@ -72,8 +81,11 @@ public class AbstractMonitorQueryListener
 
         try
         {
+            final Set<String> removedIds = new HashSet<String> ();
             if ( full )
             {
+                // remember all as removed
+                removedIds.addAll ( this.dataCache.keySet () );
                 this.dataCache.clear ();
             }
 
@@ -82,16 +94,24 @@ public class AbstractMonitorQueryListener
                 for ( final MonitorStatusInformation info : addedOrUpdated )
                 {
                     this.dataCache.put ( info.getId (), info );
+                    if ( full )
+                    {
+                        // maybe we need to re-add the item that was removed due to the "full" clear before
+                        removedIds.remove ( info.getId () );
+                    }
                 }
             }
             if ( removed != null )
             {
                 for ( final String id : removed )
                 {
-                    this.dataCache.remove ( id );
+                    if ( this.dataCache.remove ( id ) != null )
+                    {
+                        removedIds.add ( id );
+                    }
                 }
             }
-            notifyChange ( addedOrUpdated, removed, full );
+            notifyChange ( addedOrUpdated, removed );
         }
         finally
         {
@@ -99,7 +119,7 @@ public class AbstractMonitorQueryListener
         }
     }
 
-    protected void notifyChange ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
+    protected void notifyChange ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed )
     {
         if ( this.disposed )
         {
@@ -107,14 +127,24 @@ public class AbstractMonitorQueryListener
             return;
         }
 
-        this.proxyMonitorQuery.handleDataUpdate ( addedOrUpdated, removed, full );
+        // we may only send updates, since we don't know the full state
+        this.proxyMonitorQuery.handleDataUpdate ( addedOrUpdated, removed );
     }
 
     public void dispose ()
     {
         this.lock.lock ();
+        if ( this.disposed )
+        {
+            return;
+        }
+
+        // clear all first
+        performClearAll ();
+
         try
         {
+            // setting disposed state
             this.disposed = true;
         }
         finally
