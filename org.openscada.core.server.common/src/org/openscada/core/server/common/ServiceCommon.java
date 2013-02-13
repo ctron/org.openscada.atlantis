@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -133,9 +135,17 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
     {
         try
         {
+            // check who the user is
             final UserInformation result = authenticate ( properties, sessionResultProperties );
 
             logger.debug ( "Authenticated as {}", result ); //$NON-NLS-1$
+
+            // checking if the user is allowed to log on
+            final AuthorizationResult authResult = authorize ( "SESSION", extractUserName ( result ), "CONNECT", result, null );
+            if ( !authResult.isGranted () )
+            {
+                throw new UnableToCreateSessionException ( String.format ( "The user is not allowed to log on: %s", authResult.toString () ) );
+            }
 
             if ( result != null && result.getRoles () != null )
             {
@@ -151,6 +161,22 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
         {
             throw new UnableToCreateSessionException ( e );
         }
+    }
+
+    /**
+     * Get the name of the user, if the user is known
+     * 
+     * @param userInformation
+     *            the user information from which to extract the name
+     * @return the user name or <code>null</code> if the name is unknown
+     */
+    private String extractUserName ( final UserInformation userInformation )
+    {
+        if ( userInformation == null )
+        {
+            return null;
+        }
+        return userInformation.getName ();
     }
 
     protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context )
