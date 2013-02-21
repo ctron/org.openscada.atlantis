@@ -62,6 +62,12 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private static final Object STATS_MESSAGES_RECEIVED = new Object ();
 
+    private static final Object STATS_CREATION_TIMESTAMP = new Object ();
+
+    private static final Object STATS_LAST_CONNECT_TIMESTAMP = new Object ();
+
+    private static final Object STATS_LAST_BOUND_TIMESTAMP = new Object ();
+
     private final NioSocketConnector connector;
 
     private volatile ConnectionState connectionState = ConnectionState.CLOSED;
@@ -106,6 +112,12 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
         this.statistics.setLabel ( STATS_MESSAGES_SENT, "Messages sent" );
         this.statistics.setLabel ( STATS_MESSAGES_RECEIVED, "Messages received" );
+
+        this.statistics.setLabel ( STATS_CREATION_TIMESTAMP, "Timestamp of creation (in seconds)" );
+        this.statistics.setCurrentValue ( STATS_CREATION_TIMESTAMP, Math.floor ( System.currentTimeMillis () / 1000 ) );
+
+        this.statistics.setLabel ( STATS_LAST_CONNECT_TIMESTAMP, "Timestamp of last CONNECT (in seconds)" );
+        this.statistics.setLabel ( STATS_LAST_BOUND_TIMESTAMP, "Timestamp of last BOUND (in seconds)" );
     }
 
     @Override
@@ -172,6 +184,8 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private void handleConnected ()
     {
+        this.statistics.setCurrentValue ( STATS_LAST_CONNECT_TIMESTAMP, Math.floor ( System.currentTimeMillis () / 1000 ) );
+
         setState ( ConnectionState.CONNECTED, null );
         onConnectionConnected ();
     }
@@ -261,6 +275,8 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private void performBound ()
     {
+        this.statistics.setCurrentValue ( STATS_LAST_BOUND_TIMESTAMP, Math.floor ( System.currentTimeMillis () / 1000 ) );
+
         setState ( ConnectionState.BOUND, null );
         onConnectionBound ();
     }
