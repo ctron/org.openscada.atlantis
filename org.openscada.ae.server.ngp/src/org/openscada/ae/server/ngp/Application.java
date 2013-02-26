@@ -50,7 +50,7 @@ public class Application
             }
             if ( ci == null )
             {
-                ci = ConnectionInformation.fromURI ( "ae:ngp://0.0.0.0:" + System.getProperty ( "openscada.hd.ngp.server.port", "2201" ) );
+                ci = ConnectionInformation.fromURI ( "ae:ngp://0.0.0.0:" + System.getProperty ( "openscada.ae.ngp.server.port", "2201" ) );
             }
 
             // create exporter

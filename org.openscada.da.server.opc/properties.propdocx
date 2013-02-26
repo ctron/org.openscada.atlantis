@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="ASCII"?>
+<properties:properties xmlns:properties="urn:openscada:doc:content:properties">
+  <properties:groups properties:prefix="org.openscada.da.server.opc">
+    <properties:properties properties:name="org.openscada.da.server.opc.defaultConfigurationFile">
+      <properties:defaultValue>configuration.xml</properties:defaultValue>
+    </properties:properties>
+    <properties:properties properties:name="rpc.socketTimeout" properties:dataType="LONG"/>
+    <properties:properties properties:name="dcom.debug" properties:dataType="BOOLEAN" properties:shortDescription="Enable DCOM debugging">
+      <properties:defaultValue>false</properties:defaultValue>
+    </properties:properties>
+    <properties:properties properties:name="dcom.disableAutoCollection" properties:dataType="BOOLEAN" properties:shortDescription="Disable the auto garbage collection for DCOM objects">
+      <properties:defaultValue>false</properties:defaultValue>
+    </properties:properties>
+    <properties:properties properties:name="org.openscada.da.server.opc.manualValue" properties:dataType="INTEGER">
+      <properties:defaultValue>216</properties:defaultValue>
+    </properties:properties>
+    <properties:properties properties:name="org.openscada.da.server.opc.qualityErrorIfLessThen" properties:dataType="INTEGER">
+      <properties:defaultValue>192</properties:defaultValue>
+    </properties:properties>
+  </properties:groups>
+</properties:properties>

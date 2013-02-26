@@ -80,7 +80,7 @@ public class Activator implements BundleActivator
             }
             if ( service != null )
             {
-                this.exporter = new Exporter ( service, ConnectionInformation.fromURI ( System.getProperty ( "openscada.ca.ngp.exportUri", "hd:ngp://0.0.0.0:2401" ) ) );
+                this.exporter = new Exporter ( service, ConnectionInformation.fromURI ( System.getProperty ( "openscada.ca.ngp.exportUri", "ca:ngp://0.0.0.0:2401" ) ) );
                 this.exporter.start ();
             }
         }
