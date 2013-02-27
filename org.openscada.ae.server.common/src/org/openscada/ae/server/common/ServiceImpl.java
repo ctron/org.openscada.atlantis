@@ -105,15 +105,15 @@ public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> imple
     }
 
     @Override
-    public void acknowledge ( final Session session, final String conditionId, final Date aknTimestamp, final UserInformation providedUserInformation ) throws InvalidSessionException, PermissionDeniedException
+    public void acknowledge ( final Session session, final String monitorId, final Date aknTimestamp, final UserInformation providedUserInformation ) throws InvalidSessionException, PermissionDeniedException
     {
         final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
-        logger.debug ( "Request akn: {} ({}): sessionUser: {}, requestUser: {}", new Object[] { conditionId, aknTimestamp, sessionImpl.getUserInformation (), providedUserInformation } );
+        logger.debug ( "Request akn: {} ({}): sessionUser: {}, requestUser: {}", new Object[] { monitorId, aknTimestamp, sessionImpl.getUserInformation (), providedUserInformation } );
 
         final UserInformation userInformation = makeEffectiveUserInformation ( sessionImpl, providedUserInformation );
 
-        final AuthorizationResult result = authorize ( "MONITOR", conditionId, "AKN", userInformation, null );
+        final AuthorizationResult result = authorize ( "MONITOR", monitorId, "AKN", userInformation, null );
         if ( !result.isGranted () )
         {
             return;
@@ -123,7 +123,7 @@ public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> imple
         {
             if ( o instanceof AknHandler )
             {
-                if ( ( (AknHandler)o ).acknowledge ( conditionId, userInformation, aknTimestamp ) )
+                if ( ( (AknHandler)o ).acknowledge ( monitorId, userInformation, aknTimestamp ) )
                 {
                     break;
                 }
