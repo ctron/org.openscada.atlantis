@@ -1,20 +1,20 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA HD Performance Test
+Bundle-Name: openSCADA HD Performance Test
 Bundle-SymbolicName: org.openscada.hd.perf.test;singleton:=true
-Bundle-Version: 0.18.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.hd.perf.test.Activator
 Bundle-Vendor: openSCADA.org
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
- org.openscada.hd;bundle-version="0.14.0",
- org.openscada.hd.client.common;bundle-version="0.14.0",
- org.openscada.hd.client.net;bundle-version="0.14.0",
- org.openscada.hd.connection.provider;bundle-version="0.14.0",
- org.openscada.core.client;bundle-version="0.14.0",
- org.openscada.core.connection.provider;bundle-version="0.18.0",
- org.openscada.utils;bundle-version="0.14.0",
- org.openscada.core;bundle-version="0.15.0"
+ org.openscada.hd;bundle-version="1.0.0",
+ org.openscada.hd.client.common;bundle-version="1.0.0",
+ org.openscada.hd.client.net;bundle-version="1.0.0",
+ org.openscada.hd.connection.provider;bundle-version="1.0.0",
+ org.openscada.core.client;bundle-version="1.0.0",
+ org.openscada.core.connection.provider;bundle-version="1.0.0",
+ org.openscada.utils;bundle-version="1.0.0",
+ org.openscada.core;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.openscada.hd.data;version="1.0.0",
