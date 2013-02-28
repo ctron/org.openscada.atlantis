@@ -51,7 +51,7 @@ Export-Package: org.openscada.da.server.snmp;version="1.0.0";
    org.snmp4j.smi"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA SNMP Server
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.snmp
 Bundle-ClassPath: lib/grammatica-bin-1.4.jar,
  lib/mibble-mibs-2.7.jar,

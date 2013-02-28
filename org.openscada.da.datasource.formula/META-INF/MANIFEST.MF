@@ -4,7 +4,7 @@ Bundle-Name: openSCADA Formula Datasource
 Bundle-SymbolicName: org.openscada.da.datasource.formula
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.da.datasource.formula.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ca;version="0.15.0",
  org.openscada.ca.common.factory;version="1.0.0",

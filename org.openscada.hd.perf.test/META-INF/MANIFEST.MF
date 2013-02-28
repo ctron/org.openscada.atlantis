@@ -4,7 +4,7 @@ Bundle-Name: OpenSCADA HD Performance Test
 Bundle-SymbolicName: org.openscada.hd.perf.test;singleton:=true
 Bundle-Version: 0.18.0.qualifier
 Bundle-Activator: org.openscada.hd.perf.test.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,
  org.openscada.hd;bundle-version="0.14.0",

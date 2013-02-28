@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Common Daemon Utilities
 Bundle-SymbolicName: org.openscada.da.utils.daemon
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.daemon;version="1.0.10",
  org.apache.xmlbeans;version="2.4.0",

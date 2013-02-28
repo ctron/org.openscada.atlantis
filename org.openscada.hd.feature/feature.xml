@@ -3,7 +3,7 @@
       id="org.openscada.hd"
       label="openSCADA HD"
       version="1.0.0.qualifier"
-      provider-name="TH4 SYSTEMS GmbH">
+      provider-name="openSCADA.org">
 
    <description url="http://openscada.org">
       The OpenSCADA historical data module

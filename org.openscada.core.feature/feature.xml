@@ -3,7 +3,7 @@
       id="org.openscada.core"
       label="openSCADA Core"
       version="1.0.0.qualifier"
-      provider-name="TH4 SYSTEMS GmbH">
+      provider-name="openSCADA.org">
 
    <description>
       openSCADA Core Modules

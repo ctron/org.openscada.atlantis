@@ -4,7 +4,7 @@ Bundle-Name: openSCADA HD NET Client
 Bundle-SymbolicName: org.openscada.hd.client.net
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.hd.client.net.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core.session;version="2.0.0",
  org.openscada.core;version="0.14.0",

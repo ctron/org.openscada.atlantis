@@ -4,7 +4,7 @@ Bundle-Name: openSCADA NextGenerationProtocol DA Client
 Bundle-SymbolicName: org.openscada.da.client.ngp
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.da.client.ngp.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.core.client;version="1.0.0",

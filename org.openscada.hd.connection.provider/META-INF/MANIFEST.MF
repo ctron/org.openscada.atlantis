@@ -4,7 +4,7 @@ Bundle-Name: openSCADA HD Connection Provider
 Bundle-SymbolicName: org.openscada.hd.connection.provider
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.hd.connection.provider.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.core.client;version="0.14.0",

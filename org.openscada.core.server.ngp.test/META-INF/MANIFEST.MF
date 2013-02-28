@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA NextGenerationProtocol Core Server Test
 Bundle-SymbolicName: org.openscada.core.server.ngp.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core.session;version="2.0.7",
  org.apache.mina.filter.ssl;version="2.0.7",

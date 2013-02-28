@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Configuration Admin Plug-in
 Bundle-SymbolicName: org.openscada.ca
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.ca;version="1.0.0";uses:="org.openscada.utils.concurrent"
 Bundle-License: http://opensource.org/licenses/lgpl-2.1.php

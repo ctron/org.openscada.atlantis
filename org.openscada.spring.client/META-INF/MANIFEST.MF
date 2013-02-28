@@ -45,5 +45,5 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA Spring Client
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.spring.client

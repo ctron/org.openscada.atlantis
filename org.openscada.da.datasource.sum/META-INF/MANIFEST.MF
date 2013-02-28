@@ -4,7 +4,7 @@ Bundle-Name: openSCADA DA Sum Datasource
 Bundle-SymbolicName: org.openscada.da.datasource.sum
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.da.datasource.sum.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ca;version="1.0.0",
  org.openscada.ca.common.factory;version="1.0.0",

@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA OPC Server
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.opc
 Import-Package: javax.xml.stream;version="1.0";resolution:=optional,

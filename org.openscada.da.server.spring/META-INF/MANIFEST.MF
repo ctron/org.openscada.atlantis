@@ -51,7 +51,7 @@ Export-Package: org.openscada.da.server.spring;version="1.0.0";
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Server Spring
 Bundle-ManifestVersion: 2
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.spring
 Bundle-ClassPath: lib/opencsv-1.8.jar,
  .

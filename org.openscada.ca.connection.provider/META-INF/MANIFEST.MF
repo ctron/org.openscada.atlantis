@@ -4,7 +4,7 @@ Bundle-Name: openSCADA CA Connection Provider
 Bundle-SymbolicName: org.openscada.ca.connection.provider
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.ca.connection.provider.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ca.client;version="1.0.0",
  org.openscada.core.client;version="1.0.0",

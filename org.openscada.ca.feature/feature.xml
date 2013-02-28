@@ -3,7 +3,7 @@
       id="org.openscada.ca"
       label="openSCADA CA"
       version="1.0.0.qualifier"
-      provider-name="TH4 SYSTEMS GmbH">
+      provider-name="openSCADA.org">
 
    <description>
       This module holds the plugins for OpenSCADA CA - the configuration

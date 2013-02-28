@@ -4,7 +4,7 @@ Bundle-Name: openSCADA CA Server OSGi
 Bundle-SymbolicName: org.openscada.ca.server.osgi
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.ca.server.osgi.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae.sec;version="1.0.0",
  org.openscada.ca;version="1.0.0",

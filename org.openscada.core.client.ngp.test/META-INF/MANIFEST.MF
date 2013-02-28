@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA NextGenerationProtocol Client Test
 Bundle-SymbolicName: org.openscada.core.client.ngp.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.equinox.app
 Import-Package: org.openscada.core;version="1.0.0",

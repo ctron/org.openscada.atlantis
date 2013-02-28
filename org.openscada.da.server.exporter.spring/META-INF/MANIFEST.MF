@@ -10,6 +10,6 @@ Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA DA Server Exporter Spring
 Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.exporter.spring
 Export-Package: org.openscada.da.server.exporter.spring;version="0.15.0";uses:="org.openscada.da.core.server,org.springframework.context,org.openscada.da.server.exporter"

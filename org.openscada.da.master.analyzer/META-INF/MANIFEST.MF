@@ -4,7 +4,7 @@ Bundle-Name: openSCADA DA Master Server Analyzer
 Bundle-SymbolicName: org.openscada.da.master.analyzer
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.da.master.analyzer.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.google.gson;version="1.7.1",
  org.openscada.core;version="0.15.0",

@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Common Server Storage
 Bundle-SymbolicName: org.openscada.hd.server.storage.common
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.hd.server.storage.common;version="1.0.0";uses:="org.openscada.hd,QueryDataBuffer,org.openscada.hds"
 Import-Package: org.openscada.hd;version="1.0.0",

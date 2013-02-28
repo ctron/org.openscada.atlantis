@@ -3,7 +3,7 @@
       id="org.openscada.ae"
       label="openSCADA AE Feature"
       version="1.0.0.qualifier"
-      provider-name="TH4 SYSTEMS GmbH">
+      provider-name="openSCADA.org">
 
    <description>
       openSCADA Alarms and Events

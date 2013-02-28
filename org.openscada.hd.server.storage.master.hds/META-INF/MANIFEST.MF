@@ -4,7 +4,7 @@ Bundle-Name: openSCADA HDS Master Storage
 Bundle-SymbolicName: org.openscada.hd.server.storage.master.hds
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.hd.server.storage.master.hds.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.io;version="2.3.0",
  org.openscada.core;version="0.17.0",

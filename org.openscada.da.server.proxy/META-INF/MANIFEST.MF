@@ -69,6 +69,6 @@ Export-Package: org.openscada.da.server.proxy;version="1.0.0";
  org.openscada.da.server.proxy.utils;version="1.0.0"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Proxy Server
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.proxy
 

@@ -4,7 +4,7 @@ Bundle-Name: openSCADA NextGenerationProtocol HD Client Connection
 Bundle-SymbolicName: org.openscada.hd.client.ngp
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.hd.client.ngp.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core.filterchain;version="2.0.7",
  org.openscada.core;version="1.0.0",

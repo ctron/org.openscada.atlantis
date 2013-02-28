@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA NextGenerationProtocol AE Server Exporter
 Bundle-SymbolicName: org.openscada.ae.server.exporter.ngp
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Activator: org.openscada.ae.server.exporter.ngp.Activator
 Import-Package: org.openscada.ae.server;version="1.0.0",

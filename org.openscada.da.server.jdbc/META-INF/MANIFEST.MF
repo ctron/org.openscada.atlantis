@@ -33,6 +33,6 @@ Export-Package: org.openscada.da.server.jdbc;version="1.0.0";
    org.openscada.da.jdbc.configuration"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA JDBC Server
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.jdbc

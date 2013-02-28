@@ -35,6 +35,6 @@ Export-Package: org.openscada.da.client.net;version="1.0.0";
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Client Net
 Bundle-ManifestVersion: 2
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.client.net
 

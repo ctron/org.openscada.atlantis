@@ -26,5 +26,5 @@ Export-Package: org.openscada.da.server.stock;version="0.17.0";uses:="org.opensc
 Bundle-Version: 0.17.0.qualifier
 Bundle-Name: OpenSCADA DA Stock Server
 Bundle-ManifestVersion: 2
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.stock

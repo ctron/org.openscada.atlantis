@@ -4,7 +4,7 @@ Bundle-Name: openSCADA HDS Slave Storage
 Bundle-SymbolicName: org.openscada.hd.server.storage.slave.hds
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.hd.server.storage.slave.hds.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.openscada.hd;version="1.0.0",
  org.openscada.hd.data;version="1.0.0",

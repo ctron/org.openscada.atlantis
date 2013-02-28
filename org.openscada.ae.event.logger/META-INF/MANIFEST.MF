@@ -4,7 +4,7 @@ Bundle-Name: openSCADA AE Datasource Logger
 Bundle-SymbolicName: org.openscada.ae.event.logger
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.ae.event.logger.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae;version="1.0.0",
  org.openscada.ae.event;version="1.0.0",

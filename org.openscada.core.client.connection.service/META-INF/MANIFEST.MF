@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Core Connection Service
 Bundle-SymbolicName: org.openscada.core.client.connection.service
 Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.core.client.connection.service;version="1.0.0"
 Import-Package: org.openscada.ca;version="1.0.0",

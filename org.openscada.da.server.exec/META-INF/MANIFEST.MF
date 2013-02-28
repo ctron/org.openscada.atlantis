@@ -59,6 +59,6 @@ Export-Package: org.openscada.da.server.exec;version="1.0.0";
    org.openscada.da.server.exec.command"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Server Exec
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.exec
 Bundle-ClassPath: ., schemabin/

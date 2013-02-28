@@ -18,4 +18,4 @@ Import-Package: org.openscada.ca;version="1.0.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.6.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org

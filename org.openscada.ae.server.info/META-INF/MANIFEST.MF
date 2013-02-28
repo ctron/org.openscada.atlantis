@@ -27,4 +27,4 @@ Import-Package: org.openscada.ae;version="1.0.0",
  org.openscada.utils.propertyeditors;version="1.0.0",
  org.osgi.framework;version="1.5.0",
  org.slf4j;version="1.5.0"
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
