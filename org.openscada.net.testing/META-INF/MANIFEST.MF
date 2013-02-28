@@ -1,8 +1,8 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA Net Base Testing
+Bundle-Name: openSCADA Net Base Testing
 Bundle-SymbolicName: org.openscada.net.testing
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.openscada.net;bundle-version="0.14.0",

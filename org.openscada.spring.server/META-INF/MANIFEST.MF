@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Spring Server Components
 Bundle-SymbolicName: org.openscada.spring.server
-Bundle-Version: 0.16.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core;version="0.15.0",
@@ -13,4 +13,4 @@ Import-Package: org.openscada.core;version="0.15.0",
  org.openscada.utils.lifecycle;version="0.15.0",
  org.springframework.beans.factory;version="2.5.0",
  org.springframework.util;version="2.5.0"
-Export-Package: org.openscada.spring.server;version="0.16.0";uses:="org.openscada.da.server.common.impl,org.springframework.beans.factory"
+Export-Package: org.openscada.spring.server;version="1.0.0";uses:="org.openscada.da.server.common.impl,org.springframework.beans.factory"
