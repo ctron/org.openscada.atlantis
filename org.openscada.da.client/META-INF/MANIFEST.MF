@@ -17,7 +17,6 @@ Export-Package: org.openscada.da.client;version="1.0.0";
    org.openscada.core.subscription"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Client
-Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.client

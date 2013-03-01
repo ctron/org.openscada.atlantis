@@ -8,7 +8,6 @@ Import-Package: org.openscada.da.core.server;version="0.13.0",
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Version: 0.15.0.qualifier
 Bundle-Name: OpenSCADA DA Server Exporter Spring
-Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.exporter.spring

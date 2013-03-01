@@ -27,7 +27,6 @@ Export-Package: org.openscada.core.client.net;version="1.0.0";
    org.openscada.net.mina"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA Core Client NET
-Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.core.client.net

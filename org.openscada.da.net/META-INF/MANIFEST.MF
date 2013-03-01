@@ -21,7 +21,6 @@ Export-Package: org.openscada.da.net.handler;version="1.0.0";
    org.openscada.da.core"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Net Base
-Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.net

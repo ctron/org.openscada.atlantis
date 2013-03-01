@@ -30,7 +30,6 @@ Export-Package: org.openscada.net;version="1.0.0",
  org.openscada.net.utils;version="1.0.0";uses:="org.openscada.net.base.data"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA Net
-Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.net

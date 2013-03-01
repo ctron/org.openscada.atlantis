@@ -19,7 +19,6 @@ Export-Package: org.openscada.da.server.exporter;version="1.0.0";
    org.openscada.utils.lifecycle"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Server Exporter
-Bundle-DocURL: http://www.inavare.net
 Bundle-Vendor: openSCADA.org
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.exporter

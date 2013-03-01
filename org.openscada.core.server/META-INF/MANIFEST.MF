@@ -5,7 +5,6 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.core.server;version="1.0.0";uses:="org.openscada.core,org.openscada.utils.lifecycle"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA Core Server
-Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.core.server

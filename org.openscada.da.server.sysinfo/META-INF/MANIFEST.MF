@@ -16,7 +16,6 @@ Export-Package: org.openscada.da.server.sysinfo;version="0.17.0";uses:="org.open
  org.openscada.da.server.sysinfo.utils;version="0.17.0"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Server Sysinfo
-Bundle-DocURL: http://www.inavare.net
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.sysinfo
