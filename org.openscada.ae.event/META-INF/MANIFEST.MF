@@ -8,10 +8,10 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ae;version="1.0.0",
  org.openscada.ae.server.storage;version="1.0.0",
  org.openscada.core;version="1.0.0",
- org.openscada.utils.filter;version="0.16.0",
- org.openscada.utils.osgi;version="0.15.0",
- org.openscada.utils.propertyeditors;version="0.16.0",
- org.osgi.framework;version="1.6.0",
+ org.openscada.utils.filter;version="1.0.0",
+ org.openscada.utils.osgi;version="1.0.0",
+ org.openscada.utils.propertyeditors;version="1.0.0",
+ org.osgi.framework;version="1.0.0",
  org.osgi.util.tracker;version="1.5.0",
  org.slf4j;version="[1.5.0,2.0.0)"
 Export-Package: org.openscada.ae.event;version="1.0.0";

@@ -6,11 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.core;version="1.0.0",
- org.openscada.da.core;version="0.14.0",
- org.openscada.da.core.server;version="0.15.0",
- org.openscada.da.server.common;version="0.15.0",
- org.openscada.da.server.common.chain;version="0.15.0",
- org.openscada.da.server.common.chain.item;version="0.15.0",
+ org.openscada.da.core;version="1.0.0",
+ org.openscada.da.core.server;version="1.0.0",
+ org.openscada.da.server.common;version="1.0.0",
+ org.openscada.da.server.common.chain;version="1.0.0",
+ org.openscada.da.server.common.chain.item;version="1.0.0",
  org.openscada.da.server.common.item.factory;version="1.0.0",
  org.openscada.utils.osgi.pool;version="1.0.0",
  org.osgi.framework;version="1.6.0",

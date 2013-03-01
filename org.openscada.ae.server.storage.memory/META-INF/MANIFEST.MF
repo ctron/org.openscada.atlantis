@@ -5,13 +5,13 @@ Bundle-SymbolicName: org.openscada.ae.server.storage.memory
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: openSCADA.org
-Import-Package: org.openscada.ae;version="0.18.0",
- org.openscada.ae.filter;version="0.18.0",
- org.openscada.ae.filter.internal;version="0.18.0",
- org.openscada.ae.server.storage;version="0.18.0",
- org.openscada.core;version="0.18.0",
- org.openscada.utils.filter;version="0.18.0",
- org.openscada.utils.propertyeditors;version="0.18.0",
+Import-Package: org.openscada.ae;version="1.0.0",
+ org.openscada.ae.filter;version="1.0.0",
+ org.openscada.ae.filter.internal;version="1.0.0",
+ org.openscada.ae.server.storage;version="1.0.0",
+ org.openscada.core;version="1.0.0",
+ org.openscada.utils.filter;version="1.0.0",
+ org.openscada.utils.propertyeditors;version="1.0.0",
  org.osgi.framework;version="1.6.0",
  org.slf4j;version="1.5.0"
 Export-Package: org.openscada.ae.server.storage.memory

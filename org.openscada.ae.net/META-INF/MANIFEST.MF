@@ -6,11 +6,11 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.ae.net;version="1.0.0";uses:="org.openscada.net.base.data,org.openscada.ae"
-Import-Package: org.openscada.ae;version="0.18.0",
+Import-Package: org.openscada.ae;version="1.0.0",
  org.openscada.ae.data;version="1.0.0",
- org.openscada.core;version="0.14.0",
- org.openscada.core.net;version="0.14.0",
- org.openscada.net.base;version="0.14.0",
- org.openscada.net.base.data;version="0.14.0",
- org.openscada.net.base.handlers;version="0.14.0",
- org.openscada.net.utils;version="0.14.0"
+ org.openscada.core;version="1.0.0",
+ org.openscada.core.net;version="1.0.0",
+ org.openscada.net.base;version="1.0.0",
+ org.openscada.net.base.data;version="1.0.0",
+ org.openscada.net.base.handlers;version="1.0.0",
+ org.openscada.net.utils;version="1.0.0"

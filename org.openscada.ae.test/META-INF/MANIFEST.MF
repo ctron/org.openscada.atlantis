@@ -5,10 +5,10 @@ Bundle-SymbolicName: org.openscada.ae.test
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.junit;version="4.5.0",
- org.openscada.ae;version="0.15.0",
+ org.openscada.ae;version="1.0.0",
  org.openscada.ae.filter,
  org.openscada.ae.filter.internal,
- org.openscada.ae.server.storage;version="0.14.0",
+ org.openscada.ae.server.storage;version="1.0.0",
  org.openscada.ae.server.storage.memory,
  org.openscada.core;version="0.15.0"
 Bundle-Vendor: openSCADA.org
