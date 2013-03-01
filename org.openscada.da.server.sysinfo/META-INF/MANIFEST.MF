@@ -11,9 +11,9 @@ Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.utils.collection;version="1.0.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.sysinfo;version="0.17.0";uses:="org.openscada.da.server.common.impl",
- org.openscada.da.server.sysinfo.items;version="0.17.0";uses:="org.openscada.da.server.common,org.openscada.da.server.browser.common,org.openscada.da.server.sysinfo",
- org.openscada.da.server.sysinfo.utils;version="0.17.0"
+Export-Package: org.openscada.da.server.sysinfo;version="1.0.0";uses:="org.openscada.da.server.common.impl",
+ org.openscada.da.server.sysinfo.items;version="1.0.0";uses:="org.openscada.da.server.common,org.openscada.da.server.browser.common,org.openscada.da.server.sysinfo",
+ org.openscada.da.server.sysinfo.utils;version="1.0.0"
 Bundle-Version: 1.0.0.qualifier
 Bundle-Name: openSCADA DA Server Sysinfo
 Bundle-ManifestVersion: 2

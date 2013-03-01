@@ -5,7 +5,7 @@ Import-Package: org.apache.commons.beanutils;version="1.8.0",
  org.openscada.da.data;version="1.0.0",
  org.openscada.sec;version="1.0.0",
  org.openscada.utils.lang;version="1.0.0",
- org.openscada.utils.str;version="0.13.0"
+ org.openscada.utils.str;version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.core;version="1.0.0";uses:="org.openscada.sec,org.openscada.core",
  org.openscada.da.core.browser;version="1.0.0"

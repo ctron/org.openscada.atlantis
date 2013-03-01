@@ -17,10 +17,10 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.da.server.common.item.factory;version="1.0.0",
  org.openscada.sec;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
- org.openscada.utils.lang,
- org.openscada.utils.lifecycle;version="0.13.1",
+ org.openscada.utils.lang;version="1.0.0",
+ org.openscada.utils.lifecycle;version="1.0.0",
  org.openscada.utils.sql;version="1.0.0",
- org.slf4j;version="1.5.8"
+ org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.server.jdbc;version="1.0.0";
   uses:="org.openscada.da.server.common.chain,

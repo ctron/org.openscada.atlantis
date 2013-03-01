@@ -6,9 +6,9 @@ Import-Package: org.openscada.da.core.server;version="1.0.0",
  org.springframework.context.support;version="2.5.0",
  org.springframework.core.io;version="2.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-Version: 0.15.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Name: OpenSCADA DA Server Exporter Spring
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.exporter.spring
-Export-Package: org.openscada.da.server.exporter.spring;version="0.15.0";uses:="org.openscada.da.core.server,org.springframework.context,org.openscada.da.server.exporter"
+Export-Package: org.openscada.da.server.exporter.spring;version="1.0.0";uses:="org.openscada.da.core.server,org.springframework.context,org.openscada.da.server.exporter"

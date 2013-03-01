@@ -14,5 +14,5 @@ Import-Package: org.openscada.ae;version="1.0.0",
  org.openscada.utils.propertyeditors;version="1.0.0",
  org.osgi.framework;version="1.6.0",
  org.slf4j;version="1.5.0"
-Export-Package: org.openscada.ae.server.storage.memory
+Export-Package: org.openscada.ae.server.storage.memory;version="1.0.0";uses:="org.osgi.framework,org.openscada.ae.server.storage,org.openscada.ae"
 Bundle-Activator: org.openscada.ae.server.storage.memory.Activator

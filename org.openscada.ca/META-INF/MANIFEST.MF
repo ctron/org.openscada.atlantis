@@ -6,11 +6,10 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.ca;version="1.0.0";uses:="org.openscada.utils.concurrent"
-Bundle-License: http://opensource.org/licenses/lgpl-2.1.php
 Import-Package: org.openscada.ca.data;version="1.0.0",
  org.openscada.sec;version="1.0.0",
  org.openscada.utils;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
  org.openscada.utils.lang;version="1.0.0",
  org.openscada.utils.propertyeditors;version="1.0.0",
- org.openscada.utils.str;version="0.17.0"
+ org.openscada.utils.str;version="1.0.0"

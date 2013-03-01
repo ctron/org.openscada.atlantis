@@ -9,7 +9,7 @@ Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
  org.openscada.utils.lang;version="1.0.0",
  org.openscada.utils.statuscodes;version="1.0.0",
- org.openscada.utils.str;version="0.13.0"
+ org.openscada.utils.str;version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.core.server;version="1.0.0";
   uses:="org.openscada.core.server,

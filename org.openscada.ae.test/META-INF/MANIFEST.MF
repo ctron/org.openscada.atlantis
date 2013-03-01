@@ -6,9 +6,9 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.junit;version="4.5.0",
  org.openscada.ae;version="1.0.0",
- org.openscada.ae.filter,
- org.openscada.ae.filter.internal,
+ org.openscada.ae.filter;version="1.0.0",
+ org.openscada.ae.filter.internal;version="1.0.0",
  org.openscada.ae.server.storage;version="1.0.0",
- org.openscada.ae.server.storage.memory,
- org.openscada.core;version="0.15.0"
+ org.openscada.ae.server.storage.memory;version="1.0.0",
+ org.openscada.core;version="1.0.0"
 Bundle-Vendor: openSCADA.org
