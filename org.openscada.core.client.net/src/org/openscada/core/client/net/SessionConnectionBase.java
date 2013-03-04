@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,12 +21,23 @@
 
 package org.openscada.core.client.net;
 
+import java.util.Collections;
+import java.util.LinkedHashSet;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.mina.core.session.IoSession;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.client.PrivilegeListener;
+import org.openscada.core.net.ConnectionHelper;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.net.Constants;
+import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -36,18 +49,51 @@ public abstract class SessionConnectionBase extends ConnectionBase
 
     private final ConnectionInformation connectionInformation;
 
+    protected ScheduledExecutorService executor;
+
+    private final Set<PrivilegeListener> privilegeListeners = new LinkedHashSet<PrivilegeListener> ();
+
+    private volatile Set<String> currentPrivileges;
+
     public SessionConnectionBase ( final ConnectionInformation connectionInformation )
     {
         super ( connectionInformation );
+
         this.connectionInformation = connectionInformation;
+
+        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () ) );
+
+        this.messenger.setHandler ( MessageHelper.CC_PRIV_CHANGE, new MessageListener () {
+
+            @Override
+            public void messageReceived ( final Message message ) throws Exception
+            {
+                handlePrivChange ( MessageHelper.getPrivileges ( message ) );
+            }
+        } );
     }
 
     public abstract String getRequiredVersion ();
 
     @Override
+    public void dispose ()
+    {
+        super.dispose ();
+
+        this.executor.shutdown ();
+    }
+
+    @Override
     protected void onConnectionEstablished ()
     {
         requestSession ();
+    }
+
+    @Override
+    protected void onConnectionClosed ()
+    {
+        super.onConnectionClosed ();
+        handlePrivChange ( Collections.<String> emptySet () );
     }
 
     protected void requestSession ()
@@ -56,6 +102,7 @@ public abstract class SessionConnectionBase extends ConnectionBase
         props.putAll ( this.connectionInformation.getProperties () );
 
         props.setProperty ( SESSION_CLIENT_VERSION, getRequiredVersion () );
+        props.put ( MessageHelper.PROP_USING_SESSION_START, "true" );
 
         final String username = getConnectionInformation ().getProperties ().get ( ConnectionInformation.PROP_USER );
         final String password = getConnectionInformation ().getProperties ().get ( ConnectionInformation.PROP_PASSWORD );
@@ -103,8 +150,75 @@ public abstract class SessionConnectionBase extends ConnectionBase
         else
         {
             final Properties properties = new Properties ();
-            MessageHelper.getProperties ( properties, message.getValues ().get ( "properties" ) ); //$NON-NLS-1$
+            MessageHelper.getProperties ( properties, message.getValues ().get ( MessageHelper.FIELD_SESSION_PROPERTIES ) );
+            logger.debug ( "Session properties: {}", properties );
+
+            final Properties transportProperties = new Properties ();
+            MessageHelper.getProperties ( transportProperties, message.getValues ().get ( MessageHelper.FIELD_TRANSPORT_PROPERTIES ) );
+            logger.debug ( "Transport properties: {}", transportProperties );
+
+            modifyFilterChain ( this.session, transportProperties );
+
+            this.messenger.sendMessage ( new Message ( MessageHelper.CC_START_SESSION ) );
+
             setBound ( properties );
         }
     }
+
+    protected void modifyFilterChain ( final IoSession session, final Properties properties )
+    {
+        ConnectionHelper.injectCompression ( session, properties.getProperty ( Constants.PROP_TR_COMPRESSION ) );
+    }
+
+    protected synchronized void handlePrivChange ( final Set<String> privileges )
+    {
+        final Set<String> newPrivs = Collections.unmodifiableSet ( privileges );
+        this.currentPrivileges = newPrivs;
+
+        logger.info ( "Privilege change: {}", privileges );
+
+        for ( final PrivilegeListener listener : this.privilegeListeners )
+        {
+            this.executor.execute ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    listener.privilegesChanged ( newPrivs );
+                }
+            } );
+        }
+    }
+
+    @Override
+    public synchronized void addPrivilegeListener ( final PrivilegeListener listener )
+    {
+        final Set<String> newPrivs = this.currentPrivileges;
+
+        if ( this.privilegeListeners.add ( listener ) )
+        {
+            // send initial state
+            this.executor.execute ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    listener.privilegesChanged ( newPrivs );
+                }
+            } );
+        }
+    }
+
+    @Override
+    public synchronized void removePrivilegeListener ( final PrivilegeListener listener )
+    {
+        this.privilegeListeners.remove ( listener );
+    }
+
+    @Override
+    public Set<String> getPrivileges ()
+    {
+        return Collections.unmodifiableSet ( this.currentPrivileges );
+    }
+
 }

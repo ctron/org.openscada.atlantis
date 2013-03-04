@@ -30,7 +30,6 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -56,15 +55,15 @@ public class Activator implements BundleActivator
 
     private ExecutorService executor;
 
-    private ObjectPoolImpl dataSourcePool;
+    private ObjectPoolImpl<DataSource> dataSourcePool;
 
     private InfoServiceFactory factory;
 
     private ServiceRegistration<ConfigurationFactory> factoryHandle;
 
-    private ServiceRegistration<ObjectPool> dataSourcePoolHandler;
+    private ServiceRegistration<?> dataSourcePoolHandler;
 
-    private ObjectPoolTracker monitorPoolTracker;
+    private ObjectPoolTracker<MonitorService> monitorPoolTracker;
 
     /**
      * The constructor
@@ -82,16 +81,16 @@ public class Activator implements BundleActivator
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
-        this.monitorPoolTracker = new ObjectPoolTracker ( context, MonitorService.class.getName () );
+        this.monitorPoolTracker = new ObjectPoolTracker<MonitorService> ( context, MonitorService.class );
         this.monitorPoolTracker.open ();
 
-        this.dataSourcePool = new ObjectPoolImpl ();
-        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class.getName () );
+        this.dataSourcePool = new ObjectPoolImpl<DataSource> ();
+        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class );
 
         this.factory = new InfoServiceFactory ( context, this.executor, this.monitorPoolTracker, this.dataSourcePool );
         final Dictionary<String, String> properties = new Hashtable<String, String> ( 2 );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
-        properties.put ( Constants.SERVICE_DESCRIPTION, "A monitor query" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "An aggregator for all monitor states" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, InfoServiceFactory.FACTORY_ID );
 
         this.factoryHandle = context.registerService ( ConfigurationFactory.class, this.factory, properties );
@@ -114,7 +113,7 @@ public class Activator implements BundleActivator
 
     /**
      * Returns the shared instance
-     *
+     * 
      * @return the shared instance
      */
     public static Activator getDefault ()

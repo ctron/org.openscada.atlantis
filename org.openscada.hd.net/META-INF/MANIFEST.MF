@@ -1,13 +1,14 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA HD NET Base
+Bundle-Name: openSCADA HD NET Base
 Bundle-SymbolicName: org.openscada.hd.net
-Bundle-Version: 0.16.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.core;version="0.14.0",
- org.openscada.core.net;version="0.14.0",
- org.openscada.hd;version="0.14.0",
- org.openscada.net.base.data;version="0.14.0",
- org.slf4j
-Export-Package: org.openscada.hd.net;version="0.16.0";uses:="org.openscada.net.base.data,org.openscada.hd"
+Import-Package: org.openscada.core;version="1.0.0",
+ org.openscada.core.net;version="1.0.0",
+ org.openscada.hd;version="1.0.0",
+ org.openscada.hd.data;version="1.0.0",
+ org.openscada.net.base.data;version="1.0.0",
+ org.slf4j;version="1.5.0"
+Export-Package: org.openscada.hd.net;version="1.0.0";uses:="org.openscada.hd.data,org.openscada.net.base.data"

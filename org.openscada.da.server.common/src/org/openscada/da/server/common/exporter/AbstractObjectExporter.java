@@ -55,23 +55,34 @@ public abstract class AbstractObjectExporter implements Disposable
 
     protected final Map<String, DataItem> items = new HashMap<String, DataItem> ();
 
+    protected final Map<String, Map<String, Variant>> attributes = new HashMap<String, Map<String, Variant>> ();
+
     private final boolean readOnly;
 
     private final boolean nullIsError;
+
+    private final String prefix;
 
     /**
      * Create a new object factory
      * <p>
      * </p>
-     * @param itemFactory the item factory to use
-     * @param readOnly flag if all properties should be created read-only
-     * @param nullIsError flag whether controls if <code>null</code> mean <q>error</q>
+     * 
+     * @param itemFactory
+     *            the item factory to use
+     * @param readOnly
+     *            flag if all properties should be created read-only
+     * @param nullIsError
+     *            flag whether controls if <code>null</code> mean <q>error</q>
+     * @param prefix
+     *            a local item prefix
      */
-    public AbstractObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
+    public AbstractObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError, final String prefix )
     {
         this.factory = itemFactory;
         this.readOnly = readOnly;
         this.nullIsError = nullIsError;
+        this.prefix = prefix;
     }
 
     @Override
@@ -92,6 +103,11 @@ public abstract class AbstractObjectExporter implements Disposable
             {
                 final DataItem item = createItem ( pd, targetClazz );
                 this.items.put ( pd.getName (), item );
+
+                final Map<String, Variant> itemAttributes = new HashMap<String, Variant> ();
+                fillAttributes ( pd, itemAttributes );
+                this.attributes.put ( pd.getName (), itemAttributes );
+
                 initAttribute ( pd );
             }
         }
@@ -138,6 +154,7 @@ public abstract class AbstractObjectExporter implements Disposable
 
     /**
      * read the initial value of the property
+     * 
      * @param pd
      */
     protected void initAttribute ( final PropertyDescriptor pd )
@@ -183,7 +200,7 @@ public abstract class AbstractObjectExporter implements Disposable
         attributes.put ( "property.constrained", Variant.valueOf ( pd.isConstrained () ) );
         attributes.put ( "property.label", Variant.valueOf ( pd.getDisplayName () ) );
         attributes.put ( "property.type", Variant.valueOf ( pd.getPropertyType ().getName () ) );
-        attributes.put ( "proptery.name", Variant.valueOf ( pd.getName () ) );
+        attributes.put ( "property.name", Variant.valueOf ( pd.getName () ) );
         attributes.put ( "description", Variant.valueOf ( pd.getShortDescription () ) );
     }
 
@@ -192,14 +209,17 @@ public abstract class AbstractObjectExporter implements Disposable
      * <p>
      * The following search order processed
      * <ol>
-     * <li>Check the field with the same name as the property, process through all superclasses</li>
+     * <li>Check the field with the same name as the property, process through
+     * all superclasses</li>
      * <li>Check the read method</li>
      * <li>Check the write method</li>
      * </ol>
-     * 
      * </p>
-     * @param pd the property descriptor to check
-     * @param clazz class instance
+     * 
+     * @param pd
+     *            the property descriptor to check
+     * @param clazz
+     *            class instance
      * @return the annotation or <code>null</code> if none was found
      */
     protected ItemName findAnnotation ( final PropertyDescriptor pd, final Class<?> clazz )
@@ -239,16 +259,28 @@ public abstract class AbstractObjectExporter implements Disposable
             final ItemName itemName = findAnnotation ( pd, clazz );
             if ( itemName == null )
             {
-                return pd.getName ();
+                return addPrefix ( pd.getName () );
             }
             else
             {
-                return itemName.value ();
+                return addPrefix ( itemName.value () );
             }
         }
         catch ( final Exception e )
         {
-            return pd.getName ();
+            return addPrefix ( pd.getName () );
+        }
+    }
+
+    private String addPrefix ( final String name )
+    {
+        if ( this.prefix == null )
+        {
+            return name;
+        }
+        else
+        {
+            return this.prefix + name;
         }
     }
 
@@ -276,9 +308,16 @@ public abstract class AbstractObjectExporter implements Disposable
 
         final String itemName = makeItemName ( pd, clazz );
 
+        final Map<String, Variant> properties = new HashMap<String, Variant> ();
+
+        if ( pd.getShortDescription () != null )
+        {
+            properties.put ( "description", Variant.valueOf ( pd.getShortDescription () ) );
+        }
+
         if ( writeable && readable )
         {
-            return this.factory.createInputOutput ( itemName, new WriteHandler () {
+            return this.factory.createInputOutput ( itemName, properties, new WriteHandler () {
 
                 @Override
                 public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -289,11 +328,11 @@ public abstract class AbstractObjectExporter implements Disposable
         }
         else if ( readable )
         {
-            return this.factory.createInput ( itemName );
+            return this.factory.createInput ( itemName, properties );
         }
         else if ( writeable )
         {
-            final DataItemCommand item = this.factory.createCommand ( itemName );
+            final DataItemCommand item = this.factory.createCommand ( itemName, properties );
             item.addListener ( new DataItemCommand.Listener () {
 
                 @Override
@@ -319,6 +358,13 @@ public abstract class AbstractObjectExporter implements Disposable
         {
             final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
+            final Map<String, Variant> itemAttributes = this.attributes.get ( propertyName );
+
+            if ( itemAttributes != null )
+            {
+                attributes.putAll ( itemAttributes );
+            }
+
             if ( additionalAttributes != null )
             {
                 attributes.putAll ( additionalAttributes );
@@ -342,6 +388,7 @@ public abstract class AbstractObjectExporter implements Disposable
 
     /**
      * Get the current target or <code>null</code> if there is none
+     * 
      * @return the current target
      */
     protected abstract Object getTarget ();
@@ -380,12 +427,15 @@ public abstract class AbstractObjectExporter implements Disposable
 
     /**
      * Convert the value to the target type if possible.
-     * @param targetType The expected target type
-     * @param value the source value
+     * 
+     * @param targetType
+     *            The expected target type
+     * @param value
+     *            the source value
      * @return an instance of the source value in the target type (if possible)
-     * or <code>null</code> otherwise 
-     * @throws NotConvertableException 
-     * @throws NullValueException 
+     *         or <code>null</code> otherwise
+     * @throws NotConvertableException
+     * @throws NullValueException
      */
     private Object convertWriteType ( final Class<?> targetType, final Variant value ) throws NullValueException, NotConvertableException
     {

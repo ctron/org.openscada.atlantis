@@ -22,8 +22,9 @@ package org.openscada.da.component.script;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
 
@@ -33,9 +34,9 @@ public class ScriptComponentFactory extends AbstractServiceConfigurationFactory<
 
     private final Executor executor;
 
-    private final ObjectPoolImpl objectPool;
+    private final ObjectPoolImpl<DataItem> objectPool;
 
-    public ScriptComponentFactory ( final Executor executor, final ObjectPoolImpl objectPool, final BundleContext context )
+    public ScriptComponentFactory ( final Executor executor, final ObjectPoolImpl<DataItem> objectPool, final BundleContext context )
     {
         super ( context );
         this.executor = executor;
@@ -46,7 +47,6 @@ public class ScriptComponentFactory extends AbstractServiceConfigurationFactory<
     @Override
     protected Entry<ScriptComponent> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-
         return new Entry<ScriptComponent> ( configurationId, new ScriptComponent ( this.executor, this.objectPool, configurationId, context, parameters ) );
     }
 

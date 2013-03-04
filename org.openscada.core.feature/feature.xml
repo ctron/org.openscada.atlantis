@@ -2,8 +2,8 @@
 <feature
       id="org.openscada.core"
       label="openSCADA Core"
-      version="0.18.0.qualifier"
-      provider-name="TH4 SYSTEMS GmbH">
+      version="1.0.0.qualifier"
+      provider-name="openSCADA.org">
 
    <description>
       openSCADA Core Modules
@@ -39,13 +39,6 @@
 
    <plugin
          id="org.openscada.core.client.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.core"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -88,6 +81,41 @@
 
    <plugin
          id="org.openscada.core.server.common"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.client.connection.service"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.subscription"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.server.ngp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.client.ngp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.ngp"
          download-size="0"
          install-size="0"
          version="0.0.0"

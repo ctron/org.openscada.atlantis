@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,10 +25,15 @@ import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.Executor;
 
 import org.openscada.ae.sec.AuthorizationHelper;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.osgi.SessionPrivilegeTracker;
+import org.openscada.core.server.common.session.AbstractSessionImpl.DisposeListener;
+import org.openscada.core.server.common.session.PrivilegeListenerImpl;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.query.GroupFolder;
 import org.openscada.da.server.browser.common.query.IDNameProvider;
@@ -37,10 +44,12 @@ import org.openscada.da.server.browser.common.query.SplitNameProvider;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.common.impl.SessionCommon;
 import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.osgi.AuthenticationHelper;
+import org.openscada.sec.osgi.AuthorizationTracker;
 import org.openscada.utils.collection.MapBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -66,12 +75,18 @@ public class HiveImpl extends HiveCommon
 
     private final AuthorizationHelper authorizationManager;
 
-    public HiveImpl ( final BundleContext context ) throws InvalidSyntaxException
+    private final AuthorizationTracker authorizationTracker;
+
+    private final Executor executor;
+
+    public HiveImpl ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
         this.context = context;
+        this.executor = executor;
 
         this.authenticationManager = new AuthenticationHelper ( context );
         this.authorizationManager = new AuthorizationHelper ( context );
+        this.authorizationTracker = new AuthorizationTracker ( context, executor );
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
@@ -86,10 +101,17 @@ public class HiveImpl extends HiveCommon
     }
 
     @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.osgi";
+    }
+
+    @Override
     public void start () throws Exception
     {
         this.authenticationManager.open ();
         this.authorizationManager.open ();
+        this.authorizationTracker.open ();
         super.start ();
     }
 
@@ -97,8 +119,27 @@ public class HiveImpl extends HiveCommon
     public void stop () throws Exception
     {
         super.stop ();
+        this.authorizationTracker.close ();
         this.authenticationManager.close ();
         this.authorizationManager.close ();
+    }
+
+    @Override
+    protected void handleSessionCreated ( final SessionCommon session, final Properties properties, final UserInformation userInformation )
+    {
+        super.handleSessionCreated ( session, properties, userInformation );
+
+        final Set<String> privileges = extractPrivileges ( properties );
+        final SessionPrivilegeTracker privTracker = new SessionPrivilegeTracker ( this.executor, new PrivilegeListenerImpl ( session ), this.authorizationTracker, privileges, userInformation );
+
+        session.addDisposeListener ( new DisposeListener () {
+
+            @Override
+            public void disposed ()
+            {
+                privTracker.dispose ();
+            }
+        } );
     }
 
     @Override

@@ -47,7 +47,7 @@ public class StockQuoteItem extends DataItemInputCommon implements StockQuoteLis
     }
 
     @Override
-    public void setListener ( final ItemListener listener )
+    public synchronized void setListener ( final ItemListener listener )
     {
         super.setListener ( listener );
         if ( listener != null )

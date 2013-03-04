@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Random HD Exporter for testing purposes
 Bundle-SymbolicName: org.openscada.hd.exporter.http.random
-Bundle-Version: 0.17.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.hd.exporter.http.random.Activator
-Import-Package: org.openscada.hd.exporter.http;version="0.15.0",
- org.osgi.framework;version="1.3.0"
+Import-Package: org.openscada.hd.exporter.http;version="1.0.0",
+ org.osgi.framework;version="1.7.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org

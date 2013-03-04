@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,8 +29,8 @@ import java.util.concurrent.Future;
 
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.FolderListener;
@@ -49,9 +51,9 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
 
     private final SessionCommonData data = new SessionCommonData ();
 
-    private volatile FolderListener folderListener = null;
+    private volatile FolderListener folderListener;
 
-    private boolean disposed = false;
+    private boolean disposed;
 
     private final Collection<Future<?>> tasks = new ConcurrentLinkedQueue<Future<?>> ();
 
@@ -98,7 +100,7 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
     @Override
     public void updateStatus ( final Object topic, final SubscriptionState subscriptionState )
     {
-        ItemChangeListener listener;
+        final ItemChangeListener listener;
 
         if ( ( listener = this.listener ) != null )
         {
@@ -111,7 +113,7 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
     {
         logger.debug ( "Data changed - itemId: {}, value: {}, attributes: {}, cache: {}", new Object[] { item.getInformation ().getName (), value, attributes, cache } );
 
-        ItemChangeListener listener;
+        final ItemChangeListener listener;
 
         if ( ( listener = this.listener ) != null )
         {
@@ -121,12 +123,16 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
 
     /**
      * Add a future to the session.
-     * <p>The future will be canceled when the session is completed.
-     * The session subscribes to the future state in order to remove
-     * the future from the session one it is completed.
-     * </p> 
-     * @param future the future to add
-     * @throws InvalidSessionException in case the session was already disposed
+     * <p>
+     * The future will be canceled when the session is completed. The session
+     * subscribes to the future state in order to remove the future from the
+     * session one it is completed.
+     * </p>
+     * 
+     * @param future
+     *            the future to add
+     * @throws InvalidSessionException
+     *             in case the session was already disposed
      */
     public void addFuture ( final NotifyFuture<?> future ) throws InvalidSessionException
     {
@@ -167,6 +173,7 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
     /**
      * Dispose the session
      */
+    @Override
     public void dispose ()
     {
         final Collection<Future<?>> tasks;

@@ -109,13 +109,13 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
     {
         this.itemFactory = new DefaultItemFactory ( hive, parentFolder, this.id, this.id );
 
-        this.stateItem = this.itemFactory.createInput ( "state" );
+        this.stateItem = this.itemFactory.createInput ( "state", null );
         this.stateItem.updateData ( Variant.valueOf ( this.state.toString () ), null, null );
-        this.failedItem = this.itemFactory.createInput ( "lastFailure" );
+        this.failedItem = this.itemFactory.createInput ( "lastFailure", null );
 
-        this.pidItem = this.itemFactory.createInput ( "pid" );
+        this.pidItem = this.itemFactory.createInput ( "pid", null );
 
-        this.killItem = this.itemFactory.createCommand ( "kill" );
+        this.killItem = this.itemFactory.createCommand ( "kill", null );
         this.killItem.addListener ( new DataItemCommand.Listener () {
 
             @Override

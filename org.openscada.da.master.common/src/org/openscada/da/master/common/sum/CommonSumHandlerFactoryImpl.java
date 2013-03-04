@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,18 +21,19 @@ package org.openscada.da.master.common.sum;
 
 import java.util.Map;
 
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 
 public class CommonSumHandlerFactoryImpl extends AbstractServiceConfigurationFactory<AbstractMasterHandlerImpl>
 {
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
-    public CommonSumHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
+    public CommonSumHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker<MasterItem> poolTracker ) throws InvalidSyntaxException
     {
         super ( context );
         this.poolTracker = poolTracker;

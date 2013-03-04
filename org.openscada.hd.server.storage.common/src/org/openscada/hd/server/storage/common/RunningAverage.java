@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,21 +20,58 @@
 package org.openscada.hd.server.storage.common;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
+
+// for calculation use algorithm found at 
+// http://en.wikipedia.org/wiki/Algorithms_for_calculating_variance#Weighted_incremental_algorithm
+//
+// which is
+//
+// def weighted_incremental_variance(dataWeightPairs):
+//     sumweight = 0
+//     mean = 0
+//     M2 = 0
+// 
+//     for x, weight in dataWeightPairs:
+//         temp = weight + sumweight
+//         delta = x − mean
+//         R = delta * weight / temp
+//         mean = mean + R
+//         M2 = M2 + sumweight * delta * R
+//         sumweight = temp
+//  
+//     variance_n = M2/sumweight
+//     variance = variance_n * len(dataWeightPairs)/(len(dataWeightPairs) − 1)
+//
+// in this case we use the variable numOfIncrements for the expression len(dataWeightPairs)
+// which has to be updated on every value change
 
 public class RunningAverage
 {
+    private long firstTimestamp;
+
     private double lastValue = Double.NaN;
 
     private long lastTimestamp;
 
-    private BigDecimal counter;
+    private final MathContext mathContext = new MathContext ( 10, RoundingMode.HALF_DOWN );
 
-    private long firstTimestamp;
+    private BigDecimal M2 = BigDecimal.ZERO;
+
+    private BigDecimal mean = BigDecimal.ZERO;
+
+    private long sumWeight = 0;
+
+    private long numOfIncrements = 0;
+
+    private boolean hadValue = false;
 
     public void next ( final double value, final long timestamp )
     {
         increment ( timestamp );
+
+        this.hadValue = this.hadValue || ( !Double.isNaN ( this.lastValue ) );
 
         this.lastValue = value;
         this.lastTimestamp = timestamp;
@@ -42,19 +79,20 @@ public class RunningAverage
 
     private void increment ( final long timestamp )
     {
-        if ( !Double.isNaN ( this.lastValue ) )
+        final long offset = timestamp - this.lastTimestamp;
+        final long newSumWeight = offset + this.sumWeight;
+
+        if ( offset > 0 )
         {
-            final long offset = timestamp - this.lastTimestamp;
-
-            final BigDecimal localCounter = BigDecimal.valueOf ( offset ).multiply ( BigDecimal.valueOf ( this.lastValue ) );
-
-            if ( this.counter != null )
+            if ( !Double.isNaN ( this.lastValue ) )
             {
-                this.counter = this.counter.add ( localCounter );
-            }
-            else
-            {
-                this.counter = localCounter;
+                final BigDecimal delta = BigDecimal.valueOf ( this.lastValue ).subtract ( this.mean );
+                final BigDecimal R = delta.multiply ( BigDecimal.valueOf ( offset ) ).divide ( BigDecimal.valueOf ( newSumWeight ), this.mathContext );
+                this.mean = this.mean.add ( R );
+                this.M2 = this.M2.add ( BigDecimal.valueOf ( this.sumWeight ).multiply ( delta ).multiply ( R ) );
+                this.hadValue = true;
+                this.sumWeight = newSumWeight;
+                this.numOfIncrements += 1;
             }
         }
     }
@@ -63,19 +101,45 @@ public class RunningAverage
     {
         this.firstTimestamp = timestamp;
         this.lastTimestamp = timestamp;
-        this.counter = null;
+
+        this.M2 = BigDecimal.ZERO;
+        this.mean = BigDecimal.ZERO;
+        this.sumWeight = 0;
+        this.numOfIncrements = 0;
+        this.hadValue = false;
     }
 
     public double getAverage ( final long lastTimestamp )
     {
         increment ( lastTimestamp );
-        if ( this.counter == null )
+        if ( ( lastTimestamp == this.firstTimestamp ) || !this.hadValue )
         {
             return Double.NaN;
         }
         else
         {
-            return this.counter.divide ( BigDecimal.valueOf ( lastTimestamp - this.firstTimestamp ), RoundingMode.HALF_DOWN ).doubleValue ();
+            return this.mean.doubleValue ();
+        }
+    }
+
+    public double getDeviation ( final long lastTimestamp )
+    {
+        increment ( lastTimestamp );
+        if ( ( lastTimestamp == this.firstTimestamp ) || !this.hadValue )
+        {
+            return Double.NaN;
+        }
+        else
+        {
+            // if numOfIncrements is only 1, then a division by 0 could happen
+            // in this case the deviation is 0 anyway, so return this early
+            if ( this.numOfIncrements < 2 )
+            {
+                return 0.0;
+            }
+            final BigDecimal variance_n = this.M2.divide ( BigDecimal.valueOf ( this.sumWeight ), this.mathContext );
+            final BigDecimal variance = variance_n.multiply ( BigDecimal.valueOf ( this.numOfIncrements ).divide ( BigDecimal.valueOf ( this.numOfIncrements - 1 ), this.mathContext ) );
+            return Math.sqrt ( variance.doubleValue () );
         }
     }
 }

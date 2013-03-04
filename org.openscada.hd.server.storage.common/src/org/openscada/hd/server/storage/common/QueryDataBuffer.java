@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,23 +21,29 @@ package org.openscada.hd.server.storage.common;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class QueryDataBuffer
 {
+    public static final String STDDEV = "STDDEV";
+
+    public static final String MAX = "MAX";
+
+    public static final String MIN = "MIN";
+
+    public static final String AVG = "AVG";
 
     private final static Logger logger = LoggerFactory.getLogger ( QueryDataBuffer.class );
 
@@ -59,6 +65,8 @@ public abstract class QueryDataBuffer
         private double min = Double.NaN;
 
         private double max = Double.NaN;
+
+        private double stdDev = Double.NaN;
 
         public Data ( final Date start, final Date end )
         {
@@ -98,6 +106,15 @@ public abstract class QueryDataBuffer
             }
         }
 
+        public void setStdDev ( final double stdDev )
+        {
+            if ( Double.compare ( this.stdDev, stdDev ) != 0 )
+            {
+                this.changed = true;
+                this.stdDev = stdDev;
+            }
+        }
+
         public void setQuality ( final double error )
         {
             if ( Double.compare ( this.quality, error ) != 0 )
@@ -119,6 +136,11 @@ public abstract class QueryDataBuffer
         public double getAverage ()
         {
             return this.average;
+        }
+
+        public double getStdDev ()
+        {
+            return this.stdDev;
         }
 
         public double getQuality ()
@@ -160,6 +182,7 @@ public abstract class QueryDataBuffer
             setQuality ( data.quality );
             setMax ( data.max );
             setMin ( data.min );
+            setStdDev ( data.stdDev );
         }
     }
 
@@ -221,14 +244,14 @@ public abstract class QueryDataBuffer
         } );
     }
 
-    protected synchronized void notifyData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
+    protected synchronized void notifyData ( final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         if ( this.listener == null )
         {
             return;
         }
 
-        logger.debug ( "Sending data - index: {}, values#: {}, informations#: {}", new Object[] { index, values.size (), valueInformation.length } );
+        logger.debug ( "Sending data - index: {}, values#: {}, informations#: {}", new Object[] { index, values.size (), valueInformation.size () } );
 
         this.executor.execute ( new Runnable () {
 
@@ -269,11 +292,14 @@ public abstract class QueryDataBuffer
 
     protected void notifyData ( final int startIndex, final int endIndex )
     {
-        final Collection<ValueInformation> information = new ArrayList<ValueInformation> ();
-        final Map<String, Collection<Value>> values = new HashMap<String, Collection<Value>> ();
-        values.put ( "AVG", new ArrayList<Value> () );
-        values.put ( "MIN", new ArrayList<Value> () );
-        values.put ( "MAX", new ArrayList<Value> () );
+        final int size = endIndex - startIndex;
+
+        final List<ValueInformation> information = new ArrayList<ValueInformation> ( size );
+        final Map<String, List<Double>> values = new HashMap<String, List<Double>> ( 4 );
+        values.put ( AVG, new ArrayList<Double> ( size ) );
+        values.put ( MIN, new ArrayList<Double> ( size ) );
+        values.put ( MAX, new ArrayList<Double> ( size ) );
+        values.put ( STDDEV, new ArrayList<Double> ( size ) );
 
         final QueryDataBuffer.Data[] data = getData ();
 
@@ -288,10 +314,11 @@ public abstract class QueryDataBuffer
                 if ( this.fixedStartDate != null && data[i].getEnd ().before ( this.fixedStartDate ) || this.fixedEndDate != null && data[i].getStart ().after ( this.fixedEndDate ) )
                 {
                     // we are outside
-                    information.add ( new ValueInformation ( convert ( data[i].getStart () ), convert ( data[i].getEnd () ), 0.0, 0.0, 0 ) );
-                    values.get ( "AVG" ).add ( Value.NaN );
-                    values.get ( "MIN" ).add ( Value.NaN );
-                    values.get ( "MAX" ).add ( Value.NaN );
+                    information.add ( new ValueInformation ( 0.0, 0.0, convert ( data[i].getStart () ), convert ( data[i].getEnd () ), 0L ) );
+                    values.get ( AVG ).add ( Double.NaN );
+                    values.get ( MIN ).add ( Double.NaN );
+                    values.get ( MAX ).add ( Double.NaN );
+                    values.get ( STDDEV ).add ( Double.NaN );
                 }
                 else
                 {
@@ -300,10 +327,11 @@ public abstract class QueryDataBuffer
                     final double manual = Double.isNaN ( data[i].getManual () ) ? 0.0 : data[i].getManual ();
 
                     // add
-                    information.add ( new ValueInformation ( convert ( data[i].getStart () ), convert ( data[i].getEnd () ), quality, manual, data[i].getEntryCount () ) );
-                    values.get ( "AVG" ).add ( new Value ( data[i].getAverage () ) );
-                    values.get ( "MIN" ).add ( new Value ( data[i].getMin () ) );
-                    values.get ( "MAX" ).add ( new Value ( data[i].getMax () ) );
+                    information.add ( new ValueInformation ( quality, manual, convert ( data[i].getStart () ), convert ( data[i].getEnd () ), data[i].getEntryCount () ) );
+                    values.get ( AVG ).add ( data[i].getAverage () );
+                    values.get ( MIN ).add ( data[i].getMin () );
+                    values.get ( MAX ).add ( data[i].getMax () );
+                    values.get ( STDDEV ).add ( data[i].getStdDev () );
                 }
             }
             else
@@ -311,11 +339,12 @@ public abstract class QueryDataBuffer
                 // send
                 if ( !information.isEmpty () )
                 {
-                    notifyData ( lastIndex, convert ( values ), information.toArray ( new ValueInformation[information.size ()] ) );
+                    notifyData ( lastIndex, values, information );
                     information.clear ();
-                    values.get ( "AVG" ).clear ();
-                    values.get ( "MIN" ).clear ();
-                    values.get ( "MAX" ).clear ();
+                    values.get ( AVG ).clear ();
+                    values.get ( MIN ).clear ();
+                    values.get ( MAX ).clear ();
+                    values.get ( STDDEV ).clear ();
                 }
                 // clear
                 lastIndex = i + 1;
@@ -325,27 +354,12 @@ public abstract class QueryDataBuffer
         // send last
         if ( !information.isEmpty () )
         {
-            notifyData ( lastIndex, convert ( values ), information.toArray ( new ValueInformation[information.size ()] ) );
+            notifyData ( lastIndex, values, information );
         }
     }
 
-    private Calendar convert ( final Date date )
+    private long convert ( final Date date )
     {
-        final Calendar c = Calendar.getInstance ();
-        c.setTime ( date );
-        return c;
+        return date.getTime ();
     }
-
-    private Map<String, Value[]> convert ( final Map<String, Collection<Value>> values )
-    {
-        final Map<String, Value[]> result = new HashMap<String, Value[]> ();
-
-        for ( final Map.Entry<String, Collection<Value>> entry : values.entrySet () )
-        {
-            result.put ( entry.getKey (), entry.getValue ().toArray ( new Value[entry.getValue ().size ()] ) );
-        }
-
-        return result;
-    }
-
 }

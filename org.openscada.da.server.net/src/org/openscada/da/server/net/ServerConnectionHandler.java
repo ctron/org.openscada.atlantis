@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,8 +21,8 @@
 
 package org.openscada.da.server.net;
 
-import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -30,9 +32,10 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.core.server.Session.SessionListener;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
-import org.openscada.core.subscription.SubscriptionState;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
@@ -196,7 +199,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            this.session = (Session)this.hive.createSession ( props );
+            this.session = this.hive.createSession ( props );
         }
         catch ( final UnableToCreateSessionException e )
         {
@@ -216,7 +219,17 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         this.session.setListener ( (FolderListener)this );
 
         // send success
-        this.messenger.sendMessage ( MessageHelper.createSessionACK ( message, this.session.getProperties () ) );
+        replySessionCreated ( props, message, this.session.getProperties () );
+
+        // hook up privs
+        this.session.addSessionListener ( new SessionListener () {
+
+            @Override
+            public void privilegeChange ()
+            {
+                sendPrivilegeChange ( ServerConnectionHandler.this.session.getPrivileges () );
+            }
+        } );
     }
 
     private void debugSessionDelay ( final Properties props )
@@ -513,7 +526,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
     }
 
     @Override
-    public void folderChanged ( final Location location, final Collection<Entry> added, final Collection<String> removed, final boolean full )
+    public void folderChanged ( final Location location, final List<Entry> added, final Set<String> removed, final boolean full )
     {
         logger.debug ( "Got folder change event from hive for folder: {}", location );
         this.messenger.sendMessage ( ListBrowser.createEvent ( location.asArray (), added, removed, full ) );

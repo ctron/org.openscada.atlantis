@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,8 +25,8 @@ import java.util.Random;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
+import org.openscada.hd.data.QueryParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -56,9 +56,9 @@ public class Test2QueryImpl implements Query
         this.parameters = parameters;
         this.listener = listener;
 
-        this.start = parameters.getStartTimestamp ().getTimeInMillis ();
-        this.end = parameters.getEndTimestamp ().getTimeInMillis ();
-        this.count = parameters.getEntries ();
+        this.start = parameters.getStartTimestamp ();
+        this.end = parameters.getEndTimestamp ();
+        this.count = parameters.getNumberOfEntries ();
 
         initData ();
     }
@@ -69,7 +69,7 @@ public class Test2QueryImpl implements Query
 
         this.listener.updateState ( QueryState.LOADING );
 
-        final int count = this.parameters.getEntries ();
+        final int count = this.parameters.getNumberOfEntries ();
         this.values = new ValueBuffer[count];
 
         final long diff = this.end - this.start;
@@ -100,6 +100,7 @@ public class Test2QueryImpl implements Query
         this.listener.updateState ( QueryState.COMPLETE );
     }
 
+    @Override
     public void close ()
     {
         logger.info ( "Close query" );
@@ -107,13 +108,14 @@ public class Test2QueryImpl implements Query
         this.item.remove ( this );
     }
 
+    @Override
     public void changeParameters ( final QueryParameters parameters )
     {
         this.parameters = parameters;
 
-        this.start = parameters.getStartTimestamp ().getTimeInMillis ();
-        this.end = parameters.getEndTimestamp ().getTimeInMillis ();
-        this.count = parameters.getEntries ();
+        this.start = parameters.getStartTimestamp ();
+        this.end = parameters.getEndTimestamp ();
+        this.count = parameters.getNumberOfEntries ();
 
         initData ();
     }

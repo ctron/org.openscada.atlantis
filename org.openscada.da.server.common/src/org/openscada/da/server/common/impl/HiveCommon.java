@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -73,7 +75,7 @@ import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive, HiveServiceRegistry
+public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> implements Hive, ConfigurableHive, HiveServiceRegistry
 {
     private final static Logger logger = LoggerFactory.getLogger ( HiveCommon.class );
 
@@ -136,8 +138,15 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     {
         logger.info ( "Starting Hive" );
 
-        this.operationService = Executors.newFixedThreadPool ( 1, new NamedThreadFactory ( "HiveCommon" ) );
+        this.operationService = Executors.newFixedThreadPool ( 1, new NamedThreadFactory ( "HiveCommon/" + getHiveId () ) );
     }
+
+    /**
+     * Get a unique ID for you hive type
+     * 
+     * @return a unique id of you hive type
+     */
+    public abstract String getHiveId ();
 
     @Override
     public void stop () throws Exception
@@ -212,6 +221,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     /**
      * Get the root folder
+     * 
      * @return the root folder or <code>null</code> if browsing is not supported
      */
     @Override
@@ -267,10 +277,14 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     }
 
     /**
-     * Validate a session and return the session common instance if the session is valid
-     * @param session the session to validate
+     * Validate a session and return the session common instance if the session
+     * is valid
+     * 
+     * @param session
+     *            the session to validate
      * @return the session common instance
-     * @throws InvalidSessionException in the case of an invalid session
+     * @throws InvalidSessionException
+     *             in the case of an invalid session
      */
     public SessionCommon validateSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
     {
@@ -302,6 +316,8 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         final UserInformation user = createUserInformation ( props, sessionProperties );
         final SessionCommon session = new SessionCommon ( this, user, sessionProperties );
 
+        handleSessionCreated ( session, props, user );
+
         synchronized ( this.sessions )
         {
             this.sessions.add ( session );
@@ -311,14 +327,17 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         return session;
     }
 
+    protected void handleSessionCreated ( final SessionCommon session, final Properties properties, final UserInformation userInformation )
+    {
+    }
+
     /**
      * Close a session.
-     * 
      * The session will be invalid after it has been closed. All subscriptions
-     * will become invalid. All pending operation will get canceled. 
+     * will become invalid. All pending operation will get canceled.
      */
     @Override
-    public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
+    public void closeSession ( final Session session ) throws InvalidSessionException
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
@@ -346,10 +365,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
         // subscribe using the new item subscription manager
         try
         {
-            // subscribe to item
-            this.itemSubscriptionManager.subscribe ( itemId, sessionCommon );
-            // and request realization
+            // request realization
             retrieveItem ( itemId );
+            // and subscribe to item
+            this.itemSubscriptionManager.subscribe ( itemId, sessionCommon );
         }
         catch ( final ValidationException e )
         {
@@ -371,7 +390,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     /**
      * Register a new item with the hive
-     * @param item the item to register
+     * 
+     * @param item
+     *            the item to register
      */
     @Override
     public void registerItem ( final DataItem item )
@@ -425,7 +446,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     /**
      * Remove an item from the hive.
-     * @param item the item to remove
+     * 
+     * @param item
+     *            the item to remove
      */
     public void unregisterItem ( final DataItem item )
     {
@@ -472,8 +495,9 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
      * The hive will perform several methods to check if the item id is valid.
      * <p>
      * Implementations must not create items based an a validation check!
-     *  
-     * @return <code>true</code> if the item id is valid <code>false</code> otherwise
+     * 
+     * @return <code>true</code> if the item id is valid <code>false</code>
+     *         otherwise
      */
     @Override
     public boolean validateItem ( final String id )
@@ -542,19 +566,20 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     protected DataItem retrieveItem ( final String id )
     {
-        DataItem dataItem = lookupItem ( id );
-        if ( dataItem == null )
+        final DataItem dataItem = lookupItem ( id );
+        if ( dataItem != null )
         {
-            // let it create
-            factoryCreate ( id );
-
-            // and refetch
-            dataItem = lookupItem ( id );
+            return dataItem;
         }
-        return dataItem;
+
+        // let it create
+        factoryCreate ( id );
+
+        // and refetch
+        return lookupItem ( id );
     }
 
-    private static final String DATA_ITEM_OBJECT_TYPE = "ITEM";
+    private static final String DATA_ITEM_OBJECT_TYPE = "ITEM"; //$NON-NLS-1$
 
     @Override
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Session session, final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
@@ -606,55 +631,7 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     private OperationParameters makeOperationParameters ( final SessionCommon session, final OperationParameters operationParameters ) throws PermissionDeniedException
     {
-        UserInformation sessionInformation = session.getUserInformation ();
-        if ( sessionInformation == null )
-        {
-            logger.debug ( "Session has no user information. Using anonymous" );
-            sessionInformation = UserInformation.ANONYMOUS;
-        }
-
-        if ( operationParameters == null )
-        {
-            logger.debug ( "No operation parameters provided. Creating default for user ({}).", sessionInformation );
-            return new OperationParameters ( sessionInformation );
-        }
-
-        final UserInformation userInformation;
-
-        if ( operationParameters.getUserInformation () != null && operationParameters.getUserInformation ().getName () != null )
-        {
-            final String proxyUser = operationParameters.getUserInformation ().getName ();
-
-            // check if user differs
-            if ( !proxyUser.equals ( sessionInformation.getName () ) )
-            {
-                logger.debug ( "Trying to set proxy user: {}", proxyUser );
-
-                // try to set proxy user
-                final AuthorizationResult result = authorize ( "SESSION", proxyUser, "PROXY_USER", session.getUserInformation (), null );
-                if ( !result.isGranted () )
-                {
-                    logger.info ( "Proxy user is not allowed" );
-                    // not allowed to use proxy user
-                    throw new PermissionDeniedException ( result.getErrorCode (), result.getMessage () );
-                }
-
-                userInformation = new UserInformation ( operationParameters.getUserInformation ().getName (), operationParameters.getUserInformation ().getPassword (), sessionInformation.getRoles () );
-
-            }
-            else
-            {
-                logger.debug ( "Session user and proxy user match ... using session user" );
-                // session is already is proxy user
-                userInformation = sessionInformation;
-            }
-        }
-        else
-        {
-            userInformation = sessionInformation;
-        }
-
-        return new OperationParameters ( userInformation );
+        return new OperationParameters ( makeEffectiveUserInformation ( session, operationParameters == null ? null : operationParameters.getUserInformation () ) );
     }
 
     @Override
@@ -741,8 +718,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     }
 
     /**
-     * Will re-check all items in granted state. Call when your list of known items
-     * has changed in order to give granted but not connected subscriptions a chance
+     * Will re-check all items in granted state. Call when your list of known
+     * items
+     * has changed in order to give granted but not connected subscriptions a
+     * chance
      * to be created by the factories.
      */
     public void recheckGrantedItems ()
@@ -757,13 +736,14 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
 
     /**
      * Gets a set of all items in granted state.
+     * 
      * @return The list of granted items.
      */
     public Set<String> getGrantedItems ()
     {
         final List<Object> topics = this.itemSubscriptionManager.getAllGrantedTopics ();
 
-        final Set<String> items = new HashSet<String> ();
+        final Set<String> items = new HashSet<String> ( topics.size () );
 
         for ( final Object topic : topics )
         {
@@ -798,8 +778,10 @@ public class HiveCommon extends ServiceCommon implements Hive, ConfigurableHive,
     }
 
     /**
-     * This will disable the automatic generation of the stats module when setting
+     * This will disable the automatic generation of the stats module when
+     * setting
      * the root folder. Must be called before {@link #setRootFolder(Folder)}
+     * 
      * @param autoEnableStats
      */
     public void setAutoEnableStats ( final boolean autoEnableStats )

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -37,11 +37,11 @@ public class Activator implements BundleActivator
 
     private ServiceListener listener;
 
-    private ServiceReference currentServiceReference;
+    private ServiceReference<?> currentServiceReference;
 
     private BundleContext context;
 
-    private final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( System.getProperty ( "openscada.hd.net.exportUri", "ae:net://0.0.0.0:1402" ) );
+    private final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( System.getProperty ( "openscada.hd.net.exportUri", "hd:net://0.0.0.0:1402" ) );
 
     private Exporter exporter;
 
@@ -51,30 +51,32 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
      */
+    @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.context = context;
 
         context.addServiceListener ( this.listener = new ServiceListener () {
 
+            @Override
             public void serviceChanged ( final ServiceEvent event )
             {
                 switch ( event.getType () )
                 {
-                case ServiceEvent.REGISTERED:
-                    Activator.this.startExporter ( event.getServiceReference () );
-                    break;
-                case ServiceEvent.UNREGISTERING:
-                    Activator.this.stopExporter ( event.getServiceReference () );
-                    break;
+                    case ServiceEvent.REGISTERED:
+                        Activator.this.startExporter ( event.getServiceReference () );
+                        break;
+                    case ServiceEvent.UNREGISTERING:
+                        Activator.this.stopExporter ( event.getServiceReference () );
+                        break;
                 }
             }
         }, "(" + Constants.OBJECTCLASS + "=" + Service.class.getName () + ")" );
 
-        startExporter ( context.getServiceReference ( Service.class.getName () ) );
+        startExporter ( context.getServiceReference ( Service.class ) );
     }
 
-    protected void stopExporter ( final ServiceReference serviceReference )
+    protected void stopExporter ( final ServiceReference<?> serviceReference )
     {
         if ( this.currentServiceReference != serviceReference )
         {
@@ -87,7 +89,7 @@ public class Activator implements BundleActivator
         }
         catch ( final Throwable e )
         {
-            e.printStackTrace ();
+            logger.warn ( "Failed to stop exporter", e );
         }
         finally
         {
@@ -99,7 +101,7 @@ public class Activator implements BundleActivator
 
     }
 
-    protected void startExporter ( final ServiceReference serviceReference )
+    protected void startExporter ( final ServiceReference<?> serviceReference )
     {
         if ( this.currentServiceReference != null || serviceReference == null )
         {
@@ -111,14 +113,14 @@ public class Activator implements BundleActivator
         {
             try
             {
-                logger.info ( "Exporting: " + serviceReference );
+                logger.info ( "Exporting: {} ", serviceReference );
                 this.currentService = (Service)o;
                 this.exporter = new Exporter ( this.currentService, this.connectionInformation );
                 this.exporter.start ();
             }
             catch ( final Throwable e )
             {
-                e.printStackTrace ();
+                logger.warn ( "Failed to start exporter", e );
                 this.exporter = null;
                 this.currentService = null;
                 this.context.ungetService ( serviceReference );
@@ -135,6 +137,7 @@ public class Activator implements BundleActivator
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
      */
+    @Override
     public void stop ( final BundleContext context ) throws Exception
     {
         context.removeServiceListener ( this.listener );

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,24 +25,22 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.SessionConnectionBase;
-import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.HistoricalItemInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.openscada.hd.net.ItemListHelper;
 import org.openscada.hd.net.Messages;
 import org.openscada.hd.net.QueryHelper;
@@ -50,7 +50,6 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.VoidValue;
-import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,13 +69,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private static final int MAX_QUERY_ENTRIES = Integer.getInteger ( "org.openscada.hd.client.net.maxQuerySize", 4096 );
 
-    private final ExecutorService executor;
-
     private final Set<ItemListListener> itemListListeners = new HashSet<ItemListListener> ();
 
     private final Map<Long, QueryImpl> queries = new HashMap<Long, QueryImpl> ();
 
     protected Map<String, HistoricalItemInformation> knownItems = new HashMap<String, HistoricalItemInformation> ();
+
+    private static final Object STATS_COUNT_QUERIES = new Object ();
 
     @Override
     public String getRequiredVersion ()
@@ -88,16 +87,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         super ( connectionInformantion );
 
-        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () ) );
+        this.statistics.setLabel ( STATS_COUNT_QUERIES, "Active queries" );
 
         init ();
-    }
-
-    @Override
-    protected void finalize () throws Throwable
-    {
-        this.executor.shutdown ();
-        super.finalize ();
     }
 
     protected void init ()
@@ -187,8 +179,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             if ( query != null )
             {
                 final int index = ( (IntegerValue)message.getValues ().get ( "index" ) ).getValue ();
-                final Map<String, Value[]> values = QueryHelper.fromValueData ( message.getValues ().get ( "values" ) );
-                final ValueInformation[] valueInformation = QueryHelper.fromValueInfo ( message.getValues ().get ( "valueInformation" ) );
+                final Map<String, List<Double>> values = QueryHelper.fromValueData ( message.getValues ().get ( "values" ) );
+                final List<ValueInformation> valueInformation = QueryHelper.fromValueInfo ( message.getValues ().get ( "valueInformation" ) );
                 if ( index >= 0 && values != null && valueInformation != null )
                 {
                     query.handleUpdateData ( index, values, valueInformation );
@@ -212,9 +204,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Fire a list change
-     * @param addedOrModified added or modified items
-     * @param removed removed item
-     * @param full indicates a full or differential transmission
+     * 
+     * @param addedOrModified
+     *            added or modified items
+     * @param removed
+     *            removed item
+     * @param full
+     *            indicates a full or differential transmission
      */
     private synchronized void fireListChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
@@ -237,9 +233,14 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Updates data to the cache
-     * @param addedOrModified the items that where added or modified
-     * @param removed the items that where removed
-     * @param full <code>true</code> if this is a full update and not a delta update
+     * 
+     * @param addedOrModified
+     *            the items that where added or modified
+     * @param removed
+     *            the items that where removed
+     * @param full
+     *            <code>true</code> if this is a full update and not a delta
+     *            update
      */
     private void applyChange ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
@@ -258,7 +259,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             for ( final HistoricalItemInformation item : addedOrModified )
             {
-                this.knownItems.put ( item.getId (), item );
+                this.knownItems.put ( item.getItemId (), item );
             }
         }
     }
@@ -274,23 +275,25 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         super.switchState ( state, error, properties );
         switch ( state )
         {
-        case BOUND:
-            sendRequestItemList ( !this.itemListListeners.isEmpty () );
-            break;
+            case BOUND:
+                sendRequestItemList ( !this.itemListListeners.isEmpty () );
+                break;
 
-        case CLOSED:
-            // clear lists
-            fireListChanged ( new HashSet<HistoricalItemInformation> (), null, true );
-            // clear queries
+            case CLOSED:
+                // clear lists
+                fireListChanged ( new HashSet<HistoricalItemInformation> (), null, true );
+                // clear queries
 
-            // make a copy to prevent a concurrent modification
-            final Collection<QueryImpl> queries = new ArrayList<QueryImpl> ( this.queries.values () );
-            for ( final QueryImpl query : queries )
-            {
-                query.close ();
-            }
-            this.queries.clear ();
-            break;
+                // make a copy to prevent a concurrent modification
+                final Collection<QueryImpl> queries = new ArrayList<QueryImpl> ( this.queries.values () );
+                for ( final QueryImpl query : queries )
+                {
+                    query.close ();
+                }
+                this.queries.clear ();
+                break;
+            default:
+                break;
         }
     }
 
@@ -351,6 +354,10 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 }
                 query.setId ( id );
                 this.queries.put ( id, query );
+
+                // update stats
+                this.statistics.setCurrentValue ( STATS_COUNT_QUERIES, this.queries.size () );
+
                 sendCreateQuery ( id, itemId, parameters, updateData );
                 return query;
             }
@@ -402,16 +409,21 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     private QueryParameters checkParameters ( final QueryParameters parameters )
     {
-        return new QueryParameters ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), Math.min ( parameters.getEntries (), MAX_QUERY_ENTRIES ) );
+        return new QueryParameters ( parameters.getStartTimestamp (), parameters.getEndTimestamp (), Math.min ( parameters.getNumberOfEntries (), MAX_QUERY_ENTRIES ) );
     }
 
     /**
      * Close a registered query
-     * @param queryImpl the registered query to close
+     * 
+     * @param queryImpl
+     *            the registered query to close
      */
     public void closeQuery ( final QueryImpl queryImpl )
     {
-        final Long id = queryImpl.getId ();
+        final Long id = queryImpl.getCloseId ();
+
+        logger.debug ( "Request to close query: {}", id );
+
         if ( id == null )
         {
             return;
@@ -420,6 +432,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         synchronized ( this )
         {
             final QueryImpl query = this.queries.remove ( id );
+
+            logger.debug ( "Removed query: {}", query );
+
+            // update stats
+            this.statistics.setCurrentValue ( STATS_COUNT_QUERIES, this.queries.size () );
+
             performCloseQuery ( id, query );
         }
     }
@@ -429,8 +447,11 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
      * <p>
      * The internal queries collection is not modified by this call
      * </p>
-     * @param id the id of the query
-     * @param query the query itself
+     * 
+     * @param id
+     *            the id of the query
+     * @param query
+     *            the query itself
      */
     private void performCloseQuery ( final Long id, final QueryImpl query )
     {

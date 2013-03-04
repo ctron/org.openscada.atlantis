@@ -50,6 +50,12 @@ public class Hive extends HiveCommon
 
     }
 
+    @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.sysinfo";
+    }
+
     private void createModel ()
     {
         DataItem item;

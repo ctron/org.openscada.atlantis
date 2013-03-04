@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,11 +23,12 @@ package org.openscada.hd.server.storage.common;
 
 import java.util.Date;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
+import org.openscada.hd.data.QueryParameters;
 import org.openscada.hds.ValueVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,26 +91,37 @@ public class QueryImpl implements Query
 
     /**
      * Create a new common query
-     * @param storage the value source manager
-     * @param executor a single threaded executor for posting events
-     * @param parameters the initial query parameters
-     * @param listener the query listener, must not be <code>null</code>
-     * @param updateData request data updates
-     * @param fixedStartDate an optional fixed start date before which all query data is invalid
-     * @param fixedEndDate an optional fixed end date after which all query data is invalid
+     * 
+     * @param storage
+     *            the value source manager
+     * @param executor
+     *            a single threaded executor for posting events
+     * @param eventExecutor
+     * @param parameters
+     *            the initial query parameters
+     * @param listener
+     *            the query listener, must not be <code>null</code>
+     * @param updateData
+     *            request data updates
+     * @param fixedStartDate
+     *            an optional fixed start date before which all query data is
+     *            invalid
+     * @param fixedEndDate
+     *            an optional fixed end date after which all query data is
+     *            invalid
      */
-    public QueryImpl ( final ValueSourceManager storage, final ExecutorService executor, final QueryParameters parameters, final QueryListener listener, final boolean updateData, final Date fixedStartDate, final Date fixedEndDate )
+    public QueryImpl ( final ValueSourceManager storage, final ScheduledExecutorService executor, final ScheduledExecutorService eventExecutor, final QueryParameters parameters, final QueryListener listener, final boolean updateData, final Date fixedStartDate, final Date fixedEndDate )
     {
         this.storage = storage;
         this.executor = executor;
         this.listener = listener;
         this.updateData = updateData;
 
-        this.buffer = new QueryBuffer ( this.listener, executor, fixedStartDate, fixedEndDate );
+        this.buffer = new QueryBuffer ( this.listener, eventExecutor, fixedStartDate, fixedEndDate );
 
         this.state.set ( new LoadState ( false, false, parameters ) );
 
-        changeParameters ( parameters );
+        changeParameters ( parameters, true );
     }
 
     @Override
@@ -140,8 +154,9 @@ public class QueryImpl implements Query
 
     /**
      * Request a close of the query
-     * @return <code>true</code> if the close was requested, <code>false</code> if the close already was
-     * requested by someone else
+     * 
+     * @return <code>true</code> if the close was requested, <code>false</code>
+     *         if the close already was requested by someone else
      */
     private boolean requestClose ()
     {
@@ -167,6 +182,13 @@ public class QueryImpl implements Query
     @Override
     public void changeParameters ( final QueryParameters parameters )
     {
+        changeParameters ( parameters, false );
+    }
+
+    public void changeParameters ( final QueryParameters parameters, final boolean force )
+    {
+        logger.debug ( "Change parameters to - force: {}, parameters: {}", force, parameters );
+
         int i = 0;
         LoadState update;
         LoadState expect;
@@ -174,12 +196,18 @@ public class QueryImpl implements Query
         boolean shouldStart;
         do
         {
-            logger.debug ( "Try parameter update - {}", i );
             expect = this.state.get ();
+            logger.debug ( "Try parameter update - {} - {}", i, expect );
 
             if ( expect.isClosed () )
             {
                 logger.info ( "Query is closed. Bye!" );
+                return;
+            }
+
+            if ( !force && parameterEquals ( expect.getParameters (), parameters ) )
+            {
+                logger.info ( "This is not an actual parameter change. Aborting..." );
                 return;
             }
 
@@ -197,6 +225,33 @@ public class QueryImpl implements Query
 
         logger.debug ( "State applied: {}", update );
 
+    }
+
+    private static boolean parameterEquals ( final QueryParameters first, final QueryParameters second )
+    {
+        if ( first == second )
+        {
+            return true;
+        }
+        if ( first == null )
+        {
+            return false;
+        }
+
+        // now both are non-null
+        if ( first.getStartTimestamp () != second.getStartTimestamp () )
+        {
+            return false;
+        }
+        if ( first.getEndTimestamp () != second.getEndTimestamp () )
+        {
+            return false;
+        }
+        if ( first.getNumberOfEntries () != second.getNumberOfEntries () )
+        {
+            return false;
+        }
+        return true;
     }
 
     public void reload ()
@@ -229,45 +284,62 @@ public class QueryImpl implements Query
             expect = this.state.get ();
             if ( expect.isLoading () )
             {
+                // someone else started loading data ... we can stop
                 logger.debug ( "Found loading state. Bye!" );
                 return;
             }
+
             if ( expect.isClosed () )
             {
+                // the query got closed .. we can stop
                 logger.debug ( "Found closed state. Bye!" );
                 return;
             }
 
+            if ( parameterEquals ( this.buffer.getParameters (), expect.getParameters () ) )
+            {
+                logger.debug ( "Target state is no change from current state" );
+                return;
+            }
+
+            // the new state would be that we are loading, try to set and be the first
             update = new LoadState ( false, true, expect.getParameters () );
         } while ( !this.state.compareAndSet ( expect, update ) );
 
         // now we are the only running loader
-        boolean needStart = false;
+        final LoadState current = expect;
+
         try
         {
-            final LoadState current = expect;
+            logger.debug ( "Processing: {}", current );
+
             this.buffer.changeParameters ( current.getParameters () );
-            this.storage.visit ( current.getParameters (), new ValueVisitor () {
+            final boolean complete = this.storage.visit ( current.getParameters (), new ValueVisitor () {
 
                 @Override
                 public boolean value ( final double value, final Date date, final boolean error, final boolean manual )
                 {
                     QueryImpl.this.buffer.insertData ( value, date, error, manual );
-                    return shouldContinue ( current.getParameters () );
+                    final boolean result = shouldContinue ( current.getParameters () );
+                    if ( !result )
+                    {
+                        logger.info ( "Requesting early stop" );
+                    }
+                    return result;
                 }
             } );
-            this.buffer.complete ();
+
+            if ( complete )
+            {
+                // only complete the buffer if it was a complete run
+                this.buffer.complete ();
+            }
 
             if ( this.state.get ().isClosed () )
             {
                 logger.info ( "Query closed. Bye" );
                 // query is close ... quick goodbye
                 return;
-            }
-
-            if ( hasChanged ( current.getParameters () ) )
-            {
-                needStart = true;
             }
         }
         catch ( final Exception e )
@@ -277,22 +349,23 @@ public class QueryImpl implements Query
         }
         finally
         {
-            endLoading ();
+            logger.debug ( "End loading" );
+            if ( endLoading ( current ) )
+            {
+                logger.debug ( "Triggering loading restart" );
+                startLoad ();
+            }
             logger.debug ( "Loading ended" );
-        }
-
-        if ( needStart )
-        {
-            logger.debug ( "Triggering loading restart" );
-            // we are done here but need another round for the changed parameters
-            startLoad ();
         }
     }
 
     /**
      * Have the requested parameters changed
-     * @param loadingParameters the current loading parameters
-     * @return <code>true</code> if the provided loading parameters are different to the current state parameters
+     * 
+     * @param loadingParameters
+     *            the current loading parameters
+     * @return <code>true</code> if the provided loading parameters are
+     *         different to the current state parameters
      */
     private boolean hasChanged ( final QueryParameters loadingParameters )
     {
@@ -307,7 +380,8 @@ public class QueryImpl implements Query
 
     /**
      * Should the current loading continue
-     * @param queryParameters 
+     * 
+     * @param queryParameters
      * @return
      */
     protected boolean shouldContinue ( final QueryParameters queryParameters )
@@ -315,27 +389,42 @@ public class QueryImpl implements Query
         final LoadState currentState = this.state.get ();
         if ( currentState.isClosed () )
         {
+            logger.debug ( "Detected closed query" );
             return false;
         }
 
         if ( hasChanged ( queryParameters ) )
         {
+            logger.debug ( "Detected parameter change" );
             return false;
         }
 
         return true;
     }
 
-    private void endLoading ()
+    /**
+     * @return <code>true</code> if another load run is needed
+     */
+    private boolean endLoading ( final LoadState ours )
     {
+        logger.debug ( "End loading - our state: {}", ours );
+
         LoadState expect;
         LoadState update;
 
+        boolean needStart;
         do
         {
             expect = this.state.get ();
             update = new LoadState ( expect.isClosed (), false, expect.getParameters () );
+
+            needStart = !update.isClosed () && !parameterEquals ( ours.getParameters (), update.getParameters () );
+
         } while ( !this.state.compareAndSet ( expect, update ) );
+
+        logger.debug ( "State after loading - restart: {}, {}", needStart, update );
+
+        return needStart;
     }
 
     public boolean isUpdateData ()

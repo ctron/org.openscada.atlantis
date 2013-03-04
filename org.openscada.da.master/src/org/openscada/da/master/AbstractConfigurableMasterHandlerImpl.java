@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -51,7 +51,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
     private final String configurationId;
 
-    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
+    public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
     {
         super ( poolTracker, priority );
         this.configurationId = configurationId;
@@ -132,17 +132,53 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
     }
 
     /**
-     * This method will be called on write request that have attributes which match our prefix.
-     * @param writeInformation the write information of the write request
-     * @param attributes the filtered attributes that match our prefix 
+     * This method will be called on write request that have attributes which
+     * match our prefix.
+     * <p>
+     * All attributes that are processed must be returned in the result
+     * </p>
+     * 
+     * @param writeInformation
+     *            the write information of the write request
+     * @param attributes
+     *            the filtered attributes that match our prefix
      * @return the attribute result of the written attributes
-     * @throws Exception if anything goes wrong
+     * @throws Exception
+     *             if anything goes wrong
      */
     protected abstract WriteAttributeResults handleUpdate ( final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws Exception;
 
+    /**
+     * Process a CA update using the write attributes
+     * <p>
+     * Actually calls
+     * {@link #updateConfiguration(Map, Map, boolean, OperationParameters, WriteAttributeResults)}
+     * with <code>null</code> as <code>result</code> parameter.
+     * </p>
+     */
     protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet, final OperationParameters operationParameters ) throws OperationException
     {
-        final WriteAttributeResults result = new WriteAttributeResults ();
+        return updateConfiguration ( data, attributes, fullSet, operationParameters, null );
+    }
+
+    /**
+     * Process a CA update using the write attributes
+     * <p>
+     * Write attribute results will automatically be generated for attributes
+     * that match an entry in the data map.
+     * </p>
+     * <p>
+     * The <code>result</code> parameter may provide an already filled set with
+     * results for attributes that cannot be automatically filled. Note that the
+     * the attribute named must not be prefixed!
+     * </p>
+     */
+    protected WriteAttributeResults updateConfiguration ( final Map<String, String> data, final Map<String, Variant> attributes, final boolean fullSet, final OperationParameters operationParameters, WriteAttributeResults result ) throws OperationException
+    {
+        if ( result == null )
+        {
+            result = new WriteAttributeResults ();
+        }
 
         if ( data.isEmpty () )
         {
@@ -161,36 +197,36 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
             }
             return result;
         }
-        else
+
+        // use the keys from the CA update and set the write status to OK for the result
+        for ( final String attr : data.keySet () )
         {
-            for ( final String attr : data.keySet () )
+            if ( attributes.containsKey ( attr ) )
             {
-                if ( attributes.containsKey ( attr ) )
+                // only add key to result if it was requested
+                result.put ( attr, WriteAttributeResult.OK );
+            }
+        }
+
+        final NotifyFuture<Configuration> future = service.updateConfiguration ( operationParameters.getUserInformation (), this.factoryId, this.configurationId, data, fullSet );
+
+        future.addListener ( new FutureListener<Configuration> () {
+
+            @Override
+            public void complete ( final Future<Configuration> future )
+            {
+                try
                 {
-                    // only add key to result if it was requested
-                    result.put ( attr, WriteAttributeResult.OK );
+                    logger.info ( "Completed applying: {}", future.get () );
+                }
+                catch ( final Exception e )
+                {
+                    logger.warn ( "Failed applying", e );
                 }
             }
+        } );
 
-            final NotifyFuture<Configuration> future = service.updateConfiguration ( operationParameters.getUserInformation (), this.factoryId, this.configurationId, data, fullSet );
+        return result;
 
-            future.addListener ( new FutureListener<Configuration> () {
-
-                @Override
-                public void complete ( final Future<Configuration> future )
-                {
-                    try
-                    {
-                        logger.info ( "Completed applying: {}", future.get () );
-                    }
-                    catch ( final Exception e )
-                    {
-                        logger.warn ( "Failed applying", e );
-                    }
-                }
-            } );
-
-            return result;
-        }
     }
 }

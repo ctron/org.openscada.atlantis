@@ -28,6 +28,8 @@ import org.openscada.da.server.common.chain.VariantBinder;
 
 public abstract class NegateBaseItem extends BaseChainItemCommon
 {
+    public static final String NEGATE_ORIGINAL = ".value.original";
+
     public static final String NEGATE_ACTIVE = ".active";
 
     public static final String NEGATE_ERROR = ".error";
@@ -52,8 +54,9 @@ public abstract class NegateBaseItem extends BaseChainItemCommon
         {
             final Variant activeFlag = this.negateActive.getValue ();
             // only process if we are active
-            if ( !activeFlag.isNull () )
+            if ( activeFlag != null && activeFlag.asBoolean (false) )
             {
+                attributes.put ( getOriginalName (), value );
                 newValue = Variant.valueOf ( !value.asBoolean () );
             }
         }
@@ -65,6 +68,11 @@ public abstract class NegateBaseItem extends BaseChainItemCommon
         addAttributes ( attributes );
 
         return newValue;
+    }
+
+    private String getOriginalName ()
+    {
+        return getBase () + NEGATE_ORIGINAL;
     }
 
     private String getActiveName ()

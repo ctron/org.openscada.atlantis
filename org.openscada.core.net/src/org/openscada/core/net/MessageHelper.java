@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,8 +22,10 @@
 package org.openscada.core.net;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
@@ -29,6 +33,7 @@ import org.openscada.core.Variant;
 import org.openscada.net.base.data.BooleanValue;
 import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;
+import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
@@ -42,11 +47,26 @@ public class MessageHelper
 
     public static final int CC_CLOSE_SESSION = 0x00010002;
 
+    public static final int CC_PRIV_CHANGE = 0x00010003;
+
+    public static final int CC_START_SESSION = 0x00010004;
+
+    public static final String FIELD_SESSION_PROPERTIES = "properties";
+
+    public static final String FIELD_TRANSPORT_PROPERTIES = "transport.properties";
+
+    public static final String FIELD_PRIVS = "privileges";
+
+    public static final Object PROP_USING_SESSION_START = "using.sessionStart";
+
     /**
      * Convert a MapValue to a attributes map
-     * @param mapValue the map value to convert
+     * 
+     * @param mapValue
+     *            the map value to convert
      * @return the attributes map
-     * @note Only scalar entries in the map are converted. Other values are skipped.
+     * @note Only scalar entries in the map are converted. Other values are
+     *       skipped.
      */
     public static Map<String, Variant> mapToAttributes ( final MapValue mapValue )
     {
@@ -165,14 +185,16 @@ public class MessageHelper
 
     /**
      * Construct a CC_CREATE_SESSION message
-     * @param props the session properties
+     * 
+     * @param props
+     *            the session properties
      * @return the create session message
      */
     public static Message createSession ( final Properties props )
     {
         final Message msg = new Message ( CC_CREATE_SESSION );
 
-        msg.getValues ().put ( "properties", toValue ( props ) );
+        msg.getValues ().put ( FIELD_SESSION_PROPERTIES, toValue ( props ) );
 
         return msg;
     }
@@ -185,10 +207,14 @@ public class MessageHelper
     /**
      * Convert a map value to properties
      * <p>
-     * If the value is not a {@link MapValue} or is <code>null</code> the properties will not be modified.
+     * If the value is not a {@link MapValue} or is <code>null</code> the
+     * properties will not be modified.
      * </p>
-     * @param properties the properties to fill
-     * @param value the value to parse
+     * 
+     * @param properties
+     *            the properties to fill
+     * @param value
+     *            the value to parse
      */
     public static void getProperties ( final Properties properties, final Value value )
     {
@@ -202,10 +228,17 @@ public class MessageHelper
         }
     }
 
-    public static Message createSessionACK ( final Message inputMessage, final Map<String, String> sessionProperties )
+    public static Message createSessionACK ( final Message inputMessage, final Map<String, String> sessionProperties, final Map<String, String> transportProperties )
     {
         final Message message = new Message ( Message.CC_ACK, inputMessage.getSequence () );
-        message.getValues ().put ( "properties", toValue ( sessionProperties ) );
+        if ( sessionProperties != null )
+        {
+            message.getValues ().put ( FIELD_SESSION_PROPERTIES, toValue ( sessionProperties ) );
+        }
+        if ( transportProperties != null )
+        {
+            message.getValues ().put ( FIELD_TRANSPORT_PROPERTIES, toValue ( transportProperties ) );
+        }
         return message;
     }
 
@@ -220,6 +253,43 @@ public class MessageHelper
             }
         }
         return value;
+    }
+
+    public static Message createPrivilegeChange ( final Set<String> privileges )
+    {
+        final Message message = new Message ( CC_PRIV_CHANGE );
+
+        final ListValue value = new ListValue ( privileges.size () );
+        for ( final String string : privileges )
+        {
+            value.add ( new StringValue ( string ) );
+        }
+
+        message.getValues ().put ( FIELD_PRIVS, value );
+
+        return message;
+    }
+
+    public static Set<String> getPrivileges ( final Message message )
+    {
+        final Set<String> result = new HashSet<String> ();
+
+        final Value value = message.getValues ().get ( FIELD_PRIVS );
+        if ( ! ( value instanceof ListValue ) )
+        {
+            return result;
+        }
+
+        for ( final Value valueEntry : ( (ListValue)value ).getValues () )
+        {
+            if ( valueEntry == null )
+            {
+                continue;
+            }
+            result.add ( valueEntry.toString () );
+        }
+
+        return result;
     }
 
 }

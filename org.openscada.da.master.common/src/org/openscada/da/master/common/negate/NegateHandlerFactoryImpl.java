@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,9 +22,10 @@ package org.openscada.da.master.common.negate;
 import java.util.Map;
 
 import org.openscada.ca.ConfigurationAdministrator;
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
@@ -36,11 +37,11 @@ public class NegateHandlerFactoryImpl extends AbstractServiceConfigurationFactor
 
     private final int priority;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
     private final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker;
 
-    public NegateHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker poolTracker, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final int priority ) throws InvalidSyntaxException
+    public NegateHandlerFactoryImpl ( final BundleContext context, final ObjectPoolTracker<MasterItem> poolTracker, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final int priority ) throws InvalidSyntaxException
     {
         super ( context );
         this.priority = priority;

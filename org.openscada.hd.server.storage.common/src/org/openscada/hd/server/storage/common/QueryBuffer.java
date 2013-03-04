@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,13 +24,17 @@ package org.openscada.hd.server.storage.common;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
+import org.openscada.hd.data.QueryParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -177,9 +183,12 @@ public class QueryBuffer extends QueryDataBuffer
 
     private final boolean renderWhileLoading = Boolean.getBoolean ( "org.openscada.hd.server.storage.hds.renderWhileLoading" );
 
-    public QueryBuffer ( final QueryListener listener, final Executor executor, final Date fixedStartDate, final Date fixedEndDate )
+    private final ScheduledExecutorService scheduledExecutor;
+
+    public QueryBuffer ( final QueryListener listener, final ScheduledExecutorService executor, final Date fixedStartDate, final Date fixedEndDate )
     {
         super ( listener, executor, fixedStartDate, fixedEndDate );
+        this.scheduledExecutor = executor;
     }
 
     @Override
@@ -192,12 +201,12 @@ public class QueryBuffer extends QueryDataBuffer
     {
         this.parameters = parameters;
         notifyStateUpdate ( QueryState.LOADING );
-        notifyParameterUpdate ( parameters, new HashSet<String> ( Arrays.asList ( "AVG", "MIN", "MAX" ) ) );
+        notifyParameterUpdate ( parameters, new HashSet<String> ( Arrays.asList ( QueryDataBuffer.AVG, QueryDataBuffer.MIN, QueryDataBuffer.MAX, QueryDataBuffer.STDDEV ) ) );
 
         // clear
         this.entries.clear ();
         this.firstEntry = null;
-        this.data = new Data[parameters.getEntries ()];
+        this.data = new Data[parameters.getNumberOfEntries ()];
 
         fillDataCells ( this.data, parameters.getStartTimestamp (), parameters.getEndTimestamp (), new DataFactory () {
 
@@ -210,15 +219,25 @@ public class QueryBuffer extends QueryDataBuffer
 
     }
 
-    /**
-     * Insert data when loading 
-     */
+    public QueryParameters getParameters ()
+    {
+        return this.parameters;
+    }
+
     public synchronized void insertData ( final double value, final Date timestamp, final boolean error, final boolean manual )
     {
-        final Entry entry = new Entry ( value, timestamp, error, manual );
+        insertData ( new Entry ( value, timestamp, error, manual ) );
+    }
+
+    /**
+     * Insert data when loading
+     */
+    public synchronized void insertData ( final Entry entry )
+    {
+        final Date timestamp = entry.getTimestamp ();
         logger.debug ( "Received new data: {}", entry );
 
-        if ( timestamp.before ( this.parameters.getStartTimestamp ().getTime () ) )
+        if ( timestamp.before ( new Date ( this.parameters.getStartTimestamp () ) ) )
         {
             if ( this.firstEntry == null || this.firstEntry.getTimestamp ().before ( timestamp ) )
             {
@@ -230,7 +249,7 @@ public class QueryBuffer extends QueryDataBuffer
                 }
             }
         }
-        else if ( !timestamp.after ( this.parameters.getEndTimestamp ().getTime () ) )
+        else if ( !timestamp.after ( new Date ( this.parameters.getEndTimestamp () ) ) )
         {
             logger.debug ( "Adding entry: {}", entry );
             this.entries.add ( entry );
@@ -239,7 +258,7 @@ public class QueryBuffer extends QueryDataBuffer
 
             logger.debug ( "Inserting into cell: {}", i );
 
-            if ( i >= 0 && i < this.parameters.getEntries () )
+            if ( i >= 0 && i < this.parameters.getNumberOfEntries () )
             {
                 this.data[i].add ( entry );
 
@@ -253,7 +272,9 @@ public class QueryBuffer extends QueryDataBuffer
 
     /**
      * Render buffer from provided start index to the end of the buffer
-     * @param startIndex the start index
+     * 
+     * @param startIndex
+     *            the start index
      */
     private void render ( final int startIndex )
     {
@@ -262,12 +283,15 @@ public class QueryBuffer extends QueryDataBuffer
 
     /**
      * render the buffer from the provided start to the provided end
-     * @param startIndex the start index
-     * @param endIndex the end index
+     * 
+     * @param startIndex
+     *            the start index
+     * @param endIndex
+     *            the end index
      */
     private void render ( final int startIndex, int endIndex )
     {
-        endIndex = Math.min ( endIndex, this.parameters.getEntries () );
+        endIndex = Math.min ( endIndex, this.parameters.getNumberOfEntries () );
 
         Entry currentEntry = findPreviousEntry ( startIndex );
 
@@ -297,7 +321,6 @@ public class QueryBuffer extends QueryDataBuffer
 
             for ( final Entry entry : this.data[i].getEntries () )
             {
-
                 quality.next ( entry.isError () ? 0.0 : 1.0, entry.getTimestamp ().getTime () );
                 manual.next ( entry.isManual () ? 1.0 : 0.0, entry.getTimestamp ().getTime () );
 
@@ -317,6 +340,7 @@ public class QueryBuffer extends QueryDataBuffer
             }
 
             this.data[i].setAverage ( avg.getAverage ( this.data[i].getEnd ().getTime () ) );
+            this.data[i].setStdDev ( avg.getDeviation ( this.data[i].getEnd ().getTime () ) );
             this.data[i].setQuality ( quality.getAverage ( this.data[i].getEnd ().getTime () ) );
             this.data[i].setManual ( manual.getAverage ( this.data[i].getEnd ().getTime () ) );
             this.data[i].setMin ( min );
@@ -352,7 +376,7 @@ public class QueryBuffer extends QueryDataBuffer
 
     protected Entry findNextEntry ( final int i )
     {
-        if ( i + 1 >= this.parameters.getEntries () )
+        if ( i + 1 >= this.parameters.getNumberOfEntries () )
         {
             return null;
         }
@@ -371,21 +395,21 @@ public class QueryBuffer extends QueryDataBuffer
 
     private int getDataIndex ( final Date timestamp )
     {
-        if ( timestamp.before ( this.parameters.getStartTimestamp ().getTime () ) )
+        if ( timestamp.before ( new Date ( this.parameters.getStartTimestamp () ) ) )
         {
             return -1;
         }
 
         final double period = getPeriod ();
 
-        final long offset = timestamp.getTime () - this.parameters.getStartTimestamp ().getTimeInMillis ();
+        final long offset = timestamp.getTime () - this.parameters.getStartTimestamp ();
 
         return (int) ( offset / period );
     }
 
     private double getPeriod ()
     {
-        return (double) ( this.parameters.getEndTimestamp ().getTimeInMillis () - this.parameters.getStartTimestamp ().getTimeInMillis () ) / (double)this.parameters.getEntries ();
+        return (double) ( this.parameters.getEndTimestamp () - this.parameters.getStartTimestamp () ) / (double)this.parameters.getNumberOfEntries ();
     }
 
     public synchronized void complete ()
@@ -399,12 +423,47 @@ public class QueryBuffer extends QueryDataBuffer
         notifyStateUpdate ( QueryState.DISCONNECTED );
     }
 
+    private final List<Entry> updateList = new LinkedList<Entry> ();
+
+    private final int updateListMax = Integer.getInteger ( "org.openscada.hd.server.storage.hds.updateListMax", 10 );
+
+    private final long updateTimeMax = Long.getLong ( "org.openscada.hd.server.storage.hds.updateTimeMax", 1000 );
+
+    private ScheduledFuture<?> flushFuture;
+
     /**
      * Update data after loading has completed
      */
     public synchronized void updateData ( final double value, final Date timestamp, final boolean error, final boolean manual )
     {
-        insertData ( value, timestamp, error, manual );
+        this.updateList.add ( new Entry ( value, timestamp, error, manual ) );
+        if ( this.updateList.size () > this.updateListMax )
+        {
+            flushUpdateQueue ();
+        }
+        else if ( this.flushFuture == null )
+        {
+            this.flushFuture = this.scheduledExecutor.schedule ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    flushUpdateQueue ();
+
+                }
+            }, this.updateTimeMax, TimeUnit.MILLISECONDS );
+        }
+    }
+
+    private synchronized void flushUpdateQueue ()
+    {
+        this.flushFuture = null;
+
+        for ( final Entry entry : this.updateList )
+        {
+            insertData ( entry );
+        }
+        this.updateList.clear ();
         complete ();
     }
 

@@ -26,6 +26,7 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.da.component.script.ScriptContext.Item;
 import org.openscada.da.server.common.AttributeMode;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.Constants;
@@ -35,9 +36,9 @@ public class ItemWrapper implements Item
 
     private final DataItemInputChained dataItem;
 
-    private final ObjectPoolImpl objectPool;
+    private final ObjectPoolImpl<DataItem> objectPool;
 
-    public ItemWrapper ( final ObjectPoolImpl objectPool, final DataItemInputChained dataItem, final Map<String, Variant> attributes )
+    public ItemWrapper ( final ObjectPoolImpl<DataItem> objectPool, final DataItemInputChained dataItem, final Map<String, Variant> attributes )
     {
         this.dataItem = dataItem;
         this.objectPool = objectPool;

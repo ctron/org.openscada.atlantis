@@ -2,22 +2,22 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA AE Datasource Logger
 Bundle-SymbolicName: org.openscada.ae.event.logger
-Bundle-Version: 0.18.0.qualifier
+Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.ae.event.logger.Activator
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ae;version="0.15.0",
- org.openscada.ae.event;version="0.15.0",
- org.openscada.ca;version="0.18.0",
- org.openscada.core;version="0.15.0",
- org.openscada.core.client;version="0.15.0",
- org.openscada.core.subscription;version="0.15.0",
- org.openscada.core.utils;version="0.15.0",
- org.openscada.da.client;version="0.15.0",
- org.openscada.da.core;version="0.16.0",
- org.openscada.da.datasource;version="0.15.0",
- org.openscada.da.master;version="0.15.0",
- org.openscada.sec;version="0.1.0",
- org.openscada.utils.osgi.ca.factory;version="0.15.0",
- org.openscada.utils.osgi.pool;version="0.15.0",
+Import-Package: org.openscada.ae;version="1.0.0",
+ org.openscada.ae.event;version="1.0.0",
+ org.openscada.ca;version="1.0.0",
+ org.openscada.ca.common.factory;version="1.0.0",
+ org.openscada.core;version="1.0.0",
+ org.openscada.core.client;version="1.0.0",
+ org.openscada.core.data;version="1.0.0",
+ org.openscada.core.subscription;version="1.0.0",
+ org.openscada.da.client;version="1.0.0",
+ org.openscada.da.core;version="1.0.0",
+ org.openscada.da.datasource;version="1.0.0",
+ org.openscada.da.master;version="1.0.0",
+ org.openscada.sec;version="1.0.0",
+ org.openscada.utils.osgi.pool;version="1.0.0",
  org.osgi.framework;version="1.6.0"

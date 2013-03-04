@@ -54,7 +54,7 @@ public class ExtractorContinuousCommand extends AbstractContinuousCommand
     {
         super.start ( hive, parentFolder );
 
-        this.lastInput = this.itemFactory.createInput ( "lastInput" );
+        this.lastInput = this.itemFactory.createInput ( "lastInput", null );
 
         for ( final Extractor extractor : this.extrators )
         {

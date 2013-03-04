@@ -21,8 +21,8 @@ package org.openscada.hd.client.net;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
+import org.openscada.hd.data.QueryParameters;
 
 public class ErrorQueryImpl implements Query
 {
@@ -32,11 +32,13 @@ public class ErrorQueryImpl implements Query
         listener.updateState ( QueryState.DISCONNECTED );
     }
 
+    @Override
     public void close ()
     {
         // nothing to do
     }
 
+    @Override
     public void changeParameters ( final QueryParameters parameters )
     {
     }

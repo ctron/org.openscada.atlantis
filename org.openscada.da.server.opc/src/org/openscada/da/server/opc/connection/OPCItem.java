@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,10 +30,10 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.SuspendableDataItem;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
@@ -53,6 +55,8 @@ import org.slf4j.LoggerFactory;
 public class OPCItem extends DataItemInputOutputChained implements SuspendableDataItem
 {
 
+    private static final int MANUAL_VALUE = Integer.getInteger ( "org.openscada.da.server.opc.manualValue", 216 );
+
     private final static Logger logger = LoggerFactory.getLogger ( OPCItem.class );
 
     private volatile boolean suspended = true;
@@ -65,11 +69,12 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
     private boolean ignoreTimestampOnlyChange = false;
 
-    private short qualityErrorIfLessThen = 192;
+    private short qualityErrorIfLessThen = Integer.getInteger ( "org.openscada.da.server.opc.qualityErrorIfLessThen", 192 ).shortValue ();
 
     public OPCItem ( final Hive hive, final OPCController controller, final DataItemInformation di, final String opcItemId )
     {
         super ( di, DirectExecutor.INSTANCE );
+
         this.controller = controller;
         this.opcItemId = opcItemId;
 
@@ -108,19 +113,28 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
     }
 
     @Override
-    public void suspend ()
+    public synchronized void suspend ()
     {
-        logger.info ( "Suspend item: {}", getInformation ().getName () );
+        logger.info ( "Suspend item: {} - currentState: {}", getInformation ().getName (), this.suspended );
+
+        if ( this.suspended )
+        {
+            return;
+        }
 
         this.suspended = true;
         this.controller.getIoManager ().suspendItem ( this.opcItemId );
-        this.controller.getIoManager ().unrequestItem ( this.opcItemId );
     }
 
     @Override
-    public void wakeup ()
+    public synchronized void wakeup ()
     {
-        logger.info ( "Wakeup item: {}", getInformation ().getName () );
+        logger.info ( "Wakeup item: {} - currentState: {}", getInformation ().getName (), this.suspended );
+
+        if ( !this.suspended )
+        {
+            return;
+        }
 
         this.suspended = false;
         this.controller.getIoManager ().wakeupItem ( this.opcItemId );
@@ -136,6 +150,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
 
         final ValueData state = entry.getValue ();
+
+        // reset connection error in any case
         attributes.put ( "opc.connection.error", null );
 
         if ( entry.isFailed () )
@@ -166,8 +182,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             attributes.put ( "opc.quality", Variant.valueOf ( quality ) );
 
             attributes.put ( "opc.quality.error", Variant.valueOf ( quality < this.qualityErrorIfLessThen ) );
-            attributes.put ( "opc.quality.manual", Variant.valueOf ( quality == 216 ) );
-            attributes.put ( "org.openscada.da.manual.active", Variant.valueOf ( quality == 216 ) );
+            attributes.put ( "opc.quality.manual", Variant.valueOf ( quality == MANUAL_VALUE ) );
+            attributes.put ( "org.openscada.da.manual.active", Variant.valueOf ( quality == MANUAL_VALUE ) );
 
             attributes.put ( "opc.value.type", null );
             try
@@ -176,6 +192,7 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
             }
             catch ( final Throwable e )
             {
+                logger.trace ( "Failed to get type" );
             }
 
             Variant value = Helper.theirs2ours ( state.getValue () );
@@ -207,7 +224,10 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
     /**
      * Setting the last write error information
-     * @param result the write result that caused the error or <code>null</code> in case the reason is unknown
+     * 
+     * @param result
+     *            the write result that caused the error or <code>null</code> in
+     *            case the reason is unknown
      */
     public void setLastWriteError ( final Result<WriteRequest> result )
     {
@@ -242,6 +262,8 @@ public class OPCItem extends DataItemInputOutputChained implements SuspendableDa
 
     public void itemUnrealized ()
     {
+        logger.debug ( "Item got unrealized" );
+
         final Map<String, Variant> attributes = Helper.clearAttributes ();
         attributes.put ( "opc.connection.error", Variant.TRUE );
         updateData ( null, attributes, AttributeMode.UPDATE );

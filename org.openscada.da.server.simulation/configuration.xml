@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<simulation:root xmlns:simulation="http://openscada.org/DA/Simulation/Configuration"
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://openscada.org/DA/Simulation/Configuration schema/configuration.xsd ">
-	
-	<simulation:OpenOfficeConfig name="paar" inputFile="examples/iolist-template.ods" startupDelay="2000" />
-</simulation:root>

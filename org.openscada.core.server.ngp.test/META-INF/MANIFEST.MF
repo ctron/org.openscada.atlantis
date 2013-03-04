@@ -1,0 +1,16 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA NextGenerationProtocol Core Server Test
+Bundle-SymbolicName: org.openscada.core.server.ngp.test;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: openSCADA.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.apache.mina.core.session;version="2.0.7",
+ org.apache.mina.filter.ssl;version="2.0.7",
+ org.openscada.core;version="1.0.0",
+ org.openscada.core.server.ngp;version="1.0.0",
+ org.openscada.protocol.ngp.common;version="1.0.0",
+ org.osgi.framework;version="1.6.0"
+Bundle-Activator: org.openscada.core.server.ngp.test.Activator
+Bundle-ActivationPolicy: lazy
+Require-Bundle: org.eclipse.equinox.app;bundle-version="1.3.100"

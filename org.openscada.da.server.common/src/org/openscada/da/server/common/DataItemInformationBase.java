@@ -23,14 +23,14 @@ import java.util.EnumSet;
 import java.util.Set;
 
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.utils.lang.Immutable;
 import org.openscada.utils.str.StringHelper;
 
 /**
  * Default implementation of data {@link DataItemInformation}
+ * 
  * @author Jens Reimann
- *
  */
 @Immutable
 public class DataItemInformationBase implements org.openscada.da.core.DataItemInformation

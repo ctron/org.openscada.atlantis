@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -37,7 +37,7 @@ public class Activator implements BundleActivator
 
     private ServiceListener listener;
 
-    private ServiceReference currentServiceReference;
+    private ServiceReference<?> currentServiceReference;
 
     private BundleContext context;
 
@@ -76,7 +76,7 @@ public class Activator implements BundleActivator
         startExporter ( context.getServiceReference ( Service.class.getName () ) );
     }
 
-    protected void stopExporter ( final ServiceReference serviceReference )
+    protected void stopExporter ( final ServiceReference<?> serviceReference )
     {
         if ( this.currentServiceReference != serviceReference )
         {
@@ -93,7 +93,10 @@ public class Activator implements BundleActivator
         }
         finally
         {
-            this.context.ungetService ( this.currentServiceReference );
+            if ( this.currentServiceReference != null )
+            {
+                this.context.ungetService ( this.currentServiceReference );
+            }
             this.currentService = null;
             this.exporter = null;
             this.currentServiceReference = null;
@@ -101,7 +104,7 @@ public class Activator implements BundleActivator
 
     }
 
-    protected void startExporter ( final ServiceReference serviceReference )
+    protected void startExporter ( final ServiceReference<?> serviceReference )
     {
         if ( this.currentServiceReference != null || serviceReference == null )
         {
@@ -141,6 +144,7 @@ public class Activator implements BundleActivator
     public void stop ( final BundleContext context ) throws Exception
     {
         context.removeServiceListener ( this.listener );
+        stopExporter ( this.currentServiceReference );
         this.context = null;
     }
 

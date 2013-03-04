@@ -1,9 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA DA Client Common Test
+Bundle-Name: openSCADA DA Client Common Test
 Bundle-SymbolicName: org.openscada.da.client.common.test
-Bundle-Version: 0.15.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
-Fragment-Host: org.openscada.da.client;bundle-version="0.15.0"
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: openSCADA.org
+Fragment-Host: org.openscada.da.client;bundle-version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.junit4;bundle-version="4.5.0"
+Import-Package: org.openscada.core.data;version="1.0.0"

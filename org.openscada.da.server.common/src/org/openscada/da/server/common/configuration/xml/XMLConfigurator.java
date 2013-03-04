@@ -30,7 +30,7 @@ import java.util.Stack;
 import java.util.regex.Pattern;
 
 import org.apache.xmlbeans.XmlException;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.hive.FactoriesType;
 import org.openscada.da.hive.FactoryType;
 import org.openscada.da.hive.HiveDocument;

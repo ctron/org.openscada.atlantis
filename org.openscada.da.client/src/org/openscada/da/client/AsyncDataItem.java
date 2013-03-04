@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,38 +22,18 @@ package org.openscada.da.client;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 
 /**
  * A data item which performs the notification asynchronously
+ * 
  * @author Jens Reimann
- *
  */
 public class AsyncDataItem extends DataItem
 {
-
-    private final static class ThreadFactoryImplementation implements ThreadFactory
-    {
-        private final String itemId;
-
-        private final AtomicInteger i = new AtomicInteger ( 0 );
-
-        private ThreadFactoryImplementation ( final String itemId )
-        {
-            this.itemId = itemId;
-        }
-
-        public Thread newThread ( final Runnable r )
-        {
-            final Thread t = new Thread ( r, "AsyncDataItem/" + this.itemId + "#" + this.i.getAndIncrement () );
-            t.setDaemon ( true );
-            return t;
-        }
-    }
 
     /**
      * The executor to use
@@ -67,7 +47,7 @@ public class AsyncDataItem extends DataItem
 
     public AsyncDataItem ( final String itemId, final ItemManager connection )
     {
-        this ( itemId, connection, Executors.newSingleThreadExecutor ( new ThreadFactoryImplementation ( itemId ) ) );
+        this ( itemId, connection, Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "AsyncDataItem/" + itemId ) ) );
     }
 
     public AsyncDataItem ( final String itemId, final ItemManager connection, final ExecutorService executor )
@@ -87,6 +67,7 @@ public class AsyncDataItem extends DataItem
     {
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 AsyncDataItem.this.handlePerformNotifyDataChange ( value, attributes, cache );
@@ -99,6 +80,7 @@ public class AsyncDataItem extends DataItem
     {
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 AsyncDataItem.this.handlePerformNotifySubscriptionChange ( subscriptionState, subscriptionError );

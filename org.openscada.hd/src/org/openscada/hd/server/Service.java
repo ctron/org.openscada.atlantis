@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,15 +23,15 @@ import org.openscada.core.InvalidSessionException;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
+import org.openscada.hd.data.QueryParameters;
 
 /**
  * This interface specifies the operations provided by the server
+ * 
  * @author Jens Reimann
  * @since 0.14.0
- *
  */
-public interface Service extends org.openscada.core.server.Service
+public interface Service extends org.openscada.core.server.Service<Session>
 {
     public Query createQuery ( Session session, String itemId, QueryParameters parameters, QueryListener listener, boolean updateData ) throws InvalidSessionException, InvalidItemException;
 }

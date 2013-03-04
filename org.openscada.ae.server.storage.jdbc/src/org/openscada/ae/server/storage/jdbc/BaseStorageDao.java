@@ -28,7 +28,11 @@ import java.util.UUID;
 
 import org.openscada.ae.Event;
 import org.openscada.core.VariantType;
+import org.openscada.utils.osgi.jdbc.CommonConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.DataSourceConnectionAccessor;
+import org.openscada.utils.osgi.jdbc.pool.PoolConnectionAccessor;
+import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
+import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
 import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,11 +47,11 @@ public abstract class BaseStorageDao implements StorageDao
 
     private String instance = "default";
 
-    private final DataSourceConnectionAccessor accessor;
+    protected final CommonConnectionAccessor accessor;
 
-    public BaseStorageDao ( final DataSourceFactory dataSourceFactory, final Properties paramProperties ) throws SQLException
+    public BaseStorageDao ( final DataSourceFactory dataSourceFactory, final Properties paramProperties, final boolean usePool ) throws SQLException
     {
-        this.accessor = new DataSourceConnectionAccessor ( dataSourceFactory, paramProperties );
+        this.accessor = usePool ? new PoolConnectionAccessor ( dataSourceFactory, paramProperties ) : new DataSourceConnectionAccessor ( dataSourceFactory, paramProperties );
     }
 
     @Override
@@ -93,7 +97,7 @@ public abstract class BaseStorageDao implements StorageDao
         return connection;
     }
 
-    protected DataSourceConnectionAccessor getAccessor ()
+    protected CommonConnectionAccessor getAccessor ()
     {
         return this.accessor;
     }
@@ -133,45 +137,50 @@ public abstract class BaseStorageDao implements StorageDao
     @Override
     public void updateComment ( final UUID id, final String comment ) throws Exception
     {
-        final Connection con = createConnection ();
+        this.accessor.doWithConnection ( new CommonConnectionTask<Void> () {
+
+            @Override
+            protected Void performTask ( final ConnectionContext connectionContext ) throws Exception
+            {
+                connectionContext.setAutoCommit ( false );
+                performUpdateCommand ( id, comment, connectionContext.getConnection () );
+                return null;
+            }
+        } );
+    }
+
+    private void performUpdateCommand ( final UUID id, final String comment, final Connection con ) throws SQLException
+    {
+        final PreparedStatement stm1 = con.prepareStatement ( String.format ( getDeleteAttributesSql (), getSchema () ) );
         try
         {
+            stm1.setString ( 1, id.toString () );
+            stm1.setString ( 2, Event.Fields.COMMENT.getName () );
+            stm1.addBatch ();
+            stm1.execute ();
 
-            final PreparedStatement stm1 = con.prepareStatement ( String.format ( getDeleteAttributesSql (), getSchema () ) );
+            final PreparedStatement stm2 = con.prepareStatement ( String.format ( getInsertAttributesSql (), getSchema () ) );
             try
             {
-                stm1.setString ( 1, id.toString () );
-                stm1.setString ( 2, Event.Fields.COMMENT.getName () );
-                stm1.addBatch ();
-                stm1.execute ();
+                stm2.setString ( 1, id.toString () );
+                stm2.setString ( 2, Event.Fields.COMMENT.getName () );
+                stm2.setString ( 3, VariantType.STRING.name () );
+                stm2.setString ( 4, clip ( getMaxLength (), comment ) );
+                stm2.setLong ( 5, (Long)null );
+                stm2.setDouble ( 6, (Double)null );
+                stm2.addBatch ();
+                stm2.execute ();
 
-                final PreparedStatement stm2 = con.prepareStatement ( String.format ( getInsertAttributesSql (), getSchema () ) );
-                try
-                {
-                    stm2.setString ( 1, id.toString () );
-                    stm2.setString ( 2, Event.Fields.COMMENT.getName () );
-                    stm2.setString ( 3, VariantType.STRING.name () );
-                    stm2.setString ( 4, clip ( getMaxLength (), comment ) );
-                    stm2.setLong ( 5, (Long)null );
-                    stm2.setDouble ( 6, (Double)null );
-                    stm2.addBatch ();
-                    stm2.execute ();
-
-                    con.commit ();
-                }
-                finally
-                {
-                    closeStatement ( stm2 );
-                }
+                con.commit ();
             }
             finally
             {
-                closeStatement ( stm1 );
+                closeStatement ( stm2 );
             }
         }
         finally
         {
-            closeConnection ( con );
+            closeStatement ( stm1 );
         }
     }
 

@@ -25,7 +25,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ScheduledExecutorService;
@@ -80,7 +79,7 @@ public class JdbcQuery implements Query
     }
 
     @Override
-    public Collection<Event> getNext ( final long count ) throws Exception
+    public List<Event> getNext ( final long count ) throws Exception
     {
         final List<Event> result = new ArrayList<Event> ();
         if ( this.hasMore )

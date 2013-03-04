@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,31 +19,25 @@
 
 package org.openscada.da.master.common.sum;
 
-import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
-import java.util.Set;
-import java.util.regex.Pattern;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.utils.str.StringHelper;
 
 public class CommonSumHandler extends AbstractMasterHandlerImpl
 {
-    private Pattern pattern;
 
-    private String tag;
+    private volatile List<Entry> entries = new LinkedList<Entry> ();
 
-    private String prefix = "osgi.source";
-
-    private boolean debug = false;
-
-    public CommonSumHandler ( final ObjectPoolTracker poolTracker )
+    public CommonSumHandler ( final ObjectPoolTracker<MasterItem> poolTracker )
     {
         super ( poolTracker );
     }
@@ -53,102 +47,60 @@ public class CommonSumHandler extends AbstractMasterHandlerImpl
     {
         super.update ( userInformation, parameters );
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        this.debug = cfg.getBoolean ( "debug", false );
-        this.prefix = cfg.getString ( "prefix", "osgi.source" );
 
-        this.tag = cfg.getString ( "tag" );
-        this.pattern = Pattern.compile ( cfg.getString ( "pattern", ".*\\." + Pattern.quote ( this.tag ) + "$" ) );
+        final boolean debug = cfg.getBoolean ( "debug", false );
+
+        final List<Entry> entries = new LinkedList<Entry> ();
+
+        final String[] tags = cfg.getStringChecked ( "tag", "'tag' must be set" ).split ( ", ?" );
+        for ( final String tag : tags )
+        {
+            final String prefix = cfg.getString ( String.format ( "tag.%s.prefix", tag ), "osgi.source" );
+            final String suffix = cfg.getString ( String.format ( "tag.%s.suffix", tag ) );
+            final String pattern = cfg.getString ( String.format ( "tag.%s.pattern", tag ) );
+            entries.add ( new Entry ( tag, prefix, suffix, pattern, debug ) );
+        }
+
+        // now assign
+        this.entries = entries;
 
         reprocess ();
     }
 
     @Override
-    public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public void dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder )
     {
-        if ( this.tag == null )
-        {
-            return value;
-        }
-
-        final Builder builder = new DataItemValue.Builder ( value );
-
         // convert source errors
         convertSource ( builder );
 
-        final Set<Object> contextSet = getContextSet ( context, this.tag );
-
-        if ( this.debug )
+        for ( final Entry entry : this.entries )
         {
-            builder.setAttribute ( this.prefix + ".before", Variant.valueOf ( StringHelper.join ( contextSet, "," ) ) );
+            entry.start ( context, builder );
         }
 
         // sum up
-        final Set<String> matches = new HashSet<String> ();
-        for ( final Map.Entry<String, Variant> entry : builder.getAttributes ().entrySet () )
+        for ( final Map.Entry<String, Variant> valueEntry : builder.getAttributes ().entrySet () )
         {
-            final Variant pValue = entry.getValue ();
-            final String name = entry.getKey ();
-            if ( this.pattern.matcher ( name ).matches () && pValue != null && pValue.asBoolean () )
+            final Variant pValue = valueEntry.getValue ();
+            final String name = valueEntry.getKey ();
+
+            for ( final Entry entry : this.entries )
             {
-                if ( !contextSet.contains ( name ) )
-                {
-                    matches.add ( name );
-                    contextSet.add ( name );
-                }
+                entry.check ( name, pValue );
             }
         }
 
-        if ( this.debug )
+        for ( final Entry entry : this.entries )
         {
-            builder.setAttribute ( this.prefix + ".after", Variant.valueOf ( StringHelper.join ( contextSet, "," ) ) );
-        }
-
-        builder.setAttribute ( this.tag, Variant.valueOf ( !matches.isEmpty () ) );
-        if ( this.debug )
-        {
-            builder.setAttribute ( this.tag + ".count", Variant.valueOf ( matches.size () ) );
-            builder.setAttribute ( this.tag + ".items", Variant.valueOf ( StringHelper.join ( matches, ", " ) ) );
-        }
-
-        return builder.build ();
-    }
-
-    @SuppressWarnings ( "unchecked" )
-    private static Set<Object> getContextSet ( final Map<String, Object> context, final String tag )
-    {
-        final Object o = context.get ( tag + ".set" );
-        if ( o instanceof Set<?> )
-        {
-            return (Set<Object>)o;
-        }
-        else
-        {
-            final Set<Object> set = new HashSet<Object> ();
-            context.put ( tag + ".set", set );
-            return set;
+            entry.end ( context, builder );
         }
     }
 
     private void convertSource ( final Builder builder )
     {
-        Variant sourceValue;
-
-        sourceValue = builder.getAttributes ().remove ( this.tag );
-        if ( sourceValue != null )
+        for ( final Entry entry : this.entries )
         {
-            builder.setAttribute ( String.format ( "%s.%s", this.prefix, this.tag ), sourceValue );
-        }
-
-        sourceValue = builder.getAttributes ().remove ( this.tag + ".count" );
-        if ( sourceValue != null && this.debug )
-        {
-            builder.setAttribute ( String.format ( "%s.%s.count", this.prefix, this.tag ), sourceValue );
-        }
-
-        sourceValue = builder.getAttributes ().remove ( this.tag + ".items" );
-        if ( sourceValue != null && this.debug )
-        {
-            builder.setAttribute ( String.format ( "%s.%s.items", this.prefix, this.tag ), sourceValue );
+            entry.convertSource ( builder );
         }
     }
 

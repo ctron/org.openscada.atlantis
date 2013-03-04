@@ -26,7 +26,7 @@ import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;

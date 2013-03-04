@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,16 +21,16 @@
 
 package org.openscada.hd.client.net;
 
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,6 +52,8 @@ public class QueryImpl implements Query
 
     private Long id;
 
+    private Long closeId;
+
     public QueryImpl ( final Executor executor, final ConnectionImpl connection, final String itemId, final QueryParameters parameters, final QueryListener listener )
     {
         this.executor = executor;
@@ -64,6 +68,7 @@ public class QueryImpl implements Query
         }
     }
 
+    @Override
     public void close ()
     {
         synchronized ( this )
@@ -76,21 +81,22 @@ public class QueryImpl implements Query
 
             logger.info ( "Closing query: {} ({})", new Object[] { this.itemId, this.parameters } );
 
-            // request close
-            this.connection.closeQuery ( this );
-
             // disconnect
             fireStateChange ( this.listener, QueryState.DISCONNECTED );
             this.listener = null;
+            this.closeId = this.id;
             this.id = null;
-
         }
+
+        // request close
+        this.connection.closeQuery ( this );
     }
 
     private void fireStateChange ( final QueryListener listener, final QueryState state )
     {
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 listener.updateState ( state );
@@ -102,6 +108,7 @@ public class QueryImpl implements Query
     {
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
                 listener.updateParameters ( parameters, valueTypes );
@@ -109,22 +116,29 @@ public class QueryImpl implements Query
         } );
     }
 
-    private void fireDataChange ( final QueryListener listener, final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
+    private void fireDataChange ( final QueryListener listener, final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         this.executor.execute ( new Runnable () {
 
+            @Override
             public void run ()
             {
-                logger.debug ( "Data update: {} (v: {}, vi: {})", new Object[] { index, values.size (), valueInformation.length } );
+                logger.debug ( "Data update: {} (v: {}, vi: {})", new Object[] { index, values.size (), valueInformation.size () } );
                 QueryImpl.this.listener.updateData ( index, values, valueInformation );
             }
         } );
     }
 
+    @Override
     public void changeParameters ( final QueryParameters parameters )
     {
         synchronized ( this )
         {
+            if ( this.closed )
+            {
+                return;
+            }
+
             if ( this.parameters == parameters )
             {
                 return;
@@ -145,18 +159,43 @@ public class QueryImpl implements Query
         return this.id;
     }
 
+    /**
+     * The id of the query used for closing it.
+     * <p>
+     * Since the ID will be set to <code>null</code> once the query gets closed,
+     * this id will be used to close the query. It must be the same value as the
+     * original id, but only set when the query gets closed.
+     * </p>
+     * 
+     * @return the id of the query when closing
+     */
+    public Long getCloseId ()
+    {
+        return this.closeId;
+    }
+
     public void handleUpdateStatus ( final QueryState state )
     {
         synchronized ( this )
         {
+            if ( this.closed )
+            {
+                return;
+            }
+
             fireStateChange ( this.listener, state );
         }
     }
 
-    public void handleUpdateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
+    public void handleUpdateData ( final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         synchronized ( this )
         {
+            if ( this.closed )
+            {
+                return;
+            }
+
             fireDataChange ( this.listener, index, values, valueInformation );
         }
     }
@@ -165,6 +204,11 @@ public class QueryImpl implements Query
     {
         synchronized ( this )
         {
+            if ( this.closed )
+            {
+                return;
+            }
+
             fireParameterChange ( this.listener, parameters, valueTypes );
         }
     }

@@ -25,14 +25,15 @@ import java.util.concurrent.Executor;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
+import org.openscada.utils.osgi.pool.ManageableObjectPool;
 
 public class WordVariable extends ScalarVariable
 {
-    public WordVariable ( final String name, final int index, final Executor executor, final ObjectPoolImpl itemPool, final Attribute... attributes )
+    public WordVariable ( final String name, final int index, final Executor executor, final ManageableObjectPool<DataItem> itemPool, final Attribute... attributes )
     {
         super ( name, index, executor, itemPool, attributes );
     }

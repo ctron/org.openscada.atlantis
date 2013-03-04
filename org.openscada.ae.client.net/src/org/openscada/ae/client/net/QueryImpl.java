@@ -19,10 +19,12 @@
 
 package org.openscada.ae.client.net;
 
+import java.util.List;
+
 import org.openscada.ae.Event;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
-import org.openscada.ae.QueryState;
+import org.openscada.ae.data.QueryState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +84,7 @@ public class QueryImpl implements Query
         }
     }
 
-    public void handleData ( final Event[] data )
+    public void handleData ( final List<Event> data )
     {
         try
         {

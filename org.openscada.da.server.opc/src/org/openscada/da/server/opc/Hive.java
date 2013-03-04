@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,8 +34,8 @@ import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.opc.configuration.XMLConfigurator;
-import org.openscada.da.server.opc.connection.ConnectionSetup;
 import org.openscada.da.server.opc.connection.OPCConnection;
+import org.openscada.da.server.opc.connection.data.ConnectionSetup;
 import org.openscada.da.server.opc.preload.ItemSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -50,7 +52,7 @@ public class Hive extends HiveCommon
 
     public Hive () throws XmlException, IOException, ConfigurationError
     {
-        this ( new XMLConfigurator ( "configuration.xml" ) );
+        this ( new XMLConfigurator ( System.getProperty ( "org.openscada.da.server.opc.defaultConfigurationFile", "configuration.xml" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     public Hive ( final Node node ) throws XmlException, IOException, ConfigurationError
@@ -72,6 +74,12 @@ public class Hive extends HiveCommon
         setRootFolder ( this.rootFolder );
 
         configurator.configure ( this );
+    }
+
+    @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.opc"; //$NON-NLS-1$
     }
 
     private void initJInterop ()

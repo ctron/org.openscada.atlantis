@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -36,6 +38,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.core.Variant;
 import org.openscada.da.server.opc.Helper;
+import org.openscada.da.server.opc.connection.data.ControllerState;
 import org.openscada.da.server.opc.job.Worker;
 import org.openscada.da.server.opc.job.impl.ErrorMessageJob;
 import org.openscada.da.server.opc.job.impl.ItemActivationJob;
@@ -62,23 +65,26 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     private final static Logger logger = LoggerFactory.getLogger ( OPCIoManager.class );
 
-    private static final String PROP_SERVER_HANDLE_COUNT = "serverHandleCount";
+    private static final String PROP_SERVER_HANDLE_COUNT = "serverHandleCount"; //$NON-NLS-1$
 
-    private static final String PROP_WRITE_REQUEST_COUNT = "writeRequestCount";
+    private static final String PROP_WRITE_REQUEST_COUNT = "writeRequestCount"; //$NON-NLS-1$
 
-    private static final String PROP_WRITE_REQUEST_MAX = "writeRequestMax";
+    private static final String PROP_WRITE_REQUEST_MAX = "writeRequestMax"; //$NON-NLS-1$
 
-    private static final String PROP_WRITE_REQUEST_TOTAL = "writeRequestTotal";
+    private static final String PROP_WRITE_REQUEST_TOTAL = "writeRequestTotal"; //$NON-NLS-1$
 
     private int writeRequestMax = 0;
 
     private final AtomicLong writeRequestTotal = new AtomicLong ();
 
     /**
-     * The request queue
+     * Holds item that are to be requested in the next run
      */
     private final Map<String, ItemRegistrationRequest> requestMap = new HashMap<String, ItemRegistrationRequest> ();
 
+    /**
+     * Holds items which are either already realized or will be in the next run
+     */
     private final Map<String, ItemRegistrationRequest> requestedMap = new HashMap<String, ItemRegistrationRequest> ();
 
     protected final Map<String, Integer> clientHandleMap = new HashMap<String, Integer> ();
@@ -141,14 +147,20 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         for ( final ItemRegistrationRequest itemDef : items )
         {
             final String itemId = itemDef.getItemDefinition ().getItemID ();
+
+            logger.debug ( "Requsting item: {}", itemId );
+
+            // remove from un-registrations ... just in case
+            this.itemUnregistrations.remove ( itemId );
+
             if ( this.requestMap.containsKey ( itemId ) )
             {
-                logger.info ( "Item already in request queue" );
+                logger.info ( "Item already in request queue" ); //$NON-NLS-1$
                 continue;
             }
             if ( this.requestedMap.containsKey ( itemId ) )
             {
-                logger.info ( "Item already requested" );
+                logger.info ( "Item already requested" ); //$NON-NLS-1$
                 continue;
             }
             this.requestMap.put ( itemDef.getItemDefinition ().getItemID (), itemDef );
@@ -157,6 +169,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     public synchronized void unrequestItem ( final String itemId )
     {
+        logger.debug ( "Adding item to unrequest queue: {}", itemId );
         this.itemUnregistrations.add ( itemId );
     }
 
@@ -186,25 +199,31 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     {
         final Collection<FutureTask<Result<WriteRequest>>> copyWriteRequests;
 
-        this.connected = true;
-
         synchronized ( this )
         {
+            this.connected = false;
+
+            // all unregistrations are done anyway
             this.itemUnregistrations.clear ();
 
+            // all write requests will fail now
             copyWriteRequests = new ArrayList<FutureTask<Result<WriteRequest>>> ( this.writeRequests );
             this.writeRequests.clear ();
 
             firePropertyChange ( PROP_WRITE_REQUEST_COUNT, null, this.writeRequests.size () );
 
+            // all client and server handles are invalid with a disconnect
             this.clientHandleMap.clear ();
             this.clientHandleMapRev.clear ();
 
             this.serverHandleMap.clear ();
             this.serverHandleMapRev.clear ();
             firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
+
+            // we don't kill the requestedMap since we will need to re-add the items once the connection is established
         }
 
+        logger.info ( "Discarding {} write requests", copyWriteRequests.size () );
         for ( final FutureTask<Result<WriteRequest>> request : copyWriteRequests )
         {
             request.cancel ( true );
@@ -214,11 +233,12 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     /**
      * register all requested items with the OPC server
+     * 
      * @throws InvocationTargetException
      */
     private void registerAllItems () throws InvocationTargetException
     {
-        Collection<ItemRegistrationRequest> requested;
+        final Collection<ItemRegistrationRequest> requested;
 
         synchronized ( this )
         {
@@ -278,7 +298,9 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     /**
      * Remove an item form the internal structure by server handle
-     * @param serverHandle the server handle of the item to remove 
+     * 
+     * @param serverHandle
+     *            the server handle of the item to remove
      */
     private void removeByServerHandle ( final Integer serverHandle )
     {
@@ -353,22 +375,25 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         firePropertyChange ( PROP_SERVER_HANDLE_COUNT, null, this.serverHandleMap.size () );
     }
 
-    public void wakeupItem ( final String item )
+    public synchronized void wakeupItem ( final String item )
     {
+        logger.debug ( "Waking up item: {}", item );
+
         // request the item in any way
         requestItemById ( item );
 
-        synchronized ( this )
-        {
-            this.activationRequestMap.put ( item, Boolean.TRUE );
-            this.activeSet.add ( item );
-        }
+        this.activationRequestMap.put ( item, Boolean.TRUE );
+        this.activeSet.add ( item );
     }
 
     public synchronized void suspendItem ( final String item )
     {
+        logger.debug ( "Suspending item: {}", item );
+
         this.activationRequestMap.put ( item, Boolean.FALSE );
         this.activeSet.remove ( item );
+
+        unrequestItem ( item );
     }
 
     public synchronized OPCIoContext prepareProcessing ()
@@ -416,8 +441,11 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         {
             ctx.setUnregistrations ( new HashSet<String> ( this.itemUnregistrations ) );
             this.itemUnregistrations.clear ();
+
+            // remove all unregistration items from the list of items which are actively being requested
             for ( final String itemId : ctx.getUnregistrations () )
             {
+                logger.debug ( "Removing item {} from requestedMap", itemId );
                 this.requestedMap.remove ( itemId );
             }
         }
@@ -456,7 +484,9 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     /**
      * Handle the pending activations
-     * @param processMap the activations to process
+     * 
+     * @param processMap
+     *            the activations to process
      * @throws InvocationTargetException
      */
     private void performActivations ( final Map<String, Boolean> processMap ) throws InvocationTargetException
@@ -483,10 +513,13 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     /**
      * execute setting the active state.
      * <p>
-     * This method might block until either the timeout occurrs or the
-     * operation is completed
-     * @param state the state to set
-     * @param list the list to set
+     * This method might block until either the timeout occurrs or the operation
+     * is completed
+     * 
+     * @param state
+     *            the state to set
+     * @param list
+     *            the list to set
      * @throws InvocationTargetException
      */
     private void setActive ( final boolean state, final Collection<String> list ) throws InvocationTargetException
@@ -518,15 +551,21 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     /**
      * Perform the read operation on the already registered items
-     * @param dataSource the datasource to read from (cache or device)
+     * 
+     * @param dataSource
+     *            the datasource to read from (cache or device)
      * @throws InvocationTargetException
      */
     protected abstract void performRead ( final Set<String> readSet, final OPCDATASOURCE dataSource ) throws InvocationTargetException;
 
     /**
      * Provide the registers items with the read result
-     * @param result the read result
-     * @param useServerHandles <code>true</code> if the result uses server handle, <code>false</code> if it uses client handles
+     * 
+     * @param result
+     *            the read result
+     * @param useServerHandles
+     *            <code>true</code> if the result uses server handle,
+     *            <code>false</code> if it uses client handles
      * @throws InvocationTargetException
      */
     protected void handleReadResult ( final KeyedResultSet<Integer, ValueData> result, final boolean useServerHandles ) throws InvocationTargetException
@@ -630,7 +669,8 @@ public abstract class OPCIoManager extends AbstractPropertyChange
      * Perform all queued write requests
      * <p>
      * May only be called by the controller
-     * @param requests 
+     * 
+     * @param requests
      * @throws InvocationTargetException
      */
     protected abstract void performWriteRequests ( final Collection<FutureTask<Result<WriteRequest>>> requests ) throws InvocationTargetException;

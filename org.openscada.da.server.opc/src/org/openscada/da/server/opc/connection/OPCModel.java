@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,6 +25,8 @@ import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.jinterop.dcom.core.JISession;
+import org.openscada.da.server.opc.connection.data.ConnectionState;
+import org.openscada.da.server.opc.connection.data.ControllerState;
 import org.openscada.opc.dcom.common.impl.OPCCommon;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.opc.dcom.da.impl.OPCAsyncIO2;
@@ -83,7 +87,8 @@ public class OPCModel extends AbstractPropertyChange
     private int updateRate = 250;
 
     /**
-     * Flag that indicates if the driver should ignore timestamp only changes completly
+     * Flag that indicates if the driver should ignore timestamp only changes
+     * completly
      */
     private boolean ignoreTimestampOnlyChange = false;
 

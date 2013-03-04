@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,23 +21,25 @@
 
 package org.openscada.ae.server.common;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
-import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.openscada.ae.BrowserEntry;
-import org.openscada.ae.BrowserType;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.UnknownQueryException;
-import org.openscada.ae.sec.AuthorizationHelper;
+import org.openscada.ae.data.BrowserEntry;
+import org.openscada.ae.data.BrowserType;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
 import org.openscada.ae.server.common.akn.AknHandler;
@@ -44,12 +48,12 @@ import org.openscada.ae.server.common.event.EventQuerySource;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ae.server.common.monitor.MonitorQuerySource;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
-import org.openscada.core.server.common.ServiceCommon;
+import org.openscada.core.server.common.osgi.AbstractServiceImpl;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.ValidationException;
 import org.openscada.sec.AuthorizationResult;
+import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
@@ -62,13 +66,11 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ServiceImpl extends ServiceCommon implements Service, ServiceListener
+public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> implements Service, ServiceListener
 {
     private final static Logger logger = LoggerFactory.getLogger ( ServiceImpl.class );
 
-    private final Set<SessionImpl> sessions = new CopyOnWriteArraySet<SessionImpl> ();
-
-    private final SubscriptionManager conditionSubscriptions;
+    private final SubscriptionManager monitorSubscriptions;
 
     private final SubscriptionManager eventSubscriptions;
 
@@ -90,30 +92,28 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
 
     private ServiceListener eventServiceListener;
 
-    private final AuthorizationHelper authorizationHelper;
-
-    public ServiceImpl ( final BundleContext context ) throws InvalidSyntaxException
+    public ServiceImpl ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
+        super ( context, executor );
+
         this.context = context;
-        this.conditionSubscriptions = new SubscriptionManager ();
+        this.monitorSubscriptions = new SubscriptionManager ();
         this.eventSubscriptions = new SubscriptionManager ();
 
         // create akn handler
         this.aknTracker = new ServiceTracker<AknHandler, AknHandler> ( context, AknHandler.class, null );
-
-        this.authorizationHelper = new AuthorizationHelper ( context );
     }
 
     @Override
-    public void acknowledge ( final Session session, final String conditionId, final Date aknTimestamp ) throws InvalidSessionException
+    public void acknowledge ( final Session session, final String monitorId, final Date aknTimestamp, final UserInformation providedUserInformation ) throws InvalidSessionException, PermissionDeniedException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
-        logger.debug ( "Request akn: {} ({})", conditionId, aknTimestamp );
+        logger.debug ( "Request akn: {} ({}): sessionUser: {}, requestUser: {}", new Object[] { monitorId, aknTimestamp, sessionImpl.getUserInformation (), providedUserInformation } );
 
-        final UserInformation userInformation = sessionImpl.getUserInformation ();
+        final UserInformation userInformation = makeEffectiveUserInformation ( sessionImpl, providedUserInformation );
 
-        final AuthorizationResult result = this.authorizationHelper.authorize ( "MONITOR", conditionId, "AKN", userInformation, null );
+        final AuthorizationResult result = authorize ( "MONITOR", monitorId, "AKN", userInformation, null );
         if ( !result.isGranted () )
         {
             return;
@@ -123,7 +123,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         {
             if ( o instanceof AknHandler )
             {
-                if ( ( (AknHandler)o ).acknowledge ( conditionId, userInformation, aknTimestamp ) )
+                if ( ( (AknHandler)o ).acknowledge ( monitorId, userInformation, aknTimestamp ) )
                 {
                     break;
                 }
@@ -131,48 +131,53 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         }
     }
 
-    protected void addConditionQuery ( final String id, final MonitorQuery query )
+    protected void addMonitorQuery ( final String id, final MonitorQuery query )
     {
-        logger.info ( "Adding new query: " + id );
-        this.conditionSubscriptions.setSource ( id, new MonitorQuerySource ( id, query ) );
+        logger.info ( "Adding new query: {}", id );
+        this.monitorSubscriptions.setSource ( id, new MonitorQuerySource ( id, query ) );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
-        final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.CONDITIONS ), attributes );
+        final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.MONITORS ), attributes );
 
-        triggerBrowserChange ( new BrowserEntry[] { entry }, null, false );
+        triggerBrowserChange ( Arrays.asList ( entry ), null, false );
     }
 
-    protected void removeConditionQuery ( final String id, final MonitorQuery query )
+    protected void removeMonitorQuery ( final String id, final MonitorQuery query )
     {
-        logger.info ( "Removing query: " + id );
-        this.conditionSubscriptions.setSource ( id, null );
+        logger.info ( "Removing query: {}", id );
+        this.monitorSubscriptions.setSource ( id, null );
 
-        triggerBrowserChange ( null, new String[] { id }, false );
+        triggerBrowserChange ( null, Collections.singleton ( id ), false );
     }
 
     protected void addEventQuery ( final String id, final EventQuery query )
     {
-        logger.info ( "Adding new event query: " + id );
+        logger.info ( "Adding new event query: {}", id );
         this.eventSubscriptions.setSource ( id, new EventQuerySource ( id, query ) );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         final BrowserEntry entry = new BrowserEntry ( id, EnumSet.of ( BrowserType.EVENTS ), attributes );
 
-        triggerBrowserChange ( new BrowserEntry[] { entry }, null, false );
+        triggerBrowserChange ( Arrays.asList ( entry ), null, false );
     }
 
     protected void removeEventQuery ( final String id, final EventQuery query )
     {
-        logger.info ( "Removing event query: " + id );
+        logger.info ( "Removing event query: {}", id );
         this.eventSubscriptions.setSource ( id, null );
 
-        triggerBrowserChange ( null, new String[] { id }, false );
+        triggerBrowserChange ( null, Collections.singleton ( id ), false );
 
-        logger.info ( "Removed event query: " + id );
+        logger.info ( "Removed event query: {}", id );
     }
 
-    protected synchronized void triggerBrowserChange ( final BrowserEntry[] entries, final String[] removed, final boolean full )
+    protected synchronized void triggerBrowserChange ( final List<BrowserEntry> entries, final Set<String> removed, final boolean full )
     {
+        if ( full )
+        {
+            this.browserCache.clear ();
+        }
+
         if ( removed != null )
         {
             for ( final String id : removed )
@@ -197,7 +202,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
     public Query createQuery ( final Session session, final String queryType, final String queryData, final QueryListener listener ) throws InvalidSessionException
     {
         // validate the session
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
         final QueryImpl query = new QueryImpl ( this.context, sessionImpl, this.eventExecutor, this.queryLoadExecutor, queryType, queryData, listener );
 
@@ -219,12 +224,13 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
     @Override
     public void subscribeConditionQuery ( final Session session, final String queryId ) throws InvalidSessionException, UnknownQueryException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
+
         logger.info ( "Request condition subscription: " + queryId );
 
         try
         {
-            this.conditionSubscriptions.subscribe ( queryId, sessionImpl.getConditionListener () );
+            this.monitorSubscriptions.subscribe ( queryId, sessionImpl.getMonitorListener () );
         }
         catch ( final ValidationException e )
         {
@@ -236,16 +242,16 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
     @Override
     public void unsubscribeConditionQuery ( final Session session, final String queryId ) throws InvalidSessionException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
         logger.info ( "Request condition unsubscription: " + queryId );
-        this.conditionSubscriptions.unsubscribe ( queryId, sessionImpl.getConditionListener () );
+        this.monitorSubscriptions.unsubscribe ( queryId, sessionImpl.getMonitorListener () );
     }
 
     @Override
     public void subscribeEventQuery ( final Session session, final String queryId ) throws InvalidSessionException, UnknownQueryException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
         logger.info ( "Request event subscription: " + queryId );
 
         try
@@ -262,14 +268,14 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
     @Override
     public void unsubscribeEventQuery ( final Session session, final String queryId ) throws InvalidSessionException
     {
-        final SessionImpl sessionImpl = validateSession ( session );
+        final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
         logger.info ( "Request event unsubscription: " + queryId );
         this.eventSubscriptions.unsubscribe ( queryId, sessionImpl.getEventListener () );
     }
 
     @Override
-    public void closeSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
+    public void closeSession ( final Session session ) throws InvalidSessionException
     {
         SessionImpl sessionImpl = null;
         synchronized ( this )
@@ -285,28 +291,21 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
 
         if ( sessionImpl != null )
         {
-            this.conditionSubscriptions.unsubscribeAll ( sessionImpl.getConditionListener () );
+            this.monitorSubscriptions.unsubscribeAll ( sessionImpl.getMonitorListener () );
             this.eventSubscriptions.unsubscribeAll ( sessionImpl.getEventListener () );
         }
     }
 
     @Override
-    public synchronized org.openscada.core.server.Session createSession ( final Properties properties ) throws UnableToCreateSessionException
+    protected SessionImpl createSessionInstance ( final UserInformation user, final Map<String, String> sessionProperties )
     {
-        if ( this.eventExecutor == null )
-        {
-            throw new UnableToCreateSessionException ( "Service disposed" );
-        }
-
-        final Map<String, String> sessionProperties = new HashMap<String, String> ();
-        final UserInformation user = createUserInformation ( properties, sessionProperties );
         final SessionImpl session = new SessionImpl ( user, sessionProperties );
         this.sessions.add ( session );
 
         // copy data
-        final BrowserEntry[] browserCache = this.browserCache.values ().toArray ( new BrowserEntry[0] );
+        final List<BrowserEntry> browserCache = new ArrayList<BrowserEntry> ( this.browserCache.values () );
 
-        if ( browserCache.length > 0 )
+        if ( !browserCache.isEmpty () )
         {
             // notify current data if we have some
             this.eventExecutor.execute ( new Runnable () {
@@ -326,11 +325,10 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
     public synchronized void start () throws Exception
     {
         logger.info ( "Staring new service" );
+        super.start ();
 
         this.queryLoadExecutor = Executors.newCachedThreadPool ( new NamedThreadFactory ( "ServiceImpl/QueryLoad" ) );
         this.eventExecutor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ServiceImpl/Event" ) );
-
-        this.authorizationHelper.open ();
 
         // create monitor query listener
         synchronized ( this )
@@ -403,20 +401,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         this.eventExecutor.shutdown ();
         this.eventExecutor = null;
 
-        this.authorizationHelper.close ();
-    }
-
-    protected SessionImpl validateSession ( final Session session ) throws InvalidSessionException
-    {
-        if ( ! ( session instanceof Session ) )
-        {
-            throw new InvalidSessionException ();
-        }
-        if ( !this.sessions.contains ( session ) )
-        {
-            throw new InvalidSessionException ();
-        }
-        return (SessionImpl)session;
+        super.stop ();
     }
 
     @Override
@@ -429,25 +414,25 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
         {
             switch ( event.getType () )
             {
-            case ServiceEvent.REGISTERED:
-                checkAddConditionQuery ( ref );
-                checkAddEventQuery ( ref );
-                break;
-            case ServiceEvent.UNREGISTERING:
-                final String id = getQueryId ( ref );
-                final MonitorQuery query = this.conditionQueryRefs.remove ( id );
-                if ( query != null )
-                {
-                    removeConditionQuery ( id, query );
-                    this.context.ungetService ( ref );
-                }
-                final EventQuery eventQuery = this.eventQueryRefs.remove ( id );
-                if ( eventQuery != null )
-                {
-                    removeEventQuery ( id, eventQuery );
-                    this.context.ungetService ( ref );
-                }
-                break;
+                case ServiceEvent.REGISTERED:
+                    checkAddConditionQuery ( ref );
+                    checkAddEventQuery ( ref );
+                    break;
+                case ServiceEvent.UNREGISTERING:
+                    final String id = getQueryId ( ref );
+                    final MonitorQuery query = this.conditionQueryRefs.remove ( id );
+                    if ( query != null )
+                    {
+                        removeMonitorQuery ( id, query );
+                        this.context.ungetService ( ref );
+                    }
+                    final EventQuery eventQuery = this.eventQueryRefs.remove ( id );
+                    if ( eventQuery != null )
+                    {
+                        removeEventQuery ( id, eventQuery );
+                        this.context.ungetService ( ref );
+                    }
+                    break;
             }
         }
         catch ( final Exception e )
@@ -468,7 +453,7 @@ public class ServiceImpl extends ServiceCommon implements Service, ServiceListen
             if ( id != null )
             {
                 this.conditionQueryRefs.put ( id, query );
-                addConditionQuery ( id, query );
+                addMonitorQuery ( id, query );
             }
         }
         else

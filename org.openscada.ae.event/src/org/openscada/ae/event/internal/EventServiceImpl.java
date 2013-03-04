@@ -19,6 +19,8 @@
 
 package org.openscada.ae.event.internal;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
@@ -144,7 +146,7 @@ public class EventServiceImpl implements EventService, EventManager
         {
             try
             {
-                listener.handleEvent ( new Event[] { storedEvent } );
+                listener.handleEvent ( Arrays.asList ( storedEvent ) );
             }
             catch ( final Exception e )
             {
@@ -158,7 +160,7 @@ public class EventServiceImpl implements EventService, EventManager
     {
         if ( this.listeners.add ( listener ) )
         {
-            listener.handleEvent ( this.writeQueue.toArray ( new Event[this.writeQueue.size ()] ) );
+            listener.handleEvent ( Collections.unmodifiableList ( this.writeQueue ) );
         }
     }
 

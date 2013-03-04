@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +25,7 @@ import java.util.Hashtable;
 import java.util.Properties;
 
 import org.openscada.ae.server.storage.Storage;
+import org.openscada.utils.interner.InternerHelper;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
 import org.openscada.utils.osgi.jdbc.DataSourceHelper;
@@ -37,6 +38,8 @@ import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.collect.Interner;
 
 public class Activator implements BundleActivator
 {
@@ -52,6 +55,8 @@ public class Activator implements BundleActivator
 
     private SingleServiceTracker<DataSourceFactory> dataSouceFactoryTracker;
 
+    private Interner<String> stringInterner;
+
     static BundleContext getContext ()
     {
         return context;
@@ -66,7 +71,10 @@ public class Activator implements BundleActivator
     {
         Activator.context = bundleContext;
 
-        final String driver = System.getProperty ( "org.openscada.ae.server.storage.jdbc.driver", System.getProperty ( "org.openscada.jdbc.driver", "" ) );
+        this.stringInterner = InternerHelper.makeInterner ( "org.openscada.ae.monitor.dataitem.stringInternerType", "weak" );
+
+        final String driver = DataSourceHelper.getDriver ( "org.openscada.ae.server.storage.jdbc.driver", DataSourceHelper.DEFAULT_PREFIX );
+
         final Filter filter = context.createFilter ( "(&(objectClass=" + DataSourceFactory.class.getName () + ")(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=" + driver + "))" );
         this.dataSouceFactoryTracker = new SingleServiceTracker<DataSourceFactory> ( bundleContext, filter, new SingleServiceListener<DataSourceFactory> () {
             @Override
@@ -98,9 +106,9 @@ public class Activator implements BundleActivator
 
     private void activate ( final DataSourceFactory dataSourceFactory ) throws Exception
     {
-        final Properties dbProperties = DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.server.storage.jdbc", "org.openscada.jdbc" );
+        final Properties dbProperties = DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX );
 
-        this.jdbcStorage = createJdbcStorage ( dataSourceFactory, dbProperties );
+        this.jdbcStorage = createJdbcStorage ( dataSourceFactory, dbProperties, DataSourceHelper.isConnectionPool ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX, false ) );
         this.jdbcStorage.start ();
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ( 2 );
@@ -138,28 +146,15 @@ public class Activator implements BundleActivator
         Activator.context = null;
     }
 
-    private JdbcStorage createJdbcStorage ( final DataSourceFactory dataSourceFactory, final Properties dbParameters ) throws SQLException
+    private JdbcStorage createJdbcStorage ( final DataSourceFactory dataSourceFactory, final Properties dbParameters, final boolean usePool ) throws SQLException
     {
-        if ( "legacy".equals ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "" ) ) )
+        final AbstractJdbcStorageDao jdbcStorageDao = new JdbcStorageDao ( dataSourceFactory, dbParameters, usePool, this.stringInterner );
+        jdbcStorageDao.setInstance ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "default" ) );
+        jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
+        if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
         {
-            final LegacyJdbcStorageDao jdbcStorageDao = new LegacyJdbcStorageDao ( dataSourceFactory, dbParameters );
-            jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
-            if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
-            {
-                jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
-            }
-            return new JdbcStorage ( jdbcStorageDao );
+            jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
         }
-        else
-        {
-            final JdbcStorageDao jdbcStorageDao = new JdbcStorageDao ( dataSourceFactory, dbParameters );
-            jdbcStorageDao.setInstance ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.instance", "default" ) );
-            jdbcStorageDao.setMaxLength ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.maxlength", this.maxLength ) );
-            if ( !System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema", "" ).trim ().isEmpty () )
-            {
-                jdbcStorageDao.setSchema ( System.getProperty ( "org.openscada.ae.server.storage.jdbc.schema" ) + "." );
-            }
-            return new JdbcStorage ( jdbcStorageDao );
-        }
+        return new JdbcStorage ( jdbcStorageDao );
     }
 }

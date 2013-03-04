@@ -1,15 +1,17 @@
 Manifest-Version: 1.0
-Import-Package: org.openscada.core;version="0.14.0",
- org.openscada.core.net;version="0.14.0",
- org.openscada.core.subscription;version="0.14.0",
- org.openscada.da.core;version="0.14.0",
- org.openscada.da.core.browser;version="0.14.0",
- org.openscada.net.base.data;version="0.14.0",
- org.openscada.sec;version="0.1.0",
- org.openscada.utils.lang;version="0.13.0",
- org.slf4j;version="1.5.8"
+Import-Package: org.openscada.core;version="1.0.0",
+ org.openscada.core.data;version="1.0.0",
+ org.openscada.core.net;version="1.0.0",
+ org.openscada.core.subscription;version="1.0.0",
+ org.openscada.da.core;version="1.0.0",
+ org.openscada.da.core.browser;version="1.0.0",
+ org.openscada.da.data;version="1.0.0",
+ org.openscada.net.base.data;version="1.0.0",
+ org.openscada.sec;version="1.0.0",
+ org.openscada.utils.lang;version="1.0.0",
+ org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.net.handler;version="0.17.0";
+Export-Package: org.openscada.da.net.handler;version="1.0.0";
   uses:="org.openscada.net.base.data,
    org.openscada.core.net,
    org.openscada.utils.lang,
@@ -17,9 +19,8 @@ Export-Package: org.openscada.da.net.handler;version="0.17.0";
    org.openscada.core,
    org.openscada.core.subscription,
    org.openscada.da.core"
-Bundle-Version: 0.17.0.qualifier
-Bundle-Name: OpenSCADA-DA-Net-Base
-Bundle-DocURL: http://www.inavare.net
+Bundle-Version: 1.0.0.qualifier
+Bundle-Name: openSCADA DA Net Base
 Bundle-ManifestVersion: 2
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.net

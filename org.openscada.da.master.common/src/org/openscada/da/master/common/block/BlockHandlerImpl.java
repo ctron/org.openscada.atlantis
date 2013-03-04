@@ -33,6 +33,7 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
@@ -54,7 +55,7 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     private final Variant source;
 
-    public BlockHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
+    public BlockHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, BlockHandlerFactoryImpl.FACTORY_ID, BlockHandlerFactoryImpl.FACTORY_ID );
         this.source = Variant.valueOf ( configurationId );
@@ -62,11 +63,9 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
     }
 
     @Override
-    protected DataItemValue processDataUpdate ( final DataItemValue value ) throws Exception
+    protected void processDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder ) throws Exception
     {
-        final Builder builder = new Builder ( value );
         injectAttributes ( builder );
-        return builder.build ();
     }
 
     @Override

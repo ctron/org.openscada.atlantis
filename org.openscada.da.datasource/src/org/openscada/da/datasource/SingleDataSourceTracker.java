@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,18 +32,22 @@ public class SingleDataSourceTracker
         public void dataSourceChanged ( DataSource dataSource );
     }
 
-    private final SingleObjectPoolServiceTracker tracker;
+    private final SingleObjectPoolServiceTracker<DataSource> tracker;
 
     private final ServiceListener listener;
 
     /**
      * Create a new single datasource tracker
-     * @param poolTracker the pool tracker to use
-     * @param dataSourceId the id of the datasource to track 
-     * @param listener the listener that gets notified (must not be <code>null</code>)
+     * 
+     * @param poolTracker
+     *            the pool tracker to use
+     * @param dataSourceId
+     *            the id of the datasource to track
+     * @param listener
+     *            the listener that gets notified (must not be <code>null</code>)
      * @throws InvalidSyntaxException
      */
-    public SingleDataSourceTracker ( final ObjectPoolTracker poolTracker, final String dataSourceId, final ServiceListener listener ) throws InvalidSyntaxException
+    public SingleDataSourceTracker ( final ObjectPoolTracker<DataSource> poolTracker, final String dataSourceId, final ServiceListener listener ) throws InvalidSyntaxException
     {
         this.listener = listener;
         if ( listener == null )
@@ -51,11 +55,11 @@ public class SingleDataSourceTracker
             throw new NullPointerException ( "'listener' must not be null" );
         }
 
-        this.tracker = new SingleObjectPoolServiceTracker ( poolTracker, dataSourceId, new SingleObjectPoolServiceTracker.ServiceListener () {
+        this.tracker = new SingleObjectPoolServiceTracker<DataSource> ( poolTracker, dataSourceId, new SingleObjectPoolServiceTracker.ServiceListener<DataSource> () {
             @Override
-            public void serviceChange ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceChange ( final DataSource service, final Dictionary<?, ?> properties )
             {
-                SingleDataSourceTracker.this.setDataSource ( (DataSource)service );
+                SingleDataSourceTracker.this.setDataSource ( service );
             }
         } );
     }

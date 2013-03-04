@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,14 +21,15 @@
 
 package org.openscada.hd.server.importer.hsdb;
 
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
+import org.openscada.hd.data.HistoricalItemInformation;
+import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.storage.common.QueryImpl;
 import org.openscada.hd.server.storage.common.ValueSourceManager;
@@ -36,13 +39,13 @@ public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
 {
     private final HistoricalItemInformation information;
 
-    private final ExecutorService executor;
+    private final ScheduledExecutorService executor;
 
     private final HSDBValueSource source;
 
     private Set<QueryImpl> queries = new HashSet<QueryImpl> ();
 
-    public HSDBHistoricalItem ( final ExecutorService executor, final HSDBValueSource source, final HistoricalItemInformation information )
+    public HSDBHistoricalItem ( final ScheduledExecutorService executor, final HSDBValueSource source, final HistoricalItemInformation information )
     {
         this.executor = executor;
         this.information = information;
@@ -52,7 +55,7 @@ public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
     @Override
     public Query createQuery ( final QueryParameters parameters, final QueryListener listener, final boolean updateData )
     {
-        final QueryImpl query = new QueryImpl ( this, this.executor, parameters, listener, updateData, this.source.getStartTimestamp (), this.source.getEndTimestamp () );
+        final QueryImpl query = new QueryImpl ( this, this.executor, this.executor, parameters, listener, updateData, this.source.getStartTimestamp (), this.source.getEndTimestamp () );
         synchronized ( this )
         {
             if ( this.queries == null )
@@ -99,9 +102,9 @@ public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
     }
 
     @Override
-    public void visit ( final QueryParameters parameters, final ValueVisitor visitor )
+    public boolean visit ( final QueryParameters parameters, final ValueVisitor visitor )
     {
-        this.source.visit ( visitor, parameters.getStartTimestamp ().getTime (), parameters.getEndTimestamp ().getTime () );
+        return this.source.visit ( visitor, new Date ( parameters.getStartTimestamp () ), new Date ( parameters.getEndTimestamp () ) );
     }
 
 }

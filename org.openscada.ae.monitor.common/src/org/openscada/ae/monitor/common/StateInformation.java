@@ -1,148 +1,71 @@
 /*
- * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * This file is part of the openSCADA project
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
- * OpenSCADA is free software: you can redistribute it and/or modify
+ * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
  *
- * OpenSCADA is distributed in the hope that it will be useful,
+ * openSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
  *
  * You should have received a copy of the GNU Lesser General Public License
- * version 3 along with OpenSCADA. If not, see
+ * version 3 along with openSCADA. If not, see
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
 package org.openscada.ae.monitor.common;
 
-import java.io.Serializable;
-import java.util.Date;
-
+import org.openscada.ae.data.Severity;
 import org.openscada.core.Variant;
+import org.openscada.utils.lang.Immutable;
 
-public class StateInformation implements Serializable
+@Immutable
+public class StateInformation
 {
-    private static final long serialVersionUID = 1L;
+    private final State state;
 
-    public static enum State
+    private final Severity severity;
+
+    private final Long lastChangeTimestamp;
+
+    private final Long lastValueTimestamp;
+
+    private final Long lastFailTimestamp;
+
+    private final Long lastAckRequiredTimestamp;
+
+    private final Long lastAckTimestamp;
+
+    private final String lastAckUser;
+
+    private final Variant value;
+
+    private final Variant lastFailValue;
+
+    public StateInformation ( final State state, final Severity severity, final Long lastChangeTimestamp, final Variant value, final Long lastValueTimestamp, final Long lastFailTimestamp, final Long lastAckRequiredTimestamp, final Long lastAckTimestamp, final String lastAckUser, final Variant lastFailValue )
     {
-        OK,
-        FAILED,
-        UNSAFE;
-    }
-
-    private Boolean requireAck;
-
-    private Boolean active;
-
-    private State state;
-
-    private Variant value;
-
-    private Date timestamp;
-
-    private String lastAckUser;
-
-    private Date lastAckTimestamp;
-
-    private Date lastFailTimestamp;
-
-    public StateInformation ()
-    {
-    }
-
-    public StateInformation ( final StateInformation information )
-    {
-        this.requireAck = information.requireAck;
-        this.active = information.active;
-        this.state = information.state;
-        this.value = information.value;
-        if ( information.timestamp != null )
-        {
-            this.timestamp = (Date)information.timestamp.clone ();
-        }
-        this.lastAckUser = information.lastAckUser;
-        if ( information.lastAckTimestamp != null )
-        {
-            this.lastAckTimestamp = (Date)information.lastAckTimestamp.clone ();
-        }
-        if ( information.lastFailTimestamp != null )
-        {
-            this.lastFailTimestamp = (Date)information.lastFailTimestamp.clone ();
-        }
-    }
-
-    public StateInformation apply ( final StateInformation information )
-    {
-        final StateInformation newInformation = new StateInformation ( this );
-        if ( information.active != null )
-        {
-            newInformation.active = information.active;
-        }
-        if ( information.requireAck != null )
-        {
-            newInformation.requireAck = information.requireAck;
-        }
-        if ( information.state != null )
-        {
-            newInformation.state = information.state;
-        }
-        if ( information.value != null )
-        {
-            newInformation.value = information.value;
-        }
-        if ( information.timestamp != null )
-        {
-            newInformation.timestamp = (Date)information.timestamp.clone ();
-        }
-        if ( information.lastAckUser != null )
-        {
-            newInformation.lastAckUser = information.lastAckUser;
-        }
-        if ( information.lastAckTimestamp != null )
-        {
-            newInformation.lastAckTimestamp = information.lastAckTimestamp;
-        }
-        if ( information.lastFailTimestamp != null )
-        {
-            newInformation.lastFailTimestamp = information.lastFailTimestamp;
-        }
-
-        return newInformation;
-    }
-
-    public Date getLastFailTimestamp ()
-    {
-        return this.lastFailTimestamp;
-    }
-
-    public void setLastFailTimestamp ( final Date lastFailTimestamp )
-    {
+        this.state = state;
+        this.severity = severity;
+        this.lastChangeTimestamp = lastChangeTimestamp;
+        this.value = value;
+        this.lastValueTimestamp = lastValueTimestamp;
         this.lastFailTimestamp = lastFailTimestamp;
+        this.lastAckRequiredTimestamp = lastAckRequiredTimestamp;
+        this.lastAckTimestamp = lastAckTimestamp;
+        this.lastAckUser = lastAckUser;
+        this.lastFailValue = lastFailValue;
     }
 
-    public Boolean getRequireAck ()
+    @Override
+    public String toString ()
     {
-        return this.requireAck;
-    }
-
-    public void setRequireAck ( final Boolean requireAck )
-    {
-        this.requireAck = requireAck;
-    }
-
-    public Boolean getActive ()
-    {
-        return this.active;
-    }
-
-    public void setActive ( final Boolean active )
-    {
-        this.active = active;
+        return String.format ( "[%s: %s]", this.state, this.severity );
     }
 
     public State getState ()
@@ -150,9 +73,14 @@ public class StateInformation implements Serializable
         return this.state;
     }
 
-    public void setState ( final State state )
+    public Severity getSeverity ()
     {
-        this.state = state;
+        return this.severity;
+    }
+
+    public Long getLastChangeTimestamp ()
+    {
+        return this.lastChangeTimestamp;
     }
 
     public Variant getValue ()
@@ -160,19 +88,24 @@ public class StateInformation implements Serializable
         return this.value;
     }
 
-    public void setValue ( final Variant value )
+    public Long getLastValueTimestamp ()
     {
-        this.value = value;
+        return this.lastValueTimestamp;
     }
 
-    public Date getTimestamp ()
+    public Long getLastFailTimestamp ()
     {
-        return this.timestamp;
+        return this.lastFailTimestamp;
     }
 
-    public void setTimestamp ( final Date timestamp )
+    public Long getLastAckRequiredTimestamp ()
     {
-        this.timestamp = timestamp;
+        return this.lastAckRequiredTimestamp;
+    }
+
+    public Long getLastAckTimestamp ()
+    {
+        return this.lastAckTimestamp;
     }
 
     public String getLastAckUser ()
@@ -180,43 +113,233 @@ public class StateInformation implements Serializable
         return this.lastAckUser;
     }
 
-    public void setLastAckUser ( final String lastAckUser )
+    public Variant getLastFailValue ()
     {
-        this.lastAckUser = lastAckUser;
+        return this.lastFailValue;
     }
 
-    public Date getLastAckTimestamp ()
+    public static class Builder
     {
-        return this.lastAckTimestamp;
-    }
+        private State state;
 
-    public void setLastAckTimestamp ( final Date lackAckTimestamp )
-    {
-        this.lastAckTimestamp = lackAckTimestamp;
+        private Severity severity;
+
+        private Long lastChangeTimestamp;
+
+        private Variant value;
+
+        private Long lastValueTimestamp;
+
+        private Long lastFailTimestamp;
+
+        private Long lastAckRequiredTimestamp;
+
+        private Long lastAckTimestamp;
+
+        private String lastAckUser;
+
+        private Variant lastFailValue;
+
+        public Builder ( final StateInformation other )
+        {
+            this.state = other.state;
+            this.severity = other.severity;
+            this.lastChangeTimestamp = other.lastChangeTimestamp;
+            this.value = other.value;
+            this.lastValueTimestamp = other.lastValueTimestamp;
+            this.lastFailTimestamp = other.lastFailTimestamp;
+            this.lastAckRequiredTimestamp = other.lastAckRequiredTimestamp;
+            this.lastAckTimestamp = other.lastAckTimestamp;
+            this.lastAckUser = other.lastAckUser;
+            this.lastFailValue = other.lastFailValue;
+        }
+
+        public StateInformation build ()
+        {
+            return new StateInformation ( this.state, this.severity, this.lastChangeTimestamp, this.value, this.lastValueTimestamp, this.lastFailTimestamp, this.lastAckRequiredTimestamp, this.lastAckTimestamp, this.lastAckUser, this.lastFailValue );
+        }
+
+        public Builder setLastAckRequiredTimestamp ( final Long lastAckRequiredTimestamp )
+        {
+            this.lastAckRequiredTimestamp = lastAckRequiredTimestamp;
+            return this;
+        }
+
+        public Builder setLastFailTimestamp ( final Long lastFailTimestamp )
+        {
+            this.lastFailTimestamp = lastFailTimestamp;
+            return this;
+        }
+
+        public Builder setLastValueTimestamp ( final Long lastValueTimestamp )
+        {
+            this.lastValueTimestamp = lastValueTimestamp;
+            return this;
+        }
+
+        public Builder setSeverity ( final Severity severity )
+        {
+            this.severity = severity;
+            return this;
+        }
+
+        public Builder setState ( final State state )
+        {
+            this.state = state;
+            return this;
+        }
+
+        public Builder setLastAckTimestamp ( final Long lastAckTimestamp )
+        {
+            this.lastAckTimestamp = lastAckTimestamp;
+            return this;
+        }
+
+        public Builder setLastChangeTimestamp ( final Long lastChangeTimestamp )
+        {
+            this.lastChangeTimestamp = lastChangeTimestamp;
+            return this;
+        }
+
+        public Builder setLastAckUser ( final String lastAckUser )
+        {
+            this.lastAckUser = lastAckUser;
+            return this;
+        }
+
+        public Builder setValue ( final Variant value )
+        {
+            this.value = value;
+            return this;
+        }
+
+        public Builder setLastFailValue ( final Variant lastFailValue )
+        {
+            this.lastFailValue = lastFailValue;
+            return this;
+        }
+
     }
 
     @Override
-    public String toString ()
+    public int hashCode ()
     {
-        final StringBuilder sb = new StringBuilder ();
-
-        sb.append ( "State: " ); //$NON-NLS-1$
-        sb.append ( this.state );
-        sb.append ( ", Active: " ); //$NON-NLS-1$
-        sb.append ( this.active );
-        sb.append ( ", requireAck: " ); //$NON-NLS-1$
-        sb.append ( this.requireAck );
-        sb.append ( ", value: " ); //$NON-NLS-1$
-        sb.append ( this.value );
-        sb.append ( ", timestamp: " ); //$NON-NLS-1$
-        sb.append ( this.timestamp );
-        sb.append ( ", lastFailTimestamp: " ); //$NON-NLS-1$
-        sb.append ( this.lastFailTimestamp );
-        sb.append ( ", lastAckTimestamp: " ); //$NON-NLS-1$
-        sb.append ( this.lastAckTimestamp );
-        sb.append ( ", lastAckUser: " ); //$NON-NLS-1$
-        sb.append ( this.lastAckUser );
-
-        return sb.toString ();
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + ( this.lastAckRequiredTimestamp == null ? 0 : this.lastAckRequiredTimestamp.hashCode () );
+        result = prime * result + ( this.lastAckTimestamp == null ? 0 : this.lastAckTimestamp.hashCode () );
+        result = prime * result + ( this.lastAckUser == null ? 0 : this.lastAckUser.hashCode () );
+        result = prime * result + ( this.lastChangeTimestamp == null ? 0 : this.lastChangeTimestamp.hashCode () );
+        result = prime * result + ( this.lastFailTimestamp == null ? 0 : this.lastFailTimestamp.hashCode () );
+        result = prime * result + ( this.lastValueTimestamp == null ? 0 : this.lastValueTimestamp.hashCode () );
+        result = prime * result + ( this.severity == null ? 0 : this.severity.hashCode () );
+        result = prime * result + ( this.state == null ? 0 : this.state.hashCode () );
+        result = prime * result + ( this.value == null ? 0 : this.value.hashCode () );
+        return result;
     }
+
+    @Override
+    public boolean equals ( final Object obj )
+    {
+        if ( this == obj )
+        {
+            return true;
+        }
+        if ( obj == null )
+        {
+            return false;
+        }
+        if ( getClass () != obj.getClass () )
+        {
+            return false;
+        }
+        final StateInformation other = (StateInformation)obj;
+        if ( this.lastAckRequiredTimestamp == null )
+        {
+            if ( other.lastAckRequiredTimestamp != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.lastAckRequiredTimestamp.equals ( other.lastAckRequiredTimestamp ) )
+        {
+            return false;
+        }
+        if ( this.lastAckTimestamp == null )
+        {
+            if ( other.lastAckTimestamp != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.lastAckTimestamp.equals ( other.lastAckTimestamp ) )
+        {
+            return false;
+        }
+        if ( this.lastAckUser == null )
+        {
+            if ( other.lastAckUser != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.lastAckUser.equals ( other.lastAckUser ) )
+        {
+            return false;
+        }
+        if ( this.lastChangeTimestamp == null )
+        {
+            if ( other.lastChangeTimestamp != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.lastChangeTimestamp.equals ( other.lastChangeTimestamp ) )
+        {
+            return false;
+        }
+        if ( this.lastFailTimestamp == null )
+        {
+            if ( other.lastFailTimestamp != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.lastFailTimestamp.equals ( other.lastFailTimestamp ) )
+        {
+            return false;
+        }
+        if ( this.lastValueTimestamp == null )
+        {
+            if ( other.lastValueTimestamp != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.lastValueTimestamp.equals ( other.lastValueTimestamp ) )
+        {
+            return false;
+        }
+        if ( this.severity != other.severity )
+        {
+            return false;
+        }
+        if ( this.state != other.state )
+        {
+            return false;
+        }
+        if ( this.value == null )
+        {
+            if ( other.value != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.value.equals ( other.value ) )
+        {
+            return false;
+        }
+        return true;
+    }
+
 }

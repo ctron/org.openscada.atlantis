@@ -21,12 +21,17 @@ package org.openscada.ae.server.common.event.pool.internal;
 
 import java.util.Map;
 
+import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EventPoolConfigurationFactory extends AbstractServiceConfigurationFactory<EventPoolManager>
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( EventPoolConfigurationFactory.class );
 
     public EventPoolConfigurationFactory ( final BundleContext context )
     {
@@ -36,8 +41,12 @@ public class EventPoolConfigurationFactory extends AbstractServiceConfigurationF
     @Override
     protected Entry<EventPoolManager> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
+        logger.info ( "Creating event pool '{}'", configurationId );
+
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+
         final String filter = parameters.get ( "filter" );
-        final Integer size = Integer.parseInt ( parameters.get ( "size" ) );
+        final Integer size = cfg.getIntegerChecked ( "size", "Need 'size' parameter" );
 
         final EventPoolManager manager = new EventPoolManager ( context, configurationId, filter, size );
         return new Entry<EventPoolManager> ( configurationId, manager );
@@ -46,14 +55,20 @@ public class EventPoolConfigurationFactory extends AbstractServiceConfigurationF
     @Override
     protected void disposeService ( final UserInformation userInformation, final String id, final EventPoolManager service )
     {
+        logger.info ( "Disposing event pool '{}'", id );
+
         service.dispose ();
     }
 
     @Override
     protected Entry<EventPoolManager> updateService ( final UserInformation userInformation, final String configurationId, final Entry<EventPoolManager> entry, final Map<String, String> parameters ) throws Exception
     {
+        logger.info ( "Updating event pool '{}'", configurationId );
+
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+
         final String filter = parameters.get ( "filter" );
-        final Integer size = Integer.parseInt ( parameters.get ( "size" ) );
+        final Integer size = cfg.getIntegerChecked ( "size", "Need 'size' parameter" );
 
         entry.getService ().update ( filter, size );
         return entry;

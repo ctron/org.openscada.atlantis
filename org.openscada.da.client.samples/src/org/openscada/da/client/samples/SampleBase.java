@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,9 +34,9 @@ public class SampleBase
 
     private static Logger logger = Logger.getLogger ( SampleBase.class );
 
-    protected String uri = null;
+    protected String uri;
 
-    protected Connection connection = null;
+    protected Connection connection;
 
     public SampleBase ( final String uri, final String className ) throws Exception
     {
@@ -63,6 +65,7 @@ public class SampleBase
 
         this.connection.addConnectionStateListener ( new ConnectionStateListener () {
 
+            @Override
             public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
             {
                 logger.info ( "Connection state changed: " + state, error );
@@ -88,9 +91,9 @@ public class SampleBase
         }
     }
 
-    public void disconnect ()
+    public void dispose ()
     {
-        this.connection.disconnect ();
+        this.connection.dispose ();
         this.connection = null;
         System.gc ();
     }

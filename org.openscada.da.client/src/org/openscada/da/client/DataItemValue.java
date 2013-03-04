@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,11 +25,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.utils.lang.Immutable;
 
 /**
  * A current value snapshot of the {@link DataItem}
+ * 
  * @author Jens Reimann
  */
 @Immutable
@@ -45,16 +46,15 @@ public class DataItemValue
 
     /**
      * A default instance that means <q>disconnected</q>
+     * 
      * @since 0.17.0
      */
     public static final DataItemValue DISCONNECTED = new DataItemValue ();
 
     /**
      * Construct a new disconnected instance
-     * @deprecated use {@link #DISCONNECTED} instead
      */
-    @Deprecated
-    public DataItemValue ()
+    private DataItemValue ()
     {
         super ();
         this.attributes = Collections.emptyMap ();
@@ -69,7 +69,7 @@ public class DataItemValue
         this.attributes = makeAttributes ( attributes );
         this.subscriptionState = subscriptionState;
         this.subscriptionError = null;
-        this.value = value;
+        this.value = Variant.valueOf ( value ); // ensures that value is never null
     }
 
     public DataItemValue ( final Variant value, final Map<String, Variant> attributes, final SubscriptionState subscriptionState, final Throwable subscriptionError )
@@ -77,13 +77,15 @@ public class DataItemValue
         super ();
         this.attributes = makeAttributes ( attributes );
         this.subscriptionState = subscriptionState;
-        this.value = value;
+        this.value = Variant.valueOf ( value ); // ensures that value is never null
         this.subscriptionError = subscriptionError;
     }
 
     /**
      * Make the attribute map
-     * @param attributes initial attributes
+     * 
+     * @param attributes
+     *            initial attributes
      * @return a new attribute map with cleared out attributes
      */
     private static Map<String, Variant> makeAttributes ( final Map<String, Variant> attributes )
@@ -114,12 +116,12 @@ public class DataItemValue
         return result;
     }
 
-    public DataItemValue ( final DataItemValue arg0 )
+    public DataItemValue ( final DataItemValue div )
     {
-        this.attributes = arg0.attributes;
-        this.value = arg0.value;
-        this.subscriptionError = arg0.subscriptionError;
-        this.subscriptionState = arg0.subscriptionState;
+        this.attributes = div.attributes;
+        this.value = div.value;
+        this.subscriptionError = div.subscriptionError;
+        this.subscriptionState = div.subscriptionState;
     }
 
     public Variant getValue ()
@@ -129,6 +131,7 @@ public class DataItemValue
 
     /**
      * Get an unmodifiable map of the attributes
+     * 
      * @return an unmodifiable map of the attributes
      */
     public Map<String, Variant> getAttributes ()
@@ -143,6 +146,7 @@ public class DataItemValue
 
     /**
      * Get the message of the subscription error
+     * 
      * @return the message of the subscription error or <code>null</code> if no subscription error is known
      */
     public String getSubscriptionErrorString ()
@@ -162,7 +166,9 @@ public class DataItemValue
 
     /**
      * Get the value of the attribute
-     * @param attributeName the name of the attribute
+     * 
+     * @param attributeName
+     *            the name of the attribute
      * @return the value of the attribute or <code>null</code> if the attribute is not set
      */
     public Boolean isAttribute ( final String attributeName )
@@ -184,8 +190,11 @@ public class DataItemValue
 
     /**
      * Get the boolean value of the named attribute
-     * @param attributeName the attribute name to check
-     * @param defaultValue the default value, if the attribute is not set
+     * 
+     * @param attributeName
+     *            the attribute name to check
+     * @param defaultValue
+     *            the default value, if the attribute is not set
      * @return the attribute value or the default value it the attribute is not available
      */
     public boolean isAttribute ( final String attributeName, final boolean defaultValue )
@@ -200,6 +209,7 @@ public class DataItemValue
 
     /**
      * Check if the value has the manual override attribute set
+     * 
      * @return <code>true</code> if the value is manually overridden, <code>false</code> otherwise
      */
     public boolean isManual ()
@@ -215,6 +225,11 @@ public class DataItemValue
     public boolean isBlocked ()
     {
         return isAttribute ( "blocked", false );
+    }
+
+    public boolean isWarning ()
+    {
+        return isAttribute ( "warning", false );
     }
 
     public boolean isConnected ()
@@ -233,12 +248,14 @@ public class DataItemValue
 
     /**
      * get an attribute as timestamp
-     * @param attributeName the attribute to get
+     * 
+     * @param attributeName
+     *            the attribute to get
      * @return the timestamp or <code>null</code> if the timestamp property is not set
      */
-    public Calendar getAsTimestamp ( final String attributeName )
+    public static Calendar getAsTimestamp ( final Map<String, Variant> attributes, final String attributeName )
     {
-        final Variant value = this.attributes.get ( attributeName );
+        final Variant value = attributes.get ( attributeName );
         if ( value == null )
         {
             return null;
@@ -258,11 +275,52 @@ public class DataItemValue
         {
             return null;
         }
-        return (Calendar)c.clone ();
+        return c;
+    }
+
+    /**
+     * get an attribute as timestamp
+     * 
+     * @param attributeName
+     *            the attribute to get
+     * @return the timestamp or <code>null</code> if the timestamp property is not set
+     */
+    public Calendar getAsTimestamp ( final String attributeName )
+    {
+        return getAsTimestamp ( this.attributes, attributeName );
+    }
+
+    /**
+     * Get an attribute as boolean value
+     * 
+     * @param attributeName
+     *            the name of the attribute to fetch
+     * @return the value of the attribute or <code>false</code> if the attribute is not set
+     * @see Variant#asBoolean()
+     */
+    public boolean getAttributeAsBoolean ( final String attributeName )
+    {
+        final Variant value = this.attributes.get ( attributeName );
+        if ( value == null )
+        {
+            return false;
+        }
+        return value.asBoolean ();
+    }
+
+    public Boolean getAttributeAsBoolean ( final String attributeName, final Boolean defaultValue )
+    {
+        final Variant value = this.attributes.get ( attributeName );
+        if ( value == null )
+        {
+            return defaultValue;
+        }
+        return value.asBoolean ( defaultValue );
     }
 
     /**
      * get the timestamp of the value
+     * 
      * @return the timestamp or <code>null</code> if the timestamp property is not set
      */
     public Calendar getTimestamp ()
@@ -376,8 +434,8 @@ public class DataItemValue
 
     /**
      * A mutable version of {@link DataItemValue}
+     * 
      * @author Jens Reimann
-     *
      */
     public static class Builder
     {
@@ -419,9 +477,10 @@ public class DataItemValue
             return this.subscriptionState;
         }
 
-        public void setSubscriptionState ( final SubscriptionState subscriptionState )
+        public Builder setSubscriptionState ( final SubscriptionState subscriptionState )
         {
             this.subscriptionState = subscriptionState;
+            return this;
         }
 
         public Throwable getSubscriptionError ()
@@ -429,9 +488,10 @@ public class DataItemValue
             return this.subscriptionError;
         }
 
-        public void setSubscriptionError ( final Throwable subscriptionError )
+        public Builder setSubscriptionError ( final Throwable subscriptionError )
         {
             this.subscriptionError = subscriptionError;
+            return this;
         }
 
         public Variant getValue ()
@@ -439,9 +499,10 @@ public class DataItemValue
             return this.value;
         }
 
-        public void setValue ( final Variant value )
+        public Builder setValue ( final Variant value )
         {
             this.value = value;
+            return this;
         }
 
         public Map<String, Variant> getAttributes ()
@@ -449,12 +510,13 @@ public class DataItemValue
             return this.attributes;
         }
 
-        public void setAttributes ( final Map<String, Variant> attributes )
+        public Builder setAttributes ( final Map<String, Variant> attributes )
         {
             this.attributes = attributes;
+            return this;
         }
 
-        public void setAttribute ( final String name, final Variant value )
+        public Builder setAttribute ( final String name, final Variant value )
         {
             if ( value == null )
             {
@@ -464,14 +526,22 @@ public class DataItemValue
             {
                 this.attributes.put ( name, value );
             }
+            return this;
         }
 
-        public void clearAttribute ( final String name )
+        public Builder clearAttribute ( final String name )
         {
             this.attributes.remove ( name );
+            return this;
         }
 
-        public void setTimestamp ( final Calendar timestamp )
+        public Builder setTimestamp ( final long timestamp )
+        {
+            setAttribute ( "timestamp", Variant.valueOf ( timestamp ) );
+            return this;
+        }
+
+        public Builder setTimestamp ( final Calendar timestamp )
         {
             if ( timestamp == null )
             {
@@ -481,6 +551,17 @@ public class DataItemValue
             {
                 setAttribute ( "timestamp", Variant.valueOf ( timestamp.getTimeInMillis () ) );
             }
+            return this;
+        }
+
+        public Calendar getTimestamp ()
+        {
+            return getAsTimestamp ( "timestamp" );
+        }
+
+        public Calendar getAsTimestamp ( final String attributeName )
+        {
+            return DataItemValue.getAsTimestamp ( this.attributes, attributeName );
         }
 
         public DataItemValue build ()

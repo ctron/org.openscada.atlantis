@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,11 +24,13 @@ package org.openscada.ae.server.common.monitor;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,7 +48,7 @@ public class MonitorQuery
     {
         this.executor = executor;
         this.cachedData = new HashMap<String, MonitorStatusInformation> ();
-        this.listeners = new HashSet<MonitorQueryListener> ();
+        this.listeners = new LinkedHashSet<MonitorQueryListener> ();
     }
 
     /**
@@ -53,16 +57,18 @@ public class MonitorQuery
      * If the listener was already added this operation has no effect
      * </p>
      * <p>
-     * The listener will receive all current known elements in a first update call.
+     * The listener will receive all current known elements in a first update
+     * call.
      * </p>
-     * @param listener the listener to add
+     * 
+     * @param listener
+     *            the listener to add
      */
     public synchronized void addListener ( final MonitorQueryListener listener )
     {
         if ( this.listeners.add ( listener ) )
         {
-            final MonitorStatusInformation[] data = this.cachedData.values ().toArray ( new MonitorStatusInformation[0] );
-            listener.dataChanged ( data, null );
+            listener.dataChanged ( new ArrayList<MonitorStatusInformation> ( this.cachedData.values () ), null, true );
         }
     }
 
@@ -71,7 +77,7 @@ public class MonitorQuery
         this.listeners.remove ( listener );
     }
 
-    private synchronized void fireListener ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    private synchronized void fireListener ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         for ( final MonitorQueryListener listener : this.listeners )
         {
@@ -82,7 +88,7 @@ public class MonitorQuery
                 {
                     try
                     {
-                        listener.dataChanged ( addedOrUpdated, removed );
+                        listener.dataChanged ( addedOrUpdated, removed, full );
                     }
                     catch ( final Exception e )
                     {
@@ -93,8 +99,13 @@ public class MonitorQuery
         }
     }
 
-    protected synchronized void updateData ( final MonitorStatusInformation[] data, final String[] removed )
+    protected synchronized void updateData ( final List<MonitorStatusInformation> data, final Set<String> removed, final boolean full )
     {
+        if ( full )
+        {
+            this.cachedData.clear ();
+        }
+
         if ( data != null )
         {
             for ( final MonitorStatusInformation info : data )
@@ -102,6 +113,7 @@ public class MonitorQuery
                 this.cachedData.put ( info.getId (), info );
             }
         }
+
         final Set<String> removedItems = new HashSet<String> ();
         if ( removed != null )
         {
@@ -113,7 +125,8 @@ public class MonitorQuery
                 }
             }
         }
-        fireListener ( data, removedItems.toArray ( new String[removedItems.size ()] ) );
+
+        fireListener ( data, removedItems, full );
     }
 
     public synchronized void dispose ()
@@ -124,7 +137,9 @@ public class MonitorQuery
 
     /**
      * Set current data set. Will handle notifications accordingly.
-     * @param data the new data set
+     * 
+     * @param data
+     *            the new data set
      */
     protected synchronized void setData ( final MonitorStatusInformation[] data )
     {
@@ -142,12 +157,12 @@ public class MonitorQuery
                 newData.remove ( oldCi );
             }
         }
-        fireListener ( newData.toArray ( new MonitorStatusInformation[newData.size ()] ), null );
+        fireListener ( newData, null, true );
     }
 
     protected synchronized void clear ()
     {
-        fireListener ( null, this.cachedData.keySet ().toArray ( new String[this.cachedData.size ()] ) );
+        fireListener ( null, null, true );
         this.cachedData.clear ();
     }
 }

@@ -30,6 +30,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.connection.provider.ConnectionIdTracker;
 import org.openscada.da.connection.provider.ConnectionService;
 import org.openscada.da.core.OperationParameters;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
@@ -49,9 +50,9 @@ public class ScriptContextImpl implements ScriptContext
 
     private final Lock itemsLock = new ReentrantLock ();
 
-    private final ObjectPoolImpl objectPool;
+    private final ObjectPoolImpl<DataItem> objectPool;
 
-    public ScriptContextImpl ( final Executor executor, final ObjectPoolImpl objectPool, final String id, final BundleContext context, final Map<String, String> parameters )
+    public ScriptContextImpl ( final Executor executor, final ObjectPoolImpl<DataItem> objectPool, final String id, final BundleContext context, final Map<String, String> parameters )
     {
         this.executor = executor;
         this.context = context;

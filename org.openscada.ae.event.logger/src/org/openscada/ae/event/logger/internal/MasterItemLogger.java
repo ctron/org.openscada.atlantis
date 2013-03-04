@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,6 +31,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
+import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
 import org.openscada.sec.UserInformation;
@@ -65,7 +66,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
     private String typeSubscription;
 
-    public MasterItemLogger ( final BundleContext context, final ObjectPoolTracker poolTracker, final int priority ) throws InvalidSyntaxException
+    public MasterItemLogger ( final BundleContext context, final ObjectPoolTracker<MasterItem> poolTracker, final int priority ) throws InvalidSyntaxException
     {
         super ( poolTracker, priority );
         synchronized ( this )
@@ -83,16 +84,14 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     }
 
     @Override
-    public DataItemValue dataUpdate ( final Map<String, Object> context, final DataItemValue value )
+    public void dataUpdate ( final Map<String, Object> context, final DataItemValue.Builder value )
     {
         if ( this.logValue || this.logSubscription || this.logAttributes )
         {
-            publishDiff ( DataItemValueDiff.diff ( this.lastValue, value ) );
+            publishDiff ( DataItemValueDiff.diff ( this.lastValue, value.build () ) );
         }
 
-        this.lastValue = value;
-
-        return value;
+        this.lastValue = value.build ();
     }
 
     private void publishDiff ( final DataItemValue diff )
@@ -182,7 +181,6 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
     protected EventBuilder createEvent ( final WriteRequest request )
     {
-
         final EventBuilder builder = Event.create ();
         builder.sourceTimestamp ( new Date () );
         builder.attributes ( this.eventAttributes );

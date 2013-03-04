@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -50,16 +50,23 @@ public class GMPPProtocolEncoder implements ProtocolEncoder, GMPPProtocol
         }
     };
 
+    @Override
     public void dispose ( final IoSession session ) throws Exception
     {
         // Do nothing
     }
 
+    @Override
     public void encode ( final IoSession session, final Object message, final ProtocolEncoderOutput out ) throws Exception
     {
         if ( message instanceof Message )
         {
             out.write ( code ( (Message)message ) );
+        }
+        else if ( message instanceof IoBuffer && ! ( (IoBuffer)message ).hasRemaining () )
+        {
+            System.err.println ( "Empty buffer" );
+            out.write ( message );
         }
         else
         {

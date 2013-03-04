@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -37,6 +37,7 @@ public class ConnectionManager extends AbstractConnectionManager
         super ( context, connectionInformation, connectionId, autoReconnectDelay, initialOpen );
     }
 
+    @Override
     protected AbstractConnectionService createConnection ()
     {
         logger.debug ( "Creating new DA connection: {}", getConnectionInformation () );
@@ -48,6 +49,6 @@ public class ConnectionManager extends AbstractConnectionManager
             return null;
         }
 
-        return new ConnectionServiceImpl ( connection, getAutoReconnectDelay () );
+        return new ConnectionServiceImpl ( connection, getAutoReconnectDelay (), false );
     }
 }

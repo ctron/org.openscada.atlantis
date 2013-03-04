@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,7 +28,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.query.AttributeNameProvider;
 import org.openscada.da.server.browser.common.query.GroupFolder;
@@ -41,6 +43,7 @@ import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc.Helper;
 import org.openscada.da.server.opc.Hive;
+import org.openscada.da.server.opc.connection.data.ConnectionSetup;
 import org.openscada.da.server.opc.job.Worker;
 import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.da.OPCITEMDEF;
@@ -141,11 +144,10 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
      */
     public void handleDisconnected ()
     {
-        // unregisterAllItems ();
-        unrealizeAllItem ();
+        unrealizeAllItems ();
     }
 
-    private synchronized void unrealizeAllItem ()
+    private synchronized void unrealizeAllItems ()
     {
         for ( final Map.Entry<String, OPCItem> entry : this.itemMap.entrySet () )
         {
@@ -155,8 +157,11 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
     }
 
     /**
-     * Register a new OPC item which is already realized by the {@link OPCSyncIoManager}
-     * @param opcItemId the OPC item id
+     * Register a new OPC item which is already realized by the
+     * {@link OPCSyncIoManager}
+     * 
+     * @param opcItemId
+     *            the OPC item id
      * @return the new item
      */
     private void createRealizedItem ( final String opcItemId, final KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
@@ -168,8 +173,11 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
 
     /**
      * Register a new OPC Item which is initially unrealized
-     * @param opcItemId the opc item id
-     * @param di the data item information used when creating a new item
+     * 
+     * @param opcItemId
+     *            the opc item id
+     * @param di
+     *            the data item information used when creating a new item
      * @return the OPC item
      */
     public synchronized void registerItem ( final String opcItemId, final EnumSet<IODirection> ioDirection, final Map<String, Variant> additionalBrowserAttributes )
@@ -213,7 +221,9 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
 
     /**
      * Apply the item template as configured in the hive
-     * @param item the item to which a template should by applied
+     * 
+     * @param item
+     *            the item to which a template should by applied
      */
     private void applyTemplate ( final OPCItem item )
     {
@@ -254,10 +264,14 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
     @Override
     public void dataRead ( final String itemId, final KeyedResult<Integer, ValueData> entry, final String errorMessage )
     {
-        final OPCItem item = this.itemMap.get ( itemId );
-        if ( item == null )
+        final OPCItem item;
+        synchronized ( this )
         {
-            return;
+            item = this.itemMap.get ( itemId );
+            if ( item == null )
+            {
+                return;
+            }
         }
 
         item.updateStatus ( entry, errorMessage );

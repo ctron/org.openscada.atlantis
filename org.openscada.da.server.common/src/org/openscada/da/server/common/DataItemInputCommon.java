@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,6 +23,7 @@ import java.util.Map;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.concurrent.InstantFuture;
@@ -33,6 +34,12 @@ public class DataItemInputCommon extends DataItemInput
     private volatile Variant value = Variant.NULL;
 
     private AttributeManager attributes = null;
+
+    public DataItemInputCommon ( final DataItemInformation info )
+    {
+        super ( info );
+        this.attributes = new AttributeManager ( this );
+    }
 
     public DataItemInputCommon ( final String name )
     {
@@ -53,19 +60,10 @@ public class DataItemInputCommon extends DataItemInput
     }
 
     /**
-     * Perform requests from the hive to update the items attributes
-     * <br>
-     * This method actually. Reacting to attribute set requests
-     * is implementation dependent. So you will need to
-     * subclass from DataItemInputCommon and override this
-     * method.
-     * <br>
-     * If you simple need a memory container that simply stores
-     * what you write into it consider using the MemoryDataItem.
-     * <br>
-     * If you are implementing a data item based on this item and
-     * wish to change the data items attributes use {@link #getAttributeManager()}
-     * to get the attribute manager which allows you so tweak the
+     * Perform requests from the hive to update the items attributes <br>
+     * This method actually. Reacting to attribute set requests is implementation dependent. So you will need to subclass from DataItemInputCommon and override this method. <br>
+     * If you simple need a memory container that simply stores what you write into it consider using the MemoryDataItem. <br>
+     * If you are implementing a data item based on this item and wish to change the data items attributes use {@link #getAttributeManager()} to get the attribute manager which allows you so tweak the
      * items attributes from the side of the item implementation.
      */
     @Override
@@ -77,11 +75,12 @@ public class DataItemInputCommon extends DataItemInput
     /**
      * Update the value of this data item
      * 
-     * @param value the new value
+     * @param value
+     *            the new value
      */
     public synchronized void updateData ( Variant value, final Map<String, Variant> attributes, final AttributeMode mode )
     {
-        if ( !this.value.equals ( value ) )
+        if ( this.value == null || !this.value.equals ( value ) )
         {
             this.value = value;
         }

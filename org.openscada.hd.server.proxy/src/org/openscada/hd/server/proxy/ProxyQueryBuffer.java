@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,10 +27,9 @@ import java.util.List;
 import java.util.concurrent.Executor;
 
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.openscada.hd.server.storage.common.DataFactory;
 import org.openscada.hd.server.storage.common.QueryDataBuffer;
 
@@ -114,62 +113,69 @@ public class ProxyQueryBuffer extends QueryDataBuffer
 
         for ( final QueryDataHolder holder : holders )
         {
-            final ValueInformation[] information = holder.getValueInformation ();
+            final List<ValueInformation> information = holder.getValueInformation ();
             if ( information == null )
             {
                 continue;
             }
 
-            final HashMap<String, Value[]> values = holder.getValues ();
+            final HashMap<String, List<Double>> values = holder.getValues ();
             if ( values == null )
             {
                 continue;
             }
 
-            if ( information.length != data.length )
+            if ( information.size () != data.length )
             {
                 continue;
             }
 
-            final Value[] avg = values.get ( "AVG" );
+            // FIXME: this should work for all data types
+
+            final List<Double> avg = values.get ( "AVG" );
             if ( avg == null )
             {
                 continue;
             }
-            final Value[] max = values.get ( "MAX" );
+            final List<Double> max = values.get ( "MAX" );
             if ( max == null )
             {
                 continue;
             }
-            final Value[] min = values.get ( "MIN" );
+            final List<Double> min = values.get ( "MIN" );
             if ( min == null )
             {
                 continue;
             }
 
             // merge by quality
-            for ( int i = 0; i < Math.min ( data.length, information.length ); i++ )
+            for ( int i = 0; i < Math.min ( data.length, information.size () ); i++ )
             {
 
-                if ( avg[i] == null || max[i] == null || min[i] == null || information[i] == null )
+                final ValueInformation entryInformation = information.get ( i );
+                final Double entryAvg = avg.get ( i );
+                final Double entryMax = max.get ( i );
+                final Double entryMin = min.get ( i );
+
+                if ( entryAvg == null || entryMax == null || entryMin == null || entryInformation == null )
                 {
                     // data is not available
                     continue;
                 }
 
-                if ( data[i].getQuality () >= information[i].getQuality () )
+                if ( data[i].getQuality () >= entryInformation.getQuality () )
                 {
                     // quality is below current best
                     continue;
                 }
 
-                data[i].setEntryCount ( information[i].getSourceValues () );
-                data[i].setQuality ( information[i].getQuality () );
-                data[i].setManual ( information[i].getManualPercentage () );
+                data[i].setEntryCount ( entryInformation.getSourceValues () );
+                data[i].setQuality ( entryInformation.getQuality () );
+                data[i].setManual ( entryInformation.getManualPercentage () );
 
-                data[i].setAverage ( avg[i].toDouble () );
-                data[i].setMin ( min[i].toDouble () );
-                data[i].setMax ( max[i].toDouble () );
+                data[i].setAverage ( entryAvg );
+                data[i].setMax ( entryMax );
+                data[i].setMin ( entryMin );
             }
         }
 
@@ -211,7 +217,7 @@ public class ProxyQueryBuffer extends QueryDataBuffer
     private void setParameters ( final QueryParameters parameters )
     {
         this.parameters = parameters;
-        this.data = new Data[parameters.getEntries ()];
+        this.data = new Data[parameters.getNumberOfEntries ()];
 
         fillDataCells ( this.data, parameters.getStartTimestamp (), parameters.getEndTimestamp (), new DataFactory () {
 

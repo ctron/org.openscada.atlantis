@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,12 +24,12 @@ package org.openscada.da.client.samples;
 import org.apache.log4j.Logger;
 
 /**
- * Sample showing how to subscribe for events only
- * <br>
- * The example shows how to create a new connection, connect, and listen for events coming
- * in for a period of 10 seconds.
- * <br>
- * We will listen to the <em>time</em> data item of the test server. The item is an input
+ * Sample showing how to subscribe for events only <br>
+ * The example shows how to create a new connection, connect, and listen for
+ * events coming
+ * in for a period of 10 seconds. <br>
+ * We will listen to the <em>time</em> data item of the test server. The item is
+ * an input
  * item and will provided the current unix timestamp every second.
  * 
  * @author Jens Reimann <jens.reimann@th4-systems.com>
@@ -85,7 +87,7 @@ public class IdleSample1 extends SampleBase
         {
             if ( s != null )
             {
-                s.disconnect ();
+                s.dispose ();
             }
         }
     }

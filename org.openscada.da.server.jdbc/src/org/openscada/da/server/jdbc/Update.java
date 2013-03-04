@@ -19,10 +19,12 @@
 
 package org.openscada.da.server.jdbc;
 
-import java.sql.CallableStatement;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 
 import org.openscada.core.Variant;
@@ -32,6 +34,7 @@ import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.utils.lang.Immutable;
+import org.openscada.utils.sql.SqlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -58,7 +61,9 @@ public class Update
 
         /**
          * The constructor that maps the main value to a named parameter
-         * @param namedParameter the name of the SQL parameter
+         * 
+         * @param namedParameter
+         *            the name of the SQL parameter
          */
         public Mapping ( final String namedParameter )
         {
@@ -70,11 +75,14 @@ public class Update
          * A mapping that maps the specified attribute name to the
          * provided named parameter.
          * <p>
-         * Note that if the attribute is <code>null</code> then is defines the main
-         * value instead.
+         * Note that if the attribute is <code>null</code> then is defines the
+         * main value instead.
          * </p>
-         * @param attribute the name of the attribute
-         * @param namedParameter the name of the SQL parameter
+         * 
+         * @param attribute
+         *            the name of the attribute
+         * @param namedParameter
+         *            the name of the SQL parameter
          */
         public Mapping ( final String attribute, final String namedParameter )
         {
@@ -105,7 +113,7 @@ public class Update
     public void register ( final DataItemFactory parentItemFactory )
     {
         this.itemFactory = parentItemFactory.createSubFolderFactory ( this.id );
-        this.item = this.itemFactory.createInputOutput ( "START", new WriteHandler () {
+        this.item = this.itemFactory.createInputOutput ( "START", null, new WriteHandler () {
 
             @Override
             public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -140,24 +148,51 @@ public class Update
         {
             connection.setAutoCommit ( true );
 
-            final CallableStatement statement = connection.prepareCall ( this.sql );
-
-            // set the main value
+            // create parameter map
+            final Map<String, Object> parameters = new HashMap<String, Object> ();
             for ( final Mapping mapping : this.mappings )
             {
                 if ( mapping.getAttributes () == null )
                 {
-                    statement.setObject ( mapping.getNamedParameter (), value.getValue () );
+                    parameters.put ( mapping.getNamedParameter (), value.getValue () );
                 }
             }
 
-            final int result = statement.executeUpdate ();
+            // convert to positional version
+            final Map<String, List<Integer>> posMap = new HashMap<String, List<Integer>> ();
+            final String positionalSql = SqlHelper.convertSql ( this.sql, posMap );
+            final Object[] positionalParameters = SqlHelper.expandParameters ( posMap, parameters );
 
-            return result;
+            final PreparedStatement stmt = connection.prepareStatement ( positionalSql );
+
+            try
+            {
+                applyParameters ( stmt, positionalParameters );
+                return stmt.executeUpdate ();
+            }
+            finally
+            {
+                if ( stmt != null )
+                {
+                    stmt.close ();
+                }
+            }
         }
         finally
         {
             connection.close ();
+        }
+    }
+
+    private void applyParameters ( final PreparedStatement stmt, final Object... parameters ) throws SQLException
+    {
+        if ( parameters != null )
+        {
+            for ( int i = 0; i < parameters.length; i++ )
+            {
+                logger.trace ( "Set parameter #{} - {}", i + 1, parameters[i] );
+                stmt.setObject ( i + 1, parameters[i] );
+            }
         }
     }
 
@@ -170,11 +205,13 @@ public class Update
     /**
      * Add a mapping.
      * <p>
-     * Note that the mappings are not unique and adding multiple mappings
-     * for the same attribute is not allowed and will result in an
-     * undefined behavior.
+     * Note that the mappings are not unique and adding multiple mappings for
+     * the same attribute is not allowed and will result in an undefined
+     * behavior.
      * </p>
-     * @param mapping the mapping to add
+     * 
+     * @param mapping
+     *            the mapping to add
      */
     public void addMapping ( final Mapping mapping )
     {

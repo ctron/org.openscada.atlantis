@@ -43,7 +43,6 @@ import org.w3c.dom.Node;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
- *
  */
 public class Hive extends HiveCommon
 {
@@ -66,10 +65,10 @@ public class Hive extends HiveCommon
      * @throws XmlException
      * @throws IOException
      * @throws ClassNotFoundException
-     * @throws NotConvertableException 
-     * @throws NullValueException 
-     * @throws InvalidOperationException 
-     * @throws ConfigurationError 
+     * @throws NotConvertableException
+     * @throws NullValueException
+     * @throws InvalidOperationException
+     * @throws ConfigurationError
      */
     public Hive () throws XmlException, IOException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
@@ -79,10 +78,10 @@ public class Hive extends HiveCommon
     /**
      * @param configurator
      * @throws ClassNotFoundException
-     * @throws NotConvertableException 
-     * @throws NullValueException 
-     * @throws InvalidOperationException 
-     * @throws ConfigurationError 
+     * @throws NotConvertableException
+     * @throws NullValueException
+     * @throws InvalidOperationException
+     * @throws ConfigurationError
      */
     public Hive ( final XMLConfigurator configurator ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
@@ -99,19 +98,25 @@ public class Hive extends HiveCommon
      * @param node
      * @throws XmlException
      * @throws ClassNotFoundException
-     * @throws NotConvertableException 
-     * @throws NullValueException 
-     * @throws InvalidOperationException 
-     * @throws ConfigurationError 
+     * @throws NotConvertableException
+     * @throws NullValueException
+     * @throws InvalidOperationException
+     * @throws ConfigurationError
      */
     public Hive ( final Node node ) throws XmlException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
         this ( new XMLConfigurator ( RootDocument.Factory.parse ( node ) ) );
     }
 
+    @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.proxy";
+    }
+
     /**
      * @param group
-     * @return 
+     * @return
      */
     public ProxyConnection addConnection ( final ProxyPrefixName prefix )
     {
@@ -130,9 +135,8 @@ public class Hive extends HiveCommon
     }
 
     /**
-     * @param configurator 
-     * @throws Exception 
-     * 
+     * @param configurator
+     * @throws Exception
      */
     @Override
     public void start () throws Exception

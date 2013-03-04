@@ -77,6 +77,12 @@ public class Hive extends HiveCommon implements InitializingBean, ApplicationCon
     }
 
     @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.spring";
+    }
+
+    @Override
     public void afterPropertiesSet () throws Exception
     {
         setup ();

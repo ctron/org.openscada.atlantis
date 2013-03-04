@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,24 +29,26 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.ItemManagerImpl;
 
 /**
  * Sample showing how to subscribe for events using the {@link DataItem} class.
  * <p>
- * The example shows how to create a new connection, connect, and listen for events
- * coming using the {@link DataItem} class which simplifies some parts of receiving
- * events from OpenSCADA. The DataItem class performs all the merging and cache value
- * handling for us. It extends the common {@link Observable} class and therefore
- * simplifies that handling a little bit. You do not get the
+ * The example shows how to create a new connection, connect, and listen for
+ * events coming using the {@link DataItem} class which simplifies some parts of
+ * receiving events from OpenSCADA. The DataItem class performs all the merging
+ * and cache value handling for us. It extends the common {@link Observable}
+ * class and therefore simplifies that handling a little bit. You do not get the
  * much more detailed event information since you only get the information
  * <q>object changed</q>. On the other side you have an instance which always
- * has the latest value merged up for you. So you can access it using {@link DataItem#getSnapshotValue()},
- * {@link DataItem#getAttributes()} and {@link DataItem#getSubscriptionState()} at any
- * time.
- * </p> 
+ * has the latest value merged up for you. So you can access it using
+ * {@link DataItem#getSnapshotValue()}, {@link DataItem#getAttributes()} and
+ * {@link DataItem#getSubscriptionState()} at any time.
+ * </p>
  * <p>
- * We will listen to the <q>time</q> data item of the test server. The item
- * is an input item and will provided the current unix timestamp every second.
+ * We will listen to the
+ * <q>time</q> data item of the test server. The item is an input item and will
+ * provided the current unix timestamp every second.
  * </p>
  * 
  * @author Jens Reimann <jens.reimann@th4-systems.com>
@@ -64,7 +68,7 @@ public class Sample5 extends SampleBase implements Observer
     public void connect () throws Exception
     {
         super.connect ();
-        this.itemManager = new ItemManager ( this.connection );
+        this.itemManager = new ItemManagerImpl ( this.connection );
     }
 
     public void subscribe ()
@@ -130,7 +134,7 @@ public class Sample5 extends SampleBase implements Observer
         {
             if ( s != null )
             {
-                s.disconnect ();
+                s.dispose ();
             }
         }
     }

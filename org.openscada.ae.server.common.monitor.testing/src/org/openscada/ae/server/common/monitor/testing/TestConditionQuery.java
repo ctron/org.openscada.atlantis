@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,14 +21,14 @@
 
 package org.openscada.ae.server.common.monitor.testing;
 
-import java.util.Date;
+import java.util.Arrays;
 import java.util.Random;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.ae.MonitorStatus;
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatus;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.core.Variant;
 
@@ -52,7 +54,7 @@ public class TestConditionQuery extends MonitorQuery
 
     protected void tick ()
     {
-        updateData ( new MonitorStatusInformation[] { new MonitorStatusInformation ( "test", r.nextBoolean () ? MonitorStatus.OK : MonitorStatus.NOT_OK, new Date (), Variant.NULL, new Date (), "system", null, null ) }, null );
+        updateData ( Arrays.asList ( new MonitorStatusInformation ( "test", r.nextBoolean () ? MonitorStatus.OK : MonitorStatus.NOT_OK, System.currentTimeMillis (), null, Variant.NULL, System.currentTimeMillis (), "system", null, null, null ) ), null, false );
     }
 
     public void stop ()

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -37,7 +37,7 @@ public class Activator implements BundleActivator
 
     private TestConditionQuery service;
 
-    private ServiceRegistration handle;
+    private ServiceRegistration<MonitorQuery> handle;
 
     private ExecutorService executor;
 
@@ -55,7 +55,7 @@ public class Activator implements BundleActivator
         this.service = new TestConditionQuery ( this.executor );
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, "test" );
-        this.handle = this.context.registerService ( MonitorQuery.class.getName (), this.service, properties );
+        this.handle = this.context.registerService ( MonitorQuery.class, this.service, properties );
     }
 
     /*

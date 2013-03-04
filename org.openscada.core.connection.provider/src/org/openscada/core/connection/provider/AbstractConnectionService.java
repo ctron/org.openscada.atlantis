@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,27 +21,46 @@
 
 package org.openscada.core.connection.provider;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.core.client.Connection;
+import org.openscada.core.connection.provider.info.ConnectionInformationProvider;
+import org.openscada.core.info.StatisticEntry;
+import org.openscada.core.info.StatisticsImpl;
+import org.openscada.core.info.StatisticsProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class AbstractConnectionService implements org.openscada.core.connection.provider.ConnectionService
+public abstract class AbstractConnectionService implements org.openscada.core.connection.provider.ConnectionService, ConnectionInformationProvider
 {
     private static final Logger logger = LoggerFactory.getLogger ( AbstractConnectionService.class );
 
-    private final Connection connection;
+    private Connection connection;
 
-    private final AutoReconnectController controller;
+    private AutoReconnectController controller;
 
-    public AbstractConnectionService ( final Connection connection, final Integer autoReconnectController )
+    protected final StatisticsImpl statistics = new StatisticsImpl ();
+
+    private final boolean lazyActivation;
+
+    private boolean connectionRequested = false;
+
+    private final Integer autoReconnectDelay;
+
+    public AbstractConnectionService ( final Integer autoReconnectDelay, final boolean lazyActivation )
     {
-        super ();
-        this.connection = connection;
+        this.lazyActivation = lazyActivation;
+        this.autoReconnectDelay = autoReconnectDelay;
+    }
 
-        if ( autoReconnectController != null )
+    protected void setConnection ( final Connection connection )
+    {
+        this.connection = connection;
+        if ( this.autoReconnectDelay != null )
         {
-            this.controller = new AutoReconnectController ( connection, autoReconnectController );
+            this.controller = new AutoReconnectController ( connection, this.autoReconnectDelay );
         }
         else
         {
@@ -57,6 +78,10 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
         {
             this.controller.dispose ();
         }
+        if ( this.connection != null )
+        {
+            this.connection.dispose ();
+        }
     }
 
     @Override
@@ -65,14 +90,31 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
         return this.controller;
     }
 
-    @Override
-    public Connection getConnection ()
+    protected boolean shouldConnect ()
     {
-        return this.connection;
+        return true;
+    }
+
+    protected synchronized void checkConnect ()
+    {
+        if ( this.connectionRequested && ( !this.lazyActivation || shouldConnect () ) )
+        {
+            performConnect ();
+        }
+        else
+        {
+            performDisconnect ();
+        }
     }
 
     @Override
-    public void connect ()
+    public synchronized void connect ()
+    {
+        this.connectionRequested = true;
+        checkConnect ();
+    }
+
+    protected void performConnect ()
     {
         if ( this.controller != null )
         {
@@ -85,7 +127,13 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
     }
 
     @Override
-    public void disconnect ()
+    public synchronized void disconnect ()
+    {
+        this.connectionRequested = false;
+        checkConnect ();
+    }
+
+    protected void performDisconnect ()
     {
         if ( this.controller != null )
         {
@@ -95,6 +143,28 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
         {
             this.connection.disconnect ();
         }
+    }
+
+    @Override
+    public String getLabel ()
+    {
+        return this.connection.getConnectionInformation ().toMaskedString ();
+    }
+
+    @Override
+    public Collection<StatisticEntry> getStatistics ()
+    {
+        final Collection<StatisticEntry> result = new ArrayList<StatisticEntry> ();
+        result.addAll ( this.statistics.getEntries () );
+        if ( this.connection instanceof StatisticsProvider )
+        {
+            result.addAll ( ( (StatisticsProvider)this.connection ).getStatistics () );
+        }
+        if ( this.controller instanceof StatisticsProvider )
+        {
+            result.addAll ( ( (StatisticsProvider)this.controller ).getStatistics () );
+        }
+        return result;
     }
 
 }

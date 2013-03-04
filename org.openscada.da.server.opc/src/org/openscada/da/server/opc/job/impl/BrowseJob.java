@@ -26,7 +26,7 @@ import java.util.Map;
 
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.opc.browser.BrowseRequest;
 import org.openscada.da.server.opc.browser.BrowseResult;
 import org.openscada.da.server.opc.browser.BrowseResultEntry;

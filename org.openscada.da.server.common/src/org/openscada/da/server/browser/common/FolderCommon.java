@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,12 +20,13 @@
 package org.openscada.da.server.browser.common;
 
 import java.util.ArrayList;
-import java.util.Collection;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.Stack;
 
 import org.openscada.core.Variant;
@@ -36,10 +37,9 @@ import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.configuration.ConfigurableFolder;
 
 /**
- * A common folder implementation which can be used to easily implement
- * folders.
+ * A common folder implementation which can be used to easily implement folders.
+ * 
  * @author Jens Reimann
- *
  */
 public class FolderCommon implements Folder, ConfigurableFolder
 {
@@ -61,20 +61,14 @@ public class FolderCommon implements Folder, ConfigurableFolder
         }
     }
 
-    private Entry[] getAllEntries ()
+    private synchronized Entry[] getAllEntries ()
     {
-        synchronized ( this )
-        {
-            return this.entryMap.values ().toArray ( new Entry[this.entryMap.size ()] );
-        }
+        return this.entryMap.values ().toArray ( new Entry[this.entryMap.size ()] );
     }
 
-    private Entry getEntry ( final String name )
+    private synchronized Entry getEntry ( final String name )
     {
-        synchronized ( this )
-        {
-            return this.entryMap.get ( name );
-        }
+        return this.entryMap.get ( name );
     }
 
     private Folder getFolderEntry ( final String name ) throws NoSuchFolderException
@@ -93,8 +87,13 @@ public class FolderCommon implements Folder, ConfigurableFolder
 
     /**
      * Bulk add items
-     * @param folders folders to register or <code>null</code> if no folders should be registered 
-     * @param items items to register or <code>null</code> if no item should be registered
+     * 
+     * @param folders
+     *            folders to register or <code>null</code> if no folders should
+     *            be registered
+     * @param items
+     *            items to register or <code>null</code> if no item should be
+     *            registered
      * @return number of items added
      */
     public synchronized int add ( final Map<String, Folder> folders, final Map<String, DataItemInformation> items )
@@ -109,7 +108,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
             size += items.size ();
         }
 
-        final Collection<Entry> entries = new ArrayList<Entry> ( size );
+        final List<Entry> entries = new ArrayList<Entry> ( size );
 
         // add folders
         if ( folders != null )
@@ -158,22 +157,19 @@ public class FolderCommon implements Folder, ConfigurableFolder
      * @see org.openscada.da.server.browser.common.ConfigurableFolder#add(java.lang.String, org.openscada.da.server.browser.common.Folder, java.util.Map)
      */
     @Override
-    public boolean add ( final String name, final Folder folder, final Map<String, Variant> attributes )
+    public synchronized boolean add ( final String name, final Folder folder, final Map<String, Variant> attributes )
     {
-        synchronized ( this )
+        if ( !this.entryMap.containsKey ( name ) )
         {
-            if ( !this.entryMap.containsKey ( name ) )
-            {
-                final Entry entry = new FolderEntryCommon ( name, folder, attributes );
-                this.entryMap.put ( name, entry );
-                notifyAdd ( entry );
-                folder.added ();
-                return true;
-            }
-            else
-            {
-                return false;
-            }
+            final Entry entry = new FolderEntryCommon ( name, folder, attributes );
+            this.entryMap.put ( name, entry );
+            notifyAdd ( entry );
+            folder.added ();
+            return true;
+        }
+        else
+        {
+            return false;
         }
     }
 
@@ -340,6 +336,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
 
     /**
      * Check if there are subscribers
+     * 
      * @return <code>true</code> if there are active subscribers
      */
     public synchronized boolean hasSubscribers ()
@@ -349,36 +346,34 @@ public class FolderCommon implements Folder, ConfigurableFolder
 
     private synchronized void sendCurrentList ( final FolderListener listener, final Object tag )
     {
-        listener.changed ( tag, new ArrayList<Entry> ( this.entryMap.values () ), new LinkedList<String> (), true );
+        listener.changed ( tag, new ArrayList<Entry> ( this.entryMap.values () ), Collections.<String> emptySet (), true );
     }
 
-    private synchronized void notifyAdd ( final Collection<Entry> added )
+    private synchronized void notifyAdd ( final List<Entry> added )
     {
         for ( final Map.Entry<Object, FolderListener> entry : this.listeners.entrySet () )
         {
-            entry.getValue ().changed ( entry.getKey (), added, new LinkedList<String> (), false );
+            entry.getValue ().changed ( entry.getKey (), added, Collections.<String> emptySet (), false );
         }
     }
 
     private synchronized void notifyAdd ( final Entry added )
     {
-        final List<Entry> list = new LinkedList<Entry> ();
-        list.add ( added );
-        notifyAdd ( list );
+        notifyAdd ( Arrays.asList ( added ) );
     }
 
     private synchronized void notifyRemove ( final String removed )
     {
-        final List<String> list = new LinkedList<String> ();
-        list.add ( removed );
+        final Set<String> list = Collections.singleton ( removed );
         for ( final Map.Entry<Object, FolderListener> entry : this.listeners.entrySet () )
         {
-            entry.getValue ().changed ( entry.getKey (), new LinkedList<Entry> (), list, false );
+            entry.getValue ().changed ( entry.getKey (), Collections.<Entry> emptyList (), list, false );
         }
     }
 
     /**
      * Get the number of entries in this folder
+     * 
      * @return the number of entries in this folder
      */
     public int size ()
@@ -389,7 +384,6 @@ public class FolderCommon implements Folder, ConfigurableFolder
     @Override
     public void added ()
     {
-
     }
 
     @Override
@@ -405,7 +399,7 @@ public class FolderCommon implements Folder, ConfigurableFolder
     {
         for ( final Map.Entry<Object, FolderListener> entry : this.listeners.entrySet () )
         {
-            entry.getValue ().changed ( entry.getKey (), new LinkedList<Entry> (), new LinkedList<String> (), true );
+            entry.getValue ().changed ( entry.getKey (), Collections.<Entry> emptyList (), Collections.<String> emptySet (), true );
         }
 
         for ( final Map.Entry<String, Entry> entry : this.entryMap.entrySet () )

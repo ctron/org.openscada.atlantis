@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,6 +30,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.mina.core.future.WriteFuture;
+import org.openscada.core.info.StatisticsImpl;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
@@ -40,6 +42,9 @@ import org.slf4j.LoggerFactory;
 
 public class Messenger implements MessageListener
 {
+    private static Object STATS_RECEIVED_MSGS = new Object ();
+
+    private static Object STATS_SENT_MSGS = new Object ();
 
     private final static Logger logger = LoggerFactory.getLogger ( Messenger.class );
 
@@ -111,10 +116,16 @@ public class Messenger implements MessageListener
 
     private final long timeoutJobPeriod;
 
-    public Messenger ( final long timeout )
+    private final StatisticsImpl statistics;
+
+    public Messenger ( final long timeout, final StatisticsImpl statistics )
     {
         this.sessionTimeout = timeout;
         this.timeoutJobPeriod = 1000;
+        this.statistics = statistics;
+
+        statistics.setLabel ( STATS_RECEIVED_MSGS, "Received messages" );
+        statistics.setLabel ( STATS_SENT_MSGS, "Sent messages" );
     }
 
     public long getSessionTimeout ()
@@ -174,9 +185,9 @@ public class Messenger implements MessageListener
     /**
      * Disconnects the messenger from the current connection (if there is one).
      * <p>
-     * Be aware that the returned message tags have to be timed out (e.g. using {@link #fireTimeouts(Collection)}),
-     * otherwise they will wait forever!
+     * Be aware that the returned message tags have to be timed out (e.g. using {@link #fireTimeouts(Collection)}), otherwise they will wait forever!
      * </p>
+     * 
      * @return
      */
     protected synchronized Collection<MessageTag> performDisconnect ()
@@ -214,7 +225,9 @@ public class Messenger implements MessageListener
 
     /**
      * Fire timeouts for all provided tags
-     * @param tags a list of tags to time out, accepts <code>null</code> 
+     * 
+     * @param tags
+     *            a list of tags to time out, accepts <code>null</code>
      */
     private static void fireTimeouts ( final Collection<MessageTag> tags )
     {
@@ -270,6 +283,8 @@ public class Messenger implements MessageListener
     @Override
     public void messageReceived ( final Message message )
     {
+        this.statistics.changeCurrentValue ( STATS_RECEIVED_MSGS, 1 );
+
         this.lastMessge = System.currentTimeMillis ();
 
         if ( logger.isDebugEnabled () )
@@ -411,14 +426,14 @@ public class Messenger implements MessageListener
         }
     }
 
-    public void sendMessage ( final Message message )
+    public WriteFuture sendMessage ( final Message message )
     {
-        sendMessage ( message, null );
+        return sendMessage ( message, null );
     }
 
-    public void sendMessage ( final Message message, final MessageStateListener messageListener )
+    public WriteFuture sendMessage ( final Message message, final MessageStateListener messageListener )
     {
-        sendMessage ( message, messageListener, 0L );
+        return sendMessage ( message, messageListener, 0L );
     }
 
     protected void registerMessageTag ( final long sequence, final MessageTag messageTag )
@@ -436,14 +451,21 @@ public class Messenger implements MessageListener
 
     /**
      * Send out a message including optional message tracking
-     * @param message the message to send
-     * @param listener the optional listener
-     * @param timeout the timeout
+     * 
+     * @param message
+     *            the message to send
+     * @param listener
+     *            the optional listener
+     * @param timeout
+     *            the timeout
      */
-    public void sendMessage ( final Message message, final MessageStateListener listener, final long timeout )
+    public WriteFuture sendMessage ( final Message message, final MessageStateListener listener, final long timeout )
     {
         logger.debug ( "Sending message: {}", message.getCommandCode () );
-        final boolean isSent;
+
+        this.statistics.changeCurrentValue ( STATS_SENT_MSGS, 1 );
+
+        final WriteFuture future;
 
         final MessageSender connection = this.connection;
         if ( connection != null )
@@ -454,7 +476,7 @@ public class Messenger implements MessageListener
             tag.setTimestamp ( System.currentTimeMillis () );
             tag.setTimeout ( timeout < 0 ? 0 : timeout );
 
-            isSent = connection.sendMessage ( message, new PrepareSendHandler () {
+            future = connection.sendMessage ( message, new PrepareSendHandler () {
 
                 @Override
                 public void prepareSend ( final Message message )
@@ -465,11 +487,11 @@ public class Messenger implements MessageListener
         }
         else
         {
-            isSent = false;
+            future = null;
         }
 
         // If the message was not sent, notify that
-        if ( !isSent )
+        if ( future == null )
         {
             if ( listener != null )
             {
@@ -477,32 +499,33 @@ public class Messenger implements MessageListener
             }
         }
 
+        return future;
     }
 
     protected boolean handleDefaultMessage ( final Message message )
     {
         switch ( message.getCommandCode () )
         {
-        case Message.CC_FAILED:
-            String errorInfo = "";
-            if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
-            {
-                errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
-            }
+            case Message.CC_FAILED:
+                String errorInfo = "";
+                if ( message.getValues ().containsKey ( Message.FIELD_ERROR_INFO ) )
+                {
+                    errorInfo = message.getValues ().get ( Message.FIELD_ERROR_INFO ).toString ();
+                }
 
-            logger.warn ( "Failed message: {} / {} / Message: {}", new Object[] { message.getSequence (), message.getReplySequence (), errorInfo } );
-            return true;
+                logger.warn ( "Failed message: {} / {} / Message: {}", new Object[] { message.getSequence (), message.getReplySequence (), errorInfo } );
+                return true;
 
-        case Message.CC_UNKNOWN_COMMAND_CODE:
-            logger.warn ( "Reply to unknown message command code from peer: {} / {}", message.getSequence (), message.getReplySequence () );
-            return true;
+            case Message.CC_UNKNOWN_COMMAND_CODE:
+                logger.warn ( "Reply to unknown message command code from peer: {} / {}", message.getSequence (), message.getReplySequence () );
+                return true;
 
-        case Message.CC_ACK:
-            // no op
-            return true;
+            case Message.CC_ACK:
+                // no op
+                return true;
 
-        default:
-            return false;
+            default:
+                return false;
         }
     }
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -38,15 +38,16 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.datasource.DataSource;
+import org.openscada.da.datasource.DataSourceHandler;
 import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
-import org.openscada.da.datasource.base.DataSourceHandler;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -84,7 +85,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
 
     private final EventProcessor eventProcessor;
 
-    public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor, final EventProcessor eventProcessor )
+    public ScriptDataSource ( final BundleContext context, final ObjectPoolTracker<DataSource> poolTracker, final ScheduledExecutorService executor, final EventProcessor eventProcessor )
     {
         super ( poolTracker );
         this.executor = executor;
@@ -236,7 +237,7 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
             setDataSources ( parameters );
             startTimer ( cfg.getInteger ( "timer", -1 ) );
 
-            handleChange ();
+            handleChange ( getSourcesCopy () );
         }
         finally
         {
@@ -326,12 +327,12 @@ public class ScriptDataSource extends AbstractMultiSourceDataSource
      * Handle data change
      */
     @Override
-    protected synchronized void handleChange ()
+    protected synchronized void handleChange ( final Map<String, DataSourceHandler> sources )
     {
         // calcuate
         // gather all data
         final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ();
-        for ( final Map.Entry<String, DataSourceHandler> entry : this.sources.entrySet () )
+        for ( final Map.Entry<String, DataSourceHandler> entry : sources.entrySet () )
         {
             values.put ( entry.getKey (), entry.getValue ().getValue () );
         }

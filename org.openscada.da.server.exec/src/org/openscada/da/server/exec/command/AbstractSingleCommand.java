@@ -103,9 +103,9 @@ public class AbstractSingleCommand
         this.folderCommon = parentFolder;
 
         this.itemFactory = new DefaultItemFactory ( this.hive, this.folderCommon, this.id, this.id );
-        this.runningItem = this.itemFactory.createInput ( "running" );
-        this.exitCodeItem = this.itemFactory.createInput ( "exitCode" );
-        this.execItem = this.itemFactory.createInput ( "exec" );
+        this.runningItem = this.itemFactory.createInput ( "running", null );
+        this.exitCodeItem = this.itemFactory.createInput ( "exitCode", null );
+        this.execItem = this.itemFactory.createInput ( "exec", null );
 
         for ( final Extractor ext : this.extractors )
         {
@@ -122,10 +122,11 @@ public class AbstractSingleCommand
     /**
      * Gets the data item factory for this item
      * <p>
-     * Returns <code>null</code> until the {@link #register(Hive, FolderCommon)} method was called.
+     * Returns <code>null</code> until the {@link #register(Hive, FolderCommon)}
+     * method was called.
      * <p>
-     * The registry will be disposed when {@link #unregister()} is called. There is no need to
-     * unregister items manually.
+     * The registry will be disposed when {@link #unregister()} is called. There
+     * is no need to unregister items manually.
      * 
      * @return the item factory used for this item
      */

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,10 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.core.AttributesHelper;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.utils.AttributesHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.OperationParameters;
@@ -55,7 +55,7 @@ public class DataItemTargetImpl extends DataItemBase implements DataSourceListen
 
     private DataSource dataSource;
 
-    public DataItemTargetImpl ( final ObjectPoolTracker poolTracker, final DataItemInformation information, final String dataSourceId ) throws InvalidSyntaxException
+    public DataItemTargetImpl ( final ObjectPoolTracker<DataSource> poolTracker, final DataItemInformation information, final String dataSourceId ) throws InvalidSyntaxException
     {
         super ( information );
 

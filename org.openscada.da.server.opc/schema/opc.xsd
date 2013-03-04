@@ -58,7 +58,7 @@
 			default="true">
 		</attribute>
 		<attribute name="access" type="string" use="optional"
-			default="async20">
+			default="sync">
 		</attribute>
 		<attribute name="refresh" type="int" use="optional"
 			default="500">

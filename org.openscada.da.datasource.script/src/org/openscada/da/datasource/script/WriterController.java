@@ -36,11 +36,11 @@ public class WriterController
 
     private final static Logger logger = LoggerFactory.getLogger ( WriterController.class );
 
-    private final ObjectPoolTracker tracker;
+    private final ObjectPoolTracker<DataSource> tracker;
 
-    private volatile Map<String, SingleObjectPoolServiceTracker> trackers = Collections.emptyMap ();
+    private volatile Map<String, SingleObjectPoolServiceTracker<DataSource>> trackers = Collections.emptyMap ();
 
-    public WriterController ( final ObjectPoolTracker tracker )
+    public WriterController ( final ObjectPoolTracker<DataSource> tracker )
     {
         this.tracker = tracker;
     }
@@ -48,13 +48,13 @@ public class WriterController
     public void setWriteItems ( final Map<String, String> datasources )
     {
         // create new tracker map
-        final Map<String, SingleObjectPoolServiceTracker> newTrackers = new HashMap<String, SingleObjectPoolServiceTracker> ( 1 );
+        final Map<String, SingleObjectPoolServiceTracker<DataSource>> newTrackers = new HashMap<String, SingleObjectPoolServiceTracker<DataSource>> ( 1 );
         for ( final Map.Entry<String, String> entry : datasources.entrySet () )
         {
             final String name = entry.getKey ();
             final String dataSourceId = entry.getValue ();
 
-            final SingleObjectPoolServiceTracker objectTracker = new SingleObjectPoolServiceTracker ( this.tracker, dataSourceId, null );
+            final SingleObjectPoolServiceTracker<DataSource> objectTracker = new SingleObjectPoolServiceTracker<DataSource> ( this.tracker, dataSourceId, null );
             objectTracker.open ();
             newTrackers.put ( name, objectTracker );
 
@@ -62,11 +62,11 @@ public class WriterController
         }
 
         // swap
-        final Map<String, SingleObjectPoolServiceTracker> oldTrackers = this.trackers;
+        final Map<String, SingleObjectPoolServiceTracker<DataSource>> oldTrackers = this.trackers;
         this.trackers = newTrackers;
 
         // close old stuff
-        for ( final SingleObjectPoolServiceTracker tracker : oldTrackers.values () )
+        for ( final SingleObjectPoolServiceTracker<DataSource> tracker : oldTrackers.values () )
         {
             tracker.close ();
         }
@@ -76,23 +76,19 @@ public class WriterController
     {
         logger.debug ( "Write request - name: {}, value: {}", dataSourceName, value );
 
-        final SingleObjectPoolServiceTracker objectTracker = this.trackers.get ( dataSourceName );
+        final SingleObjectPoolServiceTracker<DataSource> objectTracker = this.trackers.get ( dataSourceName );
         if ( objectTracker == null )
         {
             throw new IllegalArgumentException ( String.format ( "Data source '%s' is not configured", dataSourceName ) );
         }
 
-        final Object o = objectTracker.getCurrentService ();
+        final DataSource o = objectTracker.getCurrentService ();
         if ( o == null )
         {
             throw new IllegalStateException ( String.format ( "Data source '%s' was not found", dataSourceName ) );
         }
-        if ( ! ( o instanceof DataSource ) )
-        {
-            throw new IllegalStateException ( String.format ( "Data source '%s' is not a data source", dataSourceName ) );
-        }
 
-        ( (DataSource)o ).startWriteValue ( Variant.valueOf ( value ), null );
+        o.startWriteValue ( Variant.valueOf ( value ), null );
     }
 
     public void writeAsText ( final String itemId, final String value ) throws Exception

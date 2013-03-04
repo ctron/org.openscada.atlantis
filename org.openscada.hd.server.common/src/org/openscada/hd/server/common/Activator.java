@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,26 +23,30 @@ package org.openscada.hd.server.common;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.common.internal.ServiceImpl;
+import org.openscada.utils.concurrent.ExportedExecutorService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;
 
 /**
- * This activator registeres the a common OSGi based
- * implemenation of the HD server side service
+ * This activator registers the common OSGi based
+ * implementation of the HD server side service
+ * 
  * @author Jens Reimann
  * @since 0.14.0
- *
  */
 public class Activator implements BundleActivator
 {
     private ServiceImpl service;
 
     private ServiceRegistration<Service> serviceRegistration;
+
+    private ExportedExecutorService executor;
 
     /*
      * (non-Javadoc)
@@ -49,7 +55,8 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.service = new ServiceImpl ( context );
+        this.executor = new ExportedExecutorService ( "org.openscada.hd.server.common", 1, 1, 1, TimeUnit.MINUTES );
+        this.service = new ServiceImpl ( context, this.executor );
         this.service.start ();
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
@@ -69,6 +76,8 @@ public class Activator implements BundleActivator
 
         this.service.stop ();
         this.service = null;
+
+        this.executor.shutdown ();
     }
 
 }

@@ -27,6 +27,8 @@ public class ConnectionAnalyzerStatus
 
     private boolean connected;
 
+    private String uri;
+
     public ConnectionState getState ()
     {
         return this.state;
@@ -45,6 +47,16 @@ public class ConnectionAnalyzerStatus
     public boolean isConnected ()
     {
         return this.connected;
+    }
+
+    public String getUri ()
+    {
+        return this.uri;
+    }
+
+    public void setUri ( final String uri )
+    {
+        this.uri = uri;
     }
 
 }

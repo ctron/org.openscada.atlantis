@@ -19,13 +19,15 @@
 
 package org.openscada.ae.server.common.monitor;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.server.MonitorListener;
 import org.openscada.core.subscription.SubscriptionInformation;
 import org.openscada.core.subscription.SubscriptionSource;
@@ -50,6 +52,7 @@ public class MonitorQuerySource implements SubscriptionSource, MonitorQueryListe
         this.monitorQuery = monitorQuery;
     }
 
+    @Override
     public synchronized void addListener ( final Collection<SubscriptionInformation> listeners )
     {
         final boolean wasEmpty = this.listeners.isEmpty ();
@@ -61,7 +64,7 @@ public class MonitorQuerySource implements SubscriptionSource, MonitorQueryListe
 
             if ( !this.cachedData.isEmpty () )
             {
-                listener.dataChanged ( this.queryId, this.cachedData.values ().toArray ( new MonitorStatusInformation[0] ), null );
+                listener.dataChanged ( this.queryId, new ArrayList<MonitorStatusInformation> ( this.cachedData.values () ), null, true );
             }
         }
 
@@ -71,6 +74,7 @@ public class MonitorQuerySource implements SubscriptionSource, MonitorQueryListe
         }
     }
 
+    @Override
     public synchronized void removeListener ( final Collection<SubscriptionInformation> listeners )
     {
         for ( final SubscriptionInformation information : listeners )
@@ -86,13 +90,19 @@ public class MonitorQuerySource implements SubscriptionSource, MonitorQueryListe
         }
     }
 
+    @Override
     public boolean supportsListener ( final SubscriptionInformation subscriptionInformation )
     {
         return subscriptionInformation.getListener () instanceof MonitorListener;
     }
 
-    public synchronized void dataChanged ( final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    @Override
+    public synchronized void dataChanged ( final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
+        if ( full )
+        {
+            this.cachedData.clear ();
+        }
         if ( removed != null )
         {
             for ( final String id : removed )
@@ -111,7 +121,7 @@ public class MonitorQuerySource implements SubscriptionSource, MonitorQueryListe
         {
             try
             {
-                listener.dataChanged ( this.queryId, addedOrUpdated, removed );
+                listener.dataChanged ( this.queryId, addedOrUpdated, removed, full );
             }
             catch ( final Throwable e )
             {

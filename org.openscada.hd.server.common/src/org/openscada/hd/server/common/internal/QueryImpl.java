@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,15 +20,15 @@
 package org.openscada.hd.server.common.internal;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.Value;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -106,7 +106,7 @@ public class QueryImpl implements Query, QueryListener
     }
 
     @Override
-    public void updateData ( final int index, final Map<String, Value[]> values, final ValueInformation[] valueInformation )
+    public void updateData ( final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         if ( values == null )
         {
@@ -117,7 +117,7 @@ public class QueryImpl implements Query, QueryListener
             throw new IllegalArgumentException ( "'valueInformation' must not be null" );
         }
 
-        logger.debug ( "updateData: index: {}, values: @{} ({}), valueInformation: @{}", new Object[] { index, values.size (), values.keySet (), valueInformation.length } );
+        logger.debug ( "updateData: index: {}, values: @{} ({}), valueInformation: @{}", new Object[] { index, values.size (), values.keySet (), valueInformation.size () } );
 
         synchronized ( this )
         {
@@ -130,22 +130,22 @@ public class QueryImpl implements Query, QueryListener
                 throw new IllegalArgumentException ( "'updateData' must receive the same data series as the 'updateParameters' call" );
             }
         }
-        if ( index < 0 || index >= this.queryParameters.getEntries () )
+        if ( index < 0 || index >= this.queryParameters.getNumberOfEntries () )
         {
             throw new IllegalArgumentException ( "'index' must be greater or equal to zero and lower than the number of reported entries" );
         }
-        for ( final Map.Entry<String, Value[]> entry : values.entrySet () )
+        for ( final Map.Entry<String, List<Double>> entry : values.entrySet () )
         {
             if ( entry.getValue () == null )
             {
                 throw new IllegalArgumentException ( String.format ( "The values for '%s' are null", entry.getKey () ) );
             }
-            if ( entry.getValue ().length != valueInformation.length )
+            if ( entry.getValue ().size () != valueInformation.size () )
             {
                 throw new IllegalArgumentException ( String.format ( "The number of entries for '%s' is not equal to the rest of the entry count", entry.getKey () ) );
             }
         }
-        if ( index + valueInformation.length > this.queryParameters.getEntries () )
+        if ( index + valueInformation.size () > this.queryParameters.getNumberOfEntries () )
         {
             throw new IllegalArgumentException ( "The reported data exceeds reported number of entries" );
         }
@@ -172,9 +172,11 @@ public class QueryImpl implements Query, QueryListener
         {
             switch ( state )
             {
-            case DISCONNECTED:
-                this.session.removeQuery ( this );
-                break;
+                case DISCONNECTED:
+                    this.session.removeQuery ( this );
+                    break;
+                default:
+                    break;
             }
         }
     }

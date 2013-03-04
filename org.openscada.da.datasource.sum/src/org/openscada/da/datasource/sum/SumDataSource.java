@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,42 +20,73 @@
 package org.openscada.da.datasource.sum;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
-import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
-import org.openscada.da.datasource.base.DataSourceHandler;
+import org.openscada.da.datasource.DataSource;
+import org.openscada.da.datasource.DataSourceHandler;
+import org.openscada.da.datasource.MultiDataSourceListener;
+import org.openscada.da.datasource.base.AbstractDataSource;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class SumDataSource extends AbstractMultiSourceDataSource
+public class SumDataSource extends AbstractDataSource
 {
     private final static Logger logger = LoggerFactory.getLogger ( SumDataSource.class );
 
     private final Executor executor;
 
-    private Map<String, String> types;
-
     private Set<String> groups;
 
-    public SumDataSource ( final ObjectPoolTracker poolTracker, final Executor executor )
+    private Entry[] entries;
+
+    private Entry errorEntry;
+
+    private final MultiDataSourceListener itemListener;
+
+    private final MultiDataSourceListener subItemListener;
+
+    public SumDataSource ( final ObjectPoolTracker<DataSource> poolTracker, final Executor executor )
     {
-        super ( poolTracker );
         this.executor = executor;
+
+        this.itemListener = new MultiDataSourceListener ( poolTracker ) {
+
+            @Override
+            protected void handleChange ( final Map<String, DataSourceHandler> sources )
+            {
+                SumDataSource.this.handleChange ();
+            }
+        };
+
+        this.subItemListener = new MultiDataSourceListener ( poolTracker ) {
+
+            @Override
+            protected void handleChange ( final Map<String, DataSourceHandler> sources )
+            {
+                SumDataSource.this.handleChange ();
+            }
+        };
+    }
+
+    public void dispose ()
+    {
+        this.itemListener.dispose ();
+        this.subItemListener.dispose ();
     }
 
     @Override
@@ -78,136 +109,151 @@ public class SumDataSource extends AbstractMultiSourceDataSource
 
     public synchronized void update ( final Map<String, String> parameters ) throws Exception
     {
-        final Map<String, String> types = new HashMap<String, String> ();
-
-        String groupsString = parameters.get ( "groups" );
+        String groupsString = parameters.get ( "groups" ); //$NON-NLS-1$
         if ( groupsString == null )
         {
-            groupsString = "";
+            groupsString = ""; //$NON-NLS-1$
         }
 
-        clearSources ();
+        this.itemListener.clearSources ();
+        this.subItemListener.clearSources ();
 
-        this.groups = new HashSet<String> ( Arrays.asList ( groupsString.split ( ", ?" ) ) );
+        this.groups = new HashSet<String> ( Arrays.asList ( groupsString.split ( ", ?" ) ) ); //$NON-NLS-1$
 
         for ( final Map.Entry<String, String> entry : parameters.entrySet () )
         {
             final String key = entry.getKey ();
-            final String value = entry.getValue ();
 
-            if ( key.startsWith ( "datasource." ) )
+            if ( key.startsWith ( "datasource." ) ) //$NON-NLS-1$
             {
-                final String toks[] = value.split ( "#", 2 );
-                final String id = toks[0];
+                final String id = entry.getValue ();
 
-                if ( toks.length > 1 )
-                {
-                    types.put ( key, toks[1] );
-                }
-                logger.info ( "Adding datasource: {} -> {}", key, id );
-                addDataSource ( key, id, null );
+                logger.info ( "Adding datasource: {} -> {}", key, id ); //$NON-NLS-1$
+                this.itemListener.addDataSource ( key, id, null );
+            }
+            else if ( key.startsWith ( "subDatasource." ) ) //$NON-NLS-1$
+            {
+                final String id = entry.getValue ();
+
+                logger.info ( "Adding sub datasource: {} -> {}", key, id ); //$NON-NLS-1$
+                this.subItemListener.addDataSource ( key, id, null );
             }
         }
 
-        this.types = types;
+        // prepare groups
+        final LinkedList<Entry> localEntries = new LinkedList<Entry> ();
+        for ( final String group : this.groups )
+        {
+            localEntries.add ( new Entry ( group ) );
+        }
+        this.entries = localEntries.toArray ( new Entry[localEntries.size ()] );
+
+        this.errorEntry = null;
+        for ( final Entry entry : this.entries )
+        {
+            if ( "error".equals ( entry.name ) ) //$NON-NLS-1$
+            {
+                this.errorEntry = entry;
+            }
+        }
+
         handleChange ();
     }
 
-    @Override
     protected synchronized void handleChange ()
     {
-        final Map<String, DataItemValue> values = new HashMap<String, DataItemValue> ( this.sources.size () );
-        for ( final Map.Entry<String, DataSourceHandler> entry : this.sources.entrySet () )
-        {
-            values.put ( entry.getKey (), entry.getValue ().getValue () );
-        }
-
-        updateData ( aggregate ( values ) );
+        updateData ( aggregate ( this.itemListener.getSourcesCopy (), this.subItemListener.getSourcesCopy () ) );
     }
 
     private boolean isDebug ()
     {
-        return Boolean.getBoolean ( "org.openscada.da.datasource.sum.debug" );
+        return Boolean.getBoolean ( "org.openscada.da.datasource.sum.debug" ); //$NON-NLS-1$
     }
 
-    private synchronized DataItemValue aggregate ( final Map<String, DataItemValue> values )
+    private static class Entry
     {
+        private final String name;
+
+        private boolean active;
+
+        public Entry ( final String name )
+        {
+            this.name = name;
+        }
+    }
+
+    protected synchronized DataItemValue aggregate ( final Map<String, DataSourceHandler> values, final Map<String, DataSourceHandler> subValues )
+    {
+        // setup builder
+
         final Builder builder = new Builder ();
         builder.setSubscriptionState ( SubscriptionState.CONNECTED );
-        builder.setValue ( Variant.valueOf ( values.size () ) );
 
-        final Map<String, Integer> counts = new HashMap<String, Integer> ();
+        int count = values.size ();
 
-        for ( final Map.Entry<String, DataItemValue> entry : values.entrySet () )
+        final boolean debug = isDebug ();
+
+        // reset
+
+        for ( final Entry group : this.entries )
         {
-            final DataItemValue value = entry.getValue ();
-
-            if ( value == null || !value.isConnected () )
-            {
-                increment ( counts, "disconnected" );
-                if ( this.groups.contains ( "error" ) )
-                {
-                    increment ( counts, "error" );
-                }
-                if ( isDebug () )
-                {
-                    builder.setAttribute ( "sum.disconnected." + entry.getKey (), Variant.TRUE );
-                }
-                logger.debug ( "Skipping item {} since it is disconnected", entry.getKey () );
-                continue;
-            }
-
-            // increment by group
-            for ( final String group : this.groups )
-            {
-                if ( value.isAttribute ( group, false ) )
-                {
-                    if ( isDebug () )
-                    {
-                        builder.setAttribute ( "sum." + group + "." + entry.getKey (), Variant.TRUE );
-                    }
-                    increment ( counts, group );
-                }
-            }
-
-            // increment by main value
-            final String type = this.types.get ( entry.getKey () );
-            if ( type != null )
-            {
-                if ( value.getValue ().asBoolean () )
-                {
-                    if ( isDebug () )
-                    {
-                        builder.setAttribute ( "sum.main." + entry.getKey (), Variant.TRUE );
-                    }
-                    increment ( counts, type );
-                }
-            }
+            group.active = false;
         }
 
-        // convert to attributes
-        for ( final Map.Entry<String, Integer> entry : counts.entrySet () )
+        // aggregate states
+
+        aggregateValues ( values, builder, debug, false );
+        count += aggregateValues ( subValues, builder, debug, true );
+
+        // apply attributes
+
+        for ( final Entry group : this.entries )
         {
-            builder.setAttribute ( entry.getKey (), Variant.valueOf ( entry.getValue () != 0 ) );
-            builder.setAttribute ( entry.getKey () + ".count", Variant.valueOf ( entry.getValue () ) );
+            builder.setAttribute ( group.name, Variant.valueOf ( group.active ) );
         }
+
+        // set the main value to the count of items
+        builder.setValue ( Variant.valueOf ( count ) );
 
         return builder.build ();
     }
 
-    private static void increment ( final Map<String, Integer> counts, final String group )
+    private int aggregateValues ( final Map<String, DataSourceHandler> values, final Builder builder, final boolean debug, final boolean doCount )
     {
-        if ( !counts.containsKey ( group ) )
+        int result = 0;
+
+        for ( final Map.Entry<String, DataSourceHandler> entry : values.entrySet () )
         {
-            counts.put ( group, 1 );
-            logger.debug ( "Increment group - '{}': set to 1", group );
+            final DataItemValue value = entry.getValue ().getValue ();
+
+            if ( this.errorEntry != null )
+            {
+                if ( value == null || !value.isConnected () )
+                {
+                    this.errorEntry.active = true;
+                    continue; // skip further processing on this item
+                }
+            }
+
+            if ( doCount )
+            {
+                result += value.getValue ().asInteger ( 0 );
+            }
+
+            for ( final Entry group : this.entries )
+            {
+                if ( value.isAttribute ( group.name, false ) )
+                {
+                    if ( debug )
+                    {
+                        builder.setAttribute ( String.format ( "sum.%s.%s", group, entry.getKey () ), Variant.TRUE ); //$NON-NLS-1$
+                    }
+                    group.active = true;
+                }
+            }
         }
-        else
-        {
-            int i = counts.get ( group );
-            i++;
-            counts.put ( group, i );
-            logger.debug ( "Increment group - '{}': {}", group, i );
-        }
+
+        return result;
     }
+
 }

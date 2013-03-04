@@ -23,9 +23,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The connect wait controller makes the {@link Connection#connect()} call a synchronous operation 
+ * The connect wait controller makes the {@link Connection#connect()} call a synchronous operation
+ * 
  * @author Jens Reimann
- *
  */
 public class ConnectWaitController implements ConnectionStateListener
 {
@@ -57,17 +57,19 @@ public class ConnectWaitController implements ConnectionStateListener
             this.connection.connect ();
             switch ( this.state )
             {
-            case BOUND:
-                return;
-            case CLOSED:
-                if ( this.error == null )
-                {
+                case BOUND:
                     return;
-                }
-                else
-                {
-                    throw new Exception ( this.error );
-                }
+                case CLOSED:
+                    if ( this.error == null )
+                    {
+                        return;
+                    }
+                    else
+                    {
+                        throw new Exception ( this.error );
+                    }
+                default:
+                    break;
             }
 
             wait ( timeout );
@@ -82,6 +84,7 @@ public class ConnectWaitController implements ConnectionStateListener
         }
     }
 
+    @Override
     public synchronized void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )
     {
         logger.info ( String.format ( "New connection state: %s", state ) );
@@ -90,12 +93,14 @@ public class ConnectWaitController implements ConnectionStateListener
 
         switch ( state )
         {
-        case BOUND:
-            notifyAll ();
-            break;
-        case CLOSED:
-            notifyAll ();
-            break;
+            case BOUND:
+                notifyAll ();
+                break;
+            case CLOSED:
+                notifyAll ();
+                break;
+            default:
+                break;
         }
     }
 }

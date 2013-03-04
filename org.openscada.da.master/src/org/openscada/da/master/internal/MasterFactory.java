@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,14 +23,16 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.util.concurrent.LinkedBlockingQueue;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
+import org.openscada.utils.concurrent.ExecutorServiceExporterImpl;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -46,29 +48,32 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
     private final ExecutorService executor;
 
-    private final ObjectPoolImpl dataSourcePool;
+    private final ObjectPoolImpl<DataSource> dataSourcePool;
 
-    private final ObjectPoolImpl masterItemPool;
+    private final ObjectPoolImpl<MasterItem> masterItemPool;
 
-    private final ServiceRegistration<ObjectPool> dataSourcePoolHandler;
+    private final ServiceRegistration<?> dataSourcePoolHandler;
 
-    private final ServiceRegistration<ObjectPool> masterItemPoolHandler;
+    private final ServiceRegistration<?> masterItemPoolHandler;
 
-    private final ObjectPoolTracker objectPoolTracker;
+    private final ObjectPoolTracker<DataSource> objectPoolTracker;
 
-    public MasterFactory ( final BundleContext context, final ObjectPoolTracker dataSourceTracker )
+    private final ExecutorServiceExporterImpl executorExporter;
+
+    public MasterFactory ( final BundleContext context, final ObjectPoolTracker<DataSource> dataSourceTracker )
     {
         super ( context );
 
         this.objectPoolTracker = dataSourceTracker;
 
-        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "MasterItemFactory" ) );
+        this.executor = new ThreadPoolExecutor ( 1, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable> (), new NamedThreadFactory ( "MasterItemFactory" ) );
+        this.executorExporter = new ExecutorServiceExporterImpl ( this.executor, "MasterItemFactory" );
 
-        this.dataSourcePool = new ObjectPoolImpl ();
-        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class.getName () );
+        this.dataSourcePool = new ObjectPoolImpl<DataSource> ();
+        this.dataSourcePoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.dataSourcePool, DataSource.class );
 
-        this.masterItemPool = new ObjectPoolImpl ();
-        this.masterItemPoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.masterItemPool, MasterItem.class.getName () );
+        this.masterItemPool = new ObjectPoolImpl<MasterItem> ();
+        this.masterItemPoolHandler = ObjectPoolHelper.registerObjectPool ( context, this.masterItemPool, MasterItem.class );
     }
 
     @Override
@@ -114,6 +119,8 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
         this.dataSourcePool.dispose ();
         this.masterItemPool.dispose ();
+
+        this.executorExporter.dispose ();
 
         this.executor.shutdown ();
     }

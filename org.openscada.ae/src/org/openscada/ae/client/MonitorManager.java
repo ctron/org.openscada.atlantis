@@ -50,28 +50,30 @@ public class MonitorManager implements ConnectionStateListener
         }
     }
 
+    @Override
     public void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case BOUND:
-            if ( !this.connected )
-            {
-                this.connected = true;
-            }
-            break;
-        case CLOSED:
-            for ( final MonitorSyncController controller : this.monitorListeners.values () )
-            {
-                controller.dispose ();
-            }
-            this.monitorListeners.clear ();
-        default:
-            if ( this.connected )
-            {
-                this.connected = false;
-            }
-            break;
+            case BOUND:
+                if ( !this.connected )
+                {
+                    this.connected = true;
+                }
+                break;
+            case CLOSED:
+                for ( final MonitorSyncController controller : this.monitorListeners.values () )
+                {
+                    controller.dispose ();
+                }
+                this.monitorListeners.clear ();
+                //$FALL-THROUGH$
+            default:
+                if ( this.connected )
+                {
+                    this.connected = false;
+                }
+                break;
         }
     }
 

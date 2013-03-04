@@ -28,7 +28,6 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -52,9 +51,9 @@ public class Activator implements BundleActivator
 
     private ExecutorService executor;
 
-    private ObjectPoolImpl objectPool;
+    private ObjectPoolImpl<DataItem> objectPool;
 
-    private ServiceRegistration<ObjectPool> poolHandle;
+    private ServiceRegistration<?> poolHandle;
 
     /*
      * (non-Javadoc)
@@ -67,7 +66,7 @@ public class Activator implements BundleActivator
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( bundleContext.getBundle ().getSymbolicName () ) );
 
-        this.objectPool = new ObjectPoolImpl ();
+        this.objectPool = new ObjectPoolImpl<DataItem> ();
 
         this.factory = new ScriptComponentFactory ( this.executor, this.objectPool, bundleContext );
 

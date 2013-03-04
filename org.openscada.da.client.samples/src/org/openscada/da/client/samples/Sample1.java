@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,17 +25,18 @@ import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.ItemManager;
+import org.openscada.da.client.ItemManagerImpl;
 import org.openscada.da.client.ItemUpdateListener;
 
 /**
- * Sample showing how to subscribe for events only
- * <br>
- * The example shows how to create a new connection, connect, and listen for events coming
- * in for a period of 10 seconds.
- * <br>
- * We will listen to the <em>time</em> data item of the test server. The item is an input
+ * Sample showing how to subscribe for events only <br>
+ * The example shows how to create a new connection, connect, and listen for
+ * events coming
+ * in for a period of 10 seconds. <br>
+ * We will listen to the <em>time</em> data item of the test server. The item is
+ * an input
  * item and will provided the current unix timestamp every second.
  * 
  * @author Jens Reimann <jens.reimann@th4-systems.com>
@@ -57,7 +60,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
     public void connect () throws Exception
     {
         super.connect ();
-        this.itemManager = new ItemManager ( this.connection );
+        this.itemManager = new ItemManagerImpl ( this.connection );
     }
 
     public void subscribe ()
@@ -79,6 +82,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
     {
     }
 
+    @Override
     public void notifyDataChange ( final Variant value, final Map<String, Variant> attributes, final boolean cache )
     {
         if ( value != null )
@@ -92,7 +96,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
             // Attributes have changed
             // If it is an "initial" transmission it is a complete set. Otherwise it is only
             // the set of changed attributes.
-            System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), ( cache ? " (cache read)" : "" ) ) );
+            System.out.println ( String.format ( "Attributes changed for item: %d update(s)%s", attributes.size (), cache ? " (cache read)" : "" ) );
             for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
             {
                 System.out.println ( String.format ( "'%s' => '%s'", entry.getKey (), entry.getValue ().toString () ) );
@@ -101,6 +105,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         }
     }
 
+    @Override
     public void notifySubscriptionChange ( final SubscriptionState state, final Throwable subscriptionError )
     {
         System.out.println ( "Subscription state: " + state.name () + " Error: " + ( subscriptionError == null ? "<none>" : subscriptionError.getMessage () ) );
@@ -149,7 +154,7 @@ public class Sample1 extends SampleBase implements ItemUpdateListener
         {
             if ( s != null )
             {
-                s.disconnect ();
+                s.dispose ();
             }
         }
     }

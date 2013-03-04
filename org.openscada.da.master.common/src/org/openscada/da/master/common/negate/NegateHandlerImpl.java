@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,6 +29,7 @@ import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -38,31 +39,28 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
 {
     private boolean active;
 
-    public NegateHandlerImpl ( final String configurationId, final ObjectPoolTracker poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
+    public NegateHandlerImpl ( final String configurationId, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, NegateHandlerFactoryImpl.FACTORY_ID, NegateHandlerFactoryImpl.FACTORY_ID );
     }
 
     @Override
-    protected DataItemValue processDataUpdate ( final DataItemValue value ) throws Exception
+    protected void processDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder ) throws Exception
     {
-        final Builder builder = new Builder ( value );
-
         injectAttributes ( builder );
 
         if ( this.active )
         {
-            builder.setAttribute ( getPrefixed ( "raw" ), value.getValue () ); //$NON-NLS-1$
+            builder.setAttribute ( getPrefixed ( "value.original" ), builder.getValue () ); //$NON-NLS-1$
         }
 
-        final Variant val = value.getValue ();
+        final Variant val = builder.getValue ();
         if ( val == null || val.isNull () )
         {
-            return builder.build ();
+            return;
         }
 
         builder.setValue ( handleDataUpdate ( builder.getValue () ) );
-        return builder.build ();
     }
 
     private Variant handleDataUpdate ( final Variant value )

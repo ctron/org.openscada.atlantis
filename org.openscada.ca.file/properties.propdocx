@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="ASCII"?>
+<properties:properties xmlns:properties="urn:openscada:doc:content:properties">
+  <properties:groups properties:prefix="org.openscada.ca.file">
+    <properties:properties properties:name="org.openscada.ca.file.root" properties:shortDescription="The root path of the CA">
+    </properties:properties>
+  </properties:groups>
+</properties:properties>

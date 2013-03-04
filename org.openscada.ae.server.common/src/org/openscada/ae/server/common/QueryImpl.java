@@ -19,7 +19,7 @@
 
 package org.openscada.ae.server.common;
 
-import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -27,7 +27,7 @@ import java.util.concurrent.Future;
 import org.openscada.ae.Event;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
-import org.openscada.ae.QueryState;
+import org.openscada.ae.data.QueryState;
 import org.openscada.ae.server.storage.Storage;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
@@ -162,14 +162,16 @@ public class QueryImpl implements Query
 
     /**
      * Perform the actual load process
-     * @param count number of entries to load
+     * 
+     * @param count
+     *            number of entries to load
      */
     protected void performLoad ( final int count )
     {
         try
         {
             logger.debug ( "Calling get next: {}...", count );
-            final Collection<Event> result = this.query.getNext ( count );
+            final List<Event> result = this.query.getNext ( count );
             logger.debug ( "Calling get next: {}... complete", count );
 
             this.eventExecutor.execute ( new Runnable () {
@@ -177,7 +179,7 @@ public class QueryImpl implements Query
                 @Override
                 public void run ()
                 {
-                    QueryImpl.this.listener.queryData ( result.toArray ( new Event[result.size ()] ) );
+                    QueryImpl.this.listener.queryData ( result );
                 }
             } );
 

@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: OpenSCADA AE Security Helper
+Bundle-Name: openSCADA AE Security Helper
 Bundle-SymbolicName: org.openscada.ae.sec
-Bundle-Version: 0.16.0.qualifier
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ae;version="0.15.0",
- org.openscada.ae.event;version="0.15.0",
- org.openscada.core;version="0.15.0",
- org.openscada.sec;version="0.1.0",
- org.openscada.sec.osgi;version="0.1.0",
- org.openscada.utils.statuscodes;version="0.15.0",
- org.osgi.framework;version="1.3.0"
-Export-Package: org.openscada.ae.sec;version="0.15.0";uses:="org.openscada.sec.osgi,org.openscada.sec,org.osgi.framework"
+Import-Package: org.openscada.ae;version="1.0.0",
+ org.openscada.ae.event;version="1.0.0",
+ org.openscada.core;version="1.0.0",
+ org.openscada.sec;version="1.0.0",
+ org.openscada.sec.osgi;version="1.0.0",
+ org.openscada.utils.statuscodes;version="1.0.0",
+ org.osgi.framework;version="1.7.0"
+Export-Package: org.openscada.ae.sec;version="1.0.0";uses:="org.openscada.sec.osgi,org.openscada.sec,org.osgi.framework"

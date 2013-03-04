@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +19,7 @@
 
 package org.openscada.net.mina;
 
+import org.apache.mina.core.future.WriteFuture;
 import org.openscada.net.base.data.Message;
 
 public interface MessageSender
@@ -26,11 +27,14 @@ public interface MessageSender
 
     /**
      * Send a message out to somewhere
-     * @param message the message to send
-     * @param prepareSendHandler the prepare handler to call after the message is prepared
+     * 
+     * @param message
+     *            the message to send
+     * @param prepareSendHandler
+     *            the prepare handler to call after the message is prepared
      * @return <code>true</code> if the message was send out (does not guarantee a successful delivery!)
      */
-    public boolean sendMessage ( Message message, PrepareSendHandler prepareSendHandler );
+    public WriteFuture sendMessage ( Message message, PrepareSendHandler prepareSendHandler );
 
     /**
      * Close the session of the sender

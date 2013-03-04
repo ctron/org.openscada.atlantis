@@ -85,8 +85,15 @@ public class Hive extends HiveCommon
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
     }
 
+    @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.snmp";
+    }
+
     /**
      * configure the hive based on a configuration document
+     * 
      * @param doc
      */
     protected void configure ( final ConfigurationDocument doc )
@@ -101,7 +108,10 @@ public class Hive extends HiveCommon
 
     /**
      * configure the hive based on a anonymous xml node
-     * @param node the xml node which must contain an xml tree of the configuration schema
+     * 
+     * @param node
+     *            the xml node which must contain an xml tree of the
+     *            configuration schema
      */
     protected void configure ( final Node node )
     {
@@ -141,14 +151,14 @@ public class Hive extends HiveCommon
 
         switch ( connection.getVersion () )
         {
-        case 1:
-            ci = new ConnectionInformation ( ConnectionInformation.Version.V1, connection.getName () );
-            break;
-        case 2:
-            ci = new ConnectionInformation ( ConnectionInformation.Version.V2C, connection.getName () );
-            break;
-        default:
-            return;
+            case 1:
+                ci = new ConnectionInformation ( ConnectionInformation.Version.V1, connection.getName () );
+                break;
+            case 2:
+                ci = new ConnectionInformation ( ConnectionInformation.Version.V2C, connection.getName () );
+                break;
+            default:
+                return;
         }
 
         ci.setAddress ( connection.getAddress () );

@@ -24,7 +24,6 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -35,7 +34,7 @@ import org.openscada.ae.server.storage.BaseStorage;
 import org.openscada.ae.server.storage.Query;
 import org.openscada.ae.server.storage.StoreListener;
 import org.openscada.utils.collection.BoundedPriorityQueueSet;
-import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
 import org.openscada.utils.filter.FilterParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +63,7 @@ public class JdbcStorage extends BaseStorage
     {
         this.queueSize.incrementAndGet ();
         final Event eventToStore = createEvent ( event );
-        logger.debug ( "Save Event to database: " + event );
+        logger.debug ( "Save Event to database: {}", event );
         this.executor.submit ( new Runnable () {
             @Override
             public void run ()
@@ -171,12 +170,13 @@ public class JdbcStorage extends BaseStorage
 
     /**
      * Initialize the instance
+     * 
      * @throws Exception
      */
     public void start () throws Exception
     {
         logger.info ( "jdbcStorageDAO instanciated" );
-        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( getClass ().getCanonicalName () ) );
+        this.executor = new ScheduledExportedExecutorService ( getClass ().getCanonicalName (), 1 );
         // try to store events which could not be stored before
         this.executor.scheduleAtFixedRate ( new Runnable () {
             @Override

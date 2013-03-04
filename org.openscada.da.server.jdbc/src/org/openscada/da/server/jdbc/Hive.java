@@ -82,6 +82,12 @@ public class Hive extends HiveCommon
     }
 
     @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.jdbc";
+    }
+
+    @Override
     public void stop () throws Exception
     {
         this.timer.shutdown ();

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -43,17 +43,17 @@ import org.openscada.core.NullValueException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantType;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.DataSource;
+import org.openscada.da.datasource.DataSourceHandler;
 import org.openscada.da.datasource.SingleDataSourceTracker;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
 import org.openscada.da.datasource.base.AbstractMultiSourceDataSource;
-import org.openscada.da.datasource.base.DataSourceHandler;
 import org.openscada.utils.concurrent.AbstractFuture;
 import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -67,8 +67,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A datasource that calculates based on input and/or output formula
+ * 
  * @author Jens Reimann
- *
  */
 public class FormulaDataSource extends AbstractMultiSourceDataSource
 {
@@ -106,9 +106,12 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
 
     private VariantType outputDatasourceType;
 
-    public FormulaDataSource ( final BundleContext context, final ObjectPoolTracker poolTracker, final ScheduledExecutorService executor )
+    private final ObjectPoolTracker<DataSource> poolTracker;
+
+    public FormulaDataSource ( final BundleContext context, final ObjectPoolTracker<DataSource> poolTracker, final ScheduledExecutorService executor )
     {
         super ( poolTracker );
+        this.poolTracker = poolTracker;
 
         this.outputListener = new ServiceListener () {
 
@@ -120,10 +123,10 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
         };
 
         this.executor = executor;
+
         this.classLoader = getClass ().getClassLoader ();
 
         final ClassLoader currentClassLoader = Thread.currentThread ().getContextClassLoader ();
-
         try
         {
             Thread.currentThread ().setContextClassLoader ( this.classLoader );
@@ -238,12 +241,14 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
             final Serializable writeValueObject = writeValue.as ( this.outputDatasourceType );
             logger.debug ( "Converted write value from '{}' to '{}'", writeValue, writeValueObject );
 
-            final Map<String, Object> values = new HashMap<String, Object> ( this.sources.size () );
+            final Map<String, DataSourceHandler> sources = getSourcesCopy ();
+
+            final Map<String, Object> values = new HashMap<String, Object> ( sources.size () );
 
             int error = 0;
 
             // gather all data
-            for ( final Map.Entry<String, DataSourceHandler> entry : this.sources.entrySet () )
+            for ( final Map.Entry<String, DataSourceHandler> entry : sources.entrySet () )
             {
                 final VariantType type = entry.getValue ().getType ();
                 final DataItemValue value = entry.getValue ().getValue ();
@@ -303,7 +308,7 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
             setOutputDataSource ( cfg.getString ( "outputDatasource.id", null ) );
             this.writeValueName = cfg.getString ( "writeValueName", "writeValue" );
 
-            handleChange ();
+            handleChange ( getSourcesCopy () );
         }
         finally
         {
@@ -411,7 +416,7 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
      * Handle data change
      */
     @Override
-    protected synchronized void handleChange ()
+    protected synchronized void handleChange ( final Map<String, DataSourceHandler> sources )
     {
         if ( this.inputFormula == null || this.inputFormula.isEmpty () )
         {
@@ -421,10 +426,10 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
 
         try
         {
-            final Map<String, Integer> flags = new HashMap<String, Integer> ( 3 );
-            final Map<String, Object> values = new HashMap<String, Object> ( this.sources.size () );
+            final Map<String, Integer> flags = new HashMap<String, Integer> ( 4 );
+            final Map<String, Object> values = new HashMap<String, Object> ( sources.size () );
 
-            gatherData ( flags, values );
+            gatherData ( sources, flags, values );
 
             for ( final Map.Entry<String, Object> entry : values.entrySet () )
             {
@@ -442,10 +447,10 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
         }
     }
 
-    private void gatherData ( final Map<String, Integer> flags, final Map<String, Object> values ) throws NullValueException, NotConvertableException
+    private void gatherData ( final Map<String, DataSourceHandler> sources, final Map<String, Integer> flags, final Map<String, Object> values ) throws NullValueException, NotConvertableException
     {
         // gather all data
-        for ( final Map.Entry<String, DataSourceHandler> entry : this.sources.entrySet () )
+        for ( final Map.Entry<String, DataSourceHandler> entry : sources.entrySet () )
         {
             final VariantType type = entry.getValue ().getType ();
             final DataItemValue value = entry.getValue ().getValue ();
@@ -457,6 +462,10 @@ public class FormulaDataSource extends AbstractMultiSourceDataSource
             if ( value.isError () )
             {
                 incMap ( "error", flags );
+            }
+            if ( value.isWarning () )
+            {
+                incMap ( "warning", flags );
             }
             if ( value.isManual () )
             {

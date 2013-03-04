@@ -35,19 +35,23 @@ import org.slf4j.LoggerFactory;
 /**
  * An object exporter which will bind to the change events of a bean.
  * <p>
- * The object exporter is attached to a bean using {@link #attachTarget(Object)} and reads out the initial state of the bean
- * and tries to subscribe to the bean using the method <q>addPropertyChangeListener</q>. Changes announced by the bean will then
- * be reflected in the data items of the exporter. 
+ * The object exporter is attached to a bean using {@link #attachTarget(Object)}
+ * and reads out the initial state of the bean and tries to subscribe to the
+ * bean using the method
+ * <q>addPropertyChangeListener</q>. Changes announced by the bean will then be
+ * reflected in the data items of the exporter.
  * </p>
  * <p>
- * The difference to the {@link StaticObjectExporter} is, that the bean class type must not be known in advance and
- * data items will be created on the fly based on the provided target object. If the target bean does not provide
- * the <q>addPropertyChangeListener</q> method it still shows the state the target bean had on attaching but will not
- * update. Attaching to a new target object is more expensive using the {@link ObjectExporter} since all data items will
+ * The difference to the {@link StaticObjectExporter} is, that the bean class
+ * type must not be known in advance and data items will be created on the fly
+ * based on the provided target object. If the target bean does not provide the
+ * <q>addPropertyChangeListener</q> method it still shows the state the target
+ * bean had on attaching but will not update. Attaching to a new target object
+ * is more expensive using the {@link ObjectExporter} since all data items will
  * be destroyed in the process.
  * </p>
+ * 
  * @author Jens Reimann
- *
  */
 public class ObjectExporter extends AbstractObjectExporter implements PropertyChangeListener, Disposable
 {
@@ -61,7 +65,10 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
 
     /**
      * Create a new object exporter
-     * @param itemFactory the factory used to create items. This factory is disposed when the object exporter is disposed.
+     * 
+     * @param itemFactory
+     *            the factory used to create items. This factory is disposed
+     *            when the object exporter is disposed.
      */
     public ObjectExporter ( final ItemFactory itemFactory )
     {
@@ -70,18 +77,31 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
 
     /**
      * Create a new object exporter
-     * @param itemFactory the factory used to create items. This factory is disposed when the object exporter is disposed.
-     * @param readOnly set to <code>true</code> in order to make all items read-only
-     * @param nullIsError set to <code>true</code> to mark fields that are <code>null</code> with an error attribute
+     * 
+     * @param itemFactory
+     *            the factory used to create items. This factory is disposed
+     *            when the object exporter is disposed.
+     * @param readOnly
+     *            set to <code>true</code> in order to make all items read-only
+     * @param nullIsError
+     *            set to <code>true</code> to mark fields that are
+     *            <code>null</code> with an error attribute
      */
+    public ObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError, final String prefix )
+    {
+        super ( itemFactory, readOnly, nullIsError, prefix );
+    }
+
     public ObjectExporter ( final ItemFactory itemFactory, final boolean readOnly, final boolean nullIsError )
     {
-        super ( itemFactory, readOnly, nullIsError );
+        this ( itemFactory, readOnly, nullIsError, null );
     }
 
     /**
      * attach a new target. the old target will get detached.
-     * @param target the new target
+     * 
+     * @param target
+     *            the new target
      */
     public synchronized void attachTarget ( final Object target )
     {
@@ -158,6 +178,8 @@ public class ObjectExporter extends AbstractObjectExporter implements PropertyCh
         }
 
         this.items.clear ();
+        this.attributes.clear ();
+
         this.factory.disposeAllItems ();
         this.target = null;
         this.bound = false;

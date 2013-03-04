@@ -24,9 +24,9 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.server.dave.DaveDevice;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 
 public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactory<DaveDevice>

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -37,6 +37,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import org.apache.mina.core.filterchain.DefaultIoFilterChainBuilder;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.compression.CompressionFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
@@ -74,18 +75,67 @@ public class ConnectionHelper
         }
     }
 
+    public static void injectCompression ( final IoSession session, final String compressionMode )
+    {
+        logger.debug ( "Prepare for compression filter injection: {}", compressionMode );
+
+        final CompressionFilter compressionFilter = createCompressionFilter ( compressionMode );
+        if ( compressionFilter == null )
+        {
+            return;
+        }
+
+        if ( !session.getFilterChain ().contains ( "compress" ) )
+        {
+            logger.debug ( "Injecting compression filter: {}", compressionFilter );
+            session.getFilterChain ().addFirst ( "compress", compressionFilter );
+        }
+    }
+
+    private static CompressionFilter createCompressionFilter ( final String compressionMode )
+    {
+        if ( compressionMode != null )
+        {
+            logger.debug ( "Compression mode {}", compressionMode );
+            int level = CompressionFilter.COMPRESSION_DEFAULT;
+            try
+            {
+                level = Integer.parseInt ( compressionMode );
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to parse 'compress' property", e );
+            }
+            if ( level < CompressionFilter.COMPRESSION_DEFAULT || level > CompressionFilter.COMPRESSION_MAX )
+            {
+                logger.warn ( "Compression ({}) outside of valid range. Setting to default", level );
+                level = CompressionFilter.COMPRESSION_DEFAULT;
+            }
+
+            logger.debug ( "Creating filter with compression mode: {}", level );
+            return new CompressionFilter ( level );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
     /**
      * Setup the filter chain of a NET/GMPP connection
-     * @param connectionInformation the connection information to use
-     * @param filterChainBuilder the chain builder
+     * 
+     * @param connectionInformation
+     *            the connection information to use
+     * @param filterChainBuilder
+     *            the chain builder
      */
     public static void setupFilterChain ( final ConnectionInformation connectionInformation, final DefaultIoFilterChainBuilder filterChainBuilder, final boolean isClient )
     {
         // set up compression
-        final String compress = connectionInformation.getProperties ().get ( "compress" );
-        if ( compress != null )
+        final CompressionFilter compressionFilter = createCompressionFilter ( connectionInformation.getProperties ().get ( "compress" ) );
+        if ( compressionFilter != null )
         {
-            filterChainBuilder.addLast ( "compress", new CompressionFilter () );
+            filterChainBuilder.addLast ( "compress", compressionFilter );
         }
 
         // set up ssl
@@ -108,6 +158,7 @@ public class ConnectionHelper
 
     /**
      * FIXME: still need to implement correctly
+     * 
      * @param connectionInformation
      * @param filterChainBuilder
      * @param isClient

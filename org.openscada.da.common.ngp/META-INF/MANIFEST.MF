@@ -1,0 +1,11 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA NextGenerationProtocol DA Common
+Bundle-SymbolicName: org.openscada.da.common.ngp
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: openSCADA.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.openscada.core;version="1.0.0",
+ org.openscada.da.protocol.ngp.codec;version="1.0.0",
+ org.openscada.protocol.ngp.common;version="1.0.0"
+Export-Package: org.openscada.da.common.ngp;version="1.0.0";uses:="org.openscada.protocol.ngp.common,org.openscada.core"

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,16 +23,11 @@ import org.openscada.utils.statuscodes.CodedException;
 
 public class InvalidItemException extends CodedException
 {
+    private static final long serialVersionUID = 1L;
 
     public InvalidItemException ( final String item )
     {
         super ( StatusCodes.INVALID_ITEM, String.format ( "Item '%s' is unknown", item ) );
 
     }
-
-    /**
-     * 
-     */
-    private static final long serialVersionUID = -2915749558637815564L;
-
 }

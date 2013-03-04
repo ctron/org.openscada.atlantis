@@ -20,6 +20,7 @@
 package org.openscada.da.server.net;
 
 import java.io.IOException;
+import java.util.Collection;
 
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
@@ -29,20 +30,23 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.server.net.Server;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.impl.ExporterBase;
+import org.openscada.utils.lifecycle.LifecycleAware;
 
-public class Exporter extends ExporterBase
+public class Exporter extends ExporterBase implements LifecycleAware
 {
     private Server server;
+
+    private Collection<ConnectionInformation> startedConnections;
 
     public Exporter ( final Hive hive, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( hive, connectionInformation );
     }
 
-    private void createServer () throws IOException
+    private Collection<ConnectionInformation> createServer () throws IOException
     {
         this.server = new Server ( this.connectionInformation );
-        this.server.start ( createFactory () );
+        return this.server.start ( createFactory () );
     }
 
     private SingleSessionIoHandlerDelegate createFactory ()
@@ -60,7 +64,12 @@ public class Exporter extends ExporterBase
     @Override
     public void start () throws Exception
     {
-        createServer ();
+        this.startedConnections = createServer ();
+    }
+
+    public Collection<ConnectionInformation> getStartedConnections ()
+    {
+        return this.startedConnections;
     }
 
     @Override

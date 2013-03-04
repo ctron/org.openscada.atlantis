@@ -19,9 +19,13 @@
 
 package org.openscada.ae;
 
+import java.util.List;
+
+import org.openscada.ae.data.QueryState;
+
 public interface QueryListener
 {
-    public void queryData ( Event[] events );
+    public void queryData ( List<Event> events );
 
     public void queryStateChanged ( QueryState state, Throwable error );
 }

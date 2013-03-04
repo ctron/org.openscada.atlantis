@@ -31,10 +31,10 @@ import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.SingleDataSourceTracker;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
-import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.QueryParameters;
+import org.openscada.hd.data.HistoricalItemInformation;
+import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.utils.collection.MapBuilder;
@@ -94,7 +94,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     private final Set<Query> openQueries = new HashSet<Query> ();
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<DataSource> poolTracker;
 
     private SingleDataSourceTracker dataSourceTracker;
 
@@ -111,7 +111,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
         this.valueBuffer = new LinkedList<DataItemValue> ();
 
-        this.storageTracker = new SingleServiceTracker<StorageHistoricalItem> ( context, FilterUtil.createAndFilter ( StorageHistoricalItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, itemInformation.getId () ).getMap () ), new SingleServiceListener<StorageHistoricalItem> () {
+        this.storageTracker = new SingleServiceTracker<StorageHistoricalItem> ( context, FilterUtil.createAndFilter ( StorageHistoricalItem.class.getName (), new MapBuilder<String, String> ().put ( Constants.SERVICE_PID, itemInformation.getItemId () ).getMap () ), new SingleServiceListener<StorageHistoricalItem> () {
 
             @Override
             public void serviceChange ( final ServiceReference<StorageHistoricalItem> reference, final StorageHistoricalItem service )
@@ -119,10 +119,10 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 HistoricalItemImpl.this.setStorage ( service );
             }
         } );
-        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
     }
 
-    protected synchronized void setMasterItem ( final DataSource service )
+    protected synchronized void setDataSource ( final DataSource service )
     {
         logger.info ( "Set data source item: {}", service );
 
@@ -164,7 +164,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     public void start () throws InvalidSyntaxException
     {
-        logger.info ( "Start HistoricalItem: {}", this.itemInformation.getId () );
+        logger.info ( "Start HistoricalItem: {}", this.itemInformation.getItemId () );
 
         this.storageTracker.open ();
         this.poolTracker.open ();
@@ -173,7 +173,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
     public void stop ()
     {
-        logger.info ( "Stop HistoricalItem: {}", this.itemInformation.getId () );
+        logger.info ( "Stop HistoricalItem: {}", this.itemInformation.getItemId () );
 
         this.storageTracker.close ();
         if ( this.dataSourceTracker != null )
@@ -197,7 +197,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
 
         if ( this.service == null )
         {
-            logger.warn ( "We have not service. We cannot create a query" );
+            logger.warn ( "We have no service. We cannot create a query" );
             return null;
         }
 
@@ -246,7 +246,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
             }
             else
             {
-                logger.debug ( "State change ignored: {} missing storage", this.itemInformation.getId () );
+                logger.debug ( "State change ignored: {} missing storage", this.itemInformation.getItemId () );
                 final int size = this.valueBuffer.size ();
                 if ( size < this.maxBufferSize )
                 {
@@ -295,7 +295,7 @@ public class HistoricalItemImpl implements HistoricalItem, DataSourceListener
                 @Override
                 public void dataSourceChanged ( final DataSource dataSource )
                 {
-                    setMasterItem ( dataSource );
+                    setDataSource ( dataSource );
                 }
             } );
             this.dataSourceTracker.open ();

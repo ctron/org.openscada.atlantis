@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,34 +21,34 @@
 
 package org.openscada.ae.client.net;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import org.apache.mina.core.session.IoSession;
-import org.openscada.ae.BrowserEntry;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Event;
-import org.openscada.ae.MonitorStatusInformation;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
-import org.openscada.ae.QueryState;
 import org.openscada.ae.client.EventListener;
 import org.openscada.ae.client.MonitorListener;
+import org.openscada.ae.data.BrowserEntry;
+import org.openscada.ae.data.MonitorStatusInformation;
+import org.openscada.ae.data.QueryState;
 import org.openscada.ae.net.BrowserMessageHelper;
 import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
 import org.openscada.ae.net.MonitorMessageHelper;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.net.SessionConnectionBase;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
@@ -54,7 +56,7 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.utils.MessageCreator;
-import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,8 +73,6 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     public static final String VERSION = "0.1.0";
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
-
-    private final ExecutorService executor;
 
     private final Map<String, MonitorListener> monitorListeners = new HashMap<String, MonitorListener> ();
 
@@ -96,15 +96,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     {
         super ( connectionInformantion );
 
-        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "ConnectionExecutor/" + getConnectionInformation ().toMaskedString () ) );
         init ();
-    }
-
-    @Override
-    protected void finalize () throws Throwable
-    {
-        this.executor.shutdown ();
-        super.finalize ();
     }
 
     protected void init ()
@@ -235,21 +227,21 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             }
             switch ( state )
             {
-            case DISCONNECTED:
-                // dispose if we are disconnected
-                this.queries.remove ( queryId );
-                this.executor.execute ( new Runnable () {
+                case DISCONNECTED:
+                    // dispose if we are disconnected
+                    this.queries.remove ( queryId );
+                    this.executor.execute ( new Runnable () {
 
-                    @Override
-                    public void run ()
-                    {
-                        query.dispose ();
-                    }
-                } );
-                break;
-            default:
-                fireQueryStateChange ( query, state, error != null ? new RuntimeException ( error ).fillInStackTrace () : null );
-                break;
+                        @Override
+                        public void run ()
+                        {
+                            query.dispose ();
+                        }
+                    } );
+                    break;
+                default:
+                    fireQueryStateChange ( query, state, error != null ? new RuntimeException ( error ).fillInStackTrace () : null );
+                    break;
             }
 
         }
@@ -257,7 +249,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Extract the query state from the message
-     * @param message the message
+     * 
+     * @param message
+     *            the message
      * @return the extracted query state or <code>null</code> if there was none
      */
     private QueryState queryStateFromMessage ( final Message message )
@@ -275,7 +269,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Extract the query id from the message
-     * @param message the message
+     * 
+     * @param message
+     *            the message
      * @return the extracted query id or <code>null</code> if there was none
      */
     private Long queryIdFromMessage ( final Message message )
@@ -293,8 +289,8 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     protected synchronized void handleBrowserUpdate ( final Message message )
     {
-        final BrowserEntry[] added = BrowserMessageHelper.fromValue ( message.getValues ().get ( "added" ) );
-        final String[] removed = BrowserMessageHelper.fromValueRemoved ( message.getValues ().get ( "removed" ) );
+        final List<BrowserEntry> added = BrowserMessageHelper.fromValue ( message.getValues ().get ( "added" ) );
+        final Set<String> removed = BrowserMessageHelper.fromValueRemoved ( message.getValues ().get ( "removed" ) );
         final boolean full = message.getValues ().containsKey ( "full" );
 
         // perform update
@@ -330,7 +326,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             }
         }
 
-        final Event[] data = EventMessageHelper.fromValue ( message.getValues ().get ( "events" ) );
+        final List<Event> data = EventMessageHelper.fromValue ( message.getValues ().get ( "events" ) );
 
         if ( queryId != null && data != null )
         {
@@ -345,9 +341,9 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.messenger.sendMessage ( MessageCreator.createACK ( message ) );
     }
 
-    private void fireEventDataChange ( final EventListener listener, final Event[] data )
+    private void fireEventDataChange ( final EventListener listener, final List<Event> data )
     {
-        logger.debug ( "Received: {} events", data.length );
+        logger.debug ( "Received: {} events", data.size () );
 
         if ( listener == null )
         {
@@ -387,13 +383,13 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 }
             }
 
-            final MonitorStatusInformation[] data = MonitorMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
-            final String[] removed = MonitorMessageHelper.fromValueRemoved ( message.getValues ().get ( "conditions.removed" ) );
+            final List<MonitorStatusInformation> data = MonitorMessageHelper.fromValue ( message.getValues ().get ( "conditions.addedOrUpdated" ) );
+            final Set<String> removed = MonitorMessageHelper.fromValueRemoved ( message.getValues ().get ( "conditions.removed" ) );
 
             if ( queryId != null && ( data != null || removed != null ) )
             {
                 final MonitorListener listener = this.monitorListeners.get ( queryId );
-                fireConditionDataChange ( listener, data, removed );
+                fireConditionDataChange ( listener, data, removed, false );
             }
             else
             {
@@ -407,7 +403,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     }
 
-    private void fireConditionDataChange ( final MonitorListener listener, final MonitorStatusInformation[] addedOrUpdated, final String[] removed )
+    private void fireConditionDataChange ( final MonitorListener listener, final List<MonitorStatusInformation> addedOrUpdated, final Set<String> removed, final boolean full )
     {
         if ( listener == null )
         {
@@ -423,7 +419,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
                 @Override
                 public void run ()
                 {
-                    listener.dataChanged ( addedOrUpdated, removed );
+                    listener.dataChanged ( addedOrUpdated, removed, full );
                 }
             } );
 
@@ -540,7 +536,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
-    public synchronized void setConditionListener ( final String conditionQueryId, final MonitorListener listener )
+    public synchronized void setMonitorListener ( final String conditionQueryId, final MonitorListener listener )
     {
         if ( listener == null )
         {
@@ -594,8 +590,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Send a message to request (un)subscription
-     * @param conditionQueryId the condition query id
-     * @param flag <code>true</code> for subscription, <code>false</code> otherwise
+     * 
+     * @param conditionQueryId
+     *            the condition query id
+     * @param flag
+     *            <code>true</code> for subscription, <code>false</code>
+     *            otherwise
      */
     private void sendSubscribeConditions ( final String conditionQueryId, final boolean flag )
     {
@@ -667,7 +667,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         final EventListener oldListener = this.eventListeners.remove ( eventQueryId );
         if ( oldListener != null )
         {
-            sendSubscribeConditions ( eventQueryId, false );
+            sendSubscribeEventQuery ( eventQueryId, false );
         }
         if ( oldListener != null )
         {
@@ -694,8 +694,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
     /**
      * Send a message to request (un)subscription
-     * @param eventQueryId the event query id
-     * @param flag <code>true</code> for subscription, <code>false</code> otherwise
+     * 
+     * @param eventQueryId
+     *            the event query id
+     * @param flag
+     *            <code>true</code> for subscription, <code>false</code>
+     *            otherwise
      */
     private void sendSubscribeEventQuery ( final String eventQueryId, final boolean flag )
     {
@@ -774,7 +778,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
 
         if ( this.browserListeners.add ( listener ) )
         {
-            final BrowserEntry[] addedOrChanged = this.browserCache.values ().toArray ( new BrowserEntry[0] );
+            final List<BrowserEntry> addedOrChanged = new ArrayList<BrowserEntry> ( this.browserCache.values () );
 
             this.executor.execute ( new Runnable () {
 
@@ -798,7 +802,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         this.browserListeners.remove ( listener );
     }
 
-    protected void fireBrowserListener ( final BrowserEntry[] added, final String[] removed, final boolean full )
+    protected void fireBrowserListener ( final List<BrowserEntry> added, final Set<String> removed, final boolean full )
     {
         final Set<BrowserListener> listeners = new HashSet<BrowserListener> ( this.browserListeners );
 
@@ -830,12 +834,12 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
-    public void acknowledge ( final String conditionId, final Date aknTimestamp )
+    public void acknowledge ( final String monitorId, final Date aknTimestamp, final UserInformation userInformation )
     {
-        logger.debug ( "Sending ACK: {} / {}", new Object[] { conditionId, aknTimestamp } );
+        logger.debug ( "Sending ACK: {} / {}", new Object[] { monitorId, aknTimestamp } );
 
         final Message message = new Message ( Messages.CC_CONDITION_AKN );
-        message.getValues ().put ( "id", new StringValue ( conditionId ) );
+        message.getValues ().put ( "id", new StringValue ( monitorId ) );
         // if we don't have a timestamp provided use current time
         if ( aknTimestamp != null )
         {
@@ -845,6 +849,19 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
         {
             message.getValues ().put ( "aknTimestamp", new LongValue ( System.currentTimeMillis () ) );
         }
+
+        if ( userInformation != null )
+        {
+            if ( userInformation.getName () != null )
+            {
+                message.getValues ().put ( "user", new StringValue ( userInformation.getName () ) );
+                if ( userInformation.getPassword () != null )
+                {
+                    message.getValues ().put ( "password", new StringValue ( userInformation.getPassword () ) );
+                }
+            }
+        }
+
         this.messenger.sendMessage ( message );
     }
 

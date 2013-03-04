@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.openscada.core.Variant;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
@@ -33,8 +34,8 @@ import org.openscada.da.server.common.chain.WriteHandlerItem;
 
 /**
  * This item factory only creates the items but does not register them anywhere
+ * 
  * @author Jens Reimann
- *
  */
 public class CommonItemFactory implements ItemFactory
 {
@@ -88,8 +89,11 @@ public class CommonItemFactory implements ItemFactory
     /**
      * Change the ID delimiter.
      * <p>
-     * Note that items which have already been created will not but updated to use the new delimiter
-     * @param idDelimiter the new delimiter to use
+     * Note that items which have already been created will not but updated to
+     * use the new delimiter
+     * 
+     * @param idDelimiter
+     *            the new delimiter to use
      */
     public void setIdDelimiter ( final String idDelimiter )
     {
@@ -110,7 +114,9 @@ public class CommonItemFactory implements ItemFactory
 
     /**
      * Generate a global Id by using the base id and the local id
-     * @param localId the local id
+     * 
+     * @param localId
+     *            the local id
      * @return the global id
      */
     protected String generateId ( final String localId )
@@ -199,19 +205,19 @@ public class CommonItemFactory implements ItemFactory
     }
 
     @Override
-    public DataItemCommand createCommand ( final String localId )
+    public DataItemCommand createCommand ( final String localId, final Map<String, Variant> properties )
     {
         return constructCommand ( localId );
     }
 
     @Override
-    public DataItemInputChained createInput ( final String localId )
+    public DataItemInputChained createInput ( final String localId, final Map<String, Variant> properties )
     {
         return constructInput ( localId );
     }
 
     @Override
-    public WriteHandlerItem createInputOutput ( final String localId, final WriteHandler writeHandler )
+    public WriteHandlerItem createInputOutput ( final String localId, final Map<String, Variant> properties, final WriteHandler writeHandler )
     {
         return constructInputOutput ( localId, writeHandler );
     }

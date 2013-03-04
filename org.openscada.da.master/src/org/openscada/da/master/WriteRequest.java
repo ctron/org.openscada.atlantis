@@ -78,8 +78,9 @@ public class WriteRequest
      * Check if the request is an empty request. A request
      * is empty if neither attributes nor the primary value
      * is requested to be written.
+     * 
      * @return <code>true</code>if the request is empty, <code>false</code>
-     * otherwise
+     *         otherwise
      */
     public boolean isEmpty ()
     {

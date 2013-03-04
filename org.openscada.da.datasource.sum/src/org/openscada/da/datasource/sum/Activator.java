@@ -34,9 +34,13 @@ import org.osgi.framework.Constants;
 public class Activator implements BundleActivator
 {
 
+    protected static Activator instance;
+
     private ExecutorService executor;
 
     private SumSourceFactory factory;
+
+    protected BundleContext context;
 
     /*
      * (non-Javadoc)
@@ -45,6 +49,9 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
+        Activator.instance = this;
+        this.context = context;
+
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
         this.factory = new SumSourceFactory ( context, this.executor );
 
@@ -65,6 +72,9 @@ public class Activator implements BundleActivator
     {
         this.factory.dispose ();
         this.executor.shutdown ();
+
+        instance = null;
+        this.context = null;
     }
 
 }

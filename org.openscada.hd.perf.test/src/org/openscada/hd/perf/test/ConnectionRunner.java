@@ -33,8 +33,8 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.connection.provider.ConnectionRequest;
 import org.openscada.core.connection.provider.ConnectionRequestTracker;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.connection.provider.ConnectionService;
+import org.openscada.hd.data.QueryParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -126,7 +126,7 @@ public class ConnectionRunner implements Runnable
             final Calendar start = new GregorianCalendar ( 2005, 1, 1 );
             final Calendar end = (Calendar)start.clone ();
             end.add ( Calendar.YEAR, 4 );
-            final QueryParameters params = new QueryParameters ( start, end, 1000 );
+            final QueryParameters params = new QueryParameters ( start.getTimeInMillis (), end.getTimeInMillis (), 1000 );
             tasks.add ( executor.submit ( new QueryRunner ( connection, this.itemId, params ) ) );
         }
 

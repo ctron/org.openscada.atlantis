@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,6 +32,10 @@ import org.jinterop.dcom.core.JISession;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc.Hive;
 import org.openscada.da.server.opc.browser.OPCBrowserManager;
+import org.openscada.da.server.opc.connection.data.ConnectionSetup;
+import org.openscada.da.server.opc.connection.data.ConnectionState;
+import org.openscada.da.server.opc.connection.data.ControllerState;
+import org.openscada.da.server.opc.connection.data.GroupState;
 import org.openscada.da.server.opc.job.Worker;
 import org.openscada.da.server.opc.job.impl.ConnectJob;
 import org.openscada.da.server.opc.job.impl.GetGroupStateJob;
@@ -82,12 +88,12 @@ public class OPCController implements Runnable
 
         switch ( this.configuration.getAccessMethod () )
         {
-        case ASYNC20:
-            this.ioManager = new OPCAsync2IoManager ( this.worker, this.model, this );
-            break;
-        default:
-            this.ioManager = new OPCSyncIoManager ( this.worker, this.model, this );
-            break;
+            case ASYNC20:
+                this.ioManager = new OPCAsync2IoManager ( this.worker, this.model, this );
+                break;
+            default:
+                this.ioManager = new OPCSyncIoManager ( this.worker, this.model, this );
+                break;
         }
 
         this.itemManager = new OPCItemManager ( this.worker, this.configuration, this.model, this, hive, itemFactory );
@@ -207,18 +213,10 @@ public class OPCController implements Runnable
     /**
      * Request the status from the OPC server
      */
-    private void updateStatus ()
+    private void updateStatus () throws InvocationTargetException
     {
         final ServerStatusJob job = new ServerStatusJob ( this.model.getStatusJobTimeout (), this.model );
-
-        try
-        {
-            setServerState ( this.worker.execute ( job, job ) );
-        }
-        catch ( final InvocationTargetException e )
-        {
-            disposeSession ();
-        }
+        setServerState ( this.worker.execute ( job, job ) );
     }
 
     private void updateGroupStatus () throws InvocationTargetException
@@ -230,7 +228,6 @@ public class OPCController implements Runnable
     private void setGroupState ( final OPCGroupState state )
     {
         this.groupState.update ( state );
-
     }
 
     protected void setServerState ( final OPCSERVERSTATUS state )

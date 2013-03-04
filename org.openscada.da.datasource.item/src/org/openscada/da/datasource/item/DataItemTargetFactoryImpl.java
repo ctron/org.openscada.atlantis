@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,15 +20,18 @@
 package org.openscada.da.datasource.item;
 
 import java.util.Dictionary;
+import java.util.EnumSet;
 import java.util.Hashtable;
 import java.util.Map;
+import java.util.Set;
 
+import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -43,21 +46,21 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
 
     private final BundleContext context;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<DataSource> poolTracker;
 
-    private final ObjectPoolImpl itemPool;
+    private final ObjectPoolImpl<DataItem> itemPool;
 
-    private final ServiceRegistration<ObjectPool> itemPoolHandle;
+    private final ServiceRegistration<?> itemPoolHandle;
 
     public DataItemTargetFactoryImpl ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
-        this.itemPool = new ObjectPoolImpl ();
+        this.itemPool = new ObjectPoolImpl<DataItem> ();
 
-        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class.getName () );
+        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class );
 
         this.context = context;
-        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
         this.poolTracker.open ();
     }
 
@@ -96,14 +99,27 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
 
     protected Entry<DataItemTargetImpl> createDataItem ( final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws InvalidSyntaxException
     {
-        final String itemId = parameters.get ( "item.id" );
-        if ( itemId == null )
+        final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
+
+        final String itemId = cfg.getStringChecked ( "item.id", "'item.id' must be set" );
+
+        final String io = cfg.getString ( "io.directions" );
+        final Set<IODirection> ioDirection;
+        if ( io != null )
         {
-            throw new IllegalArgumentException ( "'item.id' must be set" );
+            ioDirection = EnumSet.noneOf ( IODirection.class );
+            for ( final String tok : io.split ( "," ) )
+            {
+                ioDirection.add ( IODirection.valueOf ( tok ) );
+            }
+        }
+        else
+        {
+            ioDirection = EnumSet.allOf ( IODirection.class );
         }
 
         final String datasourceId = parameters.get ( "datasource.id" );
-        final DataItemTargetImpl item = new DataItemTargetImpl ( this.poolTracker, new DataItemInformationBase ( itemId ), datasourceId );
+        final DataItemTargetImpl item = new DataItemTargetImpl ( this.poolTracker, new DataItemInformationBase ( itemId, ioDirection ), datasourceId );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );

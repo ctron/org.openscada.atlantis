@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,14 +25,15 @@ import java.util.concurrent.Executor;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.server.common.DataItem;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
+import org.openscada.utils.osgi.pool.ManageableObjectPool;
 
 public class FloatVariable extends ScalarVariable
 {
-    public FloatVariable ( final String name, final int index, final Executor executor, final ObjectPoolImpl itemPool, final Attribute... attributes )
+    public FloatVariable ( final String name, final int index, final Executor executor, final ManageableObjectPool<DataItem> itemPool, final Attribute... attributes )
     {
         super ( name, index, executor, itemPool, attributes );
     }

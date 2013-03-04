@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -37,13 +37,15 @@ public class TriggerCommand extends AbstractSingleCommand implements Listener, P
 {
 
     /**
-     * A string which will be replaced in the arguments with the write request value
+     * A string which will be replaced in the arguments with the write request
+     * value
      */
     private final String argumentPlaceholder;
 
     /**
-     * If this flag is <code>true</code> and the written value is <code>null</code>
-     * then arguments containing the placeholder will be removed completely.
+     * If this flag is <code>true</code> and the written value is
+     * <code>null</code> then arguments containing the placeholder will be
+     * removed completely.
      */
     private final boolean skipIfNull;
 
@@ -69,12 +71,13 @@ public class TriggerCommand extends AbstractSingleCommand implements Listener, P
     public void register ( final Hive hive, final FolderCommon parentFolder )
     {
         super.register ( hive, parentFolder );
-        this.startItem = getItemFactory ().createCommand ( "start" );
+        this.startItem = getItemFactory ().createCommand ( "start", null );
         this.startItem.addListener ( this );
 
-        this.killItem = getItemFactory ().createCommand ( "kill" );
+        this.killItem = getItemFactory ().createCommand ( "kill", null );
         this.killItem.addListener ( new Listener () {
 
+            @Override
             public void command ( final Variant value ) throws Exception
             {
                 TriggerCommand.this.kill ();
@@ -83,6 +86,7 @@ public class TriggerCommand extends AbstractSingleCommand implements Listener, P
 
     }
 
+    @Override
     public void command ( final Variant value ) throws Exception
     {
         if ( !this.running.compareAndSet ( false, true ) )
@@ -103,6 +107,7 @@ public class TriggerCommand extends AbstractSingleCommand implements Listener, P
             // do the fork
             final Thread thread = new Thread ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     TriggerCommand.this.execute ( pb, TriggerCommand.this );
@@ -177,12 +182,14 @@ public class TriggerCommand extends AbstractSingleCommand implements Listener, P
         p.destroy ();
     }
 
+    @Override
     public void processCompleted ()
     {
         this.running.set ( false );
         this.currentProcess = null;
     }
 
+    @Override
     public void processCreated ( final Process process )
     {
         this.currentProcess = process;

@@ -23,7 +23,7 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.AttributeBinder;

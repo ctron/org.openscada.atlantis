@@ -2,8 +2,8 @@
 <feature
       id="org.openscada.atlantis.sdk"
       label="openSCADA Atlantis SDK"
-      version="0.18.0.qualifier"
-      provider-name="TH4 SYSTEMS GmbH">
+      version="1.0.0.qualifier"
+      provider-name="openSCADA.org">
 
    <description>
       Project Atlantis is the reference implementation of OpenSCADA

@@ -24,10 +24,9 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -44,21 +43,21 @@ public class MemorySourceFactory extends AbstractServiceConfigurationFactory<Mem
 
     private final Executor executor;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<DataSource> poolTracker;
 
-    private final ObjectPoolImpl objectPool;
+    private final ObjectPoolImpl<DataSource> objectPool;
 
-    private final ServiceRegistration<ObjectPool> poolRegistration;
+    private final ServiceRegistration<?> poolRegistration;
 
     public MemorySourceFactory ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = executor;
 
-        this.objectPool = new ObjectPoolImpl ();
-        this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class.getName () );
+        this.objectPool = new ObjectPoolImpl<DataSource> ();
+        this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class );
 
-        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class );
         this.poolTracker.open ();
     }
 

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,19 +28,25 @@ import org.openscada.da.core.WriteAttributeResults;
 public class WriteAttributesHelper
 {
     /**
-     * This method sets all unprocessed attribute write requests to an <q>unsupported</q>
-     * error ({@link UnsupportedOperationException});
-     * @param initialResults The results genereted so far
-     * @param attributes The attributes to write
+     * This method sets all unprocessed attribute write requests to an <q>unsupported</q> error ({@link UnsupportedOperationException});
+     * 
+     * @param initialResults
+     *            The results generated so far
+     * @param attributes
+     *            The attributes to write
      * @return the initial results including the unprocessed results
      */
     public static WriteAttributeResults errorUnhandled ( final WriteAttributeResults initialResults, final Map<String, Variant> attributes )
     {
-        WriteAttributeResults writeAttributeResults = initialResults;
+        final WriteAttributeResults writeAttributeResults;
 
-        if ( writeAttributeResults == null )
+        if ( initialResults == null )
         {
             writeAttributeResults = new WriteAttributeResults ();
+        }
+        else
+        {
+            writeAttributeResults = initialResults;
         }
 
         for ( final String name : attributes.keySet () )
@@ -48,6 +54,38 @@ public class WriteAttributesHelper
             if ( !writeAttributeResults.containsKey ( name ) )
             {
                 writeAttributeResults.put ( name, new WriteAttributeResult ( new UnsupportedOperationException ( "Operation not supported" ) ) );
+            }
+        }
+        return writeAttributeResults;
+    }
+
+    /**
+     * This method sets all unprocessed attribute write requests to {@link WriteAttributeResult#OK}
+     * 
+     * @param initialResults
+     *            The results generated so far
+     * @param attributes
+     *            The attributes to write
+     * @return the initial results including the unprocessed results
+     */
+    public static WriteAttributeResults okUnhandled ( final WriteAttributeResults initialResults, final Map<String, Variant> attributes )
+    {
+        final WriteAttributeResults writeAttributeResults;
+
+        if ( initialResults == null )
+        {
+            writeAttributeResults = new WriteAttributeResults ();
+        }
+        else
+        {
+            writeAttributeResults = initialResults;
+        }
+
+        for ( final String name : attributes.keySet () )
+        {
+            if ( !writeAttributeResults.containsKey ( name ) )
+            {
+                writeAttributeResults.put ( name, WriteAttributeResult.OK );
             }
         }
         return writeAttributeResults;

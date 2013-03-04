@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.openscada.ae.BrowserEntry;
-import org.openscada.ae.BrowserType;
+import org.openscada.ae.data.BrowserEntry;
+import org.openscada.ae.data.BrowserType;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;
@@ -37,7 +37,7 @@ import org.openscada.net.base.data.VoidValue;
 public class BrowserMessageHelper
 {
 
-    public static BrowserEntry[] fromValue ( final Value baseValue )
+    public static List<BrowserEntry> fromValue ( final Value baseValue )
     {
         if ( ! ( baseValue instanceof ListValue ) )
         {
@@ -57,12 +57,7 @@ public class BrowserMessageHelper
             }
         }
 
-        if ( result.isEmpty () )
-        {
-            return null;
-        }
-
-        return result.toArray ( new BrowserEntry[result.size ()] );
+        return result;
     }
 
     private static Set<BrowserType> getTypes ( final Value value )
@@ -75,7 +70,14 @@ public class BrowserMessageHelper
             {
                 if ( entry instanceof StringValue )
                 {
-                    final BrowserType type = BrowserType.valueOf ( ( (StringValue)entry ).getValue () );
+                    String strValue = ( (StringValue)entry ).getValue ();
+                    if ( strValue == "CONDITIONS" )
+                    {
+                        // convert for old connections
+                        strValue = "MONITORS";
+                    }
+
+                    final BrowserType type = BrowserType.valueOf ( strValue );
                     if ( type != null )
                     {
                         result.add ( type );
@@ -128,7 +130,7 @@ public class BrowserMessageHelper
         }
     }
 
-    public static Value toValue ( final BrowserEntry[] added )
+    public static Value toValue ( final List<BrowserEntry> added )
     {
         final ListValue result = new ListValue ();
 
@@ -159,7 +161,7 @@ public class BrowserMessageHelper
         return value;
     }
 
-    public static Value toValue ( final String[] removed )
+    public static Value toValue ( final Set<String> removed )
     {
         if ( removed == null )
         {
@@ -176,7 +178,7 @@ public class BrowserMessageHelper
         return result;
     }
 
-    public static String[] fromValueRemoved ( final Value value )
+    public static Set<String> fromValueRemoved ( final Value value )
     {
         if ( ! ( value instanceof ListValue ) )
         {
@@ -192,13 +194,6 @@ public class BrowserMessageHelper
             }
         }
 
-        if ( removed.isEmpty () )
-        {
-            return null;
-        }
-        else
-        {
-            return removed.toArray ( new String[0] );
-        }
+        return removed;
     }
 }

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,8 +19,12 @@
 
 package org.openscada.net.mina;
 
+import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IoSession;
+import org.openscada.core.info.StatisticsImpl;
 import org.openscada.net.base.data.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class IoSessionSender implements MessageSender
 {
@@ -32,13 +36,21 @@ public class IoSessionSender implements MessageSender
 
     private final IoSession session;
 
-    public IoSessionSender ( final IoSession session )
+    public static Object STATS_QUEUED_BYTES = new Object ();
+
+    private final StatisticsImpl statistics;
+
+    private final static Logger logger = LoggerFactory.getLogger ( IoSessionSender.class );
+
+    public IoSessionSender ( final IoSession session, final StatisticsImpl statistics )
     {
         this.session = session;
+        this.statistics = statistics;
+        statistics.setLabel ( STATS_QUEUED_BYTES, "Scheduled write bytes" );
     }
 
     @Override
-    public synchronized boolean sendMessage ( final Message message, final PrepareSendHandler handler )
+    public synchronized WriteFuture sendMessage ( final Message message, final PrepareSendHandler handler )
     {
         message.setSequence ( nextSequence () );
 
@@ -48,9 +60,12 @@ public class IoSessionSender implements MessageSender
             handler.prepareSend ( message );
         }
 
-        this.session.write ( message );
+        final WriteFuture future = this.session.write ( message );
 
-        return true;
+        logger.trace ( "Scheduled write bytes: {}", this.session.getScheduledWriteBytes () );
+        this.statistics.setCurrentValue ( STATS_QUEUED_BYTES, this.session.getScheduledWriteBytes () );
+
+        return future;
     }
 
     private long nextSequence ()

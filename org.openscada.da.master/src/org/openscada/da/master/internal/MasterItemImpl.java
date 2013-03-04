@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,11 +27,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.OperationParameters;
@@ -55,6 +57,8 @@ import org.slf4j.LoggerFactory;
 
 public class MasterItemImpl extends AbstractDataSourceHandler implements MasterItem
 {
+
+    private final static boolean LOG_SUPPRESS = Boolean.getBoolean ( "org.openscada.da.master.internal.masterItemLogSuppressProcess" );
 
     private static class WriteListenerAttributeImpl extends AbstractFuture<WriteAttributeResults> implements WriteListener
     {
@@ -200,13 +204,28 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     private String dataSourceId;
 
-    private final boolean debug = true;
+    private boolean debug = false;
 
     private boolean dontOverrideSubscription = false;
 
-    public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final ObjectPoolTracker dataSourcePoolTracker ) throws InvalidSyntaxException
+    private final Lock processTriggerLock = new ReentrantLock ();
+
+    private boolean processTriggered;
+
+    private final Runnable processRunnable = new Runnable () {
+        @Override
+        public void run ()
+        {
+            MasterItemImpl.this.doReprocess ();
+        }
+    };
+
+    private final String id;
+
+    public MasterItemImpl ( final Executor executor, final BundleContext context, final String id, final ObjectPoolTracker<DataSource> dataSourcePoolTracker ) throws InvalidSyntaxException
     {
         super ( dataSourcePoolTracker );
+        this.id = id;
         this.executor = executor;
         stateChanged ( initValue () );
     }
@@ -259,36 +278,56 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
     @Override
     public void reprocess ()
     {
-        this.executor.execute ( new Runnable () {
-            @Override
-            public void run ()
+        try
+        {
+            this.processTriggerLock.lock ();
+            if ( this.processTriggered )
             {
-                doReprocess ();
+                if ( LOG_SUPPRESS )
+                {
+                    logger.trace ( "Suppressed process()" );
+                }
+                return;
             }
-        } );
+
+            this.processTriggered = true;
+
+            this.executor.execute ( this.processRunnable );
+        }
+        finally
+        {
+            this.processTriggerLock.unlock ();
+        }
     }
 
-    protected synchronized void doReprocess ()
+    /**
+     * Re-process with the same source value
+     */
+    protected void doReprocess ()
     {
-        process ( this.sourceValue );
+        try
+        {
+            this.processTriggerLock.lock ();
+            this.processTriggered = false;
+        }
+        finally
+        {
+            this.processTriggerLock.unlock ();
+        }
+
+        handleProcess ();
     }
 
-    protected void process ( final DataItemValue value )
-    {
-        this.executor.execute ( new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                MasterItemImpl.this.handleReprocess ( value );
-            }
-        } );
-    }
-
-    protected synchronized void handleReprocess ( final DataItemValue value )
+    /**
+     * handle the processing
+     * 
+     * @param value
+     *            the source value
+     */
+    protected synchronized void handleProcess ()
     {
         logger.debug ( "Reprocessing" );
-        updateData ( processHandler ( value ) );
+        updateData ( processHandler ( this.sourceValue ) );
     }
 
     @Override
@@ -316,7 +355,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
             this.sourceValue = builder.build ();
         }
 
-        process ( this.sourceValue );
+        reprocess ();
     }
 
     /* (non-Javadoc)
@@ -343,7 +382,7 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
     {
         logger.debug ( "Processing handlers" );
 
-        ArrayList<HandlerEntry> handler;
+        final ArrayList<HandlerEntry> handler;
         synchronized ( this.itemHandler )
         {
             handler = new ArrayList<HandlerEntry> ( this.itemHandler );
@@ -351,26 +390,21 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
         final Map<String, Object> context = new HashMap<String, Object> ();
 
+        final DataItemValue.Builder builder = new Builder ( value );
+
         for ( final HandlerEntry entry : handler )
         {
             logger.debug ( "Process: {} -> {}", new Object[] { entry.getPriority (), entry.getHandler () } );
-            final DataItemValue newValue = entry.getHandler ().dataUpdate ( context, value );
-            if ( newValue != null )
-            {
-                value = newValue;
-            }
+            entry.getHandler ().dataUpdate ( context, builder );
         }
 
         if ( this.debug )
         {
-            final Builder builder = new Builder ( value );
-
             builder.setAttribute ( "master.debug.handlerCount", Variant.valueOf ( handler.size () ) );
-
             value = builder.build ();
         }
 
-        return value;
+        return builder.build ();
     }
 
     @Override
@@ -471,8 +505,11 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
     /**
      * Merge the two result sets
-     * @param firstResult first set
-     * @param secondResult second set
+     * 
+     * @param firstResult
+     *            first set
+     * @param secondResult
+     *            second set
      * @return the merged result
      */
     protected WriteAttributeResults mergeResults ( final WriteAttributeResults firstResult, final WriteAttributeResults secondResult )
@@ -492,15 +529,16 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
     private WriteRequestResult preProcessWrite ( final WriteRequest writeRequest )
     {
         final HandlerEntry[] handlers;
-        synchronized ( this )
+        synchronized ( this.itemHandler )
         {
             handlers = this.itemHandler.toArray ( new HandlerEntry[this.itemHandler.size ()] );
         }
 
         WriteRequest request = writeRequest;
         WriteRequestResult finalResult = new WriteRequestResult ( writeRequest.getValue (), writeRequest.getAttributes (), null );
-        for ( final HandlerEntry handler : handlers )
+        for ( int i = handlers.length; i > 0; i-- )
         {
+            final HandlerEntry handler = handlers[i - 1];
             final WriteRequestResult nextResult = handler.getHandler ().processWrite ( request );
 
             if ( nextResult != null )
@@ -554,10 +592,17 @@ public class MasterItemImpl extends AbstractDataSourceHandler implements MasterI
 
         this.dataSourceId = cfg.getString ( "datasource.id" );
         this.dontOverrideSubscription = cfg.getBoolean ( "dontOverrideSubscription", false );
+        this.debug = cfg.getBoolean ( "debug", false );
 
         stateChanged ( null );
 
         setDataSource ( this.dataSourceId );
+    }
+
+    @Override
+    public String toString ()
+    {
+        return String.format ( getClass ().getSimpleName () + ": " + this.id );
     }
 
 }

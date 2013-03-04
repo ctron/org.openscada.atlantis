@@ -2,8 +2,8 @@
 <feature
       id="org.openscada.hd"
       label="openSCADA HD"
-      version="0.17.0.qualifier"
-      provider-name="TH4 SYSTEMS GmbH">
+      version="1.0.0.qualifier"
+      provider-name="openSCADA.org">
 
    <description url="http://openscada.org">
       The OpenSCADA historical data module
@@ -94,13 +94,6 @@
          unpack="false"/>
 
    <plugin
-         id="org.openscada.hd.server.storage.hsdb"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
          id="org.openscada.hd.connection.provider"
          download-size="0"
          install-size="0"
@@ -141,6 +134,52 @@
 
    <plugin
          id="org.openscada.hd.server.proxy"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openscada.hd.server.storage.master.hds"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openscada.hd.server.storage.slave.hds"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openscada.hd.client.connection.service"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.server.exporter.ngp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.client.ngp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.server.ngp"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.hd.common.ngp"
          download-size="0"
          install-size="0"
          version="0.0.0"/>

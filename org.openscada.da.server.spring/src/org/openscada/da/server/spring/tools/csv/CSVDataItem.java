@@ -23,9 +23,9 @@ import java.util.EnumSet;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
-import org.openscada.da.core.IODirection;
 import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.common.chain.item.ChainCreator;

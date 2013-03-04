@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +19,6 @@
 
 package org.openscada.da.master;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -49,20 +48,20 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private final int defaultPriority;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<MasterItem> poolTracker;
 
     private volatile int priority;
 
-    private final Map<String, ObjectPoolServiceTracker> trackers = new HashMap<String, ObjectPoolServiceTracker> ();
+    private final Map<String, ObjectPoolServiceTracker<MasterItem>> trackers = new HashMap<String, ObjectPoolServiceTracker<MasterItem>> ();
 
     protected Map<String, Variant> eventAttributes;
 
-    public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker )
+    public AbstractMasterHandlerImpl ( final ObjectPoolTracker<MasterItem> poolTracker )
     {
         this ( poolTracker, Integer.MAX_VALUE );
     }
 
-    public AbstractMasterHandlerImpl ( final ObjectPoolTracker poolTracker, final int defaultPriority )
+    public AbstractMasterHandlerImpl ( final ObjectPoolTracker<MasterItem> poolTracker, final int defaultPriority )
     {
         this.poolTracker = poolTracker;
         this.defaultPriority = defaultPriority;
@@ -78,7 +77,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
 
     private void closeTrackers ()
     {
-        for ( final ObjectPoolServiceTracker tracker : this.trackers.values () )
+        for ( final ObjectPoolServiceTracker<MasterItem> tracker : this.trackers.values () )
         {
             tracker.close ();
         }
@@ -107,7 +106,7 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         if ( trackerUpdate )
         {
             createTrackers ( newIds );
-            for ( final ObjectPoolServiceTracker tracker : this.trackers.values () )
+            for ( final ObjectPoolServiceTracker<MasterItem> tracker : this.trackers.values () )
             {
                 tracker.open ();
             }
@@ -130,25 +129,23 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
     {
         for ( final String masterId : masterIds )
         {
-            this.trackers.put ( masterId, new ObjectPoolServiceTracker ( this.poolTracker, masterId, new ObjectPoolListener () {
+            this.trackers.put ( masterId, new ObjectPoolServiceTracker<MasterItem> ( this.poolTracker, masterId, new ObjectPoolListener<MasterItem> () {
 
                 @Override
-                public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
+                public void serviceAdded ( final MasterItem service, final Dictionary<?, ?> properties )
                 {
-                    addItem ( (MasterItem)service );
+                    addItem ( service );
                 }
 
                 @Override
-                public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
+                public void serviceModified ( final MasterItem service, final Dictionary<?, ?> properties )
                 {
-                    // TODO Auto-generated method stub
-
                 }
 
                 @Override
-                public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
+                public void serviceRemoved ( final MasterItem service, final Dictionary<?, ?> properties )
                 {
-                    removeItem ( (MasterItem)service );
+                    removeItem ( service );
                 }
             } ) );
         }
@@ -179,9 +176,14 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
         }
     }
 
+    /**
+     * Get an unmodifiable list of master items
+     * 
+     * @return unmodifiable list of master items
+     */
     protected Collection<MasterItem> getMasterItems ()
     {
-        return new ArrayList<MasterItem> ( this.items );
+        return Collections.unmodifiableCollection ( this.items );
     }
 
     protected void reprocess ()
@@ -193,14 +195,13 @@ public abstract class AbstractMasterHandlerImpl implements MasterItemHandler
     }
 
     @Override
-    public abstract DataItemValue dataUpdate ( Map<String, Object> context, final DataItemValue value );
+    public abstract void dataUpdate ( Map<String, Object> context, final DataItemValue.Builder value );
 
     /**
      * Process the write request
      * <p>
-     * This implementation does <em>nothing</em> and can be overridden by
-     * derived implementations.
-     * </p>  
+     * This implementation does <em>nothing</em> and can be overridden by derived implementations.
+     * </p>
      */
     @Override
     public WriteRequestResult processWrite ( final WriteRequest request )

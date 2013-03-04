@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,6 +20,8 @@
 package org.openscada.ae.server.common.monitor.internal;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,7 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.MonitorStatusInformation;
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
@@ -50,32 +52,32 @@ public class BundleMonitorQuery extends MonitorQuery implements MonitorListener
 
     private final Set<MonitorService> services = new HashSet<MonitorService> ();
 
-    private final AllObjectPoolServiceTracker tracker;
+    private final AllObjectPoolServiceTracker<MonitorService> tracker;
 
     private final Map<String, MonitorStatusInformation> cachedData = new HashMap<String, MonitorStatusInformation> ();
 
     private Filter filter = Filter.EMPTY;
 
-    public BundleMonitorQuery ( final Executor executor, final BundleContext context, final ObjectPoolTracker poolTracker ) throws InvalidSyntaxException
+    public BundleMonitorQuery ( final Executor executor, final BundleContext context, final ObjectPoolTracker<MonitorService> poolTracker ) throws InvalidSyntaxException
     {
         super ( executor );
-        this.tracker = new AllObjectPoolServiceTracker ( poolTracker, new ObjectPoolListener () {
+        this.tracker = new AllObjectPoolServiceTracker<MonitorService> ( poolTracker, new ObjectPoolListener<MonitorService> () {
 
             @Override
-            public void serviceRemoved ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceRemoved ( final MonitorService service, final Dictionary<?, ?> properties )
             {
-                BundleMonitorQuery.this.handleRemoved ( (MonitorService)service );
+                BundleMonitorQuery.this.handleRemoved ( service );
             }
 
             @Override
-            public void serviceModified ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceModified ( final MonitorService service, final Dictionary<?, ?> properties )
             {
             }
 
             @Override
-            public void serviceAdded ( final Object service, final Dictionary<?, ?> properties )
+            public void serviceAdded ( final MonitorService service, final Dictionary<?, ?> properties )
             {
-                BundleMonitorQuery.this.handleAdded ( (MonitorService)service );
+                BundleMonitorQuery.this.handleAdded ( service );
             }
         } );
         this.tracker.open ();
@@ -96,7 +98,7 @@ public class BundleMonitorQuery extends MonitorQuery implements MonitorListener
             service.removeStatusListener ( this );
 
             this.cachedData.remove ( service.getId () );
-            updateData ( null, new String[] { service.getId () } );
+            updateData ( null, Collections.singleton ( service.getId () ), false );
         }
     }
 
@@ -171,11 +173,11 @@ public class BundleMonitorQuery extends MonitorQuery implements MonitorListener
 
         if ( matchesFilter ( status ) )
         {
-            updateData ( new MonitorStatusInformation[] { status }, null );
+            updateData ( Arrays.asList ( status ), null, false );
         }
         else
         {
-            updateData ( null, new String[] { status.getId () } );
+            updateData ( null, Collections.singleton ( status.getId () ), false );
         }
     }
 }

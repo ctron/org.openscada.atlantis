@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,24 +26,26 @@ import org.openscada.da.core.browser.Entry;
 
 public class EntryCommon implements Entry
 {
-    private final String _name;
+    private final String name;
 
-    private final Map<String, Variant> _attributes;
+    private final Map<String, Variant> attributes;
 
     public EntryCommon ( final String name, final Map<String, Variant> attributes )
     {
-        this._name = name;
-        this._attributes = attributes;
+        this.name = name;
+        this.attributes = attributes;
     }
 
+    @Override
     public Map<String, Variant> getAttributes ()
     {
-        return this._attributes;
+        return this.attributes;
     }
 
+    @Override
     public String getName ()
     {
-        return this._name;
+        return this.name;
     }
 
 }

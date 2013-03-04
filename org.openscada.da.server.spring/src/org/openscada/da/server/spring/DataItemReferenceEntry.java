@@ -21,7 +21,7 @@ package org.openscada.da.server.spring;
 
 import java.util.EnumSet;
 
-import org.openscada.da.core.IODirection;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItem;
 
 public class DataItemReferenceEntry extends Entry

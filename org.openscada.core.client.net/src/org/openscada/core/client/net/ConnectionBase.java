@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,6 +22,7 @@
 package org.openscada.core.client.net;
 
 import java.net.SocketAddress;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -43,6 +46,9 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
+import org.openscada.core.info.StatisticEntry;
+import org.openscada.core.info.StatisticsImpl;
+import org.openscada.core.info.StatisticsProvider;
 import org.openscada.core.net.ConnectionHelper;
 import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;
@@ -53,10 +59,22 @@ import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ConnectionBase implements Connection, IoHandler
+public abstract class ConnectionBase implements Connection, IoHandler, StatisticsProvider
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionBase.class );
+
+    private static final Object STATS_PINGS_SENT = new Object ();
+
+    private static final Object STATS_SESSION_BYTES_READ = new Object ();
+
+    private static final Object STATS_SESSION_BYTES_WRITTEN = new Object ();
+
+    private static final Object STATS_CALLS_CONNECT = new Object ();
+
+    private static final Object STATS_CALLS_DISCONNECT = new Object ();
+
+    private static final Object STATS_NUMERIC_STATE = new Object ();
 
     private final Set<ConnectionStateListener> connectionStateListeners = new CopyOnWriteArraySet<ConnectionStateListener> ();
 
@@ -82,6 +100,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     private volatile Map<String, String> properties;
 
+    protected final StatisticsImpl statistics = new StatisticsImpl ();
+
     public ConnectionBase ( final ConnectionInformation connectionInformation )
     {
         super ();
@@ -90,11 +110,20 @@ public abstract class ConnectionBase implements Connection, IoHandler
         // the lookup executor has at max one thread and kills this if idle for one minute
         this.lookupExecutor = new ThreadPoolExecutor ( 0, 1, 1, TimeUnit.MINUTES, new LinkedBlockingQueue<Runnable> (), new NamedThreadFactory ( "ConnectionBaseExecutor/" + connectionInformation.toMaskedString () ) );
 
-        this.messenger = new Messenger ( getMessageTimeout () );
+        this.messenger = new Messenger ( getMessageTimeout (), this.statistics );
 
         this.pingService = new PingService ( this.messenger );
 
         this.connector = createConnector ();
+
+        this.statistics.setLabel ( STATS_PINGS_SENT, "Pings sent" );
+        this.statistics.setLabel ( STATS_SESSION_BYTES_READ, "Bytes read in session" );
+        this.statistics.setLabel ( STATS_SESSION_BYTES_WRITTEN, "Bytes written in session" );
+
+        this.statistics.setLabel ( STATS_CALLS_CONNECT, "Calls to connect" );
+        this.statistics.setLabel ( STATS_CALLS_DISCONNECT, "Calls to disconnect" );
+
+        this.statistics.setLabel ( STATS_NUMERIC_STATE, "Numeric state" );
     }
 
     protected synchronized void switchState ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
@@ -108,111 +137,128 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         switch ( this.connectionState )
         {
-        case CLOSED:
-            handleSwitchClosed ( state );
-            break;
-        case CONNECTING:
-            handleSwitchConnecting ( state, error );
-            break;
-        case CONNECTED:
-            handleSwitchConnected ( state, error, properties );
-            break;
-        case BOUND:
-            handleSwitchBound ( state, error );
-            break;
-        case CLOSING:
-            handleSwitchClosing ( state, error );
-            break;
-        case LOOKUP:
-            handleSwitchLookup ( state, error );
-            break;
+            case CLOSED:
+                handleSwitchClosed ( state );
+                break;
+            case CONNECTING:
+                handleSwitchConnecting ( state, error );
+                break;
+            case CONNECTED:
+                handleSwitchConnected ( state, error, properties );
+                break;
+            case BOUND:
+                handleSwitchBound ( state, error );
+                break;
+            case CLOSING:
+                handleSwitchClosing ( state, error );
+                break;
+            case LOOKUP:
+                handleSwitchLookup ( state, error );
+                break;
         }
     }
 
     /**
      * Handle when we are in state LOOKUP
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
 
     private void handleSwitchLookup ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case CONNECTING:
-            performConnect ();
-            break;
-        case CLOSED:
-            requestClose ( error );
-            break;
-        case CLOSING:
-            requestClose ( error );
-            break;
+            case CONNECTING:
+                performConnect ();
+                break;
+            case CLOSED:
+                requestClose ( error );
+                break;
+            case CLOSING:
+                requestClose ( error );
+                break;
+            default:
+                break;
         }
     }
 
     /**
      * Handle when we are in state CLOSING
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
 
     private void handleSwitchClosing ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case CLOSED:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
+            case CLOSED:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
+            default:
+                break;
         }
     }
 
     /**
      * Handle when we are in state BOUND
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
 
     private void handleSwitchBound ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case CLOSING:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
-        case CLOSED:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
+            case CLOSING:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
+            case CLOSED:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
+            default:
+                break;
         }
     }
 
     /**
      * Handle when we are in state CONNECTED
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
 
     private void handleSwitchConnected ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
     {
         switch ( state )
         {
-        case CLOSING:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
-        case CLOSED:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
-        case BOUND:
-            this.properties = properties;
-            setState ( ConnectionState.BOUND, error );
-            onConnectionBound ();
-            break;
+            case CLOSING:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
+            case CLOSED:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
+            case BOUND:
+                this.properties = properties;
+                setState ( ConnectionState.BOUND, error );
+                onConnectionBound ();
+                break;
+            default:
+                break;
         }
     }
 
     /**
      * We want to be closed ... maybe we already are
+     * 
      * @param error
      */
     private void requestClose ( final Throwable error )
@@ -239,44 +285,52 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * Handle when we are in state CONNECTING
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
     private void handleSwitchConnecting ( final ConnectionState state, final Throwable error )
     {
         switch ( state )
         {
-        case CLOSING:
-            requestClose ( error );
-            break;
-        case CONNECTED:
-            setState ( ConnectionState.CONNECTED, null );
-            onConnectionEstablished ();
-            break;
-        case CLOSED:
-            requestClose ( error );
-            onConnectionClosed ();
-            break;
+            case CLOSING:
+                requestClose ( error );
+                break;
+            case CONNECTED:
+                setState ( ConnectionState.CONNECTED, null );
+                onConnectionEstablished ();
+                break;
+            case CLOSED:
+                requestClose ( error );
+                onConnectionClosed ();
+                break;
+            default:
+                break;
         }
     }
 
     /**
      * Handle when we are in state CLOSED
-     * @param state the target state
+     * 
+     * @param state
+     *            the target state
      */
     private void handleSwitchClosed ( final ConnectionState state )
     {
         switch ( state )
         {
-        case CONNECTING:
-            if ( this.remoteAddress != null )
-            {
-                performConnect ();
-            }
-            else
-            {
-                performLookup ();
-            }
-            break;
+            case CONNECTING:
+                if ( this.remoteAddress != null )
+                {
+                    performConnect ();
+                }
+                else
+                {
+                    performLookup ();
+                }
+                break;
+            default:
+                break;
         }
     }
 
@@ -286,12 +340,15 @@ public abstract class ConnectionBase implements Connection, IoHandler
     @Override
     public void disconnect ()
     {
+        this.statistics.changeCurrentValue ( STATS_CALLS_DISCONNECT, 1 );
         disconnect ( null );
     }
 
     /**
      * request a disconnect
-     * @param error optionally the error that caused the request to close
+     * 
+     * @param error
+     *            optionally the error that caused the request to close
      */
     protected void disconnect ( final Throwable error )
     {
@@ -326,8 +383,11 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * set new state internally
+     * 
      * @param connectionState
-     * @param error additional error information or <code>null</code> if we don't have an error.
+     * @param error
+     *            additional error information or <code>null</code> if we don't
+     *            have an error.
      */
     private void setState ( final ConnectionState connectionState, final Throwable error )
     {
@@ -336,6 +396,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
             if ( this.connectionState != connectionState )
             {
+                this.statistics.setCurrentValue ( STATS_NUMERIC_STATE, connectionState.ordinal () );
                 this.connectionState = connectionState;
                 trigger = true;
             }
@@ -348,8 +409,12 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * Notify state change listeners
-     * @param connectionState new state
-     * @param error additional error information or <code>null</code> if we don't have an error. 
+     * 
+     * @param connectionState
+     *            new state
+     * @param error
+     *            additional error information or <code>null</code> if we don't
+     *            have an error.
      */
     private void notifyStateChange ( final ConnectionState connectionState, final Throwable error )
     {
@@ -385,6 +450,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         logger.debug ( "Requesting connect in state {}", this.connectionState );
 
+        this.statistics.changeCurrentValue ( STATS_CALLS_CONNECT, 1 );
+
         if ( this.connectionState == ConnectionState.CLOSED )
         {
             switchState ( ConnectionState.CONNECTING, null, null );
@@ -410,7 +477,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         logger.debug ( "Completed resolving remote address: {}", address );
         if ( e != null )
         {
-            logger.warn ( "Failed to resolve", e );
+            logger.warn ( "Failed to resolve: " + address, e );
         }
 
         if ( this.connectionState != ConnectionState.LOOKUP )
@@ -481,8 +548,10 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * called when a connection attempt failed
-     * @param future 
-     * @param e the error
+     * 
+     * @param future
+     * @param e
+     *            the error
      */
     protected synchronized void connectFailed ( final ConnectFuture future, final Throwable e )
     {
@@ -529,6 +598,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     protected void onConnectionClosed ()
     {
+        this.pingService.stop ();
         this.properties = null;
     }
 
@@ -539,16 +609,21 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * Set the {@link ConnectionState#BOUND} including the session properties
+     * 
      * @param properties
      */
     public void setBound ( final Properties properties )
     {
+        logger.debug ( "Request BOUND state" );
+        this.pingService.start ();
         switchState ( ConnectionState.BOUND, null, convertProperties ( properties ) );
     }
 
     /**
      * Convert properties to map
-     * @param properties the properties to convert
+     * 
+     * @param properties
+     *            the properties to convert
      * @return the converted map
      */
     private Map<String, String> convertProperties ( final Properties properties )
@@ -576,7 +651,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     @Override
     public synchronized void exceptionCaught ( final IoSession session, final Throwable cause ) throws Exception
     {
-        logger.error ( "Connection exception", cause );
+        logger.error ( String.format ( "Connection exception for connection: %s", this.connectionInformation != null ? this.connectionInformation.toMaskedString () : "<null>" ), cause );
         if ( session == this.session )
         {
             requestClose ( cause );
@@ -588,6 +663,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
     {
         if ( session == this.session )
         {
+            this.statistics.setCurrentValue ( STATS_SESSION_BYTES_READ, session.getReadBytes () );
             // only accept current session stuff
             if ( message instanceof Message )
             {
@@ -599,6 +675,8 @@ public abstract class ConnectionBase implements Connection, IoHandler
     @Override
     public void messageSent ( final IoSession session, final Object message ) throws Exception
     {
+        this.statistics.setCurrentValue ( STATS_SESSION_BYTES_WRITTEN, session.getWrittenBytes () );
+        this.statistics.setCurrentValue ( IoSessionSender.STATS_QUEUED_BYTES, session.getScheduledWriteBytes () );
     }
 
     @Override
@@ -654,6 +732,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
 
         this.pingService.sendPing ();
+        this.statistics.changeCurrentValue ( STATS_PINGS_SENT, 1 );
     }
 
     @Override
@@ -663,7 +742,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
         if ( session == this.session )
         {
-            this.messenger.connected ( new IoSessionSender ( session ) );
+            this.messenger.connected ( new IoSessionSender ( session, this.statistics ) );
 
             switchState ( ConnectionState.CONNECTED, null, null );
         }
@@ -671,6 +750,7 @@ public abstract class ConnectionBase implements Connection, IoHandler
 
     /**
      * get the timeout used for connecting to the remote host
+     * 
      * @return the timeout in milliseconds
      */
     public int getConnectTimeout ()
@@ -741,9 +821,12 @@ public abstract class ConnectionBase implements Connection, IoHandler
         }
     }
 
+    @Override
     public void dispose ()
     {
+        disconnect ( null );
         this.lookupExecutor.shutdown ();
+        this.connector.dispose ();
     }
 
     @Override
@@ -758,6 +841,12 @@ public abstract class ConnectionBase implements Connection, IoHandler
         {
             return Collections.emptyMap ();
         }
+    }
+
+    @Override
+    public Collection<StatisticEntry> getStatistics ()
+    {
+        return this.statistics.getEntries ();
     }
 
 }

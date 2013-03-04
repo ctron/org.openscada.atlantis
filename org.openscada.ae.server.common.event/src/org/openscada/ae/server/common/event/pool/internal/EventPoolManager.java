@@ -98,18 +98,23 @@ public class EventPoolManager
 
     protected synchronized void setStorageService ( final Storage service )
     {
+        logger.debug ( "Setting storage service: {}", service );
+
         this.storage = service;
         checkInit ();
     }
 
     protected synchronized void setEventManager ( final EventManager service )
     {
+        logger.debug ( "Setting event manager: {}", service );
+
         this.eventManager = service;
         checkInit ();
     }
 
     private void checkInit ()
     {
+        logger.info ( "Checking init state" );
         // FIXME: async exec
 
         if ( this.storage != null && this.eventManager != null )

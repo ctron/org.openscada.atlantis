@@ -23,7 +23,7 @@ import java.util.Calendar;
 
 import org.junit.Assert;
 import org.junit.Test;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.ValueInformation;
 
 public class ValueInformationTest
 {
@@ -35,8 +35,8 @@ public class ValueInformationTest
         final Calendar end = (Calendar)start.clone ();
         end.add ( Calendar.MINUTE, 1 );
 
-        final ValueInformation vi1 = new ValueInformation ( start, end, 1.0, 0.0, 1 );
-        final ValueInformation vi2 = new ValueInformation ( start, end, 1.0, 0.0, 1 );
+        final ValueInformation vi1 = new ValueInformation ( 1.0, 0.0, start.getTimeInMillis (), end.getTimeInMillis (), 1 );
+        final ValueInformation vi2 = new ValueInformation ( 1.0, 0.0, start.getTimeInMillis (), end.getTimeInMillis (), 1 );
 
         Assert.assertEquals ( "Basic equality", vi1, vi2 );
     }
@@ -52,11 +52,11 @@ public class ValueInformationTest
         final Calendar end = (Calendar)start.clone ();
         end.add ( Calendar.MINUTE, 1 );
 
-        final ValueInformation vi1 = new ValueInformation ( start, end, 1.0, 0.0, 1 );
+        final ValueInformation vi1 = new ValueInformation ( 1.0, 0.0, start.getTimeInMillis (), end.getTimeInMillis (), 1 );
 
         start.set ( 2001, 1, 1 );
 
-        final ValueInformation vi2 = new ValueInformation ( start, end, 1.0, 0.0, 1 );
+        final ValueInformation vi2 = new ValueInformation ( 1.0, 0.0, start.getTimeInMillis (), end.getTimeInMillis (), 1 );
 
         Assert.assertFalse ( "Should not be equal", vi1.equals ( vi2 ) );
     }

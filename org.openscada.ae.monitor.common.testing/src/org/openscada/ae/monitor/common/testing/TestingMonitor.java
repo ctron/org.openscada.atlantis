@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,14 +26,16 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ae.monitor.common.AbstractStateMachineMonitorService;
+import org.openscada.ae.monitor.common.AbstractStateMonitor;
+import org.openscada.ae.monitor.common.PersistentInformation;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.core.Variant;
 import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 
-public class TestingMonitor extends AbstractStateMachineMonitorService implements AknHandler
+public class TestingMonitor extends AbstractStateMonitor implements AknHandler
 {
 
     private final ScheduledExecutorService scheduler = new ScheduledThreadPoolExecutor ( 1 );
@@ -42,7 +44,7 @@ public class TestingMonitor extends AbstractStateMachineMonitorService implement
 
     public TestingMonitor ( final BundleContext context, final Executor executor, final EventProcessor eventProcessor, final String sourceName )
     {
-        super ( context, executor, eventProcessor, sourceName );
+        super ( sourceName, executor, null, eventProcessor );
         this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
             @Override
@@ -57,11 +59,11 @@ public class TestingMonitor extends AbstractStateMachineMonitorService implement
     {
         if ( this.r.nextBoolean () )
         {
-            setOk ( Variant.valueOf ( true ), new Date () );
+            setOk ( Variant.TRUE, System.currentTimeMillis () );
         }
         else
         {
-            setFailure ( Variant.valueOf ( false ), new Date () );
+            setFailure ( Variant.FALSE, System.currentTimeMillis (), Severity.ALARM, false );
         }
     }
 
@@ -79,6 +81,12 @@ public class TestingMonitor extends AbstractStateMachineMonitorService implement
             return true;
         }
         return false;
+    }
+
+    @Override
+    protected void storePersistentInformation ( final PersistentInformation persistentInformation )
+    {
+        // no-op
     }
 
 }

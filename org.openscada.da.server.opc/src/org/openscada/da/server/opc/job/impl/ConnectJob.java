@@ -37,8 +37,8 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This job performs the connect operation
+ * 
  * @author Jens Reimann &lt;jens.reimann@th4-systems.com&gt;
- *
  */
 public class ConnectJob extends ThreadJob
 {

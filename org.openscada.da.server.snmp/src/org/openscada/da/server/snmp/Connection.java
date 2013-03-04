@@ -82,26 +82,28 @@ public class Connection
     {
         switch ( this.connectionInformation.getVersion () )
         {
-        case V1:
-            if ( this.connectionInformation.getCommunity () != null )
-            {
-                final CommunityTarget target = new CommunityTarget ( this.address, new OctetString ( this.connectionInformation.getCommunity () ) );
-                target.setRetries ( 1 );
-                target.setVersion ( SnmpConstants.version1 );
-                target.setTimeout ( 5 * 1000 );
-                return target;
-            }
-            break;
-        case V2C:
-            if ( this.connectionInformation.getCommunity () != null )
-            {
-                final CommunityTarget target = new CommunityTarget ( this.address, new OctetString ( this.connectionInformation.getCommunity () ) );
-                target.setRetries ( 1 );
-                target.setVersion ( SnmpConstants.version2c );
-                target.setTimeout ( 5 * 1000 );
-                return target;
-            }
-            break;
+            case V1:
+                if ( this.connectionInformation.getCommunity () != null )
+                {
+                    final CommunityTarget target = new CommunityTarget ( this.address, new OctetString ( this.connectionInformation.getCommunity () ) );
+                    target.setRetries ( 1 );
+                    target.setVersion ( SnmpConstants.version1 );
+                    target.setTimeout ( 5 * 1000 );
+                    return target;
+                }
+                break;
+            case V2C:
+                if ( this.connectionInformation.getCommunity () != null )
+                {
+                    final CommunityTarget target = new CommunityTarget ( this.address, new OctetString ( this.connectionInformation.getCommunity () ) );
+                    target.setRetries ( 1 );
+                    target.setVersion ( SnmpConstants.version2c );
+                    target.setTimeout ( 5 * 1000 );
+                    return target;
+                }
+                break;
+            case V3:
+                return null;
         }
 
         return null;
@@ -119,17 +121,17 @@ public class Connection
 
     public ResponseEvent sendGET ( final OID oid ) throws IOException
     {
-        final Target target = this.createTarget ();
-        final PDU pdu = this.createPDU ( target, PDU.GET );
+        final Target target = createTarget ();
+        final PDU pdu = createPDU ( target, PDU.GET );
         pdu.add ( new VariableBinding ( oid ) );
-        return this.send ( target, pdu );
+        return send ( target, pdu );
     }
 
     public ResponseEvent sendGETNEXT ( final OID oid ) throws IOException
     {
-        final Target target = this.createTarget ();
-        final PDU pdu = this.createPDU ( target, PDU.GETNEXT );
+        final Target target = createTarget ();
+        final PDU pdu = createPDU ( target, PDU.GETNEXT );
         pdu.add ( new VariableBinding ( oid ) );
-        return this.send ( target, pdu );
+        return send ( target, pdu );
     }
 }

@@ -1,0 +1,21 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA CA WS Interface
+Bundle-SymbolicName: org.openscada.ca.servlet.jaxws
+Bundle-Version: 1.0.0.qualifier
+Bundle-Activator: org.openscada.ca.servlet.jaxws.Activator
+Bundle-Vendor: openSCADA.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: javax.jws,
+ javax.xml.ws,
+ org.openscada.ca;version="1.0.0",
+ org.openscada.ca.data;version="1.0.0",
+ org.openscada.sec;version="1.0.0",
+ org.openscada.utils;version="1.0.0",
+ org.openscada.utils.concurrent;version="1.0.0",
+ org.openscada.utils.concurrent.task;version="1.0.0",
+ org.openscada.utils.osgi;version="1.0.0",
+ org.openscada.utils.osgi.exporter;version="1.0.0",
+ org.osgi.framework;version="1.6.0",
+ org.slf4j;version="1.5.0"
+Export-Package: org.openscada.ca.servlet.jaxws;version="1.0.0";uses:="org.openscada.sec,org.openscada.ca,org.osgi.framework"

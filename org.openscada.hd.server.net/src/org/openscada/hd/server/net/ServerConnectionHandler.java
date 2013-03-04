@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,6 +20,7 @@
 package org.openscada.hd.server.net;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
@@ -31,14 +32,15 @@ import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.net.MessageHelper;
+import org.openscada.core.server.Session.SessionListener;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
-import org.openscada.hd.HistoricalItemInformation;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
-import org.openscada.hd.QueryParameters;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.HistoricalItemInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.openscada.hd.net.ItemListHelper;
 import org.openscada.hd.net.Messages;
 import org.openscada.hd.net.QueryHelper;
@@ -61,7 +63,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     public final static String VERSION = "0.1.0";
 
-    public final static int MAX_DATA_SIZE = 1024;
+    public final static int MAX_DATA_SIZE = Integer.getInteger ( "org.openscada.hd.server.net.maxDataSize", 1024 );
 
     private final static Logger logger = LoggerFactory.getLogger ( ServerConnectionHandler.class );
 
@@ -83,6 +85,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( MessageHelper.CC_CREATE_SESSION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 createSession ( message );
@@ -91,6 +94,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( MessageHelper.CC_CLOSE_SESSION, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 closeSession ();
@@ -99,6 +103,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_START_LIST, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.setItemList ( true );
@@ -107,6 +112,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_STOP_LIST, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.setItemList ( false );
@@ -115,6 +121,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_CREATE_QUERY, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.handleCreateQuery ( message );
@@ -123,6 +130,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_CLOSE_QUERY, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.handleCloseQuery ( message );
@@ -131,6 +139,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         this.messenger.setHandler ( Messages.CC_HD_CHANGE_QUERY_PARAMETERS, new MessageListener () {
 
+            @Override
             public void messageReceived ( final Message message )
             {
                 ServerConnectionHandler.this.handleUpdateQueryParameters ( message );
@@ -144,12 +153,16 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         // get the query id
         final long queryId = ( (LongValue)message.getValues ().get ( "id" ) ).getValue ();
 
+        final QueryParameters parameters = QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) );
+
+        logger.debug ( "Request parameter change: {}", parameters );
+
         synchronized ( this )
         {
             final QueryHandler handler = this.queries.get ( queryId );
             if ( handler != null )
             {
-                handler.changeParameters ( QueryHelper.fromValue ( message.getValues ().get ( "parameters" ) ) );
+                handler.changeParameters ( parameters );
             }
         }
     }
@@ -182,6 +195,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             // throw it in the disposer queue ... the storage module takes too long
             this.queryDisposer.execute ( new Runnable () {
 
+                @Override
                 public void run ()
                 {
                     handler.close ();
@@ -263,7 +277,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
     }
 
-    public void sendQueryData ( final long queryId, final int index, final Map<String, org.openscada.hd.Value[]> values, final ValueInformation[] valueInformation )
+    public void sendQueryData ( final long queryId, final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
         synchronized ( this )
         {
@@ -272,7 +286,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                 return;
             }
 
-            final int len = valueInformation.length;
+            final int len = valueInformation.size ();
 
             if ( len < MAX_DATA_SIZE )
             {
@@ -291,15 +305,13 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
                     logger.debug ( "Sending - query-id: {}, index: {}, size: {}", new Object[] { queryId, count, size } );
 
                     // copy vi
-                    final ValueInformation[] vi = new ValueInformation[size];
-                    System.arraycopy ( valueInformation, count, vi, 0, size );
+                    final List<ValueInformation> vi = valueInformation.subList ( count, count + size );
 
                     // copy values
-                    final Map<String, org.openscada.hd.Value[]> v = new HashMap<String, org.openscada.hd.Value[]> ();
-                    for ( final Map.Entry<String, org.openscada.hd.Value[]> entry : values.entrySet () )
+                    final Map<String, List<Double>> v = new HashMap<String, List<Double>> ();
+                    for ( final Map.Entry<String, List<Double>> entry : values.entrySet () )
                     {
-                        final org.openscada.hd.Value[] vs = new org.openscada.hd.Value[size];
-                        System.arraycopy ( entry.getValue (), count, vs, 0, size );
+                        final List<Double> vs = entry.getValue ().subList ( count, count + size );
                         v.put ( entry.getKey (), vs );
                     }
 
@@ -311,8 +323,10 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
     }
 
-    private void sendQueryDataPacket ( final long queryId, final int index, final Map<String, org.openscada.hd.Value[]> values, final ValueInformation[] valueInformation )
+    private void sendQueryDataPacket ( final long queryId, final int index, final Map<String, List<Double>> values, final List<ValueInformation> valueInformation )
     {
+        logger.debug ( "Sending data - queryId: {}, index: {}, @values: {}, @informations: {}", new Object[] { queryId, index, values.size (), valueInformation.size () } );
+
         final Message message = new Message ( Messages.CC_HD_UPDATE_QUERY_DATA );
         message.getValues ().put ( "id", new LongValue ( queryId ) );
         message.getValues ().put ( "index", new IntegerValue ( index ) );
@@ -406,7 +420,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            this.session = (Session)this.service.createSession ( props );
+            this.session = this.service.createSession ( props );
         }
         catch ( final UnableToCreateSessionException e )
         {
@@ -422,7 +436,17 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         }
 
         // send success
-        this.messenger.sendMessage ( MessageHelper.createSessionACK ( message, this.session.getProperties () ) );
+        replySessionCreated ( props, message, this.session.getProperties () );
+
+        // hook up privs
+        this.session.addSessionListener ( new SessionListener () {
+
+            @Override
+            public void privilegeChange ()
+            {
+                sendPrivilegeChange ( ServerConnectionHandler.this.session.getPrivileges () );
+            }
+        } );
     }
 
     @Override
@@ -457,6 +481,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         cleanUp ();
     }
 
+    @Override
     public void listChanged ( final Set<HistoricalItemInformation> addedOrModified, final Set<String> removed, final boolean full )
     {
         final Message message = new Message ( Messages.CC_HD_LIST_UPDATE );

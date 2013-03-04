@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -60,8 +60,8 @@ public abstract class AbstractXMLItemSource extends AbstractItemSource
     {
         super.activate ( factory, itemManager );
 
-        this.reloadCommandItem = this.factory.createCommand ( "reload" );
-        this.stateItem = this.factory.createInput ( "state" );
+        this.reloadCommandItem = this.factory.createCommand ( "reload", null );
+        this.stateItem = this.factory.createInput ( "state", null );
 
         this.reloadCommandItem.addListener ( this.reloadListener = new DataItemCommand.Listener () {
 

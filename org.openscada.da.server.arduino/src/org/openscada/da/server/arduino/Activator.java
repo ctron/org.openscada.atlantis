@@ -29,7 +29,6 @@ import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.server.arduino.factory.ConfigurationFactoryImpl;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
@@ -42,9 +41,9 @@ public class Activator implements BundleActivator
 
     private static BundleContext context;
 
-    private ObjectPoolImpl itemPool;
+    private ObjectPoolImpl<DataItem> itemPool;
 
-    private ServiceRegistration<ObjectPool> itemPoolHandle;
+    private ServiceRegistration<?> itemPoolHandle;
 
     private ExecutorService executor;
 
@@ -66,9 +65,9 @@ public class Activator implements BundleActivator
     {
         Activator.context = bundleContext;
 
-        this.itemPool = new ObjectPoolImpl ();
+        this.itemPool = new ObjectPoolImpl<DataItem> ();
 
-        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class.getName () );
+        this.itemPoolHandle = ObjectPoolHelper.registerObjectPool ( context, this.itemPool, DataItem.class );
 
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 

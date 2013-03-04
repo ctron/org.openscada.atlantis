@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,14 +24,12 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.ds.DataNodeTracker;
 import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;
@@ -45,11 +43,9 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
 
     private final Executor executor;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolImpl<DataSource> objectPool;
 
-    private final ObjectPoolImpl objectPool;
-
-    private final ServiceRegistration<ObjectPool> poolRegistration;
+    private final ServiceRegistration<?> poolRegistration;
 
     private final DataNodeTracker dataNodeTracker;
 
@@ -59,11 +55,8 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
         this.executor = executor;
         this.dataNodeTracker = dataNodeTracker;
 
-        this.objectPool = new ObjectPoolImpl ();
-        this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class.getName () );
-
-        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
-        this.poolTracker.open ();
+        this.objectPool = new ObjectPoolImpl<DataSource> ();
+        this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class );
     }
 
     @Override
@@ -71,7 +64,6 @@ public class DataStoreSourceFactory extends AbstractServiceConfigurationFactory<
     {
         this.poolRegistration.unregister ();
         this.objectPool.dispose ();
-        this.poolTracker.close ();
         super.dispose ();
     }
 

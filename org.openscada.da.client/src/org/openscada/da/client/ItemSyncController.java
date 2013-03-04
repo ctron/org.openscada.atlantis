@@ -1,6 +1,6 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,16 +23,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.openscada.core.AttributesHelper;
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.core.utils.AttributesHelper;
+import org.openscada.core.data.SubscriptionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * A controller that synchronizes the subscription state for one item.
+ * 
  * @author Jens Reimann <jens.reimann@th4-systems.com>
- *
  */
 public class ItemSyncController implements ItemUpdateListener
 {
@@ -53,9 +53,9 @@ public class ItemSyncController implements ItemUpdateListener
     private Throwable subscriptionError;
 
     /**
-     * Holds some additional listener information 
+     * Holds some additional listener information
+     * 
      * @author Jens Reimann
-     *
      */
     private static class ListenerInfo
     {
@@ -106,9 +106,9 @@ public class ItemSyncController implements ItemUpdateListener
 
     private final Map<ItemUpdateListener, ListenerInfo> listeners = new HashMap<ItemUpdateListener, ListenerInfo> ( 0 );
 
-    private final ItemManager itemManager;
+    private final ItemManagerImpl itemManager;
 
-    public ItemSyncController ( final org.openscada.da.client.Connection connection, final ItemManager itemManager, final String itemId )
+    public ItemSyncController ( final org.openscada.da.client.Connection connection, final ItemManagerImpl itemManager, final String itemId )
     {
         this.connection = connection;
         this.itemManager = itemManager;
@@ -136,6 +136,8 @@ public class ItemSyncController implements ItemUpdateListener
             final Variant value = this.cachedValue;
             final Map<String, Variant> attributes = new HashMap<String, Variant> ( this.cachedAttributes );
 
+            logger.trace ( "Sending out cache values - itemId: {}, state: {}, value: {}, attributes: {}", new Object[] { this.itemId, state, value, attributes } );
+
             // send the initial update
             this.itemManager.getExecutor ().execute ( new Runnable () {
 
@@ -147,7 +149,7 @@ public class ItemSyncController implements ItemUpdateListener
                 }
             } );
 
-            triggerSync ();
+            sync ( false );
         }
     }
 
@@ -156,20 +158,8 @@ public class ItemSyncController implements ItemUpdateListener
         final ListenerInfo result = this.listeners.remove ( listener );
         if ( result != null )
         {
-            triggerSync ();
+            sync ( false );
         }
-    }
-
-    public synchronized void triggerSync ()
-    {
-        this.itemManager.getExecutor ().execute ( new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                sync ( false );
-            }
-        } );
     }
 
     public synchronized void sync ( final boolean force )
@@ -212,18 +202,22 @@ public class ItemSyncController implements ItemUpdateListener
         {
             logger.debug ( "Syncing listen state: inactive" );
             this.subscribed = false;
-            this.connection.unsubscribeItem ( this.itemId );
+
+            this.cachedValue = null;
+            this.cachedAttributes.clear ();
+
             notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
+            this.connection.unsubscribeItem ( this.itemId );
         }
         catch ( final Throwable e )
         {
-            handleError ( e );
+            logger.warn ( "Failed to handle unsubscribe", e );
         }
     }
 
     private synchronized void handleError ( final Throwable e )
     {
-        logger.warn ( "Failed to subscribe", e );
+        logger.warn ( "Failed to change subscription state", e );
         this.subscribed = false;
         notifySubscriptionChange ( SubscriptionState.DISCONNECTED, e );
     }

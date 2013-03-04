@@ -19,10 +19,13 @@
 
 package org.openscada.ae.server;
 
-import org.openscada.ae.MonitorStatusInformation;
+import java.util.List;
+import java.util.Set;
+
+import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.core.subscription.SubscriptionListener;
 
 public interface MonitorListener extends SubscriptionListener
 {
-    public void dataChanged ( String subscriptionId, MonitorStatusInformation[] addedOrUpdated, String[] removed );
+    public void dataChanged ( String subscriptionId, List<MonitorStatusInformation> addedOrUpdated, Set<String> removed, boolean full );
 }

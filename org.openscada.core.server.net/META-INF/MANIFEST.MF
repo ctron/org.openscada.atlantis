@@ -4,22 +4,25 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0",
  org.apache.mina.core.service;version="2.0",
  org.apache.mina.core.session;version="2.0",
  org.apache.mina.handler.multiton;version="2.0",
- org.openscada.core;version="0.14.0",
- org.openscada.core.net;version="0.15.0",
- org.openscada.core.server.net;version="0.15.0",
- org.openscada.net.base;version="0.15.0",
- org.openscada.net.base.data;version="0.15.0",
- org.openscada.net.mina;version="0.15.0",
- org.slf4j;version="1.5.8"
+ org.openscada.core;version="1.0.0",
+ org.openscada.core.info;version="1.0.0",
+ org.openscada.core.net;version="1.0.0",
+ org.openscada.core.server.common.stats;version="1.0.0",
+ org.openscada.core.server.net;version="1.0.0",
+ org.openscada.net;version="1.0.0",
+ org.openscada.net.base;version="1.0.0",
+ org.openscada.net.base.data;version="1.0.0",
+ org.openscada.net.mina;version="1.0.0",
+ org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.core.server.net;version="0.16.0";
+Export-Package: org.openscada.core.server.net;version="1.0.0";
   uses:="org.apache.mina.core.session,
    org.openscada.net.base,
    org.apache.mina.handler.multiton,
    org.openscada.core,
    org.openscada.net.mina"
-Bundle-Version: 0.17.0.qualifier
-Bundle-Name: OpenSCADA Core Server NET
+Bundle-Version: 1.0.0.qualifier
+Bundle-Name: openSCADA Core Server NET
 Bundle-ManifestVersion: 2
-Bundle-Vendor: TH4 SYSTEMS GmbH
+Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.core.server.net

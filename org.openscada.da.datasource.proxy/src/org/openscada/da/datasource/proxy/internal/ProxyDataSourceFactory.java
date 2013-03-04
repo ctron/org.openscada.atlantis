@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,11 +23,10 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
-import org.openscada.utils.osgi.pool.ObjectPool;
 import org.openscada.utils.osgi.pool.ObjectPoolHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -39,21 +38,21 @@ public class ProxyDataSourceFactory extends AbstractServiceConfigurationFactory<
 {
     private final ExecutorService executor;
 
-    private final ObjectPoolTracker poolTracker;
+    private final ObjectPoolTracker<DataSource> poolTracker;
 
-    private final ObjectPoolImpl objectPool;
+    private final ObjectPoolImpl<DataSource> objectPool;
 
-    private final ServiceRegistration<ObjectPool> poolRegistration;
+    private final ServiceRegistration<?> poolRegistration;
 
     public ProxyDataSourceFactory ( final BundleContext context ) throws InvalidSyntaxException
     {
         super ( context );
         this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( context.getBundle ().getSymbolicName () ) );
 
-        this.objectPool = new ObjectPoolImpl ();
-        this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class.getName () );
+        this.objectPool = new ObjectPoolImpl<DataSource> ();
+        this.poolRegistration = ObjectPoolHelper.registerObjectPool ( context, this.objectPool, DataSource.class );
 
-        this.poolTracker = new ObjectPoolTracker ( context, DataSource.class.getName () );
+        this.poolTracker = new ObjectPoolTracker<DataSource> ( context, DataSource.class.getName () );
         this.poolTracker.open ();
     }
 

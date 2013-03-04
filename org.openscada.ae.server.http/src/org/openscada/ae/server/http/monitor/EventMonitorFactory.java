@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,10 +29,11 @@ import java.util.concurrent.Executor;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.event.EventProcessor;
+import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
+import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.lang.Pair;
-import org.openscada.utils.osgi.ca.factory.AbstractServiceConfigurationFactory;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -40,19 +41,19 @@ import org.slf4j.LoggerFactory;
 
 public class EventMonitorFactory extends AbstractServiceConfigurationFactory<EventMonitor> implements AknHandler, EventMonitorEvaluator
 {
-    public static final Object FACTORY_ID = "ae.monitor.ae.event.external";
+    public static final String FACTORY_ID = "ae.monitor.ae.event.external";
 
     private static final Logger logger = LoggerFactory.getLogger ( EventMonitorFactory.class );
 
     private final Executor executor;
 
-    private final ObjectPoolImpl servicePool;
+    private final ObjectPoolImpl<MonitorService> servicePool;
 
     private final EventProcessor eventProcessor;
 
     private final ConcurrentMap<String, EventMonitor> monitors = new ConcurrentHashMap<String, EventMonitor> ();
 
-    public EventMonitorFactory ( final BundleContext context, final Executor executor, final ObjectPoolImpl servicePool, final EventProcessor eventProcessor )
+    public EventMonitorFactory ( final BundleContext context, final Executor executor, final ObjectPoolImpl<MonitorService> servicePool, final EventProcessor eventProcessor )
     {
         super ( context );
         this.executor = executor;
@@ -66,7 +67,6 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
         final EventMonitor instance = new EventMonitorImpl ( context, this.executor, this.eventProcessor, configurationId );
 
         instance.update ( userInformation, parameters );
-        instance.init ();
 
         this.monitors.put ( configurationId, instance );
 
@@ -100,6 +100,7 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
         if ( monitor != null )
         {
             monitor.akn ( aknUser, aknTimestamp );
+            return true;
         }
 
         return false;

@@ -1,6 +1,6 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,8 +20,6 @@
 package org.openscada.hd.net;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -29,8 +27,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.hd.QueryParameters;
-import org.openscada.hd.ValueInformation;
+import org.openscada.hd.data.QueryParameters;
+import org.openscada.hd.data.ValueInformation;
 import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
@@ -49,14 +47,16 @@ public class QueryHelper
     public static Value toValue ( final QueryParameters parameters )
     {
         final MapValue value = new MapValue ();
+
         if ( parameters == null )
         {
             return null;
         }
 
-        value.put ( "startTimestamp", new LongValue ( parameters.getStartTimestamp ().getTimeInMillis () ) );
-        value.put ( "endTimestamp", new LongValue ( parameters.getEndTimestamp ().getTimeInMillis () ) );
-        value.put ( "numberOfEntries", new IntegerValue ( parameters.getEntries () ) );
+        value.put ( "startTimestamp", new LongValue ( parameters.getStartTimestamp () ) );
+        value.put ( "endTimestamp", new LongValue ( parameters.getEndTimestamp () ) );
+        value.put ( "numberOfEntries", new IntegerValue ( parameters.getNumberOfEntries () ) );
+
         return value;
     }
 
@@ -66,12 +66,8 @@ public class QueryHelper
         {
             final MapValue map = (MapValue)value;
 
-            final Calendar startTimestamp = Calendar.getInstance ();
-            startTimestamp.setTimeInMillis ( ( (LongValue)map.get ( "startTimestamp" ) ).getValue () );
-
-            final Calendar endTimestamp = Calendar.getInstance ();
-            endTimestamp.setTimeInMillis ( ( (LongValue)map.get ( "endTimestamp" ) ).getValue () );
-
+            final long startTimestamp = ( (LongValue)map.get ( "startTimestamp" ) ).getValue ();
+            final long endTimestamp = ( (LongValue)map.get ( "endTimestamp" ) ).getValue ();
             final int numberOfEntries = ( (IntegerValue)map.get ( "numberOfEntries" ) ).getValue ();
 
             return new QueryParameters ( startTimestamp, endTimestamp, numberOfEntries );
@@ -93,9 +89,9 @@ public class QueryHelper
         }
     }
 
-    public static Map<String, org.openscada.hd.Value[]> fromValueData ( final Value value )
+    public static Map<String, List<Double>> fromValueData ( final Value value )
     {
-        final Map<String, org.openscada.hd.Value[]> result = new HashMap<String, org.openscada.hd.Value[]> ();
+        final Map<String, List<Double>> result = new HashMap<String, List<Double>> ();
 
         final MapValue map = (MapValue)value;
         for ( final Map.Entry<String, Value> entry : map.getValues ().entrySet () )
@@ -106,31 +102,32 @@ public class QueryHelper
         return result;
     }
 
-    private static org.openscada.hd.Value[] fromValues ( final Value value )
+    private static List<Double> fromValues ( final Value value )
     {
-        final Collection<org.openscada.hd.Value> result = new ArrayList<org.openscada.hd.Value> ();
-
         final ListValue list = (ListValue)value;
+
+        final List<Double> result = new ArrayList<Double> ( list.size () );
+
         for ( final Value entry : list.getValues () )
         {
             if ( entry instanceof LongValue )
             {
-                result.add ( new org.openscada.hd.Value ( ( (LongValue)entry ).getValue () ) );
+                result.add ( (double) ( (LongValue)entry ).getValue () );
             }
             else
             {
-                result.add ( new org.openscada.hd.Value ( ( (DoubleValue)entry ).getValue () ) );
+                result.add ( ( (DoubleValue)entry ).getValue () );
             }
         }
 
-        return result.toArray ( new org.openscada.hd.Value[result.size ()] );
+        return result;
     }
 
-    public static Value toValueData ( final Map<String, org.openscada.hd.Value[]> values )
+    public static Value toValueData ( final Map<String, List<Double>> values )
     {
         final MapValue result = new MapValue ();
 
-        for ( final Map.Entry<String, org.openscada.hd.Value[]> entry : values.entrySet () )
+        for ( final Map.Entry<String, List<Double>> entry : values.entrySet () )
         {
             result.put ( entry.getKey (), toValues ( entry.getValue () ) );
         }
@@ -138,27 +135,19 @@ public class QueryHelper
         return result;
     }
 
-    private static Value toValues ( final org.openscada.hd.Value[] value )
+    private static Value toValues ( final List<Double> value )
     {
         final ListValue list = new ListValue ();
 
-        for ( final org.openscada.hd.Value entry : value )
+        for ( final Double entry : value )
         {
-            final Number val = entry.toNumber ();
-            if ( val instanceof Long )
-            {
-                list.add ( new LongValue ( (Long)val ) );
-            }
-            else
-            {
-                list.add ( new DoubleValue ( val.doubleValue () ) );
-            }
+            list.add ( new DoubleValue ( entry ) );
         }
 
         return list;
     }
 
-    public static ValueInformation[] fromValueInfo ( final Value value )
+    public static List<ValueInformation> fromValueInfo ( final Value value )
     {
         final List<ValueInformation> result = new LinkedList<ValueInformation> ();
 
@@ -181,28 +170,30 @@ public class QueryHelper
             return null;
         }
 
-        return result.toArray ( new ValueInformation[result.size ()] );
+        return result;
     }
 
     private static ValueInformation fromEntry ( final Value entry )
     {
         final MapValue value = (MapValue)entry;
-        final Calendar start = Calendar.getInstance ();
-        start.setTimeInMillis ( ( (LongValue)value.get ( "startTimestamp" ) ).getValue () );
-        final Calendar end = Calendar.getInstance ();
-        end.setTimeInMillis ( ( (LongValue)value.get ( "endTimestamp" ) ).getValue () );
-        return new ValueInformation ( start, end, ( (DoubleValue)value.get ( "quality" ) ).getValue (), ( (DoubleValue)value.get ( "manual" ) ).getValue (), ( (LongValue)value.get ( "values" ) ).getValue () );
+
+        final double quality = ( (DoubleValue)value.get ( "quality" ) ).getValue ();
+        final double manualPercentage = ( (DoubleValue)value.get ( "manual" ) ).getValue ();
+        final long startTimestamp = ( (LongValue)value.get ( "startTimestamp" ) ).getValue ();
+        final long endTimestamp = ( (LongValue)value.get ( "endTimestamp" ) ).getValue ();
+        final long sourceValues = ( (LongValue)value.get ( "values" ) ).getValue ();
+        return new ValueInformation ( quality, manualPercentage, startTimestamp, endTimestamp, sourceValues );
     }
 
-    public static Value toValueInfo ( final ValueInformation[] infos )
+    public static Value toValueInfo ( final List<ValueInformation> infos )
     {
         final ListValue result = new ListValue ();
 
         for ( final ValueInformation info : infos )
         {
             final MapValue entry = new MapValue ();
-            entry.put ( "startTimestamp", new LongValue ( info.getStartTimestamp ().getTimeInMillis () ) );
-            entry.put ( "endTimestamp", new LongValue ( info.getEndTimestamp ().getTimeInMillis () ) );
+            entry.put ( "startTimestamp", new LongValue ( info.getStartTimestamp () ) );
+            entry.put ( "endTimestamp", new LongValue ( info.getEndTimestamp () ) );
             entry.put ( "quality", new DoubleValue ( info.getQuality () ) );
             entry.put ( "manual", new DoubleValue ( info.getManualPercentage () ) );
             entry.put ( "values", new LongValue ( info.getSourceValues () ) );
