@@ -1,0 +1,8 @@
+Change-Id: I4ae8d451591adb2392881e6d88d4bc60ec686026
+Verified+1: Jens Reimann <jens.reimann@ibh-systems.com>
+Code-Review+2: Jens Reimann <jens.reimann@ibh-systems.com>
+Submitted-by: Jens Reimann <jens.reimann@ibh-systems.com>
+Submitted-at: Mon, 04 Mar 2013 11:51:30 +0100
+Reviewed-on: http://gerrit.intra/104
+Project: org.openscada.atlantis
+Branch: refs/heads/master
