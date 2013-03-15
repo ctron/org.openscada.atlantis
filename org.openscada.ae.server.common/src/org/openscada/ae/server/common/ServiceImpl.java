@@ -49,13 +49,17 @@ import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ae.server.common.monitor.MonitorQuerySource;
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.core.server.common.AuthorizedOperation;
 import org.openscada.core.server.common.osgi.AbstractServiceImpl;
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.ValidationException;
-import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;
@@ -105,25 +109,31 @@ public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> imple
     }
 
     @Override
-    public void acknowledge ( final Session session, final String monitorId, final Date aknTimestamp, final UserInformation providedUserInformation ) throws InvalidSessionException, PermissionDeniedException
+    public NotifyFuture<Void> acknowledge ( final Session session, final String monitorId, final Date aknTimestamp, final OperationParameters operationParameters, final CallbackHandler callbackHandler ) throws InvalidSessionException
     {
         final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
-        logger.debug ( "Request akn: {} ({}): sessionUser: {}, requestUser: {}", new Object[] { monitorId, aknTimestamp, sessionImpl.getUserInformation (), providedUserInformation } );
+        logger.debug ( "Request akn: {} ({}): sessionUser: {}, requestUser: {}", new Object[] { monitorId, aknTimestamp, sessionImpl.getUserInformation (), operationParameters.getUserInformation ().getName () } );
 
-        final UserInformation userInformation = makeEffectiveUserInformation ( sessionImpl, providedUserInformation );
+        return new AuthorizedOperation<Void, AbstractSessionImpl> ( this.authorizationProvider, sessionImpl, "MONITOR", monitorId, "AKN", null, operationParameters, callbackHandler, DEFAULT_RESULT ) {
+            @Override
+            protected NotifyFuture<Void> granted ( final org.openscada.core.server.OperationParameters effectiveOperationParameters )
+            {
+                processAcknowledge ( monitorId, aknTimestamp, effectiveOperationParameters, callbackHandler );
+                return new InstantFuture<Void> ( null );
+            }
+        };
+    }
 
-        final AuthorizationResult result = authorize ( "MONITOR", monitorId, "AKN", userInformation, null );
-        if ( !result.isGranted () )
-        {
-            return;
-        }
+    protected void processAcknowledge ( final String monitorId, final Date aknTimestamp, final org.openscada.core.server.OperationParameters operationParameters, final CallbackHandler callbackHandler )
+    {
+        logger.debug ( "Processing akn: {} ({}): effective: {}", new Object[] { monitorId, aknTimestamp, operationParameters.getUserInformation ().getName () } );
 
         for ( final Object o : this.aknTracker.getServices () )
         {
             if ( o instanceof AknHandler )
             {
-                if ( ( (AknHandler)o ).acknowledge ( monitorId, userInformation, aknTimestamp ) )
+                if ( ( (AknHandler)o ).acknowledge ( monitorId, operationParameters, aknTimestamp ) )
                 {
                     break;
                 }

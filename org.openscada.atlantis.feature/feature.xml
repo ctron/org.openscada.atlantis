@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.atlantis"
       label="%featureName"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="openSCADA.org">
 
    <description>
@@ -76,6 +76,19 @@
 
    <plugin
          id="org.openscada.sec.provider.script"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.sec.authz.signature"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openscada.sec.osgi.manager"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,7 +37,10 @@ import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.core.connection.provider.ConnectionIdTracker;
+import org.openscada.core.server.OperationParameters;
+import org.openscada.core.server.OperationParametersHelper;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.callback.CallbackHandler;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -190,9 +195,9 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
     }
 
     @Override
-    public boolean acknowledge ( final String monitorId, final UserInformation userInformation, final Date aknTimestamp )
+    public boolean acknowledge ( final String monitorId, final OperationParameters operationParameters, final Date aknTimestamp )
     {
-        logger.info ( "acknowledge - monitorId: {}, userInformation: {}, aknTimestamp: {}", new Object[] { monitorId, userInformation, aknTimestamp } );
+        logger.info ( "acknowledge - monitorId: {}, operationParameters: {}, aknTimestamp: {}", new Object[] { monitorId, operationParameters, aknTimestamp } );
 
         int matches = 0;
 
@@ -205,7 +210,7 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
                 if ( entry.pattern.matcher ( monitorId ).matches () )
                 {
                     matches++;
-                    akn ( entry.connectionId, monitorId, userInformation, aknTimestamp );
+                    akn ( entry.connectionId, monitorId, operationParameters, aknTimestamp );
                     if ( entry.authorative )
                     {
                         logger.debug ( "Entry is authorative" );
@@ -222,16 +227,16 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
         }
     }
 
-    private void akn ( final String connectionId, final String monitorId, final UserInformation userInformation, final Date aknTimestamp )
+    private void akn ( final String connectionId, final String monitorId, final OperationParameters operationParameters, final Date aknTimestamp )
     {
-        logger.info ( "passing on acknowledge - connectionid: {}, monitorId: {}, userInformation: {}, aknTimestamp: {}", new Object[] { connectionId, monitorId, userInformation, aknTimestamp } );
+        logger.info ( "passing on acknowledge - connectionid: {}, monitorId: {}, operationParameters: {}, aknTimestamp: {}", new Object[] { connectionId, monitorId, operationParameters, aknTimestamp } );
 
         final ConnectionIdTracker tracker = new ConnectionIdTracker ( this.context, connectionId, null, ConnectionService.class );
         tracker.open ();
         try
         {
             final ConnectionService connection = (ConnectionService)tracker.waitForService ( 1000 );
-            connection.getConnection ().acknowledge ( monitorId, aknTimestamp, userInformation );
+            connection.getConnection ().acknowledge ( monitorId, aknTimestamp, OperationParametersHelper.toData ( operationParameters ), getHandler ( operationParameters ) );
         }
         catch ( final InterruptedException e )
         {
@@ -241,5 +246,10 @@ public class ProxyAknService implements AknHandler, ConfigurationFactory
         {
             tracker.close ();
         }
+    }
+
+    private CallbackHandler getHandler ( final OperationParameters operationParameters )
+    {
+        return operationParameters == null ? null : operationParameters.getCallbackHandler ();
     }
 }

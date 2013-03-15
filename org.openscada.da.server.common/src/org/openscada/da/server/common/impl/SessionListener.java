@@ -19,9 +19,11 @@
 
 package org.openscada.da.server.common.impl;
 
+import org.openscada.core.server.common.session.AbstractSessionImpl;
+
 public interface SessionListener
 {
-    public void create ( SessionCommon session );
+    public void create ( AbstractSessionImpl session );
 
     public void destroy ( SessionCommon session );
 }

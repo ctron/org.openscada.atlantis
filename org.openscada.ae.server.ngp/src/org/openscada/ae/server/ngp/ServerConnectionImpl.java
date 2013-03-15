@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,8 +26,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.Event;
@@ -58,14 +60,14 @@ import org.openscada.ae.server.MonitorListener;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.data.ErrorInformation;
-import org.openscada.core.data.OperationParameters;
 import org.openscada.core.data.Response;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.ngp.ServiceServerConnection;
-import org.openscada.sec.PermissionDeniedException;
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.ExceptionHelper;
+import org.openscada.utils.concurrent.FutureListener;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,10 +95,13 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
         super.dispose ();
     }
 
+    /**
+     * @since 1.1
+     */
     @Override
-    protected Session createSession ( final Properties properties ) throws UnableToCreateSessionException
+    protected void initializeSession ( final Session session )
     {
-        final Session session = super.createSession ( properties );
+        super.initializeSession ( session );
         session.setMonitorListener ( new MonitorListener () {
 
             @Override
@@ -125,7 +130,6 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
                 handleEventStatusChange ( topic.toString (), subscriptionState );
             }
         } );
-        return session;
     }
 
     protected void handleEventDataChange ( final String eventPoolId, final List<Event> addedEvents )
@@ -202,30 +206,27 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
     private void handleAknRequest ( final AcknowledgeRequest message ) throws InvalidSessionException
     {
         final Date timestamp = message.getAknTimestamp () == null ? null : new Date ( message.getAknTimestamp () );
-        final org.openscada.sec.UserInformation userInformation = convertUserInformation ( message.getOperationParameters () );
-        try
-        {
-            this.service.acknowledge ( this.session, message.getMonitorId (), timestamp, userInformation );
-            sendMessage ( new AcknowledgeResponse ( new Response ( message.getRequest () ), null ) );
-        }
-        catch ( final PermissionDeniedException e )
-        {
-            sendMessage ( new AcknowledgeResponse ( new Response ( message.getRequest () ), new ErrorInformation ( 0x01L, "Permission denied", ExceptionHelper.formatted ( e ) ) ) );
-        }
-    }
 
-    private org.openscada.sec.UserInformation convertUserInformation ( final OperationParameters operationParameters )
-    {
-        if ( operationParameters == null )
-        {
-            return null;
-        }
-        final org.openscada.core.data.UserInformation ui = operationParameters.getUserInformation ();
-        if ( ui == null )
-        {
-            return null;
-        }
-        return new org.openscada.sec.UserInformation ( ui.getName (), null );
+        final CallbackHandler callbackHandler = createCallbackHandler ( message.getCallbackHandlerId () );
+
+        final NotifyFuture<Void> future = this.service.acknowledge ( this.session, message.getMonitorId (), timestamp, message.getOperationParameters (), callbackHandler );
+
+        future.addListener ( new FutureListener<Void> () {
+
+            @Override
+            public void complete ( final Future<Void> future )
+            {
+                try
+                {
+                    future.get ();
+                    sendMessage ( new AcknowledgeResponse ( new Response ( message.getRequest () ), null ) );
+                }
+                catch ( final Exception e )
+                {
+                    sendMessage ( new AcknowledgeResponse ( new Response ( message.getRequest () ), new ErrorInformation ( 0x01L, "Permission denied", ExceptionHelper.formatted ( e ) ) ) );
+                }
+            }
+        } );
     }
 
     private void handleCreateQuery ( final CreateQuery message ) throws InvalidSessionException

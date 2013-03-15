@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,8 +33,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.data.IODirection;
@@ -73,12 +75,14 @@ public abstract class DataItemBaseChained extends DataItemBase
     /**
      * This method sets the attributes.
      * <p>
-     * It is intended to be overridden by subclasses that wish to handle attribute
-     * writes differently. The method needs to remove attributes from the parameter map
-     * that were handled and return a result for all attributes that were requested.
+     * It is intended to be overridden by subclasses that wish to handle
+     * attribute writes differently. The method needs to remove attributes from
+     * the parameter map that were handled and return a result for all
+     * attributes that were requested.
      * 
-     * @param attributes Attributes to set
-     * @return status for the attribute write request  
+     * @param attributes
+     *            Attributes to set
+     * @return status for the attribute write request
      */
     @Override
     public NotifyFuture<WriteAttributeResults> startSetAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
@@ -126,8 +130,11 @@ public abstract class DataItemBaseChained extends DataItemBase
 
     /**
      * Handle all unhandled set attribute requests
-     * @param writeAttributeResults the result set
-     * @param attributes the attributes to set
+     * 
+     * @param writeAttributeResults
+     *            the result set
+     * @param attributes
+     *            the attributes to set
      * @return the final result
      */
     protected WriteAttributeResults handleUnhandledAttributes ( final WriteAttributeResults writeAttributeResults, final Map<String, Variant> attributes )
@@ -139,7 +146,9 @@ public abstract class DataItemBaseChained extends DataItemBase
 
     /**
      * Replace the current chain with the new one
-     * @param chain the new chain
+     * 
+     * @param chain
+     *            the new chain
      */
     public void setChain ( final Collection<ChainProcessEntry> chain )
     {

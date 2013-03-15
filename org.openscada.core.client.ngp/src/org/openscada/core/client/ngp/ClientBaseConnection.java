@@ -44,6 +44,8 @@ import org.openscada.protocol.ngp.common.BaseConnection;
 import org.openscada.protocol.ngp.common.FilterChainBuilder;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.protocol.ngp.common.StatisticsFilter;
+import org.openscada.sec.callback.CallbackFactory;
+import org.openscada.sec.callback.CallbackHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,6 +92,10 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private final Object writeLock = new Object ();
 
+    protected volatile CallbackHandler connectCallbackHandler;
+
+    protected CallbackFactory callbackFactory;
+
     public ClientBaseConnection ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( connectionInformation );
@@ -121,10 +127,23 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
     }
 
     @Override
+    public void setCallbackFactory ( final CallbackFactory callbackFactory )
+    {
+        this.callbackFactory = callbackFactory;
+    }
+
+    @Override
     public void connect ()
     {
         this.statistics.changeCurrentValue ( STATS_CONNECT_CALLS, 1 );
         switchState ( ConnectionState.CONNECTING, null );
+    }
+
+    @Override
+    public void connect ( final CallbackHandler callbackHandler )
+    {
+        this.connectCallbackHandler = callbackHandler;
+        connect ();
     }
 
     @Override
@@ -229,6 +248,7 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
      */
     protected void onConnectionClosed ()
     {
+        this.connectCallbackHandler = null;
         firePrivilegeChange ( Collections.<String> emptySet () );
     }
 
@@ -275,6 +295,7 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private void performBound ()
     {
+        this.connectCallbackHandler = null;
         this.statistics.setCurrentValue ( STATS_LAST_BOUND_TIMESTAMP, Math.floor ( System.currentTimeMillis () / 1000 ) );
 
         setState ( ConnectionState.BOUND, null );
@@ -296,6 +317,8 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     protected void performDisconnected ( final Throwable error )
     {
+        this.connectCallbackHandler = null;
+
         if ( this.session != null )
         {
             this.session.close ( true );

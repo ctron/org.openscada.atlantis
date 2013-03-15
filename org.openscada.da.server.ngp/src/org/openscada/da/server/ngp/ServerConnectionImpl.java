@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,19 +26,16 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.apache.mina.core.session.IoSession;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
 import org.openscada.core.data.ErrorInformation;
 import org.openscada.core.data.Response;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.ngp.ServiceServerConnection;
 import org.openscada.da.core.Location;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -63,7 +62,7 @@ import org.openscada.da.data.message.UnsubscibeItem;
 import org.openscada.da.data.message.UnsubscribeFolder;
 import org.openscada.da.data.message.WriteAttributesResult;
 import org.openscada.da.data.message.WriteValueResult;
-import org.openscada.sec.UserInformation;
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.ExceptionHelper;
 import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -158,15 +157,15 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Hive>
         sendMessage ( new FolderDataUpdate ( location.asList (), convertEntries ( added ), removed, full ) );
     }
 
+    /**
+     * @since 1.1
+     */
     @Override
-    protected Session createSession ( final Properties properties ) throws UnableToCreateSessionException
+    protected void initializeSession ( final Session session )
     {
-        final Session session = super.createSession ( properties );
-
+        super.initializeSession ( session );
         session.setListener ( this.itemChangeListener );
         session.setListener ( this.folderListener );
-
-        return session;
     }
 
     @Override
@@ -210,7 +209,8 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Hive>
     {
         try
         {
-            final NotifyFuture<WriteResult> future = this.service.startWrite ( this.session, message.getItemId (), message.getValue (), convertOperationParameters ( message.getOperationParameters () ) );
+            final CallbackHandler callbackHandler = createCallbackHandler ( message.getCallbackHandlerId () );
+            final NotifyFuture<WriteResult> future = this.service.startWrite ( this.session, message.getItemId (), message.getValue (), message.getOperationParameters (), callbackHandler );
             future.addListener ( new FutureListener<WriteResult> () {
 
                 @Override
@@ -245,7 +245,8 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Hive>
     {
         try
         {
-            final NotifyFuture<WriteAttributeResults> future = this.service.startWriteAttributes ( this.session, message.getItemId (), message.getAttributes (), convertOperationParameters ( message.getOperationParameters () ) );
+            final CallbackHandler callbackHandler = createCallbackHandler ( message.getCallbackHandlerId () );
+            final NotifyFuture<WriteAttributeResults> future = this.service.startWriteAttributes ( this.session, message.getItemId (), message.getAttributes (), message.getOperationParameters (), callbackHandler );
             future.addListener ( new FutureListener<WriteAttributeResults> () {
 
                 @Override
@@ -301,23 +302,6 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Hive>
     private void sendWriteAttributesError ( final StartWriteAttributes message, final Exception e, final Long code )
     {
         sendMessage ( new WriteAttributesResult ( new Response ( message.getRequest () ), null, new ErrorInformation ( code, e.getMessage (), ExceptionHelper.formatted ( e ) ) ) );
-    }
-
-    private OperationParameters convertOperationParameters ( final org.openscada.core.data.OperationParameters operationParameters )
-    {
-        if ( operationParameters == null )
-        {
-            return null;
-        }
-
-        if ( operationParameters.getUserInformation () != null )
-        {
-            return new OperationParameters ( new UserInformation ( operationParameters.getUserInformation ().getName (), null ) );
-        }
-        else
-        {
-            return new OperationParameters ( null );
-        }
     }
 
     private void handleBrowseFolder ( final BrowseFolder message )

@@ -26,9 +26,9 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.sec.AuthorizationResult;
+import org.openscada.sec.AuthorizationReply;
+import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.UserInformation;
-import org.openscada.sec.osgi.AuthorizationRequest;
 import org.openscada.sec.osgi.AuthorizationTracker;
 import org.openscada.sec.osgi.AuthorizationTracker.Listener;
 import org.openscada.sec.osgi.AuthorizationTracker.Monitor;
@@ -62,7 +62,7 @@ public class SessionPrivilegeTracker
         }
 
         @Override
-        public void resultChanged ( final AuthorizationResult result )
+        public void resultChanged ( final AuthorizationReply result )
         {
             privilegeChange ( this.privilege, result );
         }
@@ -86,7 +86,7 @@ public class SessionPrivilegeTracker
         }
     }
 
-    public synchronized void privilegeChange ( final String privilege, final AuthorizationResult result )
+    public synchronized void privilegeChange ( final String privilege, final AuthorizationReply result )
     {
         logger.debug ( "Privilege change - privilege: {}, result: {}", privilege, result );
         if ( result.isGranted () )

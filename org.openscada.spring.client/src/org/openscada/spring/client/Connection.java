@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,11 +31,11 @@ import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.NoConnectionException;
+import org.openscada.core.data.OperationParameters;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemManagerImpl;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,10 +47,14 @@ import org.springframework.beans.factory.InitializingBean;
  * A wrapper around the DA connection creation for openSCADA
  * </p>
  * <p>
- * The connection is bound to the lifecycle of the bean context. All assigned item adapters will be attached to the connection and a subscription will be requested.
+ * The connection is bound to the lifecycle of the bean context. All assigned
+ * item adapters will be attached to the connection and a subscription will be
+ * requested.
  * </p>
  * <p>
- * By default the connection will be kept open using a {@link AutoReconnectController}. Use the property {@link #keepOpen} to change this behavior.
+ * By default the connection will be kept open using a
+ * {@link AutoReconnectController}. Use the property {@link #keepOpen} to change
+ * this behavior.
  * </p>
  * 
  * @author Jens Reimannn
@@ -82,7 +88,8 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
     private ItemManager itemManager;
 
     /**
-     * A flag that indicates if the connection should be kept open using a {@link AutoReconnectController}.
+     * A flag that indicates if the connection should be kept open using a
+     * {@link AutoReconnectController}.
      */
     private boolean keepOpen = true;
 
@@ -109,7 +116,8 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
      * </p>
      * <p>
      * If the property
-     * <q>auto-reconnect</q> is set then connection will be kept open. If it failes an automated reconnect will be scheduled.
+     * <q>auto-reconnect</q> is set then connection will be kept open. If it
+     * failes an automated reconnect will be scheduled.
      * </p>
      * 
      * @throws ClassNotFoundException
@@ -170,7 +178,8 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
      * Stop the connection
      * </p>
      * <p>
-     * This will disconnect the currently established connection and prevent further reconnects.
+     * This will disconnect the currently established connection and prevent
+     * further reconnects.
      * </p>
      */
     @Override
@@ -195,7 +204,8 @@ public class Connection implements InitializingBean, DisposableBean, ConnectionO
      * set the connection information as a connection string
      * </p>
      * <p>
-     * A connection string can be <code>da:net://192.168.1.200:1202</code> for a DA connection using the
+     * A connection string can be <code>da:net://192.168.1.200:1202</code> for a
+     * DA connection using the
      * <q>net</q> (aka
      * <q>GMPP</q>) protocol to host
      * <q>192.168.1.200</q> on port

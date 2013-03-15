@@ -30,6 +30,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.openscada.core.InvalidSessionException;
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.Session;
@@ -174,7 +175,7 @@ public abstract class HiveBrowserCommon implements HiveBrowser, FolderListener, 
     }
 
     @Override
-    public void create ( final SessionCommon session )
+    public void create ( final AbstractSessionImpl session )
     {
     }
 

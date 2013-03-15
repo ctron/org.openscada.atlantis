@@ -2,10 +2,10 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA NextGenerationProtocol
 Bundle-SymbolicName: org.openscada.core.client.ngp
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.core.client.ngp;version="1.0.0"
+Export-Package: org.openscada.core.client.ngp;version="1.1.0"
 Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
  org.apache.mina.core.future;version="2.0.0",
  org.apache.mina.core.service;version="2.0.0",
@@ -20,5 +20,7 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
  org.openscada.core.info;version="1.0.0",
  org.openscada.core.ngp;version="1.0.0",
  org.openscada.protocol.ngp.common;version="1.0.0",
+ org.openscada.sec.callback;version="1.1.0",
+ org.openscada.utils;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
  org.slf4j;version="1.5.0"

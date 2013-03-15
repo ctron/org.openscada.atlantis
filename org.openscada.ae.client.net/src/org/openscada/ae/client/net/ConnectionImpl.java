@@ -47,8 +47,11 @@ import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
 import org.openscada.ae.net.MonitorMessageHelper;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.client.net.MessageFuture;
 import org.openscada.core.client.net.SessionConnectionBase;
+import org.openscada.core.data.OperationParameters;
 import org.openscada.core.data.SubscriptionState;
+import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.LongValue;
@@ -56,7 +59,8 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.utils.MessageCreator;
-import org.openscada.sec.UserInformation;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -834,7 +838,7 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
     }
 
     @Override
-    public void acknowledge ( final String monitorId, final Date aknTimestamp, final UserInformation userInformation )
+    public NotifyFuture<Void> acknowledge ( final String monitorId, final Date aknTimestamp, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
     {
         logger.debug ( "Sending ACK: {} / {}", new Object[] { monitorId, aknTimestamp } );
 
@@ -850,19 +854,19 @@ public class ConnectionImpl extends SessionConnectionBase implements org.opensca
             message.getValues ().put ( "aknTimestamp", new LongValue ( System.currentTimeMillis () ) );
         }
 
-        if ( userInformation != null )
-        {
-            if ( userInformation.getName () != null )
-            {
-                message.getValues ().put ( "user", new StringValue ( userInformation.getName () ) );
-                if ( userInformation.getPassword () != null )
-                {
-                    message.getValues ().put ( "password", new StringValue ( userInformation.getPassword () ) );
-                }
-            }
-        }
+        MessageHelper.encodeOperationParameters ( operationParameters, message );
 
-        this.messenger.sendMessage ( message );
+        final MessageFuture<Void> messageListenerer = new MessageFuture<Void> () {
+            @Override
+            protected Void process ( final Message message ) throws Exception
+            {
+                return null;
+            }
+        };
+
+        this.messenger.sendMessage ( message, messageListenerer );
+
+        return messageListenerer;
     }
 
     public synchronized void closeQuery ( final long queryId )

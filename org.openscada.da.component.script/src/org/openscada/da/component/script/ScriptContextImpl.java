@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,8 +30,9 @@ import java.util.concurrent.locks.ReentrantLock;
 
 import org.openscada.core.Variant;
 import org.openscada.core.connection.provider.ConnectionIdTracker;
+import org.openscada.core.server.OperationParameters;
+import org.openscada.core.server.OperationParametersHelper;
 import org.openscada.da.connection.provider.ConnectionService;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
@@ -131,7 +134,7 @@ public class ScriptContextImpl implements ScriptContext
             final ConnectionService service = (ConnectionService)tracker.waitForService ( 0 );
             if ( service != null )
             {
-                service.getConnection ().write ( itemId, value, operationParameters, null );
+                service.getConnection ().write ( itemId, value, OperationParametersHelper.toData ( operationParameters ), null );
             }
         }
         finally

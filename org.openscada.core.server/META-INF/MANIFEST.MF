@@ -1,11 +1,15 @@
 Manifest-Version: 1.0
 Import-Package: org.openscada.core;version="1.0.0",
+ org.openscada.core.data;version="1.0.0",
+ org.openscada.sec;version="1.1.0",
+ org.openscada.sec.callback;version="1.1.0",
+ org.openscada.utils.concurrent;version="1.0.0",
+ org.openscada.utils.lang;version="1.0.0",
  org.openscada.utils.lifecycle;version="1.0.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.core.server;version="1.0.0";uses:="org.openscada.core,org.openscada.utils.lifecycle"
-Bundle-Version: 1.0.0.qualifier
+Export-Package: org.openscada.core.server;version="1.1.0";uses:="org.openscada.sec.callback,org.openscada.utils.lifecycle"
+Bundle-Version: 1.1.0.qualifier
 Bundle-Name: openSCADA Core Server
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.core.server
-

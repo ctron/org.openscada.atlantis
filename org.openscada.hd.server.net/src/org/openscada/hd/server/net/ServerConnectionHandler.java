@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,11 +28,11 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.Session.SessionListener;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
@@ -53,6 +55,8 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.sec.callback.PropertiesCredentialsCallback;
+import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -418,11 +422,27 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             return;
         }
 
+        this.service.createSession ( props, new PropertiesCredentialsCallback ( props ) ).addListener ( new FutureListener<Session> () {
+
+            @Override
+            public void complete ( final Future<Session> future )
+            {
+                handleCreateSessionComplete ( future, message, props );
+            }
+        } );
+
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected void handleCreateSessionComplete ( final Future<Session> future, final Message message, final Properties props )
+    {
         try
         {
-            this.session = this.service.createSession ( props );
+            this.session = future.get ();
         }
-        catch ( final UnableToCreateSessionException e )
+        catch ( final Exception e )
         {
             this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
             return;

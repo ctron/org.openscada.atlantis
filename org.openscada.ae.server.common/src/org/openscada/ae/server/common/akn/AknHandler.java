@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,7 +23,7 @@ package org.openscada.ae.server.common.akn;
 
 import java.util.Date;
 
-import org.openscada.sec.UserInformation;
+import org.openscada.core.server.OperationParameters;
 
 public interface AknHandler
 {
@@ -30,12 +32,12 @@ public interface AknHandler
      * 
      * @param monitorId
      *            the monitor to acknowledge
-     * @param userInformation
-     *            the user which performs the operation
+     * @param operationParameters
+     *            the effective operation parameters
      * @param aknTimestamp
      *            the timestamp until which the state is acknowledged
      * @return <code>true</code> if the monitor was found and processed,
      *         <code>false</code> otherwise
      */
-    public boolean acknowledge ( String monitorId, UserInformation userInformation, Date aknTimestamp );
+    public boolean acknowledge ( String monitorId, OperationParameters operationParameters, Date aknTimestamp );
 }

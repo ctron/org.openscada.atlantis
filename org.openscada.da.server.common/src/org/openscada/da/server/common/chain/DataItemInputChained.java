@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,8 +29,8 @@ import java.util.concurrent.Executor;
 import org.openscada.core.AttributesHelper;
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.AttributeMode;
@@ -65,9 +67,16 @@ public class DataItemInputChained extends DataItemBaseChained
 
     /**
      * Update the item data
-     * @param value the new value, or <code>null</code> if the value did not change
-     * @param attributes the new attributes, <code>null</code> if no attribute have changed
-     * @param mode The attribute change mode, <code>null</code> will use the default ( {@link AttributeMode#UPDATE} )
+     * 
+     * @param value
+     *            the new value, or <code>null</code> if the value did not
+     *            change
+     * @param attributes
+     *            the new attributes, <code>null</code> if no attribute have
+     *            changed
+     * @param mode
+     *            The attribute change mode, <code>null</code> will use the
+     *            default ( {@link AttributeMode#UPDATE} )
      */
     public synchronized void updateData ( final Variant value, final Map<String, Variant> attributes, AttributeMode mode )
     {

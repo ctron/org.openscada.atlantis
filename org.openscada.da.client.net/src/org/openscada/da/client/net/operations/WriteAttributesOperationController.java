@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,7 +24,7 @@ package org.openscada.da.client.net.operations;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.da.core.OperationParameters;
+import org.openscada.core.data.OperationParameters;
 import org.openscada.da.net.handler.Messages;
 import org.openscada.da.net.handler.WriteAttributesOperation;
 import org.openscada.net.base.LongRunningController;

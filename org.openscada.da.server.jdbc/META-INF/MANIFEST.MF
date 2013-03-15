@@ -4,6 +4,7 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.apache.xmlbeans.impl.values;version="2.4",
  org.apache.xmlbeans.xml.stream;version="2.4",
  org.openscada.core;version="1.0.0",
+ org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
  org.openscada.core.server.common;version="1.0.0",
  org.openscada.da.core;version="1.0.0",
@@ -22,7 +23,7 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.utils.sql;version="1.0.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.jdbc;version="1.0.0";
+Export-Package: org.openscada.da.server.jdbc;version="1.1.0";
   uses:="org.openscada.da.server.common.chain,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common.impl,
@@ -31,7 +32,7 @@ Export-Package: org.openscada.da.server.jdbc;version="1.0.0";
    org.openscada.da.core,
    org.w3c.dom,
    org.openscada.da.jdbc.configuration"
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Name: openSCADA DA JDBC Server
 Bundle-Vendor: openSCADA.org
 Bundle-ManifestVersion: 2

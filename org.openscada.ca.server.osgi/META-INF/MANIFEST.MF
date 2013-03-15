@@ -2,12 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA CA Server OSGi
 Bundle-SymbolicName: org.openscada.ca.server.osgi
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.openscada.ca.server.osgi.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ae.sec;version="1.0.0",
- org.openscada.ca;version="1.0.0",
+Import-Package: org.openscada.ca;version="1.0.0",
  org.openscada.ca.data;version="1.0.0",
  org.openscada.ca.server;version="1.0.0",
  org.openscada.core;version="1.0.0",

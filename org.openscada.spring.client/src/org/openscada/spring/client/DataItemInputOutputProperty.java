@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,8 +31,8 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantType;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
@@ -44,7 +46,6 @@ import org.springframework.util.Assert;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
- *
  */
 public class DataItemInputOutputProperty extends DataItemInputOutputChained implements InitializingBean
 {
@@ -65,7 +66,8 @@ public class DataItemInputOutputProperty extends DataItemInputOutputChained impl
     }
 
     /**
-     * @param id item id
+     * @param id
+     *            item id
      */
     public DataItemInputOutputProperty ( final String id, final Executor executor )
     {
@@ -75,7 +77,9 @@ public class DataItemInputOutputProperty extends DataItemInputOutputChained impl
 
     /**
      * will create a dataitem with a sync executor set
-     * @param id the item id
+     * 
+     * @param id
+     *            the item id
      * @deprecated use one of the constructors with the executor
      */
     @Deprecated

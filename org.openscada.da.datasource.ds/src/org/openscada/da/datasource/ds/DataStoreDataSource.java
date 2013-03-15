@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,8 +29,8 @@ import org.openscada.core.InvalidOperationException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.base.AbstractDataSource;
@@ -70,11 +72,13 @@ public class DataStoreDataSource extends AbstractDataSource implements DataListe
         return this.executor;
     }
 
+    @Override
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         return new InstantErrorFuture<WriteAttributeResults> ( new InvalidOperationException ().fillInStackTrace () );
     }
 
+    @Override
     public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
         if ( this.dataNodeTracker.write ( new DataNode ( getNodeId (), value ) ) )
@@ -120,6 +124,7 @@ public class DataStoreDataSource extends AbstractDataSource implements DataListe
         }
     }
 
+    @Override
     public void nodeChanged ( final DataNode node )
     {
         logger.debug ( "Node data changed: {}", node );

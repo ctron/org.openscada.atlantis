@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,7 +34,7 @@ import org.openscada.ae.monitor.common.AbstractStateMonitor;
 import org.openscada.ae.monitor.common.PersistentInformation;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.core.Variant;
-import org.openscada.sec.UserInformation;
+import org.openscada.core.server.OperationParameters;
 import org.osgi.framework.BundleContext;
 
 public class TestingMonitor extends AbstractStateMonitor implements AknHandler
@@ -73,11 +75,11 @@ public class TestingMonitor extends AbstractStateMonitor implements AknHandler
     }
 
     @Override
-    public boolean acknowledge ( final String conditionId, final UserInformation aknUser, final Date aknTimestamp )
+    public boolean acknowledge ( final String conditionId, final OperationParameters operationParameters, final Date aknTimestamp )
     {
         if ( getId ().equals ( conditionId ) )
         {
-            akn ( aknUser, aknTimestamp );
+            akn ( operationParameters == null ? null : operationParameters.getUserInformation (), aknTimestamp );
             return true;
         }
         return false;

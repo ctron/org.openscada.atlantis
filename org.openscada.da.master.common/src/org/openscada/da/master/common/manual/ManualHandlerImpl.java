@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,9 +34,9 @@ import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
 import org.openscada.core.data.SubscriptionState;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;

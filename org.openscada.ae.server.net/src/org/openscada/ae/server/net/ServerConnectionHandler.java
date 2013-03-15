@@ -21,6 +21,7 @@
 
 package org.openscada.ae.server.net;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -28,6 +29,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.ae.BrowserListener;
@@ -47,8 +49,9 @@ import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
+import org.openscada.core.data.OperationParameters;
 import org.openscada.core.data.SubscriptionState;
+import org.openscada.core.data.UserInformation;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.Session.SessionListener;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
@@ -60,11 +63,12 @@ import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.net.utils.MessageCreator;
-import org.openscada.sec.UserInformation;
+import org.openscada.sec.callback.PropertiesCredentialsCallback;
+import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.concurrent.ResultHandler;
 import org.openscada.utils.concurrent.task.DefaultTaskHandler;
 import org.openscada.utils.concurrent.task.ResultFutureHandler;
+import org.openscada.utils.concurrent.task.ResultHandler;
 import org.openscada.utils.concurrent.task.TaskHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -80,9 +84,9 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
     private final static Logger logger = LoggerFactory.getLogger ( ServerConnectionHandler.class );
 
-    private Service service = null;
+    private final Service service;
 
-    private Session session = null;
+    private Session session;
 
     @SuppressWarnings ( "unused" )
     private final TaskHandler taskHandler = new DefaultTaskHandler ();
@@ -357,17 +361,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             if ( value instanceof StringValue )
             {
                 final String user = value.toString ();
-                String password;
-                final Value passwordValue = message.getValues ().get ( "password" );
-                if ( passwordValue instanceof StringValue )
-                {
-                    password = passwordValue.toString ();
-                }
-                else
-                {
-                    password = null;
-                }
-                userInformation = new UserInformation ( user, password );
+                userInformation = new UserInformation ( user );
             }
         }
 
@@ -375,7 +369,23 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
         {
             try
             {
-                this.service.acknowledge ( this.session, monitorId, aknTimestamp, userInformation );
+                final NotifyFuture<Void> future = this.service.acknowledge ( this.session, monitorId, aknTimestamp, new OperationParameters ( userInformation, Collections.<String, String> emptyMap () ), null );
+                future.addListener ( new FutureListener<Void> () {
+
+                    @Override
+                    public void complete ( final Future<Void> future )
+                    {
+                        try
+                        {
+                            future.get ();
+                            // "net" does not send anything in the "good" case
+                        }
+                        catch ( final Exception e )
+                        {
+                            ServerConnectionHandler.this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
+                        }
+                    }
+                } );
             }
             catch ( final Throwable e )
             {
@@ -507,11 +517,26 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             return;
         }
 
+        this.service.createSession ( props, new PropertiesCredentialsCallback ( props ) ).addListener ( new FutureListener<Session> () {
+
+            @Override
+            public void complete ( final Future<Session> future )
+            {
+                handleCreateSessionComplete ( future, message, props );
+            }
+        } );
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected void handleCreateSessionComplete ( final Future<Session> future, final Message message, final Properties props )
+    {
         try
         {
-            this.session = this.service.createSession ( props );
+            this.session = future.get ();
         }
-        catch ( final UnableToCreateSessionException e )
+        catch ( final Exception e )
         {
             this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
             return;

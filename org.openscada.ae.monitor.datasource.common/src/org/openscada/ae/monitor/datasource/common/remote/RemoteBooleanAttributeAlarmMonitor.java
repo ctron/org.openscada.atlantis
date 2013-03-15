@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,8 +33,8 @@ import org.openscada.ae.monitor.common.DataItemMonitor;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.master.MasterItem;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
@@ -137,16 +139,16 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
     }
 
     @Override
-    public void akn ( final UserInformation aknUser, final Date aknTimestamp )
+    public void akn ( final UserInformation userInformation, final Date aknTimestamp )
     {
-        publishAckRequestEvent ( aknUser, aknTimestamp );
+        publishAckRequestEvent ( userInformation, aknTimestamp );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( this.attributeAck, this.aknValue );
 
         for ( final MasterItem item : getMasterItems () )
         {
-            item.startWriteAttributes ( attributes, new OperationParameters ( aknUser ) );
+            item.startWriteAttributes ( attributes, new OperationParameters ( userInformation, null, null ) );
         }
     }
 
@@ -157,7 +159,7 @@ public class RemoteBooleanAttributeAlarmMonitor extends GenericRemoteMonitor imp
 
         for ( final MasterItem item : getMasterItems () )
         {
-            item.startWriteAttributes ( attributes, new OperationParameters ( UserInformation.ANONYMOUS ) );
+            item.startWriteAttributes ( attributes, new OperationParameters ( userInformation, null, null ) );
         }
     }
 

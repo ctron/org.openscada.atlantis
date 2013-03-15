@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,8 +27,9 @@ import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.UnknownQueryException;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.sec.PermissionDeniedException;
-import org.openscada.sec.UserInformation;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public interface Service extends org.openscada.core.server.Service<Session>
 {
@@ -46,5 +49,5 @@ public interface Service extends org.openscada.core.server.Service<Session>
 
     public void unsubscribeConditionQuery ( Session session, String queryId ) throws InvalidSessionException;
 
-    public void acknowledge ( Session session, String conditionId, Date aknTimestamp, UserInformation userInformation ) throws InvalidSessionException, PermissionDeniedException;
+    public NotifyFuture<Void> acknowledge ( Session session, String conditionId, Date aknTimestamp, OperationParameters operationParameters, CallbackHandler callbackHandler ) throws InvalidSessionException;
 }

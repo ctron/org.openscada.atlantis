@@ -25,13 +25,27 @@ import java.util.Map;
 import java.util.Set;
 
 import org.openscada.core.ConnectionInformation;
+import org.openscada.sec.callback.CallbackFactory;
+import org.openscada.sec.callback.CallbackHandler;
 
 public interface Connection
 {
     /**
+     * @since 1.1
+     */
+    public void setCallbackFactory ( CallbackFactory callbackFactory );
+
+    /**
      * Start the connection
      */
     public void connect ();
+
+    /**
+     * Start the connection with a callback handler
+     * 
+     * @since 1.1
+     */
+    public void connect ( CallbackHandler callbackHandler );
 
     /**
      * Stop the connection
@@ -76,6 +90,7 @@ public interface Connection
     /**
      * Return the list of currently granted privileges.
      * 
+     * @since 1.0
      * @return the list of current privileges. Must never return
      *         <code>null</code>.
      */
@@ -94,7 +109,7 @@ public interface Connection
      * {@link #dispose()} call.
      * </p>
      * 
-     * @since 1.0.0
+     * @since 1.0
      */
     public void dispose ();
 }

@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,6 +37,7 @@ import org.openscada.sec.AuthenticationService;
 import org.openscada.sec.StatusCodes;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.UserManagerService;
+import org.openscada.sec.authn.CredentialsRequest;
 import org.openscada.sec.utils.password.PasswordEncoder;
 import org.openscada.sec.utils.password.PasswordType;
 import org.openscada.sec.utils.password.PasswordValidator;
@@ -137,8 +140,18 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
     }
 
     @Override
-    public UserInformation authenticate ( final String username, final String password ) throws AuthenticationException
+    public void joinRequest ( final CredentialsRequest request )
     {
+        request.askUsername ();
+        request.askPassword ();
+    }
+
+    @Override
+    public UserInformation authenticate ( final CredentialsRequest request ) throws AuthenticationException
+    {
+        final String username = request.getUserName ();
+        final String password = request.getPassword ();
+
         try
         {
             this.readLock.lock ();

@@ -5,6 +5,7 @@ Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.apache.xmlbeans.impl.values;version="2.4",
  org.apache.xmlbeans.xml.stream;version="2.4",
  org.openscada.core;version="1.0.0",
+ org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
  org.openscada.core.server.common;version="1.0.0",
  org.openscada.da.core;version="1.0.0",
@@ -49,7 +50,7 @@ Export-Package: org.openscada.da.server.snmp;version="1.0.0";
    org.openscada.da.server.snmp.items,
    org.openscada.da.server.snmp,
    org.snmp4j.smi"
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Name: openSCADA DA SNMP Server
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.snmp

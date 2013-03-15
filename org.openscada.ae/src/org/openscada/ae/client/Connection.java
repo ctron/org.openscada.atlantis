@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,7 +26,9 @@ import java.util.Date;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
-import org.openscada.sec.UserInformation;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 /**
  * Interface for client connection
@@ -67,7 +71,7 @@ public interface Connection extends org.openscada.core.client.Connection
      *            the id of the condition
      * @param aknTimestamp
      *            the timestamp up to which the state may be acknowledged
-     * @param userInformation
+     * @param operationParameters
      *            optionally provide some user information which performs the
      *            aknowledgement. If the information is not provided the current
      *            logged in user will be used. If the information is present but
@@ -75,5 +79,5 @@ public interface Connection extends org.openscada.core.client.Connection
      *            performing acknowledgement the server may fall back to use the
      *            actual information of the logged in user instead.
      */
-    public void acknowledge ( String monitorId, Date aknTimestamp, UserInformation userInformation );
+    public NotifyFuture<Void> acknowledge ( String monitorId, Date aknTimestamp, OperationParameters operationParameters, CallbackHandler callbackHandler );
 }

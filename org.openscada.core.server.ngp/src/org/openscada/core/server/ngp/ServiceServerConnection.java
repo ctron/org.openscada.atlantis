@@ -21,21 +21,40 @@
 
 package org.openscada.core.server.ngp;
 
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
+import org.openscada.core.data.CallbackRequest;
+import org.openscada.core.data.CallbackResponse;
+import org.openscada.core.data.ErrorInformation;
+import org.openscada.core.data.RequestMessage;
+import org.openscada.core.data.ResponseMessage;
 import org.openscada.core.data.message.CreateSession;
+import org.openscada.core.data.message.RequestCallbacks;
+import org.openscada.core.data.message.RespondCallbacks;
 import org.openscada.core.data.message.SessionAccepted;
 import org.openscada.core.data.message.SessionPrivilegesChanged;
 import org.openscada.core.data.message.SessionRejected;
 import org.openscada.core.ngp.Features;
+import org.openscada.core.ngp.MessageSender;
+import org.openscada.core.ngp.ResponseManager;
 import org.openscada.core.server.Service;
 import org.openscada.core.server.Session;
 import org.openscada.core.server.Session.SessionListener;
+import org.openscada.sec.callback.Callback;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.sec.callback.Callbacks;
+import org.openscada.sec.callback.PropertiesCredentialsCallback;
+import org.openscada.utils.concurrent.CallingFuture;
+import org.openscada.utils.concurrent.DirectExecutor;
+import org.openscada.utils.concurrent.FutureListener;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +68,27 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
 
     private boolean enablePrivs;
 
+    private boolean logonInProgress;
+
+    private boolean enableCallbacks;
+
+    private final ResponseManager responseManager;
+
+    private final MessageSender messageSender = new MessageSender () {
+
+        @Override
+        public void sendMessage ( final Object message )
+        {
+            ServiceServerConnection.this.sendMessage ( message );
+        }
+    };
+
     public ServiceServerConnection ( final IoSession session, final S service )
     {
         super ( session );
         this.service = service;
+        this.responseManager = new ResponseManager ( this.statistics, this.messageSender, DirectExecutor.INSTANCE );
+        this.responseManager.connected ();
     }
 
     @Override
@@ -64,37 +100,109 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
         {
             handleCreateSession ( (CreateSession)message );
         }
+        else if ( message instanceof ResponseMessage )
+        {
+            this.responseManager.handleResponse ( (ResponseMessage)message );
+        }
     }
 
     protected synchronized void handleCreateSession ( final CreateSession message )
     {
+        if ( this.logonInProgress )
+        {
+            logger.warn ( "Logon already in progress" );
+            return;
+        }
+
         try
         {
             this.enablePrivs = message.getProperties ().containsKey ( Features.FEATURE_SESSION_PRIVILEGES );
-            logger.debug ( "Enable privileges: {}", this.enablePrivs );
+            logger.info ( "Enable privileges: {}", this.enablePrivs ); //$NON-NLS-1$
 
-            performCreateSession ( message.getProperties () );
-            sendMessage ( makeSuccessMessage ( this.session.getProperties () ) );
-            this.session.addSessionListener ( new SessionListener () {
+            this.enableCallbacks = message.getProperties ().containsKey ( Features.FEATURE_CALLBACKS );
+            logger.info ( "Enable callbacks: {}", this.enableCallbacks ); //$NON-NLS-1$
+
+            this.logonInProgress = true;
+
+            final CallbackHandler callbackHandler;
+
+            callbackHandler = createCallbackHandlerFromMessage ( message );
+
+            final NotifyFuture<T> future = performCreateSession ( message.getProperties (), callbackHandler );
+
+            future.addListener ( new FutureListener<T> () {
 
                 @Override
-                public void privilegeChange ()
+                public void complete ( final Future<T> future )
                 {
-                    handlePrivilegeChange ();
+                    try
+                    {
+                        setSession ( future );
+                    }
+                    catch ( final Exception e )
+                    {
+                        logger.warn ( "Failed to set session", e );
+                        failSession ( e );
+                    }
+
                 }
             } );
         }
-        catch ( final UnableToCreateSessionException e )
-        {
-            sendMessage ( makeRejectMessage ( e ) );
-            // FIXME: allow re-try
-            requestClose ( false );
-        }
         catch ( final Exception e )
         {
-            sendMessage ( makeRejectMessage ( e ) );
-            requestClose ( false );
+            logger.warn ( "Failed to create session", e );
+            failSession ( e );
         }
+    }
+
+    private CallbackHandler createCallbackHandlerFromMessage ( final CreateSession message )
+    {
+        if ( message.getProperties ().containsKey ( "user" ) && message.getProperties ().containsKey ( "password" ) )
+        {
+            logger.info ( "Using properties based callback handler since 'username' and 'password' are provided" );
+            return new PropertiesCredentialsCallback ( message.getProperties () );
+        }
+
+        return createCallbackHandler ( message.getCallbackHandlerId () );
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected synchronized void failSession ( final Exception e )
+    {
+        this.logonInProgress = false;
+        sendMessage ( makeRejectMessage ( e ) );
+        requestClose ( false );
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected synchronized void setSession ( final Future<T> sessionFuture ) throws Exception
+    {
+        this.logonInProgress = false;
+
+        this.session = sessionFuture.get ();
+
+        initializeSession ( this.session );
+
+        sendMessage ( makeSuccessMessage ( this.session.getProperties () ) );
+        this.session.addSessionListener ( new SessionListener () {
+
+            @Override
+            public void privilegeChange ()
+            {
+                handlePrivilegeChange ();
+            }
+        } );
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected void initializeSession ( final T session )
+    {
     }
 
     protected SessionPrivilegesChanged makePrivilegeChangeMessage ( final Set<String> privileges )
@@ -112,7 +220,7 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
         return new SessionRejected ( e.getMessage () );
     }
 
-    private void performCreateSession ( final Map<String, String> properties ) throws UnableToCreateSessionException
+    private NotifyFuture<T> performCreateSession ( final Map<String, String> properties, final CallbackHandler callbackHandler )
     {
         if ( this.session != null )
         {
@@ -121,24 +229,30 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
 
         final Properties p = new Properties ();
         p.putAll ( properties );
-        this.session = createSession ( p );
+        return createSession ( p, callbackHandler );
     }
 
-    protected T createSession ( final Properties properties ) throws UnableToCreateSessionException
+    /**
+     * @param callbackHandler
+     * @since 1.1
+     */
+    protected NotifyFuture<T> createSession ( final Properties properties, final CallbackHandler callbackHandler )
     {
-        return this.service.createSession ( properties );
+        return this.service.createSession ( properties, callbackHandler );
     }
 
     @Override
     public void dispose ()
     {
-        T session;
+        final T session;
 
         synchronized ( this )
         {
             session = this.session;
             this.session = null;
         }
+
+        this.responseManager.disconnected ();
 
         if ( session != null )
         {
@@ -151,6 +265,7 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
                 logger.warn ( "Failed to close session", e );
             }
         }
+
         super.dispose ();
     }
 
@@ -160,5 +275,90 @@ public abstract class ServiceServerConnection<T extends Session, S extends Servi
         {
             sendMessage ( makePrivilegeChangeMessage ( ServiceServerConnection.this.session.getPrivileges () ) );
         }
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected CallbackHandler createCallbackHandler ( final Long callbackHandlerId )
+    {
+        if ( callbackHandlerId == null )
+        {
+            return null;
+        }
+        else
+        {
+            return new CallbackHandler () {
+
+                @Override
+                public NotifyFuture<Callback[]> performCallback ( final Callback[] callbacks )
+                {
+                    return performCallbacks ( callbackHandlerId, callbacks );
+                }
+            };
+        }
+    }
+
+    private synchronized NotifyFuture<Callback[]> performCallbacks ( final long callbackHandlerId, final Callback[] callbacks )
+    {
+        if ( !this.enableCallbacks )
+        {
+            return Callbacks.cancelAll ( callbacks );
+        }
+
+        final NotifyFuture<ResponseMessage> future = this.responseManager.sendRequestMessage ( makeCallbackMessage ( callbackHandlerId, callbacks ) );
+        return new CallingFuture<ResponseMessage, Callback[]> ( future ) {
+
+            @Override
+            public Callback[] call ( final Future<ResponseMessage> future ) throws Exception
+            {
+                parseCallbackResponse ( (RespondCallbacks)future.get (), callbacks );
+                return callbacks;
+            }
+        };
+    }
+
+    private void parseCallbackResponse ( final RespondCallbacks response, final Callback[] callbacks )
+    {
+        final ErrorInformation error = response.getErrorInformation ();
+
+        if ( error == null && response.getCallbacks ().size () == callbacks.length )
+        {
+            int i = 0;
+
+            for ( final CallbackResponse cr : response.getCallbacks () )
+            {
+                if ( cr.isCanceled () )
+                {
+                    callbacks[i].cancel ();
+                }
+                else
+                {
+                    callbacks[i].parseResponseAttributes ( cr.getAttributes () );
+                }
+                i++;
+            }
+        }
+        else if ( error != null )
+        {
+            // FIXME: should provide a real exception from error information
+            throw new RuntimeException ( error.getMessage () );
+        }
+        else
+        {
+            throw new RuntimeException ( "Unknown error" );
+        }
+    }
+
+    private RequestMessage makeCallbackMessage ( final long callbackHandlerId, final Callback[] callbacks )
+    {
+        final List<CallbackRequest> requests = new LinkedList<CallbackRequest> ();
+
+        for ( final Callback cb : callbacks )
+        {
+            requests.add ( new CallbackRequest ( cb.getType (), cb.buildRequestAttributes () ) );
+        }
+
+        return new RequestCallbacks ( this.responseManager.nextRequest (), callbackHandlerId, requests, Callback.DEFAULT_TIMEOUT );
     }
 }

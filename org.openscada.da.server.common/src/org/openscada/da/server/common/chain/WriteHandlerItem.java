@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -24,8 +26,8 @@ import java.util.concurrent.Executor;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.InstantErrorFuture;
@@ -51,10 +53,11 @@ public class WriteHandlerItem extends DataItemInputOutputChained
     /**
      * Change the write handler
      * <p>
-     * The write handler will not be called for the last written value
-     * only for the next one.
+     * The write handler will not be called for the last written value only for
+     * the next one.
      * 
-     * @param writeHandler the new write handler
+     * @param writeHandler
+     *            the new write handler
      */
     public void setWriteHandler ( final WriteHandler writeHandler )
     {

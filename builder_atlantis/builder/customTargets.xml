@@ -231,7 +231,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.datasource"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.datasource.common"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.sec"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.utils"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.slave.pull"/>
@@ -283,8 +282,10 @@
   	
   	<!-- SEC stuff for Master -->
   	
+  	<openscada.builder.copyPlugin id="org.openscada.sec.osgi.manager" />
   	<openscada.builder.copyPlugin id="org.openscada.sec.provider.script" />
   	<openscada.builder.copyPlugin id="org.openscada.sec.provider.jdbc" />
+  	<openscada.builder.copyPlugin id="org.openscada.sec.authz.signature" />
   	
   	<!-- Additional stuff -->
   	

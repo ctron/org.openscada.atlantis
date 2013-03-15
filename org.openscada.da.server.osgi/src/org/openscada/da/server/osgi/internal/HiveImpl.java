@@ -28,10 +28,9 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.sec.AuthorizationHelper;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.Variant;
 import org.openscada.core.server.common.osgi.SessionPrivilegeTracker;
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.core.server.common.session.AbstractSessionImpl.DisposeListener;
 import org.openscada.core.server.common.session.PrivilegeListenerImpl;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -44,12 +43,9 @@ import org.openscada.da.server.browser.common.query.SplitNameProvider;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.impl.SessionCommon;
-import org.openscada.sec.AuthenticationException;
-import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
-import org.openscada.sec.osgi.AuthenticationHelper;
-import org.openscada.sec.osgi.AuthorizationTracker;
+import org.openscada.sec.osgi.TrackingAuthorizationImplementation;
+import org.openscada.sec.osgi.TrackingAuthorizationTracker;
 import org.openscada.utils.collection.MapBuilder;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
@@ -71,11 +67,9 @@ public class HiveImpl extends HiveCommon
 
     private final Map<ServiceReference<?>, ItemDescriptor> items;
 
-    private final AuthenticationHelper authenticationManager;
+    private final TrackingAuthorizationImplementation authorizationManager;
 
-    private final AuthorizationHelper authorizationManager;
-
-    private final AuthorizationTracker authorizationTracker;
+    private final TrackingAuthorizationTracker authorizationTracker;
 
     private final Executor executor;
 
@@ -84,9 +78,10 @@ public class HiveImpl extends HiveCommon
         this.context = context;
         this.executor = executor;
 
-        this.authenticationManager = new AuthenticationHelper ( context );
-        this.authorizationManager = new AuthorizationHelper ( context );
-        this.authorizationTracker = new AuthorizationTracker ( context, executor );
+        this.authorizationManager = new TrackingAuthorizationImplementation ( context );
+        this.authorizationTracker = new TrackingAuthorizationTracker ( context );
+
+        setAuthorizationImplementation ( this.authorizationManager );
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
@@ -109,7 +104,6 @@ public class HiveImpl extends HiveCommon
     @Override
     public void start () throws Exception
     {
-        this.authenticationManager.open ();
         this.authorizationManager.open ();
         this.authorizationTracker.open ();
         super.start ();
@@ -120,12 +114,11 @@ public class HiveImpl extends HiveCommon
     {
         super.stop ();
         this.authorizationTracker.close ();
-        this.authenticationManager.close ();
         this.authorizationManager.close ();
     }
 
     @Override
-    protected void handleSessionCreated ( final SessionCommon session, final Properties properties, final UserInformation userInformation )
+    protected void handleSessionCreated ( final AbstractSessionImpl session, final Properties properties, final UserInformation userInformation )
     {
         super.handleSessionCreated ( session, properties, userInformation );
 
@@ -140,18 +133,6 @@ public class HiveImpl extends HiveCommon
                 privTracker.dispose ();
             }
         } );
-    }
-
-    @Override
-    protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
-    {
-        return this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
-    }
-
-    @Override
-    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
-    {
-        return this.authorizationManager.authorize ( objectType, objectId, action, userInformation, context, defaultResult );
     }
 
     public synchronized void addItem ( final DataItem item, final Dictionary<?, ?> properties )

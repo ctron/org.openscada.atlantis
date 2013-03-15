@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Formula Datasource
 Bundle-SymbolicName: org.openscada.da.datasource.formula
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.openscada.da.datasource.formula.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -10,6 +10,7 @@ Import-Package: org.openscada.ca;version="1.0.0",
  org.openscada.ca.common.factory;version="1.0.0",
  org.openscada.core;version="1.0.0",
  org.openscada.core.data;version="1.0.0",
+ org.openscada.core.server;version="1.1.0",
  org.openscada.core.subscription;version="1.0.0",
  org.openscada.da.client;version="1.0.0",
  org.openscada.da.core;version="1.0.0",

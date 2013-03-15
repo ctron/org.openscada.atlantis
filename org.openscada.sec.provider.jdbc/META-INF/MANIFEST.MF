@@ -2,16 +2,17 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: JDBC based security provider
 Bundle-SymbolicName: org.openscada.sec.provider.jdbc
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.openscada.sec.provider.jdbc.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ca;version="1.0.0",
- org.openscada.sec;version="1.0.0",
+ org.openscada.ca.common.factory;version="1.0.0",
+ org.openscada.sec;version="1.1.0",
+ org.openscada.sec.authn;version="1.1.0",
  org.openscada.sec.utils.password;version="1.0.0",
  org.openscada.utils.collection;version="1.0.0",
  org.openscada.utils.osgi;version="1.0.0",
- org.openscada.ca.common.factory;version="1.0.0",
  org.openscada.utils.osgi.jdbc;version="1.0.0",
  org.openscada.utils.osgi.jdbc.data;version="1.0.0",
  org.openscada.utils.osgi.jdbc.pool;version="1.0.0",

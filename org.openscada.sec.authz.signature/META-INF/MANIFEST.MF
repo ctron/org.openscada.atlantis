@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA Request Signature Module
+Bundle-SymbolicName: org.openscada.sec.authz.signature
+Bundle-Version: 1.1.0.qualifier
+Bundle-Vendor: openSCADA.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.openscada.ca;version="1.0.0",
+ org.openscada.sec;version="1.1.0",
+ org.openscada.sec.audit;version="1.1.0",
+ org.openscada.sec.authz;version="1.1.0",
+ org.openscada.sec.callback;version="1.1.0",
+ org.openscada.utils.concurrent;version="1.1.0",
+ org.openscada.utils.statuscodes;version="1.0.0",
+ org.slf4j;version="1.6.0"
+Service-Component: OSGI-INF/service.xml
+Export-Package: org.openscada.sec.authz.signature;version="1.1.0"

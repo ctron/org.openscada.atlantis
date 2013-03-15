@@ -36,6 +36,7 @@ import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.net.SessionConnectionBase;
+import org.openscada.core.data.OperationParameters;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.da.client.BrowseOperationCallback;
@@ -47,8 +48,8 @@ import org.openscada.da.client.net.operations.BrowseOperationController;
 import org.openscada.da.client.net.operations.WriteAttributesOperationController;
 import org.openscada.da.client.net.operations.WriteOperationController;
 import org.openscada.da.core.Location;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.net.handler.ListBrowser;
 import org.openscada.da.net.handler.Messages;
@@ -59,6 +60,9 @@ import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.AbstractFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.exec.LongRunningListener;
 import org.openscada.utils.exec.LongRunningOperation;
 import org.openscada.utils.exec.LongRunningState;
@@ -68,6 +72,48 @@ import org.slf4j.LoggerFactory;
 
 public class Connection extends SessionConnectionBase implements org.openscada.da.client.Connection
 {
+
+    public static final class WriteOperationFuture extends AbstractFuture<WriteResult> implements WriteOperationCallback
+    {
+        @Override
+        public void failed ( final String error )
+        {
+            setError ( new OperationException ( error ) );
+        }
+
+        @Override
+        public void error ( final Throwable e )
+        {
+            setError ( e );
+        }
+
+        @Override
+        public void complete ()
+        {
+            setResult ( null );
+        }
+    }
+
+    public static final class WriteAttributeOperationFuture extends AbstractFuture<WriteAttributeResults> implements WriteAttributeOperationCallback
+    {
+        @Override
+        public void failed ( final String error )
+        {
+            setError ( new OperationException ( error ) );
+        }
+
+        @Override
+        public void error ( final Throwable e )
+        {
+            setError ( e );
+        }
+
+        @Override
+        public void complete ( final WriteAttributeResults result )
+        {
+            setResult ( result );
+        }
+    }
 
     static
     {
@@ -277,6 +323,14 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     // write operation
 
     @Override
+    public NotifyFuture<WriteResult> startWrite ( final String itemId, final Variant value, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
+    {
+        final WriteOperationFuture callback = new WriteOperationFuture ();
+        write ( itemId, value, operationParameters, callback );
+        return callback;
+    }
+
+    @Override
     public void write ( final String item, final Variant value, final OperationParameters operationParameters, final WriteOperationCallback callback )
     {
         try
@@ -354,6 +408,14 @@ public class Connection extends SessionConnectionBase implements org.openscada.d
     }
 
     // write attributes operation
+
+    @Override
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
+    {
+        final WriteAttributeOperationFuture callback = new WriteAttributeOperationFuture ();
+        writeAttributes ( itemId, attributes, operationParameters, callback );
+        return callback;
+    }
 
     @Override
     public void writeAttributes ( final String item, final Map<String, Variant> attributes, final OperationParameters operationParameters, final WriteAttributeOperationCallback callback )

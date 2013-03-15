@@ -23,4 +23,6 @@ package org.openscada.core.ngp;
 public interface Features
 {
     public static final String FEATURE_SESSION_PRIVILEGES = "feature.core.session.privileges";
+
+    public static final String FEATURE_CALLBACKS = "feature.core.callbacks";
 }

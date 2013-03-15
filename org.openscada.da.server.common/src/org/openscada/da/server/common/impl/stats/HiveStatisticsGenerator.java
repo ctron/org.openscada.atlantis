@@ -20,9 +20,9 @@
 package org.openscada.da.server.common.impl.stats;
 
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.impl.SessionCommon;
 
 public class HiveStatisticsGenerator implements HiveEventListener, Tickable
 {
@@ -43,12 +43,12 @@ public class HiveStatisticsGenerator implements HiveEventListener, Tickable
         this.itemsValue.add ( 1 );
     }
 
-    public void sessionCreated ( final SessionCommon session )
+    public void sessionCreated ( final AbstractSessionImpl session )
     {
         this.sessionsValue.add ( 1 );
     }
 
-    public void sessionDestroyed ( final SessionCommon session )
+    public void sessionDestroyed ( final AbstractSessionImpl session )
     {
         this.sessionsValue.add ( -1 );
     }

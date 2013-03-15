@@ -189,7 +189,7 @@ public class SessionCommon extends AbstractSessionImpl implements Session, DataI
         {
             try
             {
-                task.cancel ( true );
+                task.cancel ( false );
             }
             catch ( final Exception e )
             {

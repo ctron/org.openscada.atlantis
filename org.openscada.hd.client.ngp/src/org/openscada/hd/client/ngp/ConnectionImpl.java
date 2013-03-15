@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,7 +30,6 @@ import java.util.Random;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ngp.ConnectionBaseImpl;
-import org.openscada.core.data.Request;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
@@ -250,7 +251,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
     void sendCreateQuery ( final long queryId, final String itemId, final QueryParameters parameters, final boolean updateData )
     {
-        sendMessage ( new CreateQuery ( new Request ( nextRequestNumber () ), queryId, itemId, updateData, parameters ) );
+        sendMessage ( new CreateQuery ( nextRequest (), queryId, itemId, updateData, parameters ) );
     }
 
     protected void sendCloseQuery ( final long queryId )
