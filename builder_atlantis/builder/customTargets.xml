@@ -143,7 +143,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.dave" />
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exec" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.spring"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.opc"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.arduino"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.modbus"/>
@@ -151,7 +150,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation.component" />
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter.spring"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.summary"/>
@@ -265,7 +263,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.ca" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.servlet" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.servlet.jaxws" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.servlet.json" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.common" />
 	<openscada.builder.copyPlugin id="org.openscada.ca.console" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.oscar" />
@@ -288,9 +285,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.sec.authz.signature" />
   	
   	<!-- Additional stuff -->
-  	
-  	<openscada.builder.copyPlugin id="org.openscada.spring.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.spring.server"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.core.client.connection.service"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.client.connection.service"/>
