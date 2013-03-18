@@ -23,6 +23,7 @@ import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
+import java.util.Set;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.common.ngp.ProtocolConfigurationFactoryImpl;
@@ -39,6 +40,8 @@ public class Exporter implements LifecycleAware
     private Collection<InetSocketAddress> addresses = new LinkedList<InetSocketAddress> ();
 
     private final Hive service;
+
+    private Set<InetSocketAddress> startedAddresses;
 
     public Exporter ( final Hive service, final ProtocolConfigurationFactory protocolConfigurationFactory, final Collection<InetSocketAddress> addresses )
     {
@@ -57,16 +60,21 @@ public class Exporter implements LifecycleAware
         return this.service.getClass ();
     }
 
-    private void createServer () throws Exception
+    private Set<InetSocketAddress> createServer () throws Exception
     {
         this.server = new Server ( this.addresses, this.protocolConfigurationFactory, this.service );
-        this.server.start ();
+        return this.server.start ();
     }
 
     @Override
     public void start () throws Exception
     {
-        createServer ();
+        this.startedAddresses = createServer ();
+    }
+
+    public Set<InetSocketAddress> getStartedAddresses ()
+    {
+        return this.startedAddresses;
     }
 
     @Override

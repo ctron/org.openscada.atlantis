@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,9 +24,11 @@ package org.openscada.core.server.ngp;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.Collection;
+import java.util.Set;
 
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.openscada.core.server.common.NetworkHelper;
 import org.openscada.protocol.ngp.common.FilterChainBuilder;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.slf4j.Logger;
@@ -55,11 +59,13 @@ public abstract class ServerBase
         this.acceptor.setHandler ( new ServerBaseHandler ( this, protocolConfigurationFactory.createConfiguration ( false ) ) );
     }
 
-    public void start () throws IOException
+    public Set<InetSocketAddress> start () throws IOException
     {
         logger.info ( "Starting server for: {}", this.addresses );
 
         this.acceptor.bind ( this.addresses );
+
+        return NetworkHelper.getLocalAddresses ( this.acceptor );
     }
 
     public void stop ()
