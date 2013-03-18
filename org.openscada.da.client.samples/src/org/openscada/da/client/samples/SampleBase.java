@@ -21,18 +21,19 @@
 
 package org.openscada.da.client.samples;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectWaitController;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SampleBase
 {
 
-    private static Logger logger = Logger.getLogger ( SampleBase.class );
+    private final static Logger logger = LoggerFactory.getLogger ( SampleBase.class );
 
     protected String uri;
 

@@ -23,12 +23,13 @@ package org.openscada.da.client.samples;
 
 import java.util.Map;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemManagerImpl;
 import org.openscada.da.client.ItemUpdateListener;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Sample showing how to subscribe for events only <br>
@@ -44,7 +45,7 @@ import org.openscada.da.client.ItemUpdateListener;
 public class Sample1 extends SampleBase implements ItemUpdateListener
 {
 
-    private static Logger logger = Logger.getLogger ( Sample1.class );
+    private final static Logger logger = LoggerFactory.getLogger ( Sample1.class );
 
     private ItemManager itemManager;
 

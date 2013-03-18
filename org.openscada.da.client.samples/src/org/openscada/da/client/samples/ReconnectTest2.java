@@ -21,8 +21,9 @@
 
 package org.openscada.da.client.samples;
 
-import org.apache.log4j.Logger;
 import org.openscada.core.client.AutoReconnectController;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Sample showing how to subscribe for events only <br>
@@ -38,7 +39,7 @@ import org.openscada.core.client.AutoReconnectController;
 public class ReconnectTest2 extends SampleBase
 {
 
-    private static Logger logger = Logger.getLogger ( ReconnectTest2.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ReconnectTest2.class );
 
     private final AutoReconnectController controller;
 
