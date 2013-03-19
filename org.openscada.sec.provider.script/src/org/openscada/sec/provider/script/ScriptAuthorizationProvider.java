@@ -78,10 +78,11 @@ public class ScriptAuthorizationProvider implements AuthorizationService
 
     private AuthorizationEntry createEntry ( final ConfigurationDataHelper cfg ) throws Exception
     {
-        final ScriptEngine engine = this.manager.getEngineByName ( cfg.getString ( "engine", "JavaScript" ) );
+        final ScriptEngine scriptEngine = this.manager.getEngineByName ( cfg.getString ( "script.engine", "JavaScript" ) );
+        final ScriptEngine callbackScriptEngine = this.manager.getEngineByName ( cfg.getString ( "callbackScript.engine", "JavaScript" ) );
 
-        final ScriptExecutor script = makeScript ( engine, cfg.getString ( "script" ) );
-        final ScriptExecutor callbackScript = makeScript ( engine, cfg.getString ( "callbackScript" ) );
+        final ScriptExecutor script = makeScript ( scriptEngine, cfg.getString ( "script" ) );
+        final ScriptExecutor callbackScript = makeScript ( callbackScriptEngine, cfg.getString ( "callbackScript" ) );
 
         final AuthorizationEntry entry = new AuthorizationEntry ( script, callbackScript );
 
