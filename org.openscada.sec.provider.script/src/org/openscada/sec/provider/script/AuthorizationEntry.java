@@ -26,6 +26,7 @@ import java.util.concurrent.Future;
 
 import javax.script.SimpleScriptContext;
 
+import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
@@ -57,6 +58,8 @@ public class AuthorizationEntry extends AbstractBaseRule
 
     private final ScriptExecutor callbackScript;
 
+    private final AuthenticationImplementation authenticationImplementation;
+
     public static class CallbackBuilder
     {
         private final CallbackHandler callbackHandler;
@@ -73,10 +76,11 @@ public class AuthorizationEntry extends AbstractBaseRule
         }
     }
 
-    public AuthorizationEntry ( final ScriptExecutor script, final ScriptExecutor callbackScript )
+    public AuthorizationEntry ( final ScriptExecutor script, final ScriptExecutor callbackScript, final AuthenticationImplementation authenticationImplementation )
     {
         this.script = script;
         this.callbackScript = callbackScript;
+        this.authenticationImplementation = authenticationImplementation;
     }
 
     protected Map<String, Object> makeBindings ( final AuthorizationContext context )
@@ -101,6 +105,7 @@ public class AuthorizationEntry extends AbstractBaseRule
         bindings.put ( "GRANTED", AuthorizationResult.GRANTED ); //$NON-NLS-1$
         bindings.put ( "ABSTAIN", AuthorizationResult.ABSTAIN ); //$NON-NLS-1$
         bindings.put ( "requestContext", contextData ); //$NON-NLS-1$
+        bindings.put ( "authenticator", this.authenticationImplementation ); //$NON-NLS-1$
         bindings.put ( "Callbacks", new CallbackBuilder ( context.getCallbackHandler () ) ); //$NON-NLS-1$
 
         return bindings;

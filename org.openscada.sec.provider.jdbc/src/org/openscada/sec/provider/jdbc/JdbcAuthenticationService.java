@@ -246,6 +246,68 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         detach ();
     }
 
+    @Override
+    public UserInformation getUser ( final String username )
+    {
+        this.readLock.lock ();
+        try
+        {
+            if ( this.accessor == null )
+            {
+                logger.info ( "We don't have any accessor" );
+                return null;
+            }
+
+            try
+            {
+                return this.accessor.doWithConnection ( new CommonConnectionTask<UserInformation> () {
+                    @Override
+                    public UserInformation performTask ( final ConnectionContext connection ) throws Exception
+                    {
+                        return performLookup ( connection, username );
+                    }
+                } );
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to perform lookup", e );
+                return null;
+            }
+        }
+        finally
+        {
+            this.readLock.unlock ();
+        }
+    }
+
+    protected UserInformation performLookup ( final ConnectionContext connection, final String username ) throws SQLException
+    {
+        /*
+         * We use the same query as for the password here. Only that we dump the whole checking and simple return the user entry if one was found.
+         */
+        final List<String> entries = connection.queryForList ( String.class, this.findUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
+
+        if ( entries.isEmpty () )
+        {
+            return null;
+        }
+
+        final List<String> roles;
+
+        if ( this.findRolesForUserSql != null && !this.findRolesForUserSql.isEmpty () )
+        {
+            roles = connection.queryForList ( String.class, this.findRolesForUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
+        }
+        else
+        {
+            roles = null;
+        }
+
+        logger.trace ( "Found roles for user: {}", roles );
+
+        return new UserInformation ( username, roles );
+    }
+
     public void update ( final Map<String, String> parameters ) throws Exception
     {
         logger.debug ( "Updating configuration" );

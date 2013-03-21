@@ -21,7 +21,6 @@
 
 package org.openscada.core.server.common;
 
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
@@ -31,6 +30,7 @@ import java.util.concurrent.Future;
 import org.openscada.core.server.Service;
 import org.openscada.core.server.Session;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
+import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationImplementation;
 import org.openscada.sec.AuthorizationReply;
 import org.openscada.sec.AuthorizationRequest;
@@ -53,9 +53,17 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
 
     private AuthorizationImplementation authorizationImplementation;
 
+    private AuthenticationImplementation authenticationImplementation;
+
     public ServiceCommon ()
     {
-        this.authorizationImplementation = new DefaultAuthorization ( new DefaultAuthentication () );
+        this.authenticationImplementation = new DefaultAuthentication ();
+        this.authorizationImplementation = new DefaultAuthorization ( this.authenticationImplementation );
+    }
+
+    protected void setAuthenticationImplementation ( final AuthenticationImplementation authenticationImplementation )
+    {
+        this.authenticationImplementation = authenticationImplementation;
     }
 
     protected void setAuthorizationImplementation ( final AuthorizationImplementation authorizationImplementation )
@@ -220,8 +228,7 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
                     throw result.getResult ().asException ();
                 }
 
-                // FIXME: need to roles of the target user
-                return new UserInformation ( targetUser, Collections.<String> emptySet () );
+                return ServiceCommon.this.authenticationImplementation.getUser ( targetUser );
             }
         };
     }

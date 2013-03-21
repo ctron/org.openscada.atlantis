@@ -87,7 +87,13 @@ public class DefaultAuthentication implements AuthenticationImplementation
                 return processAuthenticate ( callbacks, plainPassword );
             }
         };
+    }
 
+    @Override
+    public UserInformation getUser ( final String user )
+    {
+        // we only know anonymous
+        return UserInformation.ANONYMOUS;
     }
 
     protected UserInformation processAuthenticate ( final Callback[] callbacks, final String plainPassword ) throws AuthenticationException

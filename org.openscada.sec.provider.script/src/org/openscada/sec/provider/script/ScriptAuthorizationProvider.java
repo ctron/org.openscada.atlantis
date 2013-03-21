@@ -28,6 +28,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationService;
 import org.openscada.sec.authz.AuthorizationRule;
 import org.openscada.utils.script.ScriptExecutor;
@@ -43,6 +44,8 @@ public class ScriptAuthorizationProvider implements AuthorizationService
 
     private final ClassLoader classLoader;
 
+    private AuthenticationImplementation authenticationImplementation;
+
     public ScriptAuthorizationProvider ()
     {
         this.classLoader = getClass ().getClassLoader ();
@@ -57,6 +60,11 @@ public class ScriptAuthorizationProvider implements AuthorizationService
         {
             Thread.currentThread ().setContextClassLoader ( currentClassLoader );
         }
+    }
+
+    public void setAuthenticationImplementation ( final AuthenticationImplementation authenticationImplementation )
+    {
+        this.authenticationImplementation = authenticationImplementation;
     }
 
     @Override
@@ -84,7 +92,7 @@ public class ScriptAuthorizationProvider implements AuthorizationService
         final ScriptExecutor script = makeScript ( scriptEngine, cfg.getString ( "script" ) );
         final ScriptExecutor callbackScript = makeScript ( callbackScriptEngine, cfg.getString ( "callbackScript" ) );
 
-        final AuthorizationEntry entry = new AuthorizationEntry ( script, callbackScript );
+        final AuthorizationEntry entry = new AuthorizationEntry ( script, callbackScript, this.authenticationImplementation );
 
         entry.setPreFilter ( cfg.getData () );
 
