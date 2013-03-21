@@ -39,6 +39,7 @@ import org.openscada.sec.UserInformation;
 import org.openscada.sec.UserManagerService;
 import org.openscada.sec.authn.CredentialsRequest;
 import org.openscada.sec.utils.password.PasswordEncoder;
+import org.openscada.sec.utils.password.PasswordEncoding;
 import org.openscada.sec.utils.password.PasswordType;
 import org.openscada.sec.utils.password.PasswordValidator;
 import org.openscada.utils.collection.MapBuilder;
@@ -87,13 +88,13 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
     public class PasswordCheckRowCallback implements RowCallback
     {
-        private final String password;
-
         private boolean result;
 
-        public PasswordCheckRowCallback ( final String password )
+        private final Map<PasswordEncoding, String> passwords;
+
+        public PasswordCheckRowCallback ( final Map<PasswordEncoding, String> passwords )
         {
-            this.password = password;
+            this.passwords = passwords;
         }
 
         public boolean isResult ()
@@ -111,7 +112,7 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
                 return;
             }
 
-            if ( validatePassword ( this.password, storedPassword ) )
+            if ( validatePassword ( this.passwords, storedPassword ) )
             {
                 this.result = true;
             }
@@ -143,14 +144,13 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
     public void joinRequest ( final CredentialsRequest request )
     {
         request.askUsername ();
-        request.askPassword ();
+        request.askPassword ( this.passwordValidator.getSupportedInputEncodings () );
     }
 
     @Override
     public UserInformation authenticate ( final CredentialsRequest request ) throws AuthenticationException
     {
         final String username = request.getUserName ();
-        final String password = request.getPassword ();
 
         try
         {
@@ -167,7 +167,7 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
                     @Override
                     public UserInformation performTask ( final ConnectionContext connection ) throws Exception
                     {
-                        return performAuthentication ( connection, username, password );
+                        return performAuthentication ( connection, username, request.getPasswords () );
                     }
                 } );
             }
@@ -191,9 +191,9 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         }
     }
 
-    protected UserInformation performAuthentication ( final ConnectionContext connection, final String username, final String password ) throws AuthenticationException, SQLException
+    protected UserInformation performAuthentication ( final ConnectionContext connection, final String username, final Map<PasswordEncoding, String> passwords ) throws AuthenticationException, SQLException
     {
-        final PasswordCheckRowCallback callback = new PasswordCheckRowCallback ( password );
+        final PasswordCheckRowCallback callback = new PasswordCheckRowCallback ( passwords );
         connection.query ( callback, this.findUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
 
         if ( !callback.isResult () )
@@ -214,14 +214,14 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
         logger.trace ( "Found roles for user: {}", roles );
 
-        return new UserInformation ( username, password, roles );
+        return new UserInformation ( username, roles );
     }
 
-    protected boolean validatePassword ( final String providedPassword, final String storedPassword )
+    protected boolean validatePassword ( final Map<PasswordEncoding, String> providedPasswords, final String storedPassword )
     {
         try
         {
-            return this.passwordValidator.validatePassword ( providedPassword, storedPassword );
+            return this.passwordValidator.validatePassword ( providedPasswords, storedPassword );
         }
         catch ( final Exception e )
         {
@@ -365,7 +365,7 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         }
     }
 
-    protected void handleSetPassword ( final ConnectionContext connection, final String user, final String password ) throws SQLException
+    protected void handleSetPassword ( final ConnectionContext connection, final String user, final String password ) throws Exception
     {
         final String encodedPassword = this.passwordEncoder.encodePassword ( password );
 

@@ -221,7 +221,7 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
                 }
 
                 // FIXME: need to roles of the target user
-                return new UserInformation ( targetUser, null, Collections.<String> emptySet () );
+                return new UserInformation ( targetUser, Collections.<String> emptySet () );
             }
         };
     }
