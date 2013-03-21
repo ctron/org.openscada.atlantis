@@ -20,6 +20,15 @@
 
 package org.openscada.sec.authz.signature;
 
+import java.security.cert.X509Certificate;
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.script.ScriptContext;
+import javax.script.SimpleScriptContext;
+import javax.xml.crypto.KeySelectorResult;
+
+import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.audit.AuditLogService;
 import org.openscada.sec.authz.AbstractBaseRule;
@@ -31,8 +40,11 @@ import org.openscada.sec.callback.XMLSignatureCallback;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.concurrent.TransformResultFuture;
+import org.openscada.utils.script.ScriptExecutor;
 import org.openscada.utils.statuscodes.SeverityLevel;
 import org.openscada.utils.statuscodes.StatusCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 
 /**
@@ -40,6 +52,8 @@ import org.w3c.dom.Document;
  */
 public class RequestSignatureRuleImpl extends AbstractBaseRule
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( RequestSignatureRuleImpl.class );
 
     private static StatusCode VERIFY_NO_SIGNATURE = new StatusCode ( "OSSEC", "XMLSIG", 1, SeverityLevel.ERROR );
 
@@ -53,12 +67,18 @@ public class RequestSignatureRuleImpl extends AbstractBaseRule
 
     private final boolean indent;
 
-    public RequestSignatureRuleImpl ( final SignatureRequestBuilder builder, final RequestValidator validator, final AuditLogService auditLogService, final boolean indent )
+    private final ScriptExecutor postProcessor;
+
+    private final AuthenticationImplementation authenticator;
+
+    public RequestSignatureRuleImpl ( final SignatureRequestBuilder builder, final RequestValidator validator, final AuditLogService auditLogService, final boolean indent, final ScriptExecutor postProcessor, final AuthenticationImplementation authenticator )
     {
         this.builder = builder;
         this.validator = validator;
         this.auditLogService = auditLogService;
         this.indent = indent;
+        this.postProcessor = postProcessor;
+        this.authenticator = authenticator;
     }
 
     @Override
@@ -130,9 +150,32 @@ public class RequestSignatureRuleImpl extends AbstractBaseRule
         }
     }
 
-    private void postProcess ( final AuthorizationContext context, final Result result )
+    private void postProcess ( final AuthorizationContext context, final Result result ) throws Exception
     {
+        if ( this.postProcessor == null )
+        {
+            return;
+        }
 
+        logger.debug ( "Running post processor" );
+
+        final ScriptContext scriptContext = new SimpleScriptContext ();
+        final Map<String, Object> scriptObjects = new HashMap<String, Object> ();
+
+        final KeySelectorResult keySelectorResult = result.getKeySelectorResult ();
+        if ( keySelectorResult instanceof X509KeySelectorResult )
+        {
+            final X509Certificate cert = ( (X509KeySelectorResult)keySelectorResult ).getCertificate ();
+            if ( cert != null )
+            {
+                logger.debug ( "User certifcate from result: {}", cert );
+                scriptObjects.put ( "certificate", cert );
+            }
+        }
+
+        scriptObjects.put ( "authorizationContext", context );
+        scriptObjects.put ( "authenticator", this.authenticator );
+
+        this.postProcessor.execute ( scriptContext, scriptObjects );
     }
-
 }

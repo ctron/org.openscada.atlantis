@@ -31,12 +31,15 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 
+import javax.script.ScriptEngineManager;
 import javax.xml.crypto.KeySelector;
 
 import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationService;
 import org.openscada.sec.audit.AuditLogService;
 import org.openscada.sec.authz.AuthorizationRule;
+import org.openscada.utils.script.ScriptExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +53,14 @@ public class SignatureAuthorizationService implements AuthorizationService
 
     private AuditLogService auditLogService;
 
+    private AuthenticationImplementation authenticationImplementation;
+
     private final CertificateFactory cf;
+
+    public void setAuthenticationImplementation ( final AuthenticationImplementation authenticationImplementation )
+    {
+        this.authenticationImplementation = authenticationImplementation;
+    }
 
     public void setAuditLogService ( final AuditLogService auditLogService )
     {
@@ -69,7 +79,20 @@ public class SignatureAuthorizationService implements AuthorizationService
 
         final boolean indent = cfg.getBoolean ( "indent", false );
 
-        final RequestSignatureRuleImpl rule = new RequestSignatureRuleImpl ( new SignatureRequestBuilder (), buildRequestValidator ( properties ), this.auditLogService, indent );
+        final String script = cfg.getString ( "postProcessor", null );
+        final String engine = cfg.getString ( "postProcessor.engine", "JavaScript" );
+
+        ScriptExecutor postProcessor;
+        if ( script != null )
+        {
+            postProcessor = new ScriptExecutor ( new ScriptEngineManager (), engine, script, SignatureAuthorizationService.class.getClassLoader () );
+        }
+        else
+        {
+            postProcessor = null;
+        }
+
+        final RequestSignatureRuleImpl rule = new RequestSignatureRuleImpl ( new SignatureRequestBuilder (), buildRequestValidator ( properties ), this.auditLogService, indent, postProcessor, this.authenticationImplementation );
 
         rule.setPreFilter ( properties );
 
