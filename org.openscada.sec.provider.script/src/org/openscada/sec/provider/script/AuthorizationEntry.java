@@ -30,8 +30,8 @@ import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
-import org.openscada.sec.authz.AbstractBaseRule;
 import org.openscada.sec.authz.AuthorizationContext;
+import org.openscada.sec.authz.AuthorizationRule;
 import org.openscada.sec.callback.Callback;
 import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.sec.callback.Callbacks;
@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 /**
  * @since 1.1
  */
-public class AuthorizationEntry extends AbstractBaseRule
+public class AuthorizationEntry implements AuthorizationRule
 {
     private final static Logger logger = LoggerFactory.getLogger ( AuthorizationEntry.class );
 
@@ -83,6 +83,11 @@ public class AuthorizationEntry extends AbstractBaseRule
         this.authenticationImplementation = authenticationImplementation;
     }
 
+    @Override
+    public void dispose ()
+    {
+    }
+
     protected Map<String, Object> makeBindings ( final AuthorizationContext context )
     {
         final AuthorizationRequest request = context.getRequest ();
@@ -112,7 +117,7 @@ public class AuthorizationEntry extends AbstractBaseRule
     }
 
     @Override
-    protected NotifyFuture<AuthorizationResult> procesAuthorize ( final AuthorizationContext context )
+    public NotifyFuture<AuthorizationResult> authorize ( final AuthorizationContext context )
     {
         final Map<String, Object> bindings = makeBindings ( context );
 

@@ -92,11 +92,7 @@ public class SignatureAuthorizationService implements AuthorizationService
             postProcessor = null;
         }
 
-        final RequestSignatureRuleImpl rule = new RequestSignatureRuleImpl ( new SignatureRequestBuilder (), buildRequestValidator ( properties ), this.auditLogService, indent, postProcessor, this.authenticationImplementation );
-
-        rule.setPreFilter ( properties );
-
-        return rule;
+        return new RequestSignatureRuleImpl ( new SignatureRequestBuilder (), buildRequestValidator ( properties ), this.auditLogService, indent, postProcessor, this.authenticationImplementation );
     }
 
     private RequestValidator buildRequestValidator ( final Map<String, String> properties ) throws Exception

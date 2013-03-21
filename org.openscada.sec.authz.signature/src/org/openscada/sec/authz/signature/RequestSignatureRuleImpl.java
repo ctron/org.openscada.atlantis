@@ -31,8 +31,8 @@ import javax.xml.crypto.KeySelectorResult;
 import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.audit.AuditLogService;
-import org.openscada.sec.authz.AbstractBaseRule;
 import org.openscada.sec.authz.AuthorizationContext;
+import org.openscada.sec.authz.AuthorizationRule;
 import org.openscada.sec.authz.signature.RequestValidator.Result;
 import org.openscada.sec.callback.Callback;
 import org.openscada.sec.callback.Callbacks;
@@ -50,7 +50,7 @@ import org.w3c.dom.Document;
 /**
  * @since 1.1
  */
-public class RequestSignatureRuleImpl extends AbstractBaseRule
+public class RequestSignatureRuleImpl implements AuthorizationRule
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( RequestSignatureRuleImpl.class );
@@ -82,7 +82,12 @@ public class RequestSignatureRuleImpl extends AbstractBaseRule
     }
 
     @Override
-    protected NotifyFuture<AuthorizationResult> procesAuthorize ( final AuthorizationContext context )
+    public void dispose ()
+    {
+    }
+
+    @Override
+    public NotifyFuture<AuthorizationResult> authorize ( final AuthorizationContext context )
     {
         final Document doc = this.builder.buildFromRequest ( context.getRequest () );
 

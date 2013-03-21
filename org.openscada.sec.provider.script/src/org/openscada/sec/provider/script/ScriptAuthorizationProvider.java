@@ -92,11 +92,6 @@ public class ScriptAuthorizationProvider implements AuthorizationService
         final ScriptExecutor script = makeScript ( scriptEngine, cfg.getString ( "script" ) );
         final ScriptExecutor callbackScript = makeScript ( callbackScriptEngine, cfg.getString ( "callbackScript" ) );
 
-        final AuthorizationEntry entry = new AuthorizationEntry ( script, callbackScript, this.authenticationImplementation );
-
-        entry.setPreFilter ( cfg.getData () );
-
-        return entry;
-
+        return new AuthorizationEntry ( script, callbackScript, this.authenticationImplementation );
     }
 }

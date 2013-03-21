@@ -25,8 +25,8 @@ import org.openscada.sec.AuthorizationImplementation;
 import org.openscada.sec.AuthorizationReply;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.auth.logon.LogonAuthorizationService;
-import org.openscada.sec.authz.AbstractBaseRule;
 import org.openscada.sec.authz.AuthorizationContext;
+import org.openscada.sec.authz.AuthorizationRule;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.concurrent.TransformResultFuture;
@@ -57,7 +57,7 @@ public class DefaultAuthorization implements AuthorizationImplementation
 
     private final LogonAuthorizationService logonHandler;
 
-    private final AbstractBaseRule rule;
+    private final AuthorizationRule rule;
 
     public DefaultAuthorization ( final AuthenticationImplementation authenticator )
     {
