@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,6 +30,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipFile;
+import java.util.zip.ZipInputStream;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
@@ -37,7 +40,31 @@ public class OscarLoader
 {
     private final Map<String, Map<String, Map<String, String>>> data;
 
-    private Map<String, Set<String>> ignoreFields;
+    private final Map<String, Set<String>> ignoreFields;
+
+    public OscarLoader ( final InputStream stream ) throws Exception
+    {
+        final ZipInputStream zstream = new ZipInputStream ( stream );
+
+        Map<String, Map<String, Map<String, String>>> data = null;
+        Map<String, Set<String>> ignoreFields = null;
+
+        ZipEntry entry;
+        while ( ( entry = zstream.getNextEntry () ) != null )
+        {
+            if ( "data.json".equals ( entry.getName () ) )
+            {
+                data = loadJsonData ( zstream );
+            }
+            else if ( "ignoreFields.json".equals ( entry.getName () ) )
+            {
+                ignoreFields = loadIgnoreData ( zstream );
+            }
+        }
+
+        this.data = data;
+        this.ignoreFields = ignoreFields;
+    }
 
     public OscarLoader ( final File file ) throws Exception
     {
