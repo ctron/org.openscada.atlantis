@@ -31,7 +31,7 @@ import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ConfigurationEntry implements AuthorizationRule, Comparable<ConfigurationEntry>
+public class ConfigurationEntry extends AbstractBaseRule implements Comparable<ConfigurationEntry>
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( ConfigurationEntry.class );
@@ -139,7 +139,7 @@ public class ConfigurationEntry implements AuthorizationRule, Comparable<Configu
     }
 
     @Override
-    public NotifyFuture<AuthorizationResult> authorize ( final AuthorizationContext context )
+    protected NotifyFuture<AuthorizationResult> procesAuthorize ( final AuthorizationContext context )
     {
         final AuthorizationRule rule = this.rule;
         if ( rule == null )

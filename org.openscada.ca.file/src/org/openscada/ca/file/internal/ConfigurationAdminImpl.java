@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,7 +27,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.util.HashMap;
@@ -37,10 +41,10 @@ import java.util.Properties;
 
 import org.openscada.ca.common.AbstractConfigurationAdministrator;
 import org.openscada.ca.common.ConfigurationImpl;
+import org.openscada.ca.oscar.OscarLoader;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.str.StringReplacer;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -75,7 +79,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
 
     private final Interner<String> stringInterner;
 
-    public ConfigurationAdminImpl ( final BundleContext context, final Interner<String> stringInterner ) throws InvalidSyntaxException
+    public ConfigurationAdminImpl ( final BundleContext context, final Interner<String> stringInterner ) throws Exception
     {
         super ( context );
         this.stringInterner = stringInterner;
@@ -107,7 +111,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         return StringReplacer.replace ( System.getProperty ( "org.openscada.ca.file.root", null ), System.getProperties () );
     }
 
-    private File initRoot ()
+    private File initRoot () throws Exception
     {
         final File file = getRootFile ();
         if ( file != null )
@@ -116,6 +120,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
             {
                 logger.info ( "Storage root does not exist: " + file.getName () );
                 file.mkdir ();
+                provisionData ();
             }
             if ( file.isDirectory () )
             {
@@ -131,6 +136,64 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
             logger.warn ( "No file system support" );
         }
         return null;
+    }
+
+    protected void provisionData () throws Exception
+    {
+        final String oscarUrl = System.getProperty ( "org.openscada.ca.file.provisionOscarUrl" );
+        if ( oscarUrl != null )
+        {
+            logger.info ( "Provisioning CA from: {}", oscarUrl );
+
+            final InputStream stream = new URL ( oscarUrl ).openStream ();
+            try
+            {
+                performOscarProvision ( stream );
+            }
+            finally
+            {
+                stream.close ();
+            }
+            return;
+        }
+
+        final String jsonUrl = System.getProperty ( "org.openscada.ca.file.provisionJsonUrl" );
+        if ( jsonUrl != null )
+        {
+            final InputStream stream = new URL ( jsonUrl ).openStream ();
+            try
+            {
+                performProvision ( OscarLoader.loadJsonData ( stream ) );
+            }
+            finally
+            {
+                stream.close ();
+            }
+        }
+    }
+
+    private void performProvision ( final Map<String, Map<String, Map<String, String>>> json )
+    {
+        for ( final Map.Entry<String, Map<String, Map<String, String>>> factory : json.entrySet () )
+        {
+            final String factoryId = factory.getKey ();
+            for ( final Map.Entry<String, Map<String, String>> cfg : factory.getValue ().entrySet () )
+            {
+                try
+                {
+                    writeConfiguraton ( factoryId, cfg.getKey (), cfg.getValue (), true );
+                }
+                catch ( final Exception e )
+                {
+                    logger.warn ( String.format ( "Failed to provision - %s/%s", factoryId, cfg.getKey () ), e );
+                }
+            }
+        }
+    }
+
+    private void performOscarProvision ( final InputStream stream ) throws Exception
+    {
+        performProvision ( new OscarLoader ( stream ).getData () );
     }
 
     @Override
@@ -359,14 +422,12 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         future.setComplete ();
     }
 
-    @Override
-    protected void performStoreConfiguration ( final UserInformation userInformation, final String factoryId, final String configurationId, final Map<String, String> properties, final boolean fullSet, final ConfigurationFuture future ) throws FileNotFoundException, IOException
+    protected Map<String, String> writeConfiguraton ( final String factoryId, final String configurationId, final Map<String, String> properties, final boolean fullSet ) throws Exception
     {
         if ( this.root == null )
         {
-            future.setError ( new RuntimeException ( "No root to store" ).fillInStackTrace () );
             logger.warn ( "Unable to store : no root" );
-            return;
+            throw new RuntimeException ( "No root to store" );
         }
 
         final File path = getFactoryPath ( factoryId );
@@ -416,8 +477,22 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
             stream.close ();
         }
 
-        // notify the abstract service from our content change
-        changeConfiguration ( userInformation, factoryId, configurationId, newProperties, future );
+        return newProperties;
+    }
+
+    @Override
+    protected void performStoreConfiguration ( final UserInformation userInformation, final String factoryId, final String configurationId, final Map<String, String> properties, final boolean fullSet, final ConfigurationFuture future ) throws FileNotFoundException, IOException
+    {
+        try
+        {
+            final Map<String, String> newProperties = writeConfiguraton ( factoryId, configurationId, properties, fullSet );
+            changeConfiguration ( userInformation, factoryId, configurationId, newProperties, future );
+        }
+        catch ( final Exception e )
+        {
+            future.setError ( e );
+            return;
+        }
     }
 
     private File getFactoryPath ( final String factoryId ) throws UnsupportedEncodingException

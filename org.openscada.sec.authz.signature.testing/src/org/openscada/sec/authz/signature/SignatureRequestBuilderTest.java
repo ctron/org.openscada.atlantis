@@ -27,9 +27,7 @@ import java.security.KeyPairGenerator;
 import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -64,15 +62,9 @@ public class SignatureRequestBuilderTest
 
     private CertificateFactory cf;
 
-    private X509Certificate ca1;
-
-    private X509Certificate ca2;
-
     private RequestValidator validator1;
 
     private RequestValidator validator2;
-
-    private X509CRL crl1;
 
     private static final String CERT_FILE_1 = "platform:/plugin/org.openscada.sec.authz.signature/resources/Test1.p12";
 
@@ -100,13 +92,12 @@ public class SignatureRequestBuilderTest
         this.signer = new RequestSigner ( new RequestSigner.Configuration () );
 
         this.cf = CertificateFactory.getInstance ( "X.509" );
-        this.ca1 = (X509Certificate)this.cf.generateCertificate ( new URL ( CA_FILE_1 ).openStream () );
-        this.ca2 = (X509Certificate)this.cf.generateCertificate ( new URL ( CA_FILE_2 ).openStream () );
 
-        this.crl1 = (X509CRL)this.cf.generateCRL ( new URL ( CRL_FILE_1 ).openStream () );
+        final X509CA ca1 = new X509CA ( this.cf, CA_FILE_1, Collections.singleton ( CRL_FILE_1 ) );
+        final X509CA ca2 = new X509CA ( this.cf, CA_FILE_2, null );
 
-        final X509CA ca1 = new X509CA ( Arrays.asList ( this.ca1 ), Arrays.asList ( this.crl1 ) );
-        final X509CA ca2 = new X509CA ( Arrays.asList ( this.ca2 ), Collections.<X509CRL> emptyList () );
+        ca1.load ();
+        ca2.load ();
 
         this.validator1 = new RequestValidator ( new X509KeySelector ( ca1 ) );
         this.validator2 = new RequestValidator ( new X509KeySelector ( ca2 ) );

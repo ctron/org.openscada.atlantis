@@ -98,6 +98,30 @@ public class Console
         this.admin = admin;
     }
 
+    @Descriptor ( "Delete all elements from the factory" )
+    public void purge ( @Descriptor ( "The factory id" )
+    final String factoryId )
+    {
+        final NotifyFuture<Void> future = this.admin.purgeFactory ( null, factoryId );
+        future.addListener ( new FutureListener<Void> () {
+
+            @Override
+            public void complete ( final Future<Void> future )
+            {
+                System.out.println ( "Purge completed" );
+                try
+                {
+                    future.get ();
+                }
+                catch ( final Exception e )
+                {
+                    // this is on here since it will be printed out to the OSGi console
+                    e.printStackTrace ( System.out );
+                }
+            }
+        } );
+    }
+
     @Descriptor ( "Delete an existing configuration" )
     public void delete ( @Descriptor ( "The factory id" )
     final String factoryId, @Descriptor ( "The configuration id" )

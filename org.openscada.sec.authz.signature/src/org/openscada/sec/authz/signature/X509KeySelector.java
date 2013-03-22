@@ -59,6 +59,26 @@ public class X509KeySelector extends KeySelector
         this.cas = cas.toArray ( new X509CA[cas.size ()] );
     }
 
+    public void reload ()
+    {
+        for ( final X509CA ca : this.cas )
+        {
+            try
+            {
+                ca.load ();
+            }
+            catch ( final InterruptedException e )
+            {
+                logger.warn ( "Failed to reload", e );
+                return;
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to reload", e );
+            }
+        }
+    }
+
     @Override
     public KeySelectorResult select ( final KeyInfo keyInfo, final KeySelector.Purpose purpose, final AlgorithmMethod method, final XMLCryptoContext context ) throws KeySelectorException
     {

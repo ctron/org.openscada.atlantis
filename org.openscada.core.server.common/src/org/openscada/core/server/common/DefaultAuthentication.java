@@ -22,11 +22,13 @@ package org.openscada.core.server.common;
 
 import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthenticationImplementation;
+import org.openscada.sec.StatusCodes;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.callback.Callback;
 import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.sec.callback.Callbacks;
 import org.openscada.sec.callback.PasswordCallback;
+import org.openscada.sec.utils.password.PasswordType;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.concurrent.TransformResultFuture;
@@ -75,7 +77,7 @@ public class DefaultAuthentication implements AuthenticationImplementation
             return new InstantFuture<UserInformation> ( UserInformation.ANONYMOUS );
         }
 
-        final NotifyFuture<Callback[]> future = Callbacks.callback ( callbackHandler, new Callback[] { new PasswordCallback ( "Password", 200 ) } );
+        final NotifyFuture<Callback[]> future = Callbacks.callback ( callbackHandler, new Callback[] { new PasswordCallback ( "Password", 200, PasswordType.PLAIN.getSupportedInputEncodings () ) } );
 
         return new TransformResultFuture<Callback[], UserInformation> ( future ) {
             @Override
@@ -85,29 +87,41 @@ public class DefaultAuthentication implements AuthenticationImplementation
                 return processAuthenticate ( callbacks, plainPassword );
             }
         };
+    }
 
+    @Override
+    public UserInformation getUser ( final String user )
+    {
+        // we only know anonymous
+        return UserInformation.ANONYMOUS;
     }
 
     protected UserInformation processAuthenticate ( final Callback[] callbacks, final String plainPassword ) throws AuthenticationException
     {
         final Callback cb = callbacks[0];
 
-        String password = null;
-        if ( cb instanceof PasswordCallback )
+        if ( ! ( cb instanceof PasswordCallback ) )
         {
-            password = ( (PasswordCallback)cb ).getPassword ();
+            logger.debug ( "Password requested using system properties. But none was provided." );
+            throw new AuthenticationException ( org.openscada.sec.StatusCodes.INVALID_USER_OR_PASSWORD, "Invalid username or wrong password" );
         }
 
-        if ( password == null || !plainPassword.equals ( password ) )
+        try
         {
-            logger.debug ( "Password requested using system properties. But none or wrong provided." );
-            throw new AuthenticationException ( org.openscada.sec.StatusCodes.INVALID_USER_OR_PASSWORD );
+            if ( !PasswordType.PLAIN.createValdiator ().validatePassword ( ( (PasswordCallback)cb ).getPasswords (), plainPassword ) )
+            {
+                logger.debug ( "Password requested using system properties. But none or wrong provided." );
+                throw new AuthenticationException ( org.openscada.sec.StatusCodes.INVALID_USER_OR_PASSWORD, "Invalid username or wrong password" );
+            }
         }
-        else
+        catch ( final Exception e )
         {
-            return UserInformation.ANONYMOUS;
+            logger.warn ( "Failed to authenticate", e );
+            throw new AuthenticationException ( StatusCodes.AUTHENTICATION_FAILED, e );
         }
 
+        // succeeded
+        return UserInformation.ANONYMOUS;
     }
 
 }

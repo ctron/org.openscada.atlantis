@@ -8,6 +8,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ca;version="1.0.0",
  org.openscada.ca.data;version="1.0.0",
  org.openscada.core;version="1.0.0",
+ org.openscada.core.data;version="1.1.0",
  org.openscada.core.server;version="1.0.0",
  org.openscada.sec.callback;version="1.1.0",
  org.openscada.utils.concurrent;version="1.0.0",

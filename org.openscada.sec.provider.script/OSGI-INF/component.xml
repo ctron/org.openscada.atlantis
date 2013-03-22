@@ -7,4 +7,5 @@
       <provide interface="org.openscada.sec.AuthorizationService"/>
    </service>
    <property name="rule.types" type="String" value="script"/>
+   <reference bind="setAuthenticationImplementation" cardinality="1..1" interface="org.openscada.sec.AuthenticationImplementation" name="AuthenticationImplementation" policy="static"/>
 </scr:component>

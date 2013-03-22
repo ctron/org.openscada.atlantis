@@ -26,11 +26,12 @@ import java.util.concurrent.Future;
 
 import javax.script.SimpleScriptContext;
 
+import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
-import org.openscada.sec.authz.AbstractBaseRule;
 import org.openscada.sec.authz.AuthorizationContext;
+import org.openscada.sec.authz.AuthorizationRule;
 import org.openscada.sec.callback.Callback;
 import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.sec.callback.Callbacks;
@@ -49,13 +50,15 @@ import org.slf4j.LoggerFactory;
 /**
  * @since 1.1
  */
-public class AuthorizationEntry extends AbstractBaseRule
+public class AuthorizationEntry implements AuthorizationRule
 {
     private final static Logger logger = LoggerFactory.getLogger ( AuthorizationEntry.class );
 
     private final ScriptExecutor script;
 
     private final ScriptExecutor callbackScript;
+
+    private final AuthenticationImplementation authenticationImplementation;
 
     public static class CallbackBuilder
     {
@@ -73,10 +76,16 @@ public class AuthorizationEntry extends AbstractBaseRule
         }
     }
 
-    public AuthorizationEntry ( final ScriptExecutor script, final ScriptExecutor callbackScript )
+    public AuthorizationEntry ( final ScriptExecutor script, final ScriptExecutor callbackScript, final AuthenticationImplementation authenticationImplementation )
     {
         this.script = script;
         this.callbackScript = callbackScript;
+        this.authenticationImplementation = authenticationImplementation;
+    }
+
+    @Override
+    public void dispose ()
+    {
     }
 
     protected Map<String, Object> makeBindings ( final AuthorizationContext context )
@@ -101,13 +110,14 @@ public class AuthorizationEntry extends AbstractBaseRule
         bindings.put ( "GRANTED", AuthorizationResult.GRANTED ); //$NON-NLS-1$
         bindings.put ( "ABSTAIN", AuthorizationResult.ABSTAIN ); //$NON-NLS-1$
         bindings.put ( "requestContext", contextData ); //$NON-NLS-1$
+        bindings.put ( "authenticator", this.authenticationImplementation ); //$NON-NLS-1$
         bindings.put ( "Callbacks", new CallbackBuilder ( context.getCallbackHandler () ) ); //$NON-NLS-1$
 
         return bindings;
     }
 
     @Override
-    protected NotifyFuture<AuthorizationResult> procesAuthorize ( final AuthorizationContext context )
+    public NotifyFuture<AuthorizationResult> authorize ( final AuthorizationContext context )
     {
         final Map<String, Object> bindings = makeBindings ( context );
 

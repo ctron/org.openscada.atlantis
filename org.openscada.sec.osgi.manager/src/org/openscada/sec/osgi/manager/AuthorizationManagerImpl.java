@@ -270,6 +270,7 @@ public class AuthorizationManagerImpl implements AuthorizationManager, Configura
         final int priority = cfg.getIntegerChecked ( "priority", "'priority' must be set" );
 
         final ConfigurationEntry newCfg = new ConfigurationEntry ( this, configurationId, serviceType, priority, cfg.getPrefixed ( "properties." ) ); //$NON-NLS-1$
+        newCfg.setPreFilter ( parameters );
 
         final ConfigurationEntry oldCfg = this.configuration.put ( configurationId, newCfg );
         if ( oldCfg != null )
@@ -325,10 +326,13 @@ public class AuthorizationManagerImpl implements AuthorizationManager, Configura
             row.add ( "" + cfg.getPriority () );
             row.add ( cfg.getServiceType () );
             row.add ( cfg.isRealized () ? "X" : "" );
+            row.add ( cfg.getTypeFilter () == null ? "" : cfg.getTypeFilter ().toString () );
+            row.add ( cfg.getIdFilter () == null ? "" : cfg.getIdFilter ().toString () );
+            row.add ( cfg.getActionFilter () == null ? "" : cfg.getActionFilter ().toString () );
             row.add ( ExceptionHelper.getMessage ( cfg.getError () ) );
             data.add ( row );
         }
 
-        Tables.showTable ( System.out, Arrays.asList ( "ID", "Priority", "ServiceType", "Realized", "Error" ), data, 2 );
+        Tables.showTable ( System.out, Arrays.asList ( "ID", "Priority", "ServiceType", "Realized", "TypeFilter", "IdFilter", "ActionFilter", "Error" ), data, 2 );
     }
 }

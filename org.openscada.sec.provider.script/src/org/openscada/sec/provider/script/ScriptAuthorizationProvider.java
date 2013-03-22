@@ -28,6 +28,7 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
 import org.openscada.ca.ConfigurationDataHelper;
+import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationService;
 import org.openscada.sec.authz.AuthorizationRule;
 import org.openscada.utils.script.ScriptExecutor;
@@ -43,6 +44,8 @@ public class ScriptAuthorizationProvider implements AuthorizationService
 
     private final ClassLoader classLoader;
 
+    private AuthenticationImplementation authenticationImplementation;
+
     public ScriptAuthorizationProvider ()
     {
         this.classLoader = getClass ().getClassLoader ();
@@ -57,6 +60,11 @@ public class ScriptAuthorizationProvider implements AuthorizationService
         {
             Thread.currentThread ().setContextClassLoader ( currentClassLoader );
         }
+    }
+
+    public void setAuthenticationImplementation ( final AuthenticationImplementation authenticationImplementation )
+    {
+        this.authenticationImplementation = authenticationImplementation;
     }
 
     @Override
@@ -78,16 +86,12 @@ public class ScriptAuthorizationProvider implements AuthorizationService
 
     private AuthorizationEntry createEntry ( final ConfigurationDataHelper cfg ) throws Exception
     {
-        final ScriptEngine engine = this.manager.getEngineByName ( cfg.getString ( "engine", "JavaScript" ) );
+        final ScriptEngine scriptEngine = this.manager.getEngineByName ( cfg.getString ( "script.engine", "JavaScript" ) );
+        final ScriptEngine callbackScriptEngine = this.manager.getEngineByName ( cfg.getString ( "callbackScript.engine", "JavaScript" ) );
 
-        final ScriptExecutor script = makeScript ( engine, cfg.getString ( "script" ) );
-        final ScriptExecutor callbackScript = makeScript ( engine, cfg.getString ( "callbackScript" ) );
+        final ScriptExecutor script = makeScript ( scriptEngine, cfg.getString ( "script" ) );
+        final ScriptExecutor callbackScript = makeScript ( callbackScriptEngine, cfg.getString ( "callbackScript" ) );
 
-        final AuthorizationEntry entry = new AuthorizationEntry ( script, callbackScript );
-
-        entry.setPreFilter ( cfg.getData () );
-
-        return entry;
-
+        return new AuthorizationEntry ( script, callbackScript, this.authenticationImplementation );
     }
 }

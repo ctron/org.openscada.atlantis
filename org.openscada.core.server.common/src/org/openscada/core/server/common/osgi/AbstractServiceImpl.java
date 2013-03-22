@@ -41,6 +41,7 @@ import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.sec.osgi.TrackingAuthenticationImplementation;
 import org.openscada.sec.osgi.TrackingAuthorizationImplementation;
 import org.openscada.sec.osgi.TrackingAuthorizationTracker;
 import org.openscada.utils.concurrent.CallingFuture;
@@ -74,13 +75,18 @@ public abstract class AbstractServiceImpl<S extends Session, SI extends Abstract
         }
     };
 
+    private final TrackingAuthenticationImplementation authenticationImplemenation;
+
     public AbstractServiceImpl ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
         this.executor = executor;
         this.authorizationHelper = new TrackingAuthorizationImplementation ( context );
         this.authorizationTracker = new TrackingAuthorizationTracker ( context );
 
+        this.authenticationImplemenation = new TrackingAuthenticationImplementation ( context );
+
         setAuthorizationImplementation ( this.authorizationHelper );
+        setAuthenticationImplementation ( this.authenticationImplemenation );
     }
 
     @Override
@@ -88,11 +94,13 @@ public abstract class AbstractServiceImpl<S extends Session, SI extends Abstract
     {
         this.authorizationHelper.open ();
         this.authorizationTracker.open ();
+        this.authenticationImplemenation.open ();
     }
 
     @Override
     public void stop () throws Exception
     {
+        this.authenticationImplemenation.close ();
         this.authorizationHelper.close ();
         this.authorizationTracker.close ();
 
