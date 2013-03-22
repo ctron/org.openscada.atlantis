@@ -243,6 +243,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.memory"/>
+    <openscada.builder.copyPlugin id="org.openscada.ae.server.storage.postgres"/>
   		
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.event.proxy"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.monitor.proxy"/>
