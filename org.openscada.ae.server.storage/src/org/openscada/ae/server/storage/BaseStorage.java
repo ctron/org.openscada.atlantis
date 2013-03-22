@@ -29,7 +29,6 @@ import java.util.UUID;
 
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.core.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,17 +41,17 @@ public abstract class BaseStorage implements Storage
 
     private static final String providedNodeId = System.getProperty ( "org.openscada.ae.server.storage.nodeId" ); //$NON-NLS-1$
 
-    private final Variant nodeId;
+    private final String nodeId;
 
     public BaseStorage ()
     {
         if ( providedNodeId != null )
         {
-            this.nodeId = Variant.valueOf ( providedNodeId );
+            this.nodeId = providedNodeId;
         }
         else
         {
-            this.nodeId = Variant.valueOf ( getHostname () );
+            this.nodeId = getHostname ();
         }
     }
 
@@ -69,6 +68,11 @@ public abstract class BaseStorage implements Storage
         }
     }
 
+    protected String getNodeId ()
+    {
+        return this.nodeId;
+    }
+
     @Override
     public Event store ( final Event event )
     {
@@ -81,7 +85,7 @@ public abstract class BaseStorage implements Storage
 
         final Date now = new GregorianCalendar ().getTime ();
 
-        if ( !allowEntryTimestamp || event.getEntryTimestamp () == null )
+        if ( !allowEntryTimestamp || ( event.getEntryTimestamp () == null ) )
         {
             // if we are not allowed to have prefilled entryTimestamps
             // or a missing the timestamp anyway
