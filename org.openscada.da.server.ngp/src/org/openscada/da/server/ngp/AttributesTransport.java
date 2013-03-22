@@ -21,42 +21,52 @@
 
 package org.openscada.da.server.ngp;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.openscada.core.Variant;
 
 public class AttributesTransport
 {
-    private final HashMap<String, Variant> addedOrUpdated;
+    private final Map<String, Variant> addedOrUpdated;
 
-    private final HashSet<String> removed;
+    private final Set<String> removed;
 
     public AttributesTransport ( final Map<String, Variant> attributes )
     {
-        this.addedOrUpdated = new HashMap<String, Variant> ();
-        this.removed = new HashSet<String> ();
-
-        for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
+        if ( attributes == null )
         {
-            if ( entry.getValue () == null )
+            this.addedOrUpdated = Collections.emptyMap ();
+            this.removed = Collections.emptySet ();
+        }
+        else
+        {
+            this.addedOrUpdated = new HashMap<String, Variant> ();
+            this.removed = new HashSet<String> ();
+
+            for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
             {
-                this.removed.add ( entry.getKey () );
-            }
-            else
-            {
-                this.addedOrUpdated.put ( entry.getKey (), entry.getValue () );
+                if ( entry.getValue () == null )
+                {
+                    this.removed.add ( entry.getKey () );
+                }
+                else
+                {
+                    this.addedOrUpdated.put ( entry.getKey (), entry.getValue () );
+                }
             }
         }
     }
 
-    public HashMap<String, Variant> getAddedOrUpdated ()
+    public Map<String, Variant> getAddedOrUpdated ()
     {
         return this.addedOrUpdated;
     }
 
-    public HashSet<String> getRemoved ()
+    public Set<String> getRemoved ()
     {
         return this.removed;
     }
