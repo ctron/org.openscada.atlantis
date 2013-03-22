@@ -28,6 +28,7 @@ import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -92,7 +93,7 @@ public class SignatureRequestBuilderTest
 
         this.cf = CertificateFactory.getInstance ( "X.509" );
 
-        final X509CA ca1 = new X509CA ( this.cf, CA_FILE_1, CRL_FILE_1 );
+        final X509CA ca1 = new X509CA ( this.cf, CA_FILE_1, Collections.singleton ( CRL_FILE_1 ) );
         final X509CA ca2 = new X509CA ( this.cf, CA_FILE_2, null );
 
         ca1.load ();

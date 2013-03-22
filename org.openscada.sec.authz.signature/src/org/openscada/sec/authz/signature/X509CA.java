@@ -25,8 +25,10 @@ import java.net.URL;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509CRL;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.LinkedList;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,15 +47,15 @@ public class X509CA
 
     private final String certificateUrl;
 
-    private final String crlUrl;
+    private final Collection<String> crlUrls;
 
     private final CertificateFactory certificateFactory;
 
-    public X509CA ( final CertificateFactory cf, final String certificateUrl, final String crlUrl )
+    public X509CA ( final CertificateFactory cf, final String certificateUrl, final Collection<String> crlUrls )
     {
         this.certificateFactory = cf;
         this.certificateUrl = certificateUrl;
-        this.crlUrl = crlUrl;
+        this.crlUrls = crlUrls != null ? new ArrayList<String> ( crlUrls ) : null;
 
         this.certificates = new X509Certificate[0];
         this.crls = new X509CRL[0];
@@ -62,7 +64,7 @@ public class X509CA
     public void load () throws Exception
     {
         final Collection<X509Certificate> certificates = loadCert ( this.certificateUrl );
-        final Collection<X509CRL> crls = loadCrl ( this.crlUrl );
+        final Collection<X509CRL> crls = loadCrl ( this.crlUrls );
 
         this.certificates = certificates.toArray ( new X509Certificate[certificates.size ()] );
         this.crls = crls.toArray ( new X509CRL[crls.size ()] );
@@ -70,24 +72,35 @@ public class X509CA
     }
 
     @SuppressWarnings ( "unchecked" )
-    private Collection<X509CRL> loadCrl ( final String crl ) throws Exception
+    private Collection<X509CRL> loadCrl ( final Collection<String> crls ) throws Exception
     {
-        if ( crl == null )
+        if ( crls == null || crls.isEmpty () )
         {
             return Collections.emptyList ();
         }
 
-        logger.info ( "Loading CA CRL from : {}", crl );
+        final Collection<X509CRL> result = new LinkedList<X509CRL> ();
 
-        final InputStream stream = new URL ( crl ).openStream ();
-        try
+        for ( final String crl : crls )
         {
-            return (Collection<X509CRL>)this.certificateFactory.generateCRLs ( stream );
+            logger.info ( "Loading CA CRL from : {}", crl );
+
+            final InputStream stream = new URL ( crl ).openStream ();
+            try
+            {
+                final Collection<X509CRL> crlData = (Collection<X509CRL>)this.certificateFactory.generateCRLs ( stream );
+                logger.debug ( "Loaded {} entries", crlData );
+                result.addAll ( crlData );
+            }
+            finally
+            {
+                stream.close ();
+            }
         }
-        finally
-        {
-            stream.close ();
-        }
+
+        logger.info ( "Finished loading CRLs - {} found", result.size () );
+
+        return result;
     }
 
     @SuppressWarnings ( "unchecked" )
@@ -98,7 +111,11 @@ public class X509CA
         final InputStream stream = new URL ( value ).openStream ();
         try
         {
-            return (Collection<X509Certificate>)this.certificateFactory.generateCertificates ( stream );
+            final Collection<X509Certificate> result = (Collection<X509Certificate>)this.certificateFactory.generateCertificates ( stream );
+
+            logger.info ( "Finished loading CA certs - {} found", result.size () );
+
+            return result;
         }
         finally
         {

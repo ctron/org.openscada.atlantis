@@ -35,12 +35,17 @@ import org.openscada.sec.audit.AuditLogService;
 import org.openscada.sec.authz.AuthorizationRule;
 import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
 import org.openscada.utils.script.ScriptExecutor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @since 1.1
  */
 public class SignatureAuthorizationService implements AuthorizationService
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( SignatureAuthorizationService.class );
+
     private AuditLogService auditLogService;
 
     private AuthenticationImplementation authenticationImplementation;
@@ -115,16 +120,41 @@ public class SignatureAuthorizationService implements AuthorizationService
             if ( key.equals ( "cert" ) )
             {
                 final String caCertUrl = entry.getValue ();
-                final String crlUrl = caProperties.get ( "crl" );
 
-                cas.add ( new X509CA ( this.cf, caCertUrl, crlUrl ) );
+                final Collection<String> crls = new LinkedList<String> ();
+                crls.addAll ( new ConfigurationDataHelper ( caProperties ).getPrefixed ( "crl." ).values () );
+
+                final String crlUrl = caProperties.get ( "crl" );
+                if ( crlUrl != null )
+                {
+                    crls.add ( crlUrl );
+                }
+
+                logger.debug ( "CRL uris - {}", crls );
+
+                cas.add ( new X509CA ( this.cf, caCertUrl, crls ) );
             }
             else if ( key.endsWith ( ".cert" ) )
             {
                 final String caCertUrl = entry.getValue ();
-                final String crlUrl = caProperties.get ( key.substring ( 0, key.length () - ".cert".length () ) ) + ".crl";
 
-                cas.add ( new X509CA ( this.cf, caCertUrl, crlUrl ) );
+                final Collection<String> crls = new LinkedList<String> ();
+
+                final String prefix = key.substring ( 0, key.length () - ".cert".length () ) + ".crl";
+
+                logger.debug ( "Using CRL prefix - {}", prefix );
+
+                crls.addAll ( new ConfigurationDataHelper ( caProperties ).getPrefixed ( prefix + "." ).values () );
+
+                final String crlUrl = caProperties.get ( prefix );
+                if ( crlUrl != null )
+                {
+                    crls.add ( crlUrl );
+                }
+
+                logger.debug ( "CRL uris - {}", crls );
+
+                cas.add ( new X509CA ( this.cf, caCertUrl, crls ) );
             }
         }
 
