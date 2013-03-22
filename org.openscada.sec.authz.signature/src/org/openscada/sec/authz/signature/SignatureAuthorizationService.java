@@ -20,42 +20,34 @@
 
 package org.openscada.sec.authz.signature;
 
-import java.io.InputStream;
-import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
-import java.security.cert.X509CRL;
-import java.security.cert.X509Certificate;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.LinkedList;
 import java.util.Map;
 
 import javax.script.ScriptEngineManager;
-import javax.xml.crypto.KeySelector;
 
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationService;
 import org.openscada.sec.audit.AuditLogService;
 import org.openscada.sec.authz.AuthorizationRule;
+import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
 import org.openscada.utils.script.ScriptExecutor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @since 1.1
  */
 public class SignatureAuthorizationService implements AuthorizationService
 {
-
-    private final static Logger logger = LoggerFactory.getLogger ( SignatureAuthorizationService.class );
-
     private AuditLogService auditLogService;
 
     private AuthenticationImplementation authenticationImplementation;
 
     private final CertificateFactory cf;
+
+    private ScheduledExportedExecutorService executor;
 
     public void setAuthenticationImplementation ( final AuthenticationImplementation authenticationImplementation )
     {
@@ -70,6 +62,17 @@ public class SignatureAuthorizationService implements AuthorizationService
     public SignatureAuthorizationService () throws CertificateException
     {
         this.cf = CertificateFactory.getInstance ( "X.509" );
+    }
+
+    public void activate ()
+    {
+        this.executor = new ScheduledExportedExecutorService ( "org.openscada.sec.authz.signature", 1 );
+    }
+
+    public void deactivate ()
+    {
+        this.executor.shutdown ();
+        this.executor = null;
     }
 
     @Override
@@ -92,17 +95,14 @@ public class SignatureAuthorizationService implements AuthorizationService
             postProcessor = null;
         }
 
-        return new RequestSignatureRuleImpl ( new SignatureRequestBuilder (), buildRequestValidator ( properties ), this.auditLogService, indent, postProcessor, this.authenticationImplementation );
+        final int reloadPeriod = cfg.getInteger ( "reloadPeriod", 0 );
+
+        final X509KeySelector keySelector = makeKeySelector ( properties );
+
+        return new RequestSignatureRuleImpl ( this.executor, new SignatureRequestBuilder (), new RequestValidator ( keySelector ), keySelector, this.auditLogService, indent, postProcessor, this.authenticationImplementation, reloadPeriod );
     }
 
-    private RequestValidator buildRequestValidator ( final Map<String, String> properties ) throws Exception
-    {
-        final KeySelector keySelector = makeKeySelector ( properties );
-
-        return new RequestValidator ( keySelector );
-    }
-
-    private KeySelector makeKeySelector ( final Map<String, String> properties ) throws Exception
+    private X509KeySelector makeKeySelector ( final Map<String, String> properties ) throws Exception
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
@@ -114,19 +114,17 @@ public class SignatureAuthorizationService implements AuthorizationService
             final String key = entry.getKey ();
             if ( key.equals ( "cert" ) )
             {
-                final String caCertFile = entry.getValue ();
-                final Collection<X509Certificate> certificates = loadCert ( caCertFile );
-                final String crl = caProperties.get ( "crl" );
-                final X509CA ca = new X509CA ( certificates, loadCrl ( crl ) );
-                cas.add ( ca );
+                final String caCertUrl = entry.getValue ();
+                final String crlUrl = caProperties.get ( "crl" );
+
+                cas.add ( new X509CA ( this.cf, caCertUrl, crlUrl ) );
             }
             else if ( key.endsWith ( ".cert" ) )
             {
-                final String caCertFile = entry.getValue ();
-                final Collection<X509Certificate> certificates = loadCert ( caCertFile );
-                final String crl = caProperties.get ( key.substring ( 0, key.length () - ".cert".length () ) ) + ".crl";
-                final X509CA ca = new X509CA ( certificates, loadCrl ( crl ) );
-                cas.add ( ca );
+                final String caCertUrl = entry.getValue ();
+                final String crlUrl = caProperties.get ( key.substring ( 0, key.length () - ".cert".length () ) ) + ".crl";
+
+                cas.add ( new X509CA ( this.cf, caCertUrl, crlUrl ) );
             }
         }
 
@@ -137,43 +135,6 @@ public class SignatureAuthorizationService implements AuthorizationService
         else
         {
             return new X509KeySelector ( cas );
-        }
-    }
-
-    @SuppressWarnings ( "unchecked" )
-    private Collection<X509CRL> loadCrl ( final String crl ) throws Exception
-    {
-        if ( crl == null )
-        {
-            return Collections.emptyList ();
-        }
-
-        logger.info ( "Loading CA CRL from : {}", crl );
-
-        final InputStream stream = new URL ( crl ).openStream ();
-        try
-        {
-            return (Collection<X509CRL>)this.cf.generateCRLs ( stream );
-        }
-        finally
-        {
-            stream.close ();
-        }
-    }
-
-    @SuppressWarnings ( "unchecked" )
-    private Collection<X509Certificate> loadCert ( final String value ) throws Exception
-    {
-        logger.info ( "Loading CA cert from : {}", value );
-
-        final InputStream stream = new URL ( value ).openStream ();
-        try
-        {
-            return (Collection<X509Certificate>)this.cf.generateCertificates ( stream );
-        }
-        finally
-        {
-            stream.close ();
         }
     }
 }

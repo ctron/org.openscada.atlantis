@@ -23,6 +23,9 @@ package org.openscada.sec.authz.signature;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import javax.script.ScriptContext;
 import javax.script.SimpleScriptContext;
@@ -71,7 +74,11 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
 
     private final AuthenticationImplementation authenticator;
 
-    public RequestSignatureRuleImpl ( final SignatureRequestBuilder builder, final RequestValidator validator, final AuditLogService auditLogService, final boolean indent, final ScriptExecutor postProcessor, final AuthenticationImplementation authenticator )
+    private ScheduledFuture<?> job;
+
+    private final X509KeySelector keySelector;
+
+    public RequestSignatureRuleImpl ( final ScheduledExecutorService executor, final SignatureRequestBuilder builder, final RequestValidator validator, final X509KeySelector keySelector, final AuditLogService auditLogService, final boolean indent, final ScriptExecutor postProcessor, final AuthenticationImplementation authenticator, final int reloadPeriod )
     {
         this.builder = builder;
         this.validator = validator;
@@ -79,11 +86,50 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
         this.indent = indent;
         this.postProcessor = postProcessor;
         this.authenticator = authenticator;
+        this.keySelector = keySelector;
+
+        if ( reloadPeriod > 0 )
+        {
+            logger.debug ( "Starting reload job: {} ms", reloadPeriod );
+
+            this.job = executor.schedule ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    reload ();
+                }
+            }, reloadPeriod, TimeUnit.MILLISECONDS );
+        }
+        else
+        {
+            logger.debug ( "Reloading once" );
+            reload ();
+        }
+    }
+
+    protected void reload ()
+    {
+        logger.debug ( "Reloading " );
+        this.keySelector.reload ();
     }
 
     @Override
     public void dispose ()
     {
+        ScheduledFuture<?> job;
+
+        synchronized ( this )
+        {
+            job = this.job;
+            this.job = null;
+        }
+
+        if ( job != null )
+        {
+            logger.debug ( "Cancelling reload job" );
+            job.cancel ( true );
+        }
     }
 
     @Override
