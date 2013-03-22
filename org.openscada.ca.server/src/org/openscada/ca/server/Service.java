@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,6 +27,8 @@ import org.openscada.ca.Configuration;
 import org.openscada.ca.Factory;
 import org.openscada.ca.data.DiffEntry;
 import org.openscada.core.InvalidSessionException;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.concurrent.NotifyFuture;
 
 /**
@@ -35,7 +39,7 @@ import org.openscada.utils.concurrent.NotifyFuture;
  */
 public interface Service extends org.openscada.core.server.Service<Session>
 {
-    public NotifyFuture<Void> applyDiff ( Session session, Collection<DiffEntry> changeSet ) throws InvalidSessionException;
+    public NotifyFuture<Void> applyDiff ( Session session, Collection<DiffEntry> changeSet, OperationParameters operationParameters, CallbackHandler callbackHandler ) throws InvalidSessionException;
 
     public NotifyFuture<FactoryWithData> getFactory ( Session session, String factoryId ) throws InvalidSessionException;
 

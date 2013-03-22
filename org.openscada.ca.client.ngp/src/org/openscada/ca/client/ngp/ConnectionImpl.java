@@ -43,7 +43,10 @@ import org.openscada.ca.data.message.GetFactoryWithDataResponse;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
 import org.openscada.core.client.ngp.ConnectionBaseImpl;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.core.data.Request;
 import org.openscada.core.data.ResponseMessage;
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.concurrent.ExecutorFuture;
 import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -210,11 +213,14 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     }
 
     @Override
-    public NotifyFuture<Void> applyDiff ( final List<DiffEntry> changeSet )
+    public NotifyFuture<Void> applyDiff ( final List<DiffEntry> changeSet, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
     {
         logger.debug ( "Apply diff: {} changes", changeSet.size () );
 
-        return new ErrorAwareFuture<ApplyDiffResponse, Void> ( this.executor, ApplyDiffResponse.class, sendRequestMessage ( new ApplyDiffRequest ( nextRequest (), changeSet ) ) ) {
+        final Request request = nextRequest ();
+        final Long callbackHandlerId = registerCallbackHandler ( request, callbackHandler );
+
+        return new ErrorAwareFuture<ApplyDiffResponse, Void> ( this.executor, ApplyDiffResponse.class, sendRequestMessage ( new ApplyDiffRequest ( request, changeSet, operationParameters, callbackHandlerId ) ) ) {
             @Override
             public Void handleResponse ( final ApplyDiffResponse result )
             {
