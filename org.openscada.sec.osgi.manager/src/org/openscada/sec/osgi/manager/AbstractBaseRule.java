@@ -80,10 +80,10 @@ public abstract class AbstractBaseRule implements AuthorizationRule
             setPreFilter ( properties.get ( "for.id" ), properties.get ( "for.type" ), properties.get ( "for.action" ) );
         }
 
-        final String script = properties.get ( "script.filter" );
+        final String script = properties.get ( "filter.script" );
         if ( script != null && !script.isEmpty () )
         {
-            this.scriptFilter = new ScriptExecutor ( this.engineManager, cfg.getString ( "script.filter.engine", "JavaScript" ), script, AbstractBaseRule.class.getClassLoader () );
+            this.scriptFilter = new ScriptExecutor ( this.engineManager, cfg.getString ( "filter.script.engine", "JavaScript" ), script, AbstractBaseRule.class.getClassLoader () );
         }
     }
 
