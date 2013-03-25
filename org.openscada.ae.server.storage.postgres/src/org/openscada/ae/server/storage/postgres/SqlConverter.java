@@ -237,19 +237,19 @@ public class SqlConverter
             }
             else if ( v.isInteger () || v.isLong () )
             {
-                condition.condition = String.format ( "  openscada_variant_to_long(openscada_ae_extract_field(DATA, ?))) %s ?", op );
+                condition.condition = String.format ( "  openscada_variant_to_long(openscada_ae_extract_field(DATA, ?)) %s ?", op );
                 condition.parameters.add ( attribute );
                 condition.parameters.add ( v.asLong ( 0L ) );
             }
             else if ( v.isDouble () )
             {
-                condition.condition = String.format ( "  openscada_variant_to_double(openscada_ae_extract_field(DATA, ?))) %s ?", op );
+                condition.condition = String.format ( "  openscada_variant_to_double(openscada_ae_extract_field(DATA, ?)) %s ?", op );
                 condition.parameters.add ( attribute );
                 condition.parameters.add ( v.asDouble ( 0.0 ) );
             }
             else if ( v.isBoolean () )
             {
-                condition.condition = String.format ( "  openscada_variant_to_boolean(openscada_ae_extract_field(DATA, ?))) %s ?", op );
+                condition.condition = String.format ( "  openscada_variant_to_boolean(openscada_ae_extract_field(DATA, ?)) %s ?", op );
                 condition.parameters.add ( attribute );
                 condition.parameters.add ( v.asBoolean ( false ) );
             }
@@ -260,7 +260,7 @@ public class SqlConverter
             }
             else
             {
-                condition.condition = String.format ( "  openscada_variant_to_string(openscada_ae_extract_field(DATA, ?))) %s ?", op );
+                condition.condition = String.format ( "  lower(openscada_variant_to_string(openscada_ae_extract_field(DATA, ?))) %s ?", op );
                 condition.parameters.add ( attribute );
                 condition.parameters.add ( v.asString ( "" ) );
             }
