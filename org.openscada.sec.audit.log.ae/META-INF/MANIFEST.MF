@@ -13,5 +13,6 @@ Import-Package: org.openscada.ae;version="1.1.0",
  org.openscada.sec.audit;version="1.1.0",
  org.openscada.sec.authz;version="1.1.0",
  org.openscada.utils;version="1.1.0",
+ org.slf4j;version="1.6.0",
  org.slf4j.helpers;version="1.6.0"
 Service-Component: OSGI-INF/service.xml

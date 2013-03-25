@@ -31,10 +31,14 @@ import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.audit.AuditLogService;
 import org.openscada.sec.authz.AuthorizationContext;
 import org.openscada.utils.ExceptionHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
 
 public class AuditLogServiceImpl implements AuditLogService
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( AuditLogServiceImpl.class );
 
     private static final String PROP_ENABLE_DEBUG = "org.openscada.sec.audit.log.ae.debug";
 
@@ -64,8 +68,6 @@ public class AuditLogServiceImpl implements AuditLogService
 
             evt.attribute ( Event.Fields.EVENT_TYPE, "SEC" );
             evt.attribute ( Event.Fields.MONITOR_TYPE, request.getAction () );
-
-            this.eventService.publishEvent ( evt.build () );
         }
 
         if ( error != null )
@@ -78,6 +80,12 @@ public class AuditLogServiceImpl implements AuditLogService
             evt.attribute ( "signature", context.getContext ().get ( "signature" ) );
             evt.attribute ( "failedSignature", context.getContext ().get ( "failedSignature" ) );
         }
+
+        final Event event = evt.build ();
+
+        logger.debug ( "Publishing event: {}", event );
+
+        this.eventService.publishEvent ( event );
     }
 
     protected void log ( final Severity severity, final String message, final Throwable error )
