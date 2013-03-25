@@ -44,6 +44,7 @@ import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.osgi.TrackingAuditLogImplementation;
 import org.openscada.sec.osgi.TrackingAuthenticationImplementation;
 import org.openscada.sec.osgi.TrackingAuthorizationImplementation;
 import org.openscada.sec.osgi.TrackingAuthorizationTracker;
@@ -76,6 +77,8 @@ public class HiveImpl extends HiveCommon
 
     private final TrackingAuthenticationImplementation authenticationImplementation;
 
+    private final TrackingAuditLogImplementation auditLogTracker;
+
     public HiveImpl ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
         this.context = context;
@@ -85,8 +88,11 @@ public class HiveImpl extends HiveCommon
         this.authorizationManager = new TrackingAuthorizationImplementation ( context );
         this.authorizationTracker = new TrackingAuthorizationTracker ( context );
 
+        this.auditLogTracker = new TrackingAuditLogImplementation ( context );
+
         setAuthenticationImplementation ( this.authenticationImplementation );
         setAuthorizationImplementation ( this.authorizationManager );
+        setAuditLogService ( this.auditLogTracker );
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
@@ -112,6 +118,7 @@ public class HiveImpl extends HiveCommon
         this.authorizationManager.open ();
         this.authorizationTracker.open ();
         this.authenticationImplementation.open ();
+        this.auditLogTracker.open ();
         super.start ();
     }
 
@@ -119,6 +126,7 @@ public class HiveImpl extends HiveCommon
     public void stop () throws Exception
     {
         super.stop ();
+        this.auditLogTracker.close ();
         this.authenticationImplementation.close ();
         this.authorizationTracker.close ();
         this.authorizationManager.close ();
