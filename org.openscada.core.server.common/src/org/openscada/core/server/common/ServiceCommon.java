@@ -36,9 +36,12 @@ import org.openscada.sec.AuthorizationReply;
 import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.audit.AuditLogService;
+import org.openscada.sec.audit.log.slf4j.LogServiceImpl;
 import org.openscada.sec.authz.AuthorizationContext;
 import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.concurrent.CallingFuture;
+import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
@@ -55,10 +58,18 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
 
     private AuthenticationImplementation authenticationImplementation;
 
+    private AuditLogService auditLogService;
+
     public ServiceCommon ()
     {
         this.authenticationImplementation = new DefaultAuthentication ();
         this.authorizationImplementation = new DefaultAuthorization ( this.authenticationImplementation );
+        this.auditLogService = new LogServiceImpl ();
+    }
+
+    public void setAuditLogService ( final AuditLogService auditLogService )
+    {
+        this.auditLogService = auditLogService == null ? new LogServiceImpl () : auditLogService;
     }
 
     protected void setAuthenticationImplementation ( final AuthenticationImplementation authenticationImplementation )
@@ -141,7 +152,7 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
         {
             for ( final String role : userInformation.getRoles () )
             {
-                sessionResultProperties.put ( "userInformation.roles." + role, "true" ); //$NON-NLS-1$ //$NON-NLS-2$
+                sessionResultProperties.put ( String.format ( "userInformation.roles.%s", role ), "true" ); //$NON-NLS-1$ //$NON-NLS-2$
             }
         }
     }
@@ -181,7 +192,29 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
         context.setCallbackHandler ( callbackHandler );
         context.setRequest ( request );
 
-        return this.authorizationImplementation.authorize ( context, defaultResult );
+        // log the request
+        this.auditLogService.authorizationRequested ( request );
+
+        final NotifyFuture<AuthorizationReply> result = this.authorizationImplementation.authorize ( context, defaultResult );
+
+        // log the result, when it will be available
+        result.addListener ( new FutureListener<AuthorizationReply> () {
+
+            @Override
+            public void complete ( final Future<AuthorizationReply> future )
+            {
+                try
+                {
+                    ServiceCommon.this.auditLogService.authorizationDone ( context, request, future.get () );
+                }
+                catch ( final Exception e )
+                {
+                    ServiceCommon.this.auditLogService.authorizationFailed ( context, request, e );
+                }
+            }
+        } );
+
+        return result;
     }
 
     /**

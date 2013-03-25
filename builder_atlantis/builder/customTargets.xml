@@ -284,6 +284,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.sec.provider.script" />
   	<openscada.builder.copyPlugin id="org.openscada.sec.provider.jdbc" />
   	<openscada.builder.copyPlugin id="org.openscada.sec.authz.signature" />
+  	<openscada.builder.copyPlugin id="org.openscada.sec.audit.log.ae" />
   	
   	<!-- Additional stuff -->
   	
