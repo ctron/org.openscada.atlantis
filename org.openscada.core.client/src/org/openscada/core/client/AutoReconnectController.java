@@ -24,6 +24,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,8 @@ public class AutoReconnectController implements ConnectionStateListener
     private boolean checkScheduled;
 
     private long lastStateChange;
+
+    private CallbackHandler connectCallbackHandler;
 
     /**
      * Create a new reconnect controller for the provided connection using the
@@ -213,6 +216,15 @@ public class AutoReconnectController implements ConnectionStateListener
 
     public synchronized void connect ()
     {
+        connect ( null );
+    }
+
+    /**
+     * @since 1.1
+     */
+    public synchronized void connect ( final CallbackHandler connectCallbackHandler )
+    {
+        this.connectCallbackHandler = connectCallbackHandler;
         logger.debug ( "Request to connect" );
         if ( this.connect == true )
         {
@@ -317,7 +329,7 @@ public class AutoReconnectController implements ConnectionStateListener
                 if ( connect )
                 {
                     logger.info ( "Trigger connect" );
-                    this.connection.connect ();
+                    this.connection.connect ( this.connectCallbackHandler );
                 }
                 break;
             case LOOKUP:

@@ -113,7 +113,7 @@ public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> imple
     {
         final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
-        logger.debug ( "Request akn: {} ({}): sessionUser: {}, requestUser: {}", new Object[] { monitorId, aknTimestamp, sessionImpl.getUserInformation (), operationParameters.getUserInformation ().getName () } );
+        logger.debug ( "Request akn: {} ({}): sessionUser: {}", new Object[] { monitorId, aknTimestamp, sessionImpl.getUserInformation () } );
 
         return new AuthorizedOperation<Void, AbstractSessionImpl> ( this.authorizationProvider, sessionImpl, "MONITOR", monitorId, "AKN", null, operationParameters, callbackHandler, DEFAULT_RESULT ) {
             @Override

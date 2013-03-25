@@ -127,7 +127,7 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
     {
         if ( this.controller != null )
         {
-            this.controller.connect ();
+            this.controller.connect ( this.connectCallbackHandler );
         }
         else
         {
