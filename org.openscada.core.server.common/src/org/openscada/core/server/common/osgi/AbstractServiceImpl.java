@@ -41,6 +41,7 @@ import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.sec.osgi.TrackingAuditLogImplementation;
 import org.openscada.sec.osgi.TrackingAuthenticationImplementation;
 import org.openscada.sec.osgi.TrackingAuthorizationImplementation;
 import org.openscada.sec.osgi.TrackingAuthorizationTracker;
@@ -77,6 +78,8 @@ public abstract class AbstractServiceImpl<S extends Session, SI extends Abstract
 
     private final TrackingAuthenticationImplementation authenticationImplemenation;
 
+    private final TrackingAuditLogImplementation auditLogTracker;
+
     public AbstractServiceImpl ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
         this.executor = executor;
@@ -85,8 +88,11 @@ public abstract class AbstractServiceImpl<S extends Session, SI extends Abstract
 
         this.authenticationImplemenation = new TrackingAuthenticationImplementation ( context );
 
+        this.auditLogTracker = new TrackingAuditLogImplementation ( context );
+
         setAuthorizationImplementation ( this.authorizationHelper );
         setAuthenticationImplementation ( this.authenticationImplemenation );
+        setAuditLogService ( this.auditLogTracker );
     }
 
     @Override
@@ -95,20 +101,22 @@ public abstract class AbstractServiceImpl<S extends Session, SI extends Abstract
         this.authorizationHelper.open ();
         this.authorizationTracker.open ();
         this.authenticationImplemenation.open ();
+        this.auditLogTracker.open ();
     }
 
     @Override
     public void stop () throws Exception
     {
-        this.authenticationImplemenation.close ();
-        this.authorizationHelper.close ();
-        this.authorizationTracker.close ();
-
         // close sessions
         for ( final SI session : this.sessions )
         {
             session.dispose ();
         }
+
+        this.auditLogTracker.close ();
+        this.authenticationImplemenation.close ();
+        this.authorizationHelper.close ();
+        this.authorizationTracker.close ();
     }
 
     @SuppressWarnings ( "unchecked" )

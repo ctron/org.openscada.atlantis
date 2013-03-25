@@ -170,9 +170,12 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
 
             final Result result = this.validator.validate ( signedDoc );
 
+            final String signatureString = this.builder.toString ( signedDoc, true );
+
             if ( !result.isValid () )
             {
-                this.auditLogService.info ( "Validation failed:\n{}", this.builder.toString ( signedDoc, true ) );
+                context.getContext ().put ( "failedSignature", signatureString );
+                this.auditLogService.info ( "Validation failed:\n{}", signatureString );
                 return AuthorizationResult.createReject ( VERIFY_SIGNATURE_INVALID, "Signature is not valid" );
             }
 
@@ -183,11 +186,12 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
             }
             catch ( final Exception e )
             {
-                this.auditLogService.info ( "Requests don't match" );
-                this.auditLogService.info ( "Original: {}", this.builder.toString ( doc, true ) );
-                this.auditLogService.info ( "Signed: {}", this.builder.toString ( signedDoc, true ) );
+                context.getContext ().put ( "failedSignature", signatureString );
+                this.auditLogService.info ( "Requests don't match\n\tOriginal: {}\n\tSigned: {}", this.builder.toString ( doc, true ), this.builder.toString ( signedDoc, true ) );
                 return AuthorizationResult.createReject ( e );
             }
+
+            context.getContext ().put ( "signature", signatureString );
 
             postProcess ( context, result );
 

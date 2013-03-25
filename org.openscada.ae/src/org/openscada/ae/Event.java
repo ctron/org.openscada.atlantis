@@ -1,7 +1,9 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * Copyright (C) 2013 Jürgen Rose (cptmauli@googlemail.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -111,7 +113,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
             {
                 for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
                 {
-                    if ( ( entry.getValue () != null ) && ( entry.getKey () != null ) )
+                    if ( entry.getValue () != null && entry.getKey () != null )
                     {
                         this.event.attributes.put ( entry.getKey (), entry.getValue () );
                     }
@@ -122,7 +124,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
             {
                 for ( final Map.Entry<String, Variant> entry : attributes.entrySet () )
                 {
-                    if ( ( entry.getValue () != null ) && ( entry.getKey () != null ) )
+                    if ( entry.getValue () != null && entry.getKey () != null )
                     {
                         attribute ( entry.getKey (), entry.getValue () );
                     }
@@ -133,7 +135,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
         public EventBuilder attribute ( final String key, final Variant value )
         {
-            if ( ( key == null ) || ( value == null ) )
+            if ( key == null || value == null )
             {
                 return this;
             }
@@ -146,19 +148,28 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
         public EventBuilder attribute ( final Fields key, final Variant value )
         {
-            attribute ( key.getName (), value );
+            if ( value != null )
+            {
+                attribute ( key.getName (), value );
+            }
             return this;
         }
 
         public EventBuilder attribute ( final String key, final Object value )
         {
-            attribute ( key, Variant.valueOf ( value ) );
+            if ( value != null )
+            {
+                attribute ( key, Variant.valueOf ( value ) );
+            }
             return this;
         }
 
         public EventBuilder attribute ( final Fields key, final Object value )
         {
-            attribute ( key.getName (), Variant.valueOf ( value ) );
+            if ( value != null )
+            {
+                attribute ( key.getName (), Variant.valueOf ( value ) );
+            }
             return this;
         }
 
@@ -300,7 +311,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
     {
         final int prime = 31;
         int result = 1;
-        result = ( prime * result ) + ( this.id == null ? 0 : this.id.hashCode () );
+        result = prime * result + ( this.id == null ? 0 : this.id.hashCode () );
         return result;
     }
 
@@ -383,7 +394,7 @@ public class Event implements Cloneable, Comparable<Event>, Serializable
 
     public void setField ( final Fields field, final Variant value )
     {
-        if ( ( field == null ) || ( value == null ) )
+        if ( field == null || value == null )
         {
             return;
         }
