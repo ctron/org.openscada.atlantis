@@ -81,20 +81,20 @@ public class JdbcDao
             + "WHERE instance_id = ? AND SOURCE_TIMESTAMP < ?";
 
     private static final String loadEventSql = "SELECT data FROM %sOPENSCADA_AE_EVENTS_json " //
-            + "WHERE instance_id = ? AND ID = ?";
+            + "WHERE instance_id = ? AND ID = ?::UUID";
 
     private static final String storeEventSql = "INSERT INTO %sOPENSCADA_AE_EVENTS_json " //
             + "(id, instance_id, source_timestamp, entry_timestamp, data) " //
             + "VALUES " //
-            + "(?, ?, ?, ?, ?);"; //
+            + "(?::UUID, ?, ?, ?, ?);"; //
 
     private static final String replicateEventSql = "INSERT INTO %sOPENSCADA_AE_REP " //
             + "(id, entry_timestamp, node_id, data) " //
             + "VALUES " //
-            + "(?, ?, ?, ?);"; //
+            + "(?::VARCHAR, ?, ?, ?);"; //
 
     private static final String updateEventSql = "UPDATE %sOPENSCADA_AE_EVENTS_json " //
-            + "SET data = ? WHERE id = ?;"; //
+            + "SET data = ? WHERE id = ?::UUID;"; //
 
     private static final String selectEventsSql = "SELECT data FROM %sOPENSCADA_AE_EVENTS_json " //
             + "WHERE instance_id = ? "; //
