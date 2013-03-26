@@ -142,8 +142,8 @@ public class JdbcDao
             {
                 connectionContext.setAutoCommit ( true );
                 final Object[] parameters = new Object[5];
-                parameters[0] = EventConverter.INSTANCE.toJson ( event );
-                parameters[1] = event.getId ();
+                parameters[0] = event.getId ();
+                parameters[1] = instance;
                 parameters[2] = new Timestamp ( event.getSourceTimestamp ().getTime () );
                 parameters[3] = new Timestamp ( event.getEntryTimestamp ().getTime () );
                 parameters[4] = EventConverter.INSTANCE.toJson ( event );
