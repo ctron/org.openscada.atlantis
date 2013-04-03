@@ -124,10 +124,13 @@ public class X509KeySelector extends KeySelector
                 return null;
             }
 
+            logger.trace ( "Checking certificate validity" );
             cert.checkValidity ();
 
             for ( final X509CA ca : this.cas )
             {
+                logger.trace ( "Checking CA: {}", ca );
+
                 if ( ca.isRevoked ( cert ) )
                 {
                     logger.trace ( "Cert is revoked by CA" );
@@ -138,10 +141,13 @@ public class X509KeySelector extends KeySelector
                 {
                     try
                     {
+                        logger.debug ( "Checking CA validity" );
                         caCert.checkValidity ();
 
+                        logger.debug ( "Validate certificate" );
                         // FIXME: validate CA chain
                         cert.verify ( caCert.getPublicKey () );
+
                         return new X509KeySelectorResult ( cert );
                     }
                     catch ( final Exception e )
