@@ -172,7 +172,7 @@ public class AuditLogServiceImpl implements AuditLogService
         {
             log ( Severity.INFORMATION, context, "Authorization granted", request, reply, null, null );
         }
-        else
+        else if ( !reply.isGranted () )
         {
             log ( Severity.WARNING, context, "Authorization rejected", request, reply, null, null );
         }
