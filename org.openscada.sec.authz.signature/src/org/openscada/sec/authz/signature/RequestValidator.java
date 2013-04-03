@@ -63,18 +63,22 @@ public class RequestValidator
 
         private final String message;
 
+        private final XMLSignature signature;
+
         public Result ( final boolean valid )
         {
             this.valid = valid;
+            this.signature = null;
             this.keySelectorResult = null;
             this.statusCode = null;
             this.message = null;
         }
 
-        public Result ( final boolean valid, final KeySelectorResult keySelectorResult )
+        public Result ( final boolean valid, final XMLSignature signature )
         {
             this.valid = valid;
-            this.keySelectorResult = keySelectorResult;
+            this.signature = signature;
+            this.keySelectorResult = signature.getKeySelectorResult ();
             this.statusCode = null;
             this.message = null;
         }
@@ -82,9 +86,15 @@ public class RequestValidator
         public Result ( final StatusCode statusCode, final String message )
         {
             this.valid = false;
+            this.signature = null;
             this.keySelectorResult = null;
             this.statusCode = statusCode;
             this.message = message;
+        }
+
+        public XMLSignature getSignature ()
+        {
+            return this.signature;
         }
 
         public StatusCode getStatusCode ()
@@ -125,7 +135,7 @@ public class RequestValidator
         {
             final boolean result = signature.validate ( dvc );
 
-            return new Result ( result, signature.getKeySelectorResult () );
+            return new Result ( result, signature );
         }
         catch ( final XMLSignatureException e )
         {
