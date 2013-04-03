@@ -27,6 +27,7 @@ import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.dom.DOMValidateContext;
 
+import org.openscada.utils.statuscodes.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -58,16 +59,42 @@ public class RequestValidator
 
         private final KeySelectorResult keySelectorResult;
 
+        private final StatusCode statusCode;
+
+        private final String message;
+
         public Result ( final boolean valid )
         {
             this.valid = valid;
             this.keySelectorResult = null;
+            this.statusCode = null;
+            this.message = null;
         }
 
         public Result ( final boolean valid, final KeySelectorResult keySelectorResult )
         {
             this.valid = valid;
             this.keySelectorResult = keySelectorResult;
+            this.statusCode = null;
+            this.message = null;
+        }
+
+        public Result ( final StatusCode statusCode, final String message )
+        {
+            this.valid = false;
+            this.keySelectorResult = null;
+            this.statusCode = statusCode;
+            this.message = message;
+        }
+
+        public StatusCode getStatusCode ()
+        {
+            return this.statusCode;
+        }
+
+        public String getMessage ()
+        {
+            return this.message;
         }
 
         public boolean isValid ()
@@ -87,7 +114,7 @@ public class RequestValidator
 
         if ( nl.getLength () == 0 )
         {
-            return Result.INVALID;
+            return new Result ( StatusCodes.VALIDATE_NO_SIGNATURE_DATA, "No signature data found" );
         }
 
         final DOMValidateContext dvc = new DOMValidateContext ( this.keySelector, nl.item ( 0 ) );

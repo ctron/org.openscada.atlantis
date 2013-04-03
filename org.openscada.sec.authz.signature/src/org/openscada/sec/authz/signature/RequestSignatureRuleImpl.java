@@ -44,8 +44,6 @@ import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.concurrent.TransformResultFuture;
 import org.openscada.utils.script.ScriptExecutor;
-import org.openscada.utils.statuscodes.SeverityLevel;
-import org.openscada.utils.statuscodes.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
@@ -57,10 +55,6 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( RequestSignatureRuleImpl.class );
-
-    private static StatusCode VERIFY_NO_SIGNATURE = new StatusCode ( "OSSEC", "XMLSIG", 1, SeverityLevel.ERROR );
-
-    private static StatusCode VERIFY_SIGNATURE_INVALID = new StatusCode ( "OSSEC", "XMLSIG", 2, SeverityLevel.ERROR );
 
     private final SignatureRequestBuilder builder;
 
@@ -161,7 +155,7 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
     {
         if ( callback.isCanceled () || callback.getSignedDocument () == null )
         {
-            return AuthorizationResult.createReject ( VERIFY_NO_SIGNATURE, "No signature data found" );
+            return AuthorizationResult.createReject ( StatusCodes.VERIFY_NO_SIGNATURE, "No signature data found" );
         }
 
         try
@@ -176,7 +170,7 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
             {
                 context.getContext ().put ( "failedSignature", signatureString );
                 this.auditLogService.info ( "Validation failed:\n{}", signatureString );
-                return AuthorizationResult.createReject ( VERIFY_SIGNATURE_INVALID, "Signature is not valid" );
+                return AuthorizationResult.createReject ( StatusCodes.VERIFY_SIGNATURE_INVALID, "Signature is not valid" );
             }
 
             // next we need to check if the request was the request we actually wanted, somebody might just have sent some signed XML content
