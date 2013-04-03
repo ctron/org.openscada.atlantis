@@ -170,6 +170,8 @@ public abstract class AbstractBaseRule implements AuthorizationRule
 
     private boolean processResult ( final Object execute )
     {
+        logger.debug ( "Processing filter result: {}", execute );
+
         if ( execute == null )
         {
             return false;
