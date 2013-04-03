@@ -92,14 +92,14 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
         {
             logger.debug ( "Starting reload job: {} ms", reloadPeriod );
 
-            this.job = executor.schedule ( new Runnable () {
+            this.job = executor.scheduleWithFixedDelay ( new Runnable () {
 
                 @Override
                 public void run ()
                 {
                     reload ();
                 }
-            }, reloadPeriod, TimeUnit.MILLISECONDS );
+            }, 0, reloadPeriod, TimeUnit.MILLISECONDS );
         }
         else
         {
@@ -110,7 +110,7 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
 
     protected void reload ()
     {
-        logger.debug ( "Reloading " );
+        logger.debug ( "Reloading" );
         this.keySelector.reload ();
     }
 
