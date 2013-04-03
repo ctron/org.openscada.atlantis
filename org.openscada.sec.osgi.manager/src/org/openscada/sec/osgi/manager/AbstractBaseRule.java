@@ -121,20 +121,21 @@ public abstract class AbstractBaseRule implements AuthorizationRule
     public NotifyFuture<AuthorizationResult> authorize ( final AuthorizationContext context )
     {
         final AuthorizationRequest request = context.getRequest ();
+
         logger.debug ( "Checking authentication - objectType: {}, objectId: {}, action: {}, user: {}, context: {}", new Object[] { request.getObjectType (), request.getObjectId (), request.getAction (), request.getUserInformation (), request.getContext () } ); //$NON-NLS-1$
         logger.debug ( "Pre-Filter - objectType: {}, objectId: {}, action: {}", new Object[] { this.objectType, this.objectId, this.action } ); //$NON-NLS-1$
 
-        if ( this.objectId != null && !this.objectId.matcher ( request.getObjectId () ).matches () )
+        if ( request != null && request.getObjectId () != null && this.objectId != null && !this.objectId.matcher ( request.getObjectId () ).matches () )
         {
             return ABSTAIN_FUTURE;
         }
 
-        if ( this.objectType != null && !this.objectType.matcher ( request.getObjectType () ).matches () )
+        if ( request != null && request.getObjectType () != null && this.objectType != null && !this.objectType.matcher ( request.getObjectType () ).matches () )
         {
             return ABSTAIN_FUTURE;
         }
 
-        if ( this.action != null && !this.action.matcher ( request.getAction () ).matches () )
+        if ( request != null && request.getAction () != null && this.action != null && !this.action.matcher ( request.getAction () ).matches () )
         {
             return ABSTAIN_FUTURE;
         }
