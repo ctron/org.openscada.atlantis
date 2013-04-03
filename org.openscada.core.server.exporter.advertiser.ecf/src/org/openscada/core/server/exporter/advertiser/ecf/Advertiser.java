@@ -25,6 +25,8 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.eclipse.ecf.core.ContainerConnectException;
 import org.eclipse.ecf.core.ContainerCreateException;
@@ -37,6 +39,7 @@ import org.eclipse.ecf.discovery.identity.IServiceTypeID;
 import org.eclipse.ecf.discovery.identity.ServiceIDFactory;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.server.exporter.ExporterInformation;
+import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTracker;
@@ -59,12 +62,16 @@ public class Advertiser
 
     private final Map<ExporterInformation, IServiceInfo> infoMap = new HashMap<ExporterInformation, IServiceInfo> ();
 
+    private ExecutorService executor;
+
     public Advertiser ()
     {
     }
 
     public void start ( final BundleContext context )
     {
+        this.executor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "ECF/Advertiser", true ) );
+
         try
         {
             connect ();
@@ -80,7 +87,15 @@ public class Advertiser
             @Override
             public void removedService ( final ServiceReference<ExporterInformation> reference, final ExporterInformation service )
             {
-                Advertiser.this.removedService ( service );
+                Advertiser.this.executor.execute ( new Runnable () {
+
+                    @Override
+                    public void run ()
+                    {
+                        Advertiser.this.removedService ( service );
+                    }
+
+                } );
             }
 
             @Override
@@ -91,19 +106,7 @@ public class Advertiser
             @Override
             public ExporterInformation addingService ( final ServiceReference<ExporterInformation> reference )
             {
-                final ExporterInformation info = context.getService ( reference );
-                logger.info ( "Exporint information: {}", info );
-                try
-                {
-                    Advertiser.this.addingService ( info );
-                    return info;
-                }
-                catch ( final Exception e )
-                {
-                    logger.warn ( "Failed to add", e );
-                    context.ungetService ( reference );
-                    return null;
-                }
+                return performAdd ( context, reference );
             }
         } );
         this.tracker.open ();
@@ -158,6 +161,9 @@ public class Advertiser
     {
         this.tracker.close ();
         disconnect ();
+
+        logger.info ( "Shutting down executor" );
+        this.executor.shutdown ();
     }
 
     private void connect () throws ContainerCreateException, ContainerConnectException
@@ -175,5 +181,37 @@ public class Advertiser
         this.advertiser.unregisterAllServices ();
         this.container.disconnect ();
         this.container.dispose ();
+    }
+
+    private ExporterInformation performAdd ( final BundleContext context, final ServiceReference<ExporterInformation> reference )
+    {
+        final ExporterInformation info = context.getService ( reference );
+        logger.info ( "Export information: {}", info );
+        try
+        {
+            this.executor.execute ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    try
+                    {
+                        Advertiser.this.addingService ( info );
+                    }
+                    catch ( final URISyntaxException e )
+                    {
+                        logger.warn ( "Failed to register", e );
+                    }
+                }
+            } );
+
+            return info;
+        }
+        catch ( final Exception e )
+        {
+            logger.warn ( "Failed to add", e );
+            context.ungetService ( reference );
+            return null;
+        }
     }
 }
