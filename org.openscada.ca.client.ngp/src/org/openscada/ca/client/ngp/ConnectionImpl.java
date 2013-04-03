@@ -129,22 +129,27 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     protected void onConnectionClosed ()
     {
         setFactories ( new FactoryInformation[0] );
+
         super.onConnectionClosed ();
     }
 
     protected synchronized void setFactories ( final FactoryInformation[] factories )
     {
         this.factories = factories;
-        for ( final FactoriesListener listener : this.listeners )
-        {
-            this.executor.execute ( new Runnable () {
 
-                @Override
-                public void run ()
-                {
-                    listener.updateFactories ( factories );
-                }
-            } );
+        if ( !isDisposed () )
+        {
+            for ( final FactoriesListener listener : this.listeners )
+            {
+                this.executor.execute ( new Runnable () {
+
+                    @Override
+                    public void run ()
+                    {
+                        listener.updateFactories ( factories );
+                    }
+                } );
+            }
         }
     }
 
