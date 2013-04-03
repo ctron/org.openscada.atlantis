@@ -31,6 +31,8 @@ import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.audit.AuditLogService;
 import org.openscada.sec.authz.AuthorizationContext;
 import org.openscada.utils.ExceptionHelper;
+import org.openscada.utils.statuscodes.CodedExceptionBase;
+import org.openscada.utils.statuscodes.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
@@ -51,7 +53,7 @@ public class AuditLogServiceImpl implements AuditLogService
         this.eventService = eventService;
     }
 
-    protected void log ( final Severity severity, final AuthorizationContext context, final String message, final AuthorizationRequest request, final AuthorizationReply reply, final Throwable error )
+    protected void log ( final Severity severity, final AuthorizationContext context, final String message, final AuthorizationRequest request, final AuthorizationReply reply, final String value, final Throwable error )
     {
         final EventBuilder evt = Event.create ();
 
@@ -69,6 +71,11 @@ public class AuditLogServiceImpl implements AuditLogService
 
             evt.attribute ( Event.Fields.EVENT_TYPE, "SEC" );
             evt.attribute ( Event.Fields.MONITOR_TYPE, "AUDIT" );
+        }
+
+        if ( value != null )
+        {
+            evt.attribute ( Event.Fields.VALUE, value );
         }
 
         if ( error != null )
@@ -91,7 +98,7 @@ public class AuditLogServiceImpl implements AuditLogService
 
     protected void log ( final Severity severity, final String message, final Throwable error )
     {
-        log ( severity, null, message, null, null, error );
+        log ( severity, null, message, null, null, getStatusCode ( error ), error );
     }
 
     @Override
@@ -136,7 +143,26 @@ public class AuditLogServiceImpl implements AuditLogService
     @Override
     public void authorizationFailed ( final AuthorizationContext context, final AuthorizationRequest request, final Throwable error )
     {
-        log ( Severity.ERROR, context, "Authorization failed", request, null, error );
+        log ( Severity.ERROR, context, "Authorization failed", request, null, getStatusCode ( error ), error );
+    }
+
+    protected String getStatusCode ( final Throwable error )
+    {
+        if ( error == null )
+        {
+            return null;
+        }
+
+        final Throwable root = ExceptionHelper.getRootCause ( error );
+        if ( root instanceof CodedExceptionBase )
+        {
+            final StatusCode statusCode = ( (CodedExceptionBase)root ).getStatus ();
+            if ( statusCode != null )
+            {
+                return statusCode.toString ();
+            }
+        }
+        return null;
     }
 
     @Override
@@ -144,11 +170,11 @@ public class AuditLogServiceImpl implements AuditLogService
     {
         if ( reply.isGranted () && Boolean.getBoolean ( PROP_LOG_ALL ) )
         {
-            log ( Severity.INFORMATION, context, "Authorization granted", request, reply, null );
+            log ( Severity.INFORMATION, context, "Authorization granted", request, reply, null, null );
         }
         else
         {
-            log ( Severity.WARNING, context, "Authorization rejected", request, reply, null );
+            log ( Severity.WARNING, context, "Authorization rejected", request, reply, null, null );
         }
     }
 
