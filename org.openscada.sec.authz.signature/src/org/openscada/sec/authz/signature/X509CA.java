@@ -161,4 +161,10 @@ public class X509CA
         }
         return false;
     }
+
+    @Override
+    public String toString ()
+    {
+        return String.format ( "[CA - cert: {}, crls: {}]", this.certificateUrl, this.crlUrls );
+    }
 }

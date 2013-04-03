@@ -61,8 +61,12 @@ public class X509KeySelector extends KeySelector
 
     public void reload ()
     {
+        logger.debug ( "Reloading" );
+
         for ( final X509CA ca : this.cas )
         {
+            logger.debug ( "Reloading ca: {}", ca );
+
             try
             {
                 ca.load ();
