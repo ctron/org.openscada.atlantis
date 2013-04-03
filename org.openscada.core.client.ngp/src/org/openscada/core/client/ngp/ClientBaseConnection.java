@@ -96,6 +96,8 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     protected CallbackFactory callbackFactory;
 
+    private volatile boolean disposed;
+
     public ClientBaseConnection ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( connectionInformation );
@@ -462,9 +464,16 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
         }
     }
 
+    public boolean isDisposed ()
+    {
+        return this.disposed;
+    }
+
     @Override
     public synchronized void dispose ()
     {
+        this.disposed = true;
+
         performDisconnected ( null );
 
         // no state notifications after this call
