@@ -65,7 +65,7 @@ public class AuditLogServiceImpl implements AuditLogService
         {
             evt.attribute ( Event.Fields.ACTOR_TYPE, request.getObjectType () );
             evt.attribute ( Event.Fields.ACTOR_NAME, request.getObjectId () );
-            evt.attribute ( "action", request.getAction () );
+            evt.attribute ( Event.Fields.ITEM, request.getAction () );
 
             evt.attribute ( Event.Fields.EVENT_TYPE, "SEC" );
             evt.attribute ( Event.Fields.MONITOR_TYPE, "AUDIT" );
