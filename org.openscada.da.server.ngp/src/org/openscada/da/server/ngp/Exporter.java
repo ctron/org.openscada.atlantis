@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,10 +24,12 @@ package org.openscada.da.server.ngp;
 import java.net.InetSocketAddress;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Set;
 
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.server.exporter.ExporterInformation;
 import org.openscada.da.common.ngp.ProtocolConfigurationFactoryImpl;
 import org.openscada.da.core.server.Hive;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
@@ -75,6 +79,52 @@ public class Exporter implements LifecycleAware
     public Set<InetSocketAddress> getStartedAddresses ()
     {
         return this.startedAddresses;
+    }
+
+    /**
+     * @since 1.1
+     */
+    public Set<ConnectionInformation> getStartedConnectionInformations ()
+    {
+        return convert ( "da", getStartedAddresses () );
+    }
+
+    public Set<ExporterInformation> getExporterInformation ()
+    {
+        final Set<ExporterInformation> result = new HashSet<ExporterInformation> ();
+
+        for ( final ConnectionInformation ci : getStartedConnectionInformations () )
+        {
+            result.add ( new ExporterInformation ( ci, null ) );
+        }
+
+        return result;
+    }
+
+    Set<ConnectionInformation> convert ( final String interfaceName, final Set<InetSocketAddress> startedAddresses )
+    {
+        final HashSet<ConnectionInformation> result = new HashSet<ConnectionInformation> ();
+
+        for ( final InetSocketAddress address : startedAddresses )
+        {
+            final String target = address.getAddress ().getHostAddress ().replace ( "%", "%25" ); // for IPv6
+
+            final ConnectionInformation ci;
+            if ( target.indexOf ( ':' ) >= 0 )
+            {
+                ci = ConnectionInformation.fromURI ( String.format ( "%s:ngp://[%s]:%s", interfaceName, target, address.getPort () ) );
+            }
+            else
+            {
+                ci = ConnectionInformation.fromURI ( String.format ( "%s:ngp://%s:%s", interfaceName, target, address.getPort () ) );
+            }
+            if ( ci != null )
+            {
+                result.add ( ci );
+            }
+        }
+
+        return result;
     }
 
     @Override
