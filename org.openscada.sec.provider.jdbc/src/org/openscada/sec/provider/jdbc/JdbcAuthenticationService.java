@@ -130,7 +130,7 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
             {
                 if ( this.userIdColumnName != null )
                 {
-                    this.userId = resultSet.getString ( "userIdColumn" );
+                    this.userId = resultSet.getString ( this.userIdColumnName );
                 }
                 this.result = true;
             }
