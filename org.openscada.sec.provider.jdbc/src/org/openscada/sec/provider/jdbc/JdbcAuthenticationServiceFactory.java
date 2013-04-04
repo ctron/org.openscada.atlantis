@@ -53,7 +53,7 @@ public class JdbcAuthenticationServiceFactory extends AbstractServiceConfigurati
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "JDBC based authenticator" );
         properties.put ( Constants.SERVICE_PID, configurationId );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
 
         final ServiceRegistration<?> handle;
 
