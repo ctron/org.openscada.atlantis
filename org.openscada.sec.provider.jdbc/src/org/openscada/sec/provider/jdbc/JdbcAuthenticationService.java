@@ -34,7 +34,6 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthenticationService;
-import org.openscada.sec.StatusCodes;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.UserManagerService;
 import org.openscada.sec.authn.CredentialsRequest;
@@ -221,7 +220,8 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
         if ( !callback.isResult () )
         {
-            return failure ( "User not found or password invalid", StatusCodes.INVALID_USER_OR_PASSWORD );
+            // no user found ... abstain
+            return null;
         }
 
         final String userId = this.userIdColumnName != null ? callback.getUserId () : username;
