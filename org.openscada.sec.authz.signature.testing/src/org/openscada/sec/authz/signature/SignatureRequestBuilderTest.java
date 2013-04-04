@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.KeySelector;
 
 import org.junit.Assert;
@@ -186,6 +187,16 @@ public class SignatureRequestBuilderTest
 
         final String subjectName = signCert.getSubjectX500Principal ().toString ();
         Assert.assertEquals ( "Subject name", "EMAILADDRESS=test1@test.org, CN=Test1, O=openSCADA.org, L=Munich, ST=BY, C=DE", subjectName );
+
+        System.out.println ( "1: " + signCert.getSubjectX500Principal ().getName () );
+        System.out.println ( "2a: " + signCert.getSubjectX500Principal ().getName ( X500Principal.CANONICAL ) );
+        System.out.println ( "2b: " + signCert.getSubjectX500Principal ().getName ( X500Principal.RFC1779 ) );
+        System.out.println ( "2c: " + signCert.getSubjectX500Principal ().getName ( X500Principal.RFC2253 ) );
+
+        final HashMap<String, String> oidMap = new HashMap<String, String> ();
+        oidMap.put ( "1.2.840.113549.1.9.1", "EMAILADDRESS" );
+        System.out.println ( "3b: " + signCert.getSubjectX500Principal ().getName ( X500Principal.RFC1779, oidMap ) );
+        System.out.println ( "3c: " + signCert.getSubjectX500Principal ().getName ( X500Principal.RFC2253, oidMap ) );
 
         Assert.assertFalse ( "XML Core Validation (X509KeySelector with wrong CA)", this.validator2.validate ( doc ).isValid () );
     }
