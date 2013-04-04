@@ -46,6 +46,8 @@ import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.jdbc.DataSourceConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.DataSourceFactoryTracker;
+import org.openscada.utils.osgi.jdbc.data.RowMapperAdapter;
+import org.openscada.utils.osgi.jdbc.data.RowMapperMappingException;
 import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
 import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
 import org.openscada.utils.osgi.jdbc.task.RowCallback;
@@ -92,9 +94,17 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
         private final Map<PasswordEncoding, String> passwords;
 
-        public PasswordCheckRowCallback ( final Map<PasswordEncoding, String> passwords )
+        private final String userIdColumnName;
+
+        private String userId;
+
+        private final String passwordColumnName;
+
+        public PasswordCheckRowCallback ( final Map<PasswordEncoding, String> passwords, final String passwordColumnName, final String userIdColumnName )
         {
             this.passwords = passwords;
+            this.userIdColumnName = userIdColumnName;
+            this.passwordColumnName = passwordColumnName;
         }
 
         public boolean isResult ()
@@ -102,10 +112,15 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
             return this.result;
         }
 
+        public String getUserId ()
+        {
+            return this.userId;
+        }
+
         @Override
         public void processRow ( final ResultSet resultSet ) throws SQLException
         {
-            final String storedPassword = resultSet.getString ( "password" );
+            final String storedPassword = resultSet.getString ( this.passwordColumnName );
 
             if ( storedPassword == null || storedPassword.isEmpty () )
             {
@@ -114,6 +129,10 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
             if ( validatePassword ( this.passwords, storedPassword ) )
             {
+                if ( this.userIdColumnName != null )
+                {
+                    this.userId = resultSet.getString ( "userIdColumn" );
+                }
                 this.result = true;
             }
         }
@@ -134,7 +153,9 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
     private PasswordEncoder passwordEncoder;
 
-    private boolean useProvidedUsername;
+    private String userIdColumnName;
+
+    private String passwordColumnName;
 
     public JdbcAuthenticationService ( final BundleContext context, final String id )
     {
@@ -195,13 +216,16 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
     protected UserInformation performAuthentication ( final ConnectionContext connection, final String username, final Map<PasswordEncoding, String> passwords ) throws AuthenticationException, SQLException
     {
-        final PasswordCheckRowCallback callback = new PasswordCheckRowCallback ( passwords );
+        final PasswordCheckRowCallback callback = new PasswordCheckRowCallback ( passwords, this.passwordColumnName, this.userIdColumnName );
         connection.query ( callback, this.findUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
 
         if ( !callback.isResult () )
         {
             return failure ( "User not found or password invalid", StatusCodes.INVALID_USER_OR_PASSWORD );
         }
+
+        final String userId = this.userIdColumnName != null ? callback.getUserId () : username;
+        logger.trace ( "Using user id: {}", userId );
 
         final List<String> roles;
 
@@ -287,12 +311,28 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         /*
          * We use the same query as for the password here. Only that we dump the whole checking and simple return the user entry if one was found.
          */
-        final List<String> entries = connection.queryForList ( String.class, this.findUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
+        final List<String> entries = connection.query ( new RowMapperAdapter<String> () {
+            @Override
+            public String mapRow ( final ResultSet resultSet ) throws SQLException, RowMapperMappingException
+            {
+                if ( JdbcAuthenticationService.this.userIdColumnName == null )
+                {
+                    return ""; // no username from SQL
+                }
+                else
+                {
+                    return resultSet.getString ( JdbcAuthenticationService.this.userIdColumnName );
+                }
+            }
+        }, this.findUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
 
         if ( entries.isEmpty () )
         {
             return null;
         }
+
+        final String userId = this.userIdColumnName != null ? entries.get ( 0 ) : username;
+        logger.trace ( "Using '{0}' as user id", userId );
 
         final List<String> roles;
 
@@ -304,17 +344,6 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         {
             roles = null;
         }
-
-        String userId;
-        if ( this.useProvidedUsername )
-        {
-            userId = username;
-        }
-        else
-        {
-            userId = entries.get ( 0 );
-        }
-        logger.trace ( "Using '{0}' as user id", userId );
 
         logger.trace ( "Found roles for user: {}", roles );
 
@@ -342,7 +371,8 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         this.findUserSql = cfg.getStringChecked ( "findUserSql", "Need 'findUserSql' to be set" );
         this.findRolesForUserSql = cfg.getString ( "findRolesForUserSql" );
         this.updatePasswordSql = cfg.getString ( "updatePasswordSql" );
-        this.useProvidedUsername = cfg.getBoolean ( "useProvidedUsername", true );
+        this.userIdColumnName = cfg.getString ( "userIdColumnName" );
+        this.passwordColumnName = cfg.getString ( "passwordColumnName", "password" );
 
         // now attach
 
