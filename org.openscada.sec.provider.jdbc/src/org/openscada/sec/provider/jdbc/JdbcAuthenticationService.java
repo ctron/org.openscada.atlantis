@@ -134,6 +134,8 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
     private PasswordEncoder passwordEncoder;
 
+    private boolean useProvidedUsername;
+
     public JdbcAuthenticationService ( final BundleContext context, final String id )
     {
         this.context = context;
@@ -303,9 +305,20 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
             roles = null;
         }
 
+        String userId;
+        if ( this.useProvidedUsername )
+        {
+            userId = username;
+        }
+        else
+        {
+            userId = entries.get ( 0 );
+        }
+        logger.trace ( "Using '{0}' as user id", userId );
+
         logger.trace ( "Found roles for user: {}", roles );
 
-        return new UserInformation ( username, roles );
+        return new UserInformation ( userId, roles );
     }
 
     public void update ( final Map<String, String> parameters ) throws Exception
@@ -329,6 +342,7 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         this.findUserSql = cfg.getStringChecked ( "findUserSql", "Need 'findUserSql' to be set" );
         this.findRolesForUserSql = cfg.getString ( "findRolesForUserSql" );
         this.updatePasswordSql = cfg.getString ( "updatePasswordSql" );
+        this.useProvidedUsername = cfg.getBoolean ( "useProvidedUsername", true );
 
         // now attach
 
