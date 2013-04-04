@@ -231,7 +231,7 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
         if ( this.findRolesForUserSql != null && !this.findRolesForUserSql.isEmpty () )
         {
-            roles = connection.queryForList ( String.class, this.findRolesForUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
+            roles = connection.queryForList ( String.class, this.findRolesForUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", userId ).getMap () );
         }
         else
         {
@@ -338,7 +338,7 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
         if ( this.findRolesForUserSql != null && !this.findRolesForUserSql.isEmpty () )
         {
-            roles = connection.queryForList ( String.class, this.findRolesForUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
+            roles = connection.queryForList ( String.class, this.findRolesForUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", userId ).getMap () );
         }
         else
         {
