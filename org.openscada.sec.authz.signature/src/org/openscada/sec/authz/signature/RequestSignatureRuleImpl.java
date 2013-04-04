@@ -20,7 +20,6 @@
 
 package org.openscada.sec.authz.signature;
 
-import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
@@ -29,7 +28,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.script.ScriptContext;
 import javax.script.SimpleScriptContext;
-import javax.xml.crypto.KeySelectorResult;
 
 import org.openscada.sec.AuthenticationImplementation;
 import org.openscada.sec.AuthorizationResult;
@@ -215,19 +213,8 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
         logger.debug ( "Running post processor" );
 
         final ScriptContext scriptContext = new SimpleScriptContext ();
+
         final Map<String, Object> scriptObjects = new HashMap<String, Object> ();
-
-        final KeySelectorResult keySelectorResult = result.getKeySelectorResult ();
-        if ( keySelectorResult instanceof X509KeySelectorResult )
-        {
-            final X509Certificate cert = ( (X509KeySelectorResult)keySelectorResult ).getCertificate ();
-            if ( cert != null )
-            {
-                logger.debug ( "User certifcate from result: {}", cert );
-                scriptObjects.put ( "certificate", cert );
-            }
-        }
-
         scriptObjects.put ( "authorizationContext", context );
         scriptObjects.put ( "authenticator", this.authenticator );
 
