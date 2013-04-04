@@ -183,12 +183,12 @@ public class RequestSignatureRuleImpl implements AuthorizationRule
                 return AuthorizationResult.createReject ( e );
             }
 
-            context.getContext ().put ( "signatureString", signatureString );
-            context.getContext ().put ( "signature", result.getSignature () );
-            context.getContext ().put ( "keySelectorResult", result.getKeySelectorResult () );
+            context.getContext ().put ( "xmlsig.signatureString", signatureString );
+            context.getContext ().put ( "xmlsig.signature", result.getSignature () );
+            context.getContext ().put ( "xmlsig.keySelectorResult", result.getKeySelectorResult () );
             if ( result.getKeySelectorResult () instanceof X509KeySelectorResult )
             {
-                context.getContext ().put ( "x509Certificate", ( (X509KeySelectorResult)result.getKeySelectorResult () ).getCertificate () );
+                context.getContext ().put ( "xmlsig.x509Certificate", ( (X509KeySelectorResult)result.getKeySelectorResult () ).getCertificate () );
             }
 
             postProcess ( context, result );
