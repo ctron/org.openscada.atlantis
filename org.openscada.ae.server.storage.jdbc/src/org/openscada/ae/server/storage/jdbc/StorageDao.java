@@ -42,4 +42,6 @@ public interface StorageDao
 
     public void dispose ();
 
+    public void cleanupArchive ();
+
 }

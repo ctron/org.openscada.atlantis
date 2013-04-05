@@ -211,4 +211,11 @@ public class JdbcStorage extends BaseStorage
         logger.info ( "jdbcStorageDAO destroyed" );
     }
 
+    public void cleanup ()
+    {
+        logger.info ( "Cleaning up archive..." );
+        this.jdbcStorageDao.cleanupArchive ();
+        logger.info ( "Cleaning up archive... done!" );
+    }
+
 }

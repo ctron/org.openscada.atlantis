@@ -553,7 +553,7 @@ public abstract class AbstractJdbcStorageDao extends BaseStorageDao
         return this.insertAttributesSql;
     }
 
-    protected void cleanupArchive ()
+    public void cleanupArchive ()
     {
         try
         {
