@@ -591,7 +591,7 @@ public abstract class AbstractJdbcStorageDao extends BaseStorageDao
             {
                 connectionContext.setAutoCommit ( true );
 
-                final Date d = c.getTime ();
+                final java.sql.Date d = new java.sql.Date ( c.getTimeInMillis () );
                 logger.info ( "Starting to delete events up to {}", d );
                 final int result = connectionContext.update ( String.format ( AbstractJdbcStorageDao.this.cleanupArchiveSql, getSchema () ), d );
                 logger.info ( "Successfully cleaned up {} entries", result );
