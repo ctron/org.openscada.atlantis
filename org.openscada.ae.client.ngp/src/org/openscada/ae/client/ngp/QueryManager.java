@@ -105,7 +105,7 @@ public class QueryManager
         }
         else
         {
-            query.handleStateChange ( state, error == null ? null : new OperationException ( error.getMessage () ).fillInStackTrace () );
+            query.handleStateChange ( query.getListener (), state, error == null ? null : new OperationException ( error.getMessage () ).fillInStackTrace () );
         }
     }
 
@@ -117,7 +117,7 @@ public class QueryManager
             return;
         }
 
-        query.handleData ( Events.convertToEvent ( events ) );
+        query.handleData ( query.getListener (), Events.convertToEvent ( events ) );
     }
 
 }

@@ -1,6 +1,8 @@
 /*
- * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * This file is part of the openSCADA project
+ * 
+ * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jürgen Rose (cptmauli@googlemail.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -69,14 +71,16 @@ public class QueryImpl implements Query
         this.connection.sendLoadMore ( this.queryId, count );
     }
 
-    public void handleStateChange ( final QueryState state, final Throwable error )
+    public void handleStateChange ( final QueryListener listener, final QueryState state, final Throwable error )
     {
         this.executor.execute ( new Runnable () {
-
             @Override
             public void run ()
             {
-                QueryImpl.this.listener.queryStateChanged ( state, error );
+                if ( listener != null )
+                {
+                    listener.queryStateChanged ( state, error );
+                }
             }
         } );
     }
@@ -87,19 +91,27 @@ public class QueryImpl implements Query
 
         if ( this.listener != null )
         {
-            handleStateChange ( QueryState.DISCONNECTED, null );
+            handleStateChange ( this.listener, QueryState.DISCONNECTED, null );
             this.listener = null;
         }
     }
 
-    public void handleData ( final List<Event> data )
+    public void handleData ( final QueryListener listener, final List<Event> data )
     {
         this.executor.execute ( new Runnable () {
             @Override
             public void run ()
             {
-                QueryImpl.this.listener.queryData ( data );
+                if ( listener != null )
+                {
+                    listener.queryData ( data );
+                }
             };
         } );
+    }
+
+    public QueryListener getListener ()
+    {
+        return this.listener;
     }
 }
