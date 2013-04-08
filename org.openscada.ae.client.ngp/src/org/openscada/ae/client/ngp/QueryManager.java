@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jürgen Rose (cptmauli@googlemail.com)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -103,7 +105,7 @@ public class QueryManager
         }
         else
         {
-            query.handleStateChange ( state, new OperationException ( error.getMessage () ).fillInStackTrace () );
+            query.handleStateChange ( state, error == null ? null : new OperationException ( error.getMessage () ).fillInStackTrace () );
         }
     }
 
