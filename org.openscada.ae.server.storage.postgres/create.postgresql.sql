@@ -1,12 +1,12 @@
 -- DROP TABLE openscada_ae_events;
-CREATE TABLE openscada_ae_events
+CREATE TABLE openscada_ae_events_json
 (
   id                           UUID NOT NULL,
   instance_id                  VARCHAR(32),
   source_timestamp             TIMESTAMP,
   entry_timestamp              TIMESTAMP,
   data                         TEXT,
-  CONSTRAINT pk_openscada_ae_events PRIMARY KEY (id)
+  CONSTRAINT pk_openscada_ae_events_json PRIMARY KEY (id)
 );
 
 -- DROP TABLE openscada_ae_rep;
@@ -70,7 +70,7 @@ BEGIN
 
     -- for boolean/numbers this is straight forward
     IF rettype IN ('boolean', 'long', 'double') THEN
-        SELECT 'openscada_ae_events_' || property || '_' || rettype || '_idx' INTO idx_name;
+        SELECT 'openscada_ae_events_json_' || property || '_' || rettype || '_idx' INTO idx_name;
         RAISE NOTICE 'try to create index %', idx_name;
         SELECT count(*) > 0 FROM pg_class WHERE relname = idx_name INTO indexexists;
         IF indexexists THEN
@@ -86,7 +86,7 @@ BEGIN
     -- for strings we have to create two indexes, a normal btree and a gist index
     IF rettype = 'string' THEN
         -- btree
-        SELECT 'openscada_ae_events_' || property || '_' || rettype || '_idx' INTO idx_name;
+        SELECT 'openscada_ae_events_json_' || property || '_' || rettype || '_idx' INTO idx_name;
         RAISE NOTICE 'try to create index %', idx_name;
         SELECT count(*) > 0 FROM pg_class WHERE relname = idx_name INTO indexexists;
         IF indexexists THEN
@@ -203,11 +203,11 @@ $BODY$
   LANGUAGE plpgsql IMMUTABLE;
 
 
-CREATE INDEX idx_openscada_ae_events_instance_id ON openscada_ae_events (instance_id);
-CREATE INDEX idx_openscada_ae_events_source_timestamp ON openscada_ae_events (source_timestamp);
-CREATE INDEX idx_openscada_ae_events_source_timestamp_d ON openscada_ae_events (source_timestamp DESC);
-CREATE INDEX idx_openscada_ae_events_entry_timestamp ON openscada_ae_events (entry_timestamp);
-CREATE INDEX idx_openscada_ae_events_entry_timestamp_d ON openscada_ae_events (entry_timestamp DESC);
+CREATE INDEX idx_openscada_ae_events_json_instance_id ON openscada_ae_events_json (instance_id);
+CREATE INDEX idx_openscada_ae_events_json_source_timestamp ON openscada_ae_events_json (source_timestamp);
+CREATE INDEX idx_openscada_ae_events_json_source_timestamp_d ON openscada_ae_events_json (source_timestamp DESC);
+CREATE INDEX idx_openscada_ae_events_json_entry_timestamp ON openscada_ae_events_json (entry_timestamp);
+CREATE INDEX idx_openscada_ae_events_json_entry_timestamp_d ON openscada_ae_events_json (entry_timestamp DESC);
 
 SELECT openscada_ae_create_index('monitorType', 'string');
 SELECT openscada_ae_create_index('eventType', 'string');
@@ -222,4 +222,5 @@ SELECT openscada_ae_create_index('actorName', 'string');
 SELECT openscada_ae_create_index('actorType', 'string');
 SELECT openscada_ae_create_index('severity', 'string');
 SELECT openscada_ae_create_index('item', 'string');
+SELECT openscada_ae_create_index('itemDescription', 'string');
 

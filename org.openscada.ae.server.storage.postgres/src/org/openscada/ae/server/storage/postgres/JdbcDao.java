@@ -75,15 +75,13 @@ public class JdbcDao
 
     private static final Logger logger = LoggerFactory.getLogger ( JdbcDao.class );
 
-    // this will be changed from OPENSCADA_AE_EVENTS_json to OPENSCADA_AE_EVENTS when debugging is finished!
-
-    private static final String cleanupArchiveSql = "DELETE FROM %sOPENSCADA_AE_EVENTS_json " //
+    private static final String cleanupArchiveSql = "DELETE FROM %sOPENSCADA_AE_EVENTS_JSON " //
             + "WHERE instance_id = ? AND SOURCE_TIMESTAMP < ?";
 
-    private static final String loadEventSql = "SELECT data FROM %sOPENSCADA_AE_EVENTS_json " //
+    private static final String loadEventSql = "SELECT data FROM %sOPENSCADA_AE_EVENTS_JSON " //
             + "WHERE instance_id = ? AND ID = ?::UUID";
 
-    private static final String storeEventSql = "INSERT INTO %sOPENSCADA_AE_EVENTS_json " //
+    private static final String storeEventSql = "INSERT INTO %sOPENSCADA_AE_EVENTS_JSON " //
             + "(id, instance_id, source_timestamp, entry_timestamp, data) " //
             + "VALUES " //
             + "(?::UUID, ?, ?, ?, ?);"; //
@@ -93,10 +91,10 @@ public class JdbcDao
             + "VALUES " //
             + "(?::VARCHAR, ?, ?, ?);"; //
 
-    private static final String updateEventSql = "UPDATE %sOPENSCADA_AE_EVENTS_json " //
+    private static final String updateEventSql = "UPDATE %sOPENSCADA_AE_EVENTS_JSON " //
             + "SET data = ? WHERE id = ?::UUID;"; //
 
-    private static final String selectEventsSql = "SELECT data FROM %sOPENSCADA_AE_EVENTS_json " //
+    private static final String selectEventsSql = "SELECT data FROM %sOPENSCADA_AE_EVENTS_JSON " //
             + "WHERE instance_id = ? "; //
 
     private static final String defaultOrderSql = " ORDER BY source_timestamp DESC, entry_timestamp DESC, id DESC;";
@@ -143,7 +141,7 @@ public class JdbcDao
                 connectionContext.setAutoCommit ( true );
                 final Object[] parameters = new Object[5];
                 parameters[0] = event.getId ();
-                parameters[1] = instance;
+                parameters[1] = JdbcDao.this.instance;
                 parameters[2] = new Timestamp ( event.getSourceTimestamp ().getTime () );
                 parameters[3] = new Timestamp ( event.getEntryTimestamp ().getTime () );
                 parameters[4] = EventConverter.INSTANCE.toJson ( event );
