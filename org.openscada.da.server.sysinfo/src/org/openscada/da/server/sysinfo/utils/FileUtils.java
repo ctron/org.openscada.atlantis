@@ -31,13 +31,20 @@ public class FileUtils
     public static String[] readFile ( final File file ) throws IOException
     {
         final BufferedReader reader = new BufferedReader ( new FileReader ( file ) );
-
         final List<String> content = new ArrayList<String> ();
 
-        String line = null;
-        while ( ( line = reader.readLine () ) != null )
+        try
         {
-            content.add ( line );
+
+            String line = null;
+            while ( ( line = reader.readLine () ) != null )
+            {
+                content.add ( line );
+            }
+        }
+        finally
+        {
+            reader.close ();
         }
 
         return content.toArray ( new String[content.size ()] );
