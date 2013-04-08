@@ -49,7 +49,6 @@
       <import plugin="org.openscada.da.client"/>
       <import plugin="org.openscada.da.datasource"/>
       <import plugin="org.openscada.da.master"/>
-      <import plugin="org.openscada.external.osgi.enterprise"/>
       <import plugin="com.google.gson"/>
       <import plugin="javax.servlet"/>
       <import plugin="org.eclipse.osgi.services"/>
