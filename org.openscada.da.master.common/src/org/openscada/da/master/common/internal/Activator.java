@@ -71,7 +71,7 @@ public class Activator implements BundleActivator
     {
         Activator.instance = this;
 
-        this.stringInterner = InternerHelper.makeInterner ( "org.openscada.da.master.common.stringInterner", "java" );
+        this.stringInterner = InternerHelper.makeInterner ( "org.openscada.da.master.common.stringInterner", "java" ); //$NON-NLS-1$ //$NON-NLS-2$
 
         this.eventProcessor = new EventProcessor ( context );
         this.eventProcessor.open ();
