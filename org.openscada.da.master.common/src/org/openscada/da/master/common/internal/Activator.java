@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -36,14 +38,19 @@ import org.openscada.da.master.common.negate.NegateHandlerFactoryImpl;
 import org.openscada.da.master.common.round.RoundHandlerFactoryImpl;
 import org.openscada.da.master.common.scale.ScaleHandlerFactoryImpl;
 import org.openscada.da.master.common.sum.CommonSumHandlerFactoryImpl;
+import org.openscada.utils.interner.InternerHelper;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.util.tracker.ServiceTracker;
 
+import com.google.common.collect.Interner;
+
 public class Activator implements BundleActivator
 {
+
+    private static Activator instance;
 
     private EventProcessor eventProcessor;
 
@@ -53,6 +60,8 @@ public class Activator implements BundleActivator
 
     private final Collection<AbstractServiceConfigurationFactory<?>> factories = new LinkedList<AbstractServiceConfigurationFactory<?>> ();
 
+    private Interner<String> stringInterner;
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#start(org.osgi.framework.BundleContext)
@@ -60,6 +69,10 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
+        Activator.instance = this;
+
+        this.stringInterner = InternerHelper.makeInterner ( "org.openscada.da.master.common.stringInterner", "java" );
+
         this.eventProcessor = new EventProcessor ( context );
         this.eventProcessor.open ();
 
@@ -140,6 +153,11 @@ public class Activator implements BundleActivator
 
     }
 
+    public static Interner<String> getStringInterner ()
+    {
+        return instance.stringInterner;
+    }
+
     /*
      * (non-Javadoc)
      * @see org.osgi.framework.BundleActivator#stop(org.osgi.framework.BundleContext)
@@ -160,6 +178,8 @@ public class Activator implements BundleActivator
 
         this.eventProcessor.close ();
         this.eventProcessor = null;
+
+        Activator.instance = null;
     }
 
 }

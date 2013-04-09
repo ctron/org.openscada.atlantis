@@ -33,6 +33,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.da.master.common.internal.Activator;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
@@ -41,9 +42,16 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
 {
     private boolean active;
 
+    private final String attrValueOriginal;
+
+    private final String attrActive;
+
     public NegateHandlerImpl ( final String configurationId, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, NegateHandlerFactoryImpl.FACTORY_ID, NegateHandlerFactoryImpl.FACTORY_ID );
+
+        this.attrActive = getPrefixed ( "active", Activator.getStringInterner () );
+        this.attrValueOriginal = getPrefixed ( "value.original", Activator.getStringInterner () );
     }
 
     @Override
@@ -53,7 +61,7 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
 
         if ( this.active )
         {
-            builder.setAttribute ( getPrefixed ( "value.original" ), builder.getValue () ); //$NON-NLS-1$
+            builder.setAttribute ( this.attrValueOriginal, builder.getValue () );
         }
 
         final Variant val = builder.getValue ();
@@ -90,7 +98,7 @@ public class NegateHandlerImpl extends AbstractCommonHandlerImpl
 
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( getPrefixed ( "active" ), this.active ? Variant.TRUE : Variant.FALSE ); //$NON-NLS-1$
+        builder.setAttribute ( this.attrActive, this.active ? Variant.TRUE : Variant.FALSE );
     }
 
     @Override

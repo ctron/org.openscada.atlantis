@@ -40,6 +40,8 @@ import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.google.common.collect.Interner;
+
 public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMasterHandlerImpl
 {
 
@@ -53,6 +55,10 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
     private final String configurationId;
 
+    private final String dotPrefix;
+
+    private final int dotPrefixLength;
+
     public AbstractConfigurableMasterHandlerImpl ( final String configurationId, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker, final String prefix, final String factoryId )
     {
         super ( poolTracker, priority );
@@ -60,9 +66,12 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         this.tracker = caTracker;
         this.prefix = prefix;
         this.factoryId = factoryId;
+
+        this.dotPrefix = this.prefix + ".";
+        this.dotPrefixLength = this.dotPrefix.length ();
     }
 
-    protected String getPrefixed ( final String id )
+    protected String getPrefixed ( final String id, final Interner<String> stringInterner )
     {
         if ( id == null )
         {
@@ -70,7 +79,7 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         }
         else
         {
-            return this.prefix + "." + id;
+            return stringInterner.intern ( this.dotPrefix + id );
         }
     }
 
@@ -87,9 +96,9 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         for ( final Map.Entry<String, Variant> entry : request.getAttributes ().entrySet () )
         {
             final String key = entry.getKey ();
-            if ( key.startsWith ( this.prefix + "." ) )
+            if ( key.startsWith ( this.dotPrefix ) )
             {
-                attributes.put ( key.substring ( ( this.prefix + "." ).length () ), entry.getValue () );
+                attributes.put ( key.substring ( this.dotPrefixLength ), entry.getValue () );
             }
         }
 
@@ -111,14 +120,14 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
 
             for ( final String attr : attributes.keySet () )
             {
-                result.put ( attr, new WriteAttributeResult ( new OperationException ( String.format ( "Attribute '%s' is not supported", this.prefix + "." + attr ) ) ) );
+                result.put ( attr, new WriteAttributeResult ( new OperationException ( String.format ( "Attribute '%s' is not supported", this.dotPrefix + attr ) ) ) ); //$NON-NLS-1$
             }
 
             final Map<String, Variant> newAttributes = new HashMap<String, Variant> ( request.getAttributes () );
             final WriteAttributeResults fullResults = new WriteAttributeResults ();
             for ( final Map.Entry<String, WriteAttributeResult> entry : result.entrySet () )
             {
-                final String fullKey = this.prefix + "." + entry.getKey ();
+                final String fullKey = this.dotPrefix + entry.getKey ();
                 fullResults.put ( fullKey, entry.getValue () );
 
                 // remove from list of "to be written" attributes
@@ -190,9 +199,9 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
         final ConfigurationAdministrator service = this.tracker.getService ();
         if ( ! ( service instanceof ConfigurationAdministrator ) )
         {
-            logger.info ( "Unable to set attributes - Configuration administrator not available" );
+            logger.info ( "Unable to set attributes - Configuration administrator not available" ); //$NON-NLS-1$
 
-            final OperationException error = new OperationException ( "Configuration administrator not available" );
+            final OperationException error = new OperationException ( "Configuration administrator not available" ); //$NON-NLS-1$
             for ( final String attr : data.keySet () )
             {
                 result.put ( attr, new WriteAttributeResult ( error ) );
@@ -219,11 +228,11 @@ public abstract class AbstractConfigurableMasterHandlerImpl extends AbstractMast
             {
                 try
                 {
-                    logger.info ( "Completed applying: {}", future.get () );
+                    logger.info ( "Completed applying: {}", future.get () ); //$NON-NLS-1$
                 }
                 catch ( final Exception e )
                 {
-                    logger.warn ( "Failed applying", e );
+                    logger.warn ( "Failed applying", e ); //$NON-NLS-1$
                 }
             }
         } );
