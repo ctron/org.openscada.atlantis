@@ -218,4 +218,10 @@ public class JdbcStorage extends BaseStorage
         logger.info ( "Cleaning up archive... done!" );
     }
 
+    public void showQueueSize ()
+    {
+        // should be called by the OSGi console
+        System.out.println ( "Storage queue size: " + this.queueSize.get () );
+    }
+
 }
