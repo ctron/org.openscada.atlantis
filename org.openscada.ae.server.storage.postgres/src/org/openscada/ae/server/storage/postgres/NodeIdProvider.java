@@ -20,6 +20,8 @@
 
 package org.openscada.ae.server.storage.postgres;
 
+import org.openscada.ae.server.storage.postgres.internal.JdbcStorage;
+
 /**
  * potential network access, so we don't want to call in a constructor
  * getNodeId, therefor this interface will delegate it to {@link JdbcStorage}

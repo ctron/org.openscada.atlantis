@@ -18,7 +18,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae.server.storage.postgres;
+package org.openscada.ae.server.storage.postgres.internal;
 
 import java.sql.SQLException;
 import java.util.HashSet;
@@ -38,6 +38,8 @@ import org.openscada.ae.Event.Fields;
 import org.openscada.ae.server.storage.BaseStorage;
 import org.openscada.ae.server.storage.Query;
 import org.openscada.ae.server.storage.StoreListener;
+import org.openscada.ae.server.storage.postgres.JdbcDao;
+import org.openscada.ae.server.storage.postgres.NodeIdProvider;
 import org.openscada.utils.collection.BoundedPriorityQueueSet;
 import org.openscada.utils.filter.Filter;
 import org.openscada.utils.filter.FilterParseException;

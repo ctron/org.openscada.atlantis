@@ -18,10 +18,11 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae.server.storage.postgres;
+package org.openscada.ae.server.storage.postgres.internal;
 
 import java.util.Calendar;
 
+import org.openscada.ae.server.storage.postgres.JdbcDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

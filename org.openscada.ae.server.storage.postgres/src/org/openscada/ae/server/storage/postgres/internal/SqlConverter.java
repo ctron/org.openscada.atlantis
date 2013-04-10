@@ -18,7 +18,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.ae.server.storage.postgres;
+package org.openscada.ae.server.storage.postgres.internal;
 
 import java.io.Serializable;
 import java.sql.Timestamp;
@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.openscada.ae.server.storage.postgres.NotSupportedException;
 import org.openscada.core.Variant;
 import org.openscada.core.VariantEditor;
 import org.openscada.utils.filter.Assertion;
