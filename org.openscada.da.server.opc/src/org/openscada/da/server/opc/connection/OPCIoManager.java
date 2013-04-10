@@ -637,6 +637,8 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     protected NotifyFuture<Result<WriteRequest>> addWriteRequest ( final OPCWriteRequest request )
     {
+        logger.debug ( "Adding write request: {}", request );
+
         final FutureTask<Result<WriteRequest>> future;
 
         synchronized ( this )

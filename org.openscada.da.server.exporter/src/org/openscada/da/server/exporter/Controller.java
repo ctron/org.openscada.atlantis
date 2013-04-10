@@ -150,7 +150,7 @@ public class Controller
                     }
                     catch ( final ConfigurationError e )
                     {
-                        logger.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getRef (), export.getUri () ) );
+                        logger.error ( String.format ( "Unable to configure export (%s) for hive (%s)", export.getUri (), hive.getRef () ), e );
                     }
                 }
                 this.hives.add ( hiveExport );
