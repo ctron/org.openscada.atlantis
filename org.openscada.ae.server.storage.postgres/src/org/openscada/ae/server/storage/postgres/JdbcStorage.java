@@ -133,7 +133,10 @@ public class JdbcStorage extends BaseStorage
                     {
                         JdbcStorage.this.jdbcDao.storeReplication ( eventToStore );
                     }
-                    JdbcStorage.this.accessor.getConnection ().commit ();
+                    if ( !JdbcStorage.this.accessor.getConnection ().getAutoCommit () )
+                    {
+                        JdbcStorage.this.accessor.getConnection ().commit ();
+                    }
                     if ( listener != null )
                     {
                         try
