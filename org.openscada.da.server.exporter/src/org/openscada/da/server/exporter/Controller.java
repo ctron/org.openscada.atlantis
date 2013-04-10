@@ -23,6 +23,7 @@ package org.openscada.da.server.exporter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,10 +59,39 @@ public class Controller
         this ( ConfigurationDocument.Factory.parse ( file ) );
     }
 
+    /**
+     * @since 1.1
+     */
     public Controller ( final HiveFactory defaultHiveFactory, final ConfigurationDocument configurationDocument )
     {
         this.defaultHiveFactory = defaultHiveFactory;
         configure ( configurationDocument );
+    }
+
+    /**
+     * @since 1.1
+     */
+    public Controller ( final HiveFactory defaultHiveFactory, final URL url ) throws ConfigurationException
+    {
+        this ( defaultHiveFactory, parse ( url ) );
+    }
+
+    private static ConfigurationDocument parse ( final URL url ) throws ConfigurationException
+    {
+        final ClassLoader ctx = Thread.currentThread ().getContextClassLoader ();
+        try
+        {
+            Thread.currentThread ().setContextClassLoader ( Controller.class.getClassLoader () );
+            return ConfigurationDocument.Factory.parse ( url );
+        }
+        catch ( final Exception e )
+        {
+            throw new ConfigurationException ( "Failed to parse document", e );
+        }
+        finally
+        {
+            Thread.currentThread ().setContextClassLoader ( ctx );
+        }
     }
 
     /**

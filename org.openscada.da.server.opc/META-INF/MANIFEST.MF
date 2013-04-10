@@ -94,4 +94,5 @@ Export-Package: org.openscada.da.server.opc;version="1.1.0";
    org.openscada.opc.lib.da,
    org.openscada.opc.dcom.common",
  org.openscada.da.server.opc.preload;version="1.1.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc.connection,org.openscada.da.server.common.item.factory"
+Service-Component: hive.xml
 

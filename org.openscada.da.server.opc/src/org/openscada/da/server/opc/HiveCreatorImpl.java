@@ -1,6 +1,7 @@
 /*
  * This file is part of the OpenSCADA project
- * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -17,24 +18,26 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.server.exporter;
+package org.openscada.da.server.opc;
 
 import org.openscada.da.core.server.Hive;
-import org.openscada.da.server.exporter.HiveConfigurationType;
+import org.openscada.da.server.common.HiveCreator;
+import org.w3c.dom.Node;
 
-/**
- * A hive factory which needs to create a new hive based on its implementation. 
- * @author Jens Reimann
- *
- */
-public interface HiveFactory
+public class HiveCreatorImpl implements HiveCreator
 {
-    /**
-     * Create a new hive based on the reference and the configuration
-     * @param reference the reference to the hive
-     * @param configuration the configuration of the hive that is provided in the master configuration
-     * @return the new hive
-     * @throws ConfigurationException
-     */
-    public abstract Hive createHive ( String reference, HiveConfigurationType configuration ) throws ConfigurationException;
+
+    @Override
+    public Hive createHive ( final String reference, final Node node ) throws Exception
+    {
+        if ( reference.equals ( org.openscada.da.server.opc.Hive.class.getName () ) )
+        {
+            return new org.openscada.da.server.opc.Hive ( node );
+        }
+        else
+        {
+            return null;
+        }
+    }
+
 }
