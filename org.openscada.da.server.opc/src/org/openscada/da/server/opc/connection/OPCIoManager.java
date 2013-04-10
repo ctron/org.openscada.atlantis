@@ -170,12 +170,9 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     public synchronized void unrequestItem ( final String itemId )
     {
         logger.debug ( "Adding item to unrequest queue: {}", itemId );
-        this.itemUnregistrations.add ( itemId );
-    }
 
-    public void requestItem ( final ItemRegistrationRequest itemDef )
-    {
-        requestItems ( Arrays.asList ( itemDef ) );
+        this.itemUnregistrations.add ( itemId );
+        this.requestMap.remove ( itemId );
     }
 
     public void requestItemById ( final String itemId )
