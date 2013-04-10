@@ -403,6 +403,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     @Override
     public void subscribeItem ( final Session session, final String itemId ) throws InvalidSessionException, InvalidItemException
     {
+        logger.debug ( "Subscribing item: {}", itemId );
+
         // validate the session first
         final SessionCommon sessionCommon = validateSession ( session );
 
@@ -426,6 +428,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     @Override
     public void unsubscribeItem ( final Session session, final String itemId ) throws InvalidSessionException, InvalidItemException
     {
+        logger.debug ( "Unsubscribing item: {}", itemId );
+
         final SessionCommon sessionCommon = validateSession ( session );
 
         // unsubscribe using the new item subscription manager
@@ -441,6 +445,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     @Override
     public void registerItem ( final DataItem item )
     {
+        logger.debug ( "Register item: {}", item );
+
         try
         {
             this.itemMapWriteLock.lock ();
@@ -496,6 +502,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      */
     public void unregisterItem ( final DataItem item )
     {
+        logger.debug ( "Unregister item: {}", item );
+
         try
         {
             this.itemMapWriteLock.lock ();
@@ -647,6 +655,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      */
     protected NotifyFuture<WriteAttributeResults> processWriteAttributes ( final SessionCommon session, final String itemId, final Map<String, Variant> attributes, final org.openscada.core.server.OperationParameters operationParameters )
     {
+        logger.debug ( "Process write attributes - itemId: {}, attributes: {}", itemId, attributes );
+
         final DataItem item = retrieveItem ( itemId );
 
         if ( item == null )
@@ -707,7 +717,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      */
     protected NotifyFuture<WriteResult> processWrite ( final SessionCommon session, final String itemId, final Variant value, final org.openscada.core.server.OperationParameters effectiveOperationParameters )
     {
-        logger.debug ( "Processing write - granted - itemId: {}", itemId );
+        logger.debug ( "Processing write - granted - itemId: {}, value: {}", itemId, value );
 
         final DataItem item = retrieveItem ( itemId );
 
@@ -789,6 +799,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      */
     public void recheckGrantedItems ()
     {
+        logger.debug ( "Recheck granted items" );
+
         final List<Object> topics = this.itemSubscriptionManager.getAllGrantedTopics ();
 
         for ( final Object topic : topics )
