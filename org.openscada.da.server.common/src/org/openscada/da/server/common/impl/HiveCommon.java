@@ -795,25 +795,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     }
 
     /**
-     * Will re-check all items in granted state. Call when your list of known
-     * items
-     * has changed in order to give granted but not connected subscriptions a
-     * chance
-     * to be created by the factories.
-     */
-    public void recheckGrantedItems ()
-    {
-        logger.debug ( "Recheck granted items" );
-
-        final List<Object> topics = this.itemSubscriptionManager.getAllGrantedTopics ();
-
-        for ( final Object topic : topics )
-        {
-            retrieveItem ( topic.toString () );
-        }
-    }
-
-    /**
      * Gets a set of all items in granted state.
      * 
      * @return The list of granted items.
