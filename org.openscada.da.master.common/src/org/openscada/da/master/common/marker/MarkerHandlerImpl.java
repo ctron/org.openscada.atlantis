@@ -36,6 +36,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.da.master.common.internal.Activator;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
@@ -91,10 +92,14 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
 
     private final EventProcessor eventProcessor;
 
+    private final String attrActive;
+
     public MarkerHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, MarkerHandlerFactoryImpl.FACTORY_ID + "." + configurationId, MarkerHandlerFactoryImpl.FACTORY_ID );
         this.eventProcessor = eventProcessor;
+
+        this.attrActive = getPrefixed ( "active", Activator.getStringInterner () );
     }
 
     @Override
@@ -119,7 +124,7 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
         {
             if ( this.configuration.active || this.configuration.alwaysExport )
             {
-                builder.setAttribute ( getPrefixed ( "active" ), Variant.valueOf ( this.configuration.active ) ); //$NON-NLS-1$
+                builder.setAttribute ( this.attrActive, Variant.valueOf ( this.configuration.active ) );
             }
         }
     }
@@ -143,11 +148,11 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
             final String value = entry.getValue ();
             if ( value == null || value.isEmpty () )
             {
-                markers.put ( entry.getKey (), true );
+                markers.put ( Activator.getStringInterner ().intern ( entry.getKey () ), true );
             }
             else
             {
-                markers.put ( entry.getKey (), value );
+                markers.put ( Activator.getStringInterner ().intern ( entry.getKey () ), value );
             }
         }
         c.setMarkers ( markers );
@@ -162,7 +167,7 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
     protected void injectEventAttributes ( final EventBuilder builder )
     {
         super.injectEventAttributes ( builder );
-        builder.attribute ( Fields.MONITOR_TYPE, "MARKER" );
+        builder.attribute ( Fields.MONITOR_TYPE, "MARKER" ); //$NON-NLS-1$
     }
 
     @Override
@@ -176,7 +181,7 @@ public class MarkerHandlerImpl extends AbstractCommonHandlerImpl
 
             if ( active != null && !active.isNull () )
             {
-                data.put ( "active", "" + active.asBoolean () ); //$NON-NLS-1$
+                data.put ( "active", active.asBoolean () ? "true" : "false" ); //$NON-NLS-1$
             }
         }
 

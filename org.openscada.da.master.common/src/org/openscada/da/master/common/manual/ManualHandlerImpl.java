@@ -40,6 +40,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.da.master.common.internal.Activator;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
@@ -201,11 +202,41 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
     private ManualStateData state = new ManualStateData ( Variant.NULL, null, null, null );
 
+    private final String attrActive;
+
+    private final String attrUser;
+
+    private final String attrReason;
+
+    private final String attrValueOriginal;
+
+    private final String attrErrorOriginal;
+
+    private final String attrErrorCountOriginal;
+
+    private final String attrErrorItemsOriginal;
+
+    private final String attrTimestampOriginal;
+
+    private final String attrValue;
+
     public ManualHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, ManualHandlerFactoryImpl.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
         this.id = configurationId;
         this.eventProcessor = eventProcessor;
+
+        this.attrActive = getPrefixed ( "active", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrUser = getPrefixed ( "user", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrReason = getPrefixed ( "reason", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrValue = getPrefixed ( "value", Activator.getStringInterner () ); //$NON-NLS-1$
+
+        this.attrValueOriginal = getPrefixed ( "value.original", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrErrorOriginal = getPrefixed ( "error.original", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrTimestampOriginal = getPrefixed ( "timestamp.original", Activator.getStringInterner () ); //$NON-NLS-1$
+
+        this.attrErrorCountOriginal = getPrefixed ( "error.count.original", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrErrorItemsOriginal = getPrefixed ( "error.items.original", Activator.getStringInterner () ); //$NON-NLS-1$
     }
 
     @Override
@@ -238,7 +269,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         // apply manual value : manual value is active
 
         final Variant originalError = builder.getAttributes ().remove ( "error" ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "error.original" ), originalError ); //$NON-NLS-1$
+        builder.setAttribute ( this.attrErrorOriginal, originalError );
         builder.setAttribute ( "error", Variant.FALSE ); //$NON-NLS-1$
         builder.setSubscriptionState ( SubscriptionState.CONNECTED );
         builder.setSubscriptionError ( null );
@@ -247,29 +278,29 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
         if ( originalErrorCount != null )
         {
             builder.setAttribute ( "error.count", Variant.valueOf ( 0 ) ); //$NON-NLS-1$
-            builder.setAttribute ( getPrefixed ( "error.count.original" ), originalErrorCount ); //$NON-NLS-1$
+            builder.setAttribute ( this.attrErrorCountOriginal, originalErrorCount );
         }
 
         final Variant originalErrorItems = builder.getAttributes ().remove ( "error.items" ); //$NON-NLS-1$
         if ( originalErrorItems != null )
         {
             builder.setAttribute ( "error.items", Variant.valueOf ( "" ) ); //$NON-NLS-1$ //$NON-NLS-2$
-            builder.setAttribute ( getPrefixed ( "error.items.original" ), originalErrorItems ); //$NON-NLS-1$
+            builder.setAttribute ( this.attrErrorItemsOriginal, originalErrorItems );
         }
 
-        builder.setAttribute ( getPrefixed ( "value.original" ), originalValue ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "active" ), Variant.TRUE ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( null ), Variant.TRUE );
+        builder.setAttribute ( this.attrValueOriginal, originalValue );
+        builder.setAttribute ( this.attrActive, Variant.TRUE );
+        builder.setAttribute ( getPrefixed ( null, null ), Variant.TRUE );
 
         builder.setValue ( this.state.getValue () );
 
         if ( state.getUser () != null )
         {
-            builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( state.getUser () ) ); //$NON-NLS-1$
+            builder.setAttribute ( this.attrUser, Variant.valueOf ( state.getUser () ) );
         }
         if ( state.getReason () != null )
         {
-            builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( state.getReason () ) ); //$NON-NLS-1$
+            builder.setAttribute ( this.attrReason, Variant.valueOf ( state.getReason () ) );
         }
         injectTimestamp ( builder, state );
     }
@@ -296,7 +327,7 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
             builder.setAttribute ( "timestamp", Variant.valueOf ( state.getTimestmap ().getTime () ) ); //$NON-NLS-1$
             if ( originalTimestamp != null )
             {
-                builder.setAttribute ( getPrefixed ( "timestamp.original" ), originalTimestamp ); //$NON-NLS-1$
+                builder.setAttribute ( this.attrTimestampOriginal, originalTimestamp );
             }
         }
     }
@@ -415,11 +446,11 @@ public class ManualHandlerImpl extends AbstractCommonHandlerImpl
 
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( getPrefixed ( null ), this.state.getValue ().isNull () ? Variant.FALSE : Variant.TRUE );
-        builder.setAttribute ( getPrefixed ( "active" ), this.state.getValue ().isNull () ? Variant.FALSE : Variant.TRUE ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "value" ), this.state.getValue () ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "reason" ), Variant.valueOf ( this.state.getReason () ) ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( this.state.getUser () ) ); //$NON-NLS-1$
+        builder.setAttribute ( getPrefixed ( null, null ), this.state.getValue ().isNull () ? Variant.FALSE : Variant.TRUE );
+        builder.setAttribute ( this.attrActive, this.state.getValue ().isNull () ? Variant.FALSE : Variant.TRUE );
+        builder.setAttribute ( this.attrValue, this.state.getValue () );
+        builder.setAttribute ( this.attrReason, Variant.valueOf ( this.state.getReason () ) );
+        builder.setAttribute ( this.attrUser, Variant.valueOf ( this.state.getUser () ) );
     }
 
     @Override

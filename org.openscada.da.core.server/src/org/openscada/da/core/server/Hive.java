@@ -117,17 +117,4 @@ public interface Hive extends Service<Session>
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( Session session, String itemId, Map<String, Variant> attribute, OperationParameters operationParameters, CallbackHandler callbackHandler ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException;
 
     public HiveBrowser getBrowser ();
-
-    /**
-     * Validate an item it.
-     * An item ID is valid if either the item already exists, or it can be
-     * created on
-     * the fly (e.g. using data item factories).
-     * 
-     * @param item
-     *            the item ID to validate
-     * @return <code>true</code> if the item ID is valid, <code>false</code>
-     *         otherwise
-     */
-    public boolean validateItem ( String item );
 }

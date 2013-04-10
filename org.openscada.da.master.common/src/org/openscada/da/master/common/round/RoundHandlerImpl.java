@@ -33,6 +33,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.da.master.common.internal.Activator;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
@@ -53,16 +54,29 @@ public class RoundHandlerImpl extends AbstractCommonHandlerImpl
 
     private String error = null;
 
+    private final String attrValueOriginal;
+
+    private final String attrActive;
+
+    private final String attrType;
+
+    private final String attrError;
+
     public RoundHandlerImpl ( final String configurationId, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, RoundHandlerFactoryImpl.FACTORY_ID, RoundHandlerFactoryImpl.FACTORY_ID );
+
+        this.attrActive = getPrefixed ( "active", Activator.getStringInterner () );
+        this.attrType = getPrefixed ( "type", Activator.getStringInterner () );
+        this.attrError = getPrefixed ( "error", Activator.getStringInterner () );
+        this.attrValueOriginal = getPrefixed ( "value.original", Activator.getStringInterner () );
     }
 
     @Override
     protected void processDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder ) throws Exception
     {
         injectAttributes ( builder );
-        builder.setAttribute ( getPrefixed ( "value.original" ), builder.getValue () ); //$NON-NLS-1$
+        builder.setAttribute ( this.attrValueOriginal, builder.getValue () );
 
         final Variant val = builder.getValue ();
         if ( val == null || val.isNull () )
@@ -124,14 +138,14 @@ public class RoundHandlerImpl extends AbstractCommonHandlerImpl
 
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( getPrefixed ( "active" ), this.active ? Variant.TRUE : Variant.FALSE ); //$NON-NLS-1$
+        builder.setAttribute ( this.attrActive, this.active ? Variant.TRUE : Variant.FALSE );
         if ( this.type != null && this.type != RoundType.NONE )
         {
-            builder.setAttribute ( getPrefixed ( "type" ), Variant.valueOf ( this.type.toString () ) ); //$NON-NLS-1$
+            builder.setAttribute ( this.attrType, Variant.valueOf ( this.type.toString () ) );
         }
         if ( this.error != null )
         {
-            builder.setAttribute ( getPrefixed ( "error" ), Variant.valueOf ( this.error ) ); //$NON-NLS-1$
+            builder.setAttribute ( this.attrError, Variant.valueOf ( this.error ) );
         }
     }
 

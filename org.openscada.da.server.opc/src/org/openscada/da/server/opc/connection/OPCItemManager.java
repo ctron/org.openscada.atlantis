@@ -327,6 +327,6 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         }
         item.itemUnrealized ();
 
-        this.allItemsStorage.removed ( new ItemDescriptor ( item, new HashMap<String, Variant> ( 1 ) ) );
+        this.allItemsStorage.removed ( new ItemDescriptor ( item, null ) );
     }
 }

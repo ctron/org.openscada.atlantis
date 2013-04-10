@@ -33,6 +33,7 @@ import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.da.master.common.internal.Activator;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
@@ -45,16 +46,29 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
 
     private double offset = 0.0;
 
+    private final String attrActive;
+
+    private final String attrFactor;
+
+    private final String attrOffset;
+
+    private final String attrValueOriginal;
+
     public ScaleHandlerImpl ( final String configurationId, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, ScaleHandlerFactoryImpl.FACTORY_ID, ScaleHandlerFactoryImpl.FACTORY_ID );
+
+        this.attrActive = getPrefixed ( "active", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrFactor = getPrefixed ( "factor", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrOffset = getPrefixed ( "offset", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrValueOriginal = getPrefixed ( "value.original", Activator.getStringInterner () ); //$NON-NLS-1$
     }
 
     @Override
     protected void processDataUpdate ( final Map<String, Object> context, final DataItemValue.Builder builder ) throws Exception
     {
         injectAttributes ( builder );
-        builder.setAttribute ( getPrefixed ( "value.original" ), builder.getValue () ); //$NON-NLS-1$
+        builder.setAttribute ( this.attrValueOriginal, builder.getValue () );
 
         final Variant val = builder.getValue ();
         if ( val == null || val.isNull () )
@@ -92,9 +106,9 @@ public class ScaleHandlerImpl extends AbstractCommonHandlerImpl
 
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( getPrefixed ( "active" ), this.active ? Variant.TRUE : Variant.FALSE ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "factor" ), Variant.valueOf ( this.factor ) ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "offset" ), Variant.valueOf ( this.offset ) ); //$NON-NLS-1$
+        builder.setAttribute ( this.attrActive, this.active ? Variant.TRUE : Variant.FALSE );
+        builder.setAttribute ( this.attrFactor, Variant.valueOf ( this.factor ) );
+        builder.setAttribute ( this.attrOffset, Variant.valueOf ( this.offset ) );
     }
 
     @Override

@@ -28,7 +28,6 @@ authority.
       <import plugin="org.openscada.utils.osgi"/>
       <import plugin="org.openscada.utils.osgi.jaxws"/>
       <import plugin="org.openscada.utils.osgi.jdbc"/>
-      <import plugin="org.openscada.external.osgi.enterprise"/>
       <import plugin="com.google.gson"/>
    </requires>
 

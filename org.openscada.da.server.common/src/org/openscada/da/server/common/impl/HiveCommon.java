@@ -541,8 +541,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      * @return <code>true</code> if the item id is valid <code>false</code>
      *         otherwise
      */
-    @Override
-    public boolean validateItem ( final String id )
+    protected boolean validateItem ( final String id )
     {
         if ( this.validationStrategy == ValidationStrategy.GRANT_ALL )
         {
