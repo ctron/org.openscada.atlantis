@@ -51,7 +51,6 @@ import org.openscada.core.subscription.SubscriptionListener;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.SubscriptionValidator;
 import org.openscada.core.subscription.ValidationException;
-import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.server.Hive;
@@ -61,7 +60,6 @@ import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.HiveService;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.ValidationStrategy;
@@ -90,7 +88,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
 
     private final Set<SessionCommon> sessions = new HashSet<SessionCommon> ();
 
-    private final Map<DataItemInformation, DataItem> itemMap = new HashMap<DataItemInformation, DataItem> ( 1000 );
+    private final Map<String, DataItem> itemMap = new HashMap<String, DataItem> ( 1000 );
 
     private Lock itemMapReadLock;
 
@@ -452,12 +450,11 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             this.itemMapWriteLock.lock ();
 
             final String id = item.getInformation ().getName ();
-            final DataItemInformationBase information = new DataItemInformationBase ( item.getInformation () );
 
-            if ( !this.itemMap.containsKey ( information ) )
+            if ( !this.itemMap.containsKey ( id ) )
             {
                 // first add internally ...
-                this.itemMap.put ( information, item );
+                this.itemMap.put ( id, item );
 
                 if ( this.statisticsGenerator != null )
                 {
@@ -508,10 +505,10 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         {
             this.itemMapWriteLock.lock ();
 
-            final DataItemInformationBase information = new DataItemInformationBase ( item.getInformation () );
-            if ( this.itemMap.containsKey ( information ) )
+            final String id = item.getInformation ().getName ();
+            if ( this.itemMap.containsKey ( id ) )
             {
-                this.itemMap.remove ( information );
+                this.itemMap.remove ( id );
                 if ( this.statisticsGenerator != null )
                 {
                     this.statisticsGenerator.itemUnregistered ( item );
@@ -519,7 +516,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             }
 
             // remove the source from the manager
-            this.itemSubscriptionManager.setSource ( item.getInformation ().getName (), null );
+            this.itemSubscriptionManager.setSource ( id, null );
         }
         finally
         {
@@ -599,7 +596,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         try
         {
             this.itemMapReadLock.lock ();
-            return this.itemMap.get ( new DataItemInformationBase ( id ) );
+            return this.itemMap.get ( id );
         }
         finally
         {
