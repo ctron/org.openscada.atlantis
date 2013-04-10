@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.openscada.da.server.opc">
+   <implementation class="org.openscada.da.server.opc.HiveCreatorImpl"/>
+   <service>
+      <provide interface="org.openscada.da.server.common.HiveCreator"/>
+   </service>
+   <property name="service.vendor" type="String" value="openSCADA.org"/>
+   <property name="service.description" type="String" value="openSCADA OPC Hive Creator"/>
+   <property name="openscada.hiveReferenceType" type="String" value="org.openscada.da.server.opc.Hive"/>
+</scr:component>
