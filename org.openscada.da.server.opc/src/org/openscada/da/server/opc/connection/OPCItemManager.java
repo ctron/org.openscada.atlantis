@@ -166,6 +166,8 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
      */
     private void createRealizedItem ( final String opcItemId, final KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
     {
+        logger.debug ( "Create realized item - opcItemId: {}", opcItemId );
+
         final OPCITEMRESULT result = entry.getValue ();
 
         registerItem ( opcItemId, Helper.convertToAccessSet ( result.getAccessRights () ), Helper.convertToAttributes ( entry.getKey () ) );
@@ -182,6 +184,8 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
      */
     public synchronized void registerItem ( final String opcItemId, final EnumSet<IODirection> ioDirection, final Map<String, Variant> additionalBrowserAttributes )
     {
+        logger.debug ( "Request to register item: {}", opcItemId );
+
         OPCItem item;
 
         synchronized ( this )
@@ -189,7 +193,7 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
             item = this.itemMap.get ( opcItemId );
             if ( item != null )
             {
-                // return existing item
+                logger.debug ( "Item {} already exists", opcItemId );
                 return;
             }
 
@@ -280,6 +284,8 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
     @Override
     public void itemRealized ( final String itemId, final KeyedResult<OPCITEMDEF, OPCITEMRESULT> entry )
     {
+        logger.debug ( "itemRealized - itemId: {}", itemId );
+
         final OPCItem item;
         synchronized ( this )
         {

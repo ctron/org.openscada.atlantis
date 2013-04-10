@@ -531,16 +531,21 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     {
         logger.debug ( "FactoryCreate - itemId: {}", id );
 
-        for ( final DataItemFactory factory : this.factoryList )
+        /* locking the factory list so that no one else can perform the creation process until we are done */
+        synchronized ( this.factoryList )
         {
-            if ( factory.canCreate ( id ) )
+            for ( final DataItemFactory factory : this.factoryList )
             {
-                // we let the factory create the item
-                factory.create ( id );
-                // only try one factory
-                return;
+                if ( factory.canCreate ( id ) )
+                {
+                    // we let the factory create the item
+                    factory.create ( id );
+                    // only try one factory
+                    return;
+                }
             }
         }
+
     }
 
     /**

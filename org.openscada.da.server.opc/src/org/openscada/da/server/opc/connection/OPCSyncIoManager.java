@@ -104,23 +104,28 @@ public class OPCSyncIoManager extends OPCIoManager
             @Override
             public Result<WriteRequest> call () throws Exception
             {
-                final Integer serverHandle = OPCSyncIoManager.this.serverHandleMap.get ( request.getItemId () );
-
-                if ( serverHandle == null )
-                {
-                    throw new RuntimeException ( String.format ( "Item '%s' is not realized.", request.getItemId () ) );
-                }
-
-                final SyncWriteJob job = new SyncWriteJob ( OPCSyncIoManager.this.model.getWriteJobTimeout (), OPCSyncIoManager.this.model, new WriteRequest[] { new WriteRequest ( serverHandle, request.getValue () ) } );
-
-                final Result<WriteRequest> result = OPCSyncIoManager.this.worker.execute ( job, job ).get ( 0 );
-                if ( result != null )
-                {
-                    return result;
-                }
-                throw new RuntimeException ( "No connection to the OPC server" );
+                return performWriteRequest ( request );
             }
         } );
+    }
+
+    private Result<WriteRequest> performWriteRequest ( final OPCWriteRequest request ) throws InvocationTargetException
+    {
+        final Integer serverHandle = this.serverHandleMap.get ( request.getItemId () );
+
+        if ( serverHandle == null )
+        {
+            throw new RuntimeException ( String.format ( "Item '%s' is not realized.", request.getItemId () ) );
+        }
+
+        final SyncWriteJob job = new SyncWriteJob ( this.model.getWriteJobTimeout (), this.model, new WriteRequest[] { new WriteRequest ( serverHandle, request.getValue () ) } );
+
+        final Result<WriteRequest> result = this.worker.execute ( job, job ).get ( 0 );
+        if ( result != null )
+        {
+            return result;
+        }
+        throw new RuntimeException ( "No connection to the OPC server" );
     }
 
     @Override
@@ -147,4 +152,5 @@ public class OPCSyncIoManager extends OPCIoManager
             }
         }
     }
+
 }

@@ -326,19 +326,17 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         }
 
         final Random r = new Random ();
-        synchronized ( this.clientHandleMap )
+
+        for ( final ItemRegistrationRequest def : newItems )
         {
-            for ( final ItemRegistrationRequest def : newItems )
+            Integer i = r.nextInt ();
+            while ( this.clientHandleMapRev.containsKey ( i ) )
             {
-                Integer i = r.nextInt ();
-                while ( this.clientHandleMapRev.containsKey ( i ) )
-                {
-                    i = r.nextInt ();
-                }
-                this.clientHandleMap.put ( def.getItemDefinition ().getItemID (), i );
-                this.clientHandleMapRev.put ( i, def.getItemDefinition ().getItemID () );
-                def.getItemDefinition ().setClientHandle ( i );
+                i = r.nextInt ();
             }
+            this.clientHandleMap.put ( def.getItemDefinition ().getItemID (), i );
+            this.clientHandleMapRev.put ( i, def.getItemDefinition ().getItemID () );
+            def.getItemDefinition ().setClientHandle ( i );
         }
 
         // for now do it one by one .. since packets that get too big cause an error
@@ -355,6 +353,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
                 if ( entry.isFailed () )
                 {
                     logger.info ( "Revoking client handle {} for item {}", entry.getKey ().getClientHandle (), itemId );
+
                     this.clientHandleMap.remove ( itemId );
                     this.clientHandleMapRev.remove ( entry.getKey ().getClientHandle () );
                 }

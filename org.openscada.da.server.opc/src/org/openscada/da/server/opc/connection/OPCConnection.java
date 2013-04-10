@@ -484,6 +484,8 @@ public class OPCConnection implements PropertyChangeListener
 
     public void addUnrealizedItem ( final String opcItemId )
     {
+        logger.debug ( "Adding unrealized item: {}", opcItemId );
+
         if ( opcItemId == null )
         {
             return;
