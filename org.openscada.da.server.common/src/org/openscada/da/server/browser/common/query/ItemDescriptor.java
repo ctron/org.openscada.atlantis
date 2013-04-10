@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,6 +36,14 @@ public class ItemDescriptor
 
     private final String itemId;
 
+    /**
+     * Create new item descriptor
+     * 
+     * @param item
+     *            the data item, must not be <code>null</code>
+     * @param attributes
+     *            the optional describing attributes, may be <code>null</code>
+     */
     public ItemDescriptor ( final DataItem item, final Map<String, Variant> attributes )
     {
         this.item = item;
