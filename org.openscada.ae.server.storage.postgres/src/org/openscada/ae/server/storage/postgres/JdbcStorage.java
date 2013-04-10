@@ -76,7 +76,7 @@ public class JdbcStorage extends BaseStorage
             @Override
             public String getNodeId ()
             {
-                return this.getNodeId ();
+                return JdbcStorage.this.getNodeId ();
             }
         } );
         this.scheduler = scheduler;

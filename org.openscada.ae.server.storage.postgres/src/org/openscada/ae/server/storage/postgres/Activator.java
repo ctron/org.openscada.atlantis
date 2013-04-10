@@ -112,7 +112,7 @@ public class Activator implements BundleActivator
 
     private void activate ( final DataSourceFactory dataSourceFactory ) throws Exception
     {
-        this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "org.openscada.ae.server.storage.postgresql/CleanupThread" ) );
+        this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "org.openscada.ae.server.storage.postgresql/ScheduledExecutor" ) );
 
         final Properties dbProperties = DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX );
 
