@@ -529,6 +529,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
 
     private void factoryCreate ( final String id )
     {
+        logger.debug ( "FactoryCreate - itemId: {}", id );
+
         for ( final DataItemFactory factory : this.factoryList )
         {
             if ( factory.canCreate ( id ) )
