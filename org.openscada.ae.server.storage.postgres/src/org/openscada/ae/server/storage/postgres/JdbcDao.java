@@ -126,6 +126,7 @@ public class JdbcDao
             @Override
             protected Event performTask ( final ConnectionContext connectionContext ) throws Exception
             {
+                connectionContext.setAutoCommit ( Boolean.getBoolean ( "org.openscada.ae.server.storage.jdbc.query.autoCommit" ) );
                 return connectionContext.queryForObject ( EventRowMapper.INSTANCE, String.format ( loadEventSql, JdbcDao.this.schema ), JdbcDao.this.instance, id );
             }
         } );
@@ -138,7 +139,7 @@ public class JdbcDao
             @Override
             protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                connectionContext.setAutoCommit ( true );
+                connectionContext.setAutoCommit ( false );
                 final Object[] parameters = new Object[5];
                 parameters[0] = event.getId ();
                 parameters[1] = JdbcDao.this.instance;
