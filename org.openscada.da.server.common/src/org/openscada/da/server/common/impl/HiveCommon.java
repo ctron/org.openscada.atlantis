@@ -352,6 +352,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     {
         final UserInformation user = loginFuture.get ();
 
+        logger.debug ( "Create Session - user: {}", user );
+
         final Map<String, String> sessionProperties = new HashMap<String, String> ();
 
         fillSessionProperties ( user, sessionProperties );
@@ -388,7 +390,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             this.sessions.remove ( session );
         }
 
-        logger.debug ( "Close session: " + session );
+        logger.debug ( "Close session: {}", session );
         fireSessionDestroy ( (SessionCommon)session );
 
         // destroy all subscriptions for this session
