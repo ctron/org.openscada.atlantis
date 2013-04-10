@@ -198,7 +198,7 @@ public class JdbcDao
             @Override
             protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                connectionContext.setAutoCommit ( true );
+                connectionContext.setAutoCommit ( false );
                 return connectionContext.update ( String.format ( updateEventSql, JdbcDao.this.schema ), EventConverter.INSTANCE.toJson ( event ), event.getId () );
             }
         } );
@@ -211,7 +211,7 @@ public class JdbcDao
             @Override
             protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                connectionContext.setAutoCommit ( true );
+                connectionContext.setAutoCommit ( false );
                 return connectionContext.update ( String.format ( cleanupArchiveSql, JdbcDao.this.schema ), JdbcDao.this.instance, new Timestamp ( date.getTime () ) );
             }
         } );
