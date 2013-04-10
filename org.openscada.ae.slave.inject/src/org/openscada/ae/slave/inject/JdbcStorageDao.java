@@ -3,6 +3,7 @@
  * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
+ * Copyright (C) 2013 Jürgen Rose (cptmauli@googlemail.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -191,7 +192,15 @@ public class JdbcStorageDao extends AbstractJdbcStorageDao
     {
         logger.debug ( "Checking if entry already exists" );
 
-        final List<Number> result = connectionContext.query ( new SingleColumnRowMapper<Number> ( Number.class ), String.format ( "SELECT COUNT(*) FROM %sOPENSCADA_AE_EVENTS WHERE ID=?", getSchema () ), id );
+        final List<Number> result;
+        if ( Boolean.getBoolean ( "org.openscada.ae.server.storage.postgres" ) )
+        {
+            result = connectionContext.query ( new SingleColumnRowMapper<Number> ( Number.class ), String.format ( "SELECT COUNT(*) FROM %sOPENSCADA_AE_EVENTS_JSON WHERE ID=?::UUID", getSchema () ), id );
+        }
+        else
+        {
+            result = connectionContext.query ( new SingleColumnRowMapper<Number> ( Number.class ), String.format ( "SELECT COUNT(*) FROM %sOPENSCADA_AE_EVENTS WHERE ID=?", getSchema () ), id );
+        }
         if ( result.isEmpty () )
         {
             return false;
