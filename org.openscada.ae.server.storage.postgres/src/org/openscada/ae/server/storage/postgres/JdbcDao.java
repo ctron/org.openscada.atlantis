@@ -33,6 +33,7 @@ import java.util.Date;
 import java.util.UUID;
 
 import org.openscada.ae.Event;
+import org.openscada.ae.server.storage.postgres.internal.SqlConverter;
 import org.openscada.utils.filter.Filter;
 import org.openscada.utils.osgi.jdbc.CommonConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.data.RowMapperAdapter;
@@ -44,7 +45,7 @@ import org.slf4j.LoggerFactory;
 
 public class JdbcDao
 {
-    private enum ReplicationDataFormat
+    public enum ReplicationDataFormat
     {
         BLOB,
         BYTES,
@@ -101,7 +102,7 @@ public class JdbcDao
 
     private static final int NODE_ID_LENGTH = Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.fields.nodeId.length", 32 );
 
-    private final ReplicationDataFormat dataFormat = makeDataFormat ();
+    public final ReplicationDataFormat dataFormat = makeDataFormat ();
 
     private final CommonConnectionAccessor accessor;
 
