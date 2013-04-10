@@ -390,7 +390,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             this.sessions.remove ( session );
         }
 
-        logger.debug ( "Close session: {}", session );
+        logger.info ( "Close session: {}", session );
         fireSessionDestroy ( (SessionCommon)session );
 
         // destroy all subscriptions for this session
