@@ -148,7 +148,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         {
             final String itemId = itemDef.getItemDefinition ().getItemID ();
 
-            logger.debug ( "Requsting item: {}", itemId );
+            logger.debug ( "Requesting item: {}", itemId );
 
             // remove from un-registrations ... just in case
             this.itemUnregistrations.remove ( itemId );
