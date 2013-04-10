@@ -126,7 +126,6 @@ public class JdbcDao
             @Override
             protected Event performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                connectionContext.setAutoCommit ( Boolean.getBoolean ( "org.openscada.ae.server.storage.jdbc.query.autoCommit" ) );
                 return connectionContext.queryForObject ( EventRowMapper.INSTANCE, String.format ( loadEventSql, JdbcDao.this.schema ), JdbcDao.this.instance, id );
             }
         } );
@@ -139,7 +138,6 @@ public class JdbcDao
             @Override
             protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                connectionContext.setAutoCommit ( false );
                 final Object[] parameters = new Object[5];
                 parameters[0] = event.getId ();
                 parameters[1] = JdbcDao.this.instance;
@@ -158,7 +156,6 @@ public class JdbcDao
             @Override
             protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                connectionContext.setAutoCommit ( false );
                 final Object[] parameters = new Object[4];
                 parameters[0] = event.getId ();
                 parameters[1] = new Timestamp ( event.getEntryTimestamp ().getTime () );
@@ -199,7 +196,6 @@ public class JdbcDao
             @Override
             protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                connectionContext.setAutoCommit ( false );
                 return connectionContext.update ( String.format ( updateEventSql, JdbcDao.this.schema ), EventConverter.INSTANCE.toJson ( event ), event.getId () );
             }
         } );
@@ -212,7 +208,6 @@ public class JdbcDao
             @Override
             protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                connectionContext.setAutoCommit ( false );
                 return connectionContext.update ( String.format ( cleanupArchiveSql, JdbcDao.this.schema ), JdbcDao.this.instance, new Timestamp ( date.getTime () ) );
             }
         } );
@@ -221,7 +216,6 @@ public class JdbcDao
     public ResultSet queryEvents ( final Filter filter ) throws SQLException, NotSupportedException
     {
         final Connection con = this.accessor.getConnection ();
-        con.setAutoCommit ( Boolean.getBoolean ( "org.openscada.ae.server.storage.jdbc.query.autoCommit" ) );
         // build sql
         final SqlConverter.SqlCondition condition = SqlConverter.toSql ( this.schema, filter );
         final String sql = selectEventsSql + condition.condition + defaultOrderSql;
