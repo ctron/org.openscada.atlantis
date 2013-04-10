@@ -78,19 +78,13 @@ public class Controller
 
     private static ConfigurationDocument parse ( final URL url ) throws ConfigurationException
     {
-        final ClassLoader ctx = Thread.currentThread ().getContextClassLoader ();
         try
         {
-            Thread.currentThread ().setContextClassLoader ( Controller.class.getClassLoader () );
             return ConfigurationDocument.Factory.parse ( url );
         }
         catch ( final Exception e )
         {
             throw new ConfigurationException ( "Failed to parse document", e );
-        }
-        finally
-        {
-            Thread.currentThread ().setContextClassLoader ( ctx );
         }
     }
 
