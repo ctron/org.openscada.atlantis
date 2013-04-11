@@ -169,7 +169,7 @@ public class EventInjector extends BaseStorage
         try
         {
             logger.debug ( "Storing event" );
-            this.jdbcDao.store ( toEvent ( resultSet ) );
+            this.jdbcDao.store ( connectionContext, toEvent ( resultSet ) );
             deleteReplicationEntry ( connectionContext, id );
         }
         catch ( final Exception e )
