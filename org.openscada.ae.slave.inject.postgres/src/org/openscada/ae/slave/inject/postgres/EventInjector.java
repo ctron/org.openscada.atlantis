@@ -47,7 +47,7 @@ import org.openscada.utils.osgi.jdbc.data.SingleColumnRowMapper;
 import org.openscada.utils.osgi.jdbc.pool.PoolConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
 import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
-import org.openscada.utils.osgi.jdbc.task.ResultSetProcessor;
+import org.openscada.utils.osgi.jdbc.task.RowCallback;
 import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -61,7 +61,7 @@ public class EventInjector extends BaseStorage
 
     private static final String replicateEventDeleteSql = "DELETE FROM %sOPENSCADA_AE_REP WHERE ID = ?;";
 
-    private static final String eventExistsSql = "SELECT count(id) FROM %sOPENSCADA_AE_JSON WHERE ID = ?::UUID;";
+    private static final String eventExistsSql = "SELECT count(id) FROM %sOPENSCADA_AE_EVENTS_JSON WHERE ID = ?::UUID;";
 
     private final boolean deleteFailed = Boolean.getBoolean ( "org.openscada.ae.slave.inject.deleteFailed" );
 
@@ -134,12 +134,12 @@ public class EventInjector extends BaseStorage
             {
                 final AtomicInteger i = new AtomicInteger ( 0 );
                 connectionContext.setAutoCommit ( false );
-                connectionContext.query ( new ResultSetProcessor () {
+                connectionContext.query ( new RowCallback () {
                     @Override
-                    public void processResult ( final ResultSet resultSet ) throws SQLException
+                    public void processRow ( final ResultSet resultSet ) throws SQLException
                     {
+                        EventInjector.this.processRow ( resultSet, connectionContext );
                         i.incrementAndGet ();
-                        processRow ( resultSet, connectionContext );
                     }
                 }, String.format ( replicateEventSelectSql, EventInjector.this.schema ) );
                 connectionContext.commit ();
