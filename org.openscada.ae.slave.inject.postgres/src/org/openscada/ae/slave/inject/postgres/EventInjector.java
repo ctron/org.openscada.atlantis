@@ -57,7 +57,7 @@ public class EventInjector extends BaseStorage
 
     private final static Logger logger = LoggerFactory.getLogger ( EventInjector.class );
 
-    private static final String replicateEventSelectSql = "SELECT id, entry_timestamp, node_id, data FROM %sOPENSCADA_AE_REP;";
+    private static final String replicateEventSelectSql = "SELECT id, entry_timestamp, node_id, data FROM %sOPENSCADA_AE_REP LIMIT 500;";
 
     private static final String replicateEventDeleteSql = "DELETE FROM %sOPENSCADA_AE_REP WHERE ID = ?;";
 
