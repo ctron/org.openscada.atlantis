@@ -47,6 +47,8 @@ import org.openscada.utils.filter.FilterParser;
 import org.openscada.utils.osgi.jdbc.CommonConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.DataSourceConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.pool.PoolConnectionAccessor;
+import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
+import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
 import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -130,11 +132,20 @@ public class JdbcStorage extends BaseStorage
             {
                 try
                 {
-                    JdbcStorage.this.jdbcDao.store ( eventToStore );
-                    if ( isReplication () )
-                    {
-                        JdbcStorage.this.jdbcDao.storeReplication ( eventToStore );
-                    }
+                    JdbcStorage.this.accessor.doWithConnection ( new CommonConnectionTask<Void> () {
+                        @Override
+                        public Void performTask ( final ConnectionContext connectionContext ) throws Exception
+                        {
+                            connectionContext.setAutoCommit ( false );
+                            JdbcStorage.this.jdbcDao.store ( connectionContext, eventToStore );
+                            if ( isReplication () )
+                            {
+                                JdbcStorage.this.jdbcDao.storeReplication ( connectionContext, eventToStore );
+                            }
+                            connectionContext.commit ();
+                            return null;
+                        }
+                    } );
                     if ( listener != null )
                     {
                         try
@@ -180,7 +191,16 @@ public class JdbcStorage extends BaseStorage
             @Override
             public Event call () throws Exception
             {
-                JdbcStorage.this.jdbcDao.update ( eventToStore );
+                JdbcStorage.this.accessor.doWithConnection ( new CommonConnectionTask<Void> () {
+                    @Override
+                    public Void performTask ( final ConnectionContext connectionContext ) throws Exception
+                    {
+                        connectionContext.setAutoCommit ( false );
+                        JdbcStorage.this.jdbcDao.update ( connectionContext, eventToStore );
+                        connectionContext.commit ();
+                        return null;
+                    }
+                } );
                 if ( listener != null )
                 {
                     try

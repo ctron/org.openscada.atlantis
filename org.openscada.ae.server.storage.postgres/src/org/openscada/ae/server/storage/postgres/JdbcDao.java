@@ -21,6 +21,7 @@
 package org.openscada.ae.server.storage.postgres;
 
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.io.Serializable;
 import java.sql.Blob;
@@ -132,74 +133,56 @@ public class JdbcDao
         } );
     }
 
-    public void store ( final Event event )
+    public void store ( final ConnectionContext connectionContext, final Event event ) throws SQLException
     {
         logger.trace ( "try to store event {}", event );
-        this.accessor.doWithConnection ( new CommonConnectionTask<Integer> () {
-            @Override
-            protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
-            {
-                final Object[] parameters = new Object[5];
-                parameters[0] = event.getId ();
-                parameters[1] = JdbcDao.this.instance;
-                parameters[2] = new Timestamp ( event.getSourceTimestamp ().getTime () );
-                parameters[3] = new Timestamp ( event.getEntryTimestamp ().getTime () );
-                parameters[4] = EventConverter.INSTANCE.toJson ( event );
-                return connectionContext.update ( String.format ( storeEventSql, JdbcDao.this.schema ), parameters );
-            }
-        } );
+        final Object[] parameters = new Object[5];
+        parameters[0] = event.getId ();
+        parameters[1] = JdbcDao.this.instance;
+        parameters[2] = new Timestamp ( event.getSourceTimestamp ().getTime () );
+        parameters[3] = new Timestamp ( event.getEntryTimestamp ().getTime () );
+        parameters[4] = EventConverter.INSTANCE.toJson ( event );
+        connectionContext.update ( String.format ( storeEventSql, JdbcDao.this.schema ), parameters );
     }
 
-    public void storeReplication ( final Event event )
+    public void storeReplication ( final ConnectionContext connectionContext, final Event event ) throws SQLException, IOException
     {
         logger.trace ( "try to store replication event {}", event );
-        this.accessor.doWithConnection ( new CommonConnectionTask<Integer> () {
-            @Override
-            protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
-            {
-                final Object[] parameters = new Object[4];
-                parameters[0] = event.getId ();
-                parameters[1] = new Timestamp ( event.getEntryTimestamp ().getTime () );
-                parameters[2] = clip ( NODE_ID_LENGTH, JdbcDao.this.nodeIdProvider.getNodeId () );
-                // depending on format provide parameter as one of the given data types
-                ObjectOutputStream oos;
-                switch ( JdbcDao.this.dataFormat )
-                {
-                    case JSON:
-                        parameters[3] = EventConverter.INSTANCE.toJson ( event );
-                        break;
-                    case BLOB:
-                        final Blob blob = connectionContext.getConnection ().createBlob ();
-                        oos = new ObjectOutputStream ( blob.setBinaryStream ( 1 ) );
-                        oos.writeObject ( event );
-                        oos.close ();
-                        parameters[3] = blob;
-                        break;
-                    case BYTES:
-                        //$FALL-THROUGH$
-                    default:
-                        final ByteArrayOutputStream bos = new ByteArrayOutputStream ();
-                        oos = new ObjectOutputStream ( bos );
-                        oos.writeObject ( event );
-                        oos.close ();
-                        parameters[3] = bos.toByteArray ();
-                        break;
-                }
-                return connectionContext.update ( String.format ( replicateEventSql, JdbcDao.this.schema ), parameters );
-            }
-        } );
+        final Object[] parameters = new Object[4];
+        parameters[0] = event.getId ();
+        parameters[1] = new Timestamp ( event.getEntryTimestamp ().getTime () );
+        parameters[2] = clip ( NODE_ID_LENGTH, JdbcDao.this.nodeIdProvider.getNodeId () );
+        // depending on format provide parameter as one of the given data types
+        ObjectOutputStream oos;
+        switch ( JdbcDao.this.dataFormat )
+        {
+            case JSON:
+                parameters[3] = EventConverter.INSTANCE.toJson ( event );
+                break;
+            case BLOB:
+                final Blob blob = connectionContext.getConnection ().createBlob ();
+                oos = new ObjectOutputStream ( blob.setBinaryStream ( 1 ) );
+                oos.writeObject ( event );
+                oos.close ();
+                parameters[3] = blob;
+                break;
+            case BYTES:
+                //$FALL-THROUGH$
+            default:
+                final ByteArrayOutputStream bos = new ByteArrayOutputStream ();
+                oos = new ObjectOutputStream ( bos );
+                oos.writeObject ( event );
+                oos.close ();
+                parameters[3] = bos.toByteArray ();
+                break;
+        }
+        connectionContext.update ( String.format ( replicateEventSql, JdbcDao.this.schema ), parameters );
     }
 
-    public void update ( final Event event )
+    public void update ( final ConnectionContext connectionContext, final Event event ) throws SQLException
     {
         logger.trace ( "try to update event {}", event );
-        this.accessor.doWithConnection ( new CommonConnectionTask<Integer> () {
-            @Override
-            protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
-            {
-                return connectionContext.update ( String.format ( updateEventSql, JdbcDao.this.schema ), EventConverter.INSTANCE.toJson ( event ), event.getId () );
-            }
-        } );
+        connectionContext.update ( String.format ( updateEventSql, JdbcDao.this.schema ), EventConverter.INSTANCE.toJson ( event ), event.getId () );
     }
 
     public int cleanUp ( final Date date )
@@ -209,7 +192,10 @@ public class JdbcDao
             @Override
             protected Integer performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                return connectionContext.update ( String.format ( cleanupArchiveSql, JdbcDao.this.schema ), JdbcDao.this.instance, new Timestamp ( date.getTime () ) );
+                connectionContext.setAutoCommit ( false );
+                final int i = connectionContext.update ( String.format ( cleanupArchiveSql, JdbcDao.this.schema ), JdbcDao.this.instance, new Timestamp ( date.getTime () ) );
+                connectionContext.commit ();
+                return i;
             }
         } );
     }
