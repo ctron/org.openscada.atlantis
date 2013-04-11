@@ -153,7 +153,7 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
     }
 
     @Override
-    public synchronized void messageReceived ( final Object message ) throws Exception
+    public void messageReceived ( final Object message ) throws Exception
     {
         logger.trace ( "Received message: {}", message );
 

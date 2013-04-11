@@ -283,7 +283,7 @@ public class ConnectionBaseImpl extends ClientBaseConnection
         firePrivilegeChange ( message.getGranted () );
     }
 
-    protected synchronized Request nextRequest ()
+    protected Request nextRequest ()
     {
         return this.responseManager.nextRequest ();
     }

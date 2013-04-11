@@ -23,6 +23,7 @@ package org.openscada.core.ngp;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.openscada.core.OperationException;
 import org.openscada.core.data.Request;
@@ -48,7 +49,7 @@ public class ResponseManager
 
     private final Executor executor;
 
-    private long sequenceNumber = 0;
+    private final AtomicLong sequenceNumber = new AtomicLong ();
 
     public ResponseManager ( final StatisticsImpl statistics, final MessageSender messageSender, final Executor executor )
     {
@@ -111,6 +112,6 @@ public class ResponseManager
 
     public Request nextRequest ()
     {
-        return new Request ( ++this.sequenceNumber );
+        return new Request ( this.sequenceNumber.incrementAndGet () );
     }
 }
