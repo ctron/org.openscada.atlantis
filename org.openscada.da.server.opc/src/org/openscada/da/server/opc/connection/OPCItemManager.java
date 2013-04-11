@@ -312,7 +312,10 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
 
         item.itemUnrealized ();
 
-        unregisterItem ( itemId );
+        if ( !Boolean.getBoolean ( "org.openscada.da.server.opc.keepItems" ) )
+        {
+            unregisterItem ( itemId );
+        }
     }
 
     private void unregisterItem ( final String itemId )
