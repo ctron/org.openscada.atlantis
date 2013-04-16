@@ -183,8 +183,11 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             this.browser = null;
         }
 
-        this.operationService.shutdown ();
-        this.operationService = null;
+        if ( this.operationService != null )
+        {
+            this.operationService.shutdown ();
+            this.operationService = null;
+        }
 
         unregisterAllServices ();
     }
