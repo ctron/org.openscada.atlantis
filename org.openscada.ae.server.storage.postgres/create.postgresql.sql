@@ -203,11 +203,11 @@ $BODY$
   LANGUAGE plpgsql IMMUTABLE;
 
 
-CREATE INDEX idx_openscada_ae_events_json_instance_id ON openscada_ae_events_json (instance_id);
-CREATE INDEX idx_openscada_ae_events_json_source_timestamp ON openscada_ae_events_json (source_timestamp);
-CREATE INDEX idx_openscada_ae_events_json_source_timestamp_d ON openscada_ae_events_json (source_timestamp DESC);
-CREATE INDEX idx_openscada_ae_events_json_entry_timestamp ON openscada_ae_events_json (entry_timestamp);
-CREATE INDEX idx_openscada_ae_events_json_entry_timestamp_d ON openscada_ae_events_json (entry_timestamp DESC);
+CREATE INDEX openscada_ae_events_json_instance_id_idx ON openscada_ae_events_json (instance_id);
+CREATE INDEX openscada_ae_events_json_source_timestamp_idx ON openscada_ae_events_json (source_timestamp);
+CREATE INDEX openscada_ae_events_json_source_timestamp_d_idx ON openscada_ae_events_json (source_timestamp DESC);
+CREATE INDEX openscada_ae_events_json_entry_timestamp_idx ON openscada_ae_events_json (entry_timestamp);
+CREATE INDEX openscada_ae_events_json_entry_timestamp_d_idx ON openscada_ae_events_json (entry_timestamp DESC);
 
 SELECT openscada_ae_create_index('monitorType', 'string');
 SELECT openscada_ae_create_index('eventType', 'string');
