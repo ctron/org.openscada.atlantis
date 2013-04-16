@@ -92,7 +92,7 @@ BEGIN
         IF indexexists THEN
             RAISE NOTICE 'index % already exists', idx_name;
         ELSE
-            SELECT 'CREATE INDEX ' || idx_name || ' ON openscada_ae_events_json USING btree (lower(openscada_variant_to_string(openscada_ae_extract_field(data, ''' || property || '''))));' INTO sql_idx;
+            SELECT 'CREATE INDEX ' || idx_name || ' ON openscada_ae_events_json USING btree (lower(substring(openscada_variant_to_string(openscada_ae_extract_field(data, ''' || property || ''')), 1, 512)));' INTO sql_idx;
             RAISE NOTICE 'executing %', sql_idx;
             EXECUTE sql_idx;
             SELECT true INTO result;
@@ -104,7 +104,7 @@ BEGIN
         IF indexexists THEN
             RAISE NOTICE 'index % already exists', idx_name;
         ELSE
-            SELECT 'CREATE INDEX ' || idx_name || ' ON openscada_ae_events_json USING gist ((lower(openscada_variant_to_string(openscada_ae_extract_field(data, ''' || property || ''')))) gist_trgm_ops);' INTO sql_idx;
+            SELECT 'CREATE INDEX ' || idx_name || ' ON openscada_ae_events_json USING gist ((lower(substring(openscada_variant_to_string(openscada_ae_extract_field(data, ''' || property || ''')), 1, 512))) gist_trgm_ops);' INTO sql_idx;
             RAISE NOTICE 'executing %', sql_idx;
             EXECUTE sql_idx;
             SELECT true INTO result;
