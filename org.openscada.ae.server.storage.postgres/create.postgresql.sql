@@ -98,7 +98,7 @@ BEGIN
             SELECT true INTO result;
         END IF;
         -- gist
-        SELECT 'openscada_ae_events_' || property || '_' || rettype || '_g_idx' INTO idx_name;
+        SELECT 'openscada_ae_events_json_' || property || '_' || rettype || '_g_idx' INTO idx_name;
         RAISE NOTICE 'try to create index %', idx_name;
         SELECT count(*) > 0 FROM pg_class WHERE relname = idx_name INTO indexexists;
         IF indexexists THEN
