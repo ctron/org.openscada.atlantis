@@ -21,7 +21,6 @@
 package org.openscada.da.server.common;
 
 import org.openscada.da.core.server.Hive;
-import org.w3c.dom.Node;
 
 /**
  * @since 1.1
@@ -30,5 +29,5 @@ public interface HiveCreator
 {
     public static final String SERVICE_REFERENCE_TYPE = "openscada.hiveReferenceType";
 
-    public Hive createHive ( String reference, Node node ) throws Exception;
+    public Hive createHive ( String reference, Object configuration ) throws Exception;
 }
