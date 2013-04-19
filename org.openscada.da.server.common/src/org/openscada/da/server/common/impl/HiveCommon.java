@@ -100,7 +100,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
 
     private final Set<SessionListener> sessionListeners = new CopyOnWriteArraySet<SessionListener> ();
 
-    private ExecutorService operationService;
+    private volatile ExecutorService operationService;
 
     private final List<DataItemFactory> factoryList = new CopyOnWriteArrayList<DataItemFactory> ();
 
