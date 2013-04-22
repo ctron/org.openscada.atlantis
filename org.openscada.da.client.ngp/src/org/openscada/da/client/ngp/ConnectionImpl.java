@@ -81,6 +81,11 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
+    static
+    {
+        DriverFactoryImpl.registerDriver ();
+    }
+
     public static class WriteFuture extends ExecutorFuture<WriteResult> implements FutureListener<ResponseMessage>
     {
         public WriteFuture ( final Executor executor, final NotifyFuture<ResponseMessage> future )
