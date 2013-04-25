@@ -35,6 +35,9 @@ import org.openscada.utils.concurrent.TransformResultFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * @since 1.1
+ */
 public abstract class AbstractBasicAuthentication implements AuthenticationImplementation
 {
 
