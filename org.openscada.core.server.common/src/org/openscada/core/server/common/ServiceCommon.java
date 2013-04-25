@@ -63,7 +63,20 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
     public ServiceCommon ()
     {
         this.authenticationImplementation = new DefaultAuthentication ();
-        this.authorizationImplementation = new DefaultAuthorization ( this.authenticationImplementation );
+        this.authorizationImplementation = new DefaultAuthorization ( new AuthenticationImplementation () {
+
+            @Override
+            public UserInformation getUser ( final String user )
+            {
+                return ServiceCommon.this.authenticationImplementation.getUser ( user );
+            }
+
+            @Override
+            public NotifyFuture<UserInformation> authenticate ( final CallbackHandler callbackHandler )
+            {
+                return ServiceCommon.this.authenticationImplementation.authenticate ( callbackHandler );
+            }
+        } );
         this.auditLogService = new LogServiceImpl ();
     }
 

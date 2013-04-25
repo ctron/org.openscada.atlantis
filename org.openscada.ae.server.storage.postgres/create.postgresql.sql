@@ -92,19 +92,19 @@ BEGIN
         IF indexexists THEN
             RAISE NOTICE 'index % already exists', idx_name;
         ELSE
-            SELECT 'CREATE INDEX ' || idx_name || ' ON openscada_ae_events_json USING btree (lower(openscada_variant_to_string(openscada_ae_extract_field(data, ''' || property || '''))));' INTO sql_idx;
+            SELECT 'CREATE INDEX ' || idx_name || ' ON openscada_ae_events_json USING btree (lower(substring(openscada_variant_to_string(openscada_ae_extract_field(data, ''' || property || ''')), 1, 512)));' INTO sql_idx;
             RAISE NOTICE 'executing %', sql_idx;
             EXECUTE sql_idx;
             SELECT true INTO result;
         END IF;
         -- gist
-        SELECT 'openscada_ae_events_' || property || '_' || rettype || '_g_idx' INTO idx_name;
+        SELECT 'openscada_ae_events_json_' || property || '_' || rettype || '_g_idx' INTO idx_name;
         RAISE NOTICE 'try to create index %', idx_name;
         SELECT count(*) > 0 FROM pg_class WHERE relname = idx_name INTO indexexists;
         IF indexexists THEN
             RAISE NOTICE 'index % already exists', idx_name;
         ELSE
-            SELECT 'CREATE INDEX ' || idx_name || ' ON openscada_ae_events_json USING gist ((lower(openscada_variant_to_string(openscada_ae_extract_field(data, ''' || property || ''')))) gist_trgm_ops);' INTO sql_idx;
+            SELECT 'CREATE INDEX ' || idx_name || ' ON openscada_ae_events_json USING gist ((lower(substring(openscada_variant_to_string(openscada_ae_extract_field(data, ''' || property || ''')), 1, 512))) gist_trgm_ops);' INTO sql_idx;
             RAISE NOTICE 'executing %', sql_idx;
             EXECUTE sql_idx;
             SELECT true INTO result;
@@ -203,11 +203,11 @@ $BODY$
   LANGUAGE plpgsql IMMUTABLE;
 
 
-CREATE INDEX idx_openscada_ae_events_json_instance_id ON openscada_ae_events_json (instance_id);
-CREATE INDEX idx_openscada_ae_events_json_source_timestamp ON openscada_ae_events_json (source_timestamp);
-CREATE INDEX idx_openscada_ae_events_json_source_timestamp_d ON openscada_ae_events_json (source_timestamp DESC);
-CREATE INDEX idx_openscada_ae_events_json_entry_timestamp ON openscada_ae_events_json (entry_timestamp);
-CREATE INDEX idx_openscada_ae_events_json_entry_timestamp_d ON openscada_ae_events_json (entry_timestamp DESC);
+CREATE INDEX openscada_ae_events_json_instance_id_idx ON openscada_ae_events_json (instance_id);
+CREATE INDEX openscada_ae_events_json_source_timestamp_idx ON openscada_ae_events_json (source_timestamp);
+CREATE INDEX openscada_ae_events_json_source_timestamp_d_idx ON openscada_ae_events_json (source_timestamp DESC);
+CREATE INDEX openscada_ae_events_json_entry_timestamp_idx ON openscada_ae_events_json (entry_timestamp);
+CREATE INDEX openscada_ae_events_json_entry_timestamp_d_idx ON openscada_ae_events_json (entry_timestamp DESC);
 
 SELECT openscada_ae_create_index('monitorType', 'string');
 SELECT openscada_ae_create_index('eventType', 'string');

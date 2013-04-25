@@ -81,6 +81,11 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
+    static
+    {
+        DriverFactoryImpl.registerDriver ();
+    }
+
     public static class WriteFuture extends ExecutorFuture<WriteResult> implements FutureListener<ResponseMessage>
     {
         public WriteFuture ( final Executor executor, final NotifyFuture<ResponseMessage> future )
@@ -140,12 +145,12 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
                     }
                     else
                     {
-                        setError ( new OperationException ( ( (WriteValueResult)response ).getErrorInformation ().getMessage () ).fillInStackTrace () );
+                        setError ( new OperationException ( ( (WriteAttributesResult)response ).getErrorInformation ().getMessage () ).fillInStackTrace () );
                     }
                 }
                 else
                 {
-                    setError ( new IllegalStateException ( String.format ( "Wrong reply - expected: %s, got: %s", WriteValueResult.class, response ) ) );
+                    setError ( new IllegalStateException ( String.format ( "Wrong reply - expected: %s, got: %s", WriteAttributesResult.class, response ) ) );
                 }
             }
             catch ( final Exception e )

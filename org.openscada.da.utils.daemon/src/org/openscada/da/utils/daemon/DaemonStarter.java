@@ -1,3 +1,22 @@
+/*
+ * This file is part of the OpenSCADA project
+ * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ *
+ * OpenSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ *
+ * OpenSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ *
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with OpenSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+
 package org.openscada.da.utils.daemon;
 
 import java.util.Arrays;
@@ -13,8 +32,8 @@ import org.slf4j.LoggerFactory;
 /**
  * A simple implementation of the {@link DaemonController} interface for
  * local starting of {@link Daemon} implementations.
+ * 
  * @author Jens Reimann
- *
  */
 public class DaemonStarter implements DaemonController
 {
@@ -28,7 +47,7 @@ public class DaemonStarter implements DaemonController
             throw new RuntimeException ( "syntax: DaemonStarter <daemon class name>" );
         }
 
-        Queue<String> argList = new LinkedList<String> ();
+        final Queue<String> argList = new LinkedList<String> ();
         argList.addAll ( Arrays.asList ( args ) );
 
         new DaemonStarter ( Class.forName ( argList.poll () ), argList.toArray ( new String[0] ) );
@@ -43,7 +62,7 @@ public class DaemonStarter implements DaemonController
 
     public DaemonStarter ( final Class<?> className, final String[] args ) throws Exception
     {
-        Object o = className.newInstance ();
+        final Object o = className.newInstance ();
         if ( ! ( o instanceof Daemon ) )
         {
             throw new RuntimeException ( String.format ( "Class must implement '%s'", Daemon.class ) );
@@ -53,11 +72,13 @@ public class DaemonStarter implements DaemonController
         this.daemon = (Daemon)o;
         this.daemon.init ( new DaemonContext () {
 
+            @Override
             public String[] getArguments ()
             {
                 return args;
             }
 
+            @Override
             public DaemonController getController ()
             {
                 return controller;
@@ -67,28 +88,33 @@ public class DaemonStarter implements DaemonController
 
     }
 
+    @Override
     public void fail () throws IllegalStateException
     {
         logger.error ( "Service failed" );
         System.exit ( -1 );
     }
 
+    @Override
     public void fail ( final String arg0 ) throws IllegalStateException
     {
         logger.error ( "Service failed: " + arg0 );
         System.exit ( -1 );
     }
 
+    @Override
     public void fail ( final Exception arg0 ) throws IllegalStateException
     {
         logger.error ( "Service failed", arg0 );
     }
 
+    @Override
     public void fail ( final String arg0, final Exception arg1 ) throws IllegalStateException
     {
         logger.error ( String.format ( "Service failed: '%s'", arg0 ), arg1 );
     }
 
+    @Override
     public void reload () throws IllegalStateException
     {
         try
@@ -96,12 +122,13 @@ public class DaemonStarter implements DaemonController
             this.daemon.stop ();
             this.daemon.start ();
         }
-        catch ( Exception e )
+        catch ( final Exception e )
         {
             fail ( "Failed to reload", e );
         }
     }
 
+    @Override
     public void shutdown () throws IllegalStateException
     {
         if ( this.daemon != null )
@@ -110,7 +137,7 @@ public class DaemonStarter implements DaemonController
             {
                 this.daemon.stop ();
             }
-            catch ( Exception e )
+            catch ( final Exception e )
             {
                 fail ( "Failed to shut down", e );
             }

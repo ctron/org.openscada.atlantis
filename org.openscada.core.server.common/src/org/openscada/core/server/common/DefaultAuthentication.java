@@ -20,108 +20,15 @@
 
 package org.openscada.core.server.common;
 
-import org.openscada.sec.AuthenticationException;
-import org.openscada.sec.AuthenticationImplementation;
-import org.openscada.sec.StatusCodes;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.callback.Callback;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.sec.callback.Callbacks;
-import org.openscada.sec.callback.PasswordCallback;
-import org.openscada.sec.utils.password.PasswordType;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.concurrent.TransformResultFuture;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * @since 1.1
  */
-public class DefaultAuthentication implements AuthenticationImplementation
+public class DefaultAuthentication extends AbstractBasicAuthentication
 {
-
-    private final static Logger logger = LoggerFactory.getLogger ( DefaultAuthentication.class );
-
-    /**
-     * Authenticate a user
-     * <p>
-     * This method simply implements an <em>any</em> authentication which allows
-     * access to session with or without user names. No password is checked.
-     * </p>
-     * <p>
-     * This method should be overridden if a different authentication scheme is
-     * required.
-     * </p>
-     * 
-     * @param username
-     *            the username
-     * @param password
-     *            the password
-     * @param sessionResultProperties
-     *            the session properties that will be returned to the client.
-     *            The method may add or remove properties as it likes.
-     * @return the user information object or <code>null</code> if it is an
-     *         anonymous session
-     * @throws AuthenticationException
-     *             if the user was rejected
-     */
     @Override
-    public NotifyFuture<UserInformation> authenticate ( final CallbackHandler callbackHandler )
+    protected String getPlainPassword ()
     {
-        final String plainPassword = System.getProperty ( "org.openscada.core.server.common.ServiceCommon.password" ); //$NON-NLS-1$
-
-        if ( plainPassword == null || plainPassword.isEmpty () )
-        {
-            // no need to request password
-            return new InstantFuture<UserInformation> ( UserInformation.ANONYMOUS );
-        }
-
-        final NotifyFuture<Callback[]> future = Callbacks.callback ( callbackHandler, new Callback[] { new PasswordCallback ( "Password", 200, PasswordType.PLAIN.getSupportedInputEncodings () ) } );
-
-        return new TransformResultFuture<Callback[], UserInformation> ( future ) {
-            @Override
-            protected UserInformation transform ( final Callback[] callbacks ) throws Exception
-            {
-                // pass on password from our check, so that it cannot change inbetween
-                return processAuthenticate ( callbacks, plainPassword );
-            }
-        };
+        return System.getProperty ( "org.openscada.core.server.common.ServiceCommon.password" ); //$NON-NLS-1$
     }
-
-    @Override
-    public UserInformation getUser ( final String user )
-    {
-        // we only know anonymous
-        return UserInformation.ANONYMOUS;
-    }
-
-    protected UserInformation processAuthenticate ( final Callback[] callbacks, final String plainPassword ) throws AuthenticationException
-    {
-        final Callback cb = callbacks[0];
-
-        if ( ! ( cb instanceof PasswordCallback ) )
-        {
-            logger.debug ( "Password requested using system properties. But none was provided." );
-            throw new AuthenticationException ( org.openscada.sec.StatusCodes.INVALID_USER_OR_PASSWORD, "Invalid username or wrong password" );
-        }
-
-        try
-        {
-            if ( !PasswordType.PLAIN.createValdiator ().validatePassword ( ( (PasswordCallback)cb ).getPasswords (), plainPassword ) )
-            {
-                logger.debug ( "Password requested using system properties. But none or wrong provided." );
-                throw new AuthenticationException ( org.openscada.sec.StatusCodes.INVALID_USER_OR_PASSWORD, "Invalid username or wrong password" );
-            }
-        }
-        catch ( final Exception e )
-        {
-            logger.warn ( "Failed to authenticate", e );
-            throw new AuthenticationException ( StatusCodes.AUTHENTICATION_FAILED, e );
-        }
-
-        // succeeded
-        return UserInformation.ANONYMOUS;
-    }
-
 }

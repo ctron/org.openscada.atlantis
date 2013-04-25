@@ -28,11 +28,11 @@ public class HiveCreatorImpl implements HiveCreator
 {
 
     @Override
-    public Hive createHive ( final String reference, final Node node ) throws Exception
+    public Hive createHive ( final String reference, final Object configuration ) throws Exception
     {
-        if ( reference.equals ( org.openscada.da.server.opc.Hive.class.getName () ) )
+        if ( reference.equals ( org.openscada.da.server.opc.Hive.class.getName () ) && configuration instanceof Node )
         {
-            return new org.openscada.da.server.opc.Hive ( node );
+            return new org.openscada.da.server.opc.Hive ( (Node)configuration );
         }
         else
         {
