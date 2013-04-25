@@ -1,9 +1,11 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis-parent</artifactId>
-	<version>1.1.0</version>
+	<version>1.1.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<properties>
@@ -98,7 +100,7 @@
 		<module>../org.openscada.atlantis.sdk.feature</module>
 
 		<module>builder</module> <!-- holds the p2 build -->
-		
+
 		<module>../org.openscada.ae</module>
 		<module>../org.openscada.ae.client.connection.service</module>
 		<module>../org.openscada.ae.client.net</module>
@@ -247,6 +249,7 @@
 		<module>../org.openscada.sec.osgi.manager</module>
 		<module>../org.openscada.sec.provider.jdbc</module>
 		<module>../org.openscada.sec.provider.script</module>
-	<module>../org.openscada.ae.slave.inject.postgres</module></modules>
+		<module>../org.openscada.ae.slave.inject.postgres</module>
+	</modules>
 
 </project>
