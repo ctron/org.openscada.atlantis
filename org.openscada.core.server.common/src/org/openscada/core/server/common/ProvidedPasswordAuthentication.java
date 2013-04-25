@@ -20,15 +20,30 @@
 
 package org.openscada.core.server.common;
 
-
 /**
  * @since 1.1
  */
-public class DefaultAuthentication extends AbstractBasicAuthentication
+public class ProvidedPasswordAuthentication extends AbstractBasicAuthentication
 {
+    private String password;
+
+    public ProvidedPasswordAuthentication ()
+    {
+    }
+
+    public ProvidedPasswordAuthentication ( final String password )
+    {
+        this.password = password;
+    }
+
+    public void setPassword ( final String password )
+    {
+        this.password = password;
+    }
+
     @Override
     protected String getPlainPassword ()
     {
-        return System.getProperty ( "org.openscada.core.server.common.ServiceCommon.password" ); //$NON-NLS-1$
+        return this.password;
     }
 }
