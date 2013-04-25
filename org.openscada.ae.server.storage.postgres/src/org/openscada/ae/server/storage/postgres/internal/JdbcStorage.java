@@ -21,13 +21,20 @@
 package org.openscada.ae.server.storage.postgres.internal;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
+import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -55,18 +62,23 @@ import org.slf4j.LoggerFactory;
 
 public class JdbcStorage extends BaseStorage
 {
-
     private static final Logger logger = LoggerFactory.getLogger ( JdbcStorage.class );
 
     private final CommonConnectionAccessor accessor;
 
     private final ScheduledExecutorService scheduler;
 
+    private final ExecutorService dbExecutor;
+
     private final List<JdbcQuery> openQueries = new CopyOnWriteArrayList<JdbcQuery> ();
 
     private final BoundedPriorityQueueSet<Event> errorQueue = new BoundedPriorityQueueSet<Event> ( 1000 );
 
+    private final Queue<StoreTask> storeQueue = new ConcurrentLinkedQueue<StoreTask> ();
+
     private final JdbcDao jdbcDao;
+
+    private ScheduledFuture<?> scheduledProcessStoreQueue;
 
     private ScheduledFuture<?> scheduledProcessErrorQueue;
 
@@ -84,11 +96,28 @@ public class JdbcStorage extends BaseStorage
             }
         } );
         this.scheduler = scheduler;
-
+        this.dbExecutor = Executors.newSingleThreadExecutor ();
     }
 
     public void start ()
     {
+        this.scheduledProcessStoreQueue = this.scheduler.scheduleWithFixedDelay ( new Runnable () {
+            @Override
+            public void run ()
+            {
+                if ( storeQueue.size () > 0 )
+                {
+                    try
+                    {
+                        processStoreQueue ( getBatchSize () );
+                    }
+                    catch ( Exception e )
+                    {
+                        logger.error ( "call to processStoreQueue failed", e );
+                    }
+                }
+            }
+        }, 1, 1, TimeUnit.SECONDS );
         this.scheduledProcessErrorQueue = this.scheduler.scheduleWithFixedDelay ( new Runnable () {
             @Override
             public void run ()
@@ -101,6 +130,10 @@ public class JdbcStorage extends BaseStorage
 
     public void dispose ()
     {
+        if ( this.scheduledProcessStoreQueue != null )
+        {
+            this.scheduledProcessStoreQueue.cancel ( false );
+        }
         if ( this.scheduledProcessErrorQueue != null )
         {
             this.scheduledProcessErrorQueue.cancel ( false );
@@ -113,6 +146,7 @@ public class JdbcStorage extends BaseStorage
         {
             query.dispose ();
         }
+        this.dbExecutor.shutdownNow ();
     }
 
     @Override
@@ -120,16 +154,24 @@ public class JdbcStorage extends BaseStorage
     {
         // create Event with entry timestamp and new ID
         final Event eventToStore = createEvent ( event );
-        doStore ( listener, eventToStore, true );
+        if ( getBatchSize () > 1 )
+        {
+            storeQueue.offer ( new StoreTask ( listener, eventToStore, true ) );
+        }
+        else
+        {
+            doStore ( Arrays.asList ( new StoreTask ( listener, eventToStore, true ) ) );
+        }
         return eventToStore;
     }
 
-    private Future<Event> doStore ( final StoreListener listener, final Event eventToStore, final boolean storeInErrorQueue )
+    private Future<Void> doStore ( final List<StoreTask> batch )
     {
-        return this.scheduler.submit ( new Callable<Event> () {
+        return this.dbExecutor.submit ( new Callable<Void> () {
             @Override
-            public Event call () throws Exception
+            public Void call () throws Exception
             {
+                logger.trace ( "doStore -> Callable started" );
                 try
                 {
                     JdbcStorage.this.accessor.doWithConnection ( new CommonConnectionTask<Void> () {
@@ -137,40 +179,50 @@ public class JdbcStorage extends BaseStorage
                         public Void performTask ( final ConnectionContext connectionContext ) throws Exception
                         {
                             connectionContext.setAutoCommit ( false );
-                            JdbcStorage.this.jdbcDao.store ( connectionContext, eventToStore );
-                            if ( isReplication () )
+                            for ( StoreTask task : batch )
                             {
-                                JdbcStorage.this.jdbcDao.storeReplication ( connectionContext, eventToStore );
+                                JdbcStorage.this.jdbcDao.store ( connectionContext, task.getEventToStore () );
+                                if ( isReplication () )
+                                {
+                                    JdbcStorage.this.jdbcDao.storeReplication ( connectionContext, task.getEventToStore () );
+                                }
                             }
                             connectionContext.commit ();
                             return null;
                         }
                     } );
-                    if ( listener != null )
+                    for ( StoreTask task : batch )
                     {
-                        try
+                        if ( task.getListener () != null )
                         {
-                            listener.notify ( eventToStore );
-                        }
-                        catch ( final Exception e )
-                        {
-                            logger.error ( "call to listener failed", e );
+                            try
+                            {
+                                task.getListener ().notify ( task.getEventToStore () );
+                            }
+                            catch ( final Exception e )
+                            {
+                                logger.error ( "call to listener failed", e );
+                            }
                         }
                     }
                 }
                 catch ( final Exception e )
                 {
-                    if ( storeInErrorQueue )
+                    for ( StoreTask task : batch )
                     {
-                        logger.error ( "storing event failed, putting it on error queue", e );
-                        JdbcStorage.this.errorQueue.offer ( eventToStore );
-                    }
-                    else
-                    {
-                        logger.error ( "storing event failed", e );
+                        if ( task.isStoreInErrorQueue () )
+                        {
+                            logger.error ( "storing event failed, putting it on error queue", e );
+                            JdbcStorage.this.errorQueue.offer ( task.getEventToStore () );
+                        }
+                        else
+                        {
+                            logger.error ( "storing event failed", e );
+                        }
                     }
                 }
-                return eventToStore;
+                logger.trace ( "doStore -> Callable finished" );
+                return null;
             }
         } );
     }
@@ -178,7 +230,7 @@ public class JdbcStorage extends BaseStorage
     @Override
     public Event update ( final UUID id, final String comment, final StoreListener listener ) throws Exception
     {
-        final Future<Event> future = this.scheduler.submit ( new Callable<Event> () {
+        final Future<Event> future = this.dbExecutor.submit ( new Callable<Event> () {
             @Override
             public Event call () throws Exception
             {
@@ -187,7 +239,7 @@ public class JdbcStorage extends BaseStorage
         } );
         final Event event = future.get ( 10, TimeUnit.SECONDS );
         final Event eventToStore = Event.create ().event ( event ).attribute ( Fields.COMMENT, comment ).build ();
-        this.scheduler.submit ( new Callable<Event> () {
+        this.dbExecutor.submit ( new Callable<Event> () {
             @Override
             public Event call () throws Exception
             {
@@ -218,6 +270,22 @@ public class JdbcStorage extends BaseStorage
         return eventToStore;
     }
 
+    private void processStoreQueue ( final int size ) throws InterruptedException, ExecutionException
+    {
+        logger.debug ( "processing store queue, contains approximately {} elements", this.storeQueue.size () );
+        final List<StoreTask> batch = new ArrayList<StoreTask> ( size );
+        for ( int i = 0; i < size; i++ )
+        {
+            StoreTask task = storeQueue.poll ();
+            if ( task != null )
+            {
+                batch.add ( task );
+            }
+        }
+        Future<Void> future = doStore ( batch );
+        future.get ();
+    }
+
     private void processErrorQueue ()
     {
         logger.debug ( "processing error queue, contains approximately {} elements", this.errorQueue.size () );
@@ -241,7 +309,7 @@ public class JdbcStorage extends BaseStorage
                     // ok it was already stored, so we can it ignore
                     continue;
                 }
-                final Future<Event> future = doStore ( null, event, false );
+                final Future<Void> future = doStore ( Arrays.asList ( new StoreTask ( null, event, false ) ) );
                 future.get ();
             }
             catch ( final Exception e )
@@ -275,5 +343,11 @@ public class JdbcStorage extends BaseStorage
     private boolean isReplication ()
     {
         return Boolean.getBoolean ( "org.openscada.ae.server.storage.jdbc.enableReplication" );
+    }
+
+    private int getBatchSize ()
+    {
+        final Integer size = Integer.getInteger ( "org.openscada.ae.server.storage.postgres.batchSize", 1 );
+        return size < 1 ? 1 : size;
     }
 }
