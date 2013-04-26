@@ -208,7 +208,7 @@ public class JdbcDao
         final String sql = selectEventsSql + condition.condition + defaultOrderSql;
         final String querySql = String.format ( sql, this.schema );
 
-        logger.debug ( "executing query: " + querySql + " with parameters " + condition.parameters );
+        logger.debug ( "executing query: {} with parameters {}", querySql, condition.parameters );
 
         final PreparedStatement stm = con.prepareStatement ( querySql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
         stm.setFetchSize ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.query.fetchSize", 1000 ) );

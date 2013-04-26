@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jürgen Rose (cptmauli@googlemail.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -420,7 +422,7 @@ public abstract class AbstractJdbcStorageDao extends BaseStorageDao
         sql += condition.condition;
         sql += this.defaultOrder;
         final String querySql = String.format ( sql, getSchema () );
-        logger.debug ( "executing query: " + querySql + " with parameters " + condition.joinParameters + " / " + condition.parameters );
+        logger.debug ( "executing query: {} with parameters {} / {}", new Object[] { querySql, condition.joinParameters, condition.parameters } );
         final PreparedStatement stm = con.prepareStatement ( querySql, ResultSet.TYPE_FORWARD_ONLY, ResultSet.CONCUR_READ_ONLY );
         stm.setFetchSize ( Integer.getInteger ( "org.openscada.ae.server.storage.jdbc.query.fetchSize", 1000 ) );
         int i = 0;
