@@ -31,6 +31,7 @@
 
 				<configuration>
 					<schemaDirectory>schema</schemaDirectory>
+					<classGenerationDirectory>schemabin</classGenerationDirectory>
 					<javaSource>1.5</javaSource>
 					<verbose>true</verbose>
 				</configuration>
