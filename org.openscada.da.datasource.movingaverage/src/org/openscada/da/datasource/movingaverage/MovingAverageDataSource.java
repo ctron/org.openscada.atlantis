@@ -420,7 +420,7 @@ public class MovingAverageDataSource implements DataSourceListener
         }
         if ( this.dataSourceId != null )
         {
-            logger.debug ( "track datasource " + this.dataSourceId );
+            logger.debug ( "track datasource {}", this.dataSourceId );
             this.dataSourceTracker = new SingleDataSourceTracker ( this.poolTracker, this.dataSourceId, new ServiceListener () {
                 @Override
                 public void dataSourceChanged ( final DataSource dataSource )
