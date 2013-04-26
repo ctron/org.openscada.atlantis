@@ -35,6 +35,9 @@
 					<classGenerationDirectory>schemabin</classGenerationDirectory>
 					<javaSource>1.5</javaSource>
 					<verbose>true</verbose>
+					<xmlConfigs>
+						<xmlConfig implementation="java.io.File">schema/.xsdconfig</xmlConfig>
+					</xmlConfigs>
 				</configuration>
 
 			</plugin>
