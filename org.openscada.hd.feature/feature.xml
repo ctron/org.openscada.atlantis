@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.hd"
       label="openSCADA HD"
-      version="1.1.0.qualifier"
+      version="1.2.0.qualifier"
       provider-name="openSCADA.org">
 
    <description url="http://openscada.org">
