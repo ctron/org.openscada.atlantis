@@ -30,7 +30,7 @@ public class HiveCreatorImpl implements HiveCreator
     @Override
     public Hive createHive ( final String reference, final Object configuration ) throws Exception
     {
-        if ( reference.equals ( org.openscada.da.server.snmp.Hive.class.getName () ) )
+        if ( !reference.equals ( org.openscada.da.server.snmp.Hive.class.getName () ) )
         {
             return null;
         }
