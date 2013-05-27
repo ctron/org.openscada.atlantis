@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated snmp -->
+      <package
+            uri="http://openscada.org/DA/SNMP/Configuration"
+            class="org.openscada.da.snmp.configuration.ConfigurationPackage"
+            genModel="model/snmp.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated snmp -->
+      <parser
+            type="configuration"
+            class="org.openscada.da.snmp.configuration.util.ConfigurationResourceFactoryImpl"/>
+   </extension>
+
+</plugin>

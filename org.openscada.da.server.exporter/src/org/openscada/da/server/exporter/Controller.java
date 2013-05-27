@@ -27,9 +27,15 @@ import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.xmlbeans.XmlException;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.configuration.ConfigurationError;
+import org.openscada.da.server.exporter.util.ExporterResourceFactoryImpl;
+import org.openscada.utils.init.ServiceLoaderProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,28 +50,28 @@ public class Controller
 
     private final HiveFactory defaultHiveFactory;
 
-    public Controller ( final ConfigurationDocument configurationDocument ) throws ConfigurationException
+    public Controller ( final DocumentRoot documentRoot ) throws ConfigurationException
     {
-        this ( new NewInstanceHiveFactory (), configurationDocument );
+        this ( new ServiceLoaderHiveFactory (), documentRoot.getConfiguration () );
     }
 
-    public Controller ( final String file ) throws XmlException, IOException, ConfigurationException
+    public Controller ( final String file ) throws IOException, ConfigurationException
     {
-        this ( new File ( file ) );
+        this ( parse ( URI.createFileURI ( file ) ) );
     }
 
-    public Controller ( final File file ) throws XmlException, IOException, ConfigurationException
+    public Controller ( final File file ) throws IOException, ConfigurationException
     {
-        this ( ConfigurationDocument.Factory.parse ( file ) );
+        this ( parse ( URI.createFileURI ( file.toString () ) ) );
     }
 
     /**
      * @since 1.1
      */
-    public Controller ( final HiveFactory defaultHiveFactory, final ConfigurationDocument configurationDocument )
+    public Controller ( final HiveFactory defaultHiveFactory, final ConfigurationType configuration ) throws ConfigurationException
     {
         this.defaultHiveFactory = defaultHiveFactory;
-        configure ( configurationDocument );
+        configure ( configuration );
     }
 
     /**
@@ -73,14 +79,27 @@ public class Controller
      */
     public Controller ( final HiveFactory defaultHiveFactory, final URL url ) throws ConfigurationException
     {
-        this ( defaultHiveFactory, parse ( url ) );
+        this ( defaultHiveFactory, parse ( URI.createURI ( url.toString () ) ).getConfiguration () );
     }
 
-    private static ConfigurationDocument parse ( final URL url ) throws ConfigurationException
+    private static DocumentRoot parse ( final URI uri ) throws ConfigurationException
     {
+        ExporterPackage.eINSTANCE.eClass ();
+        ServiceLoaderProcessor.initialize ( "emf" );
+
         try
         {
-            return ConfigurationDocument.Factory.parse ( url );
+            final ResourceSet rs = new ResourceSetImpl ();
+            rs.getResourceFactoryRegistry ().getExtensionToFactoryMap ().put ( "*", new ExporterResourceFactoryImpl () );
+            final Resource resource = rs.createResource ( uri );
+            resource.load ( null );
+
+            final DocumentRoot result = (DocumentRoot)EcoreUtil.getObjectByType ( resource.getContents (), ExporterPackage.Literals.DOCUMENT_ROOT );
+            if ( result == null )
+            {
+                throw new IllegalStateException ( "Document does not contain a configuration" );
+            }
+            return result;
         }
         catch ( final Exception e )
         {
@@ -88,77 +107,47 @@ public class Controller
         }
     }
 
-    /**
-     * Create the hive factory
-     * 
-     * @param factoryClass
-     *            the class to instantiate
-     * @return the factory
-     * @throws ConfigurationException
-     *             an error occurred
-     */
-    protected HiveFactory createHiveFactory ( final String factoryClass ) throws ConfigurationException
+    private void configure ( final ConfigurationType configuration ) throws ConfigurationException
     {
-        if ( factoryClass == null )
+        for ( final AnnouncerType announcer : configuration.getAnnouncer () )
         {
-            return this.defaultHiveFactory;
-        }
-        else
-        {
-            try
-            {
-                return (HiveFactory)Class.forName ( factoryClass ).newInstance ();
-            }
-            catch ( final Throwable e )
-            {
-                throw new ConfigurationException ( "Failed to create factory", e );
-            }
-        }
-    }
-
-    public void configure ( final ConfigurationDocument configurationDocument )
-    {
-        final ConfigurationType configuration = configurationDocument.getConfiguration ();
-
-        for ( final AnnouncerType announcer : configuration.getAnnouncerList () )
-        {
-            final String klass = announcer.getClass1 ();
+            final String klass = announcer.getClass_ ();
             this.announcers.add ( klass );
         }
 
-        for ( final HiveType hive : configuration.getHiveList () )
+        for ( final HiveType hive : configuration.getHive () )
         {
             final String ref = hive.getRef ();
+
+            final Hive hiveInstance;
             try
             {
-                final HiveFactory factory = createHiveFactory ( hive.getFactory () );
-
-                //create the factory and the hive
-                final Hive hiveInstance = factory.createHive ( ref, hive.getConfiguration () );
-
-                // create the hive export object
-                final HiveExport hiveExport = new HiveExport ( hiveInstance );
-
-                // export the hive
-                for ( final ExportType export : hive.getExportList () )
-                {
-                    try
-                    {
-                        logger.debug ( "Adding export: {}", export.getUri () );
-
-                        hiveExport.addExport ( export.getUri () );
-                    }
-                    catch ( final ConfigurationError e )
-                    {
-                        logger.error ( String.format ( "Unable to configure export (%s) for hive (%s)", export.getUri (), hive.getRef () ), e );
-                    }
-                }
-                this.hives.add ( hiveExport );
+                // create the factory and the hive
+                hiveInstance = this.defaultHiveFactory.createHive ( ref, hive.getConfiguration () );
             }
-            catch ( final Throwable e )
+            catch ( final Exception e )
             {
-                logger.error ( String.format ( "Failed to create hive instance '%s' using factory '%s'", ref, hive.getFactory () ), e );
+                throw new ConfigurationException ( "Failed to create hive: " + hive.getRef (), e );
             }
+
+            // create the hive export object
+            final HiveExport hiveExport = new HiveExport ( hiveInstance );
+
+            // export the hive
+            for ( final ExportType export : hive.getExport () )
+            {
+                try
+                {
+                    logger.debug ( "Adding export: {}", export.getUri () );
+
+                    hiveExport.addExport ( export.getUri () );
+                }
+                catch ( final ConfigurationError e )
+                {
+                    logger.error ( String.format ( "Unable to configure export (%s) for hive (%s)", export.getUri (), hive.getRef () ), e );
+                }
+            }
+            this.hives.add ( hiveExport );
         }
     }
 

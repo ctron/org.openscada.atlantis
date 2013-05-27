@@ -51,25 +51,25 @@ public class MIBManager
     {
         logger.debug ( "Loading MIBs..." );
 
-        if ( mibs.getMibDirList () != null )
+        if ( mibs.getMibDir () != null )
         {
-            for ( final String dir : mibs.getMibDirList () )
+            for ( final String dir : mibs.getMibDir () )
             {
                 this.loader.addDir ( new File ( dir ) );
             }
         }
 
-        if ( mibs.getRecursiveMibDirList () != null )
+        if ( mibs.getRecursiveMibDir () != null )
         {
-            for ( final String dir : mibs.getRecursiveMibDirList () )
+            for ( final String dir : mibs.getRecursiveMibDir () )
             {
                 this.loader.addAllDirs ( new File ( dir ) );
             }
         }
 
-        if ( mibs.getStaticMibNameList () != null )
+        if ( mibs.getStaticMibName () != null )
         {
-            for ( final String mib : mibs.getStaticMibNameList () )
+            for ( final String mib : mibs.getStaticMibName () )
             {
                 try
                 {
@@ -90,6 +90,7 @@ public class MIBManager
 
     /**
      * get all loaded mibs
+     * 
      * @return all loaded mibs
      */
     public Collection<Mib> getAllMIBs ()

@@ -1,9 +1,11 @@
 Manifest-Version: 1.0
-Bundle-Version: 1.1.0.qualifier
-Bundle-Name: openSCADA DA OPC Server
-Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.2.0.qualifier
+Bundle-ClassPath: .
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: org.openscada.da.server.opc
+Bundle-SymbolicName: org.openscada.da.server.opc;singleton:=true
 Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
  org.apache.xmlbeans;version="2.4.0",
  org.apache.xmlbeans.impl.values;version="2.4.0",
@@ -43,26 +45,50 @@ Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
  org.openscada.utils.beans;version="1.0.0",
  org.openscada.utils.collection;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
+ org.openscada.utils.init;version="1.2.0",
  org.openscada.utils.str;version="1.0.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.opc;version="1.1.0";
-  uses:="org.openscada.da.server.opc.connection,
+Export-Package: org.openscada.da.opc.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
+ org.openscada.da.opc.configuration.impl;version="1.2.0";
+  uses:="org.openscada.da.opc.configuration,
+   org.eclipse.emf.ecore.util,
+   org.eclipse.emf.ecore,
+   org.eclipse.emf.common.util,
+   org.eclipse.emf.common.notify,
+   org.eclipse.emf.ecore.impl",
+ org.openscada.da.opc.configuration.util;version="1.2.0";
+  uses:="org.eclipse.emf.ecore.xmi.impl,
+   org.openscada.da.opc.configuration,
+   org.eclipse.emf.ecore.resource,
+   org.eclipse.emf.common.util,
+   org.eclipse.emf.ecore.xml.type.util,
+   org.eclipse.emf.ecore.xmi.util,
+   org.eclipse.emf.common.notify,
+   org.eclipse.emf.ecore.resource.impl,
+   org.eclipse.emf.ecore.util,
+   org.eclipse.emf.ecore,
+   org.eclipse.emf.common.notify.impl",
+ org.openscada.da.server.opc;version="1.2.0";
+  uses:="org.openscada.da.opc.configuration,
+   org.openscada.da.core.server,
+   org.openscada.da.server.opc.connection,
+   org.openscada.da.server.opc.connection.data,
    org.jinterop.dcom.core,
    org.openscada.da.server.common.impl,
    org.openscada.opc.dcom.da,
    org.openscada.da.server.opc.configuration,
    org.openscada.core,
-   org.w3c.dom,
    org.openscada.opc.dcom.common",
- org.openscada.da.server.opc.browser;version="1.1.0";
+ org.openscada.da.server.opc.browser;version="1.2.0";
   uses:="org.openscada.da.server.browser.common,
+   org.openscada.da.server.opc.connection.data,
    org.openscada.da.server.opc.connection,
    org.openscada.utils.beans,
    org.openscada.da.server.opc,
    org.openscada.da.server.opc.job",
- org.openscada.da.server.opc.configuration;version="1.1.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc,org.w3c.dom",
- org.openscada.da.server.opc.connection;version="1.1.0";
+ org.openscada.da.server.opc.configuration;version="1.2.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc",
+ org.openscada.da.server.opc.connection;version="1.2.0";
   uses:="org.openscada.da.server.browser.common,
    org.openscada.da.server.common,
    org.jinterop.dcom.core,
@@ -76,13 +102,16 @@ Export-Package: org.openscada.da.server.opc;version="1.1.0";
    org.openscada.da.server.opc.browser,
    org.openscada.da.core,
    org.openscada.da.server.common.chain,
+   org.openscada.da.server.opc.connection.data,
    org.openscada.utils.beans,
+   org.openscada.core.server,
    org.openscada.da.server.opc,
    org.openscada.da.server.opc.job,
    org.openscada.core,
    org.openscada.opc.dcom.common",
- org.openscada.da.server.opc.job;version="1.1.0",
- org.openscada.da.server.opc.job.impl;version="1.1.0";
+ org.openscada.da.server.opc.connection.data;version="1.2.0";uses:="org.openscada.opc.lib.common,org.openscada.opc.dcom.da,org.openscada.utils.beans",
+ org.openscada.da.server.opc.job;version="1.2.0",
+ org.openscada.da.server.opc.job.impl;version="1.2.0";
   uses:="org.jinterop.dcom.core,
    org.openscada.da.server.opc.connection,
    org.openscada.opc.dcom.da,
@@ -92,7 +121,10 @@ Export-Package: org.openscada.da.server.opc;version="1.1.0";
    org.openscada.opc.dcom.da.impl,
    org.openscada.da.server.opc.browser,
    org.openscada.opc.lib.da,
-   org.openscada.opc.dcom.common",
- org.openscada.da.server.opc.preload;version="1.1.0";uses:="org.openscada.da.opc.configuration,org.openscada.da.server.opc.connection,org.openscada.da.server.common.item.factory"
+   org.openscada.opc.dcom.common"
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;visibility:=reexport
+Bundle-ActivationPolicy: lazy
 Service-Component: hive.xml
 

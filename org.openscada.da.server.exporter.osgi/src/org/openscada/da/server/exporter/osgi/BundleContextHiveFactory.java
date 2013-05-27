@@ -23,7 +23,8 @@ package org.openscada.da.server.exporter.osgi;
 import java.util.Collection;
 
 import org.openscada.da.core.server.Hive;
-import org.openscada.da.server.common.HiveCreator;
+import org.openscada.da.core.server.HiveCreator;
+import org.openscada.da.server.exporter.AbstractHiveFactory;
 import org.openscada.da.server.exporter.ConfigurationException;
 import org.openscada.da.server.exporter.HiveConfigurationType;
 import org.openscada.da.server.exporter.HiveFactory;
@@ -33,7 +34,7 @@ import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BundleContextHiveFactory implements HiveFactory
+public class BundleContextHiveFactory extends AbstractHiveFactory implements HiveFactory
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( BundleContextHiveFactory.class );
@@ -50,6 +51,8 @@ public class BundleContextHiveFactory implements HiveFactory
     {
         try
         {
+            final Object configurationData = getConfigurationData ( configuration );
+
             final Collection<ServiceReference<HiveCreator>> refs = this.context.getServiceReferences ( HiveCreator.class, String.format ( "(%s=%s)", HiveCreator.SERVICE_REFERENCE_TYPE, reference ) );
             if ( refs.isEmpty () )
             {
@@ -61,7 +64,7 @@ public class BundleContextHiveFactory implements HiveFactory
             try
             {
                 logger.debug ( "Delegating call to: {}", service );
-                final Hive result = service.createHive ( reference, configuration.getDomNode () );
+                final Hive result = service.createHive ( reference, configurationData );
                 if ( result == null )
                 {
                     throw new IllegalArgumentException ( "Creator did not create hive" );

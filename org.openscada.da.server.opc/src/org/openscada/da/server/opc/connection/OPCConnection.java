@@ -24,7 +24,6 @@ package org.openscada.da.server.opc.connection;
 import java.beans.PropertyChangeEvent;
 import java.beans.PropertyChangeListener;
 import java.util.Calendar;
-import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
@@ -44,7 +43,6 @@ import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc.Hive;
 import org.openscada.da.server.opc.browser.OPCRootTreeFolder;
 import org.openscada.da.server.opc.connection.data.ConnectionSetup;
-import org.openscada.da.server.opc.preload.ItemSource;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
 import org.openscada.utils.collection.MapBuilder;
 import org.slf4j.Logger;
@@ -102,18 +100,13 @@ public class OPCConnection implements PropertyChangeListener
 
     private ObjectExporter browserManagerExporter;
 
-    private final Collection<ItemSource> itemSources;
-
-    private FolderItemFactory itemSourcesFactory;
-
     private ObjectExporter groupStateExporter;
 
-    public OPCConnection ( final Hive hive, final FolderCommon rootFolder, final ConnectionSetup setup, final Collection<ItemSource> itemSources )
+    public OPCConnection ( final Hive hive, final FolderCommon rootFolder, final ConnectionSetup setup )
     {
         this.hive = hive;
         this.connectionSetup = setup;
         this.rootFolder = rootFolder;
-        this.itemSources = itemSources;
 
         this.hiveItemFactory = new OPCConnectionDataItemFactory ( this );
 
@@ -230,8 +223,6 @@ public class OPCConnection implements PropertyChangeListener
         t.setDaemon ( true );
         t.start ();
 
-        startItemSources ();
-
         // fill initial values
         updateBaseModel ();
         updateLastConnect ();
@@ -258,25 +249,6 @@ public class OPCConnection implements PropertyChangeListener
 
         this.groupStateExporter = new ObjectExporter ( this.connectionItemFactory.createSubFolderFactory ( "group" ) );
         this.groupStateExporter.attachTarget ( this.controller.getGroupState () );
-    }
-
-    private void startItemSources ()
-    {
-        this.itemSourcesFactory = this.itemFactory.createSubFolderFactory ( "itemSources" );
-
-        for ( final ItemSource itemSource : this.itemSources )
-        {
-            itemSource.activate ( this.itemSourcesFactory.createSubFolderFactory ( itemSource.getId () ), this.controller.getItemManager () );
-        }
-    }
-
-    private void stopItemSources ()
-    {
-        for ( final ItemSource itemSource : this.itemSources )
-        {
-            itemSource.deactivate ();
-        }
-        this.itemSourcesFactory.dispose ();
     }
 
     protected void setLoopDelay ( final Variant value )
@@ -341,8 +313,6 @@ public class OPCConnection implements PropertyChangeListener
         this.itemFactory.dispose ();
         this.itemFactory = null;
         this.connectionItemFactory = null;
-
-        stopItemSources ();
 
         this.controller.getModel ().removePropertyChangeListener ( this );
 

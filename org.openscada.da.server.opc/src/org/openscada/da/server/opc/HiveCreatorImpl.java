@@ -21,8 +21,8 @@
 package org.openscada.da.server.opc;
 
 import org.openscada.da.core.server.Hive;
-import org.openscada.da.server.common.HiveCreator;
-import org.w3c.dom.Node;
+import org.openscada.da.core.server.HiveCreator;
+import org.openscada.da.opc.configuration.RootType;
 
 public class HiveCreatorImpl implements HiveCreator
 {
@@ -30,9 +30,18 @@ public class HiveCreatorImpl implements HiveCreator
     @Override
     public Hive createHive ( final String reference, final Object configuration ) throws Exception
     {
-        if ( reference.equals ( org.openscada.da.server.opc.Hive.class.getName () ) && configuration instanceof Node )
+        if ( !reference.equals ( org.openscada.da.server.opc.Hive.class.getName () ) )
         {
-            return new org.openscada.da.server.opc.Hive ( (Node)configuration );
+            return null;
+        }
+
+        if ( configuration instanceof RootType )
+        {
+            return new org.openscada.da.server.opc.Hive ( (RootType)configuration );
+        }
+        else if ( configuration instanceof String )
+        {
+            return new org.openscada.da.server.opc.Hive ( (String)configuration );
         }
         else
         {

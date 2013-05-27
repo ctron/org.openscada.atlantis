@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.0"?>
+
+<!--
+-->
+
+<plugin>
+
+   <extension point="org.eclipse.emf.ecore.generated_package">
+      <!-- @generated opc -->
+      <package
+            uri="http://openscada.org/DA/OPC/Configuration"
+            class="org.openscada.da.opc.configuration.ConfigurationPackage"
+            genModel="model/opc.genmodel"/>
+   </extension>
+
+   <extension point="org.eclipse.emf.ecore.extension_parser">
+      <!-- @generated opc -->
+      <parser
+            type="configuration"
+            class="org.openscada.da.opc.configuration.util.ConfigurationResourceFactoryImpl"/>
+   </extension>
+
+</plugin>

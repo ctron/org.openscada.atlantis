@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<genmodel:GenModel xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore"
+    xmlns:genmodel="http://www.eclipse.org/emf/2002/GenModel" modelDirectory="/org.openscada.da.server.opc/emfsrc" modelPluginID="org.openscada.da.server.opc"
+    modelName="Opc" nonNLSMarkers="true" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
+    codeFormatting="true" importerID="org.eclipse.xsd.ecore.importer" containmentProxies="true"
+    complianceLevel="6.0" runtimeVersion="2.8" operationReflection="true" importOrganizing="true">
+  <foreignModel>opc.xsd</foreignModel>
+  <genPackages prefix="Configuration" basePackage="org.openscada.da.opc" resource="XML"
+      disposableProviderFactory="true" ecorePackage="configuration.ecore#/">
+    <genDataTypes ecoreDataType="configuration.ecore#//ProgIdType"/>
+    <genDataTypes ecoreDataType="configuration.ecore#//UUIDType"/>
+    <genClasses ecoreClass="configuration.ecore#//ConfigurationType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/progid"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/clsid"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/initialItem"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/initialItemResource"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/access"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/alias"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/connected"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/domain"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/enabled"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/flatBrowser"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/host"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/ignoreTimestampOnlyChange"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/initialRefresh"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/itemIdPrefix"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/password"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/qualityErrorIfLessThen"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/reconnectDelay"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/refresh"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/treeBrowser"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConfigurationType/user"/>
+    </genClasses>
+    <genClasses ecoreClass="configuration.ecore#//ConnectionsType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//ConnectionsType/configuration"/>
+    </genClasses>
+    <genClasses ecoreClass="configuration.ecore#//DocumentRoot">
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DocumentRoot/mixed"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference configuration.ecore#//DocumentRoot/xMLNSPrefixMap"/>
+      <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference configuration.ecore#//DocumentRoot/xSISchemaLocation"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//DocumentRoot/items"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//DocumentRoot/root"/>
+    </genClasses>
+    <genClasses ecoreClass="configuration.ecore#//InitialItemsType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//InitialItemsType/item"/>
+    </genClasses>
+    <genClasses ecoreClass="configuration.ecore#//InitialItemType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//InitialItemType/accessPath"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//InitialItemType/description"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//InitialItemType/id"/>
+    </genClasses>
+    <genClasses ecoreClass="configuration.ecore#//RootType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//RootType/connections"/>
+    </genClasses>
+  </genPackages>
+</genmodel:GenModel>

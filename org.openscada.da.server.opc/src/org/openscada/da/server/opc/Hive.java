@@ -26,8 +26,14 @@ import java.util.Collection;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
-import org.apache.xmlbeans.XmlException;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.jinterop.dcom.common.JISystem;
+import org.openscada.da.opc.configuration.ConfigurationPackage;
+import org.openscada.da.opc.configuration.RootType;
+import org.openscada.da.opc.configuration.util.ConfigurationResourceFactoryImpl;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
@@ -36,10 +42,8 @@ import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.opc.configuration.XMLConfigurator;
 import org.openscada.da.server.opc.connection.OPCConnection;
 import org.openscada.da.server.opc.connection.data.ConnectionSetup;
-import org.openscada.da.server.opc.preload.ItemSource;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
@@ -50,20 +54,23 @@ public class Hive extends HiveCommon
 
     private final FolderCommon rootFolder = new FolderCommon ();
 
-    public Hive () throws XmlException, IOException, ConfigurationError
+    public Hive () throws ConfigurationError, IOException
     {
-        this ( new XMLConfigurator ( System.getProperty ( "org.openscada.da.server.opc.defaultConfigurationFile", "configuration.xml" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+        this ( new XMLConfigurator ( parse ( URI.createFileURI ( System.getProperty ( "org.openscada.da.server.opc.defaultConfigurationFile", "configuration.xml" ) ) ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public Hive ( final Node node ) throws XmlException, IOException, ConfigurationError
+    public Hive ( final String uri ) throws ConfigurationError, IOException
     {
-        this ( new XMLConfigurator ( node ) );
+        this ( new XMLConfigurator ( parse ( URI.createURI ( uri ) ) ) );
     }
 
-    public Hive ( final XMLConfigurator configurator ) throws XmlException, IOException, ConfigurationError
+    public Hive ( final RootType root ) throws ConfigurationError
     {
-        super ();
+        this ( new XMLConfigurator ( root ) );
+    }
 
+    public Hive ( final XMLConfigurator configurator ) throws ConfigurationError
+    {
         initJInterop ();
 
         // enable chain storage for this hive
@@ -74,6 +81,19 @@ public class Hive extends HiveCommon
         setRootFolder ( this.rootFolder );
 
         configurator.configure ( this );
+    }
+
+    private static RootType parse ( final URI uri ) throws IOException
+    {
+        ConfigurationPackage.eINSTANCE.eClass ();
+
+        final ResourceSetImpl rs = new ResourceSetImpl ();
+        rs.getResourceFactoryRegistry ().getExtensionToFactoryMap ().put ( "*", new ConfigurationResourceFactoryImpl () );
+
+        final Resource r = rs.createResource ( uri );
+        r.load ( null );
+
+        return (RootType)EcoreUtil.getObjectByType ( r.getContents (), ConfigurationPackage.Literals.ROOT_TYPE );
     }
 
     @Override
@@ -93,9 +113,9 @@ public class Hive extends HiveCommon
         logger.info ( "DCOM auto collection: {}", JISystem.isJavaCoClassAutoCollectionSet () );
     }
 
-    public void addConnection ( final ConnectionSetup setup, final boolean connect, final Collection<ItemSource> itemSources )
+    public void addConnection ( final ConnectionSetup setup, final boolean connect )
     {
-        final OPCConnection connection = new OPCConnection ( this, this.rootFolder, setup, itemSources );
+        final OPCConnection connection = new OPCConnection ( this, this.rootFolder, setup );
 
         if ( this.connections.add ( connection ) )
         {

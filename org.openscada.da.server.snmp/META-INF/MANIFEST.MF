@@ -23,37 +23,65 @@ Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.openscada.utils.collection;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
  org.openscada.utils.exec;version="1.0.0",
+ org.openscada.utils.init;version="1.2.0",
  org.openscada.utils.str;version="1.0.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.snmp;version="1.0.0";
+Export-Package: org.openscada.da.server.snmp;version="1.2.0";
   uses:="org.openscada.da.snmp.configuration,
    org.openscada.da.server.browser.common,
    org.openscada.da.server.common.impl,
    org.openscada.da.server.snmp.utils,
+   org.eclipse.emf.common.util,
    org.openscada.da.server.common.item.factory,
    org.openscada.da.server.common.factory,
    org.snmp4j.smi,
    org.snmp4j.event,
-   org.w3c.dom,
+   org.openscada.da.core.server,
    org.openscada.da.server.common.chain,
+   org.eclipse.emf.ecore,
    org.openscada.core,
    org.snmp4j",
- org.openscada.da.server.snmp.items;version="1.0.0";
+ org.openscada.da.server.snmp.items;version="1.2.0";
   uses:="org.openscada.da.server.common.chain,
    org.openscada.da.server.common,
    org.openscada.da.server.snmp,
    org.snmp4j.smi",
- org.openscada.da.server.snmp.utils;version="1.0.0";
+ org.openscada.da.server.snmp.utils;version="1.2.0";
   uses:="org.openscada.utils.collection,
    org.openscada.da.snmp.configuration,
    org.openscada.da.server.snmp.items,
    org.openscada.da.server.snmp,
-   org.snmp4j.smi"
-Bundle-Version: 1.1.0.qualifier
-Bundle-Name: openSCADA DA SNMP Server
-Bundle-Vendor: openSCADA.org
-Bundle-SymbolicName: org.openscada.da.server.snmp
+   org.snmp4j.smi",
+ org.openscada.da.snmp.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
+ org.openscada.da.snmp.configuration.impl;version="1.2.0";
+  uses:="org.openscada.da.snmp.configuration,
+   org.eclipse.emf.ecore.util,
+   org.eclipse.emf.ecore,
+   org.eclipse.emf.common.util,
+   org.eclipse.emf.ecore.impl,
+   org.eclipse.emf.common.notify",
+ org.openscada.da.snmp.configuration.util;version="1.2.0";
+  uses:="org.eclipse.emf.ecore.resource,
+   org.eclipse.emf.ecore.xmi.impl,
+   org.openscada.da.snmp.configuration,
+   org.eclipse.emf.common.util,
+   org.eclipse.emf.ecore.xml.type.util,
+   org.eclipse.emf.ecore.xmi.util,
+   org.eclipse.emf.ecore.resource.impl,
+   org.eclipse.emf.common.notify,
+   org.eclipse.emf.ecore.util,
+   org.eclipse.emf.ecore,
+   org.eclipse.emf.common.notify.impl"
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;visibility:=reexport
+Bundle-ActivationPolicy: lazy
+Bundle-Version: 1.2.0.qualifier
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-SymbolicName: org.openscada.da.server.snmp;singleton:=true
 Bundle-ClassPath: lib/grammatica-bin-1.4.jar,
  lib/mibble-mibs-2.7.jar,
  lib/mibble-parser-2.7.jar,

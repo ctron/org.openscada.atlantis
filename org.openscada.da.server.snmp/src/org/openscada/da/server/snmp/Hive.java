@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,21 +21,25 @@
 
 package org.openscada.da.server.snmp;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.xmlbeans.XmlException;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.EObject;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.snmp.utils.MIBManager;
-import org.openscada.da.snmp.configuration.ConfigurationDocument;
-import org.openscada.da.snmp.configuration.ConfigurationDocument.Configuration.Connection;
+import org.openscada.da.snmp.configuration.ConfigurationPackage;
+import org.openscada.da.snmp.configuration.ConfigurationType;
+import org.openscada.da.snmp.configuration.ConnectionType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
@@ -41,14 +47,12 @@ public class Hive extends HiveCommon
 
     private final Map<String, SNMPNode> nodeMap = new HashMap<String, SNMPNode> ();
 
-    private FolderCommon rootFolder = null;
+    private final FolderCommon rootFolder;
 
     private MIBManager mibManager;
 
     public Hive ()
     {
-        super ();
-
         // create root folder
         this.rootFolder = new FolderCommon ();
         setRootFolder ( this.rootFolder );
@@ -58,16 +62,21 @@ public class Hive extends HiveCommon
             @Override
             public void run ()
             {
-                configure ();
+                configure ( URI.createFileURI ( "configuration.xml" ) );
             }
         } ).start ();
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
     }
 
-    public Hive ( final Node node )
+    public Hive ( final String uri )
     {
-        super ();
+        this ( parse ( URI.createURI ( uri ) ) );
+    }
+
+    public Hive ( final EObject configurationData )
+    {
+        final ConfigurationType cfg = (ConfigurationType)configurationData;
 
         // create root folder
         this.rootFolder = new FolderCommon ();
@@ -78,7 +87,7 @@ public class Hive extends HiveCommon
             @Override
             public void run ()
             {
-                configure ( node );
+                configure ( cfg );
             }
         } ).start ();
 
@@ -96,66 +105,65 @@ public class Hive extends HiveCommon
      * 
      * @param doc
      */
-    protected void configure ( final ConfigurationDocument doc )
+    protected void configure ( final ConfigurationType cfg )
     {
-        this.mibManager = new MIBManager ( doc.getConfiguration ().getMibs () );
+        this.mibManager = new MIBManager ( cfg.getMibs () );
 
-        for ( final Connection connection : doc.getConfiguration ().getConnectionList () )
+        for ( final ConnectionType connection : cfg.getConnection () )
         {
             configure ( connection );
         }
     }
 
     /**
-     * configure the hive based on a anonymous xml node
+     * configure the hive based on the default config file in the local path
      * 
-     * @param node
-     *            the xml node which must contain an xml tree of the
-     *            configuration schema
+     * @throws IOException
      */
-    protected void configure ( final Node node )
+    protected void configure ( final URI uri )
     {
-        try
-        {
-            configure ( ConfigurationDocument.Factory.parse ( node ) );
-        }
-        catch ( final XmlException e )
-        {
-            logger.warn ( "Unable to configure hive", e );
-        }
+        final ConfigurationType cfg = parse ( uri );
+
+        configure ( cfg );
     }
 
-    /**
-     * configure the hive based on the default config file in the local path
-     */
-    protected void configure ()
+    private static ConfigurationType parse ( final URI uri )
     {
+        final ResourceSet rs = new ResourceSetImpl ();
+        final Resource resource = rs.createResource ( uri );
         try
         {
-            configure ( ConfigurationDocument.Factory.parse ( new File ( "configuration.xml" ) ) );
-        }
-        catch ( final XmlException e )
-        {
-            logger.warn ( "Unable to configure hive", e );
+            resource.load ( null );
         }
         catch ( final IOException e )
         {
-            logger.warn ( "Unable to configure hive", e );
+            logger.error ( "Failed to load configuration from: " + uri, e );
         }
+
+        final ConfigurationType cfg = (ConfigurationType)EcoreUtil.getObjectByType ( resource.getContents (), ConfigurationPackage.Literals.CONFIGURATION_TYPE );
+        return cfg;
     }
 
-    protected void configure ( final Connection connection )
+    protected void configure ( final ConnectionType connection )
     {
         logger.debug ( "New Connection: {} - {}", connection.getName (), connection.getAddress () );
         ConnectionInformation ci;
 
+        if ( connection.getVersion () == null )
+        {
+            return;
+        }
+
         switch ( connection.getVersion () )
         {
-            case 1:
+            case _1:
                 ci = new ConnectionInformation ( ConnectionInformation.Version.V1, connection.getName () );
                 break;
-            case 2:
+            case _2:
                 ci = new ConnectionInformation ( ConnectionInformation.Version.V2C, connection.getName () );
+                break;
+            case _3:
+                ci = new ConnectionInformation ( ConnectionInformation.Version.V3, connection.getName () );
                 break;
             default:
                 return;
