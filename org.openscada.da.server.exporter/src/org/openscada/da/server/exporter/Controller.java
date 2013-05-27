@@ -130,6 +130,11 @@ public class Controller
                 throw new ConfigurationException ( "Failed to create hive: " + hive.getRef (), e );
             }
 
+            if ( hiveInstance == null )
+            {
+                throw new ConfigurationException ( "Failed to load hive: " + hive.getRef () );
+            }
+
             // create the hive export object
             final HiveExport hiveExport = new HiveExport ( hiveInstance );
 
