@@ -22,16 +22,22 @@ package org.openscada.da.server.opc;
 
 import org.openscada.da.opc.configuration.ConfigurationPackage;
 import org.openscada.utils.init.Initializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ModelIntializerImpl implements Initializer
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ModelIntializerImpl.class );
 
     @Override
     public void initialize ( final Object type )
     {
         if ( type.equals ( "emf" ) )
         {
+            logger.info ( "Initializing model" );
             ConfigurationPackage.eINSTANCE.eClass ();
+            logger.info ( "Initialized model: {}", ConfigurationPackage.eNS_URI );
         }
     }
 
