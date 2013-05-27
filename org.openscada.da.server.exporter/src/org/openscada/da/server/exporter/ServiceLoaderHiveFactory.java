@@ -41,11 +41,13 @@ public class ServiceLoaderHiveFactory extends AbstractHiveFactory
     {
         final ServiceLoader<HiveCreator> serviceLoader = ServiceLoader.load ( HiveCreator.class );
 
+        final Object configurationData = getConfigurationData ( configuration );
+
         final Iterator<HiveCreator> i = serviceLoader.iterator ();
         while ( i.hasNext () )
         {
             final HiveCreator creator = i.next ();
-            final Hive hive = creator.createHive ( reference, configuration );
+            final Hive hive = creator.createHive ( reference, configurationData );
             if ( hive != null )
             {
                 return hive;
