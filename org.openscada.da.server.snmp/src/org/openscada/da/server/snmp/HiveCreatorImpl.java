@@ -20,9 +20,9 @@
 
 package org.openscada.da.server.snmp;
 
-import org.eclipse.emf.ecore.EObject;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.HiveCreator;
+import org.openscada.da.snmp.configuration.ConfigurationType;
 
 public class HiveCreatorImpl implements HiveCreator
 {
@@ -35,9 +35,9 @@ public class HiveCreatorImpl implements HiveCreator
             return null;
         }
 
-        if ( configuration instanceof EObject )
+        if ( configuration instanceof ConfigurationType )
         {
-            return new org.openscada.da.server.snmp.Hive ( (EObject)configuration );
+            return new org.openscada.da.server.snmp.Hive ( (ConfigurationType)configuration );
         }
         else if ( configuration instanceof String )
         {

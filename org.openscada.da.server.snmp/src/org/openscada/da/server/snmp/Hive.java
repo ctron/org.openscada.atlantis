@@ -26,7 +26,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.emf.common.util.URI;
-import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
@@ -74,10 +73,8 @@ public class Hive extends HiveCommon
         this ( parse ( URI.createURI ( uri ) ) );
     }
 
-    public Hive ( final EObject configurationData )
+    public Hive ( final ConfigurationType cfg )
     {
-        final ConfigurationType cfg = (ConfigurationType)configurationData;
-
         // create root folder
         this.rootFolder = new FolderCommon ();
         setRootFolder ( this.rootFolder );
