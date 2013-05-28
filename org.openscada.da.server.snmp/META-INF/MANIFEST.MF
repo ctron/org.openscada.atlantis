@@ -82,6 +82,7 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-SymbolicName: org.openscada.da.server.snmp;singleton:=true
+Service-Component: hive.xml
 Bundle-ClassPath: lib/grammatica-bin-1.4.jar,
  lib/mibble-mibs-2.7.jar,
  lib/mibble-parser-2.7.jar,
