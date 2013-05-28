@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,7 +32,7 @@ import org.openscada.core.client.ConnectionFactory;
 import org.openscada.da.client.Connection;
 import org.openscada.da.proxy.configuration.ConnectionType;
 import org.openscada.da.proxy.configuration.ProxyType;
-import org.openscada.da.proxy.configuration.RootDocument;
+import org.openscada.da.proxy.configuration.RootType;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.proxy.Hive;
 import org.openscada.da.server.proxy.connection.ProxyConnection;
@@ -38,20 +40,19 @@ import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
- *
  */
 public class XMLConfigurator
 {
-    private final RootDocument document;
+    private final RootType root;
 
-    final Map<String, Connection> connections = new HashMap<String, Connection> ();
+    private final Map<String, Connection> connections = new HashMap<String, Connection> ();
 
     /**
      * @param document
      */
-    public XMLConfigurator ( final RootDocument document )
+    public XMLConfigurator ( final RootType root )
     {
-        this.document = document;
+        this.root = root;
     }
 
     /**
@@ -60,23 +61,20 @@ public class XMLConfigurator
      * @throws InvalidOperationException
      * @throws NullValueException
      * @throws NotConvertableException
-     * @throws ConfigurationError 
+     * @throws ConfigurationError
      */
     public void configure ( final Hive hive ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
     {
-        // first configure the base hive
-        new org.openscada.da.server.common.configuration.xml.XMLConfigurator ( null, this.document.getRoot ().getItemTemplates () ).configure ( hive );
-        // then the rest of the hive
-        if ( this.document.getRoot ().isSetSeparator () )
+        if ( this.root.isSetSeparator () )
         {
-            hive.setSeparator ( this.document.getRoot ().getSeparator () );
+            hive.setSeparator ( this.root.getSeparator () );
         }
-        for ( final ProxyType proxyConf : this.document.getRoot ().getProxyList () )
+        for ( final ProxyType proxyConf : this.root.getProxy () )
         {
             final ProxyConnection proxyConnection = hive.addConnection ( new ProxyPrefixName ( proxyConf.getPrefix () ) );
             proxyConnection.setWait ( proxyConf.getWait () );
 
-            for ( final ConnectionType connectionConf : proxyConf.getConnectionList () )
+            for ( final ConnectionType connectionConf : proxyConf.getConnection () )
             {
                 final Connection connection = createConnection ( connectionConf.getUri (), connectionConf.getClassName () );
                 proxyConnection.addConnection ( connection, connectionConf.getId (), new ProxyPrefixName ( connectionConf.getPrefix () ) );

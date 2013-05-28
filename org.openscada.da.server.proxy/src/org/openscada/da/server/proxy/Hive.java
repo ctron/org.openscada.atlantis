@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,27 +21,27 @@
 
 package org.openscada.da.server.proxy;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.xmlbeans.XmlException;
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.openscada.core.Variant;
-import org.openscada.da.proxy.configuration.RootDocument;
+import org.openscada.da.proxy.configuration.ConfigurationPackage;
+import org.openscada.da.proxy.configuration.RootType;
+import org.openscada.da.proxy.configuration.util.ConfigurationResourceFactoryImpl;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
-import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.proxy.configuration.XMLConfigurator;
 import org.openscada.da.server.proxy.connection.ProxyConnection;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
@@ -61,29 +63,17 @@ public class Hive extends HiveCommon
 
     private final XMLConfigurator configurator;
 
-    /**
-     * @throws XmlException
-     * @throws IOException
-     * @throws ClassNotFoundException
-     * @throws NotConvertableException
-     * @throws NullValueException
-     * @throws InvalidOperationException
-     * @throws ConfigurationError
-     */
-    public Hive () throws XmlException, IOException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
+    public Hive () throws IOException
     {
-        this ( new XMLConfigurator ( RootDocument.Factory.parse ( new File ( "configuration.xml" ) ) ) );
+        this ( new XMLConfigurator ( parse ( URI.createFileURI ( "configuration.xml" ) ) ) );
     }
 
-    /**
-     * @param configurator
-     * @throws ClassNotFoundException
-     * @throws NotConvertableException
-     * @throws NullValueException
-     * @throws InvalidOperationException
-     * @throws ConfigurationError
-     */
-    public Hive ( final XMLConfigurator configurator ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
+    public Hive ( final String uri ) throws IOException
+    {
+        this ( new XMLConfigurator ( parse ( URI.createURI ( uri ) ) ) );
+    }
+
+    public Hive ( final XMLConfigurator configurator )
     {
         // enable chain storage for this hive
         ChainStorageServiceHelper.registerDefaultPropertyService ( this );
@@ -94,18 +84,20 @@ public class Hive extends HiveCommon
         setRootFolder ( this.rootFolder );
     }
 
-    /**
-     * @param node
-     * @throws XmlException
-     * @throws ClassNotFoundException
-     * @throws NotConvertableException
-     * @throws NullValueException
-     * @throws InvalidOperationException
-     * @throws ConfigurationError
-     */
-    public Hive ( final Node node ) throws XmlException, ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
+    public Hive ( final RootType root ) throws Exception
     {
-        this ( new XMLConfigurator ( RootDocument.Factory.parse ( node ) ) );
+        this ( new XMLConfigurator ( root ) );
+    }
+
+    private static RootType parse ( final URI uri ) throws IOException
+    {
+        final ResourceSet rs = new ResourceSetImpl ();
+
+        rs.getResourceFactoryRegistry ().getExtensionToFactoryMap ().put ( "*", new ConfigurationResourceFactoryImpl () );
+        final Resource r = rs.createResource ( uri );
+        r.load ( null );
+
+        return (RootType)EcoreUtil.getObjectByType ( r.getContents (), ConfigurationPackage.Literals.ROOT_TYPE );
     }
 
     @Override

@@ -3,7 +3,6 @@
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema"
 	xmlns:proxy="http://openscada.org/DA/Proxy/Configuration" xmlns:hive="http://openscada.org/DA/Hive">
 
-	<import schemaLocation="../../org.openscada.da.server.common/schema/Hive.xsd" namespace="http://openscada.org/DA/Hive"/>
 	
 	<annotation></annotation>
 	<element name="root" type="proxy:RootType"></element>
@@ -13,7 +12,6 @@
 			<element name="proxy" type="proxy:ProxyType"
 				maxOccurs="unbounded" minOccurs="1">
 			</element>
-            <element name="item-templates" type="hive:ItemTemplatesType" minOccurs="0" maxOccurs="1"></element>
 		</sequence>
 		<attribute name="separator" type="string" use="optional"
 			default=".">
