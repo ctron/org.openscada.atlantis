@@ -55,6 +55,8 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.IoSessionSender;
 import org.openscada.net.mina.Messenger;
 import org.openscada.net.mina.SocketImpl;
+import org.openscada.sec.callback.CallbackFactory;
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -124,6 +126,12 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
         this.statistics.setLabel ( STATS_CALLS_DISCONNECT, "Calls to disconnect" );
 
         this.statistics.setLabel ( STATS_NUMERIC_STATE, "Numeric state" );
+    }
+
+    @Override
+    public void setCallbackFactory ( final CallbackFactory callbackFactory )
+    {
+        // no-op
     }
 
     protected synchronized void switchState ( final ConnectionState state, final Throwable error, final Map<String, String> properties )
@@ -443,6 +451,13 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
     public boolean isConnected ()
     {
         return this.session != null;
+    }
+
+    @Override
+    public void connect ( final CallbackHandler callbackHandler )
+    {
+        // this is unsupported for the "net" protocol
+        connect ();
     }
 
     @Override

@@ -32,22 +32,25 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.core.server.common.AuthorizationProvider;
+import org.openscada.core.server.common.AuthorizedOperation;
 import org.openscada.core.server.common.ServiceCommon;
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.core.subscription.SubscriptionListener;
 import org.openscada.core.subscription.SubscriptionManager;
 import org.openscada.core.subscription.SubscriptionValidator;
 import org.openscada.core.subscription.ValidationException;
-import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.server.Hive;
@@ -57,7 +60,6 @@ import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.HiveService;
 import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.ValidationStrategy;
@@ -66,10 +68,15 @@ import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
+import org.openscada.sec.AuthorizationReply;
+import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.collection.MapBuilder;
+import org.openscada.utils.concurrent.CallingFuture;
+import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
@@ -81,7 +88,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
 
     private final Set<SessionCommon> sessions = new HashSet<SessionCommon> ();
 
-    private final Map<DataItemInformation, DataItem> itemMap = new HashMap<DataItemInformation, DataItem> ( 1000 );
+    private final Map<String, DataItem> itemMap = new HashMap<String, DataItem> ( 1000 );
 
     private Lock itemMapReadLock;
 
@@ -93,7 +100,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
 
     private final Set<SessionListener> sessionListeners = new CopyOnWriteArraySet<SessionListener> ();
 
-    private ExecutorService operationService;
+    private volatile ExecutorService operationService;
 
     private final List<DataItemFactory> factoryList = new CopyOnWriteArrayList<DataItemFactory> ();
 
@@ -113,6 +120,21 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      * Services that are provided by this hive for internal use
      */
     private final Map<String, HiveService> services = new HashMap<String, HiveService> ();
+
+    private final AuthorizationProvider<AbstractSessionImpl> authorizationProvider = new AuthorizationProvider<AbstractSessionImpl> () {
+
+        @Override
+        public NotifyFuture<UserInformation> impersonate ( final AbstractSessionImpl session, final String targetUserName, final CallbackHandler handler )
+        {
+            return makeEffectiveUserInformation ( session, targetUserName, handler );
+        }
+
+        @Override
+        public NotifyFuture<AuthorizationReply> authorize ( final AuthorizationRequest authorizationRequest, final CallbackHandler callbackHandler, final AuthorizationResult defaultResult )
+        {
+            return HiveCommon.this.authorize ( authorizationRequest, callbackHandler, defaultResult );
+        }
+    };
 
     public HiveCommon ()
     {
@@ -161,8 +183,11 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             this.browser = null;
         }
 
-        this.operationService.shutdown ();
-        this.operationService = null;
+        if ( this.operationService != null )
+        {
+            this.operationService.shutdown ();
+            this.operationService = null;
+        }
 
         unregisterAllServices ();
     }
@@ -177,7 +202,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         this.sessionListeners.remove ( listener );
     }
 
-    private void fireSessionCreate ( final SessionCommon session )
+    private void fireSessionCreate ( final AbstractSessionImpl session )
     {
         if ( this.statisticsGenerator != null )
         {
@@ -310,13 +335,33 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     // implementation of hive interface
 
     @Override
-    public Session createSession ( final Properties props ) throws UnableToCreateSessionException
+    public NotifyFuture<Session> createSession ( final Properties properties, final CallbackHandler callbackHandler )
     {
+        final NotifyFuture<UserInformation> loginFuture = loginUser ( properties, callbackHandler );
+
+        return new CallingFuture<UserInformation, Session> ( loginFuture ) {
+
+            @Override
+            public Session call ( final Future<UserInformation> future ) throws Exception
+            {
+                return createSession ( future, properties, callbackHandler );
+            }
+        };
+    }
+
+    protected Session createSession ( final Future<UserInformation> loginFuture, final Properties properties, final CallbackHandler callbackHandler ) throws InterruptedException, ExecutionException
+    {
+        final UserInformation user = loginFuture.get ();
+
+        logger.debug ( "Create Session - user: {}", user );
+
         final Map<String, String> sessionProperties = new HashMap<String, String> ();
-        final UserInformation user = createUserInformation ( props, sessionProperties );
+
+        fillSessionProperties ( user, sessionProperties );
+
         final SessionCommon session = new SessionCommon ( this, user, sessionProperties );
 
-        handleSessionCreated ( session, props, user );
+        handleSessionCreated ( session, properties, user );
 
         synchronized ( this.sessions )
         {
@@ -327,7 +372,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         return session;
     }
 
-    protected void handleSessionCreated ( final SessionCommon session, final Properties properties, final UserInformation userInformation )
+    protected void handleSessionCreated ( final AbstractSessionImpl session, final Properties properties, final UserInformation userInformation )
     {
     }
 
@@ -346,7 +391,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             this.sessions.remove ( session );
         }
 
-        logger.debug ( "Close session: " + session );
+        logger.info ( "Close session: {}", session );
         fireSessionDestroy ( (SessionCommon)session );
 
         // destroy all subscriptions for this session
@@ -359,6 +404,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     @Override
     public void subscribeItem ( final Session session, final String itemId ) throws InvalidSessionException, InvalidItemException
     {
+        logger.debug ( "Subscribing item: {}", itemId );
+
         // validate the session first
         final SessionCommon sessionCommon = validateSession ( session );
 
@@ -382,6 +429,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     @Override
     public void unsubscribeItem ( final Session session, final String itemId ) throws InvalidSessionException, InvalidItemException
     {
+        logger.debug ( "Unsubscribing item: {}", itemId );
+
         final SessionCommon sessionCommon = validateSession ( session );
 
         // unsubscribe using the new item subscription manager
@@ -397,17 +446,18 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     @Override
     public void registerItem ( final DataItem item )
     {
+        logger.debug ( "Register item: {}", item );
+
         try
         {
             this.itemMapWriteLock.lock ();
 
             final String id = item.getInformation ().getName ();
-            final DataItemInformationBase information = new DataItemInformationBase ( item.getInformation () );
 
-            if ( !this.itemMap.containsKey ( information ) )
+            if ( !this.itemMap.containsKey ( id ) )
             {
                 // first add internally ...
-                this.itemMap.put ( information, item );
+                this.itemMap.put ( id, item );
 
                 if ( this.statisticsGenerator != null )
                 {
@@ -452,14 +502,16 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      */
     public void unregisterItem ( final DataItem item )
     {
+        logger.debug ( "Unregister item: {}", item );
+
         try
         {
             this.itemMapWriteLock.lock ();
 
-            final DataItemInformationBase information = new DataItemInformationBase ( item.getInformation () );
-            if ( this.itemMap.containsKey ( information ) )
+            final String id = item.getInformation ().getName ();
+            if ( this.itemMap.containsKey ( id ) )
             {
-                this.itemMap.remove ( information );
+                this.itemMap.remove ( id );
                 if ( this.statisticsGenerator != null )
                 {
                     this.statisticsGenerator.itemUnregistered ( item );
@@ -467,7 +519,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             }
 
             // remove the source from the manager
-            this.itemSubscriptionManager.setSource ( item.getInformation ().getName (), null );
+            this.itemSubscriptionManager.setSource ( id, null );
         }
         finally
         {
@@ -477,16 +529,23 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
 
     private void factoryCreate ( final String id )
     {
-        for ( final DataItemFactory factory : this.factoryList )
+        logger.debug ( "FactoryCreate - itemId: {}", id );
+
+        /* locking the factory list so that no one else can perform the creation process until we are done */
+        synchronized ( this.factoryList )
         {
-            if ( factory.canCreate ( id ) )
+            for ( final DataItemFactory factory : this.factoryList )
             {
-                // we let the factory create the item
-                factory.create ( id );
-                // only try one factory
-                return;
+                if ( factory.canCreate ( id ) )
+                {
+                    // we let the factory create the item
+                    factory.create ( id );
+                    // only try one factory
+                    return;
+                }
             }
         }
+
     }
 
     /**
@@ -499,8 +558,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      * @return <code>true</code> if the item id is valid <code>false</code>
      *         otherwise
      */
-    @Override
-    public boolean validateItem ( final String id )
+    protected boolean validateItem ( final String id )
     {
         if ( this.validationStrategy == ValidationStrategy.GRANT_ALL )
         {
@@ -541,7 +599,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         try
         {
             this.itemMapReadLock.lock ();
-            return this.itemMap.get ( new DataItemInformationBase ( id ) );
+            return this.itemMap.get ( id );
         }
         finally
         {
@@ -581,25 +639,36 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
 
     private static final String DATA_ITEM_OBJECT_TYPE = "ITEM"; //$NON-NLS-1$
 
+    /**
+     * @since 1.1
+     */
     @Override
-    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Session session, final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Session session, final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final CallbackHandler callbackHandler ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
     {
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final OperationParameters effectiveOperationParameters = makeOperationParameters ( sessionCommon, operationParameters );
+        return new AuthorizedOperation<WriteAttributeResults, AbstractSessionImpl> ( this.authorizationProvider, sessionCommon, DATA_ITEM_OBJECT_TYPE, itemId, "WRITE_ATTRIBUTES", makeSetAttributesContext ( attributes ), operationParameters, sessionCommon.wrapCallbackHandler ( callbackHandler ), DEFAULT_RESULT ) {
 
-        final AuthorizationResult result = authorize ( DATA_ITEM_OBJECT_TYPE, itemId, "WRITE_ATTRIBUTES", effectiveOperationParameters.getUserInformation (), makeSetAttributesContext ( attributes ) );
-        if ( !result.isGranted () )
-        {
-            logger.info ( "Write request was rejected: {}", result );
-            throw new PermissionDeniedException ( result );
-        }
+            @Override
+            protected NotifyFuture<WriteAttributeResults> granted ( final org.openscada.core.server.OperationParameters effectiveOperationParameters )
+            {
+                return processWriteAttributes ( sessionCommon, itemId, attributes, effectiveOperationParameters );
+            }
+        };
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected NotifyFuture<WriteAttributeResults> processWriteAttributes ( final SessionCommon session, final String itemId, final Map<String, Variant> attributes, final org.openscada.core.server.OperationParameters operationParameters )
+    {
+        logger.debug ( "Process write attributes - itemId: {}, attributes: {}", itemId, attributes );
 
         final DataItem item = retrieveItem ( itemId );
 
         if ( item == null )
         {
-            throw new InvalidItemException ( itemId );
+            return new InstantErrorFuture<WriteAttributeResults> ( new InvalidItemException ( itemId ).fillInStackTrace () );
         }
 
         // stats
@@ -609,10 +678,16 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         }
 
         // go
-        final NotifyFuture<WriteAttributeResults> future = item.startSetAttributes ( attributes, effectiveOperationParameters );
-        sessionCommon.addFuture ( future );
-
-        return future;
+        final NotifyFuture<WriteAttributeResults> future = item.startSetAttributes ( attributes, operationParameters );
+        try
+        {
+            session.addFuture ( future );
+            return future;
+        }
+        catch ( final InvalidSessionException e )
+        {
+            return new InstantErrorFuture<WriteAttributeResults> ( e );
+        }
     }
 
     private Map<String, Object> makeSetAttributesContext ( final Map<String, Variant> attributes )
@@ -629,35 +704,33 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         return context;
     }
 
-    private OperationParameters makeOperationParameters ( final SessionCommon session, final OperationParameters operationParameters ) throws PermissionDeniedException
-    {
-        return new OperationParameters ( makeEffectiveUserInformation ( session, operationParameters == null ? null : operationParameters.getUserInformation () ) );
-    }
-
     @Override
-    public NotifyFuture<WriteResult> startWrite ( final Session session, final String itemId, final Variant value, final OperationParameters operationParameters ) throws InvalidSessionException, InvalidItemException, PermissionDeniedException
+    public NotifyFuture<WriteResult> startWrite ( final Session session, final String itemId, final Variant value, final OperationParameters operationParameters, final CallbackHandler callbackHandler ) throws InvalidSessionException, InvalidItemException
     {
-        logger.debug ( "startWrite - session: {}, itemId: {}, value: {}, operationParameters: {}", new Object[] { session, itemId, value, operationParameters } );
         final SessionCommon sessionCommon = validateSession ( session );
 
-        final OperationParameters effectiveOperationParameters = makeOperationParameters ( sessionCommon, operationParameters );
+        return new AuthorizedOperation<WriteResult, AbstractSessionImpl> ( this.authorizationProvider, sessionCommon, DATA_ITEM_OBJECT_TYPE, itemId, "WRITE", makeWriteValueContext ( value ), operationParameters, sessionCommon.wrapCallbackHandler ( callbackHandler ), DEFAULT_RESULT ) {
 
-        logger.debug ( "Operation parameters - provided: {}, effective: {}", operationParameters, effectiveOperationParameters );
+            @Override
+            protected NotifyFuture<WriteResult> granted ( final org.openscada.core.server.OperationParameters effectiveOperationParameters )
+            {
+                return processWrite ( sessionCommon, itemId, value, effectiveOperationParameters );
+            }
+        };
+    }
 
-        final AuthorizationResult result = authorize ( DATA_ITEM_OBJECT_TYPE, itemId, "WRITE", effectiveOperationParameters.getUserInformation (), makeWriteValueContext ( value ) );
-        if ( !result.isGranted () )
-        {
-            logger.info ( "Write request was rejected: {}", result );
-            throw new PermissionDeniedException ( result );
-        }
-
-        logger.debug ( "Processing write - granted - itemId: {}", itemId );
+    /**
+     * @since 1.1
+     */
+    protected NotifyFuture<WriteResult> processWrite ( final SessionCommon session, final String itemId, final Variant value, final org.openscada.core.server.OperationParameters effectiveOperationParameters )
+    {
+        logger.debug ( "Processing write - granted - itemId: {}, value: {}", itemId, value );
 
         final DataItem item = retrieveItem ( itemId );
 
         if ( item == null )
         {
-            throw new InvalidItemException ( itemId );
+            return new InstantErrorFuture<WriteResult> ( new InvalidItemException ( itemId ).fillInStackTrace () );
         }
 
         // stats
@@ -668,8 +741,15 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
 
         // go
         final NotifyFuture<WriteResult> future = item.startWriteValue ( value, effectiveOperationParameters );
-        sessionCommon.addFuture ( future );
-        return future;
+        try
+        {
+            session.addFuture ( future );
+            return future;
+        }
+        catch ( final InvalidSessionException e )
+        {
+            return new InstantErrorFuture<WriteResult> ( e );
+        }
     }
 
     @Override
@@ -714,23 +794,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         synchronized ( this.templates )
         {
             this.templates.add ( template );
-        }
-    }
-
-    /**
-     * Will re-check all items in granted state. Call when your list of known
-     * items
-     * has changed in order to give granted but not connected subscriptions a
-     * chance
-     * to be created by the factories.
-     */
-    public void recheckGrantedItems ()
-    {
-        final List<Object> topics = this.itemSubscriptionManager.getAllGrantedTopics ();
-
-        for ( final Object topic : topics )
-        {
-            retrieveItem ( topic.toString () );
         }
     }
 

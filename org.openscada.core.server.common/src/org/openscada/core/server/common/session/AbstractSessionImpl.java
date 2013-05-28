@@ -31,6 +31,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 
 import org.openscada.core.server.Session;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.callback.Callback;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +52,8 @@ public abstract class AbstractSessionImpl implements Session
     private final Set<DisposeListener> disposeListeners = new LinkedHashSet<DisposeListener> ();
 
     private boolean disposed;
+
+    private final Set<SessionCallbackHandler> sessionCallbackHandlers = new HashSet<AbstractSessionImpl.SessionCallbackHandler> ();
 
     public interface DisposeListener
     {
@@ -80,6 +85,18 @@ public abstract class AbstractSessionImpl implements Session
         }
 
         this.disposed = true;
+
+        final HashSet<SessionCallbackHandler> handlers;
+        synchronized ( this.sessionCallbackHandlers )
+        {
+            handlers = new HashSet<SessionCallbackHandler> ( this.sessionCallbackHandlers );
+            this.sessionCallbackHandlers.clear ();
+        }
+
+        for ( final SessionCallbackHandler handler : handlers )
+        {
+            handler.dispose ();
+        }
 
         for ( final DisposeListener listener : this.disposeListeners )
         {
@@ -137,5 +154,73 @@ public abstract class AbstractSessionImpl implements Session
     public Set<String> getPrivileges ()
     {
         return this.privileges;
+    }
+
+    private class SessionCallbackHandler implements CallbackHandler
+    {
+        private final CallbackHandler callbackHandler;
+
+        private NotifyFuture<Callback[]> future;
+
+        public SessionCallbackHandler ( final CallbackHandler callbackHandler )
+        {
+            this.callbackHandler = callbackHandler;
+        }
+
+        @Override
+        public NotifyFuture<Callback[]> performCallback ( final Callback[] callbacks )
+        {
+            this.future = this.callbackHandler.performCallback ( callbacks );
+            this.future.addListener ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    removeCallbackHandler ( SessionCallbackHandler.this );
+                }
+            } );
+            return this.future;
+        }
+
+        public void dispose ()
+        {
+            if ( this.future != null )
+            {
+                this.future.cancel ( false );
+            }
+        }
+
+    }
+
+    /**
+     * @param callbackHandler
+     * @since 1.1
+     */
+    public CallbackHandler wrapCallbackHandler ( final CallbackHandler callbackHandler )
+    {
+        if ( callbackHandler == null || this.disposed )
+        {
+            return null;
+        }
+
+        final SessionCallbackHandler sch = new SessionCallbackHandler ( callbackHandler );
+        addCallbackHandler ( sch );
+        return sch;
+    }
+
+    private void addCallbackHandler ( final SessionCallbackHandler sessionCallbackHandler )
+    {
+        synchronized ( this.sessionCallbackHandlers )
+        {
+            this.sessionCallbackHandlers.add ( sessionCallbackHandler );
+        }
+    }
+
+    private void removeCallbackHandler ( final SessionCallbackHandler sessionCallbackHandler )
+    {
+        synchronized ( this.sessionCallbackHandlers )
+        {
+            this.sessionCallbackHandlers.remove ( sessionCallbackHandler );
+        }
     }
 }

@@ -114,6 +114,8 @@ public class Activator implements BundleActivator
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ( 2 );
         properties.put ( Constants.SERVICE_DESCRIPTION, "JDBC implementation for org.openscada.ae.server.storage.Storage" );
         properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( "osgi.command.scope", "ae" );
+        properties.put ( "osgi.command.function", new String[] { "cleanupArchive", "showQueueSize" } );
         this.jdbcStorageHandle = context.registerService ( new String[] { JdbcStorage.class.getName (), Storage.class.getName () }, this.jdbcStorage, properties );
     }
 

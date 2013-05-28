@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,16 +22,19 @@
 package org.openscada.da.net.handler;
 
 import org.openscada.core.Variant;
+import org.openscada.core.data.OperationParameters;
 import org.openscada.core.net.MessageHelper;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.utils.lang.Holder;
 
-public class WriteOperation extends Operation
+public class WriteOperation
 {
 
+    /**
+     * @since 1.1
+     */
     public static Message create ( final String itemName, final Variant value, final OperationParameters operationParameters )
     {
         final Message message = new Message ( Messages.CC_WRITE_OPERATION );
@@ -37,7 +42,7 @@ public class WriteOperation extends Operation
         message.getValues ().put ( "item-name", new StringValue ( itemName ) );
         message.getValues ().put ( "value", MessageHelper.variantToValue ( value ) );
 
-        encodeOperationParameters ( operationParameters, message );
+        MessageHelper.encodeOperationParameters ( operationParameters, message );
 
         return message;
     }
@@ -52,6 +57,6 @@ public class WriteOperation extends Operation
 
         value.value = MessageHelper.valueToVariant ( values.get ( "value" ), Variant.NULL );
 
-        operationParameters.value = convertOperationParameters ( values.get ( FIELD_OPERATION_PARAMETERS ) );
+        operationParameters.value = MessageHelper.convertOperationParameters ( values.get ( MessageHelper.FIELD_OPERATION_PARAMETERS ) );
     }
 }

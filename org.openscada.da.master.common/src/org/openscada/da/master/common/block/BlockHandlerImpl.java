@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -29,14 +31,15 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.WriteRequest;
 import org.openscada.da.master.WriteRequestResult;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
+import org.openscada.da.master.common.internal.Activator;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
@@ -55,11 +58,27 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     private final Variant source;
 
+    private final String attrBlocked;
+
+    private final String attrActive;
+
+    private final String attrUser;
+
+    private final String attrNote;
+
+    private final String attrTimestamp;
+
     public BlockHandlerImpl ( final String configurationId, final EventProcessor eventProcessor, final ObjectPoolTracker<MasterItem> poolTracker, final int priority, final ServiceTracker<ConfigurationAdministrator, ConfigurationAdministrator> caTracker )
     {
         super ( configurationId, poolTracker, priority, caTracker, BlockHandlerFactoryImpl.FACTORY_ID, BlockHandlerFactoryImpl.FACTORY_ID );
         this.source = Variant.valueOf ( configurationId );
         this.eventProcessor = eventProcessor;
+
+        this.attrBlocked = getPrefixed ( "blocked", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrActive = getPrefixed ( "active", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrNote = getPrefixed ( "note", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrUser = getPrefixed ( "user", Activator.getStringInterner () ); //$NON-NLS-1$
+        this.attrTimestamp = getPrefixed ( "timestamp", Activator.getStringInterner () ); //$NON-NLS-1$
     }
 
     @Override
@@ -172,11 +191,11 @@ public class BlockHandlerImpl extends AbstractCommonHandlerImpl
 
     protected void injectAttributes ( final Builder builder )
     {
-        builder.setAttribute ( getPrefixed ( "blocked" ), Variant.valueOf ( this.active ) ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "active" ), Variant.valueOf ( this.active ) ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "note" ), Variant.valueOf ( this.note ) ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "user" ), Variant.valueOf ( this.user ) ); //$NON-NLS-1$
-        builder.setAttribute ( getPrefixed ( "timestamp" ), Variant.valueOf ( this.timestamp ) ); //$NON-NLS-1$
+        builder.setAttribute ( this.attrBlocked, Variant.valueOf ( this.active ) );
+        builder.setAttribute ( this.attrActive, Variant.valueOf ( this.active ) );
+        builder.setAttribute ( this.attrNote, Variant.valueOf ( this.note ) );
+        builder.setAttribute ( this.attrUser, Variant.valueOf ( this.user ) );
+        builder.setAttribute ( this.attrTimestamp, Variant.valueOf ( this.timestamp ) );
     }
 
     @Override

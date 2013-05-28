@@ -25,16 +25,25 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Future;
 
-import org.openscada.core.ConnectionInformation;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.server.Service;
 import org.openscada.core.server.Session;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.sec.AuthenticationException;
+import org.openscada.sec.AuthenticationImplementation;
+import org.openscada.sec.AuthorizationImplementation;
+import org.openscada.sec.AuthorizationReply;
+import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.PermissionDeniedException;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.audit.AuditLogService;
+import org.openscada.sec.audit.log.slf4j.LogServiceImpl;
+import org.openscada.sec.authz.AuthorizationContext;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.CallingFuture;
+import org.openscada.utils.concurrent.FutureListener;
+import org.openscada.utils.concurrent.InstantFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,59 +52,47 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
 
     private final static Logger logger = LoggerFactory.getLogger ( ServiceCommon.class );
 
-    protected static final AuthorizationResult DEFAULT_RESULT = AuthorizationResult.create ( org.openscada.sec.StatusCodes.AUTHORIZATION_FAILED, Messages.getString ( "ServiceCommon.DefaultMessage" ) ); //$NON-NLS-1$
+    protected static final AuthorizationResult DEFAULT_RESULT = AuthorizationResult.createReject ( org.openscada.sec.StatusCodes.AUTHORIZATION_FAILED, Messages.getString ( "ServiceCommon.DefaultMessage" ) ); //$NON-NLS-1$
 
-    /**
-     * Authenticate a user
-     * <p>
-     * This method simply implements an <em>any</em> authentication which allows
-     * access to session with or without user names. No password is checked.
-     * </p>
-     * <p>
-     * This method should be overridden if a different authentication scheme is
-     * required.
-     * </p>
-     * 
-     * @param properties
-     *            the session properties used for authentication
-     * @param sessionResultProperties
-     *            the session properties that will be returned to the client.
-     *            The method may add or remove properties as it likes.
-     * @return the user information object or <code>null</code> if it is an
-     *         anonymous session
-     * @throws AuthenticationException
-     *             if the user was rejected
-     */
-    protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
+    private AuthorizationImplementation authorizationImplementation;
+
+    private AuthenticationImplementation authenticationImplementation;
+
+    private AuditLogService auditLogService;
+
+    public ServiceCommon ()
     {
-        final String username = properties.getProperty ( ConnectionInformation.PROP_USER );
-        final String password = properties.getProperty ( ConnectionInformation.PROP_PASSWORD );
+        this.authenticationImplementation = new DefaultAuthentication ();
+        this.authorizationImplementation = new DefaultAuthorization ( new AuthenticationImplementation () {
 
-        final String plainPassword = System.getProperty ( "org.openscada.core.server.common.ServiceCommon.password" );
+            @Override
+            public UserInformation getUser ( final String user )
+            {
+                return ServiceCommon.this.authenticationImplementation.getUser ( user );
+            }
 
-        if ( plainPassword == null || plainPassword.isEmpty () )
-        {
-            if ( username != null )
+            @Override
+            public NotifyFuture<UserInformation> authenticate ( final CallbackHandler callbackHandler )
             {
-                return new UserInformation ( username, password, new String[0] );
+                return ServiceCommon.this.authenticationImplementation.authenticate ( callbackHandler );
             }
-            else
-            {
-                return null;
-            }
-        }
-        else
-        {
-            if ( username == null || password == null || !plainPassword.equals ( password ) )
-            {
-                logger.debug ( "Password requested using system properties. But not or wrong provided." );
-                throw new AuthenticationException ( org.openscada.sec.StatusCodes.INVALID_USER_OR_PASSWORD );
-            }
-            else
-            {
-                return new UserInformation ( username, password, new String[0] );
-            }
-        }
+        } );
+        this.auditLogService = new LogServiceImpl ();
+    }
+
+    public void setAuditLogService ( final AuditLogService auditLogService )
+    {
+        this.auditLogService = auditLogService == null ? new LogServiceImpl () : auditLogService;
+    }
+
+    protected void setAuthenticationImplementation ( final AuthenticationImplementation authenticationImplementation )
+    {
+        this.authenticationImplementation = authenticationImplementation;
+    }
+
+    protected void setAuthorizationImplementation ( final AuthorizationImplementation authorizationImplementation )
+    {
+        this.authorizationImplementation = authorizationImplementation;
     }
 
     protected Set<String> extractPrivileges ( final Properties properties )
@@ -124,64 +121,61 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
      * 
      * @param properties
      *            the user session properties
+     * @param callbackHandler
+     *            the callback handler which handles callbacks
+     * @param sessionResultProperties
+     *            the map will be filled with the resulting session properties
      * @return the user information returned by
      *         {@link #authenticate(Properties)}
-     * @throws UnableToCreateSessionException
-     *             if a {@link AuthenticationException} was caught by the call
-     *             to {@link #authenticate(Properties)}.
      * @see #authenticate(Properties)
+     * @since 1.1
      */
-    protected UserInformation createUserInformation ( final Properties properties, final Map<String, String> sessionResultProperties ) throws UnableToCreateSessionException
+    protected NotifyFuture<UserInformation> loginUser ( final Properties properties, final CallbackHandler callbackHandler )
     {
-        try
-        {
-            // check who the user is
-            final UserInformation result = authenticate ( properties, sessionResultProperties );
+        final NotifyFuture<AuthorizationReply> future = authorize ( new AuthorizationRequest ( "SESSION", null, "CONNECT", UserInformation.ANONYMOUS, null ), callbackHandler );
+        return new CallingFuture<AuthorizationReply, UserInformation> ( future ) {
 
-            logger.debug ( "Authenticated as {}", result ); //$NON-NLS-1$
-
-            // checking if the user is allowed to log on
-            final AuthorizationResult authResult = authorize ( "SESSION", extractUserName ( result ), "CONNECT", result, null );
-            if ( !authResult.isGranted () )
+            @Override
+            public UserInformation call ( final Future<AuthorizationReply> future ) throws Exception
             {
-                throw new UnableToCreateSessionException ( String.format ( "The user is not allowed to log on: %s", authResult.toString () ) );
-            }
+                final AuthorizationReply authResult = future.get ();
 
-            if ( result != null && result.getRoles () != null )
-            {
-                for ( final String role : result.getRoles () )
+                final Exception e = authResult.getResult ().asException ();
+                if ( e != null )
                 {
-                    sessionResultProperties.put ( "userInformation.roles." + role, "true" ); //$NON-NLS-1$ //$NON-NLS-2$
+                    logger.debug ( "Failed to login user", e );
+                    throw e;
                 }
-            }
 
-            return result;
-        }
-        catch ( final AuthenticationException e )
+                return authResult.getUserInformation ();
+            }
+        };
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected void fillSessionProperties ( final UserInformation userInformation, final Map<String, String> sessionResultProperties )
+    {
+        if ( userInformation != null && !userInformation.isAnonymous () )
         {
-            throw new UnableToCreateSessionException ( e );
+            sessionResultProperties.put ( "userInformation.name", userInformation.getName () ); //$NON-NLS-1$
+        }
+        if ( userInformation != null && userInformation.getRoles () != null )
+        {
+            for ( final String role : userInformation.getRoles () )
+            {
+                sessionResultProperties.put ( String.format ( "userInformation.roles.%s", role ), "true" ); //$NON-NLS-1$ //$NON-NLS-2$
+            }
         }
     }
 
     /**
-     * Get the name of the user, if the user is known
-     * 
-     * @param userInformation
-     *            the user information from which to extract the name
-     * @return the user name or <code>null</code> if the name is unknown
+     * @since 1.1
      */
-    private String extractUserName ( final UserInformation userInformation )
+    protected NotifyFuture<AuthorizationReply> authorize ( final AuthorizationRequest request, final CallbackHandler callbackHandler )
     {
-        if ( userInformation == null )
-        {
-            return null;
-        }
-        return userInformation.getName ();
-    }
-
-    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context )
-    {
-        return authorize ( objectType, objectId, action, userInformation, context, DEFAULT_RESULT );
+        return authorize ( request, callbackHandler, DEFAULT_RESULT );
     }
 
     /**
@@ -203,57 +197,86 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
      *            the default result that should be returned if no one votes,
      *            must not be <code>null</code>
      * @return the authorization result, never returns <code>null</code>
+     * @since 1.1
      */
-    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
+    protected NotifyFuture<AuthorizationReply> authorize ( final AuthorizationRequest request, final CallbackHandler callbackHandler, final AuthorizationResult defaultResult )
     {
-        logger.debug ( "Requesting authorization - objectType: {}, objectId: {}, action: {}, userInformation: {}, context: {}, defaultResult: {} ... defaulting to GRANTED", new Object[] { objectType, objectId, action, userInformation, context, defaultResult } ); //$NON-NLS-1$
-        return AuthorizationResult.GRANTED;
+        final AuthorizationContext context = new AuthorizationContext ();
+        context.setCallbackHandler ( callbackHandler );
+        context.setRequest ( request );
+
+        // log the request
+        this.auditLogService.authorizationRequested ( request );
+
+        final NotifyFuture<AuthorizationReply> result = this.authorizationImplementation.authorize ( context, defaultResult );
+
+        // log the result, when it will be available
+        result.addListener ( new FutureListener<AuthorizationReply> () {
+
+            @Override
+            public void complete ( final Future<AuthorizationReply> future )
+            {
+                try
+                {
+                    ServiceCommon.this.auditLogService.authorizationDone ( context, request, future.get () );
+                }
+                catch ( final Exception e )
+                {
+                    ServiceCommon.this.auditLogService.authorizationFailed ( context, request, e );
+                }
+            }
+        } );
+
+        return result;
     }
 
-    protected UserInformation makeEffectiveUserInformation ( final AbstractSessionImpl session, final UserInformation userInformation ) throws PermissionDeniedException
+    /**
+     * @since 1.1
+     */
+    protected NotifyFuture<UserInformation> makeEffectiveUserInformation ( final AbstractSessionImpl session, final String targetUser, final CallbackHandler handler )
     {
-        UserInformation sessionInformation = session.getUserInformation ();
-        if ( sessionInformation == null )
+        UserInformation sessionUser = session.getUserInformation ();
+        if ( sessionUser == null )
         {
-            logger.debug ( "Session has no user information. Using anonymous" );
-            sessionInformation = UserInformation.ANONYMOUS;
+            logger.debug ( "Session has no user information. Using anonymous." );
+            sessionUser = UserInformation.ANONYMOUS;
         }
 
-        if ( userInformation == null )
+        if ( targetUser == null )
         {
-            logger.debug ( "No user information provided. Using session information ({}).", sessionInformation );
-            return sessionInformation;
-        }
-
-        final String proxyUser = userInformation.getName ();
-        if ( proxyUser == null )
-        {
-            logger.info ( "Proxy user is null" );
-            return sessionInformation;
+            logger.info ( "target user is null" );
+            return new InstantFuture<UserInformation> ( sessionUser );
         }
 
         // check if user differs
-        if ( !proxyUser.equals ( sessionInformation.getName () ) )
+        if ( targetUser.equals ( sessionUser.getName () ) )
         {
-            logger.debug ( "Trying to set proxy user: {}", proxyUser );
-
-            // try to set proxy user
-            final AuthorizationResult result = authorize ( "SESSION", proxyUser, "PROXY_USER", session.getUserInformation (), null );
-            if ( !result.isGranted () )
-            {
-                logger.info ( "Proxy user is not allowed" );
-                // not allowed to use proxy user
-                throw new PermissionDeniedException ( result.getErrorCode (), result.getMessage () );
-            }
-
-            return new UserInformation ( proxyUser, userInformation.getPassword (), sessionInformation.getRoles () );
-        }
-        else
-        {
-            logger.debug ( "Session user and proxy user match ... using session user" );
+            logger.debug ( "Session user and target user match ... using session user" );
             // session is already is proxy user
-            return sessionInformation;
+            return new InstantFuture<UserInformation> ( sessionUser );
         }
+
+        logger.debug ( "Trying to set target user: {}", targetUser );
+
+        // try to set proxy user
+        final NotifyFuture<AuthorizationReply> future = authorize ( new AuthorizationRequest ( "SESSION", targetUser, "PROXY_USER", session.getUserInformation (), null ), handler );
+
+        return new CallingFuture<AuthorizationReply, UserInformation> ( future ) {
+
+            @Override
+            public UserInformation call ( final Future<AuthorizationReply> future ) throws Exception
+            {
+                final AuthorizationReply result = future.get ();
+                if ( !result.isGranted () )
+                {
+                    logger.info ( "Proxy user is not allowed" );
+                    // not allowed to use proxy user
+                    throw result.getResult ().asException ();
+                }
+
+                return ServiceCommon.this.authenticationImplementation.getUser ( targetUser );
+            }
+        };
     }
 
 }

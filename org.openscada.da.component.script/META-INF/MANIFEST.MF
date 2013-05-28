@@ -2,14 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Script Component
 Bundle-SymbolicName: org.openscada.da.component.script
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.1.0.qualifier
 Bundle-Activator: org.openscada.da.component.script.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.openscada.ca;version="1.0.0",
+ org.openscada.ca.common.factory;version="1.0.0",
  org.openscada.core;version="1.0.0",
  org.openscada.core.client;version="1.0.0",
  org.openscada.core.connection.provider;version="1.0.0",
+ org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
  org.openscada.core.server.common;version="1.0.0",
  org.openscada.da.client;version="1.0.0",
@@ -20,7 +22,6 @@ Import-Package: org.openscada.ca;version="1.0.0",
  org.openscada.sec;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
  org.openscada.utils.osgi;version="1.0.0",
- org.openscada.ca.common.factory;version="1.0.0",
  org.openscada.utils.osgi.pool;version="1.0.0",
  org.openscada.utils.script;version="1.0.0",
  org.osgi.framework;version="1.6.0"

@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,16 +34,19 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.sec.AuthenticationException;
 import org.openscada.sec.AuthenticationService;
-import org.openscada.sec.StatusCodes;
 import org.openscada.sec.UserInformation;
 import org.openscada.sec.UserManagerService;
+import org.openscada.sec.authn.CredentialsRequest;
 import org.openscada.sec.utils.password.PasswordEncoder;
+import org.openscada.sec.utils.password.PasswordEncoding;
 import org.openscada.sec.utils.password.PasswordType;
 import org.openscada.sec.utils.password.PasswordValidator;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.jdbc.DataSourceConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.DataSourceFactoryTracker;
+import org.openscada.utils.osgi.jdbc.data.RowMapperAdapter;
+import org.openscada.utils.osgi.jdbc.data.RowMapperMappingException;
 import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
 import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
 import org.openscada.utils.osgi.jdbc.task.RowCallback;
@@ -84,13 +89,21 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
     public class PasswordCheckRowCallback implements RowCallback
     {
-        private final String password;
-
         private boolean result;
 
-        public PasswordCheckRowCallback ( final String password )
+        private final Map<PasswordEncoding, String> passwords;
+
+        private final String userIdColumnName;
+
+        private String userId;
+
+        private final String passwordColumnName;
+
+        public PasswordCheckRowCallback ( final Map<PasswordEncoding, String> passwords, final String passwordColumnName, final String userIdColumnName )
         {
-            this.password = password;
+            this.passwords = passwords;
+            this.userIdColumnName = userIdColumnName;
+            this.passwordColumnName = passwordColumnName;
         }
 
         public boolean isResult ()
@@ -98,18 +111,27 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
             return this.result;
         }
 
+        public String getUserId ()
+        {
+            return this.userId;
+        }
+
         @Override
         public void processRow ( final ResultSet resultSet ) throws SQLException
         {
-            final String storedPassword = resultSet.getString ( "password" );
+            final String storedPassword = resultSet.getString ( this.passwordColumnName );
 
             if ( storedPassword == null || storedPassword.isEmpty () )
             {
                 return;
             }
 
-            if ( validatePassword ( this.password, storedPassword ) )
+            if ( validatePassword ( this.passwords, storedPassword ) )
             {
+                if ( this.userIdColumnName != null )
+                {
+                    this.userId = resultSet.getString ( this.userIdColumnName );
+                }
                 this.result = true;
             }
         }
@@ -130,6 +152,10 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
     private PasswordEncoder passwordEncoder;
 
+    private String userIdColumnName;
+
+    private String passwordColumnName;
+
     public JdbcAuthenticationService ( final BundleContext context, final String id )
     {
         this.context = context;
@@ -137,8 +163,17 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
     }
 
     @Override
-    public UserInformation authenticate ( final String username, final String password ) throws AuthenticationException
+    public void joinRequest ( final CredentialsRequest request )
     {
+        request.askUsername ();
+        request.askPassword ( this.passwordValidator.getSupportedInputEncodings () );
+    }
+
+    @Override
+    public UserInformation authenticate ( final CredentialsRequest request ) throws AuthenticationException
+    {
+        final String username = request.getUserName ();
+
         try
         {
             this.readLock.lock ();
@@ -154,7 +189,7 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
                     @Override
                     public UserInformation performTask ( final ConnectionContext connection ) throws Exception
                     {
-                        return performAuthentication ( connection, username, password );
+                        return performAuthentication ( connection, username, request.getPasswords () );
                     }
                 } );
             }
@@ -178,21 +213,25 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         }
     }
 
-    protected UserInformation performAuthentication ( final ConnectionContext connection, final String username, final String password ) throws AuthenticationException, SQLException
+    protected UserInformation performAuthentication ( final ConnectionContext connection, final String username, final Map<PasswordEncoding, String> passwords ) throws AuthenticationException, SQLException
     {
-        final PasswordCheckRowCallback callback = new PasswordCheckRowCallback ( password );
+        final PasswordCheckRowCallback callback = new PasswordCheckRowCallback ( passwords, this.passwordColumnName, this.userIdColumnName );
         connection.query ( callback, this.findUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
 
         if ( !callback.isResult () )
         {
-            return failure ( "User not found or password invalid", StatusCodes.INVALID_USER_OR_PASSWORD );
+            // no user found ... abstain
+            return null;
         }
+
+        final String userId = this.userIdColumnName != null ? callback.getUserId () : username;
+        logger.trace ( "Using user id: {}", userId );
 
         final List<String> roles;
 
         if ( this.findRolesForUserSql != null && !this.findRolesForUserSql.isEmpty () )
         {
-            roles = connection.queryForList ( String.class, this.findRolesForUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
+            roles = connection.queryForList ( String.class, this.findRolesForUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", userId ).getMap () );
         }
         else
         {
@@ -201,14 +240,14 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
 
         logger.trace ( "Found roles for user: {}", roles );
 
-        return new UserInformation ( username, password, roles );
+        return new UserInformation ( username, roles );
     }
 
-    protected boolean validatePassword ( final String providedPassword, final String storedPassword )
+    protected boolean validatePassword ( final Map<PasswordEncoding, String> providedPasswords, final String storedPassword )
     {
         try
         {
-            return this.passwordValidator.validatePassword ( providedPassword, storedPassword );
+            return this.passwordValidator.validatePassword ( providedPasswords, storedPassword );
         }
         catch ( final Exception e )
         {
@@ -233,6 +272,84 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         detach ();
     }
 
+    @Override
+    public UserInformation getUser ( final String username )
+    {
+        this.readLock.lock ();
+        try
+        {
+            if ( this.accessor == null )
+            {
+                logger.info ( "We don't have any accessor" );
+                return null;
+            }
+
+            try
+            {
+                return this.accessor.doWithConnection ( new CommonConnectionTask<UserInformation> () {
+                    @Override
+                    public UserInformation performTask ( final ConnectionContext connection ) throws Exception
+                    {
+                        return performLookup ( connection, username );
+                    }
+                } );
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to perform lookup", e );
+                return null;
+            }
+        }
+        finally
+        {
+            this.readLock.unlock ();
+        }
+    }
+
+    protected UserInformation performLookup ( final ConnectionContext connection, final String username ) throws SQLException
+    {
+        /*
+         * We use the same query as for the password here. Only that we dump the whole checking and simple return the user entry if one was found.
+         */
+        final List<String> entries = connection.query ( new RowMapperAdapter<String> () {
+            @Override
+            public String mapRow ( final ResultSet resultSet ) throws SQLException, RowMapperMappingException
+            {
+                if ( JdbcAuthenticationService.this.userIdColumnName == null )
+                {
+                    return ""; // no username from SQL
+                }
+                else
+                {
+                    return resultSet.getString ( JdbcAuthenticationService.this.userIdColumnName );
+                }
+            }
+        }, this.findUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", username ).getMap () );
+
+        if ( entries.isEmpty () )
+        {
+            return null;
+        }
+
+        final String userId = this.userIdColumnName != null ? entries.get ( 0 ) : username;
+        logger.trace ( "Using '{0}' as user id", userId );
+
+        final List<String> roles;
+
+        if ( this.findRolesForUserSql != null && !this.findRolesForUserSql.isEmpty () )
+        {
+            roles = connection.queryForList ( String.class, this.findRolesForUserSql, new MapBuilder<String, Object> ().put ( "USER_ID", userId ).getMap () );
+        }
+        else
+        {
+            roles = null;
+        }
+
+        logger.trace ( "Found roles for user: {}", roles );
+
+        return new UserInformation ( userId, roles );
+    }
+
     public void update ( final Map<String, String> parameters ) throws Exception
     {
         logger.debug ( "Updating configuration" );
@@ -254,6 +371,8 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         this.findUserSql = cfg.getStringChecked ( "findUserSql", "Need 'findUserSql' to be set" );
         this.findRolesForUserSql = cfg.getString ( "findRolesForUserSql" );
         this.updatePasswordSql = cfg.getString ( "updatePasswordSql" );
+        this.userIdColumnName = cfg.getString ( "userIdColumnName" );
+        this.passwordColumnName = cfg.getString ( "passwordColumnName", "password" );
 
         // now attach
 
@@ -352,7 +471,7 @@ public class JdbcAuthenticationService implements AuthenticationService, UserMan
         }
     }
 
-    protected void handleSetPassword ( final ConnectionContext connection, final String user, final String password ) throws SQLException
+    protected void handleSetPassword ( final ConnectionContext connection, final String user, final String password ) throws Exception
     {
         final String encodedPassword = this.passwordEncoder.encodePassword ( password );
 

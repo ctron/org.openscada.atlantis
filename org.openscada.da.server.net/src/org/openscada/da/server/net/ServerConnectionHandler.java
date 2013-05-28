@@ -26,18 +26,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.Future;
 
 import org.apache.mina.core.session.IoSession;
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.Variant;
+import org.openscada.core.data.OperationParameters;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.Session.SessionListener;
 import org.openscada.core.server.net.AbstractServerConnectionHandler;
 import org.openscada.da.core.Location;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.browser.Entry;
@@ -56,10 +56,12 @@ import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.utils.MessageCreator;
+import org.openscada.sec.callback.PropertiesCredentialsCallback;
+import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.concurrent.ResultHandler;
 import org.openscada.utils.concurrent.task.DefaultTaskHandler;
 import org.openscada.utils.concurrent.task.ResultFutureHandler;
+import org.openscada.utils.concurrent.task.ResultHandler;
 import org.openscada.utils.concurrent.task.TaskHandler;
 import org.openscada.utils.lang.Holder;
 import org.slf4j.Logger;
@@ -197,12 +199,29 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
             return;
         }
 
+        this.hive.createSession ( props, new PropertiesCredentialsCallback ( props ) ).addListener ( new FutureListener<Session> () {
+
+            @Override
+            public void complete ( final Future<Session> future )
+            {
+                handleCreateSessionComplete ( future, message, props );
+            }
+        } );
+
+    }
+
+    /**
+     * @since 1.0
+     */
+    protected void handleCreateSessionComplete ( final Future<Session> future, final Message message, final Properties props )
+    {
         try
         {
-            this.session = this.hive.createSession ( props );
+            this.session = future.get ();
         }
-        catch ( final UnableToCreateSessionException e )
+        catch ( final Exception e )
         {
+            logger.warn ( "Failed to create session", e );
             this.messenger.sendMessage ( MessageCreator.createFailedMessage ( message, e ) );
             return;
         }
@@ -359,7 +378,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            final NotifyFuture<WriteResult> task = this.hive.startWrite ( this.session, itemId.value, value.value, operationParameters.value );
+            final NotifyFuture<WriteResult> task = this.hive.startWrite ( this.session, itemId.value, value.value, operationParameters.value, null );
             final TaskHandler.Handle handle = this.taskHandler.addTask ( task );
 
             try
@@ -429,7 +448,7 @@ public class ServerConnectionHandler extends AbstractServerConnectionHandler imp
 
         try
         {
-            final NotifyFuture<WriteAttributeResults> task = this.hive.startWriteAttributes ( this.session, itemId.value, attributes.value, operationParameters.value );
+            final NotifyFuture<WriteAttributeResults> task = this.hive.startWriteAttributes ( this.session, itemId.value, attributes.value, operationParameters.value, null );
             final TaskHandler.Handle handle = this.taskHandler.addTask ( task );
 
             try

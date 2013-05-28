@@ -265,7 +265,7 @@ public class ConfigurationAdministratorService implements RemoteConfigurationAdm
         final Object username = this.context.getMessageContext ().get ( "username" );
         if ( username instanceof String )
         {
-            return new UserInformation ( (String)username, null );
+            return new UserInformation ( (String)username );
         }
         return null;
     }

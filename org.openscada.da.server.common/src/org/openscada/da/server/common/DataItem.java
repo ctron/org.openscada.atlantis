@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,8 +28,8 @@ import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -38,8 +40,10 @@ public interface DataItem
 
     /**
      * The read operation of a data item.
+     * 
      * @return The value read from the subsystem.
-     * @throws InvalidOperationException Raised if "read" is not a valid operation for this item
+     * @throws InvalidOperationException
+     *             Raised if "read" is not a valid operation for this item
      */
     public NotifyFuture<Variant> readValue () throws InvalidOperationException;
 
@@ -47,33 +51,46 @@ public interface DataItem
 
     /**
      * Sets the listener for this item.
-     * 
-     * Set by the controller to which this item is registered. The item has to use the listener
+     * Set by the controller to which this item is registered. The item has to
+     * use the listener
      * provided.
      * 
-     * @param listener The listener to use or null to disable notification
-     * 
+     * @param listener
+     *            The listener to use or null to disable notification
      */
     public void setListener ( ItemListener listener );
 
     /**
      * The write operation of a data item.
-     * @param session The user session 
-     * @param value The value to write to the subsystem
-     * @param operationParameters 
+     * 
+     * @param session
+     *            The user session
+     * @param value
+     *            The value to write to the subsystem
+     * @param operationParameters
      * @return the future to the operation
-     * @throws InvalidOperationException Raised if "write" is not a valid operation for this item
-     * @throws NullValueException Raised if a null value was passed but the subsystem does not allow null values to be written
-     * @throws NotConvertableException Raised if a value was passed that cannot be converted in a variant type suitable for the subsystem
-     * @throws OperationException Raised if the value could not be written due to some subsystem error
+     * @throws InvalidOperationException
+     *             Raised if "write" is not a valid operation for this item
+     * @throws NullValueException
+     *             Raised if a null value was passed but the subsystem does not
+     *             allow null values to be written
+     * @throws NotConvertableException
+     *             Raised if a value was passed that cannot be converted in a
+     *             variant type suitable for the subsystem
+     * @throws OperationException
+     *             Raised if the value could not be written due to some
+     *             subsystem error
      */
     public NotifyFuture<WriteResult> startWriteValue ( Variant value, OperationParameters operationParameters );
 
     /**
      * Start the write attributes operation
-     * @param attributes attributes to set
-     * @param session The user session
-     * @param operationParameters 
+     * 
+     * @param attributes
+     *            attributes to set
+     * @param session
+     *            The user session
+     * @param operationParameters
      * @return the future to the operation
      */
     public NotifyFuture<WriteAttributeResults> startSetAttributes ( Map<String, Variant> attributes, OperationParameters operationParameters );

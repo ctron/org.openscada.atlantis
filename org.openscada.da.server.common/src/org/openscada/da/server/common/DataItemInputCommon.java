@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,8 +25,8 @@ import java.util.Map;
 
 import org.openscada.core.InvalidOperationException;
 import org.openscada.core.Variant;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.utils.concurrent.InstantFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -61,9 +63,14 @@ public class DataItemInputCommon extends DataItemInput
 
     /**
      * Perform requests from the hive to update the items attributes <br>
-     * This method actually. Reacting to attribute set requests is implementation dependent. So you will need to subclass from DataItemInputCommon and override this method. <br>
-     * If you simple need a memory container that simply stores what you write into it consider using the MemoryDataItem. <br>
-     * If you are implementing a data item based on this item and wish to change the data items attributes use {@link #getAttributeManager()} to get the attribute manager which allows you so tweak the
+     * This method actually. Reacting to attribute set requests is
+     * implementation dependent. So you will need to subclass from
+     * DataItemInputCommon and override this method. <br>
+     * If you simple need a memory container that simply stores what you write
+     * into it consider using the MemoryDataItem. <br>
+     * If you are implementing a data item based on this item and wish to change
+     * the data items attributes use {@link #getAttributeManager()} to get the
+     * attribute manager which allows you so tweak the
      * items attributes from the side of the item implementation.
      */
     @Override

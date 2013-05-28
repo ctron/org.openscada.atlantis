@@ -143,7 +143,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.dave" />
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exec" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.spring"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.opc"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.arduino"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.modbus"/>
@@ -151,7 +150,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation.component" />
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter.spring"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.summary"/>
@@ -231,11 +229,11 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.datasource"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.datasource.common"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.sec"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.utils"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.slave.pull"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.slave.inject"/>
+    <openscada.builder.copyPlugin id="org.openscada.ae.slave.inject"/>
+    <openscada.builder.copyPlugin id="org.openscada.ae.slave.inject.postgres"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.common.monitor"/>
@@ -246,6 +244,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.memory"/>
+    <openscada.builder.copyPlugin id="org.openscada.ae.server.storage.postgres"/>
   		
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.event.proxy"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.server.monitor.proxy"/>
@@ -266,7 +265,6 @@
   	<openscada.builder.copyPlugin id="org.openscada.ca" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.servlet" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.servlet.jaxws" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.servlet.json" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.common" />
 	<openscada.builder.copyPlugin id="org.openscada.ca.console" />
   	<openscada.builder.copyPlugin id="org.openscada.ca.oscar" />
@@ -283,13 +281,13 @@
   	
   	<!-- SEC stuff for Master -->
   	
+  	<openscada.builder.copyPlugin id="org.openscada.sec.osgi.manager" />
   	<openscada.builder.copyPlugin id="org.openscada.sec.provider.script" />
   	<openscada.builder.copyPlugin id="org.openscada.sec.provider.jdbc" />
+  	<openscada.builder.copyPlugin id="org.openscada.sec.authz.signature" />
+  	<openscada.builder.copyPlugin id="org.openscada.sec.audit.log.ae" />
   	
   	<!-- Additional stuff -->
-  	
-  	<openscada.builder.copyPlugin id="org.openscada.spring.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.spring.server"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.core.client.connection.service"/>
   	<openscada.builder.copyPlugin id="org.openscada.ae.client.connection.service"/>

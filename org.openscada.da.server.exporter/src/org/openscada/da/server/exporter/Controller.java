@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,6 +23,7 @@ package org.openscada.da.server.exporter;
 
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -39,10 +42,11 @@ public class Controller
 
     private final List<String> announcers = new LinkedList<String> ();
 
+    private final HiveFactory defaultHiveFactory;
+
     public Controller ( final ConfigurationDocument configurationDocument ) throws ConfigurationException
     {
-        super ();
-        configure ( configurationDocument );
+        this ( new NewInstanceHiveFactory (), configurationDocument );
     }
 
     public Controller ( final String file ) throws XmlException, IOException, ConfigurationException
@@ -56,30 +60,60 @@ public class Controller
     }
 
     /**
+     * @since 1.1
+     */
+    public Controller ( final HiveFactory defaultHiveFactory, final ConfigurationDocument configurationDocument )
+    {
+        this.defaultHiveFactory = defaultHiveFactory;
+        configure ( configurationDocument );
+    }
+
+    /**
+     * @since 1.1
+     */
+    public Controller ( final HiveFactory defaultHiveFactory, final URL url ) throws ConfigurationException
+    {
+        this ( defaultHiveFactory, parse ( url ) );
+    }
+
+    private static ConfigurationDocument parse ( final URL url ) throws ConfigurationException
+    {
+        try
+        {
+            return ConfigurationDocument.Factory.parse ( url );
+        }
+        catch ( final Exception e )
+        {
+            throw new ConfigurationException ( "Failed to parse document", e );
+        }
+    }
+
+    /**
      * Create the hive factory
-     * @param factoryClass the class to instantiate
+     * 
+     * @param factoryClass
+     *            the class to instantiate
      * @return the factory
-     * @throws ConfigurationException an error occurred
+     * @throws ConfigurationException
+     *             an error occurred
      */
     protected HiveFactory createHiveFactory ( final String factoryClass ) throws ConfigurationException
     {
-        HiveFactory factory;
         if ( factoryClass == null )
         {
-            factory = new NewInstanceHiveFactory ();
+            return this.defaultHiveFactory;
         }
         else
         {
             try
             {
-                factory = (HiveFactory)Class.forName ( factoryClass ).newInstance ();
+                return (HiveFactory)Class.forName ( factoryClass ).newInstance ();
             }
             catch ( final Throwable e )
             {
                 throw new ConfigurationException ( "Failed to create factory", e );
             }
         }
-        return factory;
     }
 
     public void configure ( final ConfigurationDocument configurationDocument )
@@ -116,7 +150,7 @@ public class Controller
                     }
                     catch ( final ConfigurationError e )
                     {
-                        logger.error ( String.format ( "Unable to configure export (%s) for hive (%s)", hive.getRef (), export.getUri () ) );
+                        logger.error ( String.format ( "Unable to configure export (%s) for hive (%s)", export.getUri (), hive.getRef () ), e );
                     }
                 }
                 this.hives.add ( hiveExport );
@@ -130,6 +164,7 @@ public class Controller
 
     /**
      * Export all hives
+     * 
      * @throws Exception
      */
     public synchronized void start () throws Exception
@@ -143,6 +178,7 @@ public class Controller
 
     /**
      * Stop exporting all hives
+     * 
      * @throws Exception
      */
     public synchronized void stop () throws Exception

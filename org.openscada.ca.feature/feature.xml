@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.ca"
       label="openSCADA CA"
-      version="1.0.0.qualifier"
+      version="1.1.0.qualifier"
       provider-name="openSCADA.org">
 
    <description>
@@ -28,11 +28,7 @@ authority.
       <import plugin="org.openscada.utils.osgi"/>
       <import plugin="org.openscada.utils.osgi.jaxws"/>
       <import plugin="org.openscada.utils.osgi.jdbc"/>
-      <import plugin="org.openscada.external.osgi.enterprise"/>
-      <import plugin="com.springsource.org.hsqldb"/>
       <import plugin="com.google.gson"/>
-      <import plugin="jackson-core-lgpl"/>
-      <import plugin="jackson-mapper-lgpl"/>
    </requires>
 
    <plugin
@@ -72,13 +68,6 @@ authority.
 
    <plugin
          id="org.openscada.ca.console"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
-
-   <plugin
-         id="org.openscada.ca.servlet.json"
          download-size="0"
          install-size="0"
          version="0.0.0"

@@ -150,20 +150,20 @@ public class OPCController implements Runnable
                 }
                 else
                 {
-                    logger.debug ( "Running normal queue" );
+                    logger.trace ( "Running normal queue" );
                     runOnce ();
                 }
             }
             catch ( final InterruptedException e )
             {
+                logger.debug ( "Got interrupted", e );
             }
-
         }
     }
 
     protected void setControllerState ( final ControllerState state )
     {
-        logger.debug ( "Controller state: {}", state );
+        logger.trace ( "Controller state: {}", state );
         this.model.setControllerState ( state );
     }
 

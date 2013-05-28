@@ -1,6 +1,7 @@
 /*
  * This file is part of the OpenSCADA project
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jürgen Rose (cptmauli@googlemail.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -33,8 +34,8 @@ import java.util.Set;
 import org.openscada.utils.osgi.jdbc.CommonConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.DataSourceConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.data.RowMapper;
+import org.openscada.utils.osgi.jdbc.data.RowMapperAdapter;
 import org.openscada.utils.osgi.jdbc.data.RowMapperMappingException;
-import org.openscada.utils.osgi.jdbc.data.RowMapperValidationException;
 import org.openscada.utils.osgi.jdbc.pool.PoolConnectionAccessor;
 import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
 import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
@@ -52,13 +53,7 @@ public class JdbcStorageDAOImpl implements JdbcStorageDAO
 
     private final String instanceId = getInstanceId ();
 
-    private final RowMapper<Entry> mapper = new RowMapper<Entry> () {
-
-        @Override
-        public void validate ( final ResultSet resultSet ) throws SQLException, RowMapperValidationException
-        {
-        }
-
+    private final RowMapper<Entry> mapper = new RowMapperAdapter<Entry> () {
         @Override
         public Entry mapRow ( final ResultSet rs ) throws SQLException
         {
@@ -71,7 +66,6 @@ public class JdbcStorageDAOImpl implements JdbcStorageDAO
             entry.setSeq ( rs.getInt ( "chunk_seq" ) );
             return entry;
         }
-
     };
 
     private final CommonConnectionAccessor accessor;
@@ -124,16 +118,12 @@ public class JdbcStorageDAOImpl implements JdbcStorageDAO
             @Override
             protected List<String> performTask ( final ConnectionContext connectionContext ) throws Exception
             {
-                return connectionContext.query ( new RowMapper<String> () {
+                return connectionContext.query ( new RowMapperAdapter<String> () {
                     @Override
-                    public String mapRow ( ResultSet resultSet ) throws SQLException, RowMapperMappingException
+                    public String mapRow ( final ResultSet resultSet ) throws SQLException, RowMapperMappingException
                     {
                         return resultSet.getString ( 1 );
                     }
-
-                    public void validate ( ResultSet resultSet ) throws SQLException, RowMapperValidationException
-                    {
-                    };
                 }, sql, JdbcStorageDAOImpl.this.instanceId );
             }
         } );

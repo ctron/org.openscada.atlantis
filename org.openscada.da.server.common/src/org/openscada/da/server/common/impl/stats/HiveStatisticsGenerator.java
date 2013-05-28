@@ -20,9 +20,9 @@
 package org.openscada.da.server.common.impl.stats;
 
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.impl.SessionCommon;
 
 public class HiveStatisticsGenerator implements HiveEventListener, Tickable
 {
@@ -38,41 +38,49 @@ public class HiveStatisticsGenerator implements HiveEventListener, Tickable
 
     protected CounterValue attributeEventsCounter = new CounterValue ();
 
+    @Override
     public void itemRegistered ( final DataItem item )
     {
         this.itemsValue.add ( 1 );
     }
 
-    public void sessionCreated ( final SessionCommon session )
+    @Override
+    public void sessionCreated ( final AbstractSessionImpl session )
     {
         this.sessionsValue.add ( 1 );
     }
 
-    public void sessionDestroyed ( final SessionCommon session )
+    @Override
+    public void sessionDestroyed ( final AbstractSessionImpl session )
     {
         this.sessionsValue.add ( -1 );
     }
 
+    @Override
     public void startWrite ( final Session session, final String itemName, final Variant value )
     {
         this.valueWritesCounter.add ( 1 );
     }
 
+    @Override
     public void startWriteAttributes ( final Session session, final String itemId, final int size )
     {
         this.attributeWritesCounter.add ( size );
     }
 
+    @Override
     public void attributesChanged ( final DataItem item, final int size )
     {
         this.attributeEventsCounter.add ( size );
     }
 
+    @Override
     public void valueChanged ( final DataItem item, final Variant variant, final boolean cache )
     {
         this.valueEventsCounter.add ( 1 );
     }
 
+    @Override
     public void tick ()
     {
         this.attributeWritesCounter.tick ();
@@ -83,6 +91,7 @@ public class HiveStatisticsGenerator implements HiveEventListener, Tickable
         this.attributeEventsCounter.tick ();
     }
 
+    @Override
     public void itemUnregistered ( final DataItem item )
     {
         this.itemsValue.add ( -1 );

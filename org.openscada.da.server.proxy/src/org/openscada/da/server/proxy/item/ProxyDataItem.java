@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,8 +33,8 @@ import org.openscada.core.OperationException;
 import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.data.SubscriptionState;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -45,7 +47,6 @@ import org.openscada.utils.concurrent.NotifyFuture;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
- *
  */
 public class ProxyDataItem extends DataItemInputOutputChained
 {
@@ -56,7 +57,8 @@ public class ProxyDataItem extends DataItemInputOutputChained
     /**
      * @param id
      * @param proxyValueHolder
-     * @param executor the executor to use for write calls
+     * @param executor
+     *            the executor to use for write calls
      */
     public ProxyDataItem ( final String id, final ProxyValueHolder proxyValueHolder, final ProxyWriteHandler writeHandler, final Executor executor )
     {

@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -99,13 +101,7 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
     }
 
     @Override
-    public void dispose ()
-    {
-        super.dispose ();
-    }
-
-    @Override
-    public synchronized void messageReceived ( final Object message ) throws Exception
+    public void messageReceived ( final Object message ) throws Exception
     {
         logger.trace ( "Received message: {}", message );
 
@@ -133,7 +129,7 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Servi
 
     protected void handleApplyDiff ( final ApplyDiffRequest message ) throws InvalidSessionException
     {
-        new ErrorAwareHandler<Void> ( message.getRequest (), this.service.applyDiff ( this.session, message.getDiffs () ) ) {
+        new ErrorAwareHandler<Void> ( message.getRequest (), this.service.applyDiff ( this.session, message.getDiffs (), message.getOperationParameters (), createCallbackHandler ( message.getCallbackHandlerId () ) ) ) {
             @Override
             protected ResponseMessage handle ( final Response response, final Void result )
             {

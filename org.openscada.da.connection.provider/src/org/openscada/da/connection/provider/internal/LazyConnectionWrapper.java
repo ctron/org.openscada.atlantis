@@ -36,6 +36,7 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.PrivilegeListener;
+import org.openscada.core.data.OperationParameters;
 import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.core.info.StatisticsProvider;
@@ -46,7 +47,11 @@ import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.core.Location;
-import org.openscada.da.core.OperationParameters;
+import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
+import org.openscada.sec.callback.CallbackFactory;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class LazyConnectionWrapper implements Connection, StatisticsProvider
 {
@@ -87,9 +92,21 @@ public abstract class LazyConnectionWrapper implements Connection, StatisticsPro
     }
 
     @Override
+    public void setCallbackFactory ( final CallbackFactory callbackFactory )
+    {
+        this.connection.setCallbackFactory ( callbackFactory );
+    }
+
+    @Override
     public void connect ()
     {
         this.connection.connect ();
+    }
+
+    @Override
+    public void connect ( final CallbackHandler callbackHandler )
+    {
+        this.connection.connect ( callbackHandler );
     }
 
     @Override
@@ -168,6 +185,18 @@ public abstract class LazyConnectionWrapper implements Connection, StatisticsPro
     public void writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final WriteAttributeOperationCallback callback )
     {
         this.connection.writeAttributes ( itemId, attributes, operationParameters, callback );
+    }
+
+    @Override
+    public NotifyFuture<WriteResult> startWrite ( final String itemId, final Variant value, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
+    {
+        return this.connection.startWrite ( itemId, value, operationParameters, callbackHandler );
+    }
+
+    @Override
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
+    {
+        return this.connection.startWriteAttributes ( itemId, attributes, operationParameters, callbackHandler );
     }
 
     @Override

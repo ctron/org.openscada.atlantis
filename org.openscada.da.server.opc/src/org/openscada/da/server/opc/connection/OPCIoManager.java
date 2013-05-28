@@ -148,7 +148,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         {
             final String itemId = itemDef.getItemDefinition ().getItemID ();
 
-            logger.debug ( "Requsting item: {}", itemId );
+            logger.debug ( "Requesting item: {}", itemId );
 
             // remove from un-registrations ... just in case
             this.itemUnregistrations.remove ( itemId );
@@ -170,12 +170,9 @@ public abstract class OPCIoManager extends AbstractPropertyChange
     public synchronized void unrequestItem ( final String itemId )
     {
         logger.debug ( "Adding item to unrequest queue: {}", itemId );
-        this.itemUnregistrations.add ( itemId );
-    }
 
-    public void requestItem ( final ItemRegistrationRequest itemDef )
-    {
-        requestItems ( Arrays.asList ( itemDef ) );
+        this.itemUnregistrations.add ( itemId );
+        this.requestMap.remove ( itemId );
     }
 
     public void requestItemById ( final String itemId )
@@ -329,19 +326,17 @@ public abstract class OPCIoManager extends AbstractPropertyChange
         }
 
         final Random r = new Random ();
-        synchronized ( this.clientHandleMap )
+
+        for ( final ItemRegistrationRequest def : newItems )
         {
-            for ( final ItemRegistrationRequest def : newItems )
+            Integer i = r.nextInt ();
+            while ( this.clientHandleMapRev.containsKey ( i ) )
             {
-                Integer i = r.nextInt ();
-                while ( this.clientHandleMapRev.containsKey ( i ) )
-                {
-                    i = r.nextInt ();
-                }
-                this.clientHandleMap.put ( def.getItemDefinition ().getItemID (), i );
-                this.clientHandleMapRev.put ( i, def.getItemDefinition ().getItemID () );
-                def.getItemDefinition ().setClientHandle ( i );
+                i = r.nextInt ();
             }
+            this.clientHandleMap.put ( def.getItemDefinition ().getItemID (), i );
+            this.clientHandleMapRev.put ( i, def.getItemDefinition ().getItemID () );
+            def.getItemDefinition ().setClientHandle ( i );
         }
 
         // for now do it one by one .. since packets that get too big cause an error
@@ -358,6 +353,7 @@ public abstract class OPCIoManager extends AbstractPropertyChange
                 if ( entry.isFailed () )
                 {
                     logger.info ( "Revoking client handle {} for item {}", entry.getKey ().getClientHandle (), itemId );
+
                     this.clientHandleMap.remove ( itemId );
                     this.clientHandleMapRev.remove ( entry.getKey ().getClientHandle () );
                 }
@@ -640,6 +636,8 @@ public abstract class OPCIoManager extends AbstractPropertyChange
 
     protected NotifyFuture<Result<WriteRequest>> addWriteRequest ( final OPCWriteRequest request )
     {
+        logger.debug ( "Adding write request: {}", request );
+
         final FutureTask<Result<WriteRequest>> future;
 
         synchronized ( this )

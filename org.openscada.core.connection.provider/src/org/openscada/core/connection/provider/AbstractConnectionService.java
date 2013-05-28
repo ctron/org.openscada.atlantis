@@ -30,6 +30,7 @@ import org.openscada.core.connection.provider.info.ConnectionInformationProvider
 import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.core.info.StatisticsProvider;
+import org.openscada.sec.callback.CallbackHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,10 +50,18 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
 
     private final Integer autoReconnectDelay;
 
+    private CallbackHandler connectCallbackHandler;
+
     public AbstractConnectionService ( final Integer autoReconnectDelay, final boolean lazyActivation )
     {
         this.lazyActivation = lazyActivation;
         this.autoReconnectDelay = autoReconnectDelay;
+    }
+
+    @Override
+    public void setConnectCallbackHandler ( final CallbackHandler callbackHandler )
+    {
+        this.connectCallbackHandler = callbackHandler;
     }
 
     protected void setConnection ( final Connection connection )
@@ -118,11 +127,11 @@ public abstract class AbstractConnectionService implements org.openscada.core.co
     {
         if ( this.controller != null )
         {
-            this.controller.connect ();
+            this.controller.connect ( this.connectCallbackHandler );
         }
         else
         {
-            this.connection.connect ();
+            this.connection.connect ( this.connectCallbackHandler );
         }
     }
 

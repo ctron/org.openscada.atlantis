@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,17 +32,16 @@ import org.openscada.core.Variant;
 import org.openscada.core.connection.provider.ConnectionIdTracker;
 import org.openscada.core.connection.provider.ConnectionTracker;
 import org.openscada.core.data.SubscriptionState;
+import org.openscada.core.server.OperationParameters;
+import org.openscada.core.server.OperationParametersHelper;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.da.client.WriteAttributeOperationCallback;
-import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.connection.provider.ConnectionService;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.base.AbstractDataSource;
-import org.openscada.utils.concurrent.AbstractFuture;
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
@@ -51,50 +52,6 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( DataItemSourceImpl.class );
-
-    private static class WriteListenerAttributeImpl extends AbstractFuture<WriteAttributeResults> implements WriteAttributeOperationCallback
-    {
-        @Override
-        public void complete ( final WriteAttributeResults results )
-        {
-            setResult ( results );
-        }
-
-        @Override
-        public void failed ( final String error )
-        {
-            setError ( new OperationException ( error ).fillInStackTrace () );
-        }
-
-        @Override
-        public void error ( final Throwable error )
-        {
-            setError ( error );
-        }
-    }
-
-    private static class WriteListenerValueImpl extends AbstractFuture<WriteResult> implements WriteOperationCallback
-    {
-
-        @Override
-        public void failed ( final String error )
-        {
-            setError ( new OperationException ( error ).fillInStackTrace () );
-        }
-
-        @Override
-        public void error ( final Throwable error )
-        {
-            setError ( error );
-        }
-
-        @Override
-        public void complete ()
-        {
-            setResult ( WriteResult.OK );
-        }
-
-    }
 
     private String itemId;
 
@@ -275,36 +232,34 @@ public class DataItemSourceImpl extends AbstractDataSource implements ItemUpdate
     @Override
     public synchronized NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters operationParameters )
     {
-        final WriteListenerValueImpl task = new WriteListenerValueImpl ();
-
         final ConnectionService connection = this.connection;
         if ( connection != null )
         {
-            connection.getConnection ().write ( this.itemId, value, operationParameters, task );
+            return connection.getConnection ().startWrite ( this.itemId, value, OperationParametersHelper.toData ( operationParameters ), getHandler ( operationParameters ) );
         }
         else
         {
             return new InstantErrorFuture<WriteResult> ( new OperationException ( "No connection" ).fillInStackTrace () );
         }
-        return task;
     }
 
     @Override
     public synchronized NotifyFuture<WriteAttributeResults> startWriteAttributes ( final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
-        final WriteListenerAttributeImpl task = new WriteListenerAttributeImpl ();
-
         final ConnectionService connection = this.connection;
         if ( connection != null )
         {
-            connection.getConnection ().writeAttributes ( this.itemId, attributes, operationParameters, task );
+            return connection.getConnection ().startWriteAttributes ( this.itemId, attributes, OperationParametersHelper.toData ( operationParameters ), getHandler ( operationParameters ) );
         }
         else
         {
             return new InstantErrorFuture<WriteAttributeResults> ( new OperationException ( "No connection" ).fillInStackTrace () );
         }
+    }
 
-        return task;
+    private CallbackHandler getHandler ( final OperationParameters operationParameters )
+    {
+        return operationParameters == null ? null : operationParameters.getCallbackHandler ();
     }
 
 }

@@ -35,7 +35,8 @@ import org.openscada.da.server.common.ItemListener;
 import org.openscada.da.server.common.impl.stats.HiveEventListener;
 
 /**
- * A subscription source for data items. This SubscriptionSource does not use a hint object.
+ * A subscription source for data items. This SubscriptionSource does not use a
+ * hint object.
  * 
  * @author Jens Reimann
  */

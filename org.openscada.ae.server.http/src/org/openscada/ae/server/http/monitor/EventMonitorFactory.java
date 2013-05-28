@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,6 +34,7 @@ import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
+import org.openscada.core.server.OperationParameters;
 import org.openscada.sec.UserInformation;
 import org.openscada.utils.lang.Pair;
 import org.openscada.utils.osgi.pool.ObjectPoolImpl;
@@ -92,14 +95,14 @@ public class EventMonitorFactory extends AbstractServiceConfigurationFactory<Eve
     }
 
     @Override
-    public boolean acknowledge ( final String monitorId, final UserInformation aknUser, final Date aknTimestamp )
+    public boolean acknowledge ( final String monitorId, final OperationParameters operationParameters, final Date aknTimestamp )
     {
         logger.debug ( "Try to process ACK: {}", monitorId );
 
         final EventMonitor monitor = this.monitors.get ( monitorId );
         if ( monitor != null )
         {
-            monitor.akn ( aknUser, aknTimestamp );
+            monitor.akn ( operationParameters == null ? null : operationParameters.getUserInformation (), aknTimestamp );
             return true;
         }
 

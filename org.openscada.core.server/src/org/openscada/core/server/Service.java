@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,6 +25,8 @@ import java.util.Properties;
 
 import org.openscada.core.InvalidSessionException;
 import org.openscada.core.UnableToCreateSessionException;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.openscada.utils.lifecycle.LifecycleAware;
 
 public interface Service<S extends Session> extends LifecycleAware
@@ -35,8 +39,9 @@ public interface Service<S extends Session> extends LifecycleAware
      * @return a new session
      * @throws UnableToCreateSessionException
      *             in the case the session could not be created
+     * @since 1.1
      */
-    public S createSession ( Properties props ) throws UnableToCreateSessionException;
+    public NotifyFuture<S> createSession ( Properties props, CallbackHandler callbackHandler );
 
     /**
      * Close the provided session

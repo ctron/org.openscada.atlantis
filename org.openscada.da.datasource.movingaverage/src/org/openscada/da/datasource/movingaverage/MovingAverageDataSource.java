@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jürgen Rose (cptmauli@googlemail.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -363,11 +365,11 @@ public class MovingAverageDataSource implements DataSourceListener
         {
             divb.setAttribute ( Activator.getContext ().getBundle ().getSymbolicName () + ".manual", Variant.valueOf ( true ) );
         }
-        if ( average.errorRange > this.nullrange )
+        if ( average.errorRange > this.nullrange * 1000 )
         {
             divb.setAttribute ( Activator.getContext ().getBundle ().getSymbolicName () + ".error", Variant.valueOf ( true ) );
         }
-        if ( average.disconnectedRange > this.nullrange )
+        if ( average.disconnectedRange > this.nullrange * 1000 )
         {
             divb.setSubscriptionState ( SubscriptionState.DISCONNECTED );
         }
@@ -418,7 +420,7 @@ public class MovingAverageDataSource implements DataSourceListener
         }
         if ( this.dataSourceId != null )
         {
-            logger.debug ( "track datasource " + this.dataSourceId );
+            logger.debug ( "track datasource {}", this.dataSourceId );
             this.dataSourceTracker = new SingleDataSourceTracker ( this.poolTracker, this.dataSourceId, new ServiceListener () {
                 @Override
                 public void dataSourceChanged ( final DataSource dataSource )

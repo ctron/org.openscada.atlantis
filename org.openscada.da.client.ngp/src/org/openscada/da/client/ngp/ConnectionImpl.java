@@ -37,6 +37,8 @@ import org.openscada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.ngp.ConnectionBaseImpl;
 import org.openscada.core.data.ErrorInformation;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.core.data.Request;
 import org.openscada.core.data.ResponseMessage;
 import org.openscada.core.data.UserInformation;
 import org.openscada.da.client.BrowseOperationCallback;
@@ -48,9 +50,9 @@ import org.openscada.da.client.WriteOperationCallback;
 import org.openscada.da.client.ngp.internal.Helper;
 import org.openscada.da.common.ngp.ProtocolConfigurationFactoryImpl;
 import org.openscada.da.core.Location;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.data.AttributeWriteResultEntry;
 import org.openscada.da.data.BrowserEntry;
@@ -67,6 +69,7 @@ import org.openscada.da.data.message.UnsubscibeItem;
 import org.openscada.da.data.message.UnsubscribeFolder;
 import org.openscada.da.data.message.WriteAttributesResult;
 import org.openscada.da.data.message.WriteValueResult;
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.concurrent.ExecutorFuture;
 import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -78,7 +81,12 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
-    public static class WriteFuture extends ExecutorFuture<Void> implements FutureListener<ResponseMessage>
+    static
+    {
+        DriverFactoryImpl.registerDriver ();
+    }
+
+    public static class WriteFuture extends ExecutorFuture<WriteResult> implements FutureListener<ResponseMessage>
     {
         public WriteFuture ( final Executor executor, final NotifyFuture<ResponseMessage> future )
         {
@@ -96,7 +104,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
                 {
                     if ( ( (WriteValueResult)response ).getErrorInformation () == null )
                     {
-                        setResult ( null );
+                        setResult ( WriteResult.OK );
                     }
                     else
                     {
@@ -137,12 +145,12 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
                     }
                     else
                     {
-                        setError ( new OperationException ( ( (WriteValueResult)response ).getErrorInformation ().getMessage () ).fillInStackTrace () );
+                        setError ( new OperationException ( ( (WriteAttributesResult)response ).getErrorInformation ().getMessage () ).fillInStackTrace () );
                     }
                 }
                 else
                 {
-                    setError ( new IllegalStateException ( String.format ( "Wrong reply - expected: %s, got: %s", WriteValueResult.class, response ) ) );
+                    setError ( new IllegalStateException ( String.format ( "Wrong reply - expected: %s, got: %s", WriteAttributesResult.class, response ) ) );
                 }
             }
             catch ( final Exception e )
@@ -254,13 +262,13 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     @Override
     public void write ( final String itemId, final Variant value, final OperationParameters operationParameters, final WriteOperationCallback callback )
     {
-        final NotifyFuture<Void> future = write ( itemId, value, operationParameters );
+        final NotifyFuture<WriteResult> future = startWrite ( itemId, value, operationParameters, (CallbackHandler)null );
         if ( callback != null )
         {
-            future.addListener ( new FutureListener<Void> () {
+            future.addListener ( new FutureListener<WriteResult> () {
 
                 @Override
-                public void complete ( final Future<Void> future )
+                public void complete ( final Future<WriteResult> future )
                 {
                     try
                     {
@@ -276,15 +284,18 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
         }
     }
 
-    public synchronized NotifyFuture<Void> write ( final String itemId, final Variant value, final OperationParameters operationParameters )
+    @Override
+    public synchronized NotifyFuture<WriteResult> startWrite ( final String itemId, final Variant value, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
     {
-        return new WriteFuture ( this.executor, sendRequestMessage ( new StartWriteValue ( nextRequest (), itemId, value, makeParameters ( operationParameters ) ) ) );
+        final Request request = nextRequest ();
+        final Long callbackHandlerId = registerCallbackHandler ( request, callbackHandler );
+        return new WriteFuture ( this.executor, sendRequestMessage ( new StartWriteValue ( request, itemId, value, makeParameters ( operationParameters ), callbackHandlerId ) ) );
     }
 
     @Override
     public void writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final WriteAttributeOperationCallback callback )
     {
-        final NotifyFuture<WriteAttributeResults> future = writeAttributes ( itemId, attributes, operationParameters );
+        final NotifyFuture<WriteAttributeResults> future = startWriteAttributes ( itemId, attributes, operationParameters, (CallbackHandler)null );
         if ( callback != null )
         {
             future.addListener ( new FutureListener<WriteAttributeResults> () {
@@ -305,9 +316,12 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
         }
     }
 
-    public synchronized NotifyFuture<WriteAttributeResults> writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters )
+    @Override
+    public synchronized NotifyFuture<WriteAttributeResults> startWriteAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
     {
-        return new WriteAttributesFuture ( this.executor, sendRequestMessage ( new StartWriteAttributes ( nextRequest (), itemId, attributes, makeParameters ( operationParameters ) ) ) );
+        final Request request = nextRequest ();
+        final Long callbackHandlerId = registerCallbackHandler ( request, callbackHandler );
+        return new WriteAttributesFuture ( this.executor, sendRequestMessage ( new StartWriteAttributes ( nextRequest (), itemId, attributes, makeParameters ( operationParameters ), callbackHandlerId ) ) );
     }
 
     @Override

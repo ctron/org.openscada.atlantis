@@ -30,6 +30,8 @@ import java.util.Set;
 import org.openscada.core.NotConvertableException;
 import org.openscada.core.NullValueException;
 import org.openscada.core.Variant;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.core.data.UserInformation;
 import org.openscada.net.base.data.BooleanValue;
 import org.openscada.net.base.data.DoubleValue;
 import org.openscada.net.base.data.IntegerValue;
@@ -270,6 +272,9 @@ public class MessageHelper
         return message;
     }
 
+    /**
+     * @since 1.1
+     */
     public static Set<String> getPrivileges ( final Message message )
     {
         final Set<String> result = new HashSet<String> ();
@@ -292,4 +297,40 @@ public class MessageHelper
         return result;
     }
 
+    public static final String FIELD_USER = "user";
+
+    public static final String FIELD_OPERATION_PARAMETERS = "operation-parameters";
+
+    public static OperationParameters convertOperationParameters ( final Value value )
+    {
+        if ( value == null )
+        {
+            return null;
+        }
+        if ( ! ( value instanceof MapValue ) )
+        {
+            return null;
+        }
+        final MapValue mapValue = (MapValue)value;
+
+        final String user = mapValue.get ( FIELD_USER ) != null ? mapValue.get ( FIELD_USER ).toString () : null;
+
+        return new OperationParameters ( new UserInformation ( user ), null );
+    }
+
+    /**
+     * @since 1.1
+     */
+    public static void encodeOperationParameters ( final OperationParameters operationParameters, final Message message )
+    {
+        if ( operationParameters != null )
+        {
+            final MapValue parameters = new MapValue ( 2 );
+            message.getValues ().put ( FIELD_OPERATION_PARAMETERS, parameters );
+            if ( operationParameters.getUserInformation () != null && operationParameters.getUserInformation ().getName () != null )
+            {
+                parameters.put ( FIELD_USER, new StringValue ( operationParameters.getUserInformation ().getName () ) );
+            }
+        }
+    }
 }

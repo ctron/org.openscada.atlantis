@@ -21,9 +21,10 @@
 
 package org.openscada.ae.client.ngp;
 
-import java.util.Collections;
 import java.util.Date;
+import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Query;
@@ -34,6 +35,7 @@ import org.openscada.ae.client.MonitorListener;
 import org.openscada.ae.common.ngp.ProtocolConfigurationFactoryImpl;
 import org.openscada.ae.data.QueryState;
 import org.openscada.ae.data.message.AcknowledgeRequest;
+import org.openscada.ae.data.message.AcknowledgeResponse;
 import org.openscada.ae.data.message.BrowseData;
 import org.openscada.ae.data.message.CloseQuery;
 import org.openscada.ae.data.message.CreateQuery;
@@ -51,10 +53,16 @@ import org.openscada.ae.data.message.UnsubscribeMonitorPool;
 import org.openscada.ae.data.message.UpdateQueryData;
 import org.openscada.ae.data.message.UpdateQueryState;
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.OperationException;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ngp.ConnectionBaseImpl;
 import org.openscada.core.data.OperationParameters;
-import org.openscada.sec.UserInformation;
+import org.openscada.core.data.Request;
+import org.openscada.core.data.ResponseMessage;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.ExecutorFuture;
+import org.openscada.utils.concurrent.FutureListener;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,6 +95,43 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
         @Override
         public void close ()
         {
+        }
+    }
+
+    public static class AcknowledgeFuture extends ExecutorFuture<Void> implements FutureListener<ResponseMessage>
+    {
+        public AcknowledgeFuture ( final Executor executor, final NotifyFuture<ResponseMessage> future )
+        {
+            super ( executor );
+            future.addListener ( this );
+        }
+
+        @Override
+        public void complete ( final Future<ResponseMessage> future )
+        {
+            try
+            {
+                final ResponseMessage response = future.get ();
+                if ( response instanceof AcknowledgeResponse )
+                {
+                    if ( ( (AcknowledgeResponse)response ).getErrorInformation () == null )
+                    {
+                        setResult ( null );
+                    }
+                    else
+                    {
+                        setError ( new OperationException ( ( (AcknowledgeResponse)response ).getErrorInformation ().getMessage () ).fillInStackTrace () );
+                    }
+                }
+                else
+                {
+                    setError ( new IllegalStateException ( String.format ( "Wrong reply - expected: %s, got: %s", AcknowledgeResponse.class, response ) ) );
+                }
+            }
+            catch ( final Exception e )
+            {
+                setError ( e );
+            }
         }
     }
 
@@ -177,20 +222,11 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     }
 
     @Override
-    public void acknowledge ( final String monitorId, final Date aknTimestamp, final UserInformation userInformation )
+    public NotifyFuture<Void> acknowledge ( final String monitorId, final Date aknTimestamp, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
     {
-        org.openscada.core.data.UserInformation coreUserInformation;
-        if ( userInformation == null )
-        {
-            coreUserInformation = null;
-        }
-        else
-        {
-            coreUserInformation = new org.openscada.core.data.UserInformation ( userInformation.getName () );
-        }
-
-        final OperationParameters operationParameters = new OperationParameters ( coreUserInformation, Collections.<String, String> emptyMap () );
-        sendMessage ( new AcknowledgeRequest ( nextRequest (), monitorId, makeTimestamp ( aknTimestamp ), operationParameters ) );
+        final Request request = nextRequest ();
+        final Long callbackHandlerId = registerCallbackHandler ( request, callbackHandler );
+        return new AcknowledgeFuture ( this.executor, sendRequestMessage ( new AcknowledgeRequest ( nextRequest (), monitorId, makeTimestamp ( aknTimestamp ), operationParameters, callbackHandlerId ) ) );
     }
 
     @Override

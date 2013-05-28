@@ -25,6 +25,7 @@ import java.util.Set;
 /**
  * A listener for privilege changes
  * 
+ * @since 1.0
  * @author Jens Reimann
  */
 public interface PrivilegeListener

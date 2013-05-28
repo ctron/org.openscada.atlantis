@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,6 +23,7 @@ package org.openscada.net.utils;
 
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
+import org.openscada.utils.ExceptionHelper;
 import org.openscada.utils.statuscodes.CodedExceptionBase;
 import org.openscada.utils.statuscodes.StatusCode;
 
@@ -39,9 +42,12 @@ public class MessageCreator
     public static Message createFailedMessage ( final Message inputMessage, final Throwable error )
     {
         String msg = null;
-        if ( error instanceof CodedExceptionBase )
+
+        final Throwable root = ExceptionHelper.getRootCause ( error );
+
+        if ( root instanceof CodedExceptionBase )
         {
-            final StatusCode status = ( (CodedExceptionBase)error ).getStatus ();
+            final StatusCode status = ( (CodedExceptionBase)root ).getStatus ();
             if ( status != null )
             {
                 msg = status.toString ();
@@ -49,7 +55,7 @@ public class MessageCreator
         }
         else
         {
-            msg = error.getMessage ();
+            msg = ExceptionHelper.getMessage ( error );
         }
 
         // if we still don't have a message ... use toString()

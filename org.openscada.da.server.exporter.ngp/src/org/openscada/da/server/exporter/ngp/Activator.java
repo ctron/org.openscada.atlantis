@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +21,12 @@
 
 package org.openscada.da.server.exporter.ngp;
 
+import java.util.Collection;
+import java.util.LinkedList;
+import java.util.Set;
+
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.server.exporter.ExporterInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.ngp.Exporter;
 import org.openscada.utils.osgi.SingleServiceListener;
@@ -27,6 +34,7 @@ import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
+import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,6 +53,8 @@ public class Activator implements BundleActivator
     private SingleServiceTracker<Hive> tracker;
 
     private Exporter exporter;
+
+    private Set<ExporterInformation> exportedInformation;
 
     /*
      * (non-Javadoc)
@@ -67,6 +77,8 @@ public class Activator implements BundleActivator
         this.tracker.open ();
     }
 
+    private final Collection<ServiceRegistration<ExporterInformation>> registeredExportInformation = new LinkedList<ServiceRegistration<ExporterInformation>> ();
+
     protected void handleServiceChange ( final Hive service )
     {
         logger.warn ( "Exporting new service: {}", service );
@@ -78,16 +90,39 @@ public class Activator implements BundleActivator
                 this.exporter.stop ();
                 this.exporter = null;
             }
+
+            // unregister all
+            unregisterAllExportInformations ();
+
             if ( service != null )
             {
                 this.exporter = new Exporter ( service, ConnectionInformation.fromURI ( System.getProperty ( "openscada.da.ngp.exportUri", "da:ngp://0.0.0.0:2101" ) ) );
                 this.exporter.start ();
+
+                this.exportedInformation = this.exporter.getExporterInformation ();
+                for ( final ExporterInformation ei : this.exportedInformation )
+                {
+                    final ServiceRegistration<ExporterInformation> reg = context.registerService ( ExporterInformation.class, ei, null );
+                    if ( reg != null )
+                    {
+                        this.registeredExportInformation.add ( reg );
+                    }
+                }
             }
         }
         catch ( final Exception e )
         {
             logger.warn ( "Failed to export hd service", e );
         }
+    }
+
+    private void unregisterAllExportInformations ()
+    {
+        for ( final ServiceRegistration<ExporterInformation> reg : this.registeredExportInformation )
+        {
+            reg.unregister ();
+        }
+        this.registeredExportInformation.clear ();
     }
 
     /*
@@ -97,6 +132,8 @@ public class Activator implements BundleActivator
     @Override
     public void stop ( final BundleContext bundleContext ) throws Exception
     {
+        unregisterAllExportInformations ();
+
         this.tracker.close ();
         if ( this.exporter != null )
         {

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,77 +27,96 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
+import java.util.concurrent.Future;
 
-import org.openscada.ae.sec.AuthorizationHelper;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
 import org.openscada.core.server.Session;
+import org.openscada.core.server.common.AuthorizationProvider;
 import org.openscada.core.server.common.ServiceCommon;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.core.server.common.session.AbstractSessionImpl.DisposeListener;
 import org.openscada.core.server.common.session.PrivilegeListenerImpl;
-import org.openscada.sec.AuthenticationException;
+import org.openscada.sec.AuthorizationReply;
+import org.openscada.sec.AuthorizationRequest;
 import org.openscada.sec.AuthorizationResult;
 import org.openscada.sec.UserInformation;
-import org.openscada.sec.osgi.AuthenticationHelper;
-import org.openscada.sec.osgi.AuthorizationTracker;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.sec.osgi.TrackingAuditLogImplementation;
+import org.openscada.sec.osgi.TrackingAuthenticationImplementation;
+import org.openscada.sec.osgi.TrackingAuthorizationImplementation;
+import org.openscada.sec.osgi.TrackingAuthorizationTracker;
+import org.openscada.utils.concurrent.CallingFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 
 public abstract class AbstractServiceImpl<S extends Session, SI extends AbstractSessionImpl> extends ServiceCommon<S, SI>
 {
 
-    private final AuthenticationHelper authenticationManager;
-
-    private final AuthorizationHelper authorizationHelper;
+    private final TrackingAuthorizationImplementation authorizationHelper;
 
     protected final Set<SI> sessions = new CopyOnWriteArraySet<SI> ();
 
-    private final AuthorizationTracker authorizationTracker;
+    private final TrackingAuthorizationTracker authorizationTracker;
 
     private final Executor executor;
+
+    protected final AuthorizationProvider<AbstractSessionImpl> authorizationProvider = new AuthorizationProvider<AbstractSessionImpl> () {
+
+        @Override
+        public NotifyFuture<UserInformation> impersonate ( final AbstractSessionImpl session, final String targetUserName, final CallbackHandler handler )
+        {
+            return makeEffectiveUserInformation ( session, targetUserName, handler );
+        }
+
+        @Override
+        public NotifyFuture<AuthorizationReply> authorize ( final AuthorizationRequest authorizationRequest, final CallbackHandler handler, final AuthorizationResult defaultResult )
+        {
+            return AbstractServiceImpl.this.authorize ( authorizationRequest, handler, defaultResult );
+        }
+    };
+
+    private final TrackingAuthenticationImplementation authenticationImplemenation;
+
+    private final TrackingAuditLogImplementation auditLogTracker;
 
     public AbstractServiceImpl ( final BundleContext context, final Executor executor ) throws InvalidSyntaxException
     {
         this.executor = executor;
-        this.authenticationManager = new AuthenticationHelper ( context );
-        this.authorizationHelper = new AuthorizationHelper ( context );
-        this.authorizationTracker = new AuthorizationTracker ( context, executor );
-    }
+        this.authorizationHelper = new TrackingAuthorizationImplementation ( context );
+        this.authorizationTracker = new TrackingAuthorizationTracker ( context );
 
-    @Override
-    protected UserInformation authenticate ( final Properties properties, final Map<String, String> sessionResultProperties ) throws AuthenticationException
-    {
-        return this.authenticationManager.authenticate ( properties.getProperty ( ConnectionInformation.PROP_USER ), properties.getProperty ( ConnectionInformation.PROP_PASSWORD ) );
-    }
+        this.authenticationImplemenation = new TrackingAuthenticationImplementation ( context );
 
-    @Override
-    protected AuthorizationResult authorize ( final String objectType, final String objectId, final String action, final UserInformation userInformation, final Map<String, Object> context, final AuthorizationResult defaultResult )
-    {
-        return this.authorizationHelper.authorize ( objectType, objectId, action, userInformation, context, defaultResult );
+        this.auditLogTracker = new TrackingAuditLogImplementation ( context );
+
+        setAuthorizationImplementation ( this.authorizationHelper );
+        setAuthenticationImplementation ( this.authenticationImplemenation );
+        setAuditLogService ( this.auditLogTracker );
     }
 
     @Override
     public void start () throws Exception
     {
-        this.authenticationManager.open ();
         this.authorizationHelper.open ();
         this.authorizationTracker.open ();
+        this.authenticationImplemenation.open ();
+        this.auditLogTracker.open ();
     }
 
     @Override
     public void stop () throws Exception
     {
-        this.authenticationManager.close ();
-        this.authorizationHelper.close ();
-        this.authorizationTracker.close ();
-
         // close sessions
         for ( final SI session : this.sessions )
         {
             session.dispose ();
         }
+
+        this.auditLogTracker.close ();
+        this.authenticationImplemenation.close ();
+        this.authorizationHelper.close ();
+        this.authorizationTracker.close ();
     }
 
     @SuppressWarnings ( "unchecked" )
@@ -124,30 +145,56 @@ public abstract class AbstractServiceImpl<S extends Session, SI extends Abstract
     {
     }
 
-    @SuppressWarnings ( "unchecked" )
+    /**
+     * @since 1.1
+     */
     @Override
-    public synchronized S createSession ( final Properties properties ) throws UnableToCreateSessionException
+    public NotifyFuture<S> createSession ( final Properties properties, final CallbackHandler callbackHandler )
     {
-        final Map<String, String> sessionProperties = new HashMap<String, String> ();
-        final UserInformation user = createUserInformation ( properties, sessionProperties );
+        final NotifyFuture<UserInformation> loginFuture = loginUser ( properties, callbackHandler );
 
-        final SI session = createSessionInstance ( user, sessionProperties );
-
-        final Set<String> privileges = extractPrivileges ( properties );
-        final SessionPrivilegeTracker privTracker = new SessionPrivilegeTracker ( this.executor, new PrivilegeListenerImpl ( session ), this.authorizationTracker, privileges, user );
-
-        session.addDisposeListener ( new DisposeListener () {
+        return new CallingFuture<UserInformation, S> ( loginFuture ) {
 
             @Override
-            public void disposed ()
+            public S call ( final Future<UserInformation> future ) throws Exception
             {
-                privTracker.dispose ();
+                return createSession ( future, properties, callbackHandler );
             }
-        } );
+        };
+    }
 
-        this.sessions.add ( session );
+    /**
+     * @since 1.1
+     */
+    @SuppressWarnings ( "unchecked" )
+    protected S createSession ( final Future<UserInformation> loginFuture, final Properties properties, final CallbackHandler callbackHandler ) throws Exception
+    {
+        final UserInformation user = loginFuture.get ();
 
-        handleSessionCreated ( session );
+        final SI session;
+        synchronized ( this )
+        {
+
+            final Map<String, String> sessionProperties = new HashMap<String, String> ();
+
+            session = createSessionInstance ( user, sessionProperties );
+
+            final Set<String> privileges = extractPrivileges ( properties );
+            final SessionPrivilegeTracker privTracker = new SessionPrivilegeTracker ( this.executor, new PrivilegeListenerImpl ( session ), this.authorizationTracker, privileges, user );
+
+            session.addDisposeListener ( new DisposeListener () {
+
+                @Override
+                public void disposed ()
+                {
+                    privTracker.dispose ();
+                }
+            } );
+
+            this.sessions.add ( session );
+
+            handleSessionCreated ( session );
+        }
 
         return (S)session;
     }

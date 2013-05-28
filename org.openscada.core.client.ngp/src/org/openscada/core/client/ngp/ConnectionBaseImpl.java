@@ -21,24 +21,39 @@
 
 package org.openscada.core.client.ngp;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.concurrent.Future;
 
 import org.openscada.core.ConnectionInformation;
-import org.openscada.core.OperationException;
 import org.openscada.core.client.ConnectionState;
+import org.openscada.core.data.CallbackRequest;
+import org.openscada.core.data.CallbackResponse;
+import org.openscada.core.data.ErrorInformation;
 import org.openscada.core.data.Request;
 import org.openscada.core.data.RequestMessage;
 import org.openscada.core.data.Response;
 import org.openscada.core.data.ResponseMessage;
 import org.openscada.core.data.message.CreateSession;
+import org.openscada.core.data.message.RequestCallbacks;
+import org.openscada.core.data.message.RespondCallbacks;
 import org.openscada.core.data.message.SessionAccepted;
 import org.openscada.core.data.message.SessionPrivilegesChanged;
 import org.openscada.core.data.message.SessionRejected;
 import org.openscada.core.ngp.Features;
+import org.openscada.core.ngp.MessageSender;
+import org.openscada.core.ngp.ResponseManager;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
-import org.openscada.utils.concurrent.ExecutorFuture;
-import org.openscada.utils.concurrent.InstantErrorFuture;
+import org.openscada.sec.callback.Callback;
+import org.openscada.sec.callback.CallbackFactory;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.sec.callback.DefaultCallbackFactory;
+import org.openscada.utils.ExceptionHelper;
+import org.openscada.utils.concurrent.FutureListener;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -48,25 +63,53 @@ public class ConnectionBaseImpl extends ClientBaseConnection
 
     private final static Logger logger = LoggerFactory.getLogger ( ConnectionBaseImpl.class );
 
-    private static final Object STATS_OPEN_REQUESTS = new Object ();
+    private final ResponseManager responseManager;
 
-    private long sequenceNumber = 0;
+    private final MessageSender messageSender = new MessageSender () {
+
+        @Override
+        public void sendMessage ( final Object message )
+        {
+            ConnectionBaseImpl.this.sendMessage ( message );
+        }
+    };
+
+    private final CallbackHandlerManager callbackHandlerManager;
+
+    private CallbackFactory callbackFactory;
+
+    private final OpenCallbacksManager callbackManager;
 
     public ConnectionBaseImpl ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( protocolConfigurationFactory, connectionInformation );
-        this.statistics.setLabel ( STATS_OPEN_REQUESTS, "Open requests" ); //$NON-NLS-1$
+        this.responseManager = new ResponseManager ( this.statistics, this.messageSender, this.executor );
+        this.callbackHandlerManager = new CallbackHandlerManager ( this.statistics );
+        this.callbackManager = new OpenCallbacksManager ( this, this.statistics, this.executor );
+        this.callbackFactory = new DefaultCallbackFactory ();
+    }
+
+    @Override
+    public void setCallbackFactory ( final CallbackFactory callbackFactory )
+    {
+        this.callbackFactory = callbackFactory;
     }
 
     @Override
     protected void onConnectionConnected ()
     {
+        // don't call super, would switch to BOUND immediately
+
+        // connect request manager
+        this.responseManager.connected ();
+
         // send create session request
         final Map<String, String> properties = makeProperties ();
 
         logger.info ( "Requesting new session: {}", properties ); //$NON-NLS-1$
 
-        sendMessage ( new CreateSession ( properties ) );
+        final Long callbackHandlerId = registerCallbackHandler ( nextRequest (), this.connectCallbackHandler );
+        sendMessage ( new CreateSession ( properties, callbackHandlerId ) );
     }
 
     protected Map<String, String> makeProperties ()
@@ -74,6 +117,7 @@ public class ConnectionBaseImpl extends ClientBaseConnection
         final Map<String, String> result = new HashMap<String, String> ( this.connectionInformation.getProperties () );
 
         result.put ( Features.FEATURE_SESSION_PRIVILEGES, "true" ); //$NON-NLS-1$
+        result.put ( Features.FEATURE_CALLBACKS, "true" ); //$NON-NLS-1$
 
         return result;
     }
@@ -82,7 +126,11 @@ public class ConnectionBaseImpl extends ClientBaseConnection
     protected void onConnectionClosed ()
     {
         super.onConnectionClosed ();
-        cancelRequests ();
+        synchronized ( this )
+        {
+            this.responseManager.disconnected ();
+            this.callbackManager.disconnected ();
+        }
     }
 
     @Override
@@ -101,10 +149,105 @@ public class ConnectionBaseImpl extends ClientBaseConnection
         {
             handlePrivilegeChange ( (SessionPrivilegesChanged)message );
         }
+        else if ( message instanceof RequestCallbacks )
+        {
+            handleRequestCallbacks ( (RequestCallbacks)message );
+        }
         else if ( message instanceof ResponseMessage )
         {
             handleResponse ( (ResponseMessage)message );
         }
+    }
+
+    private void handleResponse ( final ResponseMessage message )
+    {
+        this.callbackHandlerManager.unregisterHandler ( message.getResponse ().getRequest ().getRequestId () );
+        this.responseManager.handleResponse ( message );
+    }
+
+    /**
+     * @since 1.1
+     */
+    private void handleRequestCallbacks ( final RequestCallbacks message )
+    {
+        final CallbackHandler callbackHandler = this.callbackHandlerManager.getHandler ( message.getCallbackHandlerId () );
+        if ( callbackHandler == null || this.callbackFactory == null )
+        {
+            // early abort
+            sendMessage ( new RespondCallbacks ( new Response ( message.getRequest () ), allCallbacksCanceled ( message.getCallbacks ().size () ), null ) );
+            return;
+        }
+
+        // make array
+        final Callback[] callbacks = new Callback[message.getCallbacks ().size ()];
+
+        // create callbacks from request
+        int i = 0;
+        for ( final CallbackRequest cr : message.getCallbacks () )
+        {
+            callbacks[i] = this.callbackFactory.createCallback ( cr.getType (), cr.getAttributes () );
+            logger.debug ( "Created callback #{}: {}", i, callbacks[i] );
+            i++;
+        }
+
+        // start processing
+        final NotifyFuture<Callback[]> future = this.callbackManager.processCallbacks ( callbackHandler, callbacks, message.getTimeoutMillis () );
+        future.addListener ( new FutureListener<Callback[]> () {
+
+            @Override
+            public void complete ( final Future<Callback[]> future )
+            {
+                processCallbackFuture ( message.getRequest (), future, callbacks );
+            }
+        } );
+    }
+
+    /**
+     * @since 1.1
+     */
+    protected void processCallbackFuture ( final Request request, final Future<Callback[]> future, final Callback[] callbacks )
+    {
+        logger.debug ( "Processing callback result - request: {}, future: {}", request, future );
+
+        final List<CallbackResponse> result = new LinkedList<CallbackResponse> ();
+        ErrorInformation errorInformation = null;
+
+        try
+        {
+            future.get (); // this is just a get call to see if we have an exception
+            for ( final Callback cb : callbacks )
+            {
+                final boolean canceled = cb.isCanceled ();
+                final Map<String, String> attributes = !canceled ? cb.buildResponseAttributes () : Collections.<String, String> emptyMap ();
+                logger.debug ( "Callback result - canceled: {}, attributes: {}", canceled, attributes );
+                result.add ( new CallbackResponse ( canceled, attributes ) );
+            }
+        }
+        catch ( final Exception e )
+        {
+            logger.warn ( "Failed to build result map", e );
+            errorInformation = new ErrorInformation ( null, ExceptionHelper.getMessage ( e ), ExceptionHelper.formatted ( e ) );
+            result.clear ();
+        }
+
+        sendMessage ( new RespondCallbacks ( new Response ( request ), result, errorInformation ) );
+    }
+
+    /**
+     * Return a result with all callbacks canceled
+     * 
+     * @param count
+     *            the number of callbacks in the request
+     * @return the message result for canceled callbacks
+     */
+    private List<CallbackResponse> allCallbacksCanceled ( final int count )
+    {
+        final List<CallbackResponse> response = new ArrayList<CallbackResponse> ( count );
+        for ( int i = 0; i < count; i++ )
+        {
+            response.add ( new CallbackResponse ( true, Collections.<String, String> emptyMap () ) );
+        }
+        return response;
     }
 
     private void handleSessionAccepted ( final SessionAccepted message )
@@ -115,6 +258,24 @@ public class ConnectionBaseImpl extends ClientBaseConnection
         switchState ( ConnectionState.BOUND, null );
     }
 
+    // callbacks
+
+    /**
+     * @since 1.1
+     */
+    protected synchronized Long registerCallbackHandler ( final Request request, final CallbackHandler callbackHandler )
+    {
+        if ( callbackHandler == null )
+        {
+            return null;
+        }
+        else
+        {
+            this.callbackHandlerManager.registerHandler ( request.getRequestId (), callbackHandler );
+            return request.getRequestId ();
+        }
+    }
+
     // requests
 
     private void handlePrivilegeChange ( final SessionPrivilegesChanged message )
@@ -122,74 +283,14 @@ public class ConnectionBaseImpl extends ClientBaseConnection
         firePrivilegeChange ( message.getGranted () );
     }
 
-    protected void handleResponse ( final ResponseMessage message )
+    protected Request nextRequest ()
     {
-        final ExecutorFuture<ResponseMessage> request = this.requestMap.remove ( message.getResponse ().getRequest ().getRequestId () );
-
-        if ( request != null )
-        {
-            this.statistics.setCurrentValue ( STATS_OPEN_REQUESTS, this.requestMap.size () ); // update info
-            request.asyncSetResult ( message );
-        }
-    }
-
-    protected synchronized long nextRequestNumber ()
-    {
-        return ++this.sequenceNumber;
-    }
-
-    protected synchronized Request nextRequest ()
-    {
-        return new Request ( nextRequestNumber () );
-    }
-
-    protected Response getResponseFromMessage ( final Object message )
-    {
-        if ( message instanceof ResponseMessage )
-        {
-            return ( (ResponseMessage)message ).getResponse ();
-        }
-        else
-        {
-            return null;
-        }
-    }
-
-    private final Map<Long, ExecutorFuture<ResponseMessage>> requestMap = new HashMap<Long, ExecutorFuture<ResponseMessage>> ();
-
-    protected synchronized void cancelRequests ()
-    {
-        // all operations got cancelled
-        for ( final ExecutorFuture<ResponseMessage> request : this.requestMap.values () )
-        {
-            request.asyncSetError ( new OperationException ( "Operation was cancelled" ) );
-        }
-        this.requestMap.clear ();
+        return this.responseManager.nextRequest ();
     }
 
     protected synchronized NotifyFuture<ResponseMessage> sendRequestMessage ( final RequestMessage requestMessage )
     {
-        final Request request = requestMessage.getRequest ();
-        if ( request == null )
-        {
-            return null;
-        }
-
-        final ConnectionState state = getState ();
-
-        if ( state != ConnectionState.BOUND )
-        {
-            return new InstantErrorFuture<ResponseMessage> ( new IllegalStateException ( String.format ( "Connection is not BOUND: %s", state ) ) );
-        }
-
-        sendMessage ( requestMessage );
-
-        final long requestId = request.getRequestId ();
-        final ExecutorFuture<ResponseMessage> result = new ExecutorFuture<ResponseMessage> ( this.executor );
-        this.requestMap.put ( requestId, result );
-        this.statistics.setCurrentValue ( STATS_OPEN_REQUESTS, this.requestMap.size () ); // update info
-
-        return result;
+        return this.responseManager.sendRequestMessage ( requestMessage );
     }
 
 }

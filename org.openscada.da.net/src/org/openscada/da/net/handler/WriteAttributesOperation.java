@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,8 +24,8 @@ package org.openscada.da.net.handler;
 import java.util.Map;
 
 import org.openscada.core.Variant;
+import org.openscada.core.data.OperationParameters;
 import org.openscada.core.net.MessageHelper;
-import org.openscada.da.core.OperationParameters;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.net.base.data.LongValue;
@@ -34,9 +36,12 @@ import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
 import org.openscada.utils.lang.Holder;
 
-public class WriteAttributesOperation extends Operation
+public class WriteAttributesOperation
 {
 
+    /**
+     * @since 1.1
+     */
     public static Message createRequest ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters )
     {
         final Message message = new Message ( Messages.CC_WRITE_ATTRIBUTES_OPERATION );
@@ -44,7 +49,7 @@ public class WriteAttributesOperation extends Operation
         message.getValues ().put ( "item-id", new StringValue ( itemId ) );
         message.getValues ().put ( "attributes", MessageHelper.attributesToMap ( attributes ) );
 
-        encodeOperationParameters ( operationParameters, message );
+        MessageHelper.encodeOperationParameters ( operationParameters, message );
 
         return message;
     }
@@ -60,7 +65,7 @@ public class WriteAttributesOperation extends Operation
             attributes.value = MessageHelper.mapToAttributes ( (MapValue)value );
         }
 
-        operationParameters.value = convertOperationParameters ( message.getValues ().get ( FIELD_OPERATION_PARAMETERS ) );
+        operationParameters.value = MessageHelper.convertOperationParameters ( message.getValues ().get ( MessageHelper.FIELD_OPERATION_PARAMETERS ) );
     }
 
     public static Message createResponse ( final long id, final WriteAttributeResults writeAttributeResults )

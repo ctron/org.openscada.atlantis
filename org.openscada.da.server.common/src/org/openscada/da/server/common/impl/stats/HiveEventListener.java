@@ -20,16 +20,16 @@
 package org.openscada.da.server.common.impl.stats;
 
 import org.openscada.core.Variant;
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.impl.SessionCommon;
 
 public interface HiveEventListener
 {
 
-    public abstract void sessionCreated ( SessionCommon session );
+    public abstract void sessionCreated ( AbstractSessionImpl session );
 
-    public abstract void sessionDestroyed ( SessionCommon session );
+    public abstract void sessionDestroyed ( AbstractSessionImpl session );
 
     public abstract void itemRegistered ( DataItem item );
 

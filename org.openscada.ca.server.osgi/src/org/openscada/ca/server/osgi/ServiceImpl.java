@@ -35,8 +35,12 @@ import org.openscada.ca.server.FactoryWithData;
 import org.openscada.ca.server.Service;
 import org.openscada.ca.server.Session;
 import org.openscada.core.InvalidSessionException;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.core.server.common.AuthorizedOperation;
 import org.openscada.core.server.common.osgi.AbstractServiceImpl;
+import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.sec.UserInformation;
+import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.concurrent.ExportedExecutorService;
 import org.openscada.utils.concurrent.FutureTask;
 import org.openscada.utils.concurrent.NotifyFuture;
@@ -52,7 +56,7 @@ public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> imple
     {
         super ( context, executor );
         this.service = service;
-        this.executor = new ExportedExecutorService ( "org.openscada.ca.server.osgi.ServiceImpl", 1, 1, 1, TimeUnit.MINUTES );
+        this.executor = new ExportedExecutorService ( "org.openscada.ca.server.osgi.ServiceImpl", 1, 1, 1, TimeUnit.MINUTES ); //$NON-NLS-1$
     }
 
     @Override
@@ -69,11 +73,22 @@ public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> imple
     }
 
     @Override
-    public synchronized NotifyFuture<Void> applyDiff ( final Session session, final Collection<DiffEntry> changeSet ) throws InvalidSessionException
+    public synchronized NotifyFuture<Void> applyDiff ( final Session session, final Collection<DiffEntry> changeSet, final OperationParameters operationParameters, final CallbackHandler callbackHandler ) throws InvalidSessionException
     {
         final SessionImpl sessionImpl = validateSession ( session, SessionImpl.class );
 
-        return this.service.applyDiff ( sessionImpl.getUserInformation (), changeSet );
+        return new AuthorizedOperation<Void, AbstractSessionImpl> ( this.authorizationProvider, sessionImpl, "CFG", null, "APPLY_DIFF", null, operationParameters, callbackHandler, DEFAULT_RESULT ) {
+            @Override
+            protected NotifyFuture<Void> granted ( final org.openscada.core.server.OperationParameters effectiveOperationParameters )
+            {
+                return processApplyDiff ( effectiveOperationParameters.getUserInformation (), changeSet );
+            }
+        };
+    }
+
+    protected NotifyFuture<Void> processApplyDiff ( final UserInformation userInformation, final Collection<DiffEntry> changeSet )
+    {
+        return this.service.applyDiff ( userInformation, changeSet );
     }
 
     @Override

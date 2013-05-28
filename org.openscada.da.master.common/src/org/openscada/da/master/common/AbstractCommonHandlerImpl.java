@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -32,6 +34,7 @@ import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.master.AbstractConfigurableMasterHandlerImpl;
 import org.openscada.da.master.MasterItem;
+import org.openscada.da.master.common.internal.Activator;
 import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 
@@ -113,8 +116,8 @@ public abstract class AbstractCommonHandlerImpl extends AbstractConfigurableMast
         }
         catch ( final Throwable e )
         {
-            builder.setAttribute ( getPrefixed ( "error" ), Variant.TRUE );
-            builder.setAttribute ( getPrefixed ( "error.message" ), Variant.valueOf ( e.getMessage () ) );
+            builder.setAttribute ( getPrefixed ( "error", Activator.getStringInterner () ), Variant.TRUE );
+            builder.setAttribute ( getPrefixed ( "error.message", Activator.getStringInterner () ), Variant.valueOf ( e.getMessage () ) );
         }
     }
 

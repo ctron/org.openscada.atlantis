@@ -21,7 +21,8 @@
 
 package org.openscada.da.client.samples;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Sample showing how to subscribe for events only <br>
@@ -37,7 +38,7 @@ import org.apache.log4j.Logger;
 public class IdleSample1 extends SampleBase
 {
 
-    private static Logger logger = Logger.getLogger ( IdleSample1.class );
+    private final static Logger logger = LoggerFactory.getLogger ( IdleSample1.class );
 
     public IdleSample1 ( final String uri, final String className ) throws Exception
     {
