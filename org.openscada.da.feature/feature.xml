@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="org.openscada.da"
-      label="openSCADA DA"
-      version="1.1.0.qualifier"
-      provider-name="openSCADA.org">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="org.openscada.da" label="openSCADA DA" provider-name="openSCADA.org" version="1.1.0.v20130529">
 
    <description>
       openSCADA DA Feature
@@ -22,352 +17,104 @@
       <import feature="org.openscada.external" version="1.1.0.qualifier"/>
    </requires>
 
-   <plugin
-         id="org.openscada.da.client"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.client" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.client.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.client.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.core.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.core.common" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.core.server"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.core.server" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.common" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.exec"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.exec" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.exporter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.exporter" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.jdbc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.jdbc" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.opc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.opc" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.proxy"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.proxy" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.simulation.component"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.simulation.component" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.snmp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.snmp" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.stock"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.stock" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.sysinfo"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.sysinfo" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.test"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.test" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.client.connection.service"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.client.connection.service" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.connection.provider"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.connection.provider" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.master"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.master" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.osgi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.osgi" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.osgi.exporter.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.osgi.exporter.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.osgi.testing"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.osgi.testing" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.item"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.item" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.proxy"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.proxy" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.master.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.master.common" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.dave"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.dave" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.script"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.script" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.common.osgi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.common.osgi" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.master.analyzer"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.master.analyzer" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.average"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.average" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.movingaverage"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.movingaverage" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.memory"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.memory" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.sum"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.sum" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.ds"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.ds" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.osgi.summary"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.osgi.summary" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.formula"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.formula" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.arduino"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.arduino" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.component.script"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+   <plugin download-size="0" id="org.openscada.da.component.script" install-size="0" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.utils.daemon"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.utils.daemon" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.mapper"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.mapper" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.master.mapper"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.master.mapper" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.mapper.osgi"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+   <plugin download-size="0" id="org.openscada.da.mapper.osgi" install-size="0" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.datasource.constant"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.datasource.constant" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.common.ngp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.common.ngp" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.ngp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.ngp" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.client.ngp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.client.ngp" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.exporter.ngp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.exporter.ngp" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.da.server.modbus"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.da.server.modbus" install-size="0" unpack="false" version="0.0.0"/>
 
 </feature>

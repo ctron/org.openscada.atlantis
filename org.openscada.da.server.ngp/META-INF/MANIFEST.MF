@@ -1,38 +1,27 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA NextGenerationProtocol DA Server
-Bundle-SymbolicName: org.openscada.da.server.ngp
-Bundle-Version: 1.1.0.qualifier
+Export-Package: org.openscada.da.server.ngp;version="1.1.0"; uses:="or
+ g.apache.mina.core.session,  org.openscada.da.core.server,  org.opens
+ cada.core.data,  org.openscada.core.server.ngp,  org.openscada.protoc
+ ol.ngp.common,  org.openscada.core,  org.openscada.da.core,  org.open
+ scada.utils.lifecycle"
 Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA NextGenerationProtocol DA Server
+Bundle-ManifestVersion: 2
+Import-Package: org.apache.mina.core.session;version="2.0.7",org.opens
+ cada.core;version="1.0.0",org.openscada.core.data;version="1.0.0",org
+ .openscada.core.data.message;version="1.0.0",org.openscada.core.ngp;v
+ ersion="1.1.0",org.openscada.core.server;version="1.0.0",org.openscad
+ a.core.server.exporter;version="1.0.0",org.openscada.core.server.ngp;
+ version="1.0.0",org.openscada.da.common.ngp;version="1.0.0",org.opens
+ cada.da.core;version="1.0.0",org.openscada.da.core.browser;version="1
+ .0.0",org.openscada.da.core.server;version="1.0.0",org.openscada.da.c
+ ore.server.browser;version="1.0.0",org.openscada.da.data;version="1.0
+ .0",org.openscada.da.data.message;version="1.0.0",org.openscada.proto
+ col.ngp.common;version="1.0.0",org.openscada.sec;version="1.0.0",org.
+ openscada.sec.callback;version="1.1.0",org.openscada.utils;version="1
+ .0.0",org.openscada.utils.concurrent;version="1.0.0",org.openscada.ut
+ ils.lifecycle;version="1.0.0",org.slf4j;version="1.5.0"
+Bundle-SymbolicName: org.openscada.da.server.ngp
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.mina.core.session;version="2.0.7",
- org.openscada.core;version="1.0.0",
- org.openscada.core.data;version="1.0.0",
- org.openscada.core.data.message;version="1.0.0",
- org.openscada.core.ngp;version="1.1.0",
- org.openscada.core.server;version="1.0.0",
- org.openscada.core.server.exporter;version="1.0.0",
- org.openscada.core.server.ngp;version="1.0.0",
- org.openscada.da.common.ngp;version="1.0.0",
- org.openscada.da.core;version="1.0.0",
- org.openscada.da.core.browser;version="1.0.0",
- org.openscada.da.core.server;version="1.0.0",
- org.openscada.da.core.server.browser;version="1.0.0",
- org.openscada.da.data;version="1.0.0",
- org.openscada.da.data.message;version="1.0.0",
- org.openscada.protocol.ngp.common;version="1.0.0",
- org.openscada.sec;version="1.0.0",
- org.openscada.sec.callback;version="1.1.0",
- org.openscada.utils;version="1.0.0",
- org.openscada.utils.concurrent;version="1.0.0",
- org.openscada.utils.lifecycle;version="1.0.0",
- org.slf4j;version="1.5.0"
-Export-Package: org.openscada.da.server.ngp;version="1.1.0";
-  uses:="org.apache.mina.core.session,
-   org.openscada.da.core.server,
-   org.openscada.core.data,
-   org.openscada.core.server.ngp,
-   org.openscada.protocol.ngp.common,
-   org.openscada.core,
-   org.openscada.da.core,
-   org.openscada.utils.lifecycle"
+

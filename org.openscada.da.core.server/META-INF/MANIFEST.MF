@@ -1,30 +1,22 @@
 Manifest-Version: 1.0
-Import-Package: org.openscada.core;version="1.0.0",
- org.openscada.core.data;version="1.0.0",
- org.openscada.core.server;version="1.0.0",
- org.openscada.core.subscription;version="1.0.0",
- org.openscada.da.core;version="1.0.0",
- org.openscada.da.core.browser;version="1.0.0",
- org.openscada.sec;version="1.0.0",
- org.openscada.sec.callback;version="1.1.0",
- org.openscada.utils.concurrent;version="1.0.0",
- org.openscada.utils.lang;version="1.0.0",
- org.openscada.utils.statuscodes;version="1.0.0",
- org.openscada.utils.str;version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.core.server;version="1.1.0";
-  uses:="org.openscada.core.server,
-   org.openscada.utils.concurrent,
-   org.openscada.da.core.server.browser,
-   org.openscada.core,
-   org.openscada.da.core",
- org.openscada.da.core.server.browser;version="1.1.0";
-  uses:="org.openscada.da.core.server,
-   org.openscada.utils.concurrent,
-   org.openscada.utils.statuscodes,
-   org.openscada.da.core"
-Bundle-Version: 1.1.0.qualifier
+Export-Package: org.openscada.da.core.server;version="1.1.0"; uses:="o
+ rg.openscada.core.server,  org.openscada.utils.concurrent,  org.opens
+ cada.da.core.server.browser,  org.openscada.core,  org.openscada.da.c
+ ore",org.openscada.da.core.server.browser;version="1.1.0"; uses:="org
+ .openscada.da.core.server,  org.openscada.utils.concurrent,  org.open
+ scada.utils.statuscodes,  org.openscada.da.core"
+Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
 Bundle-Name: openSCADA DA Core Server
 Bundle-ManifestVersion: 2
-Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.core.server
+Import-Package: org.openscada.core;version="1.0.0",org.openscada.core.
+ data;version="1.0.0",org.openscada.core.server;version="1.0.0",org.op
+ enscada.core.subscription;version="1.0.0",org.openscada.da.core;versi
+ on="1.0.0",org.openscada.da.core.browser;version="1.0.0",org.openscad
+ a.sec;version="1.0.0",org.openscada.sec.callback;version="1.1.0",org.
+ openscada.utils.concurrent;version="1.0.0",org.openscada.utils.lang;v
+ ersion="1.0.0",org.openscada.utils.statuscodes;version="1.0.0",org.op
+ enscada.utils.str;version="1.0.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

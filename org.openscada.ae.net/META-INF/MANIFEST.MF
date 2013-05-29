@@ -1,16 +1,15 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA A&E Net Base Plug-in
-Bundle-SymbolicName: org.openscada.ae.net
-Bundle-Version: 1.0.0.qualifier
+Export-Package: org.openscada.ae.net;version="1.0.0";uses:="org.opensc
+ ada.net.base.data,org.openscada.ae"
 Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA A&E Net Base Plug-in
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.ae;version="1.0.0",org.openscada.ae.data
+ ;version="1.0.0",org.openscada.core;version="1.0.0",org.openscada.cor
+ e.net;version="1.0.0",org.openscada.net.base;version="1.0.0",org.open
+ scada.net.base.data;version="1.0.0",org.openscada.net.base.handlers;v
+ ersion="1.0.0",org.openscada.net.utils;version="1.0.0"
+Bundle-SymbolicName: org.openscada.ae.net
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.ae.net;version="1.0.0";uses:="org.openscada.net.base.data,org.openscada.ae"
-Import-Package: org.openscada.ae;version="1.0.0",
- org.openscada.ae.data;version="1.0.0",
- org.openscada.core;version="1.0.0",
- org.openscada.core.net;version="1.0.0",
- org.openscada.net.base;version="1.0.0",
- org.openscada.net.base.data;version="1.0.0",
- org.openscada.net.base.handlers;version="1.0.0",
- org.openscada.net.utils;version="1.0.0"
+

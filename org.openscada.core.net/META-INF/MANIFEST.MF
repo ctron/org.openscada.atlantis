@@ -1,27 +1,20 @@
 Manifest-Version: 1.0
-Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
- org.apache.mina.core.session;version="2.0.0",
- org.apache.mina.filter.codec;version="2.0.0",
- org.apache.mina.filter.compression;version="2.0.0",
- org.apache.mina.filter.logging;version="2.0.0",
- org.apache.mina.filter.ssl;version="2.0.0",
- org.openscada.core;version="1.0.0",
- org.openscada.core.data;version="1.0.0",
- org.openscada.core.net;version="1.0.0",
- org.openscada.net.base.data;version="1.0.0",
- org.openscada.net.mina;version="1.0.0",
- org.openscada.net.utils;version="1.0.0",
- org.slf4j;version="1.5.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.core.net;version="1.1.0";
-  uses:="org.apache.mina.core.session,
-   org.openscada.net.base.data,
-   org.apache.mina.core.filterchain,
-   org.openscada.core,
-   org.openscada.net.mina"
-Bundle-Version: 1.1.0.qualifier
+Export-Package: org.openscada.core.net;version="1.1.0"; uses:="org.apa
+ che.mina.core.session,  org.openscada.net.base.data,  org.apache.mina
+ .core.filterchain,  org.openscada.core,  org.openscada.net.mina"
+Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
 Bundle-Name: openSCADA Core Net
 Bundle-ManifestVersion: 2
-Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.core.net
+Import-Package: org.apache.mina.core.filterchain;version="2.0.0",org.a
+ pache.mina.core.session;version="2.0.0",org.apache.mina.filter.codec;
+ version="2.0.0",org.apache.mina.filter.compression;version="2.0.0",or
+ g.apache.mina.filter.logging;version="2.0.0",org.apache.mina.filter.s
+ sl;version="2.0.0",org.openscada.core;version="1.0.0",org.openscada.c
+ ore.data;version="1.0.0",org.openscada.core.net;version="1.0.0",org.o
+ penscada.net.base.data;version="1.0.0",org.openscada.net.mina;version
+ ="1.0.0",org.openscada.net.utils;version="1.0.0",org.slf4j;version="1
+ .5.0"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 

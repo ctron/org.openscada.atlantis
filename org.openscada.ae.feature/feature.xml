@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="org.openscada.ae"
-      label="openSCADA AE Feature"
-      version="1.1.0.qualifier"
-      provider-name="openSCADA.org">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="org.openscada.ae" label="openSCADA AE Feature" provider-name="openSCADA.org" version="1.1.0.v20130529">
 
    <description>
       openSCADA Alarms and Events
@@ -17,9 +12,7 @@
       %license
    </license>
 
-   <includes
-         id="org.openscada.core"
-         version="0.0.0"/>
+   <includes id="org.openscada.core" version="0.0.0"/>
 
    <requires>
       <import plugin="org.openscada.core"/>
@@ -53,260 +46,82 @@
       <import plugin="javax.servlet"/>
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.openscada.da.server.common"/>
-      <import plugin="org.openscada.ae" version="0.14.0" match="greaterOrEqual"/>
-      <import plugin="org.openscada.ae.server.net" version="0.14.0" match="greaterOrEqual"/>
+      <import match="greaterOrEqual" plugin="org.openscada.ae" version="0.14.0"/>
+      <import match="greaterOrEqual" plugin="org.openscada.ae.server.net" version="0.14.0"/>
       <import plugin="org.openscada.utils.osgi.jdbc"/>
       <import plugin="org.openscada.utils.osgi.jdbc.pool"/>
    </requires>
 
-   <plugin
-         id="org.openscada.ae"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.client.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.client.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.connection.provider"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.connection.provider" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.event"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.event" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.monitor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.monitor" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.monitor.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.monitor.common" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.common" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.common.monitor"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.common.monitor" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.exporter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.exporter" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.exporter.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.exporter.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.storage"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.storage" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.event.logger"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.event.logger" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.common.event"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.common.event" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.storage.jdbc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.storage.jdbc" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.storage.postgres"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.storage.postgres" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.filter"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.filter" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.http"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.http" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.info"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.info" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.monitor.datasource"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.monitor.datasource" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.monitor.datasource.common"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.monitor.datasource.common" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.storage.memory"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.storage.memory" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.utils"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.utils" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.monitor.script"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.monitor.script" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.client.connection.service"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.client.connection.service" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.event.proxy"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.event.proxy" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.monitor.proxy"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.monitor.proxy" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.akn.proxy"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+   <plugin download-size="0" id="org.openscada.ae.server.akn.proxy" install-size="0" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.slave.pull"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+   <plugin download-size="0" id="org.openscada.ae.slave.pull" install-size="0" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.slave.inject"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.slave.inject" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.slave.inject.postgres"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.slave.inject.postgres" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.client.ngp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.client.ngp" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.common.ngp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.common.ngp" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.exporter.ngp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.exporter.ngp" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.ae.server.ngp"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.ae.server.ngp" install-size="0" unpack="false" version="0.0.0"/>
 
 </feature>

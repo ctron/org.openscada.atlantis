@@ -1,23 +1,19 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA Event Plug-in
-Bundle-SymbolicName: org.openscada.ae.event
-Bundle-Version: 1.0.0.qualifier
+Export-Package: org.openscada.ae.event;version="1.0.0"; uses:="org.ope
+ nscada.utils.propertyeditors,  org.openscada.utils.filter,  org.osgi.
+ framework,  org.openscada.ae"
 Bundle-Vendor: openSCADA.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ae;version="1.0.0",
- org.openscada.ae.server.storage;version="1.0.0",
- org.openscada.core;version="1.0.0",
- org.openscada.utils.filter;version="1.0.0",
- org.openscada.utils.osgi;version="1.0.0",
- org.openscada.utils.propertyeditors;version="1.0.0",
- org.osgi.framework;version="1.0.0",
- org.osgi.util.tracker;version="1.5.0",
- org.slf4j;version="[1.5.0,2.0.0)"
-Export-Package: org.openscada.ae.event;version="1.0.0";
-  uses:="org.openscada.utils.propertyeditors,
-   org.openscada.utils.filter,
-   org.osgi.framework,
-   org.openscada.ae"
-Bundle-Activator: org.openscada.ae.event.Activator
 Bundle-ActivationPolicy: lazy
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA Event Plug-in
+Bundle-Activator: org.openscada.ae.event.Activator
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.ae;version="1.0.0",org.openscada.ae.serv
+ er.storage;version="1.0.0",org.openscada.core;version="1.0.0",org.ope
+ nscada.utils.filter;version="1.0.0",org.openscada.utils.osgi;version=
+ "1.0.0",org.openscada.utils.propertyeditors;version="1.0.0",org.osgi.
+ framework;version="1.0.0",org.osgi.util.tracker;version="1.5.0",org.s
+ lf4j;version="[1.5.0,2.0.0)"
+Bundle-SymbolicName: org.openscada.ae.event
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

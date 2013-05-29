@@ -1,15 +1,13 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA CA Console Handler
-Bundle-SymbolicName: org.openscada.ca.console
-Bundle-Version: 1.1.0.qualifier
-Bundle-Vendor: openSCADA.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ca;version="1.0.0",
- org.openscada.ca.data;version="1.0.0",
- org.openscada.sec;version="1.1.0",
- org.openscada.utils.concurrent;version="1.1.0",
- org.openscada.utils.str;version="1.1.0"
-Service-Component: OSGI-INF/freezableConsole.xml,
- OSGI-INF/console.xml
 Require-Bundle: org.apache.felix.gogo.runtime;bundle-version="0.8.0"
+Service-Component: OSGI-INF/freezableConsole.xml,OSGI-INF/console.xml
+Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA CA Console Handler
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.ca;version="1.0.0",org.openscada.ca.data
+ ;version="1.0.0",org.openscada.sec;version="1.1.0",org.openscada.util
+ s.concurrent;version="1.1.0",org.openscada.utils.str;version="1.1.0"
+Bundle-SymbolicName: org.openscada.ca.console
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

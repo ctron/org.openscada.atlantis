@@ -1,14 +1,13 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA HD NET Server Exporter
-Bundle-SymbolicName: org.openscada.hd.server.exporter.net
-Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.openscada.hd.server.exporter.net.Activator
 Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA HD NET Server Exporter
+Bundle-Activator: org.openscada.hd.server.exporter.net.Activator
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.core;version="1.0.0",org.openscada.hd;ve
+ rsion="1.0.0",org.openscada.hd.server;version="1.0.0",org.openscada.h
+ d.server.net;version="1.0.0",org.osgi.framework;version="1.3.0",org.s
+ lf4j;version="1.5.0"
+Bundle-SymbolicName: org.openscada.hd.server.exporter.net
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.core;version="1.0.0",
- org.openscada.hd;version="1.0.0",
- org.openscada.hd.server;version="1.0.0",
- org.openscada.hd.server.net;version="1.0.0",
- org.osgi.framework;version="1.3.0",
- org.slf4j;version="1.5.0"
+

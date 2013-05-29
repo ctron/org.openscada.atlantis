@@ -1,22 +1,18 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA JDBC Configuration Administrator
-Bundle-SymbolicName: org.openscada.ca.jdbc
-Bundle-Version: 1.1.0.qualifier
-Bundle-Activator: org.openscada.ca.jdbc.Activator
 Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA JDBC Configuration Administrator
+Bundle-Activator: org.openscada.ca.jdbc.Activator
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.ca;version="1.0.0",org.openscada.ca.comm
+ on;version="1.0.0",org.openscada.ca.data;version="1.0.0",org.openscad
+ a.sec;version="1.0.0",org.openscada.utils;version="1.0.0",org.opensca
+ da.utils.concurrent;version="1.0.0",org.openscada.utils.osgi;version=
+ "1.0.0",org.openscada.utils.osgi.jdbc;version="1.1.0",org.openscada.u
+ tils.osgi.jdbc.data;version="1.1.0",org.openscada.utils.osgi.jdbc.poo
+ l;version="1.0.0",org.openscada.utils.osgi.jdbc.task;version="1.1.0",
+ org.osgi.framework;version="1.6.0",org.osgi.service.jdbc;version="1.0
+ .0",org.slf4j;version="[1.5.0,2.0.0)"
+Bundle-SymbolicName: org.openscada.ca.jdbc
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ca;version="1.0.0",
- org.openscada.ca.common;version="1.0.0",
- org.openscada.ca.data;version="1.0.0",
- org.openscada.sec;version="1.0.0",
- org.openscada.utils;version="1.0.0",
- org.openscada.utils.concurrent;version="1.0.0",
- org.openscada.utils.osgi;version="1.0.0",
- org.openscada.utils.osgi.jdbc;version="1.1.0",
- org.openscada.utils.osgi.jdbc.data;version="1.1.0",
- org.openscada.utils.osgi.jdbc.pool;version="1.0.0",
- org.openscada.utils.osgi.jdbc.task;version="1.1.0",
- org.osgi.framework;version="1.6.0",
- org.osgi.service.jdbc;version="1.0.0",
- org.slf4j;version="[1.5.0,2.0.0)"
+

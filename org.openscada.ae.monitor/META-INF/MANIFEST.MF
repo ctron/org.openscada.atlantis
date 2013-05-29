@@ -1,12 +1,13 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA Monitor Plug-in
-Bundle-SymbolicName: org.openscada.ae.monitor
-Bundle-Version: 1.0.0.qualifier
+Export-Package: org.openscada.ae.monitor;version="1.0.0";uses:="org.op
+ enscada.sec,org.openscada.ae"
 Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA Monitor Plug-in
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.ae;version="1.0.0",org.openscada.ae.data
+ ;version="1.0.0",org.openscada.sec;version="1.0.0",org.osgi.framework
+ ;version="1.7.0"
+Bundle-SymbolicName: org.openscada.ae.monitor
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ae;version="1.0.0",
- org.openscada.ae.data;version="1.0.0",
- org.openscada.sec;version="1.0.0",
- org.osgi.framework;version="1.7.0"
-Export-Package: org.openscada.ae.monitor;version="1.0.0";uses:="org.openscada.sec,org.openscada.ae"
+

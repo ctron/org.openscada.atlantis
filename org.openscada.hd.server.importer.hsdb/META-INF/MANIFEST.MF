@@ -1,18 +1,15 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA HSDB Importer
-Bundle-SymbolicName: org.openscada.hd.server.importer.hsdb
-Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.openscada.hd.server.importer.hsdb.Activator
 Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA HSDB Importer
+Bundle-Activator: org.openscada.hd.server.importer.hsdb.Activator
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.core;version="1.0.0",org.openscada.hd;ve
+ rsion="1.0.0",org.openscada.hd.data;version="1.0.0",org.openscada.hd.
+ server.common;version="1.0.0",org.openscada.hd.server.storage.common;
+ version="1.0.0",org.openscada.hds;version="1.0.0",org.openscada.utils
+ .concurrent;version="1.0.0",org.openscada.utils.lang;version="1.0.0",
+ org.osgi.framework;version="1.6.0",org.slf4j;version="1.5.0"
+Bundle-SymbolicName: org.openscada.hd.server.importer.hsdb
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.core;version="1.0.0",
- org.openscada.hd;version="1.0.0",
- org.openscada.hd.data;version="1.0.0",
- org.openscada.hd.server.common;version="1.0.0",
- org.openscada.hd.server.storage.common;version="1.0.0",
- org.openscada.hds;version="1.0.0",
- org.openscada.utils.concurrent;version="1.0.0",
- org.openscada.utils.lang;version="1.0.0",
- org.osgi.framework;version="1.6.0",
- org.slf4j;version="1.5.0"
+

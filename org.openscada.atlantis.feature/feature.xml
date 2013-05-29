@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="org.openscada.atlantis"
-      label="%featureName"
-      version="1.1.0.qualifier"
-      provider-name="openSCADA.org">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="org.openscada.atlantis" label="%featureName" provider-name="openSCADA.org" version="1.1.0.v20130529">
 
    <description>
       The openSCADA Atlantis Project
@@ -17,25 +12,15 @@
       %license
    </license>
 
-   <includes
-         id="org.openscada.ae"
-         version="0.0.0"/>
+   <includes id="org.openscada.ae" version="0.0.0"/>
 
-   <includes
-         id="org.openscada.da"
-         version="0.0.0"/>
+   <includes id="org.openscada.da" version="0.0.0"/>
 
-   <includes
-         id="org.openscada.core"
-         version="0.0.0"/>
+   <includes id="org.openscada.core" version="0.0.0"/>
 
-   <includes
-         id="org.openscada.hd"
-         version="0.0.0"/>
+   <includes id="org.openscada.hd" version="0.0.0"/>
 
-   <includes
-         id="org.openscada.ca"
-         version="0.0.0"/>
+   <includes id="org.openscada.ca" version="0.0.0"/>
 
    <requires>
       <import plugin="slf4j.api"/>
@@ -46,45 +31,16 @@
       <import feature="org.openscada.utgard" version="0.7.0.qualifier"/>
    </requires>
 
-   <plugin
-         id="org.openscada.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.sec.provider.jdbc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.sec.provider.jdbc" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.sec.provider.script"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.sec.provider.script" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.sec.authz.signature"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+   <plugin download-size="0" id="org.openscada.sec.authz.signature" install-size="0" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.sec.osgi.manager"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.sec.osgi.manager" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.openscada.sec.audit.log.ae"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.openscada.sec.audit.log.ae" install-size="0" unpack="false" version="0.0.0"/>
 
 </feature>

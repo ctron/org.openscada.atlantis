@@ -1,18 +1,18 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA AE Storage In Memory Plug-in
-Bundle-SymbolicName: org.openscada.ae.server.storage.memory
-Bundle-Version: 1.0.0.qualifier
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.ae.server.storage.memory;version="1.0.0"
+ ;uses:="org.osgi.framework,org.openscada.ae.server.storage,org.opensc
+ ada.ae"
 Bundle-Vendor: openSCADA.org
-Import-Package: org.openscada.ae;version="1.0.0",
- org.openscada.ae.filter;version="1.0.0",
- org.openscada.ae.filter.internal;version="1.0.0",
- org.openscada.ae.server.storage;version="1.0.0",
- org.openscada.core;version="1.0.0",
- org.openscada.utils.filter;version="1.0.0",
- org.openscada.utils.propertyeditors;version="1.0.0",
- org.osgi.framework;version="1.6.0",
- org.slf4j;version="1.5.0"
-Export-Package: org.openscada.ae.server.storage.memory;version="1.0.0";uses:="org.osgi.framework,org.openscada.ae.server.storage,org.openscada.ae"
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA AE Storage In Memory Plug-in
 Bundle-Activator: org.openscada.ae.server.storage.memory.Activator
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.ae;version="1.0.0",org.openscada.ae.filt
+ er;version="1.0.0",org.openscada.ae.filter.internal;version="1.0.0",o
+ rg.openscada.ae.server.storage;version="1.0.0",org.openscada.core;ver
+ sion="1.0.0",org.openscada.utils.filter;version="1.0.0",org.openscada
+ .utils.propertyeditors;version="1.0.0",org.osgi.framework;version="1.
+ 6.0",org.slf4j;version="1.5.0"
+Bundle-SymbolicName: org.openscada.ae.server.storage.memory
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

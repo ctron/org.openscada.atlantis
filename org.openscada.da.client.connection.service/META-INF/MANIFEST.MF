@@ -1,23 +1,21 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA DA Connections Plug-in
-Bundle-SymbolicName: org.openscada.da.client.connection.service
-Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.openscada.da.client.connection.service.Activator
+Export-Package: org.openscada.da.client.connection.service;version="1.
+ 0.0";uses:="org.osgi.framework"
 Bundle-Vendor: openSCADA.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ca;version="1.0.0",
- org.openscada.core;version="1.0.0",
- org.openscada.core.client;version="1.0.0",
- org.openscada.core.client.connection.service;version="1.0.0",
- org.openscada.core.connection.provider;version="1.0.0",
- org.openscada.da.client;version="1.0.0",
- org.openscada.da.connection.provider;version="1.0.0",
- org.openscada.sec;version="1.0.0",
- org.openscada.utils.osgi;version="1.0.0",
- org.osgi.framework;version="1.6.0",
- org.osgi.util.tracker;version="1.4.2",
- org.slf4j;version="1.5.0"
-Export-Package: org.openscada.da.client.connection.service;version="1.0.0";uses:="org.osgi.framework"
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA DA Connections Plug-in
+Bundle-Activator: org.openscada.da.client.connection.service.Activator
+Bundle-ManifestVersion: 2
 Bundle-License: http://opensource.org/licenses/lgpl-2.1.php
+Import-Package: org.openscada.ca;version="1.0.0",org.openscada.core;ve
+ rsion="1.0.0",org.openscada.core.client;version="1.0.0",org.openscada
+ .core.client.connection.service;version="1.0.0",org.openscada.core.co
+ nnection.provider;version="1.0.0",org.openscada.da.client;version="1.
+ 0.0",org.openscada.da.connection.provider;version="1.0.0",org.opensca
+ da.sec;version="1.0.0",org.openscada.utils.osgi;version="1.0.0",org.o
+ sgi.framework;version="1.6.0",org.osgi.util.tracker;version="1.4.2",o
+ rg.slf4j;version="1.5.0"
+Bundle-SymbolicName: org.openscada.da.client.connection.service
 Bundle-Copyright: 2006-2009 TH4 SYSTEMS GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+

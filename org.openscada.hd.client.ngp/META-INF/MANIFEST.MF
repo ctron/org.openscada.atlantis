@@ -1,33 +1,24 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA NextGenerationProtocol HD Client Connection
-Bundle-SymbolicName: org.openscada.hd.client.ngp
-Bundle-Version: 1.1.0.qualifier
-Bundle-Activator: org.openscada.hd.client.ngp.Activator
+Export-Package: org.openscada.hd.client.ngp;version="1.1.0"; uses:="or
+ g.openscada.hd.data,  org.openscada.core.client,  org.openscada.core.
+ client.ngp,  org.openscada.hd,  org.openscada.hd.client,  org.osgi.fr
+ amework,  org.openscada.core"
 Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA NextGenerationProtocol HD Client Connection
+Bundle-Activator: org.openscada.hd.client.ngp.Activator
+Bundle-ManifestVersion: 2
+Import-Package: org.apache.mina.core.filterchain;version="2.0.7",org.o
+ penscada.core;version="1.0.0",org.openscada.core.client;version="1.0.
+ 0",org.openscada.core.client.ngp;version="1.0.0",org.openscada.core.d
+ ata;version="1.0.0",org.openscada.core.data.message;version="1.0.0",o
+ rg.openscada.core.info;version="1.0.0",org.openscada.hd;version="1.0.
+ 0",org.openscada.hd.client;version="1.0.0",org.openscada.hd.common.ng
+ p;version="1.0.0",org.openscada.hd.data;version="1.0.0",org.openscada
+ .hd.data.message;version="1.0.0",org.openscada.hd.protocol.ngp.codec;
+ version="1.0.0",org.openscada.protocol.ngp.common;version="1.0.0",org
+ .openscada.sec.callback;version="1.1.0",org.osgi.framework;version="1
+ .3.0",org.slf4j;version="1.5.0"
+Bundle-SymbolicName: org.openscada.hd.client.ngp
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.mina.core.filterchain;version="2.0.7",
- org.openscada.core;version="1.0.0",
- org.openscada.core.client;version="1.0.0",
- org.openscada.core.client.ngp;version="1.0.0",
- org.openscada.core.data;version="1.0.0",
- org.openscada.core.data.message;version="1.0.0",
- org.openscada.core.info;version="1.0.0",
- org.openscada.hd;version="1.0.0",
- org.openscada.hd.client;version="1.0.0",
- org.openscada.hd.common.ngp;version="1.0.0",
- org.openscada.hd.data;version="1.0.0",
- org.openscada.hd.data.message;version="1.0.0",
- org.openscada.hd.protocol.ngp.codec;version="1.0.0",
- org.openscada.protocol.ngp.common;version="1.0.0",
- org.openscada.sec.callback;version="1.1.0",
- org.osgi.framework;version="1.3.0",
- org.slf4j;version="1.5.0"
-Export-Package: org.openscada.hd.client.ngp;version="1.1.0";
-  uses:="org.openscada.hd.data,
-   org.openscada.core.client,
-   org.openscada.core.client.ngp,
-   org.openscada.hd,
-   org.openscada.hd.client,
-   org.osgi.framework,
-   org.openscada.core"
+

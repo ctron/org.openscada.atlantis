@@ -1,13 +1,15 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA A&E Server Plug-in
-Bundle-SymbolicName: org.openscada.ae.server.exporter
-Bundle-Version: 1.0.0.qualifier
+Export-Package: org.openscada.ae.server.exporter;version="1.0.0";uses:
+ ="org.openscada.ae.server,org.openscada.core,org.openscada.utils.life
+ cycle"
 Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA A&E Server Plug-in
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.ae.server;version="1.0.0",org.openscada.
+ ae.server.exporter;version="1.0.0",org.openscada.core;version="1.0.0"
+ ,org.openscada.core.server;version="1.0.0",org.openscada.utils.lifecy
+ cle;version="1.0.0"
+Bundle-SymbolicName: org.openscada.ae.server.exporter
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.ae.server.exporter;version="1.0.0";uses:="org.openscada.ae.server,org.openscada.core,org.openscada.utils.lifecycle"
-Import-Package: org.openscada.ae.server;version="1.0.0",
- org.openscada.ae.server.exporter;version="1.0.0",
- org.openscada.core;version="1.0.0",
- org.openscada.core.server;version="1.0.0",
- org.openscada.utils.lifecycle;version="1.0.0"
+

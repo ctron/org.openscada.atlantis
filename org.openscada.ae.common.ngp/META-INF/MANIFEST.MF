@@ -1,15 +1,15 @@
 Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA NextGenerationProtocol AE Common
-Bundle-SymbolicName: org.openscada.ae.common.ngp
-Bundle-Version: 1.0.0.qualifier
+Export-Package: org.openscada.ae.common.ngp;version="1.0.0";uses:="org
+ .openscada.protocol.ngp.common,org.openscada.core"
 Bundle-Vendor: openSCADA.org
+Bundle-Version: 1.1.0.v20130529
+Bundle-Name: openSCADA NextGenerationProtocol AE Common
+Bundle-ManifestVersion: 2
+Import-Package: org.openscada.ae.data;version="1.0.0",org.openscada.ae
+ .data.message;version="1.0.0",org.openscada.ae.protocol.ngp.codec;ver
+ sion="1.0.0",org.openscada.core;version="1.0.0",org.openscada.core.da
+ ta;version="1.0.0",org.openscada.core.data.message;version="1.0.0",or
+ g.openscada.protocol.ngp.common;version="1.0.0"
+Bundle-SymbolicName: org.openscada.ae.common.ngp
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ae.data;version="1.0.0",
- org.openscada.ae.data.message;version="1.0.0",
- org.openscada.ae.protocol.ngp.codec;version="1.0.0",
- org.openscada.core;version="1.0.0",
- org.openscada.core.data;version="1.0.0",
- org.openscada.core.data.message;version="1.0.0",
- org.openscada.protocol.ngp.common;version="1.0.0"
-Export-Package: org.openscada.ae.common.ngp;version="1.0.0";uses:="org.openscada.protocol.ngp.common,org.openscada.core"
+
