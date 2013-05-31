@@ -1,4 +1,5 @@
 Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
 Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
@@ -59,5 +60,5 @@ Bundle-ClassPath: .
 Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.jdbc;singleton:=true
+Service-Component: OSGI-INF/hive.xml

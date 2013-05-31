@@ -83,3 +83,5 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-SymbolicName: org.openscada.da.server.exec;singleton:=true
 Bundle-ClassPath: .
+Service-Component: OSGI-INF/hive.xml
+
