@@ -5,6 +5,6 @@
       <provide interface="org.openscada.da.core.server.HiveCreator"/>
    </service>
    <property name="service.vendor" type="String" value="openSCADA.org"/>
-   <property name="service.description" type="String" value="openSCADA OPC Hive Creator"/>
+   <property name="service.description" type="String" value="openSCADA Modbus Hive Creator"/>
    <property name="openscada.hiveReferenceType" type="String" value="org.openscada.da.server.modbus.driver.Hive"/>
 </scr:component>
