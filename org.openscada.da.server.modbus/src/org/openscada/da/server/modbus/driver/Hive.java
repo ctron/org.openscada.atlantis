@@ -20,7 +20,6 @@
 
 package org.openscada.da.server.modbus.driver;
 
-import java.io.File;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
@@ -29,11 +28,18 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.xmlbeans.XmlException;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.openscada.da.modbus.configuration.ConfigurationPackage;
 import org.openscada.da.modbus.configuration.DeviceType;
+import org.openscada.da.modbus.configuration.DocumentRoot;
 import org.openscada.da.modbus.configuration.ItemType;
 import org.openscada.da.modbus.configuration.ModbusSlave;
-import org.openscada.da.modbus.configuration.RootDocument;
+import org.openscada.da.modbus.configuration.RootType;
+import org.openscada.da.modbus.configuration.util.ConfigurationResourceFactoryImpl;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -42,28 +48,19 @@ import org.openscada.da.server.modbus.ModbusDeviceType;
 import org.openscada.da.server.modbus.ModbusRegisterType;
 import org.openscada.da.server.modbus.ModbusType;
 import org.openscada.da.server.modbus.Rs232Information;
-import org.openscada.da.server.modbus.Rs232Information.Parity;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
     private final ScheduledExecutorService scheduler;
 
-    public Hive () throws XmlException, IOException
+    public Hive ( final String uri ) throws IOException
     {
-        this ( RootDocument.Factory.parse ( new File ( "modbusConfiguration.xml" ) ) );
+        this ( parse ( URI.createURI ( uri ) ) );
     }
 
-    public Hive ( final Node node ) throws XmlException
+    public Hive ( final RootType root )
     {
-        this ( RootDocument.Factory.parse ( node ) );
-    }
-
-    public Hive ( final RootDocument document )
-    {
-        super ();
-
         ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
         this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "modbusScheduler" ) );
@@ -71,10 +68,10 @@ public class Hive extends HiveCommon
         final FolderCommon rootFolder = new FolderCommon ();
         setRootFolder ( rootFolder );
 
-        for ( final DeviceType device : document.getRoot ().getDevices ().getDeviceList () )
+        for ( final DeviceType device : root.getDevices ().getDevice () )
         {
             final InetSocketAddress address = new InetSocketAddress ( device.getHost (), device.getPort () );
-            final Rs232Information rs232Information = new Rs232Information ( device.getBaudRate (), Parity.valueOf ( device.getParity ().toString () ), device.getDataBits (), device.getStopBits () );
+            final Rs232Information rs232Information = new Rs232Information ( device.getBaudRate (), device.getParity (), device.getDataBits (), device.getStopBits () );
             // convert both values to nanoseconds! 
             final long interFrameDelay;
             if ( device.getInterFrameDelay () > 10 )
@@ -94,7 +91,7 @@ public class Hive extends HiveCommon
             {
                 interCharacterTimeout = new Double ( rs232Information.getCharLengthAsNano () * device.getInterCharacterTimeout () ).longValue ();
             }
-            final Map<Byte, SlaveDevice> slaves = toSlaveList ( device.getSlaveList () );
+            final Map<Byte, SlaveDevice> slaves = toSlaveList ( device.getSlave () );
             ModbusDeviceType deviceType = ModbusDeviceType.RTU;
             for ( final ModbusDeviceType t : ModbusDeviceType.values () )
             {
@@ -105,6 +102,20 @@ public class Hive extends HiveCommon
             }
             new DeviceWrapper ( this, device.getId (), this.scheduler, rootFolder, address, deviceType, rs232Information, interFrameDelay, interCharacterTimeout, slaves );
         }
+    }
+
+    private static RootType parse ( final URI uri ) throws IOException
+    {
+        final ResourceSet rs = new ResourceSetImpl ();
+        rs.getResourceFactoryRegistry ().getExtensionToFactoryMap ().put ( "*", new ConfigurationResourceFactoryImpl () );
+        final Resource r = rs.createResource ( uri );
+        r.load ( null );
+        final DocumentRoot dr = (DocumentRoot)EcoreUtil.getObjectByType ( r.getContents (), ConfigurationPackage.Literals.DOCUMENT_ROOT );
+        if ( dr == null )
+        {
+            return null;
+        }
+        return dr.getRoot ();
     }
 
     @Override
@@ -128,19 +139,19 @@ public class Hive extends HiveCommon
                 throw new IllegalArgumentException ( "slave with id " + slaveDevice + " is already configured" );
             }
 
-            for ( final ItemType item : modbusSlave.getDiscreteInputList () )
+            for ( final ItemType item : modbusSlave.getDiscreteInput () )
             {
                 configureItems ( ModbusRegisterType.DiscreteInputs, slaveDevice, item );
             }
-            for ( final ItemType item : modbusSlave.getCoilList () )
+            for ( final ItemType item : modbusSlave.getCoil () )
             {
                 configureItems ( ModbusRegisterType.Coils, slaveDevice, item );
             }
-            for ( final ItemType item : modbusSlave.getInputRegisterList () )
+            for ( final ItemType item : modbusSlave.getInputRegister () )
             {
                 configureItems ( ModbusRegisterType.InputRegisters, slaveDevice, item );
             }
-            for ( final ItemType item : modbusSlave.getHoldingRegisterList () )
+            for ( final ItemType item : modbusSlave.getHoldingRegister () )
             {
                 configureItems ( ModbusRegisterType.HoldingRegisters, slaveDevice, item );
             }

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,6 +22,7 @@
 package org.openscada.da.server.exec.configuration;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -28,7 +31,31 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.apache.xmlbeans.XmlException;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.openscada.da.exec.configuration.ConfigurationPackage;
+import org.openscada.da.exec.configuration.DocumentRoot;
+import org.openscada.da.exec.configuration.EnvEntryType;
+import org.openscada.da.exec.configuration.ExtractorType;
+import org.openscada.da.exec.configuration.FieldExtractorType;
+import org.openscada.da.exec.configuration.FieldType;
+import org.openscada.da.exec.configuration.HiveProcessCommandType;
+import org.openscada.da.exec.configuration.NagiosReturnCodeExtractorType;
+import org.openscada.da.exec.configuration.PlainStreamExtractorType;
+import org.openscada.da.exec.configuration.ProcessType;
+import org.openscada.da.exec.configuration.QueueType;
+import org.openscada.da.exec.configuration.RegExExtractorType;
+import org.openscada.da.exec.configuration.ReturnCodeExtractorType;
+import org.openscada.da.exec.configuration.RootType;
+import org.openscada.da.exec.configuration.SingleCommandType;
+import org.openscada.da.exec.configuration.SplitContinuousCommandType;
+import org.openscada.da.exec.configuration.SplitterExtractorType;
+import org.openscada.da.exec.configuration.SplitterType;
+import org.openscada.da.exec.configuration.TriggerCommandType;
+import org.openscada.da.exec.configuration.util.ConfigurationResourceFactoryImpl;
 import org.openscada.da.server.exec.Hive;
 import org.openscada.da.server.exec.command.CommandQueue;
 import org.openscada.da.server.exec.command.CommandQueueImpl;
@@ -39,24 +66,6 @@ import org.openscada.da.server.exec.command.ProcessConfiguration;
 import org.openscada.da.server.exec.command.SingleCommand;
 import org.openscada.da.server.exec.command.SingleCommandImpl;
 import org.openscada.da.server.exec.command.TriggerCommand;
-import org.openscada.da.server.exec.configuration.model.EnvEntryType;
-import org.openscada.da.server.exec.configuration.model.ExtractorType;
-import org.openscada.da.server.exec.configuration.model.FieldExtractorType;
-import org.openscada.da.server.exec.configuration.model.FieldType;
-import org.openscada.da.server.exec.configuration.model.HiveProcessCommandType;
-import org.openscada.da.server.exec.configuration.model.NagiosReturnCodeExtractorType;
-import org.openscada.da.server.exec.configuration.model.PlainStreamExtractorType;
-import org.openscada.da.server.exec.configuration.model.ProcessType;
-import org.openscada.da.server.exec.configuration.model.QueueType;
-import org.openscada.da.server.exec.configuration.model.RegExExtractorType;
-import org.openscada.da.server.exec.configuration.model.ReturnCodeExtractorType;
-import org.openscada.da.server.exec.configuration.model.RootDocument;
-import org.openscada.da.server.exec.configuration.model.RootType;
-import org.openscada.da.server.exec.configuration.model.SingleCommandType;
-import org.openscada.da.server.exec.configuration.model.SplitContinuousCommandType;
-import org.openscada.da.server.exec.configuration.model.SplitterExtractorType;
-import org.openscada.da.server.exec.configuration.model.SplitterType;
-import org.openscada.da.server.exec.configuration.model.TriggerCommandType;
 import org.openscada.da.server.exec.extractor.AbstractArrayExtractor;
 import org.openscada.da.server.exec.extractor.Extractor;
 import org.openscada.da.server.exec.extractor.NagiosExtractor;
@@ -70,14 +79,13 @@ import org.openscada.da.server.exec.splitter.SplitSplitter;
 import org.openscada.da.server.exec.splitter.Splitter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
 
 public class XmlConfigurator implements Configurator
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( XmlConfigurator.class );
 
-    private RootDocument document;
+    private RootType root;
 
     /**
      * Configure based on provided root document
@@ -85,9 +93,9 @@ public class XmlConfigurator implements Configurator
      * @param document
      *            the root document
      */
-    public XmlConfigurator ( final RootDocument document )
+    public XmlConfigurator ( final RootType root )
     {
-        this.document = document;
+        this.root = root;
     }
 
     /**
@@ -98,13 +106,13 @@ public class XmlConfigurator implements Configurator
      * @throws ConfigurationException
      *             if anything goes wrong
      */
-    public XmlConfigurator ( final Node node ) throws ConfigurationException
+    public XmlConfigurator ( final URI uri ) throws ConfigurationException
     {
         try
         {
-            this.document = RootDocument.Factory.parse ( node );
+            this.root = parse ( uri );
         }
-        catch ( final XmlException e )
+        catch ( final IOException e )
         {
             throw new ConfigurationException ( "Failed to parse xml document", e );
         }
@@ -118,13 +126,13 @@ public class XmlConfigurator implements Configurator
     @Override
     public void configure ( final Hive hive ) throws ConfigurationException
     {
-        configure ( this.document.getRoot (), hive );
+        configure ( this.root, hive );
     }
 
     private void configure ( final RootType root, final Hive hive ) throws ConfigurationException
     {
         // create scheduled commands
-        for ( final QueueType queueType : root.getQueueList () )
+        for ( final QueueType queueType : root.getQueue () )
         {
             final CommandQueue queue = new CommandQueueImpl ( hive, queueType.getName (), 1000 );
             configureQueue ( queue, queueType, hive );
@@ -132,7 +140,7 @@ public class XmlConfigurator implements Configurator
         }
 
         // create continuous commands with configured splitters and extractors
-        for ( final SplitContinuousCommandType commandType : root.getCommandList () )
+        for ( final SplitContinuousCommandType commandType : root.getCommand () )
         {
             final ProcessConfiguration processConfiguration = createProcessConfiguration ( commandType.getProcess () );
             final Splitter splitter = createSplitter ( commandType.getSplitter () );
@@ -140,12 +148,12 @@ public class XmlConfigurator implements Configurator
             {
                 throw new ConfigurationException ( String.format ( "Unable to create splitter: " + commandType.getSplitter ().getType () ) );
             }
-            final ContinuousCommand command = new ExtractorContinuousCommand ( commandType.getId (), processConfiguration, commandType.getRestartDelay (), commandType.getMaxInputBuffer (), commandType.getIgnoreStartLines (), splitter, createExtractors ( commandType.getExtractorList (), hive ) );
+            final ContinuousCommand command = new ExtractorContinuousCommand ( commandType.getId (), processConfiguration, commandType.getRestartDelay (), commandType.getMaxInputBuffer (), commandType.getIgnoreStartLines (), splitter, createExtractors ( commandType.getExtractor (), hive ) );
             hive.addContinuousCommand ( command );
         }
 
         // create openscada command line hive processes
-        for ( final HiveProcessCommandType hiveProcessType : root.getHiveProcessList () )
+        for ( final HiveProcessCommandType hiveProcessType : root.getHiveProcess () )
         {
             final ProcessConfiguration processConfiguration = createProcessConfiguration ( hiveProcessType.getProcess () );
             final HiveProcessCommand command = new HiveProcessCommand ( hiveProcessType.getId (), processConfiguration, hiveProcessType.getRestartDelay (), hiveProcessType.getMaxInputBuffer () );
@@ -153,17 +161,17 @@ public class XmlConfigurator implements Configurator
         }
 
         // create triggers
-        for ( final TriggerCommandType triggerType : root.getTriggerList () )
+        for ( final TriggerCommandType triggerType : root.getTrigger () )
         {
             final ProcessConfiguration processConfiguration = createProcessConfiguration ( triggerType.getProcess () );
-            final boolean fork = triggerType.isSetFork () ? triggerType.getFork () : true;
-            final TriggerCommand command = new TriggerCommand ( triggerType.getId (), processConfiguration, createExtractors ( triggerType.getExtractorList (), hive ), triggerType.getArgumentPlaceholder (), triggerType.getSkipIfNull (), fork );
+            final boolean fork = triggerType.isSetFork () ? triggerType.isFork () : true;
+            final TriggerCommand command = new TriggerCommand ( triggerType.getId (), processConfiguration, createExtractors ( triggerType.getExtractor (), hive ), triggerType.getArgumentPlaceholder (), triggerType.isSkipIfNull (), fork );
             hive.addTrigger ( command );
         }
 
-        if ( root.getAdditionalConfigurationDirectoryList () != null )
+        if ( root.getAdditionalConfigurationDirectory () != null )
         {
-            for ( final String directory : root.getAdditionalConfigurationDirectoryList () )
+            for ( final String directory : root.getAdditionalConfigurationDirectory () )
             {
                 logger.info ( "Processing include dir: {}", directory );
 
@@ -186,24 +194,37 @@ public class XmlConfigurator implements Configurator
                         logger.warn ( "Unable to read file. Skipping." );
                         continue;
                     }
-                    processSubFile ( file, hive );
+                    processFile ( file, hive );
                 }
             }
         }
     }
 
-    private void processSubFile ( final File file, final Hive hive ) throws ConfigurationException
+    private RootType parse ( final URI uri ) throws IOException
     {
-        RootDocument root;
+        final ResourceSet rs = new ResourceSetImpl ();
+        rs.getResourceFactoryRegistry ().getExtensionToFactoryMap ().put ( "*", new ConfigurationResourceFactoryImpl () );
+        final Resource r = rs.createResource ( uri );
+        r.load ( null );
+        final DocumentRoot doc = (DocumentRoot)EcoreUtil.getObjectByType ( r.getContents (), ConfigurationPackage.Literals.DOCUMENT_ROOT );
+        if ( doc == null )
+        {
+            return null;
+        }
+        return doc.getRoot ();
+    }
+
+    private void processFile ( final File file, final Hive hive ) throws ConfigurationException
+    {
         try
         {
-            root = RootDocument.Factory.parse ( file );
+            final RootType subRoot = parse ( URI.createFileURI ( file.getAbsolutePath () ) );
+            configure ( subRoot, hive );
         }
-        catch ( final Exception e )
+        catch ( final IOException e )
         {
-            throw new ConfigurationException ( String.format ( "Failed to parse sub file: %s", file ), e );
+            throw new ConfigurationException ( "Failed to parse sub xml document: " + file, e );
         }
-        configure ( root.getRoot (), hive );
     }
 
     /**
@@ -237,7 +258,7 @@ public class XmlConfigurator implements Configurator
 
     private void configureQueue ( final CommandQueue queue, final QueueType queueType, final Hive hive ) throws ConfigurationException
     {
-        for ( final SingleCommandType commandType : queueType.getCommandList () )
+        for ( final SingleCommandType commandType : queueType.getCommand () )
         {
             final SingleCommand command = createSingleCommand ( commandType, hive );
             queue.addCommand ( command, commandType.getPeriod () );
@@ -246,7 +267,7 @@ public class XmlConfigurator implements Configurator
 
     private SingleCommand createSingleCommand ( final SingleCommandType commandType, final Hive hive ) throws ConfigurationException
     {
-        final SingleCommand command = new SingleCommandImpl ( commandType.getId (), createProcessConfiguration ( commandType.getProcess () ), createExtractors ( commandType.getExtractorList (), hive ) );
+        final SingleCommand command = new SingleCommandImpl ( commandType.getId (), createProcessConfiguration ( commandType.getProcess () ), createExtractors ( commandType.getExtractor (), hive ) );
         return command;
     }
 
@@ -272,7 +293,7 @@ public class XmlConfigurator implements Configurator
         {
             final RegExExtractorType regExType = (RegExExtractorType)type;
             boolean requireFullMatch = false;
-            requireFullMatch = regExType.getRequireFullMatch ();
+            requireFullMatch = regExType.isRequireFullMatch ();
             return new RegExExtractor ( type.getName (), Pattern.compile ( regExType.getExpression () ), requireFullMatch, createFields ( regExType ) );
         }
         else if ( type instanceof SplitterExtractorType )
@@ -294,7 +315,7 @@ public class XmlConfigurator implements Configurator
     private List<AbstractArrayExtractor.FieldMapping> createFields ( final FieldExtractorType regExType )
     {
         final List<AbstractArrayExtractor.FieldMapping> groups = new ArrayList<AbstractArrayExtractor.FieldMapping> ();
-        for ( final FieldType group : regExType.getFieldList () )
+        for ( final FieldType group : regExType.getField () )
         {
             final AbstractArrayExtractor.FieldMapping groupMapping = new AbstractArrayExtractor.FieldMapping ();
             groupMapping.setName ( group.getName () );
@@ -305,7 +326,8 @@ public class XmlConfigurator implements Configurator
     }
 
     /**
-     * Create a new {@link ProcessConfiguration} instance based on a {@link ProcessType}
+     * Create a new {@link ProcessConfiguration} instance based on a
+     * {@link ProcessType}
      * 
      * @param process
      *            the {@link ProcessType} object
@@ -316,10 +338,10 @@ public class XmlConfigurator implements Configurator
         // create the env var map
         Map<String, String> env = null;
 
-        if ( process.getEnvList () != null && !process.getEnvList ().isEmpty () )
+        if ( process.getEnv () != null && !process.getEnv ().isEmpty () )
         {
             env = new HashMap<String, String> ();
-            for ( final EnvEntryType entry : process.getEnvList () )
+            for ( final EnvEntryType entry : process.getEnv () )
             {
                 if ( entry.getName () != null && entry.getName ().length () > 0 )
                 {
@@ -329,8 +351,7 @@ public class XmlConfigurator implements Configurator
         }
 
         // create the process configuration instance
-        final ProcessConfiguration pc = new ProcessConfiguration ( process.getExec (), process.getArgumentList ().toArray ( new String[0] ), env );
-        return pc;
+        return new ProcessConfiguration ( process.getExec (), process.getArgument ().toArray ( new String[0] ), env );
     }
 
 }

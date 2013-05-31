@@ -1,48 +1,50 @@
-/*
- * This file is part of the OpenSCADA project
+/**
+ * This file is part of the openSCADA project
  * 
  * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
- *
- * OpenSCADA is free software: you can redistribute it and/or modify
+ * 
+ * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
- *
- * OpenSCADA is distributed in the hope that it will be useful,
+ * 
+ * openSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
- * version 3 along with OpenSCADA. If not, see
+ * version 3 along with openSCADA. If not, see
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
-
 package org.openscada.da.server.exporter.util;
 
 import org.eclipse.emf.common.notify.Adapter;
 import org.eclipse.emf.common.notify.Notifier;
+
 import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
+
 import org.eclipse.emf.ecore.EObject;
-import org.openscada.da.server.exporter.AnnouncerType;
-import org.openscada.da.server.exporter.ConfigurationType;
-import org.openscada.da.server.exporter.DocumentRoot;
-import org.openscada.da.server.exporter.ExportType;
-import org.openscada.da.server.exporter.ExporterPackage;
-import org.openscada.da.server.exporter.HiveConfigurationType;
-import org.openscada.da.server.exporter.HiveType;
+
+import org.openscada.da.server.exporter.*;
 
 /**
  * <!-- begin-user-doc -->
  * The <b>Adapter Factory</b> for the model.
- * It provides an adapter <code>createXXX</code> method for each class of the
- * model.
+ * It provides an adapter <code>createXXX</code> method for each class of the model.
  * <!-- end-user-doc -->
  * @see org.openscada.da.server.exporter.ExporterPackage
  * @generated
  */
 public class ExporterAdapterFactory extends AdapterFactoryImpl
 {
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
+
     /**
      * The cached model package.
      * <!-- begin-user-doc -->
@@ -68,8 +70,7 @@ public class ExporterAdapterFactory extends AdapterFactoryImpl
     /**
      * Returns whether this factory is applicable for the type of the object.
      * <!-- begin-user-doc -->
-     * This implementation returns <code>true</code> if the object is either the
-     * model's package or is an instance object of the model.
+     * This implementation returns <code>true</code> if the object is either the model's package or is an instance object of the model.
      * <!-- end-user-doc -->
      * @return whether this factory is applicable for the type of the object.
      * @generated
@@ -155,10 +156,8 @@ public class ExporterAdapterFactory extends AdapterFactoryImpl
     /**
      * Creates a new adapter for an object of class '{@link org.openscada.da.server.exporter.AnnouncerType <em>Announcer Type</em>}'.
      * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore
-     * cases;
-     * it's useful to ignore a case when inheritance will catch all the cases
-     * anyway.
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.openscada.da.server.exporter.AnnouncerType
@@ -172,10 +171,8 @@ public class ExporterAdapterFactory extends AdapterFactoryImpl
     /**
      * Creates a new adapter for an object of class '{@link org.openscada.da.server.exporter.ConfigurationType <em>Configuration Type</em>}'.
      * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore
-     * cases;
-     * it's useful to ignore a case when inheritance will catch all the cases
-     * anyway.
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.openscada.da.server.exporter.ConfigurationType
@@ -189,10 +186,8 @@ public class ExporterAdapterFactory extends AdapterFactoryImpl
     /**
      * Creates a new adapter for an object of class '{@link org.openscada.da.server.exporter.DocumentRoot <em>Document Root</em>}'.
      * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore
-     * cases;
-     * it's useful to ignore a case when inheritance will catch all the cases
-     * anyway.
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.openscada.da.server.exporter.DocumentRoot
@@ -206,10 +201,8 @@ public class ExporterAdapterFactory extends AdapterFactoryImpl
     /**
      * Creates a new adapter for an object of class '{@link org.openscada.da.server.exporter.ExportType <em>Export Type</em>}'.
      * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore
-     * cases;
-     * it's useful to ignore a case when inheritance will catch all the cases
-     * anyway.
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.openscada.da.server.exporter.ExportType
@@ -223,10 +216,8 @@ public class ExporterAdapterFactory extends AdapterFactoryImpl
     /**
      * Creates a new adapter for an object of class '{@link org.openscada.da.server.exporter.HiveConfigurationType <em>Hive Configuration Type</em>}'.
      * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore
-     * cases;
-     * it's useful to ignore a case when inheritance will catch all the cases
-     * anyway.
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.openscada.da.server.exporter.HiveConfigurationType
@@ -240,10 +231,8 @@ public class ExporterAdapterFactory extends AdapterFactoryImpl
     /**
      * Creates a new adapter for an object of class '{@link org.openscada.da.server.exporter.HiveType <em>Hive Type</em>}'.
      * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore
-     * cases;
-     * it's useful to ignore a case when inheritance will catch all the cases
-     * anyway.
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
      * <!-- end-user-doc -->
      * @return the new adapter.
      * @see org.openscada.da.server.exporter.HiveType

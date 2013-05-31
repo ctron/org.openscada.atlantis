@@ -18,22 +18,24 @@ Import-Package: javax.xml.stream;version="1.0.1",
  org.openscada.da.server.common.item.factory;version="1.0.0",
  org.openscada.sec;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
+ org.openscada.utils.init;version="1.2.0",
  org.openscada.utils.lang;version="1.0.0",
  org.openscada.utils.lifecycle;version="1.0.0",
  org.openscada.utils.sql;version="1.0.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.jdbc;version="1.1.0";
-  uses:="org.openscada.da.server.common.chain,
-   org.openscada.da.server.browser.common,
-   org.openscada.da.server.common.impl,
-   org.openscada.da.server.common.item.factory,
-   org.openscada.core,
-   org.openscada.da.core,
-   org.w3c.dom,
-   org.openscada.da.jdbc.configuration"
+Export-Package: org.openscada.da.server.jdbc;uses:="org.openscada.da.server.common.chain,  org.openscada.da.server.browser.common,  org.openscada.da.server.common.impl,  org.openscada.da.server.common.item.factory,  org.openscada.core,  org.openscada.da.core,  org.w3c.dom,  org.openscada.da.jdbc.configuration";version="1.1.0",
+ org.openscada.da.jdbc.configuration,
+ org.openscada.da.jdbc.configuration.impl,
+ org.openscada.da.jdbc.configuration.util
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;visibility:=reexport
+Bundle-ActivationPolicy: lazy
 Bundle-Version: 1.1.0.qualifier
-Bundle-Name: openSCADA DA JDBC Server
-Bundle-Vendor: openSCADA.org
+Bundle-ClassPath: .
+Bundle-Name: %pluginName
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-ManifestVersion: 2
-Bundle-SymbolicName: org.openscada.da.server.jdbc
+Bundle-SymbolicName: org.openscada.da.server.jdbc;singleton:=true

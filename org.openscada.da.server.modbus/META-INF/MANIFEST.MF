@@ -1,10 +1,77 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA Modbus Hive
-Bundle-SymbolicName: org.openscada.da.server.modbus
-Bundle-Version: 1.1.0.qualifier
-Bundle-Vendor: openSCADA.org
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.openscada.da.server.modbus;singleton:=true
+Bundle-Version: 1.2.0.qualifier
+Bundle-ClassPath: .
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.da.modbus.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
+ org.openscada.da.modbus.configuration.impl;version="1.2.0";
+  uses:="org.eclipse.emf.ecore.util,
+   org.eclipse.emf.ecore,
+   org.eclipse.emf.common.util,
+   org.eclipse.emf.common.notify,
+   org.eclipse.emf.ecore.impl,
+   org.openscada.da.modbus.configuration",
+ org.openscada.da.modbus.configuration.util;version="1.2.0";
+  uses:="org.eclipse.emf.ecore.resource,
+   org.eclipse.emf.ecore.xmi.impl,
+   org.eclipse.emf.common.util,
+   org.eclipse.emf.ecore.xml.type.util,
+   org.eclipse.emf.ecore.resource.impl,
+   org.eclipse.emf.ecore.xmi.util,
+   org.eclipse.emf.common.notify,
+   org.openscada.da.modbus.configuration,
+   org.eclipse.emf.ecore.util,
+   org.eclipse.emf.ecore,
+   org.eclipse.emf.common.notify.impl",
+ org.openscada.da.server.io.common;version="1.2.0";
+  uses:="org.openscada.da.server.common,
+   org.openscada.da.server.browser.common,
+   org.openscada.da.server.common.impl,
+   org.apache.mina.core.buffer,
+   org.apache.mina.core.write,
+   org.apache.mina.filter.codec,
+   org.openscada.da.server.common.chain,
+   org.apache.mina.core.session,
+   org.apache.mina.core.filterchain,
+   org.apache.mina.core.service,
+   org.apache.mina.transport.socket",
+ org.openscada.da.server.modbus;version="1.2.0";
+  uses:="org.openscada.da.modbus.configuration,
+   org.openscada.da.server.io.common,
+   org.apache.mina.core.session,
+   org.openscada.da.server.modbus.io.message,
+   org.openscada.core,
+   org.apache.mina.transport.socket",
+ org.openscada.da.server.modbus.driver;version="1.2.0";
+  uses:="org.openscada.da.server.browser.common,
+   org.openscada.da.server.common.impl,
+   org.openscada.utils.init,
+   org.openscada.da.server.modbus,
+   org.openscada.da.modbus.configuration,
+   org.openscada.da.core.server,
+   org.openscada.da.server.io.common,
+   org.openscada.da.server.common.chain,
+   org.openscada.da.server.modbus.io.message,
+   org.openscada.core",
+ org.openscada.da.server.modbus.io;version="1.2.0";
+  uses:="org.openscada.da.server.io.common,
+   org.apache.mina.core.session,
+   org.apache.mina.core.buffer,
+   org.openscada.da.server.modbus.io.message.request,
+   org.openscada.da.server.modbus.io.message.response,
+   org.apache.mina.filter.codec",
+ org.openscada.da.server.modbus.io.message;version="1.2.0";uses:="org.openscada.da.server.modbus.io.message.request,org.openscada.da.server.modbus.io.message.response",
+ org.openscada.da.server.modbus.io.message.request;version="1.2.0";uses:="org.openscada.da.server.modbus.io.message,org.openscada.da.server.modbus,org.openscada.core",
+ org.openscada.da.server.modbus.io.message.response;version="1.2.0";uses:="org.openscada.da.server.modbus.io.message"
+Require-Bundle: org.eclipse.core.runtime,
+ org.eclipse.emf.ecore;visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;visibility:=reexport,
+ org.openscada.da.server.common;visibility:=reexport
+Bundle-ActivationPolicy: lazy
 Import-Package: org.apache.mina.core;version="2.0.7",
  org.apache.mina.core.buffer;version="2.0.7",
  org.apache.mina.core.file;version="2.0.7",
@@ -34,5 +101,6 @@ Import-Package: org.apache.mina.core;version="2.0.7",
  org.openscada.sec;version="1.0.0",
  org.openscada.utils.collection;version="1.0.0",
  org.openscada.utils.concurrent;version="1.0.0",
+ org.openscada.utils.init;version="1.2.0",
  org.openscada.utils.lang;version="1.0.0",
  org.slf4j;version="1.6.0"

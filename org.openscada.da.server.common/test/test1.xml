@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<hive:hive
-  xmlns:common="http://openscada.org/Common"
-  xmlns:hive="http://openscada.org/DA/Hive"
-  xmlns:item="http://openscada.org/DA/Hive/DataItem"
-  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://openscada.org/DA/Hive ../schema/Hive.xsd http://openscada.org/DA/Hive/DataItem DataItem.xsd http://openscada.org/Common Common.xsd ">
-
-</hive:hive>

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,7 +21,6 @@
 
 package org.openscada.da.server.jdbc;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.HashMap;
@@ -29,13 +30,20 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.xmlbeans.XmlException;
+import org.eclipse.emf.common.util.URI;
+import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.emf.ecore.resource.ResourceSet;
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
+import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.openscada.da.jdbc.configuration.ColumnMappingType;
+import org.openscada.da.jdbc.configuration.ConfigurationPackage;
 import org.openscada.da.jdbc.configuration.ConnectionType;
+import org.openscada.da.jdbc.configuration.DocumentRoot;
 import org.openscada.da.jdbc.configuration.QueryType;
-import org.openscada.da.jdbc.configuration.RootDocument;
+import org.openscada.da.jdbc.configuration.RootType;
 import org.openscada.da.jdbc.configuration.UpdateMappingType;
 import org.openscada.da.jdbc.configuration.UpdateType;
+import org.openscada.da.jdbc.configuration.util.ConfigurationResourceFactoryImpl;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -43,7 +51,6 @@ import org.openscada.da.server.jdbc.Update.Mapping;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
@@ -56,17 +63,36 @@ public class Hive extends HiveCommon
 
     private final ScheduledExecutorService timer;
 
-    public Hive () throws XmlException, IOException
+    public Hive () throws IOException
     {
-        this ( RootDocument.Factory.parse ( new File ( "configuration.xml" ) ) );
+        this ( parse ( URI.createFileURI ( "configuration.xml" ) ) );
     }
 
-    public Hive ( final Node node ) throws XmlException
+    public Hive ( final String uri ) throws IOException
     {
-        this ( RootDocument.Factory.parse ( node ) );
+        this ( parse ( URI.createURI ( uri ) ) );
     }
 
-    protected Hive ( final RootDocument doc )
+    private static RootType parse ( final URI uri ) throws IOException
+    {
+        final ResourceSet rs = new ResourceSetImpl ();
+        rs.getResourceFactoryRegistry ().getExtensionToFactoryMap ().put ( "*", new ConfigurationResourceFactoryImpl () );
+
+        final Resource r = rs.createResource ( uri );
+        r.load ( null );
+
+        final DocumentRoot doc = (DocumentRoot)EcoreUtil.getObjectByType ( r.getContents (), ConfigurationPackage.Literals.DOCUMENT_ROOT );
+        if ( doc == null )
+        {
+            return null;
+        }
+        else
+        {
+            return doc.getRoot ();
+        }
+    }
+
+    public Hive ( final RootType root )
     {
         // create root folder
         this.rootFolder = new FolderCommon ();
@@ -76,7 +102,7 @@ public class Hive extends HiveCommon
 
         this.timer = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "JdbcHiveTimer", true ) );
 
-        configure ( doc );
+        configure ( root );
 
         register ();
     }
@@ -110,9 +136,9 @@ public class Hive extends HiveCommon
         }
     }
 
-    private void configure ( final RootDocument doc )
+    private void configure ( final RootType root )
     {
-        for ( final ConnectionType connectionType : doc.getRoot ().getConnectionList () )
+        for ( final ConnectionType connectionType : root.getConnection () )
         {
             createConnection ( connectionType );
         }
@@ -122,12 +148,12 @@ public class Hive extends HiveCommon
     {
         final Connection connection = new Connection ( connectionType.getId (), connectionType.getTimeout (), connectionType.getConnectionClass (), connectionType.getUri (), connectionType.getUsername (), connectionType.getPassword () );
 
-        for ( final QueryType queryType : connectionType.getQueryList () )
+        for ( final QueryType queryType : connectionType.getQuery () )
         {
-            createQuery ( connection, queryType, convertMappings ( queryType.getColumnMappingList () ) );
+            createQuery ( connection, queryType, convertMappings ( queryType.getColumnMapping () ) );
         }
 
-        for ( final UpdateType updateType : connectionType.getUpdateList () )
+        for ( final UpdateType updateType : connectionType.getUpdate () )
         {
             createUpdate ( connection, updateType );
         }
@@ -152,14 +178,14 @@ public class Hive extends HiveCommon
         String sql = updateType.getSql ();
         if ( sql == null || sql.length () == 0 )
         {
-            sql = updateType.getSql2 ();
+            sql = updateType.getSql1 ();
         }
 
         logger.info ( "Create update: {}", sql );
 
         final Update update = new Update ( updateType.getId (), sql, connection );
 
-        for ( final UpdateMappingType mappingValue : updateType.getMappingList () )
+        for ( final UpdateMappingType mappingValue : updateType.getMapping () )
         {
             update.addMapping ( new Mapping ( mappingValue.getName (), mappingValue.getNamedParameter () ) );
         }
@@ -172,7 +198,7 @@ public class Hive extends HiveCommon
         String sql = queryType.getSql ();
         if ( sql == null || sql.length () == 0 )
         {
-            sql = queryType.getSql2 ();
+            sql = queryType.getSql1 ();
         }
 
         logger.info ( "Creating new query: {}", sql );

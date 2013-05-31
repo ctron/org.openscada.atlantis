@@ -10,33 +10,4 @@
 	<artifactId>org.openscada.da.server.common</artifactId>
 	<version>1.2.0-SNAPSHOT</version>
 	<packaging>eclipse-plugin</packaging>
-
-
-	<build>
-		<plugins>
-			<plugin>
-
-				<groupId>org.codehaus.mojo</groupId>
-				<artifactId>xmlbeans-maven-plugin</artifactId>
-				<version>2.3.3</version>
-				<executions>
-					<execution>
-						<phase>generate-sources</phase>
-						<goals>
-							<goal>xmlbeans</goal>
-						</goals>
-					</execution>
-				</executions>
-
-				<configuration>
-					<schemaDirectory>schema</schemaDirectory>
-					<classGenerationDirectory>schemabin</classGenerationDirectory>
-					<javaSource>1.5</javaSource>
-					<verbose>true</verbose>
-				</configuration>
-
-			</plugin>
-		</plugins>
-	</build>
-
 </project>

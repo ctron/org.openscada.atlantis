@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,13 +21,13 @@
 
 package org.openscada.da.server.exec;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.LinkedList;
 
-import org.apache.xmlbeans.XmlException;
+import org.eclipse.emf.common.util.URI;
 import org.openscada.core.Variant;
+import org.openscada.da.exec.configuration.RootType;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -34,9 +36,7 @@ import org.openscada.da.server.exec.command.ContinuousCommand;
 import org.openscada.da.server.exec.command.TriggerCommand;
 import org.openscada.da.server.exec.configuration.ConfigurationException;
 import org.openscada.da.server.exec.configuration.XmlConfigurator;
-import org.openscada.da.server.exec.configuration.model.RootDocument;
 import org.openscada.utils.collection.MapBuilder;
-import org.w3c.dom.Node;
 
 public class Hive extends HiveCommon
 {
@@ -62,41 +62,30 @@ public class Hive extends HiveCommon
      * @throws IOException
      * @throws ConfigurationException
      */
-    public Hive () throws XmlException, IOException, ConfigurationException
+    public Hive () throws IOException, ConfigurationException
     {
-        this ( RootDocument.Factory.parse ( new File ( "configuration.xml" ) ) );
+        this ( new XmlConfigurator ( URI.createFileURI ( "configuration.xml" ) ) );
     }
 
-    /**
-     * Constructor
-     * 
-     * @param node
-     * @throws XmlException
-     * @throws ConfigurationException
-     */
-    public Hive ( final Node node ) throws XmlException, ConfigurationException
+    public Hive ( final String uri ) throws ConfigurationException
     {
-        this ( RootDocument.Factory.parse ( node ) );
+        this ( new XmlConfigurator ( URI.createURI ( uri ) ) );
     }
 
-    /**
-     * Set up the hive and start the command queues
-     * 
-     * @param document
-     *            Configuration
-     * @throws ConfigurationException
-     */
-    public Hive ( final RootDocument document ) throws ConfigurationException
+    public Hive ( final RootType root ) throws ConfigurationException
     {
-        super ();
+        this ( new XmlConfigurator ( root ) );
+    }
 
+    protected Hive ( final XmlConfigurator configurator ) throws ConfigurationException
+    {
         ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
         setRootFolder ( this.rootFolder );
         this.triggerFolder = new FolderCommon ();
         this.rootFolder.add ( TRIGGER_FOLDER_NAME, this.triggerFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Contains all triggers" ) ).getMap () );
 
-        new XmlConfigurator ( document ).configure ( this );
+        configurator.configure ( this );
 
         // Setup and start the queues
         startQueues ();

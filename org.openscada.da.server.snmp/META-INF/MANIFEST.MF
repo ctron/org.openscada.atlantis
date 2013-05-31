@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
+Import-Package: javax.xml.stream;resolution:=optional;version="1.0.1",
  org.apache.xmlbeans;version="2.4",
  org.apache.xmlbeans.impl.values;version="2.4",
  org.apache.xmlbeans.xml.stream;version="2.4",
@@ -27,52 +27,12 @@ Import-Package: javax.xml.stream;version="1.0.1";resolution:=optional,
  org.openscada.utils.str;version="1.0.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.snmp;version="1.2.0";
-  uses:="org.openscada.da.snmp.configuration,
-   org.openscada.da.server.browser.common,
-   org.openscada.da.server.common.impl,
-   org.openscada.da.server.snmp.utils,
-   org.eclipse.emf.common.util,
-   org.openscada.da.server.common.item.factory,
-   org.openscada.da.server.common.factory,
-   org.snmp4j.smi,
-   org.snmp4j.event,
-   org.openscada.da.core.server,
-   org.openscada.da.server.common.chain,
-   org.eclipse.emf.ecore,
-   org.openscada.core,
-   org.snmp4j",
- org.openscada.da.server.snmp.items;version="1.2.0";
-  uses:="org.openscada.da.server.common.chain,
-   org.openscada.da.server.common,
-   org.openscada.da.server.snmp,
-   org.snmp4j.smi",
- org.openscada.da.server.snmp.utils;version="1.2.0";
-  uses:="org.openscada.utils.collection,
-   org.openscada.da.snmp.configuration,
-   org.openscada.da.server.snmp.items,
-   org.openscada.da.server.snmp,
-   org.snmp4j.smi",
- org.openscada.da.snmp.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
- org.openscada.da.snmp.configuration.impl;version="1.2.0";
-  uses:="org.openscada.da.snmp.configuration,
-   org.eclipse.emf.ecore.util,
-   org.eclipse.emf.ecore,
-   org.eclipse.emf.common.util,
-   org.eclipse.emf.ecore.impl,
-   org.eclipse.emf.common.notify",
- org.openscada.da.snmp.configuration.util;version="1.2.0";
-  uses:="org.eclipse.emf.ecore.resource,
-   org.eclipse.emf.ecore.xmi.impl,
-   org.openscada.da.snmp.configuration,
-   org.eclipse.emf.common.util,
-   org.eclipse.emf.ecore.xml.type.util,
-   org.eclipse.emf.ecore.xmi.util,
-   org.eclipse.emf.ecore.resource.impl,
-   org.eclipse.emf.common.notify,
-   org.eclipse.emf.ecore.util,
-   org.eclipse.emf.ecore,
-   org.eclipse.emf.common.notify.impl"
+Export-Package: org.openscada.da.server.snmp;uses:="org.openscada.da.snmp.configuration,  org.openscada.da.server.browser.common,  org.openscada.da.server.common.impl,  org.openscada.da.server.snmp.utils,  org.eclipse.emf.common.util,  org.openscada.da.server.common.item.factory,  org.openscada.da.server.common.factory,  org.snmp4j.smi,  org.snmp4j.event,  org.openscada.da.core.server,  org.openscada.da.server.common.chain,  org.eclipse.emf.ecore,  org.openscada.core,  org.snmp4j";version="1.2.0",
+ org.openscada.da.server.snmp.items;uses:="org.openscada.da.server.common.chain,  org.openscada.da.server.common,  org.openscada.da.server.snmp,  org.snmp4j.smi";version="1.2.0",
+ org.openscada.da.server.snmp.utils;uses:="org.openscada.utils.collection,  org.openscada.da.snmp.configuration,  org.openscada.da.server.snmp.items,  org.openscada.da.server.snmp,  org.snmp4j.smi";version="1.2.0",
+ org.openscada.da.snmp.configuration;uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util";version="1.2.0",
+ org.openscada.da.snmp.configuration.impl;uses:="org.openscada.da.snmp.configuration,  org.eclipse.emf.ecore.util,  org.eclipse.emf.ecore,  org.eclipse.emf.common.util,  org.eclipse.emf.ecore.impl,  org.eclipse.emf.common.notify";version="1.2.0",
+ org.openscada.da.snmp.configuration.util;uses:="org.eclipse.emf.ecore.resource,  org.eclipse.emf.ecore.xmi.impl,  org.openscada.da.snmp.configuration,  org.eclipse.emf.common.util,  org.eclipse.emf.ecore.xml.type.util,  org.eclipse.emf.ecore.xmi.util,  org.eclipse.emf.ecore.resource.impl,  org.eclipse.emf.common.notify,  org.eclipse.emf.ecore.util,  org.eclipse.emf.ecore,  org.eclipse.emf.common.notify.impl";version="1.2.0"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport

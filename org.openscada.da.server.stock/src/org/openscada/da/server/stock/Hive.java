@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,19 +21,16 @@
 
 package org.openscada.da.server.stock;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.apache.xmlbeans.XmlException;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.configuration.Configurator;
-import org.openscada.da.server.common.configuration.xml.XMLConfigurator;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.stock.business.YahooStockQuoteService;
 import org.openscada.da.server.stock.items.StockQuoteItem;
@@ -45,16 +44,16 @@ public class Hive extends HiveCommon
 
     private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor ();
 
-    private FolderCommon symbolsFolder = null;
+    private final FolderCommon symbolsFolder;
 
-    private UpdateManager updateManager = null;
+    private final UpdateManager updateManager;
 
-    public Hive () throws ConfigurationError, IOException, XmlException
+    public Hive () throws ConfigurationError, IOException
     {
         this ( null );
     }
 
-    public Hive ( final Configurator configurator ) throws ConfigurationError, IOException, XmlException
+    public Hive ( final Configurator configurator ) throws ConfigurationError, IOException
     {
         super ();
 
@@ -67,11 +66,7 @@ public class Hive extends HiveCommon
         // create and register test folder
         this.symbolsFolder = new FolderCommon ();
         rootFolder.add ( "symbols", this.symbolsFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This folder contains the items by stock symbol" ) ).getMap () );
-        if ( configurator == null )
-        {
-            xmlConfigure ();
-        }
-        else
+        if ( configurator != null )
         {
             configurator.configure ( this );
         }
@@ -103,21 +98,6 @@ public class Hive extends HiveCommon
     {
         this.scheduler.shutdown ();
         super.stop ();
-    }
-
-    private void xmlConfigure () throws ConfigurationError, IOException, XmlException
-    {
-        final String configurationFile = System.getProperty ( "openscada.da.hive.configuration" );
-        if ( configurationFile != null )
-        {
-            final File file = new File ( configurationFile );
-            xmlConfigure ( file );
-        }
-    }
-
-    private void xmlConfigure ( final File file ) throws ConfigurationError, XmlException, IOException
-    {
-        new XMLConfigurator ( file ).configure ( this );
     }
 
     public void addSymbol ( final String symbol )

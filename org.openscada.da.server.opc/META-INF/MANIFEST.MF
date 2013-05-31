@@ -6,11 +6,7 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.opc;singleton:=true
-Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
- org.apache.xmlbeans;version="2.4.0",
- org.apache.xmlbeans.impl.values;version="2.4.0",
- org.apache.xmlbeans.xml.stream;version="2.4.0",
- org.jinterop.dcom.common;version="2.0.0",
+Import-Package: org.jinterop.dcom.common;version="2.0.0",
  org.jinterop.dcom.core;version="2.0.0",
  org.openscada.core;version="1.0.0",
  org.openscada.core.data;version="1.0.0",
@@ -22,18 +18,16 @@ Import-Package: javax.xml.stream;version="1.0";resolution:=optional,
  org.openscada.da.core.server;version="1.0.0",
  org.openscada.da.core.server.browser;version="1.0.0",
  org.openscada.da.data;version="1.0.0",
- org.openscada.da.hive;version="1.0.0",
- org.openscada.da.server.browser.common;version="1.0.0",
- org.openscada.da.server.browser.common.query;version="1.0.0",
- org.openscada.da.server.common;version="1.0.0",
- org.openscada.da.server.common.chain;version="1.0.0",
- org.openscada.da.server.common.chain.storage;version="1.0.0",
- org.openscada.da.server.common.configuration;version="1.0.0",
- org.openscada.da.server.common.configuration.xml;version="1.0.0",
+ org.openscada.da.server.browser.common;version="1.2.0",
+ org.openscada.da.server.browser.common.query;version="1.2.0",
+ org.openscada.da.server.common;version="1.2.0",
+ org.openscada.da.server.common.chain;version="1.2.0",
+ org.openscada.da.server.common.chain.storage;version="1.2.0",
+ org.openscada.da.server.common.configuration;version="1.2.0",
  org.openscada.da.server.common.exporter;version="1.0.0",
- org.openscada.da.server.common.factory;version="1.0.0",
- org.openscada.da.server.common.impl;version="1.0.0",
- org.openscada.da.server.common.item.factory;version="1.0.0",
+ org.openscada.da.server.common.factory;version="1.2.0",
+ org.openscada.da.server.common.impl;version="1.2.0",
+ org.openscada.da.server.common.item.factory;version="1.2.0",
  org.openscada.opc.dcom.common;version="1.0.0",
  org.openscada.opc.dcom.common.impl;version="1.0.0",
  org.openscada.opc.dcom.da;version="1.0.0",
@@ -78,6 +72,7 @@ Export-Package: org.openscada.da.opc.configuration;version="1.2.0";uses:="org.ec
    org.openscada.da.server.common.impl,
    org.openscada.opc.dcom.da,
    org.openscada.da.server.opc.configuration,
+   org.openscada.utils.init,
    org.openscada.core,
    org.openscada.opc.dcom.common",
  org.openscada.da.server.opc.browser;version="1.2.0";
@@ -123,8 +118,8 @@ Export-Package: org.openscada.da.opc.configuration;version="1.2.0";uses:="org.ec
    org.openscada.opc.lib.da,
    org.openscada.opc.dcom.common"
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore;visibility:=reexport,
- org.eclipse.emf.ecore.xmi;visibility:=reexport
+ org.eclipse.emf.ecore;bundle-version="2.8.0";visibility:=reexport,
+ org.eclipse.emf.ecore.xmi;bundle-version="2.8.0";visibility:=reexport
 Bundle-ActivationPolicy: lazy
 Service-Component: hive.xml
 

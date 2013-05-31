@@ -2,6 +2,7 @@
  * This file is part of the openSCADA project
  * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,6 +23,8 @@ package org.openscada.da.server.modbus;
 
 import java.io.Serializable;
 
+import org.openscada.da.modbus.configuration.ParityType;
+import org.openscada.da.modbus.configuration.StopBitsType;
 import org.openscada.utils.lang.Immutable;
 
 @Immutable
@@ -29,37 +32,24 @@ public class Rs232Information implements Serializable
 {
     private static final long serialVersionUID = 7742677764862312475L;
 
-    public enum Parity
-    {
-        NONE,
-        ODD,
-        EVEN,
-        MARK,
-        SPACE;
-    }
-
     private final int baudRate;
 
-    private final Parity parity;
+    private final ParityType parity;
 
     private final int dataBits;
 
-    private final float stopBits;
+    private final StopBitsType stopBits;
 
     private final long nanoBitLength;
 
     private final long nanoCharLength;
 
-    public Rs232Information ( final int baudRate, final Parity parity, final int dataBits, final float stopBits )
+    public Rs232Information ( final int baudRate, final ParityType parity, final int dataBits, final StopBitsType stopBits )
     {
         // check constraints
         if ( dataBits < 7 || dataBits > 8 )
         {
             throw new IllegalArgumentException ( "dataBits has to be 7 or 8" );
-        }
-        if ( ! ( stopBits == 1.0 || stopBits == 1.5 || stopBits == 2.0 ) )
-        {
-            throw new IllegalArgumentException ( "stopBits has to be 1, 1.5 or 2" );
         }
 
         this.baudRate = baudRate;
@@ -68,7 +58,27 @@ public class Rs232Information implements Serializable
         this.stopBits = stopBits;
 
         this.nanoBitLength = Math.round ( 1000000000.0d / this.baudRate );
-        this.nanoCharLength = Math.round ( ( dataBits + (double)stopBits + ( parity != Parity.NONE ? 1 : 0 ) ) * this.nanoBitLength );
+        this.nanoCharLength = Math.round ( ( dataBits + getStopBitsValue () + ( parity != ParityType.NONE ? 1 : 0 ) ) * this.nanoBitLength );
+    }
+
+    private double getStopBitsValue ()
+    {
+        if ( this.stopBits == null )
+        {
+            return 0.0;
+        }
+
+        switch ( this.stopBits )
+        {
+            case _1:
+                return 1.0;
+            case _15:
+                return 1.5;
+            case _2:
+                return 2;
+            default:
+                throw new IllegalArgumentException ( "stopBits has to be 1, 1.5 or 2" );
+        }
     }
 
     public long getBitLengthAsNano ()
@@ -86,12 +96,12 @@ public class Rs232Information implements Serializable
         return this.baudRate;
     }
 
-    public Parity getParity ()
+    public ParityType getParity ()
     {
         return this.parity;
     }
 
-    public float getStopBits ()
+    public StopBitsType getStopBits ()
     {
         return this.stopBits;
     }
@@ -121,18 +131,7 @@ public class Rs232Information implements Serializable
                 sb.append ( "S" );
                 break;
         }
-        if ( this.stopBits == 1.0 )
-        {
-            sb.append ( "1" );
-        }
-        else if ( this.stopBits == 2.0 )
-        {
-            sb.append ( "2" );
-        }
-        else
-        {
-            sb.append ( "1.5" );
-        }
+        sb.append ( this.stopBits.getLiteral () );
         return sb.toString ();
     }
 }

@@ -1,31 +1,33 @@
-/*
- * This file is part of the OpenSCADA project
+/**
+ * This file is part of the openSCADA project
  * 
  * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
- *
- * OpenSCADA is free software: you can redistribute it and/or modify
+ * 
+ * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
  * only, as published by the Free Software Foundation.
- *
- * OpenSCADA is distributed in the hope that it will be useful,
+ * 
+ * openSCADA is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Lesser General Public License version 3 for more details
  * (a copy is included in the LICENSE file that accompanied this code).
- *
+ * 
  * You should have received a copy of the GNU Lesser General Public License
- * version 3 along with OpenSCADA. If not, see
+ * version 3 along with openSCADA. If not, see
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
-
 package org.openscada.da.server.exporter.impl;
 
 import org.eclipse.emf.ecore.EAttribute;
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.EPackage;
 import org.eclipse.emf.ecore.EReference;
+
 import org.eclipse.emf.ecore.impl.EPackageImpl;
+
 import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
+
 import org.openscada.da.server.exporter.AnnouncerType;
 import org.openscada.da.server.exporter.ConfigurationType;
 import org.openscada.da.server.exporter.DocumentRoot;
@@ -43,6 +45,13 @@ import org.openscada.da.server.exporter.HiveType;
  */
 public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
 {
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
+
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -87,15 +96,14 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
 
     /**
      * Creates an instance of the model <b>Package</b>, registered with
-     * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the
-     * package
+     * {@link org.eclipse.emf.ecore.EPackage.Registry EPackage.Registry} by the package
      * package URI value.
-     * <p>
-     * Note: the correct way to create the package is via the static factory
-     * method {@link #init init()}, which also performs initialization of the
-     * package, or returns the registered package, if one already exists. <!--
-     * begin-user-doc --> <!-- end-user-doc -->
-     * 
+     * <p>Note: the correct way to create the package is via the static
+     * factory method {@link #init init()}, which also performs
+     * initialization of the package, or returns the registered package,
+     * if one already exists.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
      * @see org.eclipse.emf.ecore.EPackage.Registry
      * @see org.openscada.da.server.exporter.ExporterPackage#eNS_URI
      * @see #init()
@@ -114,14 +122,12 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
     private static boolean isInited = false;
 
     /**
-     * Creates, registers, and initializes the <b>Package</b> for this model,
-     * and for any others upon which it depends.
-     * <p>
-     * This method is used to initialize {@link ExporterPackage#eINSTANCE} when
-     * that field is accessed. Clients should not invoke it directly. Instead,
-     * they should simply access that field to obtain the package. <!--
-     * begin-user-doc --> <!-- end-user-doc -->
+     * Creates, registers, and initializes the <b>Package</b> for this model, and for any others upon which it depends.
      * 
+     * <p>This method is used to initialize {@link ExporterPackage#eINSTANCE} when that field is accessed.
+     * Clients should not invoke it directly. Instead, they should simply access that field to obtain the package.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
      * @see #eNS_URI
      * @see #createPackageContents()
      * @see #initializePackageContents()
@@ -159,7 +165,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EClass getAnnouncerType ()
     {
         return announcerTypeEClass;
@@ -170,7 +175,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EAttribute getAnnouncerType_Class ()
     {
         return (EAttribute)announcerTypeEClass.getEStructuralFeatures ().get ( 0 );
@@ -181,7 +185,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EClass getConfigurationType ()
     {
         return configurationTypeEClass;
@@ -192,7 +195,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EReference getConfigurationType_Hive ()
     {
         return (EReference)configurationTypeEClass.getEStructuralFeatures ().get ( 0 );
@@ -203,7 +205,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EReference getConfigurationType_Announcer ()
     {
         return (EReference)configurationTypeEClass.getEStructuralFeatures ().get ( 1 );
@@ -214,7 +215,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EClass getDocumentRoot ()
     {
         return documentRootEClass;
@@ -225,7 +225,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EAttribute getDocumentRoot_Mixed ()
     {
         return (EAttribute)documentRootEClass.getEStructuralFeatures ().get ( 0 );
@@ -236,7 +235,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EReference getDocumentRoot_XMLNSPrefixMap ()
     {
         return (EReference)documentRootEClass.getEStructuralFeatures ().get ( 1 );
@@ -247,7 +245,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EReference getDocumentRoot_XSISchemaLocation ()
     {
         return (EReference)documentRootEClass.getEStructuralFeatures ().get ( 2 );
@@ -258,7 +255,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EReference getDocumentRoot_Configuration ()
     {
         return (EReference)documentRootEClass.getEStructuralFeatures ().get ( 3 );
@@ -269,7 +265,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EClass getExportType ()
     {
         return exportTypeEClass;
@@ -280,7 +275,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EAttribute getExportType_Uri ()
     {
         return (EAttribute)exportTypeEClass.getEStructuralFeatures ().get ( 0 );
@@ -291,7 +285,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EClass getHiveConfigurationType ()
     {
         return hiveConfigurationTypeEClass;
@@ -312,7 +305,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EAttribute getHiveConfigurationType_Any ()
     {
         return (EAttribute)hiveConfigurationTypeEClass.getEStructuralFeatures ().get ( 1 );
@@ -323,7 +315,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EClass getHiveType ()
     {
         return hiveTypeEClass;
@@ -334,7 +325,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EReference getHiveType_Configuration ()
     {
         return (EReference)hiveTypeEClass.getEStructuralFeatures ().get ( 0 );
@@ -345,7 +335,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EReference getHiveType_Export ()
     {
         return (EReference)hiveTypeEClass.getEStructuralFeatures ().get ( 1 );
@@ -356,7 +345,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public EAttribute getHiveType_Ref ()
     {
         return (EAttribute)hiveTypeEClass.getEStructuralFeatures ().get ( 2 );
@@ -367,7 +355,6 @@ public class ExporterPackageImpl extends EPackageImpl implements ExporterPackage
      * <!-- end-user-doc -->
      * @generated
      */
-    @Override
     public ExporterFactory getExporterFactory ()
     {
         return (ExporterFactory)getEFactoryInstance ();
