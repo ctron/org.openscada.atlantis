@@ -95,5 +95,5 @@ Bundle-Name: %pluginName
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-SymbolicName: org.openscada.da.server.proxy;singleton:=true
-Service-Component: hive.xml
+Service-Component: OSGI-INF/hive.xml
 
