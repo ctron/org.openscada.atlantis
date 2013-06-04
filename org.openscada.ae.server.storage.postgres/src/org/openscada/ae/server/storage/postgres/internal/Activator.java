@@ -28,7 +28,6 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.ae.server.storage.Storage;
 import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.interner.InternerHelper;
 import org.openscada.utils.osgi.SingleServiceListener;
 import org.openscada.utils.osgi.SingleServiceTracker;
 import org.openscada.utils.osgi.jdbc.DataSourceHelper;
@@ -42,8 +41,6 @@ import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.google.common.collect.Interner;
-
 public class Activator implements BundleActivator
 {
     private static final Logger logger = LoggerFactory.getLogger ( Activator.class );
@@ -55,8 +52,6 @@ public class Activator implements BundleActivator
     private ServiceRegistration<?> jdbcStorageHandle;
 
     private SingleServiceTracker<DataSourceFactory> dataSouceFactoryTracker;
-
-    private Interner<String> stringInterner;
 
     private ScheduledExecutorService scheduler;
 
@@ -76,8 +71,6 @@ public class Activator implements BundleActivator
     public void start ( final BundleContext bundleContext ) throws Exception
     {
         Activator.context = bundleContext;
-
-        this.stringInterner = InternerHelper.makeInterner ( "org.openscada.ae.monitor.dataitem.stringInternerType", "weak" );
 
         final String driver = DataSourceHelper.getDriver ( "org.openscada.ae.server.storage.jdbc.driver", DataSourceHelper.DEFAULT_PREFIX );
 

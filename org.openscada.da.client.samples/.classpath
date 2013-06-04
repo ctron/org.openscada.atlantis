@@ -9,8 +9,10 @@
 	<classpathentry combineaccessrules="false" kind="src" path="/org.openscada.da.core.common"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.openscada.core.subscription"/>
 	<classpathentry combineaccessrules="false" kind="src" path="/org.openscada.core.data"/>
-	<classpathentry kind="lib" path="/builder_external/builder/lib/logback-classic-1.0.0.jar"/>
-	<classpathentry kind="lib" path="/builder_external/builder/lib/logback-core-1.0.0.jar"/>
-	<classpathentry kind="lib" path="/builder_external/builder/lib/slf4j-api-1.6.4.jar"/>
+	<classpathentry kind="lib" path="/builder_external/builder/lib/ch.qos.logback.classic_1.0.7.v20121108-1250.jar"/>
+	<classpathentry kind="lib" path="/builder_external/builder/lib/ch.qos.logback.core_1.0.7.v20121108-1250.jar"/>
+	<classpathentry kind="lib" path="/builder_external/builder/lib/ch.qos.logback.slf4j_1.0.7.v20121108-1250.jar"/>
+	<classpathentry kind="lib" path="/builder_external/builder/lib/org.slf4j.api_1.7.2.v20121108-1250.jar"/>
+	<classpathentry kind="lib" path="/builder_external/builder/lib/org.slf4j.ext_1.7.2.v20121108-1250.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
