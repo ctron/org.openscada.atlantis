@@ -36,8 +36,6 @@ import org.openscada.da.opc.configuration.RootType;
 import org.openscada.da.opc.configuration.util.ConfigurationResourceFactoryImpl;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
-import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
-import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.opc.configuration.XMLConfigurator;
 import org.openscada.da.server.opc.connection.OPCConnection;
@@ -54,27 +52,24 @@ public class Hive extends HiveCommon
 
     private final FolderCommon rootFolder = new FolderCommon ();
 
-    public Hive () throws ConfigurationError, IOException
+    public Hive () throws IOException
     {
         this ( new XMLConfigurator ( parse ( URI.createFileURI ( System.getProperty ( "org.openscada.da.server.opc.defaultConfigurationFile", "configuration.xml" ) ) ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    public Hive ( final String uri ) throws ConfigurationError, IOException
+    public Hive ( final String uri ) throws IOException
     {
         this ( new XMLConfigurator ( parse ( URI.createURI ( uri ) ) ) );
     }
 
-    public Hive ( final RootType root ) throws ConfigurationError
+    public Hive ( final RootType root )
     {
         this ( new XMLConfigurator ( root ) );
     }
 
-    public Hive ( final XMLConfigurator configurator ) throws ConfigurationError
+    public Hive ( final XMLConfigurator configurator )
     {
         initJInterop ();
-
-        // enable chain storage for this hive
-        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
 
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 

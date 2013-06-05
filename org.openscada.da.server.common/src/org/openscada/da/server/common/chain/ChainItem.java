@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,41 +25,36 @@ import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.server.common.DataItem;
 
 /**
  * A chain element
  * <p>
- * An instance of chain element may only be added to one data item 
+ * An instance of chain element may only be added to one data item
+ * 
  * @author Jens Reimann
- *
  */
 public interface ChainItem
 {
     /**
      * Request to set attributes
-     * @param attributes the attributes update set
+     * 
+     * @param attributes
+     *            the attributes update set
      * @return result for processed attributes
      */
     public abstract WriteAttributeResults setAttributes ( Map<String, Variant> attributes );
 
     /**
      * Process the chain item
-     * @return the new result or <code>null</code> if the chain item does not change the input value
-     * @param value the value to process or <code>null</code> if a output item changed only the attributes 
-     * @param attributes The current primary attributes
+     * 
+     * @return the new result or <code>null</code> if the chain item does not
+     *         change the input value
+     * @param value
+     *            the value to process or <code>null</code> if a output item
+     *            changed only the attributes
+     * @param attributes
+     *            The current primary attributes
      */
     public abstract Variant process ( Variant value, Map<String, Variant> attributes );
 
-    /**
-     * Called when the chain item is set to a data item
-     * @param item The data item itself or <code>null</code> if the chain element is removed from the data item
-     */
-    public abstract void dataItemChanged ( DataItem item );
-
-    /**
-     * If this method returns true its binders are persisted when added to the {@link BaseChainItemCommon}
-     * @return
-     */
-    public abstract boolean isPersistent ();
 }

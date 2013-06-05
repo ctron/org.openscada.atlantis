@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -47,9 +49,6 @@ import org.openscada.da.server.browser.common.query.InvisibleStorage;
 import org.openscada.da.server.browser.common.query.ItemDescriptor;
 import org.openscada.da.server.browser.common.query.PatternNameProvider;
 import org.openscada.da.server.browser.common.query.SplitGroupProvider;
-import org.openscada.da.server.common.configuration.ConfigurationError;
-import org.openscada.da.server.common.factory.FactoryHelper;
-import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.proxy.Hive;
 import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.item.ProxyItemUpdateListener;
@@ -66,7 +65,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;
- *
  */
 public class ProxyGroup implements LifecycleAware
 {
@@ -202,7 +200,7 @@ public class ProxyGroup implements LifecycleAware
      * @param connection
      * @param id
      * @param prefix
-     * @param folderCommon 
+     * @param folderCommon
      * @throws InvalidOperationException
      * @throws NullValueException
      * @throws NotConvertableException
@@ -275,7 +273,7 @@ public class ProxyGroup implements LifecycleAware
 
     /**
      * @return time how long proxy should wait if subconnection is lost,
-     * before item is set on error
+     *         before item is set on error
      */
     public int getWait ()
     {
@@ -292,8 +290,10 @@ public class ProxyGroup implements LifecycleAware
     }
 
     /**
-     * @param itemId the item id to convert (from the original source)
-     * @return return name of item in proxy or <code>null</code> if the item does not match the proxy group
+     * @param itemId
+     *            the item id to convert (from the original source)
+     * @return return name of item in proxy or <code>null</code> if the item
+     *         does not match the proxy group
      */
     public String convertToProxyId ( final String itemId )
     {
@@ -345,9 +345,6 @@ public class ProxyGroup implements LifecycleAware
 
     private void setUpItem ( final ProxyDataItem item, final String requestId )
     {
-        // add item chains
-        applyTemplate ( item );
-
         // add to storage
         this.registeredItemsStorage.added ( new ItemDescriptor ( item, new MapBuilder<String, Variant> ().getMap () ) );
 
@@ -358,29 +355,6 @@ public class ProxyGroup implements LifecycleAware
             final String originalItemId = ProxyUtils.originalItemId ( requestId, this.hive.getSeparator (), getPrefix (), subConnection.getPrefix () );
 
             itemManager.addItemUpdateListener ( originalItemId, new ProxyItemUpdateListener ( this.itemListenerExecutor, item, subConnection ) );
-        }
-    }
-
-    /**
-     * Apply the item template as configured in the hive
-     * @param item the item to which a template should by applied
-     */
-    private void applyTemplate ( final ProxyDataItem item )
-    {
-        final String itemId = item.getInformation ().getName ();
-        final FactoryTemplate ft = this.hive.findFactoryTemplate ( itemId );
-        logger.debug ( "Find template for item '{}' : {}", itemId, ft );
-        if ( ft != null )
-        {
-            try
-            {
-                item.setChain ( FactoryHelper.instantiateChainList ( this.hive, ft.getChainEntries () ) );
-            }
-            catch ( final ConfigurationError e )
-            {
-                logger.warn ( "Failed to apply item template", e );
-            }
-            item.setTemplateAttributes ( ft.getItemAttributes (), null );
         }
     }
 

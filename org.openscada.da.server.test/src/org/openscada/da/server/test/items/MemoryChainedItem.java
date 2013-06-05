@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,111 +27,26 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.HiveServiceRegistry;
-import org.openscada.da.server.common.chain.AttributeBinder;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.ChainItem;
 import org.openscada.da.server.common.chain.ChainProcessEntry;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.MemoryItemChained;
-import org.openscada.da.server.common.chain.item.LevelAlarmChainItem;
-import org.openscada.da.server.common.chain.item.ManualErrorOverrideChainItem;
-import org.openscada.da.server.common.chain.item.ManualOverrideChainItem;
-import org.openscada.da.server.common.chain.item.RoundChainItem;
-import org.openscada.da.server.common.chain.item.ScaleInputItem;
 import org.openscada.da.server.common.chain.item.SumAlarmChainItem;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
-import org.openscada.da.server.common.factory.FactoryHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
 
 public class MemoryChainedItem extends MemoryItemChained
 {
 
-    private class AddClassAttributeBinder implements AttributeBinder
-    {
-        private MemoryChainedItem _item = null;
-
-        private IODirection _direction = null;
-
-        public AddClassAttributeBinder ( final MemoryChainedItem item, final IODirection direction )
-        {
-            super ();
-            this._item = item;
-            this._direction = direction;
-        }
-
-        @Override
-        public void bind ( final Variant value ) throws Exception
-        {
-            if ( value != null )
-            {
-                if ( !value.isNull () )
-                {
-                    this._item.addChainElement ( this._direction, value.asString () );
-                }
-            }
-        }
-
-        @Override
-        public Variant getAttributeValue ()
-        {
-            return null;
-        }
-
-    }
-
-    private class RemoveClassAttributeBinder implements AttributeBinder
-    {
-        private MemoryChainedItem _item = null;
-
-        private IODirection _direction = null;
-
-        public RemoveClassAttributeBinder ( final MemoryChainedItem item, final IODirection direction )
-        {
-            super ();
-            this._item = item;
-            this._direction = direction;
-        }
-
-        @Override
-        public void bind ( final Variant value ) throws Exception
-        {
-            if ( value != null )
-            {
-                if ( !value.isNull () )
-                {
-                    this._item.removeChainElement ( this._direction, value.asString () );
-                }
-            }
-        }
-
-        @Override
-        public Variant getAttributeValue ()
-        {
-            return null;
-        }
-    }
-
     private class InjectChainItem extends BaseChainItemCommon
     {
-        private MemoryChainedItem _item = null;
+        private MemoryChainedItem item = null;
 
-        public InjectChainItem ( final HiveServiceRegistry serviceRegistry, final MemoryChainedItem item )
+        public InjectChainItem ( final MemoryChainedItem item )
         {
-            super ( serviceRegistry );
-            this._item = item;
-
-            addBinder ( "org.openscada.da.test.chain.input.add", new AddClassAttributeBinder ( item, IODirection.INPUT ) );
-            addBinder ( "org.openscada.da.test.chain.input.remove", new RemoveClassAttributeBinder ( item, IODirection.INPUT ) );
-            addBinder ( "org.openscada.da.test.chain.outpt.add", new AddClassAttributeBinder ( item, IODirection.OUTPUT ) );
-            addBinder ( "org.openscada.da.test.chain.output.remove", new RemoveClassAttributeBinder ( item, IODirection.OUTPUT ) );
+            this.item = item;
             setReservedAttributes ( "org.openscada.da.test.chain.value" );
-        }
-
-        @Override
-        public boolean isPersistent ()
-        {
-            return false;
         }
 
         @Override
@@ -137,7 +54,7 @@ public class MemoryChainedItem extends MemoryItemChained
         {
             int i = 0;
             final StringBuilder str = new StringBuilder ();
-            for ( final ChainProcessEntry item : this._item.getChainCopy () )
+            for ( final ChainProcessEntry item : this.item.getChainCopy () )
             {
                 if ( i > 0 )
                 {
@@ -158,41 +75,31 @@ public class MemoryChainedItem extends MemoryItemChained
 
     }
 
-    private final HiveCommon hive;
-
     /**
      * Add some default chain items to the item
      * <p>
      * Adds the following chain items:
      * <ul>
      * <li>{@link SumErrorChainItem}</li>
-     * <li>{@link ScaleInputItem}</li>
-     * <li>{@link RoundChainItem}</li>
-     * <li>{@link ManualOverrideChainItem}</li>
-     * <li>{@link ManualErrorOverrideChainItem}</li>
-     * <li>{@link LevelAlarmChainItem}</li>
      * <li>{@link SUmAlarmChainItem}</li>
      * </ul>
      * </p>
-     * @param hive the hive to use
-     * @param item the item to modify
+     * 
+     * @param hive
+     *            the hive to use
+     * @param item
+     *            the item to modify
      */
     public static void applyDefaultInputChain ( final HiveCommon hive, final DataItemInputChained item )
     {
-        item.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
-        item.addChainElement ( IODirection.INPUT, new ScaleInputItem ( hive ) );
-        item.addChainElement ( IODirection.INPUT, new RoundChainItem ( hive ) );
-        item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( hive ) );
-        item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
-        item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( hive ) );
-        item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem ( hive ) );
+        item.addChainElement ( IODirection.INPUT, new SumErrorChainItem () );
+        item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem () );
     }
 
     public MemoryChainedItem ( final HiveCommon hive, final String id )
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
-        this.hive = hive;
-        addChainElement ( IODirection.INPUT, new InjectChainItem ( hive, this ) );
+        addChainElement ( IODirection.INPUT, new InjectChainItem ( this ) );
 
         applyDefaultInputChain ( hive, this );
     }
@@ -201,8 +108,6 @@ public class MemoryChainedItem extends MemoryItemChained
     {
         final Class<?> itemClass = Class.forName ( className );
         final Object o = itemClass.newInstance ();
-
-        FactoryHelper.createChainItem ( this.hive, Class.forName ( className ) );
 
         addChainElement ( direction, (ChainItem)o );
     }

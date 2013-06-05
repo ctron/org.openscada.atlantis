@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,11 +27,11 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.exec.Hive;
 import org.openscada.da.server.exec.splitter.SplitResult;
 import org.openscada.da.server.exec.splitter.Splitter;
-import org.openscada.da.server.exec.util.DefaultItemFactory;
 import org.openscada.da.server.exec.util.StreamProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -107,7 +109,7 @@ public abstract class AbstractContinuousCommand implements ContinuousCommand, Ru
     @Override
     public void start ( final Hive hive, final FolderCommon parentFolder )
     {
-        this.itemFactory = new DefaultItemFactory ( hive, parentFolder, this.id, this.id );
+        this.itemFactory = new DefaultChainItemFactory ( hive, parentFolder, this.id, this.id );
 
         this.stateItem = this.itemFactory.createInput ( "state", null );
         this.stateItem.updateData ( Variant.valueOf ( this.state.toString () ), null, null );

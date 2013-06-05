@@ -33,7 +33,6 @@ import org.openscada.da.client.Connection;
 import org.openscada.da.proxy.configuration.ConnectionType;
 import org.openscada.da.proxy.configuration.ProxyType;
 import org.openscada.da.proxy.configuration.RootType;
-import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.proxy.Hive;
 import org.openscada.da.server.proxy.connection.ProxyConnection;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
@@ -63,7 +62,7 @@ public class XMLConfigurator
      * @throws NotConvertableException
      * @throws ConfigurationError
      */
-    public void configure ( final Hive hive ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException, ConfigurationError
+    public void configure ( final Hive hive ) throws ClassNotFoundException, InvalidOperationException, NullValueException, NotConvertableException
     {
         if ( this.root.isSetSeparator () )
         {

@@ -37,9 +37,6 @@ import org.openscada.da.server.browser.common.query.ItemDescriptor;
 import org.openscada.da.server.browser.common.query.PatternNameProvider;
 import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.configuration.ConfigurationError;
-import org.openscada.da.server.common.factory.FactoryHelper;
-import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc.Helper;
 import org.openscada.da.server.opc.Hive;
@@ -206,9 +203,6 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
             setRegisteredItemCount ( this.itemMap.size () );
         }
 
-        // apply the chain items
-        applyTemplate ( item );
-
         // register the item with the hive
         this.hive.registerItem ( item );
 
@@ -221,31 +215,6 @@ public class OPCItemManager extends AbstractPropertyChange implements IOListener
         }
         // add to "allItems" folder
         this.allItemsStorage.added ( new ItemDescriptor ( item, browserMap ) );
-    }
-
-    /**
-     * Apply the item template as configured in the hive
-     * 
-     * @param item
-     *            the item to which a template should by applied
-     */
-    private void applyTemplate ( final OPCItem item )
-    {
-        final String itemId = item.getInformation ().getName ();
-        final FactoryTemplate ft = this.hive.findFactoryTemplate ( itemId );
-        logger.debug ( "Find template for item '{}' : {}", itemId, ft );
-        if ( ft != null )
-        {
-            try
-            {
-                item.setChain ( FactoryHelper.instantiateChainList ( this.hive, ft.getChainEntries () ) );
-            }
-            catch ( final ConfigurationError e )
-            {
-                logger.warn ( "Failed to apply item template", e );
-            }
-            item.processSetAttributes ( ft.getItemAttributes (), null );
-        }
     }
 
     public String createItemId ( final String opcItemId )

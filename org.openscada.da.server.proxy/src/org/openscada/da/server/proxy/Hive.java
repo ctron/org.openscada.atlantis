@@ -35,7 +35,6 @@ import org.openscada.da.proxy.configuration.ConfigurationPackage;
 import org.openscada.da.proxy.configuration.RootType;
 import org.openscada.da.proxy.configuration.util.ConfigurationResourceFactoryImpl;
 import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.proxy.configuration.XMLConfigurator;
 import org.openscada.da.server.proxy.connection.ProxyConnection;
@@ -75,9 +74,6 @@ public class Hive extends HiveCommon
 
     public Hive ( final XMLConfigurator configurator )
     {
-        // enable chain storage for this hive
-        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
-
         this.configurator = configurator;
 
         this.rootFolder = new FolderCommon ();

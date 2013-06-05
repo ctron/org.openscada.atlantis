@@ -47,7 +47,7 @@ public class TestItem2 extends MemoryItemChained
     public TestItem2 ( final HiveCommon hive, final String id )
     {
         super ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
-        addChainElement ( IODirection.INPUT, new SumErrorChainItem ( hive ) );
+        addChainElement ( IODirection.INPUT, new SumErrorChainItem () );
     }
 
     @Override

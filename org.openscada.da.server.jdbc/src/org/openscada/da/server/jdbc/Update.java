@@ -34,6 +34,7 @@ import org.openscada.core.server.OperationParameters;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
+import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.utils.lang.Immutable;
 import org.openscada.utils.sql.SqlHelper;
@@ -112,7 +113,7 @@ public class Update
         this.connection = connection;
     }
 
-    public void register ( final DataItemFactory parentItemFactory )
+    public void register ( final DefaultChainItemFactory parentItemFactory )
     {
         this.itemFactory = parentItemFactory.createSubFolderFactory ( this.id );
         this.item = this.itemFactory.createInputOutput ( "START", null, new WriteHandler () {

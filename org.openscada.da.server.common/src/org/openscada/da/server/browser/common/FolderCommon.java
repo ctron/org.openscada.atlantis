@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -34,14 +36,13 @@ import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.configuration.ConfigurableFolder;
 
 /**
  * A common folder implementation which can be used to easily implement folders.
  * 
  * @author Jens Reimann
  */
-public class FolderCommon implements Folder, ConfigurableFolder
+public class FolderCommon implements Folder
 {
 
     private final Map<String, Entry> entryMap = new HashMap<String, Entry> ();
@@ -156,7 +157,6 @@ public class FolderCommon implements Folder, ConfigurableFolder
     /* (non-Javadoc)
      * @see org.openscada.da.server.browser.common.ConfigurableFolder#add(java.lang.String, org.openscada.da.server.browser.common.Folder, java.util.Map)
      */
-    @Override
     public synchronized boolean add ( final String name, final Folder folder, final Map<String, Variant> attributes )
     {
         if ( !this.entryMap.containsKey ( name ) )
@@ -178,7 +178,6 @@ public class FolderCommon implements Folder, ConfigurableFolder
         return add ( name, dataItem.getInformation (), attributes );
     }
 
-    @Override
     public boolean add ( final String name, final DataItemInformation itemInformation, final Map<String, Variant> attributes )
     {
         if ( itemInformation == null || itemInformation.getName () == null )

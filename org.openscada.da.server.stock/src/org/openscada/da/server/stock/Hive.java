@@ -29,8 +29,6 @@ import java.util.concurrent.TimeUnit;
 import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
-import org.openscada.da.server.common.configuration.ConfigurationError;
-import org.openscada.da.server.common.configuration.Configurator;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.stock.business.YahooStockQuoteService;
 import org.openscada.da.server.stock.items.StockQuoteItem;
@@ -48,12 +46,7 @@ public class Hive extends HiveCommon
 
     private final UpdateManager updateManager;
 
-    public Hive () throws ConfigurationError, IOException
-    {
-        this ( null );
-    }
-
-    public Hive ( final Configurator configurator ) throws ConfigurationError, IOException
+    public Hive () throws IOException
     {
         super ();
 
@@ -66,10 +59,6 @@ public class Hive extends HiveCommon
         // create and register test folder
         this.symbolsFolder = new FolderCommon ();
         rootFolder.add ( "symbols", this.symbolsFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "This folder contains the items by stock symbol" ) ).getMap () );
-        if ( configurator != null )
-        {
-            configurator.configure ( this );
-        }
 
         this.updateManager = new UpdateManager ();
         this.updateManager.setStockQuoteService ( new YahooStockQuoteService () );

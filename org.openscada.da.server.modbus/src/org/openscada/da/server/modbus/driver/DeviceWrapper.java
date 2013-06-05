@@ -386,7 +386,7 @@ public class DeviceWrapper extends BaseDeviceWrapper implements DeviceListener
         final DataItemInputChained item = new DataItemInputChained ( getItemId ( slaveDevice, tag.getName () ), getHive ().getOperationService () );
         getHive ().registerItem ( item );
         item.updateData ( Variant.NULL, new MapBuilder<String, Variant> ().put ( "address.dec", Variant.valueOf ( tag.getAddress () ) ).put ( "address.hex", Variant.valueOf ( String.format ( "%x", tag.getAddress () ) ) ).getMap (), AttributeMode.SET );
-        ChainCreator.applyDefaultInputChain ( item, getHive () );
+        ChainCreator.applyDefaultInputChain ( item );
         folder.add ( tag.getName (), item, new MapBuilder<String, Variant> ().getMap () );
         return item;
     }
@@ -403,7 +403,7 @@ public class DeviceWrapper extends BaseDeviceWrapper implements DeviceListener
         final WriteHandlerItem item = new WriteHandlerItem ( getItemId ( slaveDevice, tag.getName () ), null, getHive ().getOperationService () );
         getHive ().registerItem ( item );
         item.updateData ( Variant.NULL, new MapBuilder<String, Variant> ().put ( "address.dec", Variant.valueOf ( tag.getAddress () ) ).put ( "address.hex", Variant.valueOf ( String.format ( "%x", tag.getAddress () ) ) ).getMap (), AttributeMode.SET );
-        ChainCreator.applyDefaultInputChain ( item, getHive () );
+        ChainCreator.applyDefaultInputChain ( item );
         folder.add ( tag.getName (), item, new MapBuilder<String, Variant> ().getMap () );
         return item;
     }

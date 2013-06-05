@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,25 +24,24 @@ package org.openscada.da.server.common.chain.item;
 import java.util.regex.Pattern;
 
 import org.openscada.core.Variant;
-import org.openscada.da.server.common.HiveServiceRegistry;
 
 /**
- * A chain item that summarizes based on a pattern. 
+ * A chain item that summarizes based on a pattern.
+ * 
  * @author Jens Reimann &lt;jens.reimann@th4-systems.com&gt;
- *
  */
 public class SumPatternAttributesChainItem extends SummarizeChainItem
 {
     private final Pattern pattern;
 
-    public SumPatternAttributesChainItem ( final HiveServiceRegistry serviceRegistry, final String baseName, final String pattern )
+    public SumPatternAttributesChainItem ( final String baseName, final String pattern )
     {
-        this ( serviceRegistry, baseName, Pattern.compile ( pattern ) );
+        this ( baseName, Pattern.compile ( pattern ) );
     }
 
-    public SumPatternAttributesChainItem ( final HiveServiceRegistry serviceRegistry, final String baseName, final Pattern pattern )
+    public SumPatternAttributesChainItem ( final String baseName, final Pattern pattern )
     {
-        super ( serviceRegistry, baseName );
+        super ( baseName );
 
         this.pattern = pattern;
     }

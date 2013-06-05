@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,11 +30,11 @@ import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
+import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.exec.Hive;
 import org.openscada.da.server.exec.extractor.Extractor;
 import org.openscada.da.server.exec.util.CommandExecutor;
-import org.openscada.da.server.exec.util.DefaultItemFactory;
 
 public class AbstractSingleCommand
 {
@@ -102,7 +104,7 @@ public class AbstractSingleCommand
         this.hive = hive;
         this.folderCommon = parentFolder;
 
-        this.itemFactory = new DefaultItemFactory ( this.hive, this.folderCommon, this.id, this.id );
+        this.itemFactory = new DefaultChainItemFactory ( this.hive, this.folderCommon, this.id, this.id );
         this.runningItem = this.itemFactory.createInput ( "running", null );
         this.exitCodeItem = this.itemFactory.createInput ( "exitCode", null );
         this.execItem = this.itemFactory.createInput ( "exec", null );

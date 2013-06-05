@@ -40,9 +40,6 @@ import org.openscada.da.server.browser.common.query.QueryFolder;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.MemoryDataItem;
-import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
-import org.openscada.da.server.common.configuration.ConfigurationError;
-import org.openscada.da.server.common.configuration.Configurator;
 import org.openscada.da.server.common.exporter.ObjectExporter;
 import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -78,17 +75,8 @@ public class Hive extends HiveCommon
 
     private TestModelObject testObject;
 
-    public Hive () throws ConfigurationError, IOException
+    public Hive () throws IOException
     {
-        this ( null );
-    }
-
-    public Hive ( final Configurator configurator ) throws ConfigurationError, IOException
-    {
-        super ();
-
-        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
-
         this.timer = new Timer ( true );
 
         // create root folder
@@ -268,11 +256,6 @@ public class Hive extends HiveCommon
         changeThread.start ();
 
         setupExporter ( rootFolder );
-
-        if ( configurator != null )
-        {
-            configurator.configure ( this );
-        }
     }
 
     @Override

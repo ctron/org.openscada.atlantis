@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,9 +32,10 @@ import org.openscada.da.server.common.impl.HiveCommon;
 /**
  * An item factory with a default chain of item entries
  * <p>
- * In order to apply your own chain you may override {@link #applyChain(DataItemBaseChained)}
+ * In order to apply your own chain you may override
+ * {@link #applyChain(DataItemBaseChained)}
+ * 
  * @author Jens Reimann
- *
  */
 public class DefaultChainItemFactory extends FolderItemFactory
 {
@@ -57,7 +60,10 @@ public class DefaultChainItemFactory extends FolderItemFactory
      * <p>
      * Sub-factories get disposed when the parent factory is disposed
      * </p>
-     * @param name the name of the sub-factory, this will be the folder name and added to the item id as local part
+     * 
+     * @param name
+     *            the name of the sub-factory, this will be the folder name and
+     *            added to the item id as local part
      */
     @Override
     public DefaultChainItemFactory createSubFolderFactory ( final String name )
@@ -89,11 +95,13 @@ public class DefaultChainItemFactory extends FolderItemFactory
 
     /**
      * Apply our chain of elements
-     * @param item the item to which the chain should be applied
+     * 
+     * @param item
+     *            the item to which the chain should be applied
      */
     protected void applyChain ( final DataItemBaseChained item )
     {
-        ChainCreator.applyDefaultInputChain ( item, this.hive );
+        ChainCreator.applyDefaultInputChain ( item );
     }
 
 }

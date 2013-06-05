@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,7 +22,6 @@
 package org.openscada.da.server.common.chain.item;
 
 import org.openscada.da.data.IODirection;
-import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.chain.DataItemBaseChained;
 
 /**
@@ -30,14 +31,9 @@ import org.openscada.da.server.common.chain.DataItemBaseChained;
  */
 public class ChainCreator
 {
-    public static void applyDefaultInputChain ( final DataItemBaseChained item, final HiveServiceRegistry serviceRegistry )
+    public static void applyDefaultInputChain ( final DataItemBaseChained item )
     {
-        item.addChainElement ( IODirection.INPUT, new NegateInputItem ( serviceRegistry ) );
-        item.addChainElement ( IODirection.INPUT, new ScaleInputItem ( serviceRegistry ) );
-        item.addChainElement ( IODirection.INPUT, new ManualOverrideChainItem ( serviceRegistry ) );
-        item.addChainElement ( IODirection.INPUT, new LevelAlarmChainItem ( serviceRegistry ) );
-        item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem ( serviceRegistry ) );
-        item.addChainElement ( IODirection.INPUT, new SumErrorChainItem ( serviceRegistry ) );
-        item.addChainElement ( IODirection.INPUT, new ManualErrorOverrideChainItem () );
+        item.addChainElement ( IODirection.INPUT, new SumAlarmChainItem () );
+        item.addChainElement ( IODirection.INPUT, new SumErrorChainItem () );
     }
 }

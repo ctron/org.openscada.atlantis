@@ -33,7 +33,6 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.openscada.da.core.server.Hive;
-import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.openscada.da.server.exporter.util.ExporterResourceFactoryImpl;
 import org.openscada.utils.init.ServiceLoaderProcessor;
 import org.slf4j.Logger;
@@ -147,7 +146,7 @@ public class Controller
 
                     hiveExport.addExport ( export.getUri () );
                 }
-                catch ( final ConfigurationError e )
+                catch ( final ConfigurationException e )
                 {
                     logger.error ( String.format ( "Unable to configure export (%s) for hive (%s)", export.getUri (), hive.getRef () ), e );
                 }

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -26,17 +28,12 @@ import org.openscada.da.server.common.chain.BaseChainItemCommon;
 
 /**
  * A chain item which will add a timestamp by default it none is provided.
+ * 
  * @author Jens Reimann
- *
  */
 public class AutoTimestampChainItem extends BaseChainItemCommon
 {
     private Variant lastValue = Variant.NULL;
-
-    public AutoTimestampChainItem ()
-    {
-        super ( null );
-    }
 
     @Override
     public Variant process ( final Variant value, final Map<String, Variant> attributes )

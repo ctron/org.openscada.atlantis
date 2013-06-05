@@ -29,7 +29,6 @@ import org.eclipse.emf.common.util.URI;
 import org.openscada.core.Variant;
 import org.openscada.da.exec.configuration.RootType;
 import org.openscada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.chain.storage.ChainStorageServiceHelper;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.exec.command.CommandQueue;
 import org.openscada.da.server.exec.command.ContinuousCommand;
@@ -79,8 +78,6 @@ public class Hive extends HiveCommon
 
     protected Hive ( final XmlConfigurator configurator ) throws ConfigurationException
     {
-        ChainStorageServiceHelper.registerDefaultPropertyService ( this );
-
         setRootFolder ( this.rootFolder );
         this.triggerFolder = new FolderCommon ();
         this.rootFolder.add ( TRIGGER_FOLDER_NAME, this.triggerFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Contains all triggers" ) ).getMap () );

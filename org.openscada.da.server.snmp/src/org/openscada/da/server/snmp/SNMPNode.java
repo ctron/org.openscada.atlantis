@@ -42,6 +42,7 @@ import org.openscada.da.server.browser.common.query.SplitGroupProvider;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.chain.item.ChainCreator;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.snmp.items.SNMPItem;
 import org.openscada.da.server.snmp.mib.MibManager;
@@ -266,7 +267,7 @@ public class SNMPNode
 
         this.storage.added ( new ItemDescriptor ( item, builder.getMap () ) );
 
-        DefaultFolderItemFactory.applyDefaultInputChain ( this.hive, item );
+        ChainCreator.applyDefaultInputChain ( item );
         this.hive.registerItem ( item );
 
         return item;

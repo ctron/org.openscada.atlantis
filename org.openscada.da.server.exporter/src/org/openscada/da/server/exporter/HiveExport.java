@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -25,7 +27,6 @@ import java.util.concurrent.CopyOnWriteArrayList;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
-import org.openscada.da.server.common.configuration.ConfigurationError;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -82,7 +83,7 @@ public class HiveExport
         this.hive.stop ();
     }
 
-    public Export addExport ( final String endpointUri ) throws ConfigurationError
+    public Export addExport ( final String endpointUri ) throws ConfigurationException
     {
         logger.info ( "Adding export: {}", endpointUri );
 
@@ -96,19 +97,19 @@ public class HiveExport
         else
         {
             logger.info ( "No exporter found for endpoint: {}", endpointUri );
-            throw new ConfigurationError ( String.format ( "No exporter found for endpoint: %s", endpointUri ) );
+            throw new ConfigurationException ( String.format ( "No exporter found for endpoint: %s", endpointUri ) );
         }
 
         return export;
     }
 
-    protected Export findExport ( final ConnectionInformation ci ) throws ConfigurationError
+    protected Export findExport ( final ConnectionInformation ci ) throws ConfigurationException
     {
         logger.info ( "Requested export to: {}", ci );
 
         if ( !ci.getInterface ().equalsIgnoreCase ( "da" ) )
         {
-            throw new ConfigurationError ( String.format ( "Interface must be 'da' but is '%s'", ci.getInterface () ) );
+            throw new ConfigurationException ( String.format ( "Interface must be 'da' but is '%s'", ci.getInterface () ) );
         }
 
         try
@@ -125,12 +126,12 @@ public class HiveExport
             }
             else
             {
-                throw new ConfigurationError ( String.format ( "Driver '%s' is unknown", ci.getDriver () ) );
+                throw new ConfigurationException ( String.format ( "Driver '%s' is unknown", ci.getDriver () ) );
             }
         }
         catch ( final Throwable e )
         {
-            throw new ConfigurationError ( "Failed to configure exporter", e );
+            throw new ConfigurationException ( "Failed to configure exporter", e );
         }
     }
 

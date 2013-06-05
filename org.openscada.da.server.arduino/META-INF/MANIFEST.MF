@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Arduino DA Server
 Bundle-SymbolicName: org.openscada.da.server.arduino
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.openscada.da.server.arduino.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -18,7 +18,6 @@ Import-Package: org.apache.mina.core.service;version="2.0.4",
  org.openscada.da.server.common;version="1.0.0",
  org.openscada.da.server.common.chain;version="1.0.0",
  org.openscada.da.server.common.chain.item;version="1.0.0",
- org.openscada.da.server.common.chain.storage;version="1.0.0",
  org.openscada.da.server.common.impl;version="1.0.0",
  org.openscada.protocols.arduino;version="1.0.0",
  org.openscada.sec;version="1.0.0",

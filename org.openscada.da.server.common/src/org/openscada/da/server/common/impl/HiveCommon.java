@@ -21,11 +21,8 @@
 
 package org.openscada.da.server.common.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -60,13 +57,9 @@ import org.openscada.da.core.server.browser.HiveBrowser;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.HiveService;
-import org.openscada.da.server.common.HiveServiceRegistry;
 import org.openscada.da.server.common.ValidationStrategy;
-import org.openscada.da.server.common.configuration.ConfigurableHive;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemValidator;
-import org.openscada.da.server.common.factory.FactoryTemplate;
 import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
 import org.openscada.sec.AuthorizationReply;
 import org.openscada.sec.AuthorizationRequest;
@@ -82,7 +75,7 @@ import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> implements Hive, ConfigurableHive, HiveServiceRegistry
+public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> implements Hive
 {
     private final static Logger logger = LoggerFactory.getLogger ( HiveCommon.class );
 
@@ -104,8 +97,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
 
     private final List<DataItemFactory> factoryList = new CopyOnWriteArrayList<DataItemFactory> ();
 
-    private final List<FactoryTemplate> templates = new LinkedList<FactoryTemplate> ();
-
     private final SubscriptionManager itemSubscriptionManager = new SubscriptionManager ();
 
     private final Set<DataItemValidator> itemValidators = new CopyOnWriteArraySet<DataItemValidator> ();
@@ -115,11 +106,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     private HiveCommonStatisticsGenerator statisticsGenerator;
 
     private boolean autoEnableStats = true;
-
-    /**
-     * Services that are provided by this hive for internal use
-     */
-    private final Map<String, HiveService> services = new HashMap<String, HiveService> ();
 
     private final AuthorizationProvider<AbstractSessionImpl> authorizationProvider = new AuthorizationProvider<AbstractSessionImpl> () {
 
@@ -188,8 +174,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             this.operationService.shutdown ();
             this.operationService = null;
         }
-
-        unregisterAllServices ();
     }
 
     public void addSessionListener ( final SessionListener listener )
@@ -245,22 +229,10 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     }
 
     /**
-     * Get the root folder
-     * 
-     * @return the root folder or <code>null</code> if browsing is not supported
-     */
-    @Override
-    public Folder getRootFolder ()
-    {
-        return this.rootFolder;
-    }
-
-    /**
      * Set the root folder. The root folder can only be set once. All
      * further set requests are ignored.
      */
-    @Override
-    public synchronized void setRootFolder ( final Folder rootFolder )
+    protected synchronized void setRootFolder ( final Folder rootFolder )
     {
         if ( this.rootFolder == null )
         {
@@ -443,7 +415,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      * @param item
      *            the item to register
      */
-    @Override
     public void registerItem ( final DataItem item )
     {
         logger.debug ( "Register item: {}", item );
@@ -593,7 +564,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         return false;
     }
 
-    @Override
     public DataItem lookupItem ( final String id )
     {
         try
@@ -605,21 +575,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         {
             this.itemMapReadLock.unlock ();
         }
-    }
-
-    public FactoryTemplate findFactoryTemplate ( final String item )
-    {
-        synchronized ( this.templates )
-        {
-            for ( final FactoryTemplate template : this.templates )
-            {
-                if ( template.getPattern ().matcher ( item ).matches () )
-                {
-                    return template;
-                }
-            }
-        }
-        return null;
     }
 
     protected DataItem retrieveItem ( final String id )
@@ -774,10 +729,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         return this.browser;
     }
 
-    /* (non-Javadoc)
-     * @see org.openscada.da.server.common.impl.ConfigurableHive#addItemFactory(org.openscada.da.server.common.DataItemFactory)
-     */
-    @Override
     public void addItemFactory ( final DataItemFactory factory )
     {
         this.factoryList.add ( factory );
@@ -786,15 +737,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     public void removeItemFactory ( final DataItemFactory factory )
     {
         this.factoryList.remove ( factory );
-    }
-
-    @Override
-    public void registerTemplate ( final FactoryTemplate template )
-    {
-        synchronized ( this.templates )
-        {
-            this.templates.add ( template );
-        }
     }
 
     /**
@@ -850,77 +792,5 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     public void setAutoEnableStats ( final boolean autoEnableStats )
     {
         this.autoEnableStats = autoEnableStats;
-    }
-
-    /* (non-Javadoc)
-     * @see org.openscada.da.server.common.impl.HiveServiceRegistry#registerService(java.lang.String, org.openscada.da.server.common.HiveService)
-     */
-    @Override
-    public HiveService registerService ( final String serviceName, final HiveService service )
-    {
-        HiveService oldService = null;
-        synchronized ( this.services )
-        {
-            oldService = this.services.put ( serviceName, service );
-        }
-
-        if ( oldService != null )
-        {
-            oldService.dispose ();
-        }
-        if ( service != null )
-        {
-            service.init ();
-        }
-
-        return oldService;
-    }
-
-    /* (non-Javadoc)
-     * @see org.openscada.da.server.common.impl.HiveServiceRegistry#unregisterService(java.lang.String)
-     */
-    @Override
-    public HiveService unregisterService ( final String serviceName )
-    {
-        HiveService service = null;
-        synchronized ( this.services )
-        {
-            service = this.services.remove ( serviceName );
-        }
-
-        if ( service != null )
-        {
-            service.dispose ();
-        }
-
-        return service;
-    }
-
-    /**
-     * Unregister all the services at once
-     */
-    protected void unregisterAllServices ()
-    {
-        Collection<HiveService> services;
-        synchronized ( this.services )
-        {
-            services = new ArrayList<HiveService> ( this.services.values () );
-            this.services.clear ();
-        }
-
-        // now dispose all
-        for ( final HiveService service : services )
-        {
-            service.dispose ();
-        }
-    }
-
-    /* (non-Javadoc)
-     * @see org.openscada.da.server.common.impl.HiveServiceRegistry#getService(java.lang.String)
-     */
-    @Override
-    public HiveService getService ( final String serviceName )
-    {
-        return this.services.get ( serviceName );
     }
 }

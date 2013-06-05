@@ -152,11 +152,6 @@ public abstract class DataItemBaseChained extends DataItemBase
      */
     public void setChain ( final Collection<ChainProcessEntry> chain )
     {
-        for ( final ChainProcessEntry entry : this.chain )
-        {
-            entry.getWhat ().dataItemChanged ( this );
-        }
-
         if ( chain == null )
         {
             this.chain = new CopyOnWriteArraySet<ChainProcessEntry> ();
@@ -164,10 +159,6 @@ public abstract class DataItemBaseChained extends DataItemBase
         else
         {
             final Set<ChainProcessEntry> newChain = new CopyOnWriteArraySet<ChainProcessEntry> ( chain );
-            for ( final ChainProcessEntry entry : newChain )
-            {
-                entry.getWhat ().dataItemChanged ( this );
-            }
             this.chain = newChain;
         }
         process ();
@@ -177,7 +168,6 @@ public abstract class DataItemBaseChained extends DataItemBase
     {
         if ( this.chain.add ( new ChainProcessEntry ( when, item ) ) )
         {
-            item.dataItemChanged ( this );
             process ();
         }
     }
@@ -186,7 +176,6 @@ public abstract class DataItemBaseChained extends DataItemBase
     {
         if ( this.chain.add ( new ChainProcessEntry ( EnumSet.of ( when ), item ) ) )
         {
-            item.dataItemChanged ( this );
             process ();
         }
     }
@@ -212,7 +201,6 @@ public abstract class DataItemBaseChained extends DataItemBase
         if ( n > 0 )
         {
             process ();
-            item.dataItemChanged ( null );
         }
     }
 

@@ -2,6 +2,7 @@
  * This file is part of the openSCADA project
  * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,6 +28,7 @@ import java.util.LinkedList;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.da.server.browser.common.FolderCommon;
+import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,7 +48,7 @@ public class Connection
 
     private final String id;
 
-    private DataItemFactory itemFactory;
+    private DefaultChainItemFactory itemFactory;
 
     private final Integer timeout;
 
@@ -77,7 +79,7 @@ public class Connection
 
     public void register ( final Hive hive, final FolderCommon rootFolder, final ScheduledExecutorService timer )
     {
-        this.itemFactory = new DataItemFactory ( hive, rootFolder, this.id, this.id );
+        this.itemFactory = new DefaultChainItemFactory ( hive, rootFolder, this.id, this.id );
 
         for ( final Query query : this.queries )
         {

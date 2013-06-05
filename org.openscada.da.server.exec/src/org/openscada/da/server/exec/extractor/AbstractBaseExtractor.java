@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -27,10 +29,10 @@ import java.util.Map;
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.exec.Hive;
 import org.openscada.da.server.exec.command.ExecutionResult;
-import org.openscada.da.server.exec.util.DefaultItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -141,7 +143,7 @@ public abstract class AbstractBaseExtractor implements Extractor
     public void register ( final Hive hive, final FolderItemFactory folderItemFactory )
     {
         this.hive = hive;
-        this.itemFactory = new DefaultItemFactory ( folderItemFactory, this.hive, folderItemFactory.getFolder (), this.id, this.id );
+        this.itemFactory = new DefaultChainItemFactory ( folderItemFactory, this.hive, folderItemFactory.getFolder (), this.id, this.id );
         folderItemFactory.addSubFactory ( this.itemFactory );
     }
 
