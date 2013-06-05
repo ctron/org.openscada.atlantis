@@ -2,8 +2,8 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA AE DataItem Monitor Testing
 Bundle-SymbolicName: org.openscada.ae.monitor.dataitem.test
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: openSCADA.org
 Fragment-Host: org.openscada.ae.monitor.datasource.common;bundle-version="1.0.0.qualifier"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Require-Bundle: org.junit4;bundle-version="4.5.0"
+Require-Bundle: org.junit;bundle-version="4.5.0"
