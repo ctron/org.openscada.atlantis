@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,56 +23,43 @@ package org.openscada.da.server.snmp;
 
 public class ConnectionInformation implements Cloneable
 {
-    public enum Version
+    public static enum Version
     {
         V1,
         V2C,
         V3,
     };
 
-    private Version _version = Version.V2C;
+    private Version version = Version.V2C;
 
-    private String _name = null;
+    private String name;
 
-    private String _address = null;
+    private String address;
 
-    private String _community = null;
+    private String community;
 
     public ConnectionInformation ( final Version version, final String name )
     {
-        this._version = version;
-        this._name = name;
+        this.version = version;
+        this.name = name;
     }
 
-    public ConnectionInformation ( final ConnectionInformation arg0 )
+    public ConnectionInformation ( final ConnectionInformation other )
     {
-        if ( arg0._address != null )
-        {
-            this._address = new String ( arg0._address );
-        }
-        if ( arg0._name != null )
-        {
-            this._name = new String ( arg0._name );
-        }
-        if ( arg0._version != null )
-        {
-            this._version = arg0._version;
-        }
-
-        if ( arg0._community != null )
-        {
-            this._community = new String ( arg0._community );
-        }
+        this.address = other.address;
+        this.name = other.name;
+        this.version = other.version;
+        this.community = other.community;
     }
 
     public String getAddress ()
     {
-        return this._address;
+        return this.address;
     }
 
     public void setAddress ( final String address )
     {
-        this._address = address;
+        this.address = address;
     }
 
     @Override
@@ -81,31 +70,31 @@ public class ConnectionInformation implements Cloneable
 
     public String getName ()
     {
-        return this._name;
+        return this.name;
     }
 
     public void setName ( final String name )
     {
-        this._name = name;
+        this.name = name;
     }
 
     public String getCommunity ()
     {
-        return this._community;
+        return this.community;
     }
 
     public void setCommunity ( final String community )
     {
-        this._community = community;
+        this.community = community;
     }
 
     public Version getVersion ()
     {
-        return this._version;
+        return this.version;
     }
 
     public void setVersion ( final Version version )
     {
-        this._version = version;
+        this.version = version;
     }
 }

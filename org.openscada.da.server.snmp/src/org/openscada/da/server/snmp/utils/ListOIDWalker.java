@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -28,7 +30,7 @@ import org.snmp4j.smi.OID;
 public class ListOIDWalker extends WalkOperation
 {
 
-    private final Set<OID> _oidSet = new HashSet<OID> ();
+    private final Set<OID> oidSet = new HashSet<OID> ();
 
     public ListOIDWalker ( final SNMPNode node, final OID oid, final boolean useBulkGet )
     {
@@ -38,12 +40,12 @@ public class ListOIDWalker extends WalkOperation
     @Override
     protected void handleOID ( final OID oid )
     {
-        this._oidSet.add ( oid );
+        this.oidSet.add ( oid );
     }
 
     public Set<OID> getList ()
     {
-        return this._oidSet;
+        return this.oidSet;
     }
 
 }

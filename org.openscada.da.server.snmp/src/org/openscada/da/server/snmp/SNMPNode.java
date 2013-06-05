@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -56,9 +58,9 @@ import org.snmp4j.smi.OID;
 
 public class SNMPNode
 {
-    private HiveCommon hive = null;
+    private final HiveCommon hive;
 
-    private FolderCommon rootFolder = null;
+    private final FolderCommon rootFolder;
 
     private boolean registered = false;
 
@@ -70,7 +72,7 @@ public class SNMPNode
 
     private GroupFolder mibGroupFolder = null;
 
-    private ConnectionInformation connectionInformation = null;
+    private final ConnectionInformation connectionInformation;
 
     private Connection connection = null;
 
@@ -80,7 +82,7 @@ public class SNMPNode
 
     private ScheduledExecutorService scheduler = null;
 
-    private SNMPBulkReader bulkReader = null;
+    private final SNMPBulkReader bulkReader;
 
     private ScheduledFuture<?> bulkReaderJob = null;
 
@@ -226,11 +228,6 @@ public class SNMPNode
     public Connection getConnection ()
     {
         return this.connection;
-    }
-
-    public ScheduledExecutorService getScheduler ()
-    {
-        return this.scheduler;
     }
 
     public SNMPBulkReader getBulkReader ()

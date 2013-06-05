@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -36,11 +38,11 @@ public abstract class WalkOperation
 {
     private final static Logger logger = LoggerFactory.getLogger ( WalkOperation.class );
 
-    private SNMPNode node = null;
+    private final SNMPNode node;
 
-    private OID oid = null;
+    private final OID oid;
 
-    private boolean useBulkGet = false;
+    private final boolean useBulkGet;
 
     public WalkOperation ( final SNMPNode node, final OID oid, final boolean useBulkGet )
     {

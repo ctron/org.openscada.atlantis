@@ -38,7 +38,7 @@ public class SNMPBulkReader
 {
     private final static Logger logger = LoggerFactory.getLogger ( SNMPBulkReader.class );
 
-    private SNMPNode node = null;
+    private final SNMPNode node;
 
     private final Map<OID, SNMPItem> list = new ConcurrentHashMap<OID, SNMPItem> ();
 
@@ -72,6 +72,7 @@ public class SNMPBulkReader
 
     /**
      * Perform a read of all stored items
+     * 
      * @throws Exception
      */
     @SuppressWarnings ( "unchecked" )
@@ -131,6 +132,7 @@ public class SNMPBulkReader
 
     /**
      * set an error for all items
+     * 
      * @param t
      */
     private void setError ( final Throwable t )
