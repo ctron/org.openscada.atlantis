@@ -20,3 +20,4 @@ Bundle-Name: openSCADA DA Server Sysinfo
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.sysinfo
+Service-Component: OSGI-INF/hive.xml

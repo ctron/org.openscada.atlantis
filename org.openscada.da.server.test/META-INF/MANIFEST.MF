@@ -46,3 +46,5 @@ Bundle-Name: openSCADA-DA-Server-Test
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
 Bundle-SymbolicName: org.openscada.da.server.test
+Service-Component: OSGI-INF/hive.xml
+
