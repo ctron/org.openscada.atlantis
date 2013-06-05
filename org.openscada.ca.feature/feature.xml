@@ -22,7 +22,7 @@ authority.
       <import plugin="org.openscada.utils"/>
       <import plugin="org.openscada.utils.propertyeditors"/>
       <import plugin="org.eclipse.osgi"/>
-      <import plugin="slf4j.api"/>
+      <import plugin="org.slf4j.api"/>
       <import plugin="javax.servlet"/>
       <import plugin="org.eclipse.osgi.services"/>
       <import plugin="org.openscada.utils.osgi"/>

@@ -23,9 +23,9 @@
       <import plugin="org.openscada.da.client"/>
       <import plugin="org.openscada.da.master"/>
       <import plugin="org.openscada.da.server.common"/>
-      <import feature="org.openscada.aurora" version="0.14.0.qualifier"/>
-      <import feature="org.openscada.external" version="0.15.0.qualifier"/>
-      <import feature="org.openscada.core" version="0.15.0.qualifier"/>
+      <import feature="org.openscada.aurora" version="1.2.0.qualifier"/>
+      <import feature="org.openscada.external" version="1.2.0.qualifier"/>
+      <import feature="org.openscada.core" version="1.2.0.qualifier"/>
       <import plugin="com.google.gson"/>
       <import plugin="org.openscada.hds"/>
    </requires>

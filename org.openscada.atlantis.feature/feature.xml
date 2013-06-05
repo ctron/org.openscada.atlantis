@@ -38,12 +38,12 @@
          version="0.0.0"/>
 
    <requires>
-      <import plugin="slf4j.api"/>
       <import plugin="org.eclipse.osgi"/>
       <import feature="org.openscada.external" version="0.16.0.qualifier"/>
       <import feature="org.openscada.aurora" version="0.15.0.qualifier"/>
       <import feature="org.openscada.oxygen" version="0.1.0.qualifier"/>
       <import feature="org.openscada.utgard" version="0.7.0.qualifier"/>
+      <import plugin="org.slf4j.api"/>
    </requires>
 
    <plugin

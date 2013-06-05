@@ -18,9 +18,9 @@
    </license>
 
    <requires>
-      <import feature="org.openscada.external" version="0.18.0.qualifier"/>
+      <import feature="org.openscada.external" version="1.1.0.qualifier"/>
       <import plugin="org.eclipse.osgi"/>
-      <import feature="org.openscada.sec" version="0.4.0.qualifier"/>
+      <import feature="org.openscada.sec" version="1.1.0.qualifier"/>
    </requires>
 
    <plugin
