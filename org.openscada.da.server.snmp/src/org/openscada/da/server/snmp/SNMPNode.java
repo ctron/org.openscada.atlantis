@@ -261,7 +261,7 @@ public class SNMPNode
 
         if ( this.mibManager != null )
         {
-            this.mibManager.fillAttributes ( oid, builder );
+            this.mibManager.fillAttributes ( oid.toString (), builder );
         }
 
         this.storage.added ( new ItemDescriptor ( item, builder.getMap () ) );

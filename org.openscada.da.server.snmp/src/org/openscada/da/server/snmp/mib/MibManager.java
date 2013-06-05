@@ -24,12 +24,11 @@ import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.snmp.configuration.MibsType;
 import org.openscada.utils.collection.MapBuilder;
-import org.snmp4j.smi.OID;
 
 public interface MibManager
 {
 
-    public void fillAttributes ( OID oid, MapBuilder<String, Variant> attributes );
+    public void fillAttributes ( String oid, MapBuilder<String, Variant> attributes );
 
     public void buildMIBFolders ( FolderCommon mibFolder );
 

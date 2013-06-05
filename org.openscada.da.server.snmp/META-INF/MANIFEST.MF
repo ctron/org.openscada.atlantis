@@ -23,7 +23,12 @@ Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.utils.str;version="1.0.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.snmp.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
+Export-Package: org.openscada.da.server.snmp.mib;version="1.2.0";
+  uses:="org.openscada.utils.collection,
+   org.openscada.da.snmp.configuration,
+   org.openscada.da.server.browser.common,
+   org.snmp4j.smi",
+ org.openscada.da.snmp.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
  org.openscada.da.snmp.configuration.impl;version="1.2.0";
   uses:="org.openscada.da.snmp.configuration,
    org.eclipse.emf.ecore.util,
@@ -53,9 +58,6 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-SymbolicName: org.openscada.da.server.snmp;singleton:=true
 Service-Component: OSGI-INF/hive.xml
-Bundle-ClassPath: lib/grammatica-bin-1.4.jar,
- lib/mibble-mibs-2.7.jar,
- lib/mibble-parser-2.7.jar,
- lib/snmp4j-2.2.1.jar,
+Bundle-ClassPath: lib/snmp4j-2.2.1.jar,
  .
 
