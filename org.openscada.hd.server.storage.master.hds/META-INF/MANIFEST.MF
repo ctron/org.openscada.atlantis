@@ -6,7 +6,7 @@ Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.hd.server.storage.master.hds.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.commons.io;version="2.3.0",
+Import-Package: org.apache.commons.io;version="2.0.1",
  org.openscada.core;version="1.0.0",
  org.openscada.da.client;version="1.0.0",
  org.openscada.hd;version="1.0.0",
