@@ -44,8 +44,8 @@ import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.snmp.items.SNMPItem;
+import org.openscada.da.server.snmp.mib.MibManager;
 import org.openscada.da.server.snmp.utils.ListOIDWalker;
-import org.openscada.da.server.snmp.utils.MIBManager;
 import org.openscada.da.server.snmp.utils.SNMPBulkReader;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.concurrent.NamedThreadFactory;
@@ -97,9 +97,9 @@ public class SNMPNode
 
     private final DataItemFactory itemFactory;
 
-    private final MIBManager mibManager;
+    private final MibManager mibManager;
 
-    public SNMPNode ( final HiveCommon hive, final FolderCommon rootFolder, final MIBManager manager, final ConnectionInformation connectionInformation )
+    public SNMPNode ( final HiveCommon hive, final FolderCommon rootFolder, final MibManager manager, final ConnectionInformation connectionInformation )
     {
         this.hive = hive;
         this.rootFolder = rootFolder;

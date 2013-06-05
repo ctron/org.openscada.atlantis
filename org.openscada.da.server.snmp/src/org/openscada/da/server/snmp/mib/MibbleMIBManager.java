@@ -19,7 +19,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.server.snmp.utils;
+package org.openscada.da.server.snmp.mib;
 
 import java.io.File;
 import java.io.IOException;
@@ -43,15 +43,16 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.snmp4j.smi.OID;
 
-public class MIBManager
+public class MibbleMIBManager implements MibManager
 {
-    private final static Logger logger = LoggerFactory.getLogger ( MIBManager.class );
+    private final static Logger logger = LoggerFactory.getLogger ( MibbleMIBManager.class );
 
     private final MibLoader loader = new MibLoader ();
 
     private final Collection<Mib> mibs = new LinkedList<Mib> ();
 
-    public MIBManager ( final MibsType mibs )
+    @Override
+    public void configure ( final MibsType mibs )
     {
         logger.debug ( "Loading MIBs..." );
 
@@ -125,6 +126,10 @@ public class MIBManager
         return bestMVS;
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.da.server.snmp.mib.MibManager#fillAttributes(org.snmp4j.smi.OID, org.openscada.utils.collection.MapBuilder)
+     */
+    @Override
     public void fillAttributes ( final OID oid, final MapBuilder<String, Variant> attributes )
     {
         final MibValueSymbol mvs = findBestMVS ( oid );
@@ -202,6 +207,10 @@ public class MIBManager
         }
     }
 
+    /* (non-Javadoc)
+     * @see org.openscada.da.server.snmp.mib.MibManager#buildMIBFolders(org.openscada.da.server.browser.common.FolderCommon)
+     */
+    @Override
     public void buildMIBFolders ( final FolderCommon mibFolder )
     {
         final Collection<Mib> mibs = getAllMIBs ();

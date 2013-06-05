@@ -23,7 +23,9 @@ package org.openscada.da.server.snmp;
 
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
+import java.util.ServiceLoader;
 
 import org.eclipse.emf.common.util.URI;
 import org.eclipse.emf.ecore.resource.Resource;
@@ -33,7 +35,7 @@ import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.snmp.utils.MIBManager;
+import org.openscada.da.server.snmp.mib.MibManager;
 import org.openscada.da.snmp.configuration.ConfigurationPackage;
 import org.openscada.da.snmp.configuration.ConfigurationType;
 import org.openscada.da.snmp.configuration.ConnectionType;
@@ -48,7 +50,7 @@ public class Hive extends HiveCommon
 
     private final FolderCommon rootFolder;
 
-    private MIBManager mibManager;
+    private MibManager mibManager;
 
     public Hive ()
     {
@@ -104,12 +106,36 @@ public class Hive extends HiveCommon
      */
     protected void configure ( final ConfigurationType cfg )
     {
-        this.mibManager = new MIBManager ( cfg.getMibs () );
+        this.mibManager = createMibManager ( cfg );
 
         for ( final ConnectionType connection : cfg.getConnection () )
         {
             configure ( connection );
         }
+    }
+
+    /**
+     * Create a mib manager if we fine some
+     * 
+     * @param The
+     *            hive configuration
+     * @return a mib manager implementation or <code>null</code> if none could
+     *         be found
+     */
+    private MibManager createMibManager ( final ConfigurationType cfg )
+    {
+        final ServiceLoader<MibManager> loader = ServiceLoader.load ( MibManager.class );
+        final Iterator<MibManager> i = loader.iterator ();
+        while ( i.hasNext () )
+        {
+            final MibManager mibManager = i.next ();
+            if ( mibManager != null )
+            {
+                mibManager.configure ( cfg.getMibs () );
+                return mibManager;
+            }
+        }
+        return null;
     }
 
     /**
