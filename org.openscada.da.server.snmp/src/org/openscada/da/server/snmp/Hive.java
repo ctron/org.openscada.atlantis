@@ -70,16 +70,25 @@ public class Hive extends HiveCommon
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
     }
 
-    public Hive ( final String uri )
+    public Hive ( final String uri, final MibManager mibManager )
     {
-        this ( parse ( URI.createURI ( uri ) ) );
+        this ( parse ( URI.createURI ( uri ) ), mibManager );
     }
 
-    public Hive ( final ConfigurationType cfg )
+    public Hive ( final ConfigurationType cfg, final MibManager mibManager )
     {
         // create root folder
         this.rootFolder = new FolderCommon ();
         setRootFolder ( this.rootFolder );
+
+        if ( mibManager != null )
+        {
+            this.mibManager = mibManager;
+        }
+        else
+        {
+            this.mibManager = createMibManager ( cfg );
+        }
 
         new Thread ( new Runnable () {
 
@@ -106,7 +115,10 @@ public class Hive extends HiveCommon
      */
     protected void configure ( final ConfigurationType cfg )
     {
-        this.mibManager = createMibManager ( cfg );
+        if ( this.mibManager != null )
+        {
+            this.mibManager.configure ( cfg.getMibs () );
+        }
 
         for ( final ConnectionType connection : cfg.getConnection () )
         {
@@ -131,7 +143,6 @@ public class Hive extends HiveCommon
             final MibManager mibManager = i.next ();
             if ( mibManager != null )
             {
-                mibManager.configure ( cfg.getMibs () );
                 return mibManager;
             }
         }
@@ -198,5 +209,10 @@ public class Hive extends HiveCommon
         final SNMPNode node = new SNMPNode ( this, this.rootFolder, this.mibManager, ci );
         node.register ();
         this.nodeMap.put ( connection.getName (), node );
+    }
+
+    public void setMibManager ( final MibManager mibManager )
+    {
+        this.mibManager = mibManager;
     }
 }

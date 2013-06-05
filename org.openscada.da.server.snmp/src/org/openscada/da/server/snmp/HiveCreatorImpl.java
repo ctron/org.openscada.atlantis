@@ -22,10 +22,25 @@ package org.openscada.da.server.snmp;
 
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.HiveCreator;
+import org.openscada.da.server.snmp.mib.MibManager;
 import org.openscada.da.snmp.configuration.ConfigurationType;
 
 public class HiveCreatorImpl implements HiveCreator
 {
+    private MibManager mibManager;
+
+    public void setMibManager ( final MibManager mibManager )
+    {
+        this.mibManager = mibManager;
+    }
+
+    public void unsetMibManager ( final MibManager mibManager )
+    {
+        if ( this.mibManager == mibManager )
+        {
+            this.mibManager = null;
+        }
+    }
 
     @Override
     public Hive createHive ( final String reference, final Object configuration ) throws Exception
@@ -37,11 +52,11 @@ public class HiveCreatorImpl implements HiveCreator
 
         if ( configuration instanceof ConfigurationType )
         {
-            return new org.openscada.da.server.snmp.Hive ( (ConfigurationType)configuration );
+            return new org.openscada.da.server.snmp.Hive ( (ConfigurationType)configuration, this.mibManager );
         }
         else if ( configuration instanceof String )
         {
-            return new org.openscada.da.server.snmp.Hive ( (String)configuration );
+            return new org.openscada.da.server.snmp.Hive ( (String)configuration, this.mibManager );
         }
         else
         {
