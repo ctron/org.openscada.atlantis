@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -75,7 +77,6 @@ public class SNMPBulkReader
      * 
      * @throws Exception
      */
-    @SuppressWarnings ( "unchecked" )
     private void performRead () throws Exception
     {
         final Connection connection = this.node.getConnection ();
@@ -110,7 +111,7 @@ public class SNMPBulkReader
 
         logger.debug ( "VB size: {}", reply.size () );
 
-        final Vector<VariableBinding> vbs = reply.getVariableBindings ();
+        final Vector<? extends VariableBinding> vbs = reply.getVariableBindings ();
 
         for ( final VariableBinding vb : vbs )
         {

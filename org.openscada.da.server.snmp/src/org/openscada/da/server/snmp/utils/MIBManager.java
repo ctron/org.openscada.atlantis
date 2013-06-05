@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,8 +32,10 @@ import net.percederberg.mibble.MibLoader;
 import net.percederberg.mibble.MibLoaderException;
 import net.percederberg.mibble.MibValueSymbol;
 import net.percederberg.mibble.snmp.SnmpObjectType;
+import net.percederberg.mibble.value.ObjectIdentifierValue;
 
 import org.openscada.core.Variant;
+import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.snmp.configuration.MibsType;
 import org.openscada.utils.collection.MapBuilder;
 import org.openscada.utils.str.StringHelper;
@@ -164,4 +168,73 @@ public class MIBManager
         attributes.put ( "snmp.oid.symbolic", Variant.valueOf ( symbolicName ) );
 
     }
+
+    private void populateMIBFolder ( final MibValueSymbol vs, final FolderCommon baseFolder )
+    {
+        for ( final MibValueSymbol child : vs.getChildren () )
+        {
+            if ( child == null )
+            {
+                continue;
+            }
+
+            final MapBuilder<String, Variant> attributes = new MapBuilder<String, Variant> ();
+
+            if ( child.getComment () != null )
+            {
+                attributes.put ( "snmp.mib.comment", Variant.valueOf ( child.getComment () ) );
+            }
+
+            final FolderCommon folder = new FolderCommon ();
+
+            if ( child.getValue () instanceof ObjectIdentifierValue )
+            {
+                attributes.put ( "snmp.oid", Variant.valueOf ( child.getValue ().toString () ) );
+
+                // no need to add an item since the instance number is missing anyway
+                // SNMPItem item = getSNMPItem ( new OID ( child.getValue ().toString () ) );
+                //folder.add ( "value", item, attributes.getMap () );
+            }
+
+            baseFolder.add ( child.getName (), folder, attributes.getMap () );
+
+            populateMIBFolder ( child, folder );
+        }
+    }
+
+    public void buildMIBFolders ( final FolderCommon mibFolder )
+    {
+        final Collection<Mib> mibs = getAllMIBs ();
+        for ( final Mib mib : mibs )
+        {
+            if ( mib.getRootSymbol () == null )
+            {
+                continue;
+            }
+
+            final FolderCommon mibBaseFolder = new FolderCommon ();
+            final MapBuilder<String, Variant> attributes = new MapBuilder<String, Variant> ();
+            attributes.put ( "description", Variant.valueOf ( "Automatically generated base folder for MIB" ) );
+
+            final String header = mib.getHeaderComment ();
+            if ( header != null )
+            {
+                attributes.put ( "snmp.mib.header", Variant.valueOf ( header ) );
+            }
+
+            final String footer = mib.getFooterComment ();
+            if ( footer != null )
+            {
+                attributes.put ( "snmp.mib.footer", Variant.valueOf ( footer ) );
+            }
+
+            attributes.put ( "snmp.mib.root", Variant.valueOf ( mib.getRootSymbol ().getValue ().toString () ) );
+            attributes.put ( "snmp.mib.smi.version", Variant.valueOf ( mib.getSmiVersion () ) );
+
+            populateMIBFolder ( mib.getRootSymbol (), mibBaseFolder );
+
+            mibFolder.add ( mib.getName (), mibBaseFolder, attributes.getMap () );
+        }
+    }
+
 }

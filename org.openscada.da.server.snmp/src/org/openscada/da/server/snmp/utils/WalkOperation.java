@@ -53,7 +53,6 @@ public abstract class WalkOperation
 
     protected abstract void handleOID ( OID oid );
 
-    @SuppressWarnings ( "unchecked" )
     private OID processResponse ( final ResponseEvent responseEvent )
     {
         if ( responseEvent == null )
@@ -84,7 +83,7 @@ public abstract class WalkOperation
             return null;
         }
 
-        final Vector<VariableBinding> vbs = response.getVariableBindings ();
+        final Vector<? extends VariableBinding> vbs = response.getVariableBindings ();
 
         OID nextOID = null;
         for ( final VariableBinding vb : vbs )

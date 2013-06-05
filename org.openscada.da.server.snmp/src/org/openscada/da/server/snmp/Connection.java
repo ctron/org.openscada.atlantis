@@ -48,7 +48,7 @@ public class Connection
 
     private Snmp snmp = null;
 
-    private TransportMapping transport = null;
+    private TransportMapping<?> transport = null;
 
     private Address address = null;
 

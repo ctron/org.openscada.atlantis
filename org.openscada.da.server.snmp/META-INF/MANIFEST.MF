@@ -23,33 +23,7 @@ Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.utils.str;version="1.0.0",
  org.slf4j;version="1.5.8"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.server.snmp;version="1.2.0";
-  uses:="org.openscada.da.snmp.configuration,
-   org.openscada.da.server.browser.common,
-   org.openscada.da.server.common.impl,
-   org.openscada.da.server.snmp.utils,
-   org.eclipse.emf.common.util,
-   org.openscada.da.server.common.item.factory,
-   org.openscada.da.server.common.factory,
-   org.snmp4j.smi,
-   org.openscada.utils.init,
-   org.snmp4j.event,
-   org.openscada.da.core.server,
-   org.openscada.da.server.common.chain,
-   org.openscada.core,
-   org.snmp4j",
- org.openscada.da.server.snmp.items;version="1.2.0";
-  uses:="org.openscada.da.server.common.chain,
-   org.openscada.da.server.common,
-   org.openscada.da.server.snmp,
-   org.snmp4j.smi",
- org.openscada.da.server.snmp.utils;version="1.2.0";
-  uses:="org.openscada.utils.collection,
-   org.openscada.da.snmp.configuration,
-   org.openscada.da.server.snmp.items,
-   org.openscada.da.server.snmp,
-   org.snmp4j.smi",
- org.openscada.da.snmp.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
+Export-Package: org.openscada.da.snmp.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
  org.openscada.da.snmp.configuration.impl;version="1.2.0";
   uses:="org.openscada.da.snmp.configuration,
    org.eclipse.emf.ecore.util,
@@ -82,5 +56,6 @@ Service-Component: OSGI-INF/hive.xml
 Bundle-ClassPath: lib/grammatica-bin-1.4.jar,
  lib/mibble-mibs-2.7.jar,
  lib/mibble-parser-2.7.jar,
- lib/SNMP4J.jar
+ lib/snmp4j-2.2.1.jar,
+ .
 
