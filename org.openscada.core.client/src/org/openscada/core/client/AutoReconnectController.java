@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,6 +23,7 @@ package org.openscada.core.client;
 
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
@@ -74,6 +77,8 @@ public class AutoReconnectController implements ConnectionStateListener
 
     private CallbackHandler connectCallbackHandler;
 
+    private ScheduledFuture<?> zombieJob;
+
     /**
      * Create a new reconnect controller for the provided connection using the
      * default reconnect delay
@@ -119,7 +124,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
         if ( !Boolean.getBoolean ( "org.openscada.core.client.AutoReconnectController.disableZombieMode" ) )
         {
-            this.executor.scheduleWithFixedDelay ( new Runnable () {
+            this.zombieJob = this.executor.scheduleWithFixedDelay ( new Runnable () {
 
                 @Override
                 public void run ()
@@ -193,6 +198,12 @@ public class AutoReconnectController implements ConnectionStateListener
                 }
                 this.executor = null;
             }
+        }
+
+        if ( this.zombieJob != null )
+        {
+            this.zombieJob.cancel ( false );
+            this.zombieJob = null;
         }
 
         if ( executor != null )
