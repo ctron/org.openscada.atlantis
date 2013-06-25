@@ -22,12 +22,16 @@
 package org.openscada.da.server.common.chain;
 
 import java.util.EnumSet;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.openscada.core.Variant;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
+import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.data.IODirection;
+import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.utils.concurrent.DirectExecutor;
 import org.openscada.utils.concurrent.InstantFuture;
@@ -43,6 +47,30 @@ public class MemoryItemChained extends DataItemInputOutputChained
     public MemoryItemChained ( final String id )
     {
         this ( new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) ) );
+    }
+
+    @Override
+    protected WriteAttributeResults handleUnhandledAttributes ( final WriteAttributeResults writeAttributeResults, final Map<String, Variant> attributes )
+    {
+        final Map<String, Variant> addAttributes = new HashMap<String, Variant> ();
+
+        testFlag ( attributes, addAttributes, "test.error", "test.error" );
+        testFlag ( attributes, addAttributes, "test.alarm", "test.alarm" );
+        testFlag ( attributes, addAttributes, "test.warning", "warning" );
+        testFlag ( attributes, addAttributes, "test.manual", "manual" );
+
+        updateData ( null, addAttributes, AttributeMode.UPDATE );
+
+        return super.handleUnhandledAttributes ( writeAttributeResults, attributes );
+    }
+
+    private void testFlag ( final Map<String, Variant> attributes, final Map<String, Variant> addAttributes, final String writeAttribute, final String readAttribute )
+    {
+        final Variant attributeRequest = attributes.remove ( writeAttribute );
+        if ( attributeRequest != null )
+        {
+            addAttributes.put ( readAttribute, attributeRequest );
+        }
     }
 
     @Override
