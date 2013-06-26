@@ -95,16 +95,16 @@ public class DataItem extends Observable
      * 
      * @param itemId
      *            the id of the item to register
-     * @param connection
+     * @param itemManager
      *            the item manager to which the item will register
      */
-    public DataItem ( final String itemId, final ItemManager connection )
+    public DataItem ( final String itemId, final ItemManager itemManager )
     {
         this ( itemId );
 
-        if ( connection != null )
+        if ( itemManager != null )
         {
-            register ( connection );
+            register ( itemManager );
         }
     }
 
