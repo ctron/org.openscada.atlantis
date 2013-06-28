@@ -25,10 +25,10 @@ import org.openscada.utils.init.Initializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ModelIntializerImpl implements Initializer
+public class ModelInitializerImpl implements Initializer
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( ModelIntializerImpl.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ModelInitializerImpl.class );
 
     @Override
     public void initialize ( final Object type )
