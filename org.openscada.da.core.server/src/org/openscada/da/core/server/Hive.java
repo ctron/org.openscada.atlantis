@@ -80,6 +80,8 @@ public interface Hive extends Service<Session>
      * @param operationParameters
      *            additional parameters to the write request, can be
      *            <code>null</code>
+     * @param callbackHandler
+     *            can be null
      * @return An operation ID which can be used to cancel or run the operation
      * @throws InvalidSessionException
      *             In the case the session is not a valid session
