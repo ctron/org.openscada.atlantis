@@ -137,7 +137,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
             try
             {
                 final ResponseMessage response = future.get ();
-                if ( response instanceof WriteAttributeResults )
+                if ( response instanceof WriteAttributesResult )
                 {
                     if ( ( (WriteAttributesResult)response ).getErrorInformation () == null )
                     {
