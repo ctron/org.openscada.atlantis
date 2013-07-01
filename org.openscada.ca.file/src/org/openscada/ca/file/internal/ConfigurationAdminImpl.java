@@ -143,7 +143,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         final String oscarUrl = System.getProperty ( "org.openscada.ca.file.provisionOscarUrl" );
         if ( oscarUrl != null )
         {
-            logger.info ( "Provisioning CA from: {}", oscarUrl );
+            logger.info ( "Provisioning CA from: oscar {}", oscarUrl );
 
             final InputStream stream = new URL ( oscarUrl ).openStream ();
             try
@@ -160,6 +160,9 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         final String jsonUrl = System.getProperty ( "org.openscada.ca.file.provisionJsonUrl" );
         if ( jsonUrl != null )
         {
+
+            logger.info ( "Provisioning CA from: json {}", jsonUrl );
+
             final InputStream stream = new URL ( jsonUrl ).openStream ();
             try
             {
