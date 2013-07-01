@@ -75,7 +75,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
 
     private final BundleContext context;
 
-    private final File root;
+    private File root;
 
     private final Interner<String> stringInterner;
 
@@ -84,7 +84,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         super ( context );
         this.stringInterner = stringInterner;
         this.context = context;
-        this.root = initRoot ();
+        initRoot ();
     }
 
     protected String intern ( final String string )
@@ -111,31 +111,28 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         return StringReplacer.replace ( System.getProperty ( "org.openscada.ca.file.root", null ), System.getProperties () );
     }
 
-    private File initRoot () throws Exception
+    private void initRoot () throws Exception
     {
-        final File file = getRootFile ();
-        if ( file != null )
+        this.root = getRootFile ();
+        if ( this.root != null )
         {
-            if ( !file.exists () )
+            logger.info ( "Checking CA root at: {}", this.root.getAbsolutePath () );
+            if ( !this.root.exists () )
             {
-                logger.info ( "Storage root does not exist: " + file.getName () );
-                file.mkdir ();
+                logger.warn ( "Storage root does not exist: {}, Try to provision...", this.root.getName () );
+                this.root.mkdir ();
                 provisionData ();
             }
-            if ( file.isDirectory () )
+            if ( !this.root.isDirectory () )
             {
-                return file;
-            }
-            else
-            {
-                logger.warn ( "File exists but is not a directory: " + file.getName () );
+                logger.warn ( "File exists but is not a directory: {}", this.root.getName () );
+                this.root = null;
             }
         }
         else
         {
             logger.warn ( "No file system support" );
         }
-        return null;
     }
 
     protected void provisionData () throws Exception
