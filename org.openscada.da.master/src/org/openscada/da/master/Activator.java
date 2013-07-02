@@ -57,7 +57,7 @@ public class Activator implements BundleActivator
         properties = new Hashtable<String, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "master.item" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A configuration factory for master items" );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         this.masterHandle = context.registerService ( ConfigurationFactory.class, this.masterFactory, properties );
     }
 

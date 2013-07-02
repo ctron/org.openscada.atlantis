@@ -85,7 +85,7 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<MasterIte
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, configurationId );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "Master Data Item" );
 
         this.dataSourcePool.addService ( configurationId, service, properties );

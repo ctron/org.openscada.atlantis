@@ -50,7 +50,7 @@ public class ProxyItemFactory extends AbstractServiceConfigurationFactory<ProxyH
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "A proxy to historical items" );
         properties.put ( Constants.SERVICE_PID, configurationId );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
 
         final ServiceRegistration<HistoricalItem> handle = context.registerService ( HistoricalItem.class, service, properties );
         return new Entry<ProxyHistoricalItem> ( configurationId, service, handle );

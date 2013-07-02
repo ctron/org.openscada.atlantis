@@ -76,14 +76,14 @@ public class Activator implements BundleActivator
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, context.getBundle ().getSymbolicName () + ".all" );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A monitor query containing all monitor services" );
 
         this.handle = this.context.registerService ( MonitorQuery.class, this.allQuery, properties );
 
         // register factory
         this.factory = new QueryServiceFactory ( this.executor, context, this.poolTracker );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A monitor query" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, QueryServiceFactory.FACTORY_ID );
 

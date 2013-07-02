@@ -51,7 +51,7 @@ public class HSDBItemController
 
         final Dictionary<String, Object> serviceProperties = new Hashtable<String, Object> ();
         serviceProperties.put ( Constants.SERVICE_PID, id );
-        serviceProperties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        serviceProperties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         this.handle = context.registerService ( HistoricalItem.class, this.item, serviceProperties );
     }
 

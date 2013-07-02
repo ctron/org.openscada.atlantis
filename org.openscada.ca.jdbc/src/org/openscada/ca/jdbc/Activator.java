@@ -126,7 +126,7 @@ public class Activator implements BundleActivator
         this.configAdmin = configAdmin;
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ( 2 );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A JDBC based configuration administrator" );
 
         this.serviceHandle = context.registerService ( new String[] { ConfigurationAdministrator.class.getName (), FreezableConfigurationAdministrator.class.getName () }, this.configAdmin, properties );

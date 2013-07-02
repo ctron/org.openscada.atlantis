@@ -86,7 +86,7 @@ public class Activator implements BundleActivator
             final CommonSumHandlerFactoryImpl factory = new CommonSumHandlerFactoryImpl ( context, this.poolTracker );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "An attribute sum handler" );
-            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+            properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "da.master.handler.sum" );
             context.registerService ( ConfigurationFactory.class, factory, properties );
             this.factories.add ( factory );
@@ -95,7 +95,7 @@ public class Activator implements BundleActivator
             final ScaleHandlerFactoryImpl factory = new ScaleHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 500 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local scaling master handler" );
-            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+            properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ScaleHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class, factory, properties );
             this.factories.add ( factory );
@@ -105,7 +105,7 @@ public class Activator implements BundleActivator
             final NegateHandlerFactoryImpl factory = new NegateHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 501 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local negate master handler" );
-            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+            properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, NegateHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class, factory, properties );
             this.factories.add ( factory );
@@ -115,7 +115,7 @@ public class Activator implements BundleActivator
             final ManualHandlerFactoryImpl factory = new ManualHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, 1000 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A local manual override master handler" );
-            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+            properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, ManualHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class, factory, properties );
             this.factories.add ( factory );
@@ -125,7 +125,7 @@ public class Activator implements BundleActivator
             final BlockHandlerFactoryImpl factory = new BlockHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, Integer.MIN_VALUE );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A blocking operation handler" );
-            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+            properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, BlockHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class, factory, properties );
             this.factories.add ( factory );
@@ -135,7 +135,7 @@ public class Activator implements BundleActivator
             final RoundHandlerFactoryImpl factory = new RoundHandlerFactoryImpl ( context, this.poolTracker, this.caTracker, 502 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A rounding operation handler" );
-            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+            properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, RoundHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class, factory, properties );
             this.factories.add ( factory );
@@ -145,7 +145,7 @@ public class Activator implements BundleActivator
             final MarkerHandlerFactoryImpl factory = new MarkerHandlerFactoryImpl ( context, this.eventProcessor, this.poolTracker, this.caTracker, 100 );
             final Dictionary<String, String> properties = new Hashtable<String, String> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "A handler which allows to injects a marker" );
-            properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+            properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, MarkerHandlerFactoryImpl.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class, factory, properties );
             this.factories.add ( factory );

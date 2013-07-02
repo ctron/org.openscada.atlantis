@@ -53,7 +53,7 @@ public class Activator implements BundleActivator
 
         final Hashtable<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "openSCADA Proxy Event Query" );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, ProxyEventQueryFactory.FACTORY_ID );
         this.handle = context.registerService ( ConfigurationFactory.class, this.factory, properties );
     }

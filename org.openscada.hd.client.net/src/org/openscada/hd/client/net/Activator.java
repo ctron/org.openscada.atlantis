@@ -46,7 +46,7 @@ public class Activator implements BundleActivator
         properties.put ( org.openscada.core.client.DriverFactory.INTERFACE_NAME, "hd" );
         properties.put ( org.openscada.core.client.DriverFactory.DRIVER_NAME, "net" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "openSCADA HD NET Adapter" );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         this.handle = context.registerService ( org.openscada.core.client.DriverFactory.class, this.factory, properties );
     }
 

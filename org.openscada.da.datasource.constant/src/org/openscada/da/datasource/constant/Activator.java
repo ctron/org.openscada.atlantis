@@ -54,7 +54,7 @@ public class Activator implements BundleActivator
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ( 3 );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A constant DA data source" );
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, context.getBundle ().getSymbolicName () );
 
         this.registration = context.registerService ( ConfigurationFactory.class, this.factory, properties );

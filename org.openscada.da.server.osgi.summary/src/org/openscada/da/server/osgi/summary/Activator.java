@@ -66,7 +66,7 @@ public class Activator implements BundleActivator
         this.factory = new FactoryImpl ( this.executor, context, this.tracker, this.pool );
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A data source status summarizer" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, FactoryImpl.FACTORY_ID );
         this.factoryHandle = context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );

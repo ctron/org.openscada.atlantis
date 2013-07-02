@@ -60,7 +60,7 @@ public class Activator implements BundleActivator
         this.service.start ();
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-        properties.put ( Constants.SERVICE_VENDOR, "TH4 SYSTEMS GmbH" );
+        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "An openSCADA HD service implementation" );
         this.serviceRegistration = context.registerService ( Service.class, this.service, properties );
     }
