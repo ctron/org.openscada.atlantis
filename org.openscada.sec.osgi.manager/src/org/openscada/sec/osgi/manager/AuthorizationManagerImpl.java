@@ -76,7 +76,7 @@ public class AuthorizationManagerImpl implements AuthorizationManager, Configura
 
     public void activate ( final BundleContext context )
     {
-        this.executor = new ExportedExecutorService ( "org.openscada.sec.osgi.manager", 1, 1, 1, TimeUnit.MINUTES );
+        this.executor = new ExportedExecutorService ( AuthorizationManagerImpl.class.getName (), 1, 1, 1, TimeUnit.MINUTES );
         this.tracker = new ServiceTracker<AuthorizationService, AuthorizationService> ( context, AuthorizationService.class, new ServiceTrackerCustomizerImplementation ( this, context ) );
 
         this.tracker.open ();
