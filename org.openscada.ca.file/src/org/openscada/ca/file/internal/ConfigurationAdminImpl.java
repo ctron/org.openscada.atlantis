@@ -96,7 +96,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
     {
         final String rootDir = getRootFileName ();
 
-        if ( rootDir == null || rootDir.length () == 0 )
+        if ( rootDir == null || rootDir.isEmpty () )
         {
             return this.context.getDataFile ( STORE );
         }
@@ -119,13 +119,13 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
             logger.info ( "Checking CA root at: {}", this.root.getAbsolutePath () );
             if ( !this.root.exists () )
             {
-                logger.warn ( "Storage root does not exist: {}, Try to provision...", this.root.getName () );
+                logger.warn ( "Storage root does not exist: {}, Try to provision...", this.root );
                 this.root.mkdir ();
                 provisionData ();
             }
             if ( !this.root.isDirectory () )
             {
-                logger.warn ( "File exists but is not a directory: {}", this.root.getName () );
+                logger.warn ( "File exists but is not a directory: {}", this.root );
                 this.root = null;
             }
         }
@@ -157,7 +157,6 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
         final String jsonUrl = System.getProperty ( "org.openscada.ca.file.provisionJsonUrl" );
         if ( jsonUrl != null )
         {
-
             logger.info ( "Provisioning CA from: json {}", jsonUrl );
 
             final InputStream stream = new URL ( jsonUrl ).openStream ();
