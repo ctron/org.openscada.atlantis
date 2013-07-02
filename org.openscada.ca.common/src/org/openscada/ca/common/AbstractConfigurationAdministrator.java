@@ -434,7 +434,7 @@ public abstract class AbstractConfigurationAdministrator implements FreezableCon
      */
     protected void applyConfiguration ( final UserInformation userInformation, final ConfigurationFuture future, final ConfigurationFactory factoryService, final FactoryImpl factory, final ConfigurationImpl configuration )
     {
-        logger.info ( "Apply configuration: {}/{} -> {}", new Object[] { factory.getId (), configuration.getId (), configuration.getData () } );
+        logger.debug ( "Apply configuration: {}/{} -> {}", new Object[] { factory.getId (), configuration.getId (), configuration.getData () } );
 
         try
         {
@@ -455,7 +455,7 @@ public abstract class AbstractConfigurationAdministrator implements FreezableCon
                 setConfigurationStatus ( configuration, ConfigurationState.APPLIED, null );
             }
 
-            logger.info ( "Applied configuration: {}/{} -> {}", new Object[] { factory.getId (), configuration.getId (), configuration.getData () } );
+            logger.debug ( "Applied configuration: {}/{} -> {}", new Object[] { factory.getId (), configuration.getId (), configuration.getData () } );
         }
         catch ( final Throwable e )
         {
