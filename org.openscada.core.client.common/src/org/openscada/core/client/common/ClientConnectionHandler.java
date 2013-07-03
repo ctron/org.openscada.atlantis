@@ -26,7 +26,7 @@ import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class ClientConnectionHandler implements IoHandler
+public class ClientConnectionHandler implements IoHandler
 {
     private final static Logger logger = LoggerFactory.getLogger ( ClientConnectionHandler.class );
 
@@ -71,6 +71,11 @@ public abstract class ClientConnectionHandler implements IoHandler
     public void sessionOpened ( final IoSession session ) throws Exception
     {
         this.connection.performOpened ( session );
+    }
+
+    @Override
+    public void sessionCreated ( final IoSession session ) throws Exception
+    {
     }
 
 }
