@@ -52,8 +52,20 @@ public interface Connection extends org.openscada.core.client.Connection
      */
     public abstract void browse ( Location location, BrowseOperationCallback callback );
 
+    /**
+     * @deprecated use
+     *             {@link #startWrite(String, Variant, OperationParameters, CallbackHandler)}
+     *             instead
+     */
+    @Deprecated
     public abstract void write ( String itemId, Variant value, OperationParameters operationParameters, WriteOperationCallback callback );
 
+    /**
+     * @deprecated use
+     *             {@link #startWriteAttributes(String, Map, OperationParameters, CallbackHandler)}
+     *             instead
+     */
+    @Deprecated
     public abstract void writeAttributes ( String itemId, Map<String, Variant> attributes, OperationParameters operationParameters, WriteAttributeOperationCallback callback );
 
     public abstract NotifyFuture<WriteResult> startWrite ( String itemId, Variant value, OperationParameters operationParameters, CallbackHandler callbackHandler );

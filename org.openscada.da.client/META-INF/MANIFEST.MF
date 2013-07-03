@@ -11,12 +11,14 @@ Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.utils.lang;version="1.0.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.client;version="1.1.0";
+Export-Package: org.openscada.da.client;version="1.2.0";
   uses:="org.openscada.core.client,
    org.openscada.core.data,
+   org.openscada.utils.concurrent,
    org.openscada.core,
-   org.openscada.da.core"
-Bundle-Version: 1.1.0.qualifier
+   org.openscada.da.core,
+   org.openscada.sec.callback"
+Bundle-Version: 1.2.0.qualifier
 Bundle-Name: openSCADA DA Client
 Bundle-ManifestVersion: 2
 Bundle-Vendor: openSCADA.org
