@@ -71,11 +71,11 @@ public class OpenCallbacksManager
 
     public NotifyFuture<Callback[]> processCallbacks ( final CallbackHandler callbackHandler, final Callback[] callbacks, final Long timeout )
     {
-        logger.debug ( "Process callbacks: {}", callbacks );
+        logger.debug ( "Process callbacks: {}", (Object)callbacks );
 
         final NotifyFuture<Callback[]> future = Callbacks.callback ( callbackHandler, callbacks );
 
-        logger.debug ( "Future opened: {}", callbacks );
+        logger.debug ( "Future opened: {}", (Object)callbacks );
 
         if ( timeout != null && timeout > 0 && !future.isDone () ) // check also for isDone since it might be an instant future
         {
