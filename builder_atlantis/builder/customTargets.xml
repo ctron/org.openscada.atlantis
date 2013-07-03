@@ -105,6 +105,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.core.subscription"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.core.client"/>
+  	<openscada.builder.copyPlugin id="org.openscada.core.client.common"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.server"/>
   	<openscada.builder.copyPlugin id="org.openscada.core.server.common"/>
   	
