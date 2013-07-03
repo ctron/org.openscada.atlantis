@@ -92,6 +92,10 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
         {
             processWelcome ( (Welcome)message );
         }
+        else
+        {
+            this.strategy.handleMessage ( message );
+        }
     }
 
     private void processWelcome ( final Welcome message )
