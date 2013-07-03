@@ -170,6 +170,8 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.ngp"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter.ngp"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.da.client.sfp"/>
+  	
   	<!-- OpenSCADA HD -->
   	
   	<openscada.builder.copyFeature id="org.openscada.hd"/>

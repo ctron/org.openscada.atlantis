@@ -172,6 +172,7 @@
 		<module>../org.openscada.da.client.connection.service</module>
 		<module>../org.openscada.da.client.net</module>
 		<module>../org.openscada.da.client.ngp</module>
+		<module>../org.openscada.da.client.sfp</module>
 		<module>../org.openscada.da.common.ngp</module>
 		<module>../org.openscada.da.component.script</module>
 		<module>../org.openscada.da.connection.provider</module>
