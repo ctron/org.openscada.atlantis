@@ -695,4 +695,9 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
             } );
         }
     }
+
+    protected IoSession getSession ()
+    {
+        return this.session;
+    }
 }
