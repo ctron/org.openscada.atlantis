@@ -22,7 +22,9 @@ package org.openscada.da.client.sfp;
 
 import java.nio.charset.Charset;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.core.ConnectionInformation;
@@ -50,9 +52,25 @@ import org.openscada.utils.concurrent.NotifyFuture;
 public class ConnectionImpl extends ClientBaseConnection implements Connection
 {
 
+    private ReadAllStrategy strategy;
+
+    private long pollTime;
+
+    private final Set<String> subscribedItems = new HashSet<> ();
+
     public ConnectionImpl ( final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( new HandlerFactory (), new FilterChainBuilder (), connectionInformation );
+
+        final String pollTime = connectionInformation.getProperties ().get ( "pollTime" );
+        if ( pollTime != null )
+        {
+            this.pollTime = Long.parseLong ( pollTime );
+        }
+        else
+        {
+            this.pollTime = 1_000L;
+        }
     }
 
     @Override
@@ -68,7 +86,7 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     }
 
     @Override
-    protected void handleMessage ( final Object message )
+    protected synchronized void handleMessage ( final Object message )
     {
         if ( message instanceof Welcome )
         {
@@ -85,6 +103,35 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
             Sessions.setCharset ( getSession (), charset );
         }
         switchState ( ConnectionState.BOUND, null );
+        this.strategy = new ReadAllStrategy ( new ConnectionHandler () {
+
+            @Override
+            public void sendMessage ( final Object message )
+            {
+                ConnectionImpl.this.sendMessage ( message );
+            }
+
+            @Override
+            public ScheduledExecutorService getExecutor ()
+            {
+                return ConnectionImpl.this.getExecutor ();
+            };
+        }, this.pollTime );
+        this.strategy.subscribeAll ( this.subscribedItems );
+    }
+
+    @Override
+    protected void onConnectionClosed ()
+    {
+        synchronized ( this )
+        {
+            if ( this.strategy != null )
+            {
+                this.strategy.dispose ();
+                this.strategy = null;
+            }
+        }
+        super.onConnectionClosed ();
     }
 
     @Override
@@ -140,24 +187,33 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     }
 
     @Override
-    public void subscribeItem ( final String itemId ) throws NoConnectionException, OperationException
+    public synchronized void subscribeItem ( final String itemId ) throws NoConnectionException, OperationException
     {
-        // TODO Auto-generated method stub
-
+        if ( this.subscribedItems.add ( itemId ) )
+        {
+            if ( this.strategy != null )
+            {
+                this.strategy.subscribeItem ( itemId );
+            }
+        }
     }
 
     @Override
-    public void unsubscribeItem ( final String itemId ) throws NoConnectionException, OperationException
+    public synchronized void unsubscribeItem ( final String itemId ) throws NoConnectionException, OperationException
     {
-        // TODO Auto-generated method stub
-
+        if ( this.subscribedItems.remove ( itemId ) )
+        {
+            if ( this.strategy != null )
+            {
+                this.strategy.subscribeItem ( itemId );
+            }
+        }
     }
 
     @Override
     public ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
     {
-        // TODO Auto-generated method stub
-        return null;
+        return this.strategy.setItemUpateListener ( itemId, listener );
     }
 
     @Override
