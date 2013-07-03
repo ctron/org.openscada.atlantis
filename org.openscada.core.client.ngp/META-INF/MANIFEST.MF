@@ -5,7 +5,17 @@ Bundle-SymbolicName: org.openscada.core.client.ngp
 Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.core.client.ngp;version="1.2.0"
+Export-Package: org.openscada.core.client.ngp;version="1.2.0";
+  uses:="org.openscada.core.client.common,
+   org.openscada.core.data,
+   org.openscada.utils.concurrent,
+   org.openscada.core.info,
+   org.slf4j,
+   org.openscada.sec.callback,
+   org.apache.mina.core.session,
+   org.apache.mina.core.service,
+   org.openscada.protocol.ngp.common,
+   org.openscada.core"
 Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
  org.apache.mina.core.future;version="2.0.0",
  org.apache.mina.core.service;version="2.0.0",
