@@ -263,25 +263,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     public void write ( final String itemId, final Variant value, final OperationParameters operationParameters, final WriteOperationCallback callback )
     {
         final NotifyFuture<WriteResult> future = startWrite ( itemId, value, operationParameters, (CallbackHandler)null );
-        if ( callback != null )
-        {
-            future.addListener ( new FutureListener<WriteResult> () {
-
-                @Override
-                public void complete ( final Future<WriteResult> future )
-                {
-                    try
-                    {
-                        future.get ();
-                        callback.complete ();
-                    }
-                    catch ( final Exception e )
-                    {
-                        callback.error ( e );
-                    }
-                }
-            } );
-        }
+        org.openscada.da.client.Helper.transformWrite ( future, callback );
     }
 
     @Override
@@ -296,24 +278,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
     public void writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final WriteAttributeOperationCallback callback )
     {
         final NotifyFuture<WriteAttributeResults> future = startWriteAttributes ( itemId, attributes, operationParameters, (CallbackHandler)null );
-        if ( callback != null )
-        {
-            future.addListener ( new FutureListener<WriteAttributeResults> () {
-
-                @Override
-                public void complete ( final Future<WriteAttributeResults> future )
-                {
-                    try
-                    {
-                        callback.complete ( future.get () );
-                    }
-                    catch ( final Exception e )
-                    {
-                        callback.error ( e );
-                    }
-                }
-            } );
-        }
+        org.openscada.da.client.Helper.transformWriteAttributes ( callback, future );
     }
 
     @Override
