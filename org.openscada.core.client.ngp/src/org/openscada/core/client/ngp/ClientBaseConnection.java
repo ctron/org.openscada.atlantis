@@ -40,7 +40,7 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.PrivilegeListener;
-import org.openscada.protocol.ngp.common.BaseConnection;
+import org.openscada.core.client.common.BaseConnection;
 import org.openscada.protocol.ngp.common.FilterChainBuilder;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.protocol.ngp.common.StatisticsFilter;
@@ -82,7 +82,7 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private final StateNotifier stateNotifier;
 
-    private final ClientConnectionHandler handler;
+    private final ClientProtocolConnectionHandler handler;
 
     private final FilterChainBuilder chainBuilder;
 
@@ -104,7 +104,7 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
         this.stateNotifier = new StateNotifier ( this.executor, this );
 
-        this.handler = new ClientConnectionHandler ( this, protocolConfigurationFactory.createConfiguration ( true ) );
+        this.handler = new ClientProtocolConnectionHandler ( this, protocolConfigurationFactory.createConfiguration ( true ) );
 
         this.connector = new NioSocketConnector ();
 

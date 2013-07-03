@@ -1,6 +1,7 @@
 /*
  * This file is part of the openSCADA project
- * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * 
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,23 +23,18 @@ package org.openscada.core.client.ngp;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ClientConnectionHandler implements IoHandler
+public abstract class ClientConnectionHandler implements IoHandler
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( ClientConnectionHandler.class );
 
-    private final ClientBaseConnection connection;
+    protected final ClientBaseConnection connection;
 
-    private final ProtocolConfiguration protocolConfiguration;
-
-    public ClientConnectionHandler ( final ClientBaseConnection connection, final ProtocolConfiguration protocolConfiguration )
+    public ClientConnectionHandler ( final ClientBaseConnection connection )
     {
         this.connection = connection;
-        this.protocolConfiguration = protocolConfiguration;
     }
 
     @Override
@@ -64,12 +60,6 @@ public class ClientConnectionHandler implements IoHandler
     public void sessionClosed ( final IoSession session ) throws Exception
     {
         this.connection.performClosed ( session, null );
-    }
-
-    @Override
-    public void sessionCreated ( final IoSession session ) throws Exception
-    {
-        this.protocolConfiguration.assign ( session );
     }
 
     @Override
