@@ -1,13 +1,10 @@
 Manifest-Version: 1.0
 Import-Package: org.openscada.core;version="1.0.0",
- org.openscada.core.info;version="1.0.0",
  org.openscada.sec.callback;version="1.1.0",
  org.openscada.utils.concurrent;version="1.0.0",
- org.openscada.utils.concurrent.task;version="1.0.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.core.client;version="1.1.0";uses:="org.openscada.core,org.openscada.sec.callback",
- org.openscada.core.client.common;version="1.2.0";uses:="org.openscada.core"
+Export-Package: org.openscada.core.client;version="1.1.0"
 Bundle-Version: 1.2.0.qualifier
 Bundle-Name: openSCADA Core Client
 Bundle-ManifestVersion: 2

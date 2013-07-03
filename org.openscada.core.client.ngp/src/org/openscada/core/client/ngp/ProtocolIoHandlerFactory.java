@@ -1,7 +1,6 @@
 /*
  * This file is part of the openSCADA project
  * 
- * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
@@ -22,29 +21,24 @@
 package org.openscada.core.client.ngp;
 
 import org.apache.mina.core.service.IoHandler;
-import org.apache.mina.core.session.IoSession;
 import org.openscada.core.client.common.ClientBaseConnection;
-import org.openscada.core.client.common.ClientConnectionHandler;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.openscada.core.client.common.IoHandlerFactory;
+import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 
-public class ClientProtocolConnectionHandler extends ClientConnectionHandler implements IoHandler
+public class ProtocolIoHandlerFactory implements IoHandlerFactory
 {
-    final static Logger logger = LoggerFactory.getLogger ( ClientProtocolConnectionHandler.class );
 
-    private final ProtocolConfiguration protocolConfiguration;
+    private final ProtocolConfigurationFactory protocolConfigurationFactory;
 
-    public ClientProtocolConnectionHandler ( final ClientBaseConnection connection, final ProtocolConfiguration protocolConfiguration )
+    public ProtocolIoHandlerFactory ( final ProtocolConfigurationFactory protocolConfigurationFactory )
     {
-        super ( connection );
-        this.protocolConfiguration = protocolConfiguration;
+        this.protocolConfigurationFactory = protocolConfigurationFactory;
     }
 
     @Override
-    public void sessionCreated ( final IoSession session ) throws Exception
+    public IoHandler create ( final ClientBaseConnection clientBaseConnection ) throws Exception
     {
-        this.protocolConfiguration.assign ( session );
+        return new ClientProtocolConnectionHandler ( clientBaseConnection, this.protocolConfigurationFactory.createConfiguration ( true ) );
     }
 
 }

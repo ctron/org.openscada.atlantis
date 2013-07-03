@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -22,8 +24,10 @@ package org.openscada.core.client.ngp.test;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.openscada.core.ConnectionInformation;
-import org.openscada.core.client.ngp.ClientBaseConnection;
+import org.openscada.core.client.common.ClientBaseConnection;
+import org.openscada.core.client.ngp.ProtocolIoHandlerFactory;
 import org.openscada.protocol.ngp.common.DefaultProtocolConfigurationFactory;
+import org.openscada.protocol.ngp.common.FilterChainBuilder;
 import org.openscada.protocol.ngp.common.ProtocolConfiguration;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.slf4j.Logger;
@@ -52,7 +56,7 @@ public class ConnectionTest1 implements IApplication
         };
 
         logger.info ( "Start - Begin" );
-        this.connection = new ClientBaseConnection ( protocolConfigurationFactory, connectionInformation ) {
+        this.connection = new ClientBaseConnection ( new ProtocolIoHandlerFactory ( protocolConfigurationFactory ), new FilterChainBuilder ( true ), connectionInformation ) {
             @Override
             protected void handleMessage ( final Object message )
             {

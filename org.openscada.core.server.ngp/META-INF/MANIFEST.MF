@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA NextGenerationProtocol Core Server
 Bundle-SymbolicName: org.openscada.core.server.ngp
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.core.server.ngp;version="1.1.0"
@@ -20,6 +20,7 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0.7",
  org.openscada.core.server;version="1.0.0",
  org.openscada.core.server.common;version="1.1.0",
  org.openscada.core.server.common.stats;version="1.0.0",
+ org.openscada.protocol.common;version="1.2.0",
  org.openscada.protocol.ngp.common;version="1.0.0",
  org.openscada.protocol.ngp.common.mc;version="1.0.0",
  org.openscada.protocol.ngp.common.mc.message;version="1.0.0",

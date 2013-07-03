@@ -31,6 +31,7 @@ import java.util.concurrent.Future;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
+import org.openscada.core.client.common.ClientBaseConnection;
 import org.openscada.core.data.CallbackRequest;
 import org.openscada.core.data.CallbackResponse;
 import org.openscada.core.data.ErrorInformation;
@@ -47,6 +48,7 @@ import org.openscada.core.data.message.SessionRejected;
 import org.openscada.core.ngp.Features;
 import org.openscada.core.ngp.MessageSender;
 import org.openscada.core.ngp.ResponseManager;
+import org.openscada.protocol.ngp.common.FilterChainBuilder;
 import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.sec.callback.Callback;
 import org.openscada.sec.callback.CallbackFactory;
@@ -82,7 +84,7 @@ public class ConnectionBaseImpl extends ClientBaseConnection
 
     public ConnectionBaseImpl ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
     {
-        super ( protocolConfigurationFactory, connectionInformation );
+        super ( new ProtocolIoHandlerFactory ( protocolConfigurationFactory ), new FilterChainBuilder ( true ), connectionInformation );
         this.responseManager = new ResponseManager ( this.statistics, this.messageSender, this.executor );
         this.callbackHandlerManager = new CallbackHandlerManager ( this.statistics );
         this.callbackManager = new OpenCallbacksManager ( this, this.statistics, this.executor );

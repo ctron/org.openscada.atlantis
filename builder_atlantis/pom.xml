@@ -154,6 +154,7 @@
 		<module>../org.openscada.ca.server.osgi</module>
 		<module>../org.openscada.ca.servlet</module>
 		<module>../org.openscada.core.client</module>
+		<module>../org.openscada.core.client.common</module>
 		<module>../org.openscada.core.client.connection.service</module>
 		<module>../org.openscada.core.client.net</module>
 		<module>../org.openscada.core.client.ngp</module>

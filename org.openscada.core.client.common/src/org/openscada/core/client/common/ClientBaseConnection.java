@@ -19,7 +19,7 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.core.client.ngp;
+package org.openscada.core.client.common;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -31,6 +31,7 @@ import javax.net.ssl.SSLSession;
 
 import org.apache.mina.core.future.ConnectFuture;
 import org.apache.mina.core.future.IoFutureListener;
+import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
@@ -40,10 +41,8 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.PrivilegeListener;
-import org.openscada.core.client.common.BaseConnection;
-import org.openscada.protocol.ngp.common.FilterChainBuilder;
-import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
-import org.openscada.protocol.ngp.common.StatisticsFilter;
+import org.openscada.protocol.common.IoLoggerFilterChainBuilder;
+import org.openscada.protocol.common.StatisticsFilter;
 import org.openscada.sec.callback.CallbackFactory;
 import org.openscada.sec.callback.CallbackHandler;
 import org.slf4j.Logger;
@@ -82,9 +81,9 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private final StateNotifier stateNotifier;
 
-    private final ClientProtocolConnectionHandler handler;
+    private final IoHandler handler;
 
-    private final FilterChainBuilder chainBuilder;
+    private final IoLoggerFilterChainBuilder chainBuilder;
 
     private final Set<PrivilegeListener> privilegeListeners = new LinkedHashSet<PrivilegeListener> ();
 
@@ -98,17 +97,17 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
 
     private volatile boolean disposed;
 
-    public ClientBaseConnection ( final ProtocolConfigurationFactory protocolConfigurationFactory, final ConnectionInformation connectionInformation ) throws Exception
+    public ClientBaseConnection ( final IoHandlerFactory handlerFactory, final IoLoggerFilterChainBuilder chainBuilder, final ConnectionInformation connectionInformation ) throws Exception
     {
         super ( connectionInformation );
 
         this.stateNotifier = new StateNotifier ( this.executor, this );
 
-        this.handler = new ClientProtocolConnectionHandler ( this, protocolConfigurationFactory.createConfiguration ( true ) );
+        this.handler = handlerFactory.create ( this );
 
         this.connector = new NioSocketConnector ();
 
-        this.chainBuilder = new FilterChainBuilder ( true );
+        this.chainBuilder = chainBuilder;
         this.chainBuilder.setLoggerName ( ClientBaseConnection.class.getName () + ".protocol" );
 
         this.connector.setFilterChainBuilder ( this.chainBuilder );

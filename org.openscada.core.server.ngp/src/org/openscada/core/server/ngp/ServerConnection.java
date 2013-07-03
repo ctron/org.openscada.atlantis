@@ -31,7 +31,7 @@ import org.apache.mina.filter.ssl.SslFilter;
 import org.openscada.core.info.StatisticEntry;
 import org.openscada.core.info.StatisticsImpl;
 import org.openscada.core.server.common.stats.ManagedConnection;
-import org.openscada.protocol.ngp.common.StatisticsFilter;
+import org.openscada.protocol.common.StatisticsFilter;
 import org.openscada.protocol.ngp.common.mc.MessageChannelFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
