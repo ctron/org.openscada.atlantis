@@ -22,15 +22,32 @@ package org.openscada.da.client.sfp;
 
 import java.nio.charset.Charset;
 import java.util.EnumSet;
+import java.util.Map;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.core.ConnectionInformation;
+import org.openscada.core.OperationException;
+import org.openscada.core.Variant;
 import org.openscada.core.client.ConnectionState;
+import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.common.ClientBaseConnection;
+import org.openscada.core.data.OperationParameters;
+import org.openscada.da.client.BrowseOperationCallback;
+import org.openscada.da.client.Connection;
+import org.openscada.da.client.FolderListener;
+import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.client.WriteAttributeOperationCallback;
+import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.core.Location;
+import org.openscada.da.core.WriteAttributeResults;
+import org.openscada.da.core.WriteResult;
 import org.openscada.protocol.sfp.Sessions;
 import org.openscada.protocol.sfp.messages.Hello;
 import org.openscada.protocol.sfp.messages.Welcome;
+import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.NotifyFuture;
 
-public class ConnectionImpl extends ClientBaseConnection
+public class ConnectionImpl extends ClientBaseConnection implements Connection
 {
 
     public ConnectionImpl ( final ConnectionInformation connectionInformation ) throws Exception
@@ -68,6 +85,85 @@ public class ConnectionImpl extends ClientBaseConnection
             Sessions.setCharset ( getSession (), charset );
         }
         switchState ( ConnectionState.BOUND, null );
+    }
+
+    @Override
+    public void browse ( final Location location, final BrowseOperationCallback callback )
+    {
+    }
+
+    @Override
+    public void write ( final String itemId, final Variant value, final OperationParameters operationParameters, final WriteOperationCallback callback )
+    {
+        final NotifyFuture<WriteResult> future = startWrite ( itemId, value, operationParameters, (CallbackHandler)null );
+        org.openscada.da.client.Helper.transformWrite ( future, callback );
+    }
+
+    @Override
+    public void writeAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final WriteAttributeOperationCallback callback )
+    {
+        final NotifyFuture<WriteAttributeResults> future = startWriteAttributes ( itemId, attributes, operationParameters, (CallbackHandler)null );
+        org.openscada.da.client.Helper.transformWriteAttributes ( callback, future );
+    }
+
+    @Override
+    public NotifyFuture<WriteResult> startWrite ( final String itemId, final Variant value, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void subscribeFolder ( final Location location ) throws NoConnectionException, OperationException
+    {
+        // NO-OP
+    }
+
+    @Override
+    public void unsubscribeFolder ( final Location location ) throws NoConnectionException, OperationException
+    {
+        // NO-OP
+    }
+
+    @Override
+    public FolderListener setFolderListener ( final Location location, final FolderListener listener )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public void subscribeItem ( final String itemId ) throws NoConnectionException, OperationException
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public void unsubscribeItem ( final String itemId ) throws NoConnectionException, OperationException
+    {
+        // TODO Auto-generated method stub
+
+    }
+
+    @Override
+    public ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
+    {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public ScheduledExecutorService getExecutor ()
+    {
+        return this.executor;
     }
 
 }
