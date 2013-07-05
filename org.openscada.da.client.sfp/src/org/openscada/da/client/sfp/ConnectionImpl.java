@@ -50,9 +50,13 @@ import org.openscada.protocol.sfp.messages.Hello;
 import org.openscada.protocol.sfp.messages.Welcome;
 import org.openscada.sec.callback.CallbackHandler;
 import org.openscada.utils.concurrent.NotifyFuture;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConnectionImpl extends ClientBaseConnection implements Connection
 {
+
+    private final static Logger logger = LoggerFactory.getLogger ( ConnectionImpl.class );
 
     private ReadAllStrategy strategy;
 
@@ -92,6 +96,7 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     @Override
     protected synchronized void handleMessage ( final Object message )
     {
+        logger.debug ( "Handle message: {}", message );
         if ( message instanceof Welcome )
         {
             processWelcome ( (Welcome)message );

@@ -110,7 +110,7 @@ public class ReadAllStrategy
 
         attributes.put ( "timestamp", Variant.valueOf ( entry.getTimestamp () ) );
 
-        attributes.put ( "register", Variant.valueOf ( entry.getRegister () ) );
+        attributes.put ( "sfp.register", Variant.valueOf ( entry.getRegister () ) );
 
         attributes.put ( "error", Variant.valueOf ( entry.getStates ().contains ( DataUpdate.State.ERROR ) ) );
         attributes.put ( "alarm", Variant.valueOf ( entry.getStates ().contains ( DataUpdate.State.ALARM ) ) );
