@@ -135,7 +135,7 @@ public class ReadAllStrategy
                 @Override
                 public void run ()
                 {
-                    listener.notifySubscriptionChange ( SubscriptionState.GRANTED, null );
+                    listener.notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
                 }
             } );
         }
