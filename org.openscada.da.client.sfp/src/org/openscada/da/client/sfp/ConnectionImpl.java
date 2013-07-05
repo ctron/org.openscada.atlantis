@@ -22,6 +22,7 @@ package org.openscada.da.client.sfp;
 
 import java.nio.charset.Charset;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
@@ -34,6 +35,7 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.common.ClientBaseConnection;
 import org.openscada.core.data.OperationParameters;
+import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.BrowseOperationCallback;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderListener;
@@ -57,6 +59,8 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     private long pollTime;
 
     private final Set<String> subscribedItems = new HashSet<> ();
+
+    private final Map<String, ItemUpdateListener> itemListeners = new HashMap<> ();
 
     public ConnectionImpl ( final ConnectionInformation connectionInformation ) throws Exception
     {
@@ -122,6 +126,7 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
             };
         }, this.pollTime );
         this.strategy.subscribeAll ( this.subscribedItems );
+        this.strategy.setAllItemListeners ( this.itemListeners );
     }
 
     @Override
@@ -209,15 +214,32 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
         {
             if ( this.strategy != null )
             {
-                this.strategy.subscribeItem ( itemId );
+                this.strategy.unsubscribeItem ( itemId );
             }
         }
     }
 
     @Override
-    public ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
+    public synchronized ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
     {
-        return this.strategy.setItemUpateListener ( itemId, listener );
+        final ItemUpdateListener old = this.itemListeners.put ( itemId, listener );
+
+        if ( this.strategy != null )
+        {
+            this.strategy.setItemUpateListener ( itemId, listener );
+        }
+        else
+        {
+            getExecutor ().execute ( new Runnable () {
+                @Override
+                public void run ()
+                {
+                    listener.notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
+                };
+            } );
+        }
+
+        return old;
     }
 
     @Override

@@ -21,6 +21,7 @@
 package org.openscada.da.client.sfp;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
@@ -86,10 +87,20 @@ public class ReadAllStrategy
 
     private void processDataUpdate ( final DataUpdate message )
     {
+        final Set<String> keys = new HashSet<> ( this.cache.keySet () );
+
         for ( final DataUpdate.Entry entry : message.getEntries () )
         {
             final DataItemValue value = convert ( entry );
-            internalUpdate ( "" + entry.getRegister (), value );
+            final String itemId = "" + entry.getRegister ();
+            internalUpdate ( itemId, value );
+            keys.remove ( itemId );
+        }
+
+        // now process the removed keys
+        for ( final String removed : keys )
+        {
+            internalRemove ( removed );
         }
     }
 
@@ -136,14 +147,19 @@ public class ReadAllStrategy
         // NO-OP
     }
 
+    public void unsubscribeItem ( final String itemId )
+    {
+        // NO-OP
+    }
+
     public void subscribeAll ( final Set<String> items )
     {
         // NO-OP
     }
 
-    public ItemUpdateListener setItemUpateListener ( final String itemId, final ItemUpdateListener listener )
+    public void setItemUpateListener ( final String itemId, final ItemUpdateListener listener )
     {
-        final ItemUpdateListener old = this.itemListeners.put ( itemId, listener );
+        this.itemListeners.put ( itemId, listener );
 
         final DataItemValue value = this.cache.get ( itemId );
 
@@ -163,8 +179,14 @@ public class ReadAllStrategy
                 }
             }
         } );
+    }
 
-        return old;
+    public void setAllItemListeners ( final Map<String, ItemUpdateListener> itemListeners )
+    {
+        for ( final Map.Entry<String, ItemUpdateListener> entry : itemListeners.entrySet () )
+        {
+            setItemUpateListener ( entry.getKey (), entry.getValue () );
+        }
     }
 
     protected void execute ( final Runnable command )
@@ -235,4 +257,5 @@ public class ReadAllStrategy
         }
 
     }
+
 }
