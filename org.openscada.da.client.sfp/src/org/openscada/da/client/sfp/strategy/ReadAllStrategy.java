@@ -18,48 +18,60 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.client.sfp;
+package org.openscada.da.client.sfp.strategy;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.core.AttributesHelper;
 import org.openscada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
+import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.ItemUpdateListener;
+import org.openscada.da.client.sfp.ConnectionHandler;
+import org.openscada.da.core.Location;
 import org.openscada.protocol.sfp.messages.BrowseUpdate;
 import org.openscada.protocol.sfp.messages.DataUpdate;
 import org.openscada.protocol.sfp.messages.DataUpdate.Entry;
 import org.openscada.protocol.sfp.messages.ReadAll;
 import org.openscada.protocol.sfp.messages.SubscribeBrowse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ReadAllStrategy
 {
+    private final static Logger logger = LoggerFactory.getLogger ( ReadAllStrategy.class );
+
     private final ConnectionHandler connectionHandler;
 
-    private final ScheduledFuture<?> pollJob;
+    private ScheduledFuture<?> pollJob;
 
-    private final Map<String, ItemUpdateListener> itemListeners = new HashMap<String, ItemUpdateListener> ();
+    private Set<Integer> previousRegisters = new HashSet<> ();
 
-    private final Map<String, DataItemValue> cache = new HashMap<> ();
+    private final DataManager dataManager;
+
+    private final FolderManager folderManager;
+
+    private final long pollDelay;
 
     public ReadAllStrategy ( final ConnectionHandler connectionHandler, final long pollDelay )
     {
-        this.connectionHandler = connectionHandler;
-        this.connectionHandler.sendMessage ( new SubscribeBrowse () );
-        this.pollJob = connectionHandler.getExecutor ().scheduleWithFixedDelay ( new Runnable () {
+        logger.debug ( "Created new strategy" );
 
-            @Override
-            public void run ()
-            {
-                triggerReadAll ();
-            }
-        }, 0, pollDelay, TimeUnit.MILLISECONDS );
+        this.pollDelay = pollDelay;
+
+        this.connectionHandler = connectionHandler;
+
+        this.dataManager = new DataManager ( connectionHandler );
+        this.folderManager = new FolderManager ( connectionHandler );
+
+        this.connectionHandler.sendMessage ( new SubscribeBrowse () );
     }
 
     protected void triggerReadAll ()
@@ -81,30 +93,78 @@ public class ReadAllStrategy
 
     private void processBrowseUpdate ( final BrowseUpdate message )
     {
-        // TODO Auto-generated method stub
+        logger.debug ( "Browse data update:" );
+        for ( final BrowseUpdate.Entry entry : message.getEntries () )
+        {
+            logger.trace ( "\t{} = '{}'", entry.getRegister (), entry.getName () );
+        }
 
+        // update browser
+
+        for ( final BrowseUpdate.Entry entry : message.getEntries () )
+        {
+            this.dataManager.addMapping ( entry.getRegister (), entry.getName (), entry.getUnit () );
+
+            final String[] toks = makeItemHiearchy ( entry.getName () );
+            final LinkedList<String> hier = new LinkedList<> ( Arrays.asList ( toks ) );
+            if ( hier.size () == 1 )
+            {
+                this.folderManager.addEntry ( new Location (), entry.getName (), entry.getName (), entry.getDescription () );
+            }
+            else
+            {
+                // last segment is the name
+                final String name = hier.removeLast ();
+                this.folderManager.addEntry ( new Location ( hier ), name, entry.getName (), entry.getDescription () );
+            }
+        }
+
+        // finally we can start the poller, if not already done
+
+        if ( this.pollJob == null )
+        {
+            this.pollJob = this.connectionHandler.getExecutor ().scheduleWithFixedDelay ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    triggerReadAll ();
+                }
+            }, 0, this.pollDelay, TimeUnit.MILLISECONDS );
+        }
+    }
+
+    private String[] makeItemHiearchy ( final String name )
+    {
+        return name.split ( "\\." );
     }
 
     private void processDataUpdate ( final DataUpdate message )
     {
-        final Set<String> keys = new HashSet<> ( this.cache.keySet () );
+        final Set<Integer> registers = new HashSet<> ();
 
         for ( final DataUpdate.Entry entry : message.getEntries () )
         {
             final DataItemValue value = convert ( entry );
-            final String itemId = "" + entry.getRegister ();
-            internalUpdate ( itemId, value );
-            keys.remove ( itemId );
+            // final String itemId = "" + entry.getRegister ();
+            // internalUpdate ( itemId, value );
+            this.dataManager.updateData ( entry.getRegister (), value );
+            registers.add ( entry.getRegister () );
         }
+
+        this.previousRegisters.removeAll ( registers );
 
         // now process the removed keys
-        for ( final String removed : keys )
+        for ( final Integer removed : this.previousRegisters )
         {
-            internalRemove ( removed );
+            this.dataManager.removeRegister ( removed );
+            //   internalRemove ( removed );
         }
+
+        this.previousRegisters = registers;
     }
 
-    private DataItemValue convert ( final Entry entry )
+    private static DataItemValue convert ( final Entry entry )
     {
         final Map<String, Variant> attributes = new HashMap<> ( 10 );
 
@@ -126,67 +186,38 @@ public class ReadAllStrategy
 
     public void dispose ()
     {
-        this.pollJob.cancel ( false );
-
-        for ( final ItemUpdateListener listener : this.itemListeners.values () )
+        if ( this.pollJob != null )
         {
-            this.connectionHandler.getExecutor ().execute ( new Runnable () {
-
-                @Override
-                public void run ()
-                {
-                    listener.notifySubscriptionChange ( SubscriptionState.DISCONNECTED, null );
-                }
-            } );
+            this.pollJob.cancel ( false );
+            this.pollJob = null;
         }
-        this.itemListeners.clear ();
+
+        this.folderManager.dispose ();
+        this.dataManager.dispose ();
     }
 
     public void subscribeItem ( final String itemId )
     {
-        // NO-OP
+        logger.debug ( "Subscribe item: {}", itemId );
+
+        this.dataManager.subscribeItem ( itemId );
     }
 
     public void unsubscribeItem ( final String itemId )
     {
-        // NO-OP
-    }
+        logger.debug ( "Unsubscribe item: {}", itemId );
 
-    public void subscribeAll ( final Set<String> items )
-    {
-        // NO-OP
+        this.dataManager.unsubscribeItem ( itemId );
     }
 
     public void setItemUpateListener ( final String itemId, final ItemUpdateListener listener )
     {
-        this.itemListeners.put ( itemId, listener );
-
-        final DataItemValue value = this.cache.get ( itemId );
-
-        execute ( new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                if ( value != null )
-                {
-                    listener.notifySubscriptionChange ( SubscriptionState.CONNECTED, null );
-                    listener.notifyDataChange ( value.getValue (), value.getAttributes (), true );
-                }
-                else
-                {
-                    listener.notifySubscriptionChange ( SubscriptionState.GRANTED, null );
-                }
-            }
-        } );
+        this.dataManager.setItemUpateListener ( itemId, listener );
     }
 
     public void setAllItemListeners ( final Map<String, ItemUpdateListener> itemListeners )
     {
-        for ( final Map.Entry<String, ItemUpdateListener> entry : itemListeners.entrySet () )
-        {
-            setItemUpateListener ( entry.getKey (), entry.getValue () );
-        }
+        this.dataManager.setAllItemListeners ( itemListeners );
     }
 
     protected void execute ( final Runnable command )
@@ -194,68 +225,27 @@ public class ReadAllStrategy
         this.connectionHandler.getExecutor ().execute ( command );
     }
 
-    protected void internalRemove ( final String itemId )
+    public void subscribeFolder ( final Location location )
     {
-        final DataItemValue oldValue = this.cache.remove ( itemId );
-
-        if ( oldValue == null )
-        {
-            return;
-        }
-
-        final ItemUpdateListener listener = this.itemListeners.get ( itemId );
-        if ( listener == null )
-        {
-            // no body is interested in this value
-            return;
-        }
-
-        execute ( new Runnable () {
-            @Override
-            public void run ()
-            {
-                listener.notifySubscriptionChange ( SubscriptionState.GRANTED, null );
-            };
-        } );
+        this.folderManager.subscribeFolder ( location );
     }
 
-    protected void internalUpdate ( final String itemId, final DataItemValue value )
+    public void unsubscribeFolder ( final Location location )
     {
-        final DataItemValue oldValue = this.cache.get ( itemId );
+        this.folderManager.unsubscribeFolder ( location );
+    }
 
-        this.cache.put ( itemId, value );
+    public void setFolderListener ( final Location location, final FolderListener listener )
+    {
+        this.folderManager.setFolderListener ( location, listener );
+    }
 
-        final ItemUpdateListener listener = this.itemListeners.get ( itemId );
-        if ( listener == null )
+    public void setAllFolderListeners ( final Map<Location, FolderListener> folderListeners )
+    {
+        for ( final Map.Entry<Location, FolderListener> entry : folderListeners.entrySet () )
         {
-            // no body is interested in this value
-            return;
+            setFolderListener ( entry.getKey (), entry.getValue () );
         }
-
-        if ( oldValue != null )
-        {
-            Variant valueChange = null;
-            if ( !oldValue.getValue ().equals ( value.getValue () ) )
-            {
-                valueChange = value.getValue ();
-            }
-
-            final Map<String, Variant> attributesChange = AttributesHelper.diff ( oldValue.getAttributes (), value.getAttributes () );
-
-            listener.notifyDataChange ( valueChange, attributesChange.isEmpty () ? null : attributesChange, false );
-        }
-        else
-        {
-            execute ( new Runnable () {
-                @Override
-                public void run ()
-                {
-                    listener.notifySubscriptionChange ( SubscriptionState.CONNECTED, null );
-                    listener.notifyDataChange ( value.getValue (), value.getAttributes (), false );
-                }
-            } );
-        }
-
     }
 
 }

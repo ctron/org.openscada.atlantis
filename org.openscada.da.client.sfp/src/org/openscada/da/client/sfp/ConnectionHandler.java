@@ -22,9 +22,13 @@ package org.openscada.da.client.sfp;
 
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.openscada.core.client.ConnectionState;
+
 public interface ConnectionHandler
 {
     public void sendMessage ( Object message );
 
     public ScheduledExecutorService getExecutor ();
+
+    public ConnectionState getConnectionState ();
 }

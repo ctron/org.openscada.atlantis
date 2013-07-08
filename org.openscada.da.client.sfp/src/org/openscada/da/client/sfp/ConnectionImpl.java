@@ -42,6 +42,7 @@ import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.client.sfp.strategy.ReadAllStrategy;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -65,6 +66,10 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     private final Set<String> subscribedItems = new HashSet<> ();
 
     private final Map<String, ItemUpdateListener> itemListeners = new HashMap<> ();
+
+    private final Set<Location> subscribedFolders = new HashSet<> ();
+
+    private final Map<Location, FolderListener> folderListeners = new HashMap<> ();
 
     public ConnectionImpl ( final ConnectionInformation connectionInformation ) throws Exception
     {
@@ -115,7 +120,7 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
             final Charset charset = Charset.forName ( charsetName );
             Sessions.setCharset ( getSession (), charset );
         }
-        switchState ( ConnectionState.BOUND, null );
+
         this.strategy = new ReadAllStrategy ( new ConnectionHandler () {
 
             @Override
@@ -129,9 +134,25 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
             {
                 return ConnectionImpl.this.getExecutor ();
             };
+
+            @Override
+            public ConnectionState getConnectionState ()
+            {
+                return ConnectionImpl.this.getState ();
+            }
         }, this.pollTime );
-        this.strategy.subscribeAll ( this.subscribedItems );
+
+        // the subscription maps emulate a server state here, so we initialize them empty
+        // as the server would do
+        this.subscribedItems.clear ();
+        this.subscribedFolders.clear ();
+
         this.strategy.setAllItemListeners ( this.itemListeners );
+        this.strategy.setAllFolderListeners ( this.folderListeners );
+
+        switchState ( ConnectionState.BOUND, null );
+
+        logger.debug ( "Processed welcome" );
     }
 
     @Override
@@ -184,25 +205,47 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     @Override
     public void subscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
-        // NO-OP
+        if ( this.subscribedFolders.add ( location ) )
+        {
+            if ( this.strategy != null )
+            {
+                this.strategy.subscribeFolder ( location );
+            }
+        }
+        this.strategy.subscribeFolder ( location );
     }
 
     @Override
     public void unsubscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
-        // NO-OP
+        this.subscribedFolders.remove ( location );
+        if ( this.subscribedFolders.remove ( location ) )
+        {
+            if ( this.strategy != null )
+            {
+                this.strategy.unsubscribeFolder ( location );
+            }
+        }
     }
 
     @Override
     public FolderListener setFolderListener ( final Location location, final FolderListener listener )
     {
-        // TODO Auto-generated method stub
-        return null;
+        final FolderListener old = this.folderListeners.put ( location, listener );
+
+        if ( this.strategy != null )
+        {
+            this.strategy.setFolderListener ( location, listener );
+        }
+
+        return old;
     }
 
     @Override
     public synchronized void subscribeItem ( final String itemId ) throws NoConnectionException, OperationException
     {
+        logger.debug ( "Subscribe - itemId: {}", itemId );
+
         if ( this.subscribedItems.add ( itemId ) )
         {
             if ( this.strategy != null )
@@ -215,6 +258,8 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     @Override
     public synchronized void unsubscribeItem ( final String itemId ) throws NoConnectionException, OperationException
     {
+        logger.debug ( "Unsubscribe - itemId: {}", itemId );
+
         if ( this.subscribedItems.remove ( itemId ) )
         {
             if ( this.strategy != null )
@@ -227,6 +272,8 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     @Override
     public synchronized ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
     {
+        logger.debug ( "Setting item update listener - itemId: {}, listener: {}", itemId, listener );
+
         final ItemUpdateListener old = this.itemListeners.put ( itemId, listener );
 
         if ( this.strategy != null )
