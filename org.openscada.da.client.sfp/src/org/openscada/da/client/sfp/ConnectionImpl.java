@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
@@ -50,6 +51,7 @@ import org.openscada.protocol.sfp.Sessions;
 import org.openscada.protocol.sfp.messages.Hello;
 import org.openscada.protocol.sfp.messages.Welcome;
 import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -89,6 +91,7 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     @Override
     protected void onConnectionConnected ()
     {
+        getSession ().getConfig ().setReaderIdleTime ( (int) ( TimeUnit.MILLISECONDS.toSeconds ( this.pollTime ) * 3 ) + 1 );
         sendHello ();
     }
 
@@ -189,17 +192,22 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWrite ( final String itemId, final Variant value, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
+    public synchronized NotifyFuture<WriteResult> startWrite ( final String itemId, final Variant value, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
     {
-        // TODO Auto-generated method stub
-        return null;
+        if ( this.strategy != null )
+        {
+            return this.strategy.startWrite ( itemId, value );
+        }
+        else
+        {
+            return new InstantErrorFuture<> ( new IllegalStateException ( "No connection" ) );
+        }
     }
 
     @Override
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new InstantErrorFuture<> ( new RuntimeException ( "The small footprint protocol does not allow writing attributes" ) );
     }
 
     @Override

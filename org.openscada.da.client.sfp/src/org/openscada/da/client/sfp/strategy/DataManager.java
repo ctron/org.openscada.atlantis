@@ -57,6 +57,18 @@ public class DataManager
         this.connectionHandler = connectionHandler;
     }
 
+    /**
+     * Find the register number from an item id
+     * 
+     * @param itemId
+     *            the item id to look up
+     * @return the register number or <code>null</code> if none was found
+     */
+    public Integer findRegister ( final String itemId )
+    {
+        return this.itemIdMap.get ( itemId );
+    }
+
     public void updateData ( final int registerNumber, final DataItemValue value )
     {
         logger.debug ( "Update data - registerNumer: {}, value: {}", registerNumber, value );

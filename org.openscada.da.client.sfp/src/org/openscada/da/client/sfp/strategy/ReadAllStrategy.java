@@ -20,11 +20,14 @@
 
 package org.openscada.da.client.sfp.strategy;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
@@ -36,11 +39,15 @@ import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.sfp.ConnectionHandler;
 import org.openscada.da.core.Location;
+import org.openscada.da.core.WriteResult;
 import org.openscada.protocol.sfp.messages.BrowseUpdate;
 import org.openscada.protocol.sfp.messages.DataUpdate;
 import org.openscada.protocol.sfp.messages.DataUpdate.Entry;
 import org.openscada.protocol.sfp.messages.ReadAll;
 import org.openscada.protocol.sfp.messages.SubscribeBrowse;
+import org.openscada.protocol.sfp.messages.WriteCommand;
+import org.openscada.utils.concurrent.InstantErrorFuture;
+import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,6 +66,10 @@ public class ReadAllStrategy
     private final FolderManager folderManager;
 
     private final long pollDelay;
+
+    private final Random random = new Random ();
+
+    private final Map<Integer, WriteHandler> writeHandlerMap = new HashMap<> ();
 
     public ReadAllStrategy ( final ConnectionHandler connectionHandler, final long pollDelay )
     {
@@ -89,6 +100,31 @@ public class ReadAllStrategy
         {
             processBrowseUpdate ( (BrowseUpdate)message );
         }
+        else if ( message instanceof org.openscada.protocol.sfp.messages.WriteResult )
+        {
+            processWriteResult ( (org.openscada.protocol.sfp.messages.WriteResult)message );
+        }
+    }
+
+    private void processWriteResult ( final org.openscada.protocol.sfp.messages.WriteResult message )
+    {
+        logger.debug ( "Processing write result" );
+
+        final WriteHandler handler = this.writeHandlerMap.remove ( message.getOperationId () );
+        if ( handler == null )
+        {
+            logger.warn ( "No handler found for operation: {}", message.getOperationId () );
+            return;
+        }
+
+        // complete outside any locks
+        execute ( new Runnable () {
+            @Override
+            public void run ()
+            {
+                handler.complete ( message );
+            };
+        } );
     }
 
     private void processBrowseUpdate ( final BrowseUpdate message )
@@ -192,6 +228,24 @@ public class ReadAllStrategy
             this.pollJob = null;
         }
 
+        if ( !this.writeHandlerMap.isEmpty () )
+        {
+            final List<WriteHandler> handlers = new ArrayList<> ( this.writeHandlerMap.values () );
+
+            execute ( new Runnable () {
+                @Override
+                public void run ()
+                {
+                    for ( final WriteHandler handler : handlers )
+                    {
+                        handler.cancel ( false );
+                    }
+
+                };
+            } );
+            this.writeHandlerMap.clear ();
+        }
+
         this.folderManager.dispose ();
         this.dataManager.dispose ();
     }
@@ -248,4 +302,26 @@ public class ReadAllStrategy
         }
     }
 
+    public NotifyFuture<WriteResult> startWrite ( final String itemId, final Variant value )
+    {
+        int operationId;
+        do
+        {
+            operationId = this.random.nextInt ();
+        } while ( this.writeHandlerMap.containsKey ( operationId ) );
+
+        final WriteHandler writeHandler = new WriteHandler ();
+
+        final Integer registerNumber = this.dataManager.findRegister ( itemId );
+        if ( registerNumber == null )
+        {
+            return new InstantErrorFuture<> ( new RuntimeException ( String.format ( "Item '%s' is unknown", itemId ) ) );
+        }
+
+        this.connectionHandler.sendMessage ( new WriteCommand ( registerNumber, value, operationId ) );
+
+        this.writeHandlerMap.put ( operationId, writeHandler );
+
+        return writeHandler;
+    }
 }
