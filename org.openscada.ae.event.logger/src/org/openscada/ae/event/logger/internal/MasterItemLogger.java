@@ -53,6 +53,8 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
 
     private boolean logAttributes;
 
+    private boolean logWrites;
+
     private String typeWriteValue;
 
     private String typeWriteAttributes;
@@ -130,6 +132,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
         this.logSubscription = cfg.getBoolean ( "logSubscription", false );
         this.logValue = cfg.getBoolean ( "logValue", false );
         this.logAttributes = cfg.getBoolean ( "logAttributes", false );
+        this.logWrites = cfg.getBoolean ( "logWrites", false );
 
         this.typeWriteValue = cfg.getString ( "type.write.value", "WRITE" );
         this.typeWriteAttributes = cfg.getString ( "type.write.attributes", "WRITE_ATTRIBUTES" );
@@ -143,6 +146,11 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     @Override
     public WriteRequestResult processWrite ( final WriteRequest request )
     {
+        if ( !this.logWrites )
+        {
+            return null; // return "no-change"
+        }
+
         if ( request.getValue () != null )
         {
             final EventBuilder builder = createEvent ( request );
@@ -162,8 +170,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
             this.eventProcessor.publishEvent ( builder.build () );
         }
 
-        // return "no-change"
-        return null;
+        return null; // return "no-change"
     }
 
     protected Variant formatAttributes ( final Map<String, Variant> attributes )
