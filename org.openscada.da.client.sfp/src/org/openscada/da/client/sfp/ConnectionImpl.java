@@ -27,6 +27,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 import org.openscada.core.ConnectionInformation;
 import org.openscada.core.OperationException;
@@ -42,6 +43,7 @@ import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.WriteAttributeOperationCallback;
 import org.openscada.da.client.WriteOperationCallback;
+import org.openscada.da.client.sfp.strategy.ReadAllStrategy;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -49,6 +51,7 @@ import org.openscada.protocol.sfp.Sessions;
 import org.openscada.protocol.sfp.messages.Hello;
 import org.openscada.protocol.sfp.messages.Welcome;
 import org.openscada.sec.callback.CallbackHandler;
+import org.openscada.utils.concurrent.InstantErrorFuture;
 import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,6 +68,10 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     private final Set<String> subscribedItems = new HashSet<> ();
 
     private final Map<String, ItemUpdateListener> itemListeners = new HashMap<> ();
+
+    private final Set<Location> subscribedFolders = new HashSet<> ();
+
+    private final Map<Location, FolderListener> folderListeners = new HashMap<> ();
 
     public ConnectionImpl ( final ConnectionInformation connectionInformation ) throws Exception
     {
@@ -84,6 +91,7 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     @Override
     protected void onConnectionConnected ()
     {
+        getSession ().getConfig ().setReaderIdleTime ( (int) ( TimeUnit.MILLISECONDS.toSeconds ( this.pollTime ) * 3 ) + 1 );
         sendHello ();
     }
 
@@ -115,7 +123,7 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
             final Charset charset = Charset.forName ( charsetName );
             Sessions.setCharset ( getSession (), charset );
         }
-        switchState ( ConnectionState.BOUND, null );
+
         this.strategy = new ReadAllStrategy ( new ConnectionHandler () {
 
             @Override
@@ -129,9 +137,25 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
             {
                 return ConnectionImpl.this.getExecutor ();
             };
+
+            @Override
+            public ConnectionState getConnectionState ()
+            {
+                return ConnectionImpl.this.getState ();
+            }
         }, this.pollTime );
-        this.strategy.subscribeAll ( this.subscribedItems );
+
+        // the subscription maps emulate a server state here, so we initialize them empty
+        // as the server would do
+        this.subscribedItems.clear ();
+        this.subscribedFolders.clear ();
+
         this.strategy.setAllItemListeners ( this.itemListeners );
+        this.strategy.setAllFolderListeners ( this.folderListeners );
+
+        switchState ( ConnectionState.BOUND, null );
+
+        logger.debug ( "Processed welcome" );
     }
 
     @Override
@@ -168,41 +192,68 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     }
 
     @Override
-    public NotifyFuture<WriteResult> startWrite ( final String itemId, final Variant value, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
+    public synchronized NotifyFuture<WriteResult> startWrite ( final String itemId, final Variant value, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
     {
-        // TODO Auto-generated method stub
-        return null;
+        if ( this.strategy != null )
+        {
+            return this.strategy.startWrite ( itemId, value );
+        }
+        else
+        {
+            return new InstantErrorFuture<> ( new IllegalStateException ( "No connection" ) );
+        }
     }
 
     @Override
     public NotifyFuture<WriteAttributeResults> startWriteAttributes ( final String itemId, final Map<String, Variant> attributes, final OperationParameters operationParameters, final CallbackHandler callbackHandler )
     {
-        // TODO Auto-generated method stub
-        return null;
+        return new InstantErrorFuture<> ( new RuntimeException ( "The small footprint protocol does not allow writing attributes" ) );
     }
 
     @Override
     public void subscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
-        // NO-OP
+        if ( this.subscribedFolders.add ( location ) )
+        {
+            if ( this.strategy != null )
+            {
+                this.strategy.subscribeFolder ( location );
+            }
+        }
+        this.strategy.subscribeFolder ( location );
     }
 
     @Override
     public void unsubscribeFolder ( final Location location ) throws NoConnectionException, OperationException
     {
-        // NO-OP
+        this.subscribedFolders.remove ( location );
+        if ( this.subscribedFolders.remove ( location ) )
+        {
+            if ( this.strategy != null )
+            {
+                this.strategy.unsubscribeFolder ( location );
+            }
+        }
     }
 
     @Override
     public FolderListener setFolderListener ( final Location location, final FolderListener listener )
     {
-        // TODO Auto-generated method stub
-        return null;
+        final FolderListener old = this.folderListeners.put ( location, listener );
+
+        if ( this.strategy != null )
+        {
+            this.strategy.setFolderListener ( location, listener );
+        }
+
+        return old;
     }
 
     @Override
     public synchronized void subscribeItem ( final String itemId ) throws NoConnectionException, OperationException
     {
+        logger.debug ( "Subscribe - itemId: {}", itemId );
+
         if ( this.subscribedItems.add ( itemId ) )
         {
             if ( this.strategy != null )
@@ -215,6 +266,8 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     @Override
     public synchronized void unsubscribeItem ( final String itemId ) throws NoConnectionException, OperationException
     {
+        logger.debug ( "Unsubscribe - itemId: {}", itemId );
+
         if ( this.subscribedItems.remove ( itemId ) )
         {
             if ( this.strategy != null )
@@ -227,6 +280,8 @@ public class ConnectionImpl extends ClientBaseConnection implements Connection
     @Override
     public synchronized ItemUpdateListener setItemUpdateListener ( final String itemId, final ItemUpdateListener listener )
     {
+        logger.debug ( "Setting item update listener - itemId: {}, listener: {}", itemId, listener );
+
         final ItemUpdateListener old = this.itemListeners.put ( itemId, listener );
 
         if ( this.strategy != null )

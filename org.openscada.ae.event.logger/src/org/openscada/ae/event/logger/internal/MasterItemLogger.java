@@ -43,12 +43,7 @@ import org.osgi.framework.InvalidSyntaxException;
 
 public class MasterItemLogger extends AbstractMasterHandlerImpl
 {
-
     private final EventProcessor eventProcessor;
-
-    private String source;
-
-    private String itemId;
 
     private DataItemValue lastValue;
 
@@ -57,6 +52,8 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     private boolean logValue;
 
     private boolean logAttributes;
+
+    private boolean logWrites;
 
     private String typeWriteValue;
 
@@ -131,12 +128,11 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
     public synchronized void update ( final UserInformation userInformation, final Map<String, String> parameters ) throws Exception
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-        final String source = cfg.getStringChecked ( "source", "'source' must be set" );
-        final String itemId = cfg.getString ( "item.id" );
 
         this.logSubscription = cfg.getBoolean ( "logSubscription", false );
         this.logValue = cfg.getBoolean ( "logValue", false );
         this.logAttributes = cfg.getBoolean ( "logAttributes", false );
+        this.logWrites = cfg.getBoolean ( "logWrites", false );
 
         this.typeWriteValue = cfg.getString ( "type.write.value", "WRITE" );
         this.typeWriteAttributes = cfg.getString ( "type.write.attributes", "WRITE_ATTRIBUTES" );
@@ -145,14 +141,16 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
         this.typeSubscription = cfg.getString ( "type.change.subscription", "SUBSCRIPTION" );
 
         super.update ( userInformation, parameters );
-
-        this.source = source;
-        this.itemId = itemId;
     }
 
     @Override
     public WriteRequestResult processWrite ( final WriteRequest request )
     {
+        if ( !this.logWrites )
+        {
+            return null; // return "no-change"
+        }
+
         if ( request.getValue () != null )
         {
             final EventBuilder builder = createEvent ( request );
@@ -172,8 +170,7 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
             this.eventProcessor.publishEvent ( builder.build () );
         }
 
-        // return "no-change"
-        return null;
+        return null; // return "no-change"
     }
 
     protected Variant formatAttributes ( final Map<String, Variant> attributes )
@@ -187,11 +184,6 @@ public class MasterItemLogger extends AbstractMasterHandlerImpl
         builder.sourceTimestamp ( new Date () );
         builder.attributes ( this.eventAttributes );
 
-        builder.attribute ( Event.Fields.SOURCE, this.source );
-        if ( this.itemId != null )
-        {
-            builder.attribute ( Event.Fields.ITEM, this.itemId );
-        }
         builder.attribute ( Event.Fields.MONITOR_TYPE, "LOG" );
 
         if ( request != null )

@@ -18,17 +18,17 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.server.proxy;
+package org.openscada.da.server.modbus.driver;
 
-import org.openscada.da.proxy.configuration.ConfigurationPackage;
+import org.openscada.da.modbus.configuration.ConfigurationPackage;
 import org.openscada.utils.init.Initializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class ModelIntializerImpl implements Initializer
+public class ModelInitializerImpl implements Initializer
 {
 
-    private final static Logger logger = LoggerFactory.getLogger ( ModelIntializerImpl.class );
+    private final static Logger logger = LoggerFactory.getLogger ( ModelInitializerImpl.class );
 
     @Override
     public void initialize ( final Object type )

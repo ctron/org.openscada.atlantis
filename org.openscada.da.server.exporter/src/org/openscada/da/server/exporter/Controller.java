@@ -84,7 +84,12 @@ public class Controller
     private static DocumentRoot parse ( final URI uri ) throws ConfigurationException
     {
         ExporterPackage.eINSTANCE.eClass ();
-        ServiceLoaderProcessor.initialize ( "emf" );
+
+        /*
+         * we do need to provide the current context classloader, otherwise there
+         * seem to be problems finding services when run with jsvc. 
+         */
+        ServiceLoaderProcessor.initialize ( "emf", Thread.currentThread ().getContextClassLoader () );
 
         try
         {

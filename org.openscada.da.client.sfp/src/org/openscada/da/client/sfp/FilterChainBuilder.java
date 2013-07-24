@@ -20,7 +20,10 @@
 
 package org.openscada.da.client.sfp;
 
+import org.apache.mina.core.filterchain.IoFilterAdapter;
 import org.apache.mina.core.filterchain.IoFilterChain;
+import org.apache.mina.core.session.IdleStatus;
+import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.openscada.protocol.common.IoLoggerFilterChainBuilder;
@@ -61,6 +64,13 @@ public class FilterChainBuilder implements IoLoggerFilterChainBuilder
             chain.addFirst ( "logger", new LoggingFilter ( this.loggerName ) );
         }
 
+        chain.addLast ( "closeidle", new IoFilterAdapter () {
+            @Override
+            public void sessionIdle ( final NextFilter nextFilter, final IoSession session, final IdleStatus status ) throws Exception
+            {
+                session.close ( true );
+            }
+        } );
         chain.addLast ( "codec", new ProtocolCodecFilter ( new ProtocolEncoderImpl (), new ProtocolDecoderImpl () ) );
     }
 }
