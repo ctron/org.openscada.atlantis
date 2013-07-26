@@ -42,7 +42,7 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
 
     private String prefix;
 
-    private String writeValueSuffix;
+    private String writeSuffix;
 
     private String username;
 
@@ -54,6 +54,8 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
 
     private Future<MqttClient> startClientFuture;
 
+    private MqttClient client;
+
     private final ConcurrentMap<String, Set<TopicListener>> topicListeners = new ConcurrentHashMap<String, Set<TopicListener>> ();
 
     public MqttBrokerImpl ( final ExecutorService executor )
@@ -63,6 +65,7 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
 
     public void update ( final Map<String, String> parameters )
     {
+        logger.trace ( "update called" );
         stopClient ();
         parseConfig ( parameters );
         startClient ();
@@ -104,7 +107,7 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
 
     public String getWriteValueSuffix ()
     {
-        return this.writeValueSuffix;
+        return this.writeSuffix;
     }
 
     @Override
@@ -121,10 +124,12 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
 
     private void startClient ()
     {
+        logger.trace ( "startClient () called" );
         this.startClientFuture = this.executor.submit ( new Callable<MqttClient> () {
             @Override
             public MqttClient call () throws Exception
             {
+                logger.trace ( "starting client" );
                 // check parameters
                 final String effectiveClientId = MqttBrokerImpl.this.clientId == null ? getDefaultClientId () : MqttBrokerImpl.this.clientId;
                 logger.info ( "using clientId {}", effectiveClientId );
@@ -142,53 +147,56 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
 
                 // start client
                 logger.debug ( "starting MQTT client" );
-                MqttClient client = null;
+                MqttBrokerImpl.this.client = null;
                 try
                 {
                     options.setUserName ( MqttBrokerImpl.this.username );
                     options.setPassword ( MqttBrokerImpl.this.password.toCharArray () );
-                    client = new MqttClient ( effectiveUri.toString (), effectiveClientId, new MqttDefaultFilePersistence ( effectivePersistencePath.getAbsolutePath () ) );
-                    client.setCallback ( MqttBrokerImpl.this );
-                    client.connect ( options );
+                    MqttBrokerImpl.this.client = new MqttClient ( effectiveUri.toString (), effectiveClientId, new MqttDefaultFilePersistence ( effectivePersistencePath.getAbsolutePath () ) );
+                    MqttBrokerImpl.this.client.setCallback ( MqttBrokerImpl.this );
+                    logger.trace ( "connecting client" );
+                    MqttBrokerImpl.this.client.connect ( options );
                 }
                 catch ( final MqttException e )
                 {
                     logger.error ( "failed to start MQTT client", e );
                 }
 
-                return client;
+                return MqttBrokerImpl.this.client;
             }
         } );
     }
 
     private void stopClient ()
     {
+        logger.trace ( "stopClient () called" );
         this.executor.submit ( new Callable<MqttClient> () {
             @Override
             public MqttClient call () throws Exception
             {
-                if ( MqttBrokerImpl.this.startClientFuture == null )
+                logger.trace ( "stopping client" );
+                if ( MqttBrokerImpl.this.client == null )
                 {
+                    logger.trace ( "client itself is null" );
                     return null;
                 }
-                final MqttClient client = MqttBrokerImpl.this.startClientFuture.get ();
-                if ( client == null )
-                {
-                    return null;
-                }
-                client.disconnect ( TimeUnit.SECONDS.toMillis ( 30 ) );
+                logger.trace ( "disconnect client" );
+                MqttBrokerImpl.this.client.disconnect ( TimeUnit.SECONDS.toMillis ( 30 ) );
+                logger.trace ( "clear listeners" );
                 MqttBrokerImpl.this.topicListeners.clear ();
-                return client;
+                return MqttBrokerImpl.this.client;
             };
         } );
     }
 
     private void parseConfig ( final Map<String, String> parameters )
     {
+        logger.trace ( "parseConfig () called" );
         this.executor.submit ( new Callable<Void> () {
             @Override
             public Void call () throws Exception
             {
+                logger.trace ( "parsing config" );
                 final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
                 if ( cfg.getString ( "clientId" ) != null )
                 {
@@ -210,12 +218,21 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
                 {
                     MqttBrokerImpl.this.prefix = cfg.getString ( "prefix" );
                 }
-                MqttBrokerImpl.this.writeValueSuffix = cfg.getString ( "writeSuffix", "$write" );
+                MqttBrokerImpl.this.writeSuffix = cfg.getString ( "writeSuffix", "$write" );
                 MqttBrokerImpl.this.username = cfg.getString ( "username", "mqtt" );
                 MqttBrokerImpl.this.password = cfg.getString ( "password", "" );
 
-                MqttBrokerImpl.this.itemToTopicConverter = new ItemToTopicConverter ( MqttBrokerImpl.this.delimiter, MqttBrokerImpl.this.prefix, MqttBrokerImpl.this.writeValueSuffix );
-                MqttBrokerImpl.this.topicToItemConverter = new TopicToItemConverter ( MqttBrokerImpl.this.delimiter, MqttBrokerImpl.this.prefix, MqttBrokerImpl.this.writeValueSuffix );
+                MqttBrokerImpl.this.itemToTopicConverter = new ItemToTopicConverter ( MqttBrokerImpl.this.delimiter, MqttBrokerImpl.this.prefix, MqttBrokerImpl.this.writeSuffix );
+                MqttBrokerImpl.this.topicToItemConverter = new TopicToItemConverter ( MqttBrokerImpl.this.delimiter, MqttBrokerImpl.this.prefix, MqttBrokerImpl.this.writeSuffix );
+
+                logger.trace ( "clientId = {}", MqttBrokerImpl.this.clientId );
+                logger.trace ( "uri = {}", MqttBrokerImpl.this.uri );
+                logger.trace ( "persistencePath = {}", MqttBrokerImpl.this.persistencePath );
+                logger.trace ( "delimiter = {}", MqttBrokerImpl.this.delimiter );
+                logger.trace ( "prefix = {}", MqttBrokerImpl.this.prefix );
+                logger.trace ( "writeSuffix = {}", MqttBrokerImpl.this.writeSuffix );
+                logger.trace ( "username = {}", MqttBrokerImpl.this.username );
+                logger.trace ( "password = {}", ( MqttBrokerImpl.this.password == null ? "null" : "********" ) );
                 return null;
             };
         } );
@@ -248,6 +265,7 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
     @Override
     public void connectionLost ( final Throwable th )
     {
+        logger.warn ( "connection lost", th );
         for ( final Set<TopicListener> listeners : this.topicListeners.values () )
         {
             for ( final TopicListener listener : listeners )
@@ -259,7 +277,7 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
     }
 
     @Override
-    public void deliveryComplete ( final MqttDeliveryToken arg0 )
+    public void deliveryComplete ( final MqttDeliveryToken token )
     {
         // ignore for now
     }
@@ -267,6 +285,7 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
     @Override
     public void messageArrived ( final MqttTopic topic, final MqttMessage message ) throws Exception
     {
+        logger.trace ( "received message {} on topic {}", message, topic );
         final Set<TopicListener> listeners = this.topicListeners.get ( topic.getName () );
         if ( listeners != null )
         {
@@ -281,17 +300,41 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
     @Override
     public void addListener ( final String topic, final TopicListener listener )
     {
+        logger.trace ( "addListener () called with topic '{}' and listener '{}'", topic, listener );
         this.topicListeners.putIfAbsent ( topic, new ConcurrentSkipListSet<TopicListener> () );
         this.topicListeners.get ( topic ).add ( listener );
+        if ( this.startClientFuture != null )
+        {
+            try
+            {
+                this.startClientFuture.get ( 30, TimeUnit.SECONDS ).subscribe ( topic );
+            }
+            catch ( final Exception e )
+            {
+                logger.error ( "could not subscribe to topic {}", topic, e );
+            }
+        }
     }
 
     @Override
     public void removeListener ( final String topic, final TopicListener listener )
     {
+        logger.trace ( "removeListener () called with topic '{}' and listener '{}'", topic, listener );
         final Set<TopicListener> listeners = this.topicListeners.get ( topic );
         if ( listeners != null )
         {
             listeners.remove ( listener );
+        }
+        if ( ( listeners == null ) || listeners.isEmpty () )
+        {
+            try
+            {
+                this.startClientFuture.get ( 30, TimeUnit.SECONDS ).unsubscribe ( topic );
+            }
+            catch ( final Exception e )
+            {
+                logger.error ( "could not unsubscribe from topic {}", topic, e );
+            }
         }
     }
 }

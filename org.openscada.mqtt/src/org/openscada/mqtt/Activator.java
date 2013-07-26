@@ -69,7 +69,7 @@ public class Activator implements BundleActivator
         this.mqttBrokerFactory = null;
         if ( this.executor != null )
         {
-            this.executor.shutdownNow ();
+            this.executor.shutdown ();
         }
         this.executor = null;
 
