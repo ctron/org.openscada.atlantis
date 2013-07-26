@@ -223,7 +223,7 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Hive>
                     }
                     catch ( final Exception e )
                     {
-                        logger.warn ( "Failed to compelete write value", e );
+                        logger.warn ( "Failed to complete write value", e );
                         sendWriteValueError ( message, e, 0x05L );
                     }
                 }
@@ -259,7 +259,7 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Hive>
                     }
                     catch ( final Exception e )
                     {
-                        logger.warn ( "Failed to compelete write attributes", e );
+                        logger.warn ( "Failed to complete write attributes", e );
                         sendWriteAttributesError ( message, e, 0x07L );
                     }
                 }
@@ -291,7 +291,7 @@ public class ServerConnectionImpl extends ServiceServerConnection<Session, Hive>
 
     private ErrorInformation convertEntry ( final WriteAttributeResult value )
     {
-        if ( value == null || value.isSuccess () || value.getError () == null )
+        if ( ( value == null ) || value.isSuccess () || ( value.getError () == null ) )
         {
             return null;
         }
