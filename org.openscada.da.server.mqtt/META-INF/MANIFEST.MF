@@ -5,7 +5,10 @@ Bundle-SymbolicName: org.openscada.da.server.mqtt
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.openscada.da.server.mqtt.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.eclipse.paho.client.mqttv3,
+Import-Package: com.google.gson;version="2.1.0",
+ com.google.gson.reflect;version="2.1.0",
+ com.google.gson.stream;version="2.1.0",
+ org.eclipse.paho.client.mqttv3,
  org.openscada.ca;version="1.0.0",
  org.openscada.ca.common.factory;version="1.0.0",
  org.openscada.core;version="1.0.0",

@@ -177,29 +177,35 @@ public class MqttDataItemFactory extends AbstractServiceConfigurationFactory<Mqt
 
     private void findAndAssignBroker ( final MqttDataitem service )
     {
-        if ( service.getBrokerId () == null )
+        if ( ( service.getBrokerId () == null ) || service.getBrokerId ().trim ().equals ( "" ) )
         {
+            logger.trace ( "no broker id set" );
+            service.connectionLost ( new RuntimeException ( "broker is not set" ) );
             this.unassigned.add ( service );
             return;
         }
-        for ( final ServiceReference<MqttBroker> reference : this.tracker.getServiceReferences () )
+        if ( this.tracker.getServiceReferences () != null )
         {
-            final String brokerId = (String)reference.getProperty ( Constants.SERVICE_PID );
-            if ( brokerId == null )
+            for ( final ServiceReference<MqttBroker> reference : this.tracker.getServiceReferences () )
             {
-                logger.warn ( "Can not use broker {}. '{}' is not set", reference, Constants.SERVICE_PID );
-                continue;
-            }
-            if ( brokerId.equals ( service.getBrokerId () ) )
-            {
-                this.unassigned.remove ( service );
-                service.setBroker ( this.context.getService ( reference ) );
-                this.assigned.putIfAbsent ( brokerId, new ConcurrentSkipListSet<MqttDataitem> () );
-                this.assigned.get ( brokerId ).add ( service );
+                final String brokerId = (String)reference.getProperty ( Constants.SERVICE_PID );
+                if ( brokerId == null )
+                {
+                    logger.warn ( "Can not use broker {}. '{}' is not set", reference, Constants.SERVICE_PID );
+                    continue;
+                }
+                if ( brokerId.equals ( service.getBrokerId () ) )
+                {
+                    this.unassigned.remove ( service );
+                    service.setBroker ( this.context.getService ( reference ) );
+                    this.assigned.putIfAbsent ( brokerId, new ConcurrentSkipListSet<MqttDataitem> () );
+                    this.assigned.get ( brokerId ).add ( service );
+                }
             }
         }
         if ( !service.isBrokerSet () )
         {
+            service.connectionLost ( new RuntimeException ( "broker is not set" ) );
             this.unassigned.add ( service );
         }
     }
