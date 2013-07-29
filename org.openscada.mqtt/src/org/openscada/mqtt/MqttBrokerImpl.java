@@ -34,9 +34,9 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
 
     private String clientId;
 
-    private URI uri;
+    private String uri;
 
-    private File persistencePath;
+    private String persistencePath;
 
     private Character delimiter = '.';
 
@@ -93,6 +93,8 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
     public void dispose ()
     {
         stopClient ();
+        logger.trace ( "clear listeners" );
+        MqttBrokerImpl.this.topicListeners.clear ();
     }
 
     public Character getDelimiter ()
@@ -133,9 +135,9 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
                 // check parameters
                 final String effectiveClientId = MqttBrokerImpl.this.clientId == null ? getDefaultClientId () : MqttBrokerImpl.this.clientId;
                 logger.info ( "using clientId {}", effectiveClientId );
-                final URI effectiveUri = MqttBrokerImpl.this.uri == null ? getDefaultUri () : MqttBrokerImpl.this.uri;
+                final URI effectiveUri = MqttBrokerImpl.this.uri == null ? URI.create ( getDefaultUri () ) : URI.create ( MqttBrokerImpl.this.uri );
                 logger.info ( "using URI {}", effectiveUri );
-                final File effectivePersistencePath = MqttBrokerImpl.this.persistencePath == null ? getDefaultPersistencePath () : MqttBrokerImpl.this.persistencePath;
+                final File effectivePersistencePath = MqttBrokerImpl.this.persistencePath == null ? new File ( getDefaultPersistencePath () ) : new File ( MqttBrokerImpl.this.persistencePath );
                 logger.info ( "using persistence path {}", effectivePersistencePath );
 
                 // set up setting
@@ -156,9 +158,21 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
                     MqttBrokerImpl.this.client.setCallback ( MqttBrokerImpl.this );
                     logger.trace ( "connecting client" );
                     MqttBrokerImpl.this.client.connect ( options );
+                    // subscribe for existing topics
+                    for ( final String topic : MqttBrokerImpl.this.topicListeners.keySet () )
+                    {
+                        MqttBrokerImpl.this.client.subscribe ( topic );
+                    }
                 }
                 catch ( final MqttException e )
                 {
+                    for ( final Set<TopicListener> listeners : MqttBrokerImpl.this.topicListeners.values () )
+                    {
+                        for ( final TopicListener listener : listeners )
+                        {
+                            listener.connectionLost ( e );
+                        }
+                    }
                     logger.error ( "failed to start MQTT client", e );
                 }
 
@@ -182,8 +196,6 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
                 }
                 logger.trace ( "disconnect client" );
                 MqttBrokerImpl.this.client.disconnect ( TimeUnit.SECONDS.toMillis ( 30 ) );
-                logger.trace ( "clear listeners" );
-                MqttBrokerImpl.this.topicListeners.clear ();
                 return MqttBrokerImpl.this.client;
             };
         } );
@@ -198,26 +210,11 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
             {
                 logger.trace ( "parsing config" );
                 final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
-                if ( cfg.getString ( "clientId" ) != null )
-                {
-                    MqttBrokerImpl.this.clientId = cfg.getString ( "clientId" );
-                }
-                if ( cfg.getString ( "uri" ) != null )
-                {
-                    MqttBrokerImpl.this.uri = URI.create ( cfg.getString ( "uri" ) );
-                }
-                if ( cfg.getString ( "persistencePath" ) != null )
-                {
-                    MqttBrokerImpl.this.persistencePath = new File ( cfg.getString ( "persistencePath" ) );
-                }
-                if ( cfg.getString ( "delimiter" ) != null )
-                {
-                    MqttBrokerImpl.this.delimiter = cfg.getString ( "delimiter", "." ).charAt ( 0 );
-                }
-                if ( cfg.getString ( "prefix" ) != null )
-                {
-                    MqttBrokerImpl.this.prefix = cfg.getString ( "prefix" );
-                }
+                MqttBrokerImpl.this.clientId = cfg.getString ( "clientId", null );
+                MqttBrokerImpl.this.uri = cfg.getString ( "uri", null );
+                MqttBrokerImpl.this.persistencePath = cfg.getString ( "persistencePath", null );
+                MqttBrokerImpl.this.delimiter = cfg.getString ( "delimiter", "." ).charAt ( 0 );
+                MqttBrokerImpl.this.prefix = cfg.getString ( "prefix", null );
                 MqttBrokerImpl.this.writeSuffix = cfg.getString ( "writeSuffix", "$write" );
                 MqttBrokerImpl.this.username = cfg.getString ( "username", "mqtt" );
                 MqttBrokerImpl.this.password = cfg.getString ( "password", "" );
@@ -233,6 +230,7 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
                 logger.trace ( "writeSuffix = {}", MqttBrokerImpl.this.writeSuffix );
                 logger.trace ( "username = {}", MqttBrokerImpl.this.username );
                 logger.trace ( "password = {}", ( MqttBrokerImpl.this.password == null ? "null" : "********" ) );
+
                 return null;
             };
         } );
@@ -249,17 +247,17 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
     /**
      * @return default persistence property given through system property
      */
-    private File getDefaultPersistencePath ()
+    private String getDefaultPersistencePath ()
     {
-        return new File ( System.getProperty ( "org.openscada.mqtt.persistence", System.getProperty ( "user.home" ) + File.separator + ".openscada" + File.separator + "mqtt" ) );
+        return System.getProperty ( "org.openscada.mqtt.persistence", System.getProperty ( "user.home" ) + File.separator + ".openscada" + File.separator + "mqtt" );
     }
 
     /**
      * @return default mqtt uri given through system property
      */
-    private URI getDefaultUri ()
+    private String getDefaultUri ()
     {
-        return URI.create ( System.getProperty ( "org.openscada.mqtt.uri", "tcp://localhost:1883" ) );
+        return System.getProperty ( "org.openscada.mqtt.uri", "tcp://localhost:1883" );
     }
 
     @Override
@@ -311,8 +309,13 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
             }
             catch ( final Exception e )
             {
+                listener.connectionLost ( e );
                 logger.error ( "could not subscribe to topic {}", topic, e );
             }
+        }
+        else
+        {
+            listener.connectionLost ( new RuntimeException ( "client not set" ) );
         }
     }
 
@@ -330,9 +333,11 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
             try
             {
                 this.startClientFuture.get ( 30, TimeUnit.SECONDS ).unsubscribe ( topic );
+                listener.connectionLost ( new RuntimeException ( "topic '" + topic + "' unsubscribed" ) );
             }
             catch ( final Exception e )
             {
+                listener.connectionLost ( e );
                 logger.error ( "could not unsubscribe from topic {}", topic, e );
             }
         }
