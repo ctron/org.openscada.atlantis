@@ -21,8 +21,6 @@
 
 package org.openscada.da.server.jdbc;
 
-import java.sql.DriverManager;
-import java.sql.SQLException;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.concurrent.ScheduledExecutorService;
@@ -52,13 +50,19 @@ public class Connection
 
     private final Integer timeout;
 
-    public Connection ( final String id, final Integer timeout, final String connectionClass, final String uri, final String username, final String password )
+    private final ConnectionFactory connectionFactory;
+
+    private final String connectionClass;
+
+    public Connection ( final ConnectionFactory connectionFactory, final String id, final Integer timeout, final String connectionClass, final String uri, final String username, final String password )
     {
+        this.connectionFactory = connectionFactory;
         this.uri = uri;
         this.username = username;
         this.password = password;
         this.id = id;
         this.timeout = timeout;
+        this.connectionClass = connectionClass;
         try
         {
             if ( connectionClass != null )
@@ -104,21 +108,19 @@ public class Connection
             update.unregister ();
         }
 
-        this.itemFactory.dispose ();
-        this.itemFactory = null;
-    }
-
-    protected java.sql.Connection createConnection () throws SQLException
-    {
-        if ( this.timeout != null )
+        if ( this.itemFactory != null )
         {
-            DriverManager.setLoginTimeout ( this.timeout / 1000 );
+            this.itemFactory.dispose ();
+            this.itemFactory = null;
         }
-
-        return DriverManager.getConnection ( this.uri, this.username, this.password );
     }
 
-    public java.sql.Connection getConnection () throws SQLException
+    protected java.sql.Connection createConnection () throws Exception
+    {
+        return this.connectionFactory.createConnection ( this.connectionClass, this.uri, this.username, this.password, this.timeout );
+    }
+
+    public java.sql.Connection getConnection () throws Exception
     {
         return createConnection ();
     }

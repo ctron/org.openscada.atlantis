@@ -31,6 +31,7 @@ import org.eclipse.emf.common.util.EList;
  * <ul>
  *   <li>{@link org.openscada.da.jdbc.configuration.TabularQueryType#getUpdateColumns <em>Update Columns</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.TabularQueryType#getDefaultUpdateSql <em>Default Update Sql</em>}</li>
+ *   <li>{@link org.openscada.da.jdbc.configuration.TabularQueryType#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.TabularQueryType#getDefaultUpdateSql1 <em>Default Update Sql1</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.TabularQueryType#getIdColumn <em>Id Column</em>}</li>
  * </ul>
@@ -59,7 +60,9 @@ public interface TabularQueryType extends AbstractQueryType
      * </p>
      * <!-- end-user-doc -->
      * <!-- begin-model-doc -->
-     * Define all columns that are updateable.
+     * 
+     * 								Define all columns that are updateable.
+     * 							
      * <!-- end-model-doc -->
      * @return the value of the '<em>Update Columns</em>' containment reference list.
      * @see org.openscada.da.jdbc.configuration.ConfigurationPackage#getTabularQueryType_UpdateColumns()
@@ -78,7 +81,13 @@ public interface TabularQueryType extends AbstractQueryType
      * </p>
      * <!-- end-user-doc -->
      * <!-- begin-model-doc -->
-     * This value needs to have one %s parameter which will be replaced by the columnName from the UpdateColumnsType attribute and one JDBC parameter (?) which will then receive the value.
+     * 
+     * 								This value needs to have one %s
+     * 								parameter which will be replaced by the
+     * 								columnName from the UpdateColumnsType
+     * 								attribute and one JDBC parameter (?)
+     * 								which will then receive the value.
+     * 							
      * <!-- end-model-doc -->
      * @return the value of the '<em>Default Update Sql</em>' attribute.
      * @see #setDefaultUpdateSql(String)
@@ -98,6 +107,23 @@ public interface TabularQueryType extends AbstractQueryType
      * @generated
      */
     void setDefaultUpdateSql ( String value );
+
+    /**
+     * Returns the value of the '<em><b>Commands</b></em>' containment reference list.
+     * The list contents are of type {@link org.openscada.da.jdbc.configuration.CommandsType}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Commands</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Commands</em>' containment reference list.
+     * @see org.openscada.da.jdbc.configuration.ConfigurationPackage#getTabularQueryType_Commands()
+     * @model containment="true"
+     *        extendedMetaData="kind='element' name='commands' namespace='##targetNamespace'"
+     * @generated
+     */
+    EList<CommandsType> getCommands ();
 
     /**
      * Returns the value of the '<em><b>Default Update Sql1</b></em>' attribute.

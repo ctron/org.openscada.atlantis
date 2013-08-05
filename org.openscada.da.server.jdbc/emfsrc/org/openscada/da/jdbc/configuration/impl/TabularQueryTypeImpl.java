@@ -29,6 +29,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
+import org.openscada.da.jdbc.configuration.CommandsType;
 import org.openscada.da.jdbc.configuration.ConfigurationPackage;
 import org.openscada.da.jdbc.configuration.TabularQueryType;
 import org.openscada.da.jdbc.configuration.UpdateColumnsType;
@@ -42,6 +43,7 @@ import org.openscada.da.jdbc.configuration.UpdateColumnsType;
  * <ul>
  *   <li>{@link org.openscada.da.jdbc.configuration.impl.TabularQueryTypeImpl#getUpdateColumns <em>Update Columns</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.impl.TabularQueryTypeImpl#getDefaultUpdateSql <em>Default Update Sql</em>}</li>
+ *   <li>{@link org.openscada.da.jdbc.configuration.impl.TabularQueryTypeImpl#getCommands <em>Commands</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.impl.TabularQueryTypeImpl#getDefaultUpdateSql1 <em>Default Update Sql1</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.impl.TabularQueryTypeImpl#getIdColumn <em>Id Column</em>}</li>
  * </ul>
@@ -87,6 +89,16 @@ public class TabularQueryTypeImpl extends AbstractQueryTypeImpl implements Tabul
      * @ordered
      */
     protected String defaultUpdateSql = DEFAULT_UPDATE_SQL_EDEFAULT;
+
+    /**
+     * The cached value of the '{@link #getCommands() <em>Commands</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getCommands()
+     * @generated
+     * @ordered
+     */
+    protected EList<CommandsType> commands;
 
     /**
      * The default value of the '{@link #getDefaultUpdateSql1() <em>Default Update Sql1</em>}' attribute.
@@ -200,6 +212,20 @@ public class TabularQueryTypeImpl extends AbstractQueryTypeImpl implements Tabul
      * <!-- end-user-doc -->
      * @generated
      */
+    public EList<CommandsType> getCommands ()
+    {
+        if ( commands == null )
+        {
+            commands = new EObjectContainmentEList<CommandsType> ( CommandsType.class, this, ConfigurationPackage.TABULAR_QUERY_TYPE__COMMANDS );
+        }
+        return commands;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public String getDefaultUpdateSql1 ()
     {
         return defaultUpdateSql1;
@@ -280,6 +306,8 @@ public class TabularQueryTypeImpl extends AbstractQueryTypeImpl implements Tabul
         {
             case ConfigurationPackage.TABULAR_QUERY_TYPE__UPDATE_COLUMNS:
                 return ( (InternalEList<?>)getUpdateColumns () ).basicRemove ( otherEnd, msgs );
+            case ConfigurationPackage.TABULAR_QUERY_TYPE__COMMANDS:
+                return ( (InternalEList<?>)getCommands () ).basicRemove ( otherEnd, msgs );
         }
         return super.eInverseRemove ( otherEnd, featureID, msgs );
     }
@@ -298,6 +326,8 @@ public class TabularQueryTypeImpl extends AbstractQueryTypeImpl implements Tabul
                 return getUpdateColumns ();
             case ConfigurationPackage.TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL:
                 return getDefaultUpdateSql ();
+            case ConfigurationPackage.TABULAR_QUERY_TYPE__COMMANDS:
+                return getCommands ();
             case ConfigurationPackage.TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL1:
                 return getDefaultUpdateSql1 ();
             case ConfigurationPackage.TABULAR_QUERY_TYPE__ID_COLUMN:
@@ -323,6 +353,10 @@ public class TabularQueryTypeImpl extends AbstractQueryTypeImpl implements Tabul
                 return;
             case ConfigurationPackage.TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL:
                 setDefaultUpdateSql ( (String)newValue );
+                return;
+            case ConfigurationPackage.TABULAR_QUERY_TYPE__COMMANDS:
+                getCommands ().clear ();
+                getCommands ().addAll ( (Collection<? extends CommandsType>)newValue );
                 return;
             case ConfigurationPackage.TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL1:
                 setDefaultUpdateSql1 ( (String)newValue );
@@ -350,6 +384,9 @@ public class TabularQueryTypeImpl extends AbstractQueryTypeImpl implements Tabul
             case ConfigurationPackage.TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL:
                 setDefaultUpdateSql ( DEFAULT_UPDATE_SQL_EDEFAULT );
                 return;
+            case ConfigurationPackage.TABULAR_QUERY_TYPE__COMMANDS:
+                getCommands ().clear ();
+                return;
             case ConfigurationPackage.TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL1:
                 setDefaultUpdateSql1 ( DEFAULT_UPDATE_SQL1_EDEFAULT );
                 return;
@@ -374,6 +411,8 @@ public class TabularQueryTypeImpl extends AbstractQueryTypeImpl implements Tabul
                 return updateColumns != null && !updateColumns.isEmpty ();
             case ConfigurationPackage.TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL:
                 return DEFAULT_UPDATE_SQL_EDEFAULT == null ? defaultUpdateSql != null : !DEFAULT_UPDATE_SQL_EDEFAULT.equals ( defaultUpdateSql );
+            case ConfigurationPackage.TABULAR_QUERY_TYPE__COMMANDS:
+                return commands != null && !commands.isEmpty ();
             case ConfigurationPackage.TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL1:
                 return DEFAULT_UPDATE_SQL1_EDEFAULT == null ? defaultUpdateSql1 != null : !DEFAULT_UPDATE_SQL1_EDEFAULT.equals ( defaultUpdateSql1 );
             case ConfigurationPackage.TABULAR_QUERY_TYPE__ID_COLUMN:

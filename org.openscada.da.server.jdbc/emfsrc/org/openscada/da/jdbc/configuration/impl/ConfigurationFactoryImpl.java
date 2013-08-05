@@ -94,6 +94,8 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
         {
             case ConfigurationPackage.COLUMN_MAPPING_TYPE:
                 return createColumnMappingType ();
+            case ConfigurationPackage.COMMANDS_TYPE:
+                return createCommandsType ();
             case ConfigurationPackage.CONNECTION_TYPE:
                 return createConnectionType ();
             case ConfigurationPackage.DOCUMENT_ROOT:
@@ -166,6 +168,17 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     {
         ColumnMappingTypeImpl columnMappingType = new ColumnMappingTypeImpl ();
         return columnMappingType;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public CommandsType createCommandsType ()
+    {
+        CommandsTypeImpl commandsType = new CommandsTypeImpl ();
+        return commandsType;
     }
 
     /**

@@ -129,6 +129,8 @@ public class ConfigurationValidator extends EObjectValidator
                 return validateAbstractQueryType ( (AbstractQueryType)value, diagnostics, context );
             case ConfigurationPackage.COLUMN_MAPPING_TYPE:
                 return validateColumnMappingType ( (ColumnMappingType)value, diagnostics, context );
+            case ConfigurationPackage.COMMANDS_TYPE:
+                return validateCommandsType ( (CommandsType)value, diagnostics, context );
             case ConfigurationPackage.CONNECTION_TYPE:
                 return validateConnectionType ( (ConnectionType)value, diagnostics, context );
             case ConfigurationPackage.DOCUMENT_ROOT:
@@ -174,6 +176,16 @@ public class ConfigurationValidator extends EObjectValidator
     public boolean validateColumnMappingType ( ColumnMappingType columnMappingType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validate_EveryDefaultConstraint ( columnMappingType, diagnostics, context );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public boolean validateCommandsType ( CommandsType commandsType, DiagnosticChain diagnostics, Map<Object, Object> context )
+    {
+        return validate_EveryDefaultConstraint ( commandsType, diagnostics, context );
     }
 
     /**

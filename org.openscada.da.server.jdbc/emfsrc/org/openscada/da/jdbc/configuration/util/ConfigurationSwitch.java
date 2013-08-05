@@ -112,6 +112,14 @@ public class ConfigurationSwitch<T> extends Switch<T>
                     result = defaultCase ( theEObject );
                 return result;
             }
+            case ConfigurationPackage.COMMANDS_TYPE:
+            {
+                CommandsType commandsType = (CommandsType)theEObject;
+                T result = caseCommandsType ( commandsType );
+                if ( result == null )
+                    result = defaultCase ( theEObject );
+                return result;
+            }
             case ConfigurationPackage.CONNECTION_TYPE:
             {
                 ConnectionType connectionType = (ConnectionType)theEObject;
@@ -213,6 +221,22 @@ public class ConfigurationSwitch<T> extends Switch<T>
      * @generated
      */
     public T caseColumnMappingType ( ColumnMappingType object )
+    {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Commands Type</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Commands Type</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseCommandsType ( CommandsType object )
     {
         return null;
     }

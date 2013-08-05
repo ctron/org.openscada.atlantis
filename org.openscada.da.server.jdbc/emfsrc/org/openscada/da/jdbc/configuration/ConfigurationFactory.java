@@ -56,6 +56,15 @@ public interface ConfigurationFactory extends EFactory
     ColumnMappingType createColumnMappingType ();
 
     /**
+     * Returns a new object of class '<em>Commands Type</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Commands Type</em>'.
+     * @generated
+     */
+    CommandsType createCommandsType ();
+
+    /**
      * Returns a new object of class '<em>Connection Type</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

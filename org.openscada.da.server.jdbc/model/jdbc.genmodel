@@ -22,6 +22,11 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ColumnMappingType/aliasName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ColumnMappingType/columnNumber"/>
     </genClasses>
+    <genClasses ecoreClass="configuration.ecore#//CommandsType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//CommandsType/sql"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//CommandsType/localName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//CommandsType/sql1"/>
+    </genClasses>
     <genClasses ecoreClass="configuration.ecore#//ConnectionType">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//ConnectionType/query"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//ConnectionType/tabularQuery"/>
@@ -46,6 +51,7 @@
     <genClasses ecoreClass="configuration.ecore#//TabularQueryType">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//TabularQueryType/updateColumns"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//TabularQueryType/defaultUpdateSql"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//TabularQueryType/commands"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//TabularQueryType/defaultUpdateSql1"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//TabularQueryType/idColumn"/>
     </genClasses>

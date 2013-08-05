@@ -23,9 +23,16 @@ package org.openscada.da.server.jdbc;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.core.server.HiveCreator;
 import org.openscada.da.jdbc.configuration.RootType;
+import org.osgi.framework.BundleContext;
 
 public class HiveCreatorImpl implements HiveCreator
 {
+    private BundleContext context;
+
+    public void activate ( final BundleContext context )
+    {
+        this.context = context;
+    }
 
     @Override
     public Hive createHive ( final String reference, final Object configuration ) throws Exception
@@ -37,11 +44,11 @@ public class HiveCreatorImpl implements HiveCreator
 
         if ( configuration instanceof RootType )
         {
-            return new org.openscada.da.server.jdbc.Hive ( (RootType)configuration );
+            return new org.openscada.da.server.jdbc.Hive ( (RootType)configuration, this.context );
         }
         else if ( configuration instanceof String )
         {
-            return new org.openscada.da.server.jdbc.Hive ( (String)configuration );
+            return new org.openscada.da.server.jdbc.Hive ( (String)configuration, this.context );
         }
         else
         {

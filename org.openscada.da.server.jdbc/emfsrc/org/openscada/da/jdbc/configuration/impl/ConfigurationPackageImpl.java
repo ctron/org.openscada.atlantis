@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 
 import org.openscada.da.jdbc.configuration.AbstractQueryType;
 import org.openscada.da.jdbc.configuration.ColumnMappingType;
+import org.openscada.da.jdbc.configuration.CommandsType;
 import org.openscada.da.jdbc.configuration.ConfigurationFactory;
 import org.openscada.da.jdbc.configuration.ConfigurationPackage;
 import org.openscada.da.jdbc.configuration.ConnectionType;
@@ -73,6 +74,13 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     private EClass columnMappingTypeEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass commandsTypeEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -320,6 +328,46 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getCommandsType ()
+    {
+        return commandsTypeEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getCommandsType_Sql ()
+    {
+        return (EAttribute)commandsTypeEClass.getEStructuralFeatures ().get ( 0 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getCommandsType_LocalName ()
+    {
+        return (EAttribute)commandsTypeEClass.getEStructuralFeatures ().get ( 1 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getCommandsType_Sql1 ()
+    {
+        return (EAttribute)commandsTypeEClass.getEStructuralFeatures ().get ( 2 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getConnectionType ()
     {
         return connectionTypeEClass;
@@ -530,9 +578,19 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
+    public EReference getTabularQueryType_Commands ()
+    {
+        return (EReference)tabularQueryTypeEClass.getEStructuralFeatures ().get ( 2 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EAttribute getTabularQueryType_DefaultUpdateSql1 ()
     {
-        return (EAttribute)tabularQueryTypeEClass.getEStructuralFeatures ().get ( 2 );
+        return (EAttribute)tabularQueryTypeEClass.getEStructuralFeatures ().get ( 3 );
     }
 
     /**
@@ -542,7 +600,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      */
     public EAttribute getTabularQueryType_IdColumn ()
     {
-        return (EAttribute)tabularQueryTypeEClass.getEStructuralFeatures ().get ( 3 );
+        return (EAttribute)tabularQueryTypeEClass.getEStructuralFeatures ().get ( 4 );
     }
 
     /**
@@ -727,6 +785,11 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         createEAttribute ( columnMappingTypeEClass, COLUMN_MAPPING_TYPE__ALIAS_NAME );
         createEAttribute ( columnMappingTypeEClass, COLUMN_MAPPING_TYPE__COLUMN_NUMBER );
 
+        commandsTypeEClass = createEClass ( COMMANDS_TYPE );
+        createEAttribute ( commandsTypeEClass, COMMANDS_TYPE__SQL );
+        createEAttribute ( commandsTypeEClass, COMMANDS_TYPE__LOCAL_NAME );
+        createEAttribute ( commandsTypeEClass, COMMANDS_TYPE__SQL1 );
+
         connectionTypeEClass = createEClass ( CONNECTION_TYPE );
         createEReference ( connectionTypeEClass, CONNECTION_TYPE__QUERY );
         createEReference ( connectionTypeEClass, CONNECTION_TYPE__TABULAR_QUERY );
@@ -752,6 +815,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         tabularQueryTypeEClass = createEClass ( TABULAR_QUERY_TYPE );
         createEReference ( tabularQueryTypeEClass, TABULAR_QUERY_TYPE__UPDATE_COLUMNS );
         createEAttribute ( tabularQueryTypeEClass, TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL );
+        createEReference ( tabularQueryTypeEClass, TABULAR_QUERY_TYPE__COMMANDS );
         createEAttribute ( tabularQueryTypeEClass, TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL1 );
         createEAttribute ( tabularQueryTypeEClass, TABULAR_QUERY_TYPE__ID_COLUMN );
 
@@ -823,6 +887,11 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         initEAttribute ( getColumnMappingType_AliasName (), this.getAliasNameType (), "aliasName", null, 1, 1, ColumnMappingType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEAttribute ( getColumnMappingType_ColumnNumber (), this.getColumnNumberType (), "columnNumber", null, 1, 1, ColumnMappingType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
 
+        initEClass ( commandsTypeEClass, CommandsType.class, "CommandsType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
+        initEAttribute ( getCommandsType_Sql (), theXMLTypePackage.getString (), "sql", null, 0, 1, CommandsType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEAttribute ( getCommandsType_LocalName (), theXMLTypePackage.getString (), "localName", null, 1, 1, CommandsType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEAttribute ( getCommandsType_Sql1 (), theXMLTypePackage.getString (), "sql1", null, 0, 1, CommandsType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+
         initEClass ( connectionTypeEClass, ConnectionType.class, "ConnectionType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEReference ( getConnectionType_Query (), this.getQueryType (), null, "query", null, 0, -1, ConnectionType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEReference ( getConnectionType_TabularQuery (), this.getTabularQueryType (), null, "tabularQuery", null, 0, -1, ConnectionType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
@@ -848,6 +917,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         initEClass ( tabularQueryTypeEClass, TabularQueryType.class, "TabularQueryType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEReference ( getTabularQueryType_UpdateColumns (), this.getUpdateColumnsType (), null, "updateColumns", null, 0, -1, TabularQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEAttribute ( getTabularQueryType_DefaultUpdateSql (), theXMLTypePackage.getString (), "defaultUpdateSql", null, 0, 1, TabularQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEReference ( getTabularQueryType_Commands (), this.getCommandsType (), null, "commands", null, 0, -1, TabularQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEAttribute ( getTabularQueryType_DefaultUpdateSql1 (), theXMLTypePackage.getString (), "defaultUpdateSql1", null, 0, 1, TabularQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEAttribute ( getTabularQueryType_IdColumn (), theXMLTypePackage.getInt (), "idColumn", null, 1, 1, TabularQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
 
@@ -927,6 +997,19 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         addAnnotation ( columnNumberTypeObjectEDataType, source, new String[] { "name", "columnNumber_._type:Object", //$NON-NLS-1$ //$NON-NLS-2$
         "baseType", "columnNumber_._type" //$NON-NLS-1$ //$NON-NLS-2$
         } );
+        addAnnotation ( commandsTypeEClass, source, new String[] { "name", "CommandsType", //$NON-NLS-1$ //$NON-NLS-2$
+        "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getCommandsType_Sql (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "sql", //$NON-NLS-1$ //$NON-NLS-2$
+        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getCommandsType_LocalName (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "localName" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getCommandsType_Sql1 (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "sql" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
         addAnnotation ( connectionTypeEClass, source, new String[] { "name", "ConnectionType", //$NON-NLS-1$ //$NON-NLS-2$
         "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
         } );
@@ -995,6 +1078,10 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         } );
         addAnnotation ( getTabularQueryType_DefaultUpdateSql (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
         "name", "defaultUpdateSql", //$NON-NLS-1$ //$NON-NLS-2$
+        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getTabularQueryType_Commands (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "commands", //$NON-NLS-1$ //$NON-NLS-2$
         "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( getTabularQueryType_DefaultUpdateSql1 (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$

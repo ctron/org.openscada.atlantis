@@ -49,22 +49,52 @@ public class TabularQuery extends AbstractQuery
 
     private WriteHandlerFactory writeHandlerFactory;
 
-    public TabularQuery ( final String id, final int idColumn, final int period, final String sql, final Connection connection, final Map<Integer, String> columnAliases, final Map<String, String> updateMap )
+    private Map<String, String> commands;
+
+    public TabularQuery ( final String id, final int idColumn, final int period, final String sql, final Connection connection, final Map<Integer, String> columnAliases, final Map<String, String> updateMap, final Map<String, String> commands )
     {
         super ( id, period, sql, connection, columnAliases );
         this.idColumn = idColumn;
         this.updateMap = updateMap;
+        this.commands = commands;
         this.writeHandlerFactory = new WriteHandlerFactory () {
 
             @Override
-            public WriteHandler createWriteHandler ( final String columnName )
+            public WriteHandler createColumnWriteHandler ( final String id, final String columnName )
             {
-                return performCreateWriteHandler ( columnName );
+                return performColumnCreateWriteHandler ( id, columnName );
+            }
+
+            @Override
+            public WriteHandler createCommandWriteHandler ( final String id, final String command )
+            {
+                return performCreateCommandWriteHandler ( id, command );
+            }
+
+        };
+    }
+
+    protected WriteHandler performCreateCommandWriteHandler ( final String id, final String command )
+    {
+        final String commandSql = this.commands.get ( command );
+        if ( commandSql == null || commandSql.isEmpty () )
+        {
+            return null;
+        }
+
+        final String sql = String.format ( commandSql, id );
+
+        return new WriteHandler () {
+
+            @Override
+            public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
+            {
+                processUpdateSql ( sql, value, operationParameters );
             }
         };
     }
 
-    protected WriteHandler performCreateWriteHandler ( final String columnName )
+    protected WriteHandler performColumnCreateWriteHandler ( final String id, final String columnName )
     {
         final String updateSql = this.updateMap.get ( columnName );
         if ( updateSql == null || updateSql.isEmpty () )
@@ -72,17 +102,19 @@ public class TabularQuery extends AbstractQuery
             return null;
         }
 
+        final String sql = String.format ( updateSql, id );
+
         return new WriteHandler () {
 
             @Override
             public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
             {
-                processUpdate ( updateSql, value, operationParameters );
+                processUpdateSql ( sql, value, operationParameters );
             }
         };
     }
 
-    protected void processUpdate ( final String updateSql, final Variant value, final OperationParameters operationParameters ) throws Exception
+    protected void processUpdateSql ( final String updateSql, final Variant value, final OperationParameters operationParameters ) throws Exception
     {
         try (final java.sql.Connection c = this.connection.getConnection ())
         {
@@ -90,7 +122,10 @@ public class TabularQuery extends AbstractQuery
 
             try (PreparedStatement stmt = c.prepareStatement ( updateSql ))
             {
-                stmt.setObject ( 1, value.getValue () );
+                if ( stmt.getParameterMetaData ().getParameterCount () == 1 && !value.isNull () )
+                {
+                    stmt.setObject ( 1, value.getValue () );
+                }
                 stmt.executeUpdate ();
             }
         }
@@ -100,7 +135,7 @@ public class TabularQuery extends AbstractQuery
     public void register ( final ScheduledExecutorService timer, final DefaultChainItemFactory parentItemFactory )
     {
         super.register ( timer, parentItemFactory );
-        this.exporter = new TabularExporter ( this.itemFactory, this.writeHandlerFactory );
+        this.exporter = new TabularExporter ( this.itemFactory, this.writeHandlerFactory, this.commands.keySet () );
     }
 
     @Override
@@ -145,9 +180,14 @@ public class TabularQuery extends AbstractQuery
     {
         final List<Entry> entries = new LinkedList<> ();
 
+        logger.trace ( "Processing result" );
+
+        final int count = result.getMetaData ().getColumnCount ();
+        logger.trace ( "Column count: {}", count );
+
         while ( result.next () )
         {
-            final int count = result.getMetaData ().getColumnCount ();
+            logger.trace ( "Next row" );
 
             final String idValue = String.format ( "%s", result.getObject ( this.idColumn ) );
             final Entry entry = new Entry ( idValue );

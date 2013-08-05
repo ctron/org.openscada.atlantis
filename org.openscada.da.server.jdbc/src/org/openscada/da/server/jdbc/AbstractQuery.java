@@ -86,11 +86,18 @@ public abstract class AbstractQuery
 
     public void unregister ()
     {
-        this.job.cancel ( false );
+        if ( this.job != null )
+        {
+            this.job.cancel ( false );
+            this.job = null;
+        }
         this.timer = null;
 
-        this.itemFactory.dispose ();
-        this.itemFactory = null;
+        if ( this.itemFactory != null )
+        {
+            this.itemFactory.dispose ();
+            this.itemFactory = null;
+        }
     }
 
     public void tick ()
@@ -101,6 +108,7 @@ public abstract class AbstractQuery
         }
         catch ( final Throwable e )
         {
+            logger.debug ( "Global error", e );
             setGlobalError ( e );
         }
     }

@@ -37,6 +37,7 @@ import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
 import org.openscada.da.jdbc.configuration.ColumnMappingType;
+import org.openscada.da.jdbc.configuration.CommandsType;
 import org.openscada.da.jdbc.configuration.ConfigurationPackage;
 import org.openscada.da.jdbc.configuration.ConnectionType;
 import org.openscada.da.jdbc.configuration.DocumentRoot;
@@ -52,6 +53,7 @@ import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.jdbc.Update.Mapping;
 import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -64,16 +66,31 @@ public class Hive extends HiveCommon
 
     private final Collection<Connection> connections = new LinkedList<Connection> ();
 
-    private final ScheduledExecutorService timer;
+    private ScheduledExecutorService timer;
+
+    private final ConnectionFactory connectionFactory;
+
+    private final RootType root;
 
     public Hive () throws IOException
     {
-        this ( parse ( URI.createFileURI ( "configuration.xml" ) ) );
+        this ( parse ( URI.createFileURI ( "configuration.xml" ) ), null );
     }
 
-    public Hive ( final String uri ) throws IOException
+    public Hive ( final String uri, final BundleContext bundleContext ) throws IOException
     {
-        this ( parse ( URI.createURI ( uri ) ) );
+        this ( parse ( URI.createURI ( uri ) ), bundleContext );
+    }
+
+    public Hive ( final RootType root, final BundleContext bundleContext )
+    {
+        this.root = root;
+        this.connectionFactory = new DefaultConnectionFactory ( bundleContext );
+        // create root folder
+        this.rootFolder = new FolderCommon ();
+        setRootFolder ( this.rootFolder );
+
+        setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
     }
 
     private static RootType parse ( final URI uri ) throws IOException
@@ -95,21 +112,6 @@ public class Hive extends HiveCommon
         }
     }
 
-    public Hive ( final RootType root )
-    {
-        // create root folder
-        this.rootFolder = new FolderCommon ();
-        setRootFolder ( this.rootFolder );
-
-        setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
-
-        this.timer = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "JdbcHiveTimer", true ) );
-
-        configure ( root );
-
-        register ();
-    }
-
     @Override
     public String getHiveId ()
     {
@@ -117,9 +119,21 @@ public class Hive extends HiveCommon
     }
 
     @Override
+    public void start () throws Exception
+    {
+        super.start ();
+
+        this.timer = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "JdbcHiveTimer", true ) );
+
+        configure ();
+        register ();
+    }
+
+    @Override
     public void stop () throws Exception
     {
         this.timer.shutdown ();
+        unregister ();
         super.stop ();
     }
 
@@ -139,9 +153,9 @@ public class Hive extends HiveCommon
         }
     }
 
-    private void configure ( final RootType root )
+    private void configure ()
     {
-        for ( final ConnectionType connectionType : root.getConnection () )
+        for ( final ConnectionType connectionType : this.root.getConnection () )
         {
             createConnection ( connectionType );
         }
@@ -149,7 +163,7 @@ public class Hive extends HiveCommon
 
     private void createConnection ( final ConnectionType connectionType )
     {
-        final Connection connection = new Connection ( connectionType.getId (), connectionType.getTimeout (), connectionType.getConnectionClass (), connectionType.getUri (), connectionType.getUsername (), connectionType.getPassword () );
+        final Connection connection = new Connection ( this.connectionFactory, connectionType.getId (), connectionType.getTimeout (), connectionType.getConnectionClass (), connectionType.getUri (), connectionType.getUsername (), connectionType.getPassword () );
 
         for ( final QueryType queryType : connectionType.getQuery () )
         {
@@ -158,7 +172,7 @@ public class Hive extends HiveCommon
 
         for ( final TabularQueryType queryType : connectionType.getTabularQuery () )
         {
-            createTabularQuery ( connection, queryType, convertMappings ( queryType.getColumnMapping () ), convertUpdateColumns ( queryType ) );
+            createTabularQuery ( connection, queryType, convertMappings ( queryType.getColumnMapping () ), convertUpdateColumns ( queryType ), convertCommands ( queryType ) );
         }
 
         for ( final UpdateType updateType : connectionType.getUpdate () )
@@ -167,6 +181,24 @@ public class Hive extends HiveCommon
         }
 
         this.connections.add ( connection );
+    }
+
+    private Map<String, String> convertCommands ( final TabularQueryType queryType )
+    {
+        final Map<String, String> result = new HashMap<> ();
+
+        for ( final CommandsType command : queryType.getCommands () )
+        {
+            String sql = command.getSql ();
+            if ( sql == null || sql.isEmpty () )
+            {
+                sql = command.getSql1 ();
+            }
+
+            result.put ( command.getLocalName (), sql );
+        }
+
+        return result;
     }
 
     private Map<String, String> convertUpdateColumns ( final TabularQueryType queryType )
@@ -250,7 +282,7 @@ public class Hive extends HiveCommon
         connection.add ( new Query ( queryType.getId (), queryType.getPeriod (), sql, connection, columnAliases ) );
     }
 
-    private void createTabularQuery ( final Connection connection, final TabularQueryType queryType, final Map<Integer, String> columnAliases, final Map<String, String> updateMap )
+    private void createTabularQuery ( final Connection connection, final TabularQueryType queryType, final Map<Integer, String> columnAliases, final Map<String, String> updateMap, final Map<String, String> commands )
     {
         String sql = queryType.getSql ();
         if ( sql == null || sql.isEmpty () )
@@ -259,7 +291,7 @@ public class Hive extends HiveCommon
         }
 
         logger.info ( "Creating new tabular query: {} / {}", sql );
-        connection.add ( new TabularQuery ( queryType.getId (), queryType.getIdColumn (), queryType.getPeriod (), sql, connection, columnAliases, updateMap ) );
+        connection.add ( new TabularQuery ( queryType.getId (), queryType.getIdColumn (), queryType.getPeriod (), sql, connection, columnAliases, updateMap, commands ) );
     }
 
 }

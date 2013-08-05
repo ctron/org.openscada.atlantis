@@ -40,19 +40,29 @@
 			<extension base="jdbc:AbstractQueryType">
 				<sequence>
 					<element name="updateColumns"
-						type="jdbc:UpdateColumnsType" minOccurs="0" maxOccurs="unbounded">
-                        <annotation>
-                        	<documentation>Define all columns that are updateable.</documentation>
-                        </annotation>
+						type="jdbc:UpdateColumnsType" minOccurs="0"
+						maxOccurs="unbounded">
+						<annotation>
+							<documentation>
+								Define all columns that are updateable.
+							</documentation>
+						</annotation>
 					</element>
 					<element name="defaultUpdateSql" type="string"
 						minOccurs="0" maxOccurs="1">
-                        <annotation>
-                        	<documentation>This value needs to have one %s parameter which will be replaced by the columnName from the UpdateColumnsType attribute and one JDBC parameter (?) which will then receive the value.</documentation>
-                        </annotation>
+						<annotation>
+							<documentation>
+								This value needs to have one %s
+								parameter which will be replaced by the
+								columnName from the UpdateColumnsType
+								attribute and one JDBC parameter (?)
+								which will then receive the value.
+							</documentation>
+						</annotation>
 					</element>
+					<element name="commands" type="jdbc:CommandsType" minOccurs="0" maxOccurs="unbounded"></element>
 				</sequence>
-                <attribute name="idColumn" type="int" use="required">
+				<attribute name="idColumn" type="int" use="required">
                 	<annotation>
                 		<documentation>The number (starting with 1) of the id column.</documentation>
                 	</annotation></attribute>
@@ -126,5 +136,13 @@
 			<annotation>
 				<documentation>This SQL needs to have exactly one parameter. The value.</documentation>
 			</annotation></attribute>
+	</complexType>
+
+	<complexType name="CommandsType">
+		<sequence>
+			<element name="sql" type="string" minOccurs="0" maxOccurs="1"></element>
+		</sequence>
+		<attribute name="localName" type="string" use="required"></attribute>
+		<attribute name="sql" type="string" use="optional"></attribute>
 	</complexType>
 </schema>

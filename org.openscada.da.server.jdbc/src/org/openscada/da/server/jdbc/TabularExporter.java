@@ -70,7 +70,9 @@ public class TabularExporter
 
     public static interface WriteHandlerFactory
     {
-        public WriteHandler createWriteHandler ( String columnName );
+        public WriteHandler createColumnWriteHandler ( String id, String columnName );
+
+        public WriteHandler createCommandWriteHandler ( String id, String command );
     }
 
     private static class Row
@@ -79,10 +81,19 @@ public class TabularExporter
 
         private final WriteHandlerFactory writeHandlerFactory;
 
-        public Row ( final FolderItemFactory itemFactory, final String id, final WriteHandlerFactory writeHandlerFactory )
+        public Row ( final FolderItemFactory itemFactory, final String id, final WriteHandlerFactory writeHandlerFactory, final Set<String> commands )
         {
             this.itemFactory = itemFactory.createSubFolderFactory ( id );
             this.writeHandlerFactory = writeHandlerFactory;
+
+            for ( final String command : commands )
+            {
+                final WriteHandler writeHandler = writeHandlerFactory.createCommandWriteHandler ( id, command );
+                if ( writeHandler != null )
+                {
+                    this.itemFactory.createOutput ( command, null, writeHandler );
+                }
+            }
         }
 
         public void dispose ()
@@ -95,14 +106,15 @@ public class TabularExporter
 
         public void update ( final Map<String, Variant> values )
         {
-            final Set<String> currentItems = this.items.keySet ();
+            final Set<String> currentItems = new HashSet<> ( this.items.keySet () );
 
             for ( final Map.Entry<String, Variant> entry : values.entrySet () )
             {
                 DataItemInputChained item = this.items.get ( entry.getKey () );
                 if ( item == null )
                 {
-                    item = createItem ( entry.getKey () );
+                    item = createItem ( entry.getKey (), entry.getKey () );
+                    this.items.put ( entry.getKey (), item );
                 }
                 else
                 {
@@ -121,9 +133,9 @@ public class TabularExporter
             }
         }
 
-        public DataItemInputChained createItem ( final String columnName )
+        public DataItemInputChained createItem ( final String id, final String columnName )
         {
-            final WriteHandler writeHandler = this.writeHandlerFactory.createWriteHandler ( columnName );
+            final WriteHandler writeHandler = this.writeHandlerFactory.createColumnWriteHandler ( id, columnName );
             if ( writeHandler != null )
             {
                 return this.itemFactory.createInputOutput ( columnName, null, writeHandler );
@@ -139,10 +151,13 @@ public class TabularExporter
 
     private final WriteHandlerFactory writeHandlerFactory;
 
-    public TabularExporter ( final FolderItemFactory itemFactory, final WriteHandlerFactory writeHandlerFactory )
+    private final Set<String> commands;
+
+    public TabularExporter ( final FolderItemFactory itemFactory, final WriteHandlerFactory writeHandlerFactory, final Set<String> commands )
     {
         this.itemFactory = itemFactory;
         this.writeHandlerFactory = writeHandlerFactory;
+        this.commands = commands;
     }
 
     public void update ( final List<Entry> entries )
@@ -154,7 +169,7 @@ public class TabularExporter
             Row row = this.rows.get ( entry.getId () );
             if ( row == null )
             {
-                row = new Row ( this.itemFactory, entry.getId (), this.writeHandlerFactory );
+                row = new Row ( this.itemFactory, entry.getId (), this.writeHandlerFactory, this.commands );
                 this.rows.put ( entry.getId (), row );
             }
             else

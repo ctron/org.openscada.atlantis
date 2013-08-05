@@ -109,6 +109,12 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
         }
 
         @Override
+        public Adapter caseCommandsType ( CommandsType object )
+        {
+            return createCommandsTypeAdapter ();
+        }
+
+        @Override
         public Adapter caseConnectionType ( ConnectionType object )
         {
             return createConnectionTypeAdapter ();
@@ -203,6 +209,21 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
      * @generated
      */
     public Adapter createColumnMappingTypeAdapter ()
+    {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.openscada.da.jdbc.configuration.CommandsType <em>Commands Type</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.openscada.da.jdbc.configuration.CommandsType
+     * @generated
+     */
+    public Adapter createCommandsTypeAdapter ()
     {
         return null;
     }

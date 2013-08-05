@@ -19,6 +19,7 @@ Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.utils.lang;version="1.0.0",
  org.openscada.utils.lifecycle;version="1.0.0",
  org.openscada.utils.sql;version="1.0.0",
+ org.osgi.service.jdbc;resolution:=optional;version="1.0.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.openscada.da.jdbc.configuration;uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util";version="1.2.0",
