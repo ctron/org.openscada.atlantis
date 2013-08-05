@@ -93,6 +93,14 @@ public class DefaultChainItemFactory extends FolderItemFactory
         return item;
     }
 
+    @Override
+    protected WriteHandlerItem constructWriteHandler ( final String localId, final WriteHandler writeHandler )
+    {
+        final WriteHandlerItem item = super.constructWriteHandler ( localId, writeHandler );
+        applyChain ( item );
+        return item;
+    }
+
     /**
      * Apply our chain of elements
      * 

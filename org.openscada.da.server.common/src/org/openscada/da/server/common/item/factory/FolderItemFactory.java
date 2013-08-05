@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -99,6 +101,14 @@ public class FolderItemFactory extends HiveItemFactory
     protected DataItemInputChained constructInput ( final String localId )
     {
         final DataItemInputChained item = super.constructInput ( localId );
+        addToFolder ( item, localId, new HashMap<String, Variant> () );
+        return item;
+    }
+
+    @Override
+    protected WriteHandlerItem constructWriteHandler ( final String localId, final WriteHandler writeHandler )
+    {
+        final WriteHandlerItem item = super.constructWriteHandler ( localId, writeHandler );
         addToFolder ( item, localId, new HashMap<String, Variant> () );
         return item;
     }

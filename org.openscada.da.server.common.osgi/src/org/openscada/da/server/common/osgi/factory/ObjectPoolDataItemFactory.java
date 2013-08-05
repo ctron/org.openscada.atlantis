@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,14 +22,17 @@
 package org.openscada.da.server.common.osgi.factory;
 
 import java.util.Dictionary;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
+import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
@@ -79,6 +84,12 @@ public class ObjectPoolDataItemFactory implements ItemFactory
     public synchronized WriteHandlerItem createInputOutput ( final String localId, final Map<String, Variant> properties, final WriteHandler writeHandler )
     {
         return registerItem ( new WriteHandlerItem ( getId ( localId ), writeHandler, this.executor ), properties );
+    }
+
+    @Override
+    public WriteHandlerItem createOutput ( final String localId, final Map<String, Variant> properties, final WriteHandler writeHandler )
+    {
+        return registerItem ( new WriteHandlerItem ( new DataItemInformationBase ( getId ( localId ), EnumSet.of ( IODirection.OUTPUT ) ), writeHandler, this.executor ), properties );
     }
 
     private <T extends DataItem> T registerItem ( final T item, final Map<String, Variant> properties )

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -30,8 +32,8 @@ import org.openscada.da.server.common.impl.HiveCommon;
 
 /**
  * This item factory creates the items and registers them in the hive
+ * 
  * @author jens
- *
  */
 public class HiveItemFactory extends CommonItemFactory
 {
@@ -53,6 +55,14 @@ public class HiveItemFactory extends CommonItemFactory
     protected DataItemCommand constructCommand ( final String localId )
     {
         final DataItemCommand item = super.constructCommand ( localId );
+        this.hive.registerItem ( item );
+        return item;
+    }
+
+    @Override
+    protected WriteHandlerItem constructWriteHandler ( final String localId, final WriteHandler writeHandler )
+    {
+        final WriteHandlerItem item = super.constructWriteHandler ( localId, writeHandler );
         this.hive.registerItem ( item );
         return item;
     }

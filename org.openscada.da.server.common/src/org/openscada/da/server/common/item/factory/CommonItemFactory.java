@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,6 +21,7 @@
 
 package org.openscada.da.server.common.item.factory;
 
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -26,8 +29,10 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.openscada.core.Variant;
+import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
+import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
@@ -161,6 +166,13 @@ public class CommonItemFactory implements ItemFactory
         return ioItem;
     }
 
+    protected WriteHandlerItem constructWriteHandler ( final String localId, final WriteHandler writeHandler )
+    {
+        final WriteHandlerItem item = new WriteHandlerItem ( new DataItemInformationBase ( generateId ( localId ), EnumSet.of ( IODirection.OUTPUT ) ), writeHandler, this.executor );
+        registerItem ( item );
+        return item;
+    }
+
     @Override
     public void dispose ()
     {
@@ -214,6 +226,12 @@ public class CommonItemFactory implements ItemFactory
     public DataItemInputChained createInput ( final String localId, final Map<String, Variant> properties )
     {
         return constructInput ( localId );
+    }
+
+    @Override
+    public WriteHandlerItem createOutput ( final String localId, final Map<String, Variant> properties, final WriteHandler writeHandler )
+    {
+        return constructWriteHandler ( localId, writeHandler );
     }
 
     @Override

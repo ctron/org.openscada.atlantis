@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -35,6 +37,8 @@ public interface ItemFactory
     public abstract DataItemInputChained createInput ( String localId, Map<String, Variant> properties );
 
     public abstract WriteHandlerItem createInputOutput ( String localId, Map<String, Variant> properties, WriteHandler writeHandler );
+
+    public abstract WriteHandlerItem createOutput ( String localId, Map<String, Variant> properties, WriteHandler writeHandler );
 
     /**
      * Dispose an item if it was created by this factory
