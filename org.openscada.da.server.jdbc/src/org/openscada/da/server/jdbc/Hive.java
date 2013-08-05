@@ -23,6 +23,7 @@ package org.openscada.da.server.jdbc;
 
 import java.io.IOException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
@@ -41,6 +42,8 @@ import org.openscada.da.jdbc.configuration.ConnectionType;
 import org.openscada.da.jdbc.configuration.DocumentRoot;
 import org.openscada.da.jdbc.configuration.QueryType;
 import org.openscada.da.jdbc.configuration.RootType;
+import org.openscada.da.jdbc.configuration.TabularQueryType;
+import org.openscada.da.jdbc.configuration.UpdateColumnsType;
 import org.openscada.da.jdbc.configuration.UpdateMappingType;
 import org.openscada.da.jdbc.configuration.UpdateType;
 import org.openscada.da.jdbc.configuration.util.ConfigurationResourceFactoryImpl;
@@ -57,7 +60,7 @@ public class Hive extends HiveCommon
 
     private final static Logger logger = LoggerFactory.getLogger ( Hive.class );
 
-    private FolderCommon rootFolder = null;
+    private final FolderCommon rootFolder;
 
     private final Collection<Connection> connections = new LinkedList<Connection> ();
 
@@ -153,12 +156,53 @@ public class Hive extends HiveCommon
             createQuery ( connection, queryType, convertMappings ( queryType.getColumnMapping () ) );
         }
 
+        for ( final TabularQueryType queryType : connectionType.getTabularQuery () )
+        {
+            createTabularQuery ( connection, queryType, convertMappings ( queryType.getColumnMapping () ), convertUpdateColumns ( queryType ) );
+        }
+
         for ( final UpdateType updateType : connectionType.getUpdate () )
         {
             createUpdate ( connection, updateType );
         }
 
         this.connections.add ( connection );
+    }
+
+    private Map<String, String> convertUpdateColumns ( final TabularQueryType queryType )
+    {
+        String defaultUpdateSql = queryType.getDefaultUpdateSql ();
+        if ( defaultUpdateSql == null || defaultUpdateSql.isEmpty () )
+        {
+            defaultUpdateSql = queryType.getDefaultUpdateSql1 ();
+        }
+
+        if ( defaultUpdateSql == null || defaultUpdateSql.isEmpty () )
+        {
+            return Collections.emptyMap ();
+        }
+
+        if ( queryType.getUpdateColumns () == null || queryType.getUpdateColumns ().isEmpty () )
+        {
+            return Collections.emptyMap ();
+        }
+
+        final Map<String, String> result = new HashMap<> ( queryType.getUpdateColumns ().size () );
+
+        for ( final UpdateColumnsType updateCol : queryType.getUpdateColumns () )
+        {
+            final String updateSql = updateCol.getCustomUpdateSql ();
+            if ( updateSql == null || updateSql.isEmpty () )
+            {
+                result.put ( updateCol.getColumnName (), String.format ( defaultUpdateSql, updateCol.getColumnName () ) );
+            }
+            else
+            {
+                result.put ( updateCol.getColumnName (), updateSql );
+            }
+        }
+
+        return result;
     }
 
     private Map<Integer, String> convertMappings ( final List<ColumnMappingType> list )
@@ -205,4 +249,17 @@ public class Hive extends HiveCommon
 
         connection.add ( new Query ( queryType.getId (), queryType.getPeriod (), sql, connection, columnAliases ) );
     }
+
+    private void createTabularQuery ( final Connection connection, final TabularQueryType queryType, final Map<Integer, String> columnAliases, final Map<String, String> updateMap )
+    {
+        String sql = queryType.getSql ();
+        if ( sql == null || sql.isEmpty () )
+        {
+            sql = queryType.getSql1 ();
+        }
+
+        logger.info ( "Creating new tabular query: {} / {}", sql );
+        connection.add ( new TabularQuery ( queryType.getId (), queryType.getIdColumn (), queryType.getPeriod (), sql, connection, columnAliases, updateMap ) );
+    }
+
 }

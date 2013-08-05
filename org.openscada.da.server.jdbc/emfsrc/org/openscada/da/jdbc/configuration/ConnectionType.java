@@ -32,6 +32,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * <ul>
  *   <li>{@link org.openscada.da.jdbc.configuration.ConnectionType#getQuery <em>Query</em>}</li>
+ *   <li>{@link org.openscada.da.jdbc.configuration.ConnectionType#getTabularQuery <em>Tabular Query</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.ConnectionType#getUpdate <em>Update</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.ConnectionType#getConnectionClass <em>Connection Class</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.ConnectionType#getId <em>Id</em>}</li>
@@ -71,6 +72,23 @@ public interface ConnectionType extends EObject
      * @generated
      */
     EList<QueryType> getQuery ();
+
+    /**
+     * Returns the value of the '<em><b>Tabular Query</b></em>' containment reference list.
+     * The list contents are of type {@link org.openscada.da.jdbc.configuration.TabularQueryType}.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Tabular Query</em>' containment reference list isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Tabular Query</em>' containment reference list.
+     * @see org.openscada.da.jdbc.configuration.ConfigurationPackage#getConnectionType_TabularQuery()
+     * @model containment="true"
+     *        extendedMetaData="kind='element' name='tabularQuery' namespace='##targetNamespace'"
+     * @generated
+     */
+    EList<TabularQueryType> getTabularQuery ();
 
     /**
      * Returns the value of the '<em><b>Update</b></em>' containment reference list.

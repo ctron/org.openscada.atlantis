@@ -125,6 +125,8 @@ public class ConfigurationValidator extends EObjectValidator
     {
         switch ( classifierID )
         {
+            case ConfigurationPackage.ABSTRACT_QUERY_TYPE:
+                return validateAbstractQueryType ( (AbstractQueryType)value, diagnostics, context );
             case ConfigurationPackage.COLUMN_MAPPING_TYPE:
                 return validateColumnMappingType ( (ColumnMappingType)value, diagnostics, context );
             case ConfigurationPackage.CONNECTION_TYPE:
@@ -135,6 +137,10 @@ public class ConfigurationValidator extends EObjectValidator
                 return validateQueryType ( (QueryType)value, diagnostics, context );
             case ConfigurationPackage.ROOT_TYPE:
                 return validateRootType ( (RootType)value, diagnostics, context );
+            case ConfigurationPackage.TABULAR_QUERY_TYPE:
+                return validateTabularQueryType ( (TabularQueryType)value, diagnostics, context );
+            case ConfigurationPackage.UPDATE_COLUMNS_TYPE:
+                return validateUpdateColumnsType ( (UpdateColumnsType)value, diagnostics, context );
             case ConfigurationPackage.UPDATE_MAPPING_TYPE:
                 return validateUpdateMappingType ( (UpdateMappingType)value, diagnostics, context );
             case ConfigurationPackage.UPDATE_TYPE:
@@ -148,6 +154,16 @@ public class ConfigurationValidator extends EObjectValidator
             default:
                 return true;
         }
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public boolean validateAbstractQueryType ( AbstractQueryType abstractQueryType, DiagnosticChain diagnostics, Map<Object, Object> context )
+    {
+        return validate_EveryDefaultConstraint ( abstractQueryType, diagnostics, context );
     }
 
     /**
@@ -198,6 +214,26 @@ public class ConfigurationValidator extends EObjectValidator
     public boolean validateRootType ( RootType rootType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validate_EveryDefaultConstraint ( rootType, diagnostics, context );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public boolean validateTabularQueryType ( TabularQueryType tabularQueryType, DiagnosticChain diagnostics, Map<Object, Object> context )
+    {
+        return validate_EveryDefaultConstraint ( tabularQueryType, diagnostics, context );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public boolean validateUpdateColumnsType ( UpdateColumnsType updateColumnsType, DiagnosticChain diagnostics, Map<Object, Object> context )
+    {
+        return validate_EveryDefaultConstraint ( updateColumnsType, diagnostics, context );
     }
 
     /**

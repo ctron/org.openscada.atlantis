@@ -145,9 +145,7 @@ public class Update
 
     private int doUpdate ( final Variant value ) throws Exception
     {
-        final java.sql.Connection connection = this.connection.createConnection ();
-
-        try
+        try (final java.sql.Connection connection = this.connection.createConnection ())
         {
             connection.setAutoCommit ( true );
 
@@ -166,24 +164,11 @@ public class Update
             final String positionalSql = SqlHelper.convertSql ( this.sql, posMap );
             final Object[] positionalParameters = SqlHelper.expandParameters ( posMap, parameters );
 
-            final PreparedStatement stmt = connection.prepareStatement ( positionalSql );
-
-            try
+            try (final PreparedStatement stmt = connection.prepareStatement ( positionalSql ))
             {
                 applyParameters ( stmt, positionalParameters );
                 return stmt.executeUpdate ();
             }
-            finally
-            {
-                if ( stmt != null )
-                {
-                    stmt.close ();
-                }
-            }
-        }
-        finally
-        {
-            connection.close ();
         }
     }
 

@@ -30,6 +30,7 @@ import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.eclipse.emf.ecore.xml.type.XMLTypePackage;
 
+import org.openscada.da.jdbc.configuration.AbstractQueryType;
 import org.openscada.da.jdbc.configuration.ColumnMappingType;
 import org.openscada.da.jdbc.configuration.ConfigurationFactory;
 import org.openscada.da.jdbc.configuration.ConfigurationPackage;
@@ -37,6 +38,8 @@ import org.openscada.da.jdbc.configuration.ConnectionType;
 import org.openscada.da.jdbc.configuration.DocumentRoot;
 import org.openscada.da.jdbc.configuration.QueryType;
 import org.openscada.da.jdbc.configuration.RootType;
+import org.openscada.da.jdbc.configuration.TabularQueryType;
+import org.openscada.da.jdbc.configuration.UpdateColumnsType;
 import org.openscada.da.jdbc.configuration.UpdateMappingType;
 import org.openscada.da.jdbc.configuration.UpdateType;
 
@@ -56,6 +59,13 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass abstractQueryTypeEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -91,6 +101,20 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     private EClass rootTypeEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass tabularQueryTypeEClass = null;
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    private EClass updateColumnsTypeEClass = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -206,6 +230,66 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
+    public EClass getAbstractQueryType ()
+    {
+        return abstractQueryTypeEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getAbstractQueryType_Sql ()
+    {
+        return (EAttribute)abstractQueryTypeEClass.getEStructuralFeatures ().get ( 0 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getAbstractQueryType_ColumnMapping ()
+    {
+        return (EReference)abstractQueryTypeEClass.getEStructuralFeatures ().get ( 1 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getAbstractQueryType_Id ()
+    {
+        return (EAttribute)abstractQueryTypeEClass.getEStructuralFeatures ().get ( 2 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getAbstractQueryType_Period ()
+    {
+        return (EAttribute)abstractQueryTypeEClass.getEStructuralFeatures ().get ( 3 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getAbstractQueryType_Sql1 ()
+    {
+        return (EAttribute)abstractQueryTypeEClass.getEStructuralFeatures ().get ( 4 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     public EClass getColumnMappingType ()
     {
         return columnMappingTypeEClass;
@@ -256,7 +340,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public EReference getConnectionType_Update ()
+    public EReference getConnectionType_TabularQuery ()
     {
         return (EReference)connectionTypeEClass.getEStructuralFeatures ().get ( 1 );
     }
@@ -266,9 +350,9 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getConnectionType_ConnectionClass ()
+    public EReference getConnectionType_Update ()
     {
-        return (EAttribute)connectionTypeEClass.getEStructuralFeatures ().get ( 2 );
+        return (EReference)connectionTypeEClass.getEStructuralFeatures ().get ( 2 );
     }
 
     /**
@@ -276,7 +360,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getConnectionType_Id ()
+    public EAttribute getConnectionType_ConnectionClass ()
     {
         return (EAttribute)connectionTypeEClass.getEStructuralFeatures ().get ( 3 );
     }
@@ -286,7 +370,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getConnectionType_Password ()
+    public EAttribute getConnectionType_Id ()
     {
         return (EAttribute)connectionTypeEClass.getEStructuralFeatures ().get ( 4 );
     }
@@ -296,7 +380,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getConnectionType_Timeout ()
+    public EAttribute getConnectionType_Password ()
     {
         return (EAttribute)connectionTypeEClass.getEStructuralFeatures ().get ( 5 );
     }
@@ -306,7 +390,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getConnectionType_Uri ()
+    public EAttribute getConnectionType_Timeout ()
     {
         return (EAttribute)connectionTypeEClass.getEStructuralFeatures ().get ( 6 );
     }
@@ -316,9 +400,19 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getConnectionType_Username ()
+    public EAttribute getConnectionType_Uri ()
     {
         return (EAttribute)connectionTypeEClass.getEStructuralFeatures ().get ( 7 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getConnectionType_Username ()
+    {
+        return (EAttribute)connectionTypeEClass.getEStructuralFeatures ().get ( 8 );
     }
 
     /**
@@ -386,56 +480,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public EAttribute getQueryType_Sql ()
-    {
-        return (EAttribute)queryTypeEClass.getEStructuralFeatures ().get ( 0 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EReference getQueryType_ColumnMapping ()
-    {
-        return (EReference)queryTypeEClass.getEStructuralFeatures ().get ( 1 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getQueryType_Id ()
-    {
-        return (EAttribute)queryTypeEClass.getEStructuralFeatures ().get ( 2 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getQueryType_Period ()
-    {
-        return (EAttribute)queryTypeEClass.getEStructuralFeatures ().get ( 3 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public EAttribute getQueryType_Sql1 ()
-    {
-        return (EAttribute)queryTypeEClass.getEStructuralFeatures ().get ( 4 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public EClass getRootType ()
     {
         return rootTypeEClass;
@@ -449,6 +493,86 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
     public EReference getRootType_Connection ()
     {
         return (EReference)rootTypeEClass.getEStructuralFeatures ().get ( 0 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getTabularQueryType ()
+    {
+        return tabularQueryTypeEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EReference getTabularQueryType_UpdateColumns ()
+    {
+        return (EReference)tabularQueryTypeEClass.getEStructuralFeatures ().get ( 0 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getTabularQueryType_DefaultUpdateSql ()
+    {
+        return (EAttribute)tabularQueryTypeEClass.getEStructuralFeatures ().get ( 1 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getTabularQueryType_DefaultUpdateSql1 ()
+    {
+        return (EAttribute)tabularQueryTypeEClass.getEStructuralFeatures ().get ( 2 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getTabularQueryType_IdColumn ()
+    {
+        return (EAttribute)tabularQueryTypeEClass.getEStructuralFeatures ().get ( 3 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EClass getUpdateColumnsType ()
+    {
+        return updateColumnsTypeEClass;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getUpdateColumnsType_ColumnName ()
+    {
+        return (EAttribute)updateColumnsTypeEClass.getEStructuralFeatures ().get ( 0 );
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EAttribute getUpdateColumnsType_CustomUpdateSql ()
+    {
+        return (EAttribute)updateColumnsTypeEClass.getEStructuralFeatures ().get ( 1 );
     }
 
     /**
@@ -592,12 +716,20 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         isCreated = true;
 
         // Create classes and their features
+        abstractQueryTypeEClass = createEClass ( ABSTRACT_QUERY_TYPE );
+        createEAttribute ( abstractQueryTypeEClass, ABSTRACT_QUERY_TYPE__SQL );
+        createEReference ( abstractQueryTypeEClass, ABSTRACT_QUERY_TYPE__COLUMN_MAPPING );
+        createEAttribute ( abstractQueryTypeEClass, ABSTRACT_QUERY_TYPE__ID );
+        createEAttribute ( abstractQueryTypeEClass, ABSTRACT_QUERY_TYPE__PERIOD );
+        createEAttribute ( abstractQueryTypeEClass, ABSTRACT_QUERY_TYPE__SQL1 );
+
         columnMappingTypeEClass = createEClass ( COLUMN_MAPPING_TYPE );
         createEAttribute ( columnMappingTypeEClass, COLUMN_MAPPING_TYPE__ALIAS_NAME );
         createEAttribute ( columnMappingTypeEClass, COLUMN_MAPPING_TYPE__COLUMN_NUMBER );
 
         connectionTypeEClass = createEClass ( CONNECTION_TYPE );
         createEReference ( connectionTypeEClass, CONNECTION_TYPE__QUERY );
+        createEReference ( connectionTypeEClass, CONNECTION_TYPE__TABULAR_QUERY );
         createEReference ( connectionTypeEClass, CONNECTION_TYPE__UPDATE );
         createEAttribute ( connectionTypeEClass, CONNECTION_TYPE__CONNECTION_CLASS );
         createEAttribute ( connectionTypeEClass, CONNECTION_TYPE__ID );
@@ -613,14 +745,19 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         createEReference ( documentRootEClass, DOCUMENT_ROOT__ROOT );
 
         queryTypeEClass = createEClass ( QUERY_TYPE );
-        createEAttribute ( queryTypeEClass, QUERY_TYPE__SQL );
-        createEReference ( queryTypeEClass, QUERY_TYPE__COLUMN_MAPPING );
-        createEAttribute ( queryTypeEClass, QUERY_TYPE__ID );
-        createEAttribute ( queryTypeEClass, QUERY_TYPE__PERIOD );
-        createEAttribute ( queryTypeEClass, QUERY_TYPE__SQL1 );
 
         rootTypeEClass = createEClass ( ROOT_TYPE );
         createEReference ( rootTypeEClass, ROOT_TYPE__CONNECTION );
+
+        tabularQueryTypeEClass = createEClass ( TABULAR_QUERY_TYPE );
+        createEReference ( tabularQueryTypeEClass, TABULAR_QUERY_TYPE__UPDATE_COLUMNS );
+        createEAttribute ( tabularQueryTypeEClass, TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL );
+        createEAttribute ( tabularQueryTypeEClass, TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL1 );
+        createEAttribute ( tabularQueryTypeEClass, TABULAR_QUERY_TYPE__ID_COLUMN );
+
+        updateColumnsTypeEClass = createEClass ( UPDATE_COLUMNS_TYPE );
+        createEAttribute ( updateColumnsTypeEClass, UPDATE_COLUMNS_TYPE__COLUMN_NAME );
+        createEAttribute ( updateColumnsTypeEClass, UPDATE_COLUMNS_TYPE__CUSTOM_UPDATE_SQL );
 
         updateMappingTypeEClass = createEClass ( UPDATE_MAPPING_TYPE );
         createEAttribute ( updateMappingTypeEClass, UPDATE_MAPPING_TYPE__NAME );
@@ -671,14 +808,24 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         // Set bounds for type parameters
 
         // Add supertypes to classes
+        queryTypeEClass.getESuperTypes ().add ( this.getAbstractQueryType () );
+        tabularQueryTypeEClass.getESuperTypes ().add ( this.getAbstractQueryType () );
 
         // Initialize classes, features, and operations; add parameters
+        initEClass ( abstractQueryTypeEClass, AbstractQueryType.class, "AbstractQueryType", IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
+        initEAttribute ( getAbstractQueryType_Sql (), theXMLTypePackage.getString (), "sql", null, 0, 1, AbstractQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEReference ( getAbstractQueryType_ColumnMapping (), this.getColumnMappingType (), null, "columnMapping", null, 0, -1, AbstractQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEAttribute ( getAbstractQueryType_Id (), theXMLTypePackage.getString (), "id", null, 1, 1, AbstractQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEAttribute ( getAbstractQueryType_Period (), theXMLTypePackage.getInt (), "period", null, 1, 1, AbstractQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEAttribute ( getAbstractQueryType_Sql1 (), theXMLTypePackage.getString (), "sql1", null, 0, 1, AbstractQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+
         initEClass ( columnMappingTypeEClass, ColumnMappingType.class, "ColumnMappingType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEAttribute ( getColumnMappingType_AliasName (), this.getAliasNameType (), "aliasName", null, 1, 1, ColumnMappingType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEAttribute ( getColumnMappingType_ColumnNumber (), this.getColumnNumberType (), "columnNumber", null, 1, 1, ColumnMappingType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
 
         initEClass ( connectionTypeEClass, ConnectionType.class, "ConnectionType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEReference ( getConnectionType_Query (), this.getQueryType (), null, "query", null, 0, -1, ConnectionType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEReference ( getConnectionType_TabularQuery (), this.getTabularQueryType (), null, "tabularQuery", null, 0, -1, ConnectionType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEReference ( getConnectionType_Update (), this.getUpdateType (), null, "update", null, 0, -1, ConnectionType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEAttribute ( getConnectionType_ConnectionClass (), theXMLTypePackage.getString (), "connectionClass", null, 0, 1, ConnectionType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEAttribute ( getConnectionType_Id (), theXMLTypePackage.getString (), "id", null, 1, 1, ConnectionType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
@@ -694,14 +841,19 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         initEReference ( getDocumentRoot_Root (), this.getRootType (), null, "root", null, 0, -2, null, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
 
         initEClass ( queryTypeEClass, QueryType.class, "QueryType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
-        initEAttribute ( getQueryType_Sql (), theXMLTypePackage.getString (), "sql", null, 0, 1, QueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
-        initEReference ( getQueryType_ColumnMapping (), this.getColumnMappingType (), null, "columnMapping", null, 0, -1, QueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
-        initEAttribute ( getQueryType_Id (), theXMLTypePackage.getString (), "id", null, 1, 1, QueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
-        initEAttribute ( getQueryType_Period (), theXMLTypePackage.getInt (), "period", null, 1, 1, QueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
-        initEAttribute ( getQueryType_Sql1 (), theXMLTypePackage.getString (), "sql1", null, 0, 1, QueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
 
         initEClass ( rootTypeEClass, RootType.class, "RootType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEReference ( getRootType_Connection (), this.getConnectionType (), null, "connection", null, 0, -1, RootType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+
+        initEClass ( tabularQueryTypeEClass, TabularQueryType.class, "TabularQueryType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
+        initEReference ( getTabularQueryType_UpdateColumns (), this.getUpdateColumnsType (), null, "updateColumns", null, 0, -1, TabularQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEAttribute ( getTabularQueryType_DefaultUpdateSql (), theXMLTypePackage.getString (), "defaultUpdateSql", null, 0, 1, TabularQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEAttribute ( getTabularQueryType_DefaultUpdateSql1 (), theXMLTypePackage.getString (), "defaultUpdateSql1", null, 0, 1, TabularQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEAttribute ( getTabularQueryType_IdColumn (), theXMLTypePackage.getInt (), "idColumn", null, 1, 1, TabularQueryType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+
+        initEClass ( updateColumnsTypeEClass, UpdateColumnsType.class, "UpdateColumnsType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
+        initEAttribute ( getUpdateColumnsType_ColumnName (), theXMLTypePackage.getString (), "columnName", null, 1, 1, UpdateColumnsType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
+        initEAttribute ( getUpdateColumnsType_CustomUpdateSql (), theXMLTypePackage.getString (), "customUpdateSql", null, 0, 1, UpdateColumnsType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
 
         initEClass ( updateMappingTypeEClass, UpdateMappingType.class, "UpdateMappingType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEAttribute ( getUpdateMappingType_Name (), theXMLTypePackage.getString (), "name", null, 0, 1, UpdateMappingType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
@@ -735,6 +887,26 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
     protected void createExtendedMetaDataAnnotations ()
     {
         String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData"; //$NON-NLS-1$		
+        addAnnotation ( abstractQueryTypeEClass, source, new String[] { "name", "AbstractQueryType", //$NON-NLS-1$ //$NON-NLS-2$
+        "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getAbstractQueryType_Sql (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "sql", //$NON-NLS-1$ //$NON-NLS-2$
+        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getAbstractQueryType_ColumnMapping (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "columnMapping", //$NON-NLS-1$ //$NON-NLS-2$
+        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getAbstractQueryType_Id (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "id" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getAbstractQueryType_Period (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "period" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getAbstractQueryType_Sql1 (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "sql" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
         addAnnotation ( aliasNameTypeEDataType, source, new String[] { "name", "aliasName_._type", //$NON-NLS-1$ //$NON-NLS-2$
         "baseType", "http://www.eclipse.org/emf/2003/XMLType#string", //$NON-NLS-1$ //$NON-NLS-2$
         "minLength", "1" //$NON-NLS-1$ //$NON-NLS-2$
@@ -760,6 +932,10 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         } );
         addAnnotation ( getConnectionType_Query (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
         "name", "query", //$NON-NLS-1$ //$NON-NLS-2$
+        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getConnectionType_TabularQuery (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "tabularQuery", //$NON-NLS-1$ //$NON-NLS-2$
         "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( getConnectionType_Update (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
@@ -803,29 +979,38 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         addAnnotation ( queryTypeEClass, source, new String[] { "name", "QueryType", //$NON-NLS-1$ //$NON-NLS-2$
         "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
         } );
-        addAnnotation ( getQueryType_Sql (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "sql", //$NON-NLS-1$ //$NON-NLS-2$
-        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getQueryType_ColumnMapping (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "columnMapping", //$NON-NLS-1$ //$NON-NLS-2$
-        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getQueryType_Id (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "id" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getQueryType_Period (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "period" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getQueryType_Sql1 (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "sql" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
         addAnnotation ( rootTypeEClass, source, new String[] { "name", "RootType", //$NON-NLS-1$ //$NON-NLS-2$
         "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( getRootType_Connection (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
         "name", "connection", //$NON-NLS-1$ //$NON-NLS-2$
         "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( tabularQueryTypeEClass, source, new String[] { "name", "TabularQueryType", //$NON-NLS-1$ //$NON-NLS-2$
+        "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getTabularQueryType_UpdateColumns (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "updateColumns", //$NON-NLS-1$ //$NON-NLS-2$
+        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getTabularQueryType_DefaultUpdateSql (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "defaultUpdateSql", //$NON-NLS-1$ //$NON-NLS-2$
+        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getTabularQueryType_DefaultUpdateSql1 (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "defaultUpdateSql" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getTabularQueryType_IdColumn (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "idColumn" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( updateColumnsTypeEClass, source, new String[] { "name", "UpdateColumnsType", //$NON-NLS-1$ //$NON-NLS-2$
+        "kind", "empty" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getUpdateColumnsType_ColumnName (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "columnName" //$NON-NLS-1$ //$NON-NLS-2$
+        } );
+        addAnnotation ( getUpdateColumnsType_CustomUpdateSql (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+        "name", "customUpdateSql" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( updateMappingTypeEClass, source, new String[] { "name", "UpdateMappingType", //$NON-NLS-1$ //$NON-NLS-2$
         "kind", "empty" //$NON-NLS-1$ //$NON-NLS-2$

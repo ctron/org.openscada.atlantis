@@ -26,93 +26,26 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
 
 import org.openscada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class Query
+public class Query extends AbstractQuery
 {
     private final static Logger logger = LoggerFactory.getLogger ( Query.class );
 
-    private final String id;
-
-    private final int period;
-
-    private final String sql;
-
-    private final Connection connection;
-
-    private ScheduledExecutorService timer;
-
-    private final Runnable task;
-
     private final Map<String, DataItemInputChained> items = new HashMap<String, DataItemInputChained> ();
-
-    private FolderItemFactory itemFactory;
-
-    private final Map<Integer, String> columnAliases;
-
-    private ScheduledFuture<?> job;
 
     public Query ( final String id, final int period, final String sql, final Connection connection, final Map<Integer, String> columnAliases )
     {
-        super ();
-        this.id = id;
-        this.period = period;
-        this.sql = sql;
-        this.connection = connection;
-        this.columnAliases = columnAliases;
-
-        logger.info ( "Created new query: {}", this.id );
-
-        this.task = new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                Query.this.tick ();
-            }
-        };
+        super ( id, period, sql, connection, columnAliases );
     }
 
-    public void register ( final ScheduledExecutorService timer, final DefaultChainItemFactory parentItemFactory )
-    {
-        this.timer = timer;
-        this.itemFactory = parentItemFactory.createSubFolderFactory ( this.id );
-
-        this.job = this.timer.scheduleAtFixedRate ( this.task, 0, this.period, TimeUnit.MILLISECONDS );
-    }
-
-    public void unregister ()
-    {
-        this.job.cancel ( false );
-        this.timer = null;
-
-        this.itemFactory.dispose ();
-        this.itemFactory = null;
-    }
-
-    public void tick ()
-    {
-        try
-        {
-            doQuery ();
-        }
-        catch ( final Throwable e )
-        {
-            setGlobalError ( e );
-        }
-    }
-
-    private void setGlobalError ( final Throwable e )
+    @Override
+    protected void setGlobalError ( final Throwable e )
     {
         logger.error ( "Failed to query", e );
 
@@ -122,61 +55,42 @@ public class Query
         }
     }
 
-    private void doQuery () throws Exception
+    @Override
+    protected void doQuery () throws Exception
     {
         logger.debug ( "Perform query" );
-        final java.sql.Connection connection = this.connection.getConnection ();
-        try
+        try (java.sql.Connection connection = this.connection.getConnection ())
         {
-            final PreparedStatement stmt = connection.prepareStatement ( this.sql );
-            if ( this.connection.getTimeout () != null )
+            try (final PreparedStatement stmt = connection.prepareStatement ( this.sql ))
             {
-                stmt.setQueryTimeout ( this.connection.getTimeout () / 1000 );
-            }
-
-            try
-            {
-                final ResultSet result = stmt.executeQuery ();
-                if ( result.next () )
+                if ( this.connection.getTimeout () != null )
                 {
-                    final int count = result.getMetaData ().getColumnCount ();
+                    stmt.setQueryTimeout ( this.connection.getTimeout () / 1000 );
+                }
 
-                    for ( int i = 0; i < count; i++ )
+                try (final ResultSet result = stmt.executeQuery ())
+                {
+                    if ( result.next () )
                     {
-                        updateField ( i, result );
+                        final int count = result.getMetaData ().getColumnCount ();
+
+                        for ( int i = 0; i < count; i++ )
+                        {
+                            updateField ( i + 1, result );
+                        }
                     }
                 }
-                result.close ();
-            }
-            finally
-            {
-                stmt.close ();
-            }
-        }
-        finally
-        {
-            if ( connection != null )
-            {
-                connection.close ();
             }
         }
     }
 
     private void updateField ( final int i, final ResultSet result ) throws SQLException
     {
-        final String field;
-        if ( this.columnAliases.containsKey ( i + 1 ) )
-        {
-            field = this.columnAliases.get ( i + 1 );
-        }
-        else
-        {
-            field = result.getMetaData ().getColumnName ( i + 1 );
-        }
+        final String field = mapFieldName ( i, result );
 
         try
         {
-            setValue ( field, Variant.valueOf ( result.getObject ( i + 1 ) ) );
+            setValue ( field, Variant.valueOf ( result.getObject ( i ) ) );
         }
         catch ( final Throwable e )
         {
@@ -195,7 +109,7 @@ public class Query
         item = this.itemFactory.createInput ( key, null );
         this.items.put ( key, item );
 
-        return null;
+        return item;
     }
 
     private void setValue ( final String key, final Variant value )

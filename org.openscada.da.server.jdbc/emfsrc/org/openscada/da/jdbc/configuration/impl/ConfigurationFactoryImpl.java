@@ -102,6 +102,10 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
                 return createQueryType ();
             case ConfigurationPackage.ROOT_TYPE:
                 return createRootType ();
+            case ConfigurationPackage.TABULAR_QUERY_TYPE:
+                return createTabularQueryType ();
+            case ConfigurationPackage.UPDATE_COLUMNS_TYPE:
+                return createUpdateColumnsType ();
             case ConfigurationPackage.UPDATE_MAPPING_TYPE:
                 return createUpdateMappingType ();
             case ConfigurationPackage.UPDATE_TYPE:
@@ -206,6 +210,28 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     {
         RootTypeImpl rootType = new RootTypeImpl ();
         return rootType;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public TabularQueryType createTabularQueryType ()
+    {
+        TabularQueryTypeImpl tabularQueryType = new TabularQueryTypeImpl ();
+        return tabularQueryType;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public UpdateColumnsType createUpdateColumnsType ()
+    {
+        UpdateColumnsTypeImpl updateColumnsType = new UpdateColumnsTypeImpl ();
+        return updateColumnsType;
     }
 
     /**

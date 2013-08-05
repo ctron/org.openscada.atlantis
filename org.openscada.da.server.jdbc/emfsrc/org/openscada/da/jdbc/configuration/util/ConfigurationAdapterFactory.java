@@ -97,6 +97,12 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
      */
     protected ConfigurationSwitch<Adapter> modelSwitch = new ConfigurationSwitch<Adapter> () {
         @Override
+        public Adapter caseAbstractQueryType ( AbstractQueryType object )
+        {
+            return createAbstractQueryTypeAdapter ();
+        }
+
+        @Override
         public Adapter caseColumnMappingType ( ColumnMappingType object )
         {
             return createColumnMappingTypeAdapter ();
@@ -124,6 +130,18 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
         public Adapter caseRootType ( RootType object )
         {
             return createRootTypeAdapter ();
+        }
+
+        @Override
+        public Adapter caseTabularQueryType ( TabularQueryType object )
+        {
+            return createTabularQueryTypeAdapter ();
+        }
+
+        @Override
+        public Adapter caseUpdateColumnsType ( UpdateColumnsType object )
+        {
+            return createUpdateColumnsTypeAdapter ();
         }
 
         @Override
@@ -157,6 +175,21 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
     public Adapter createAdapter ( Notifier target )
     {
         return modelSwitch.doSwitch ( (EObject)target );
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.openscada.da.jdbc.configuration.AbstractQueryType <em>Abstract Query Type</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.openscada.da.jdbc.configuration.AbstractQueryType
+     * @generated
+     */
+    public Adapter createAbstractQueryTypeAdapter ()
+    {
+        return null;
     }
 
     /**
@@ -230,6 +263,36 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
      * @generated
      */
     public Adapter createRootTypeAdapter ()
+    {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.openscada.da.jdbc.configuration.TabularQueryType <em>Tabular Query Type</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.openscada.da.jdbc.configuration.TabularQueryType
+     * @generated
+     */
+    public Adapter createTabularQueryTypeAdapter ()
+    {
+        return null;
+    }
+
+    /**
+     * Creates a new adapter for an object of class '{@link org.openscada.da.jdbc.configuration.UpdateColumnsType <em>Update Columns Type</em>}'.
+     * <!-- begin-user-doc -->
+     * This default implementation returns null so that we can easily ignore cases;
+     * it's useful to ignore a case when inheritance will catch all the cases anyway.
+     * <!-- end-user-doc -->
+     * @return the new adapter.
+     * @see org.openscada.da.jdbc.configuration.UpdateColumnsType
+     * @generated
+     */
+    public Adapter createUpdateColumnsTypeAdapter ()
     {
         return null;
     }

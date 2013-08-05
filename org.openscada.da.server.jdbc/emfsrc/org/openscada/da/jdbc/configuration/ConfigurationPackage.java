@@ -83,6 +83,79 @@ public interface ConfigurationPackage extends EPackage
     ConfigurationPackage eINSTANCE = org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl.init ();
 
     /**
+     * The meta object id for the '{@link org.openscada.da.jdbc.configuration.impl.AbstractQueryTypeImpl <em>Abstract Query Type</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.openscada.da.jdbc.configuration.impl.AbstractQueryTypeImpl
+     * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getAbstractQueryType()
+     * @generated
+     */
+    int ABSTRACT_QUERY_TYPE = 0;
+
+    /**
+     * The feature id for the '<em><b>Sql</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ABSTRACT_QUERY_TYPE__SQL = 0;
+
+    /**
+     * The feature id for the '<em><b>Column Mapping</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ABSTRACT_QUERY_TYPE__COLUMN_MAPPING = 1;
+
+    /**
+     * The feature id for the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ABSTRACT_QUERY_TYPE__ID = 2;
+
+    /**
+     * The feature id for the '<em><b>Period</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ABSTRACT_QUERY_TYPE__PERIOD = 3;
+
+    /**
+     * The feature id for the '<em><b>Sql1</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ABSTRACT_QUERY_TYPE__SQL1 = 4;
+
+    /**
+     * The number of structural features of the '<em>Abstract Query Type</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ABSTRACT_QUERY_TYPE_FEATURE_COUNT = 5;
+
+    /**
+     * The number of operations of the '<em>Abstract Query Type</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int ABSTRACT_QUERY_TYPE_OPERATION_COUNT = 0;
+
+    /**
      * The meta object id for the '{@link org.openscada.da.jdbc.configuration.impl.ColumnMappingTypeImpl <em>Column Mapping Type</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -90,7 +163,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getColumnMappingType()
      * @generated
      */
-    int COLUMN_MAPPING_TYPE = 0;
+    int COLUMN_MAPPING_TYPE = 1;
 
     /**
      * The feature id for the '<em><b>Alias Name</b></em>' attribute.
@@ -136,7 +209,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getConnectionType()
      * @generated
      */
-    int CONNECTION_TYPE = 1;
+    int CONNECTION_TYPE = 2;
 
     /**
      * The feature id for the '<em><b>Query</b></em>' containment reference list.
@@ -148,13 +221,22 @@ public interface ConfigurationPackage extends EPackage
     int CONNECTION_TYPE__QUERY = 0;
 
     /**
+     * The feature id for the '<em><b>Tabular Query</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int CONNECTION_TYPE__TABULAR_QUERY = 1;
+
+    /**
      * The feature id for the '<em><b>Update</b></em>' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int CONNECTION_TYPE__UPDATE = 1;
+    int CONNECTION_TYPE__UPDATE = 2;
 
     /**
      * The feature id for the '<em><b>Connection Class</b></em>' attribute.
@@ -163,7 +245,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int CONNECTION_TYPE__CONNECTION_CLASS = 2;
+    int CONNECTION_TYPE__CONNECTION_CLASS = 3;
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -172,7 +254,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int CONNECTION_TYPE__ID = 3;
+    int CONNECTION_TYPE__ID = 4;
 
     /**
      * The feature id for the '<em><b>Password</b></em>' attribute.
@@ -181,7 +263,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int CONNECTION_TYPE__PASSWORD = 4;
+    int CONNECTION_TYPE__PASSWORD = 5;
 
     /**
      * The feature id for the '<em><b>Timeout</b></em>' attribute.
@@ -190,7 +272,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int CONNECTION_TYPE__TIMEOUT = 5;
+    int CONNECTION_TYPE__TIMEOUT = 6;
 
     /**
      * The feature id for the '<em><b>Uri</b></em>' attribute.
@@ -199,7 +281,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int CONNECTION_TYPE__URI = 6;
+    int CONNECTION_TYPE__URI = 7;
 
     /**
      * The feature id for the '<em><b>Username</b></em>' attribute.
@@ -208,7 +290,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int CONNECTION_TYPE__USERNAME = 7;
+    int CONNECTION_TYPE__USERNAME = 8;
 
     /**
      * The number of structural features of the '<em>Connection Type</em>' class.
@@ -217,7 +299,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int CONNECTION_TYPE_FEATURE_COUNT = 8;
+    int CONNECTION_TYPE_FEATURE_COUNT = 9;
 
     /**
      * The number of operations of the '<em>Connection Type</em>' class.
@@ -236,7 +318,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getDocumentRoot()
      * @generated
      */
-    int DOCUMENT_ROOT = 2;
+    int DOCUMENT_ROOT = 3;
 
     /**
      * The feature id for the '<em><b>Mixed</b></em>' attribute list.
@@ -300,7 +382,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getQueryType()
      * @generated
      */
-    int QUERY_TYPE = 3;
+    int QUERY_TYPE = 4;
 
     /**
      * The feature id for the '<em><b>Sql</b></em>' attribute.
@@ -309,7 +391,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int QUERY_TYPE__SQL = 0;
+    int QUERY_TYPE__SQL = ABSTRACT_QUERY_TYPE__SQL;
 
     /**
      * The feature id for the '<em><b>Column Mapping</b></em>' containment reference list.
@@ -318,7 +400,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int QUERY_TYPE__COLUMN_MAPPING = 1;
+    int QUERY_TYPE__COLUMN_MAPPING = ABSTRACT_QUERY_TYPE__COLUMN_MAPPING;
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -327,7 +409,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int QUERY_TYPE__ID = 2;
+    int QUERY_TYPE__ID = ABSTRACT_QUERY_TYPE__ID;
 
     /**
      * The feature id for the '<em><b>Period</b></em>' attribute.
@@ -336,7 +418,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int QUERY_TYPE__PERIOD = 3;
+    int QUERY_TYPE__PERIOD = ABSTRACT_QUERY_TYPE__PERIOD;
 
     /**
      * The feature id for the '<em><b>Sql1</b></em>' attribute.
@@ -345,7 +427,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int QUERY_TYPE__SQL1 = 4;
+    int QUERY_TYPE__SQL1 = ABSTRACT_QUERY_TYPE__SQL1;
 
     /**
      * The number of structural features of the '<em>Query Type</em>' class.
@@ -354,7 +436,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int QUERY_TYPE_FEATURE_COUNT = 5;
+    int QUERY_TYPE_FEATURE_COUNT = ABSTRACT_QUERY_TYPE_FEATURE_COUNT + 0;
 
     /**
      * The number of operations of the '<em>Query Type</em>' class.
@@ -363,7 +445,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int QUERY_TYPE_OPERATION_COUNT = 0;
+    int QUERY_TYPE_OPERATION_COUNT = ABSTRACT_QUERY_TYPE_OPERATION_COUNT + 0;
 
     /**
      * The meta object id for the '{@link org.openscada.da.jdbc.configuration.impl.RootTypeImpl <em>Root Type</em>}' class.
@@ -373,7 +455,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getRootType()
      * @generated
      */
-    int ROOT_TYPE = 4;
+    int ROOT_TYPE = 5;
 
     /**
      * The feature id for the '<em><b>Connection</b></em>' containment reference list.
@@ -403,6 +485,161 @@ public interface ConfigurationPackage extends EPackage
     int ROOT_TYPE_OPERATION_COUNT = 0;
 
     /**
+     * The meta object id for the '{@link org.openscada.da.jdbc.configuration.impl.TabularQueryTypeImpl <em>Tabular Query Type</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.openscada.da.jdbc.configuration.impl.TabularQueryTypeImpl
+     * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getTabularQueryType()
+     * @generated
+     */
+    int TABULAR_QUERY_TYPE = 6;
+
+    /**
+     * The feature id for the '<em><b>Sql</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE__SQL = ABSTRACT_QUERY_TYPE__SQL;
+
+    /**
+     * The feature id for the '<em><b>Column Mapping</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE__COLUMN_MAPPING = ABSTRACT_QUERY_TYPE__COLUMN_MAPPING;
+
+    /**
+     * The feature id for the '<em><b>Id</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE__ID = ABSTRACT_QUERY_TYPE__ID;
+
+    /**
+     * The feature id for the '<em><b>Period</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE__PERIOD = ABSTRACT_QUERY_TYPE__PERIOD;
+
+    /**
+     * The feature id for the '<em><b>Sql1</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE__SQL1 = ABSTRACT_QUERY_TYPE__SQL1;
+
+    /**
+     * The feature id for the '<em><b>Update Columns</b></em>' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE__UPDATE_COLUMNS = ABSTRACT_QUERY_TYPE_FEATURE_COUNT + 0;
+
+    /**
+     * The feature id for the '<em><b>Default Update Sql</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL = ABSTRACT_QUERY_TYPE_FEATURE_COUNT + 1;
+
+    /**
+     * The feature id for the '<em><b>Default Update Sql1</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL1 = ABSTRACT_QUERY_TYPE_FEATURE_COUNT + 2;
+
+    /**
+     * The feature id for the '<em><b>Id Column</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE__ID_COLUMN = ABSTRACT_QUERY_TYPE_FEATURE_COUNT + 3;
+
+    /**
+     * The number of structural features of the '<em>Tabular Query Type</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE_FEATURE_COUNT = ABSTRACT_QUERY_TYPE_FEATURE_COUNT + 4;
+
+    /**
+     * The number of operations of the '<em>Tabular Query Type</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int TABULAR_QUERY_TYPE_OPERATION_COUNT = ABSTRACT_QUERY_TYPE_OPERATION_COUNT + 0;
+
+    /**
+     * The meta object id for the '{@link org.openscada.da.jdbc.configuration.impl.UpdateColumnsTypeImpl <em>Update Columns Type</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.openscada.da.jdbc.configuration.impl.UpdateColumnsTypeImpl
+     * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getUpdateColumnsType()
+     * @generated
+     */
+    int UPDATE_COLUMNS_TYPE = 7;
+
+    /**
+     * The feature id for the '<em><b>Column Name</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int UPDATE_COLUMNS_TYPE__COLUMN_NAME = 0;
+
+    /**
+     * The feature id for the '<em><b>Custom Update Sql</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int UPDATE_COLUMNS_TYPE__CUSTOM_UPDATE_SQL = 1;
+
+    /**
+     * The number of structural features of the '<em>Update Columns Type</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int UPDATE_COLUMNS_TYPE_FEATURE_COUNT = 2;
+
+    /**
+     * The number of operations of the '<em>Update Columns Type</em>' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     * @ordered
+     */
+    int UPDATE_COLUMNS_TYPE_OPERATION_COUNT = 0;
+
+    /**
      * The meta object id for the '{@link org.openscada.da.jdbc.configuration.impl.UpdateMappingTypeImpl <em>Update Mapping Type</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -410,7 +647,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getUpdateMappingType()
      * @generated
      */
-    int UPDATE_MAPPING_TYPE = 5;
+    int UPDATE_MAPPING_TYPE = 8;
 
     /**
      * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -456,7 +693,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getUpdateType()
      * @generated
      */
-    int UPDATE_TYPE = 6;
+    int UPDATE_TYPE = 9;
 
     /**
      * The feature id for the '<em><b>Sql</b></em>' attribute.
@@ -520,7 +757,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getAliasNameType()
      * @generated
      */
-    int ALIAS_NAME_TYPE = 7;
+    int ALIAS_NAME_TYPE = 10;
 
     /**
      * The meta object id for the '<em>Column Number Type</em>' data type.
@@ -529,7 +766,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getColumnNumberType()
      * @generated
      */
-    int COLUMN_NUMBER_TYPE = 8;
+    int COLUMN_NUMBER_TYPE = 11;
 
     /**
      * The meta object id for the '<em>Column Number Type Object</em>' data type.
@@ -539,7 +776,72 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getColumnNumberTypeObject()
      * @generated
      */
-    int COLUMN_NUMBER_TYPE_OBJECT = 9;
+    int COLUMN_NUMBER_TYPE_OBJECT = 12;
+
+    /**
+     * Returns the meta object for class '{@link org.openscada.da.jdbc.configuration.AbstractQueryType <em>Abstract Query Type</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Abstract Query Type</em>'.
+     * @see org.openscada.da.jdbc.configuration.AbstractQueryType
+     * @generated
+     */
+    EClass getAbstractQueryType ();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.AbstractQueryType#getSql <em>Sql</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Sql</em>'.
+     * @see org.openscada.da.jdbc.configuration.AbstractQueryType#getSql()
+     * @see #getAbstractQueryType()
+     * @generated
+     */
+    EAttribute getAbstractQueryType_Sql ();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.openscada.da.jdbc.configuration.AbstractQueryType#getColumnMapping <em>Column Mapping</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Column Mapping</em>'.
+     * @see org.openscada.da.jdbc.configuration.AbstractQueryType#getColumnMapping()
+     * @see #getAbstractQueryType()
+     * @generated
+     */
+    EReference getAbstractQueryType_ColumnMapping ();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.AbstractQueryType#getId <em>Id</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Id</em>'.
+     * @see org.openscada.da.jdbc.configuration.AbstractQueryType#getId()
+     * @see #getAbstractQueryType()
+     * @generated
+     */
+    EAttribute getAbstractQueryType_Id ();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.AbstractQueryType#getPeriod <em>Period</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Period</em>'.
+     * @see org.openscada.da.jdbc.configuration.AbstractQueryType#getPeriod()
+     * @see #getAbstractQueryType()
+     * @generated
+     */
+    EAttribute getAbstractQueryType_Period ();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.AbstractQueryType#getSql1 <em>Sql1</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Sql1</em>'.
+     * @see org.openscada.da.jdbc.configuration.AbstractQueryType#getSql1()
+     * @see #getAbstractQueryType()
+     * @generated
+     */
+    EAttribute getAbstractQueryType_Sql1 ();
 
     /**
      * Returns the meta object for class '{@link org.openscada.da.jdbc.configuration.ColumnMappingType <em>Column Mapping Type</em>}'.
@@ -593,6 +895,17 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      */
     EReference getConnectionType_Query ();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.openscada.da.jdbc.configuration.ConnectionType#getTabularQuery <em>Tabular Query</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Tabular Query</em>'.
+     * @see org.openscada.da.jdbc.configuration.ConnectionType#getTabularQuery()
+     * @see #getConnectionType()
+     * @generated
+     */
+    EReference getConnectionType_TabularQuery ();
 
     /**
      * Returns the meta object for the containment reference list '{@link org.openscada.da.jdbc.configuration.ConnectionType#getUpdate <em>Update</em>}'.
@@ -736,61 +1049,6 @@ public interface ConfigurationPackage extends EPackage
     EClass getQueryType ();
 
     /**
-     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.QueryType#getSql <em>Sql</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Sql</em>'.
-     * @see org.openscada.da.jdbc.configuration.QueryType#getSql()
-     * @see #getQueryType()
-     * @generated
-     */
-    EAttribute getQueryType_Sql ();
-
-    /**
-     * Returns the meta object for the containment reference list '{@link org.openscada.da.jdbc.configuration.QueryType#getColumnMapping <em>Column Mapping</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the containment reference list '<em>Column Mapping</em>'.
-     * @see org.openscada.da.jdbc.configuration.QueryType#getColumnMapping()
-     * @see #getQueryType()
-     * @generated
-     */
-    EReference getQueryType_ColumnMapping ();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.QueryType#getId <em>Id</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Id</em>'.
-     * @see org.openscada.da.jdbc.configuration.QueryType#getId()
-     * @see #getQueryType()
-     * @generated
-     */
-    EAttribute getQueryType_Id ();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.QueryType#getPeriod <em>Period</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Period</em>'.
-     * @see org.openscada.da.jdbc.configuration.QueryType#getPeriod()
-     * @see #getQueryType()
-     * @generated
-     */
-    EAttribute getQueryType_Period ();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.QueryType#getSql1 <em>Sql1</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Sql1</em>'.
-     * @see org.openscada.da.jdbc.configuration.QueryType#getSql1()
-     * @see #getQueryType()
-     * @generated
-     */
-    EAttribute getQueryType_Sql1 ();
-
-    /**
      * Returns the meta object for class '{@link org.openscada.da.jdbc.configuration.RootType <em>Root Type</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -810,6 +1068,92 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      */
     EReference getRootType_Connection ();
+
+    /**
+     * Returns the meta object for class '{@link org.openscada.da.jdbc.configuration.TabularQueryType <em>Tabular Query Type</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Tabular Query Type</em>'.
+     * @see org.openscada.da.jdbc.configuration.TabularQueryType
+     * @generated
+     */
+    EClass getTabularQueryType ();
+
+    /**
+     * Returns the meta object for the containment reference list '{@link org.openscada.da.jdbc.configuration.TabularQueryType#getUpdateColumns <em>Update Columns</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the containment reference list '<em>Update Columns</em>'.
+     * @see org.openscada.da.jdbc.configuration.TabularQueryType#getUpdateColumns()
+     * @see #getTabularQueryType()
+     * @generated
+     */
+    EReference getTabularQueryType_UpdateColumns ();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.TabularQueryType#getDefaultUpdateSql <em>Default Update Sql</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Default Update Sql</em>'.
+     * @see org.openscada.da.jdbc.configuration.TabularQueryType#getDefaultUpdateSql()
+     * @see #getTabularQueryType()
+     * @generated
+     */
+    EAttribute getTabularQueryType_DefaultUpdateSql ();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.TabularQueryType#getDefaultUpdateSql1 <em>Default Update Sql1</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Default Update Sql1</em>'.
+     * @see org.openscada.da.jdbc.configuration.TabularQueryType#getDefaultUpdateSql1()
+     * @see #getTabularQueryType()
+     * @generated
+     */
+    EAttribute getTabularQueryType_DefaultUpdateSql1 ();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.TabularQueryType#getIdColumn <em>Id Column</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Id Column</em>'.
+     * @see org.openscada.da.jdbc.configuration.TabularQueryType#getIdColumn()
+     * @see #getTabularQueryType()
+     * @generated
+     */
+    EAttribute getTabularQueryType_IdColumn ();
+
+    /**
+     * Returns the meta object for class '{@link org.openscada.da.jdbc.configuration.UpdateColumnsType <em>Update Columns Type</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for class '<em>Update Columns Type</em>'.
+     * @see org.openscada.da.jdbc.configuration.UpdateColumnsType
+     * @generated
+     */
+    EClass getUpdateColumnsType ();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.UpdateColumnsType#getColumnName <em>Column Name</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Column Name</em>'.
+     * @see org.openscada.da.jdbc.configuration.UpdateColumnsType#getColumnName()
+     * @see #getUpdateColumnsType()
+     * @generated
+     */
+    EAttribute getUpdateColumnsType_ColumnName ();
+
+    /**
+     * Returns the meta object for the attribute '{@link org.openscada.da.jdbc.configuration.UpdateColumnsType#getCustomUpdateSql <em>Custom Update Sql</em>}'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return the meta object for the attribute '<em>Custom Update Sql</em>'.
+     * @see org.openscada.da.jdbc.configuration.UpdateColumnsType#getCustomUpdateSql()
+     * @see #getUpdateColumnsType()
+     * @generated
+     */
+    EAttribute getUpdateColumnsType_CustomUpdateSql ();
 
     /**
      * Returns the meta object for class '{@link org.openscada.da.jdbc.configuration.UpdateMappingType <em>Update Mapping Type</em>}'.
@@ -957,6 +1301,56 @@ public interface ConfigurationPackage extends EPackage
     interface Literals
     {
         /**
+         * The meta object literal for the '{@link org.openscada.da.jdbc.configuration.impl.AbstractQueryTypeImpl <em>Abstract Query Type</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.openscada.da.jdbc.configuration.impl.AbstractQueryTypeImpl
+         * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getAbstractQueryType()
+         * @generated
+         */
+        EClass ABSTRACT_QUERY_TYPE = eINSTANCE.getAbstractQueryType ();
+
+        /**
+         * The meta object literal for the '<em><b>Sql</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute ABSTRACT_QUERY_TYPE__SQL = eINSTANCE.getAbstractQueryType_Sql ();
+
+        /**
+         * The meta object literal for the '<em><b>Column Mapping</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference ABSTRACT_QUERY_TYPE__COLUMN_MAPPING = eINSTANCE.getAbstractQueryType_ColumnMapping ();
+
+        /**
+         * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute ABSTRACT_QUERY_TYPE__ID = eINSTANCE.getAbstractQueryType_Id ();
+
+        /**
+         * The meta object literal for the '<em><b>Period</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute ABSTRACT_QUERY_TYPE__PERIOD = eINSTANCE.getAbstractQueryType_Period ();
+
+        /**
+         * The meta object literal for the '<em><b>Sql1</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute ABSTRACT_QUERY_TYPE__SQL1 = eINSTANCE.getAbstractQueryType_Sql1 ();
+
+        /**
          * The meta object literal for the '{@link org.openscada.da.jdbc.configuration.impl.ColumnMappingTypeImpl <em>Column Mapping Type</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -999,6 +1393,14 @@ public interface ConfigurationPackage extends EPackage
          * @generated
          */
         EReference CONNECTION_TYPE__QUERY = eINSTANCE.getConnectionType_Query ();
+
+        /**
+         * The meta object literal for the '<em><b>Tabular Query</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference CONNECTION_TYPE__TABULAR_QUERY = eINSTANCE.getConnectionType_TabularQuery ();
 
         /**
          * The meta object literal for the '<em><b>Update</b></em>' containment reference list feature.
@@ -1109,46 +1511,6 @@ public interface ConfigurationPackage extends EPackage
         EClass QUERY_TYPE = eINSTANCE.getQueryType ();
 
         /**
-         * The meta object literal for the '<em><b>Sql</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute QUERY_TYPE__SQL = eINSTANCE.getQueryType_Sql ();
-
-        /**
-         * The meta object literal for the '<em><b>Column Mapping</b></em>' containment reference list feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EReference QUERY_TYPE__COLUMN_MAPPING = eINSTANCE.getQueryType_ColumnMapping ();
-
-        /**
-         * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute QUERY_TYPE__ID = eINSTANCE.getQueryType_Id ();
-
-        /**
-         * The meta object literal for the '<em><b>Period</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute QUERY_TYPE__PERIOD = eINSTANCE.getQueryType_Period ();
-
-        /**
-         * The meta object literal for the '<em><b>Sql1</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute QUERY_TYPE__SQL1 = eINSTANCE.getQueryType_Sql1 ();
-
-        /**
          * The meta object literal for the '{@link org.openscada.da.jdbc.configuration.impl.RootTypeImpl <em>Root Type</em>}' class.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1165,6 +1527,74 @@ public interface ConfigurationPackage extends EPackage
          * @generated
          */
         EReference ROOT_TYPE__CONNECTION = eINSTANCE.getRootType_Connection ();
+
+        /**
+         * The meta object literal for the '{@link org.openscada.da.jdbc.configuration.impl.TabularQueryTypeImpl <em>Tabular Query Type</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.openscada.da.jdbc.configuration.impl.TabularQueryTypeImpl
+         * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getTabularQueryType()
+         * @generated
+         */
+        EClass TABULAR_QUERY_TYPE = eINSTANCE.getTabularQueryType ();
+
+        /**
+         * The meta object literal for the '<em><b>Update Columns</b></em>' containment reference list feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EReference TABULAR_QUERY_TYPE__UPDATE_COLUMNS = eINSTANCE.getTabularQueryType_UpdateColumns ();
+
+        /**
+         * The meta object literal for the '<em><b>Default Update Sql</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL = eINSTANCE.getTabularQueryType_DefaultUpdateSql ();
+
+        /**
+         * The meta object literal for the '<em><b>Default Update Sql1</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute TABULAR_QUERY_TYPE__DEFAULT_UPDATE_SQL1 = eINSTANCE.getTabularQueryType_DefaultUpdateSql1 ();
+
+        /**
+         * The meta object literal for the '<em><b>Id Column</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute TABULAR_QUERY_TYPE__ID_COLUMN = eINSTANCE.getTabularQueryType_IdColumn ();
+
+        /**
+         * The meta object literal for the '{@link org.openscada.da.jdbc.configuration.impl.UpdateColumnsTypeImpl <em>Update Columns Type</em>}' class.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @see org.openscada.da.jdbc.configuration.impl.UpdateColumnsTypeImpl
+         * @see org.openscada.da.jdbc.configuration.impl.ConfigurationPackageImpl#getUpdateColumnsType()
+         * @generated
+         */
+        EClass UPDATE_COLUMNS_TYPE = eINSTANCE.getUpdateColumnsType ();
+
+        /**
+         * The meta object literal for the '<em><b>Column Name</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute UPDATE_COLUMNS_TYPE__COLUMN_NAME = eINSTANCE.getUpdateColumnsType_ColumnName ();
+
+        /**
+         * The meta object literal for the '<em><b>Custom Update Sql</b></em>' attribute feature.
+         * <!-- begin-user-doc -->
+         * <!-- end-user-doc -->
+         * @generated
+         */
+        EAttribute UPDATE_COLUMNS_TYPE__CUSTOM_UPDATE_SQL = eINSTANCE.getUpdateColumnsType_CustomUpdateSql ();
 
         /**
          * The meta object literal for the '{@link org.openscada.da.jdbc.configuration.impl.UpdateMappingTypeImpl <em>Update Mapping Type</em>}' class.

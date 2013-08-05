@@ -38,6 +38,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.openscada.da.jdbc.configuration.ConfigurationPackage;
 import org.openscada.da.jdbc.configuration.ConnectionType;
 import org.openscada.da.jdbc.configuration.QueryType;
+import org.openscada.da.jdbc.configuration.TabularQueryType;
 import org.openscada.da.jdbc.configuration.UpdateType;
 
 /**
@@ -48,6 +49,7 @@ import org.openscada.da.jdbc.configuration.UpdateType;
  * The following features are implemented:
  * <ul>
  *   <li>{@link org.openscada.da.jdbc.configuration.impl.ConnectionTypeImpl#getQuery <em>Query</em>}</li>
+ *   <li>{@link org.openscada.da.jdbc.configuration.impl.ConnectionTypeImpl#getTabularQuery <em>Tabular Query</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.impl.ConnectionTypeImpl#getUpdate <em>Update</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.impl.ConnectionTypeImpl#getConnectionClass <em>Connection Class</em>}</li>
  *   <li>{@link org.openscada.da.jdbc.configuration.impl.ConnectionTypeImpl#getId <em>Id</em>}</li>
@@ -78,6 +80,16 @@ public class ConnectionTypeImpl extends MinimalEObjectImpl.Container implements 
      * @ordered
      */
     protected EList<QueryType> query;
+
+    /**
+     * The cached value of the '{@link #getTabularQuery() <em>Tabular Query</em>}' containment reference list.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see #getTabularQuery()
+     * @generated
+     * @ordered
+     */
+    protected EList<TabularQueryType> tabularQuery;
 
     /**
      * The cached value of the '{@link #getUpdate() <em>Update</em>}' containment reference list.
@@ -251,6 +263,20 @@ public class ConnectionTypeImpl extends MinimalEObjectImpl.Container implements 
             query = new EObjectContainmentEList<QueryType> ( QueryType.class, this, ConfigurationPackage.CONNECTION_TYPE__QUERY );
         }
         return query;
+    }
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    public EList<TabularQueryType> getTabularQuery ()
+    {
+        if ( tabularQuery == null )
+        {
+            tabularQuery = new EObjectContainmentEList<TabularQueryType> ( TabularQueryType.class, this, ConfigurationPackage.CONNECTION_TYPE__TABULAR_QUERY );
+        }
+        return tabularQuery;
     }
 
     /**
@@ -444,6 +470,8 @@ public class ConnectionTypeImpl extends MinimalEObjectImpl.Container implements 
         {
             case ConfigurationPackage.CONNECTION_TYPE__QUERY:
                 return ( (InternalEList<?>)getQuery () ).basicRemove ( otherEnd, msgs );
+            case ConfigurationPackage.CONNECTION_TYPE__TABULAR_QUERY:
+                return ( (InternalEList<?>)getTabularQuery () ).basicRemove ( otherEnd, msgs );
             case ConfigurationPackage.CONNECTION_TYPE__UPDATE:
                 return ( (InternalEList<?>)getUpdate () ).basicRemove ( otherEnd, msgs );
         }
@@ -462,6 +490,8 @@ public class ConnectionTypeImpl extends MinimalEObjectImpl.Container implements 
         {
             case ConfigurationPackage.CONNECTION_TYPE__QUERY:
                 return getQuery ();
+            case ConfigurationPackage.CONNECTION_TYPE__TABULAR_QUERY:
+                return getTabularQuery ();
             case ConfigurationPackage.CONNECTION_TYPE__UPDATE:
                 return getUpdate ();
             case ConfigurationPackage.CONNECTION_TYPE__CONNECTION_CLASS:
@@ -494,6 +524,10 @@ public class ConnectionTypeImpl extends MinimalEObjectImpl.Container implements 
             case ConfigurationPackage.CONNECTION_TYPE__QUERY:
                 getQuery ().clear ();
                 getQuery ().addAll ( (Collection<? extends QueryType>)newValue );
+                return;
+            case ConfigurationPackage.CONNECTION_TYPE__TABULAR_QUERY:
+                getTabularQuery ().clear ();
+                getTabularQuery ().addAll ( (Collection<? extends TabularQueryType>)newValue );
                 return;
             case ConfigurationPackage.CONNECTION_TYPE__UPDATE:
                 getUpdate ().clear ();
@@ -534,6 +568,9 @@ public class ConnectionTypeImpl extends MinimalEObjectImpl.Container implements 
             case ConfigurationPackage.CONNECTION_TYPE__QUERY:
                 getQuery ().clear ();
                 return;
+            case ConfigurationPackage.CONNECTION_TYPE__TABULAR_QUERY:
+                getTabularQuery ().clear ();
+                return;
             case ConfigurationPackage.CONNECTION_TYPE__UPDATE:
                 getUpdate ().clear ();
                 return;
@@ -571,6 +608,8 @@ public class ConnectionTypeImpl extends MinimalEObjectImpl.Container implements 
         {
             case ConfigurationPackage.CONNECTION_TYPE__QUERY:
                 return query != null && !query.isEmpty ();
+            case ConfigurationPackage.CONNECTION_TYPE__TABULAR_QUERY:
+                return tabularQuery != null && !tabularQuery.isEmpty ();
             case ConfigurationPackage.CONNECTION_TYPE__UPDATE:
                 return update != null && !update.isEmpty ();
             case ConfigurationPackage.CONNECTION_TYPE__CONNECTION_CLASS:

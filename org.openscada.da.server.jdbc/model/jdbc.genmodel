@@ -11,12 +11,20 @@
     <genDataTypes ecoreDataType="configuration.ecore#//AliasNameType"/>
     <genDataTypes ecoreDataType="configuration.ecore#//ColumnNumberType"/>
     <genDataTypes ecoreDataType="configuration.ecore#//ColumnNumberTypeObject"/>
+    <genClasses ecoreClass="configuration.ecore#//AbstractQueryType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//AbstractQueryType/sql"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//AbstractQueryType/columnMapping"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//AbstractQueryType/id"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//AbstractQueryType/period"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//AbstractQueryType/sql1"/>
+    </genClasses>
     <genClasses ecoreClass="configuration.ecore#//ColumnMappingType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ColumnMappingType/aliasName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ColumnMappingType/columnNumber"/>
     </genClasses>
     <genClasses ecoreClass="configuration.ecore#//ConnectionType">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//ConnectionType/query"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//ConnectionType/tabularQuery"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//ConnectionType/update"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConnectionType/connectionClass"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//ConnectionType/id"/>
@@ -31,15 +39,19 @@
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference configuration.ecore#//DocumentRoot/xSISchemaLocation"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//DocumentRoot/root"/>
     </genClasses>
-    <genClasses ecoreClass="configuration.ecore#//QueryType">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//QueryType/sql"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//QueryType/columnMapping"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//QueryType/id"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//QueryType/period"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//QueryType/sql1"/>
-    </genClasses>
+    <genClasses ecoreClass="configuration.ecore#//QueryType"/>
     <genClasses ecoreClass="configuration.ecore#//RootType">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//RootType/connection"/>
+    </genClasses>
+    <genClasses ecoreClass="configuration.ecore#//TabularQueryType">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//TabularQueryType/updateColumns"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//TabularQueryType/defaultUpdateSql"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//TabularQueryType/defaultUpdateSql1"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//TabularQueryType/idColumn"/>
+    </genClasses>
+    <genClasses ecoreClass="configuration.ecore#//UpdateColumnsType">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//UpdateColumnsType/columnName"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//UpdateColumnsType/customUpdateSql"/>
     </genClasses>
     <genClasses ecoreClass="configuration.ecore#//UpdateMappingType">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//UpdateMappingType/name"/>

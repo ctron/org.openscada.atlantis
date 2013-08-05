@@ -92,6 +92,24 @@ public interface ConfigurationFactory extends EFactory
     RootType createRootType ();
 
     /**
+     * Returns a new object of class '<em>Tabular Query Type</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Tabular Query Type</em>'.
+     * @generated
+     */
+    TabularQueryType createTabularQueryType ();
+
+    /**
+     * Returns a new object of class '<em>Update Columns Type</em>'.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @return a new object of class '<em>Update Columns Type</em>'.
+     * @generated
+     */
+    UpdateColumnsType createUpdateColumnsType ();
+
+    /**
      * Returns a new object of class '<em>Update Mapping Type</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->

@@ -96,6 +96,14 @@ public class ConfigurationSwitch<T> extends Switch<T>
     {
         switch ( classifierID )
         {
+            case ConfigurationPackage.ABSTRACT_QUERY_TYPE:
+            {
+                AbstractQueryType abstractQueryType = (AbstractQueryType)theEObject;
+                T result = caseAbstractQueryType ( abstractQueryType );
+                if ( result == null )
+                    result = defaultCase ( theEObject );
+                return result;
+            }
             case ConfigurationPackage.COLUMN_MAPPING_TYPE:
             {
                 ColumnMappingType columnMappingType = (ColumnMappingType)theEObject;
@@ -125,6 +133,8 @@ public class ConfigurationSwitch<T> extends Switch<T>
                 QueryType queryType = (QueryType)theEObject;
                 T result = caseQueryType ( queryType );
                 if ( result == null )
+                    result = caseAbstractQueryType ( queryType );
+                if ( result == null )
                     result = defaultCase ( theEObject );
                 return result;
             }
@@ -132,6 +142,24 @@ public class ConfigurationSwitch<T> extends Switch<T>
             {
                 RootType rootType = (RootType)theEObject;
                 T result = caseRootType ( rootType );
+                if ( result == null )
+                    result = defaultCase ( theEObject );
+                return result;
+            }
+            case ConfigurationPackage.TABULAR_QUERY_TYPE:
+            {
+                TabularQueryType tabularQueryType = (TabularQueryType)theEObject;
+                T result = caseTabularQueryType ( tabularQueryType );
+                if ( result == null )
+                    result = caseAbstractQueryType ( tabularQueryType );
+                if ( result == null )
+                    result = defaultCase ( theEObject );
+                return result;
+            }
+            case ConfigurationPackage.UPDATE_COLUMNS_TYPE:
+            {
+                UpdateColumnsType updateColumnsType = (UpdateColumnsType)theEObject;
+                T result = caseUpdateColumnsType ( updateColumnsType );
                 if ( result == null )
                     result = defaultCase ( theEObject );
                 return result;
@@ -155,6 +183,22 @@ public class ConfigurationSwitch<T> extends Switch<T>
             default:
                 return defaultCase ( theEObject );
         }
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Abstract Query Type</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Abstract Query Type</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseAbstractQueryType ( AbstractQueryType object )
+    {
+        return null;
     }
 
     /**
@@ -233,6 +277,38 @@ public class ConfigurationSwitch<T> extends Switch<T>
      * @generated
      */
     public T caseRootType ( RootType object )
+    {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Tabular Query Type</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Tabular Query Type</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseTabularQueryType ( TabularQueryType object )
+    {
+        return null;
+    }
+
+    /**
+     * Returns the result of interpreting the object as an instance of '<em>Update Columns Type</em>'.
+     * <!-- begin-user-doc -->
+     * This implementation returns null;
+     * returning a non-null result will terminate the switch.
+     * <!-- end-user-doc -->
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Update Columns Type</em>'.
+     * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+     * @generated
+     */
+    public T caseUpdateColumnsType ( UpdateColumnsType object )
     {
         return null;
     }

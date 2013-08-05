@@ -36,7 +36,7 @@ public class Connection
 {
     private final static Logger logger = LoggerFactory.getLogger ( Connection.class );
 
-    private final Collection<Query> queries = new LinkedList<Query> ();
+    private final Collection<AbstractQuery> queries = new LinkedList<AbstractQuery> ();
 
     private final Collection<Update> updates = new LinkedList<Update> ();
 
@@ -72,7 +72,7 @@ public class Connection
         }
     }
 
-    public void add ( final Query query )
+    public void add ( final AbstractQuery query )
     {
         this.queries.add ( query );
     }
@@ -81,7 +81,7 @@ public class Connection
     {
         this.itemFactory = new DefaultChainItemFactory ( hive, rootFolder, this.id, this.id );
 
-        for ( final Query query : this.queries )
+        for ( final AbstractQuery query : this.queries )
         {
             query.register ( timer, this.itemFactory );
         }
@@ -94,7 +94,7 @@ public class Connection
 
     public void unregister ( final Hive hive )
     {
-        for ( final Query query : this.queries )
+        for ( final AbstractQuery query : this.queries )
         {
             query.unregister ();
         }
@@ -115,8 +115,7 @@ public class Connection
             DriverManager.setLoginTimeout ( this.timeout / 1000 );
         }
 
-        final java.sql.Connection connection = DriverManager.getConnection ( this.uri, this.username, this.password );
-        return connection;
+        return DriverManager.getConnection ( this.uri, this.username, this.password );
     }
 
     public java.sql.Connection getConnection () throws SQLException
