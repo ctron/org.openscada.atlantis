@@ -20,5 +20,14 @@
             type="xml"
             class="org.openscada.da.server.exporter.util.ExporterResourceFactoryImpl"/>
    </extension>
+   <extension
+         point="org.eclipse.wst.xml.core.catalogContributions">
+      <catalogContribution>
+         <uri
+               name="http://openscada.org/DA/Server/Exporter"
+               uri="model/exporter.xsd">
+         </uri>
+      </catalogContribution>
+   </extension>
 
 </plugin>
