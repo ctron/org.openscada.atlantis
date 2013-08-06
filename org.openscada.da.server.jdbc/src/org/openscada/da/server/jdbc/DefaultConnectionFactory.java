@@ -25,7 +25,9 @@ import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
@@ -40,6 +42,8 @@ public class DefaultConnectionFactory implements ConnectionFactory
 
     private final BundleContext bundleContext;
 
+    private final Set<String> forNameSet = new HashSet<> ();
+
     public DefaultConnectionFactory ( final BundleContext bundleContext )
     {
         this.bundleContext = bundleContext;
@@ -48,6 +52,23 @@ public class DefaultConnectionFactory implements ConnectionFactory
     @Override
     public Connection createConnection ( final String connectionClass, final String uri, final String username, final String password, final Integer timeout ) throws Exception
     {
+        if ( this.bundleContext == null && !this.forNameSet.contains ( connectionClass ) )
+        {
+            // we only do this outside of OSGi
+            this.forNameSet.add ( connectionClass );
+            try
+            {
+                if ( connectionClass != null )
+                {
+                    Class.forName ( connectionClass );
+                }
+            }
+            catch ( final Throwable e )
+            {
+                logger.error ( "Failed to initialize connection", e );
+            }
+        }
+
         if ( timeout != null )
         {
             DriverManager.setLoginTimeout ( timeout / 1000 );

@@ -27,13 +27,9 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Connection
 {
-    private final static Logger logger = LoggerFactory.getLogger ( Connection.class );
-
     private final Collection<AbstractQuery> queries = new LinkedList<AbstractQuery> ();
 
     private final Collection<Update> updates = new LinkedList<Update> ();
@@ -63,17 +59,6 @@ public class Connection
         this.id = id;
         this.timeout = timeout;
         this.connectionClass = connectionClass;
-        try
-        {
-            if ( connectionClass != null )
-            {
-                Class.forName ( connectionClass );
-            }
-        }
-        catch ( final Throwable e )
-        {
-            logger.error ( "Failed to initialize connection", e );
-        }
     }
 
     public void add ( final AbstractQuery query )
