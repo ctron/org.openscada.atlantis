@@ -18,8 +18,9 @@
  * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
  */
 
-package org.openscada.da.server.jdbc;
+package org.openscada.da.server.common.exporter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -201,4 +202,8 @@ public class TabularExporter
         this.rows.clear ();
     }
 
+    public void setGlobalError ( final Throwable e )
+    {
+        update ( Collections.<TabularExporter.Entry> emptyList () );
+    }
 }

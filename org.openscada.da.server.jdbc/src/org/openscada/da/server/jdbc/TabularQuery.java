@@ -31,9 +31,10 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.openscada.core.Variant;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.server.common.chain.WriteHandler;
+import org.openscada.da.server.common.exporter.TabularExporter;
+import org.openscada.da.server.common.exporter.TabularExporter.Entry;
+import org.openscada.da.server.common.exporter.TabularExporter.WriteHandlerFactory;
 import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
-import org.openscada.da.server.jdbc.TabularExporter.Entry;
-import org.openscada.da.server.jdbc.TabularExporter.WriteHandlerFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -153,6 +154,7 @@ public class TabularQuery extends AbstractQuery
     protected void setGlobalError ( final Throwable e )
     {
         logger.error ( "Failed to query", e );
+        this.exporter.setGlobalError ( e );
     }
 
     @Override
