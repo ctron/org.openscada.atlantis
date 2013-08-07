@@ -318,6 +318,14 @@
   	
   	<openscada.builder.copyFeature id="org.openscada.atlantis" />
   	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk" />
+  	
+  	<!-- editors -->
+	
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.common.edit"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.common.editor"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.exec.edit"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.exec.editor"/>
+  	
   </target>
 
   <!-- ===================================================================== -->
