@@ -14,19 +14,34 @@
 
 	<repositories>
 		<repository>
-			<id>juno</id>
+			<id>kepler</id>
 			<layout>p2</layout>
-			<url>http://download.eclipse.org/releases/juno</url>
-		</repository>
-		<repository>
-			<id>openscada.external</id>
-			<layout>p2</layout>
-			<url>http://repo.openscada.org/p2/external/I/1.1.0/</url>
+			<url>http://download.eclipse.org/releases/kepler</url>
 		</repository>
 		<repository>
 			<id>eclipse.orbit</id>
 			<layout>p2</layout>
 			<url>http://download.eclipse.org/tools/orbit/downloads/drops/R20130118183705/repository/</url>
+		</repository>
+		<repository>
+			<id>openscada.p2.external</id>
+			<layout>p2</layout>
+			<url>http://repo.openscada.org/p2/external/I/1.2.0/</url>
+		</repository>
+		<repository>
+			<id>openscada.p2.aurora</id>
+			<layout>p2</layout>
+			<url>http://repo.openscada.org/p2/aurora/I/1.2.0/</url>
+		</repository>
+		<repository>
+			<id>openscada.p2.utgard</id>
+			<layout>p2</layout>
+			<url>http://repo.openscada.org/p2/utgard/I/1.2.0/</url>
+		</repository>
+		<repository>
+			<id>openscada.p2.oxygen</id>
+			<layout>p2</layout>
+			<url>http://repo.openscada.org/p2/oxygen/I/1.2.0/</url>
 		</repository>
 	</repositories>
 
