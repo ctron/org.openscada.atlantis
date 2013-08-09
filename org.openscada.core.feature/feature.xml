@@ -1,19 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
       id="org.openscada.core"
-      label="openSCADA Core"
+      label="%featureName"
       version="1.2.0.qualifier"
-      provider-name="openSCADA.org">
+      provider-name="%providerName"
+      license-feature="org.eclipse.scada.license"
+      license-feature-version="0.1.0.qualifier">
 
    <description>
-      openSCADA Core Modules
+      %description
    </description>
 
    <copyright>
       %copyright
    </copyright>
 
-   <license url="http://opensource.org/licenses/lgpl-3.0.html">
+   <license url="%licenseURL">
       %license
    </license>
 
