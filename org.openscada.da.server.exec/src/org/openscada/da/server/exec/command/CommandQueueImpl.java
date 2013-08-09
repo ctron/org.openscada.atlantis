@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -82,11 +84,13 @@ public class CommandQueueImpl implements CommandQueue
         this.loopDelay = loopDelay;
     }
 
+    @Override
     public void addCommand ( final SingleCommand command, final int period )
     {
         this.commands.add ( new Entry ( command, period ) );
     }
 
+    @Override
     public void removeCommand ( final SingleCommand command )
     {
         for ( final Iterator<Entry> i = this.commands.iterator (); i.hasNext (); )
@@ -100,6 +104,7 @@ public class CommandQueueImpl implements CommandQueue
         }
     }
 
+    @Override
     public void start ( final Hive hive, final FolderCommon baseFolder )
     {
         for ( final Entry entry : this.commands )
@@ -119,10 +124,14 @@ public class CommandQueueImpl implements CommandQueue
 
     }
 
+    @Override
     public void stop ()
     {
-        this.timer.cancel ();
-        this.timer = null;
+        if ( this.timer != null )
+        {
+            this.timer.cancel ();
+            this.timer = null;
+        }
 
         for ( final Entry entry : this.commands )
         {
