@@ -83,9 +83,6 @@ public class Hive extends HiveCommon
         this.rootFolder.add ( TRIGGER_FOLDER_NAME, this.triggerFolder, new MapBuilder<String, Variant> ().put ( "description", Variant.valueOf ( "Contains all triggers" ) ).getMap () );
 
         configurator.configure ( this );
-
-        // Setup and start the queues
-        startQueues ();
     }
 
     @Override
@@ -113,11 +110,26 @@ public class Hive extends HiveCommon
         }
     }
 
+    @Override
+    public void start () throws Exception
+    {
+        super.start ();
+        startQueues ();
+    }
+
     /**
      * Stops all running command queues and destroy them
+     * 
+     * @throws Exception
      */
     @Override
-    public void stop ()
+    public void stop () throws Exception
+    {
+        stopQueues ();
+        super.stop ();
+    }
+
+    protected void stopQueues ()
     {
         for ( final CommandQueue queue : this.queues )
         {

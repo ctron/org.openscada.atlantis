@@ -146,6 +146,11 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     {
         logger.info ( "Starting Hive" );
 
+        if ( this.autoEnableStats && this.rootFolder instanceof FolderCommon )
+        {
+            enableStats ( (FolderCommon)this.rootFolder );
+        }
+
         this.operationService = Executors.newFixedThreadPool ( 1, new NamedThreadFactory ( "HiveCommon/" + getHiveId () ) );
     }
 
@@ -237,10 +242,6 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         if ( this.rootFolder == null )
         {
             this.rootFolder = rootFolder;
-            if ( rootFolder instanceof FolderCommon && this.autoEnableStats )
-            {
-                enableStats ( (FolderCommon)this.rootFolder );
-            }
         }
     }
 
