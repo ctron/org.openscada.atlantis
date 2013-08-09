@@ -117,7 +117,11 @@ public class AbstractSingleCommand
 
     public void unregister ()
     {
-        this.itemFactory.dispose ();
+        if ( this.itemFactory != null )
+        {
+            this.itemFactory.dispose ();
+            this.itemFactory = null;
+        }
         this.hive = null;
     }
 

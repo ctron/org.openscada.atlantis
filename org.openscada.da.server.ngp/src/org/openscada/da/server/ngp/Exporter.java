@@ -73,7 +73,10 @@ public class Exporter implements LifecycleAware
     @Override
     public void start () throws Exception
     {
-        this.startedAddresses = createServer ();
+        if ( this.startedAddresses != null )
+        {
+            this.startedAddresses = createServer ();
+        }
     }
 
     public Set<InetSocketAddress> getStartedAddresses ()
@@ -139,6 +142,7 @@ public class Exporter implements LifecycleAware
         {
             this.server.dispose ();
             this.server = null;
+            this.startedAddresses = null;
         }
     }
 }
