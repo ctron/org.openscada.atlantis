@@ -32,9 +32,9 @@ public class NgpExport implements Export
 
     private final static Logger logger = LoggerFactory.getLogger ( NgpExport.class );
 
-    private Hive hive = null;
+    private final Hive hive;
 
-    private Exporter exporter = null;
+    private final Exporter exporter;
 
     private final ConnectionInformation connectionInformation;
 
