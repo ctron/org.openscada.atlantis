@@ -73,7 +73,7 @@ public class Exporter implements LifecycleAware
     @Override
     public void start () throws Exception
     {
-        if ( this.startedAddresses != null )
+        if ( this.startedAddresses == null )
         {
             this.startedAddresses = createServer ();
         }
