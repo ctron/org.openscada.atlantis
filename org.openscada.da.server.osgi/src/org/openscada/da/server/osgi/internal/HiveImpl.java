@@ -113,19 +113,19 @@ public class HiveImpl extends HiveCommon
     }
 
     @Override
-    public void start () throws Exception
+    protected void performStart () throws Exception
     {
         this.authorizationManager.open ();
         this.authorizationTracker.open ();
         this.authenticationImplementation.open ();
         this.auditLogTracker.open ();
-        super.start ();
+        super.performStart ();
     }
 
     @Override
-    public void stop () throws Exception
+    protected void performStop () throws Exception
     {
-        super.stop ();
+        super.performStop ();
         this.auditLogTracker.close ();
         this.authenticationImplementation.close ();
         this.authorizationTracker.close ();

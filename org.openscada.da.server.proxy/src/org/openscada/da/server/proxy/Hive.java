@@ -127,9 +127,9 @@ public class Hive extends HiveCommon
      * @throws Exception
      */
     @Override
-    public void start () throws Exception
+    protected void performStart () throws Exception
     {
-        super.start ();
+        super.performStart ();
 
         logger.info ( "Starting hive" );
 
@@ -153,13 +153,13 @@ public class Hive extends HiveCommon
     }
 
     @Override
-    public void stop () throws Exception
+    protected void performStop () throws Exception
     {
         for ( final ProxyConnection connection : this.connections.values () )
         {
             connection.stop ();
         }
-        super.stop ();
+        super.performStop ();
     }
 
     /**

@@ -40,7 +40,7 @@ public class Hive extends HiveCommon
 
     private static final int UPDATE_PERIOD = 30 * 1000;
 
-    private final ScheduledExecutorService scheduler = Executors.newSingleThreadScheduledExecutor ();
+    private ScheduledExecutorService scheduler;
 
     private final FolderCommon symbolsFolder;
 
@@ -63,6 +63,21 @@ public class Hive extends HiveCommon
         this.updateManager = new UpdateManager ();
         this.updateManager.setStockQuoteService ( new YahooStockQuoteService () );
 
+    }
+
+    @Override
+    public String getHiveId ()
+    {
+        return "org.openscada.da.server.stock";
+    }
+
+    @Override
+    protected void performStart () throws Exception
+    {
+        super.performStart ();
+
+        this.scheduler = Executors.newSingleThreadScheduledExecutor ();
+
         this.scheduler.scheduleAtFixedRate ( new Runnable () {
 
             @Override
@@ -77,20 +92,16 @@ public class Hive extends HiveCommon
     }
 
     @Override
-    public String getHiveId ()
-    {
-        return "org.openscada.da.server.stock";
-    }
-
-    @Override
-    public void stop () throws Exception
+    protected void performStop () throws Exception
     {
         this.scheduler.shutdown ();
-        super.stop ();
+        super.performStop ();
     }
 
     public void addSymbol ( final String symbol )
     {
+        // this is a bad example, items are created but can never be destroyed!
+        // TODO: should use some sort of ItemFactory
         final StockQuoteItem newItem = new StockQuoteItem ( symbol, this.updateManager );
         registerItem ( newItem );
         this.symbolsFolder.add ( symbol, newItem, new MapBuilder<String, Variant> ().getMap () );
