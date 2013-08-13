@@ -73,7 +73,6 @@ public abstract class StreamBaseDevice extends GenericBaseDevice implements Base
         if ( this.connector == null )
         {
             this.connector = new NioSocketConnector ();
-            // FIXME: is that correct??? Jens help me in this
             this.connector.setHandler ( this );
             if ( Boolean.getBoolean ( "org.openscada.da.server.io.common.trace" ) )
             {

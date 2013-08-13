@@ -59,7 +59,7 @@ public class ModbusRtuDecoder extends TimedEndDecoder
         }
         final RequestMessage originalRequest = ModbusRtuCodecFactory.getOriginalRequest ( session );
         currentFrame.flip ();
-        logger.trace ( "timeout () frame = {}", new String[] { currentFrame.getHexDump () } );
+        logger.trace ( "timeout () frame = {}", currentFrame.getHexDump () );
         // check size
         if ( currentFrame.limit () <= ModbusRtuCodecFactory.RTU_HEADER_SIZE )
         {
@@ -111,8 +111,8 @@ public class ModbusRtuDecoder extends TimedEndDecoder
             session.setAttribute ( SESSION_KEY_CURRENT_FRAME, newFrame );
         }
         final IoBuffer currentFrame = (IoBuffer)session.getAttribute ( SESSION_KEY_CURRENT_FRAME );
-        logger.trace ( "decode () current frame = {} data = {}", new String[] { currentFrame.toString (), currentFrame.getHexDump () } );
-        logger.trace ( "decode () new     frame = {} data = {}", new String[] { in.toString (), in.getHexDump () } );
+        logger.trace ( "decode () current frame = {} data = {}", currentFrame.toString (), currentFrame.getHexDump () );
+        logger.trace ( "decode () new     frame = {} data = {}", in.toString (), in.getHexDump () );
         final int maxSize = ModbusConstants.MAX_PDU_SIZE + ModbusRtuCodecFactory.RTU_HEADER_SIZE;
         final int expectedSize = currentFrame.limit () + in.remaining ();
         if ( expectedSize > maxSize + 1 )

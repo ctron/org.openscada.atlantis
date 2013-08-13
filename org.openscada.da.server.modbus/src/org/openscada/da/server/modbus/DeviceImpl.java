@@ -35,7 +35,6 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
 import org.openscada.da.server.io.common.StreamBaseDevice;
-import org.openscada.da.server.io.common.TimedProtocolCodecFilter;
 import org.openscada.da.server.modbus.io.ModbusRtuCodecFactory;
 import org.openscada.da.server.modbus.io.ModbusTcpCodecFactory;
 import org.openscada.da.server.modbus.io.ResetableCodecFactory;
@@ -108,7 +107,7 @@ public class DeviceImpl extends StreamBaseDevice implements Device
         else if ( this.deviceType == ModbusDeviceType.RTU )
         {
             this.codecFactory = new ModbusRtuCodecFactory ( this.scheduler, this.interFrameDelay, TimeUnit.NANOSECONDS );
-            connector.getFilterChain ().addLast ( "modbusFilter", new TimedProtocolCodecFilter ( this.codecFactory ) );
+            connector.getFilterChain ().addLast ( "modbusFilter", new ProtocolCodecFilter ( this.codecFactory ) );
         }
         else
         {

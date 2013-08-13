@@ -265,6 +265,6 @@
 		<module>../org.openscada.sec.provider.jdbc</module>
 		<module>../org.openscada.sec.provider.script</module>
 		<module>../org.openscada.ae.slave.inject.postgres</module>
-	<module>../org.openscada.da.server.common.edit</module><module>../org.openscada.da.server.common.editor</module><module>../org.openscada.da.server.exec.edit</module><module>../org.openscada.da.server.exec.editor</module></modules>
+	<module>../org.openscada.da.server.common.edit</module><module>../org.openscada.da.server.common.editor</module><module>../org.openscada.da.server.exec.edit</module><module>../org.openscada.da.server.exec.editor</module><module>../org.openscada.da.server.io.common</module></modules>
 
 </project>

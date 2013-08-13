@@ -136,6 +136,8 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.common.osgi"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.net"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.io.common"/>
+  	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.test"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.sysinfo"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.stock"/>
