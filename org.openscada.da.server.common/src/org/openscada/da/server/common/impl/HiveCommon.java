@@ -122,6 +122,8 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         }
     };
 
+    private boolean running;
+
     public HiveCommon ()
     {
         final ReentrantReadWriteLock itemMapLock = new ReentrantReadWriteLock ( Boolean.getBoolean ( "org.openscada.da.server.common.fairItemMapLock" ) );
@@ -145,6 +147,14 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     public void start () throws Exception
     {
         logger.info ( "Starting Hive" );
+        synchronized ( this )
+        {
+            if ( this.running )
+            {
+                return;
+            }
+            this.running = true;
+        }
 
         if ( this.autoEnableStats && this.rootFolder instanceof FolderCommon )
         {
@@ -152,6 +162,30 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         }
 
         this.operationService = Executors.newFixedThreadPool ( 1, new NamedThreadFactory ( "HiveCommon/" + getHiveId () ) );
+
+        performStart ();
+    }
+
+    /**
+     * Called then the hive should perform its startup procedure
+     * <p>
+     * This is internally dispatched when the {@link #start()} method was called
+     * and the hive was not already started.
+     * </p>
+     */
+    protected void performStart () throws Exception
+    {
+    }
+
+    /**
+     * Called then the hive should perform its shutdown procedure
+     * <p>
+     * This is internally dispatched when the {@link #stop()} method was called
+     * and the hive was already started.
+     * </p>
+     */
+    protected void performStop () throws Exception
+    {
     }
 
     /**
@@ -165,6 +199,17 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     public void stop () throws Exception
     {
         logger.info ( "Stopping hive" );
+
+        synchronized ( this )
+        {
+            if ( !this.running )
+            {
+                return;
+            }
+            this.running = false;
+        }
+
+        performStop ();
 
         disableStats ();
 

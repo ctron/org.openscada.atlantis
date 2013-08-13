@@ -111,22 +111,17 @@ public class Hive extends HiveCommon
     }
 
     @Override
-    public void start () throws Exception
+    protected void performStart () throws Exception
     {
-        super.start ();
+        super.performStart ();
         startQueues ();
     }
 
-    /**
-     * Stops all running command queues and destroy them
-     * 
-     * @throws Exception
-     */
     @Override
-    public void stop () throws Exception
+    protected void performStop () throws Exception
     {
         stopQueues ();
-        super.stop ();
+        super.performStop ();
     }
 
     protected void stopQueues ()

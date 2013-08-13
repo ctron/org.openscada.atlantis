@@ -119,9 +119,9 @@ public class Hive extends HiveCommon
     }
 
     @Override
-    public void start () throws Exception
+    protected void performStart () throws Exception
     {
-        super.start ();
+        super.performStart ();
 
         this.timer = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "JdbcHiveTimer", true ) );
 
@@ -130,11 +130,11 @@ public class Hive extends HiveCommon
     }
 
     @Override
-    public void stop () throws Exception
+    protected void performStop () throws Exception
     {
         this.timer.shutdown ();
         unregister ();
-        super.stop ();
+        super.performStop ();
     }
 
     public void register ()
