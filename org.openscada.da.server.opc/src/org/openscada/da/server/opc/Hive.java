@@ -52,6 +52,8 @@ public class Hive extends HiveCommon
 
     private final FolderCommon rootFolder = new FolderCommon ();
 
+    private final XMLConfigurator configurator;
+
     public Hive () throws IOException
     {
         this ( new XMLConfigurator ( parse ( URI.createFileURI ( System.getProperty ( "org.openscada.da.server.opc.defaultConfigurationFile", "configuration.xml" ) ) ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
@@ -74,8 +76,32 @@ public class Hive extends HiveCommon
         setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
 
         setRootFolder ( this.rootFolder );
+        this.configurator = configurator;
+    }
 
-        configurator.configure ( this );
+    @Override
+    protected void performStart () throws Exception
+    {
+        super.performStart ();
+
+        this.configurator.configure ( this );
+    }
+
+    @Override
+    protected void performStop () throws Exception
+    {
+        for ( final OPCConnection connection : this.connections )
+        {
+            try
+            {
+                connection.dispose ();
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to clean up connection", e );
+            }
+        }
+        super.performStop ();
     }
 
     private static RootType parse ( final URI uri ) throws IOException
