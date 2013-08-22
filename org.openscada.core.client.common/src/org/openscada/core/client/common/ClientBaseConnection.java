@@ -316,7 +316,7 @@ public abstract class ClientBaseConnection extends BaseConnection implements Con
         }
     }
 
-    protected void performDisconnected ( final Throwable error )
+    protected synchronized void performDisconnected ( final Throwable error )
     {
         this.connectCallbackHandler = null;
 
