@@ -39,6 +39,7 @@ import org.openscada.hd.server.storage.hds.StorageInformation;
 import org.openscada.hds.DataFilePool;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
+import org.openscada.utils.str.StringReplacer;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,7 +75,11 @@ public class StorageManager extends AbstractStorageManager
 
     private static File makeBase ( final BundleContext context )
     {
-        final String basePath = System.getProperty ( "org.openscada.hd.server.storage.master.hds.basePath", System.getProperty ( "org.openscada.hd.server.storage.hds.basePath" ) );
+        String basePath = System.getProperty ( "org.openscada.hd.server.storage.master.hds.basePath", System.getProperty ( "org.openscada.hd.server.storage.hds.basePath" ) );
+
+        // replace variables in path, like "user.home"
+        basePath = StringReplacer.replace ( basePath, System.getProperties () );
+
         if ( basePath == null )
         {
             final File base = context.getDataFile ( "storage" );

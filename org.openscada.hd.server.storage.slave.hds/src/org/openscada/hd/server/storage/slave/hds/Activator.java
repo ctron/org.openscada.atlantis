@@ -28,6 +28,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.openscada.hds.DataFilePool;
 import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
+import org.openscada.utils.str.StringReplacer;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 
@@ -72,8 +73,10 @@ public class Activator implements BundleActivator
 
         try
         {
-            for ( final String path : basePaths.split ( ":" ) )
+            for ( String path : basePaths.split ( ":" ) )
             {
+                // replace variables in path, like "user.home"
+                path = StringReplacer.replace ( path, System.getProperties () );
                 if ( path.startsWith ( "@" ) )
                 {
                     final File dir = new File ( path.substring ( 1 ) );
