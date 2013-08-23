@@ -106,6 +106,8 @@ public class Activator implements BundleActivator
 
     private void activate ( final DataSourceFactory dataSourceFactory ) throws Exception
     {
+        logger.info ( "Activating: {}", dataSourceFactory );
+
         final Properties dbProperties = DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX );
 
         this.jdbcStorage = createJdbcStorage ( dataSourceFactory, dbProperties, DataSourceHelper.isConnectionPool ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX, false ) );
@@ -121,6 +123,8 @@ public class Activator implements BundleActivator
 
     private void deactivate () throws Exception
     {
+        logger.info ( "Deactivating" );
+
         if ( this.jdbcStorageHandle != null )
         {
             this.jdbcStorageHandle.unregister ();
