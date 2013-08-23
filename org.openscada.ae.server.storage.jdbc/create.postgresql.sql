@@ -80,10 +80,10 @@ CREATE INDEX openscada_ae_events_attr_idx_5 ON openscada_ae_events_attr (value_d
 
 CREATE TABLE OPENSCADA_AE_REP
 (
-	ID			CHAR(36) NOT NULL,
-	ENTRY_TIMESTAMP		TIMESTAMP,
-	NODE_ID			VARCHAR(32),
-	DATA			BYTEA,
+	ID                      CHAR(36) NOT NULL,
+	ENTRY_TIMESTAMP         TIMESTAMP,
+	NODE_ID                 VARCHAR(32),
+	DATA                    BYTEA,
 
 	CONSTRAINT OPENSCADA_AE_REP_PK PRIMARY KEY ( ID )	
 );
