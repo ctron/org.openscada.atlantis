@@ -1,3 +1,6 @@
+-- as database owner
+CREATE LANGUAGE plpgsql;
+
 -- DROP TABLE openscada_ae_events;
 CREATE TABLE openscada_ae_events_json
 (
