@@ -2,6 +2,7 @@
  * This file is part of the openSCADA project
  * 
  * Copyright (C) 2013 Jürgen Rose (cptmauli@googlemail.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -73,6 +74,12 @@ public class Activator implements BundleActivator
         Activator.context = bundleContext;
 
         final String driver = DataSourceHelper.getDriver ( "org.openscada.ae.server.storage.jdbc.driver", DataSourceHelper.DEFAULT_PREFIX );
+
+        if ( driver == null )
+        {
+            logger.error ( "JDBC driver is not set" );
+            throw new IllegalStateException ( "JDBC driver name is not set" );
+        }
 
         final Filter filter = context.createFilter ( "(&(objectClass=" + DataSourceFactory.class.getName () + ")(" + DataSourceFactory.OSGI_JDBC_DRIVER_CLASS + "=" + driver + "))" );
         this.dataSouceFactoryTracker = new SingleServiceTracker<DataSourceFactory> ( bundleContext, filter, new SingleServiceListener<DataSourceFactory> () {

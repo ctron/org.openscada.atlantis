@@ -1,6 +1,8 @@
 /*
  * This file is part of the openSCADA project
+ * 
  * Copyright (C) 2011-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -70,7 +72,15 @@ public class PullManager implements ConfigurationFactory
 
     public PullManager () throws InvalidSyntaxException
     {
-        this.tracker = new DataSourceFactoryTracker ( Activator.getContext (), DataSourceHelper.getDriver ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX ), null );
+        final String driver = DataSourceHelper.getDriver ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX );
+        this.tracker = new DataSourceFactoryTracker ( Activator.getContext (), driver, null );
+
+        if ( driver == null )
+        {
+            logger.error ( "JDBC driver is not set" );
+            throw new IllegalStateException ( "JDBC driver name is not set" );
+        }
+
         this.tracker.open ();
 
         this.thread = new Thread ( "org.openscada.ae.slave.pull.Worker" ) {
