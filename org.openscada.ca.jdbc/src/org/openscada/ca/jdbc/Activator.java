@@ -45,6 +45,8 @@ import org.slf4j.LoggerFactory;
 public class Activator implements BundleActivator
 {
 
+    private static final String CA_PREFIX = "org.openscada.ca.jdbc";
+
     private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
 
     private DataSourceFactoryTracker dataSourceFactoryTracker;
@@ -62,7 +64,7 @@ public class Activator implements BundleActivator
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        final String driver = DataSourceHelper.getDriver ( "org.openscada.ca.jdbc.driver", DataSourceHelper.DEFAULT_PREFIX );
+        final String driver = DataSourceHelper.getDriver ( CA_PREFIX, DataSourceHelper.DEFAULT_PREFIX );
 
         if ( driver == null )
         {
@@ -142,12 +144,12 @@ public class Activator implements BundleActivator
 
     public static boolean isConnectionPool ()
     {
-        return DataSourceHelper.isConnectionPool ( "org.openscada.ca.jdbc", DataSourceHelper.DEFAULT_PREFIX, false );
+        return DataSourceHelper.isConnectionPool ( CA_PREFIX, DataSourceHelper.DEFAULT_PREFIX, false );
     }
 
     private static Properties getDataSourceProperties ()
     {
-        return DataSourceHelper.getDataSourceProperties ( "org.openscada.ca.jdbc", DataSourceHelper.DEFAULT_PREFIX );
+        return DataSourceHelper.getDataSourceProperties ( CA_PREFIX, DataSourceHelper.DEFAULT_PREFIX );
     }
 
     protected void unregister ()

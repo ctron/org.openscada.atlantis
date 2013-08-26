@@ -45,6 +45,8 @@ import com.google.common.collect.Interner;
 
 public class Activator implements BundleActivator
 {
+    private static final String SPECIFIC_PREFIX = "org.openscada.ae.server.storage.jdbc";
+
     private static final Logger logger = LoggerFactory.getLogger ( Activator.class );
 
     private static BundleContext context;
@@ -75,7 +77,7 @@ public class Activator implements BundleActivator
 
         this.stringInterner = InternerHelper.makeInterner ( "org.openscada.ae.monitor.dataitem.stringInternerType", "weak" );
 
-        final String driver = DataSourceHelper.getDriver ( "org.openscada.ae.server.storage.jdbc.driver", DataSourceHelper.DEFAULT_PREFIX );
+        final String driver = DataSourceHelper.getDriver ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX );
 
         if ( driver == null )
         {
@@ -120,9 +122,9 @@ public class Activator implements BundleActivator
     {
         logger.info ( "Activating: {}", dataSourceFactory );
 
-        final Properties dbProperties = DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX );
+        final Properties dbProperties = DataSourceHelper.getDataSourceProperties ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX );
 
-        this.jdbcStorage = createJdbcStorage ( dataSourceFactory, dbProperties, DataSourceHelper.isConnectionPool ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX, false ) );
+        this.jdbcStorage = createJdbcStorage ( dataSourceFactory, dbProperties, DataSourceHelper.isConnectionPool ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX, false ) );
         this.jdbcStorage.start ();
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ( 2 );

@@ -44,6 +44,8 @@ import org.slf4j.LoggerFactory;
 
 public class Activator implements BundleActivator
 {
+    private static final String SPECIFIC_PREFIX = "org.openscada.ae.server.storage.jdbc";
+
     private static final Logger logger = LoggerFactory.getLogger ( Activator.class );
 
     private static BundleContext context;
@@ -73,7 +75,7 @@ public class Activator implements BundleActivator
     {
         Activator.context = bundleContext;
 
-        final String driver = DataSourceHelper.getDriver ( "org.openscada.ae.server.storage.jdbc.driver", DataSourceHelper.DEFAULT_PREFIX );
+        final String driver = DataSourceHelper.getDriver ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX );
 
         if ( driver == null )
         {
@@ -114,11 +116,11 @@ public class Activator implements BundleActivator
     {
         this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "org.openscada.ae.server.storage.postgresql/ScheduledExecutor" ) );
 
-        final Properties dbProperties = DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX );
+        final Properties dbProperties = DataSourceHelper.getDataSourceProperties ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX );
 
         final String schema = getSchema ();
         final String instance = getInstance ();
-        this.jdbcStorage = new JdbcStorage ( dataSourceFactory, this.scheduler, dbProperties, DataSourceHelper.isConnectionPool ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX, false ), schema, instance );
+        this.jdbcStorage = new JdbcStorage ( dataSourceFactory, this.scheduler, dbProperties, DataSourceHelper.isConnectionPool ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX, false ), schema, instance );
         this.jdbcStorage.start ();
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ( 2 );

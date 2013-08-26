@@ -36,6 +36,8 @@ import org.slf4j.LoggerFactory;
 public class Activator implements BundleActivator
 {
 
+    private static final String SPECIFIC_PREFIX = "org.openscada.ae.slave.inject";
+
     private final static Logger logger = LoggerFactory.getLogger ( Activator.class );
 
     private static BundleContext context;
@@ -58,7 +60,7 @@ public class Activator implements BundleActivator
     {
         Activator.context = bundleContext;
 
-        final String driver = DataSourceHelper.getDriver ( "org.openscada.ae.slave.inject", DataSourceHelper.DEFAULT_PREFIX );
+        final String driver = DataSourceHelper.getDriver ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX );
 
         if ( driver == null )
         {
@@ -91,7 +93,7 @@ public class Activator implements BundleActivator
             {
                 final String schema = getSchema ();
                 final String instance = getInstance ();
-                this.injector = new EventInjector ( service, DataSourceHelper.getDataSourceProperties ( "org.openscada.ae.slave.inject", DataSourceHelper.DEFAULT_PREFIX ), Integer.getInteger ( "org.openscada.ae.slave.inject.loopDelay", 10 * 1000 ), DataSourceHelper.isConnectionPool ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX, false ), schema, instance );
+                this.injector = new EventInjector ( service, DataSourceHelper.getDataSourceProperties ( SPECIFIC_PREFIX, DataSourceHelper.DEFAULT_PREFIX ), Integer.getInteger ( "org.openscada.ae.slave.inject.loopDelay", 10 * 1000 ), DataSourceHelper.isConnectionPool ( "org.openscada.ae.server.storage.jdbc", DataSourceHelper.DEFAULT_PREFIX, false ), schema, instance );
             }
             catch ( final SQLException e )
             {
