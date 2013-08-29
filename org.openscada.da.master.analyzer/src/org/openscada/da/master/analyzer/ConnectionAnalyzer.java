@@ -42,6 +42,7 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.exporter.StaticObjectExporter;
 import org.openscada.da.server.common.osgi.factory.DataItemFactory;
+import org.openscada.utils.ExceptionHelper;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceReference;
@@ -51,7 +52,7 @@ import com.google.gson.GsonBuilder;
 
 public class ConnectionAnalyzer implements ConnectionStateListener
 {
-    private final static long STATISTICS_DELAY = Long.getLong ( "org.openscada.da.master.analyzer.statisticsDelay", 5 );
+    private final static long STATISTICS_DELAY = Long.getLong ( "org.openscada.da.master.analyzer.statisticsDelay", 5 ); //$NON-NLS-1$
 
     private final DataItemFactory factory;
 
@@ -67,10 +68,10 @@ public class ConnectionAnalyzer implements ConnectionStateListener
 
     public ConnectionAnalyzer ( final ScheduledExecutorService executor, final BundleContext context, final ServiceReference<?> reference, final ConnectionService service )
     {
-        this.factory = new DataItemFactory ( context, executor, "org.openscada.da.master.analyzer.connectionService." + makeId ( reference ) );
-        this.exporter = new StaticObjectExporter<ConnectionAnalyzerStatus> ( this.factory, ConnectionAnalyzerStatus.class, false, false, "state." );
+        this.factory = new DataItemFactory ( context, executor, "org.openscada.da.master.analyzer.connectionService." + makeId ( reference ) ); //$NON-NLS-1$
+        this.exporter = new StaticObjectExporter<ConnectionAnalyzerStatus> ( this.factory, ConnectionAnalyzerStatus.class, false, false, "state." ); //$NON-NLS-1$
 
-        this.statisticsItem = this.factory.createInput ( "statistics", null );
+        this.statisticsItem = this.factory.createInput ( "statistics", null ); //$NON-NLS-1$
 
         this.value = new ConnectionAnalyzerStatus ();
 
@@ -86,7 +87,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
             }
         }, 0, STATISTICS_DELAY, TimeUnit.SECONDS );
 
-        this.factory.createOutput ( "connect", null, new WriteHandler () {
+        this.factory.createOutput ( "connect", null, new WriteHandler () { //$NON-NLS-1$
 
             @Override
             public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -95,7 +96,7 @@ public class ConnectionAnalyzer implements ConnectionStateListener
             }
         } );
 
-        this.factory.createOutput ( "disconnect", null, new WriteHandler () {
+        this.factory.createOutput ( "disconnect", null, new WriteHandler () { //$NON-NLS-1$
 
             @Override
             public void handleWrite ( final Variant value, final OperationParameters operationParameters ) throws Exception
@@ -121,9 +122,9 @@ public class ConnectionAnalyzer implements ConnectionStateListener
             {
                 try
                 {
-                    result.put ( String.format ( "statistics.%s.current", entry.getLabel () ), Variant.valueOf ( entry.getValue ().getCurrent () ) );
-                    result.put ( String.format ( "statistics.%s.min", entry.getLabel () ), Variant.valueOf ( entry.getValue ().getMinimum () ) );
-                    result.put ( String.format ( "statistics.%s.max", entry.getLabel () ), Variant.valueOf ( entry.getValue ().getMaximum () ) );
+                    result.put ( String.format ( "statistics.%s.current", entry.getLabel () ), Variant.valueOf ( entry.getValue ().getCurrent () ) ); //$NON-NLS-1$
+                    result.put ( String.format ( "statistics.%s.min", entry.getLabel () ), Variant.valueOf ( entry.getValue ().getMinimum () ) ); //$NON-NLS-1$
+                    result.put ( String.format ( "statistics.%s.max", entry.getLabel () ), Variant.valueOf ( entry.getValue ().getMaximum () ) ); //$NON-NLS-1$
                 }
                 catch ( final Exception e )
                 {
@@ -205,6 +206,8 @@ public class ConnectionAnalyzer implements ConnectionStateListener
     {
         this.value.setState ( state );
         this.value.setConnected ( state == ConnectionState.BOUND );
+        this.value.setLastException ( ExceptionHelper.formatted ( error ) );
+        this.value.setLastError ( ExceptionHelper.getMessage ( error ) );
         this.exporter.setTarget ( this.value );
     }
 

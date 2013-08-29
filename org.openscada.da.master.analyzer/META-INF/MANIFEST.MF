@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA DA Master Server Analyzer
 Bundle-SymbolicName: org.openscada.da.master.analyzer
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.openscada.da.master.analyzer.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
@@ -22,6 +22,7 @@ Import-Package: com.google.gson;version="1.7.1",
  org.openscada.da.server.common.item.factory;version="1.0.0",
  org.openscada.da.server.common.osgi.factory;version="1.0.0",
  org.openscada.sec;version="1.0.0",
+ org.openscada.utils;version="1.1.0",
  org.openscada.utils.concurrent;version="1.0.0",
  org.osgi.framework;version="1.6.0",
  org.osgi.util.tracker;version="1.5.0",

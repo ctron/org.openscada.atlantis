@@ -29,6 +29,30 @@ public class ConnectionAnalyzerStatus
 
     private String uri;
 
+    private String lastError;
+
+    private String lastException;
+
+    public String getLastError ()
+    {
+        return this.lastError;
+    }
+
+    public void setLastError ( final String lastError )
+    {
+        this.lastError = lastError;
+    }
+
+    public String getLastException ()
+    {
+        return this.lastException;
+    }
+
+    public void setLastException ( final String lastException )
+    {
+        this.lastException = lastException;
+    }
+
     public ConnectionState getState ()
     {
         return this.state;
