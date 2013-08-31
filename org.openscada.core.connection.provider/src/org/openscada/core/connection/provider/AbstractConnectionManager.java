@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -157,6 +159,8 @@ public abstract class AbstractConnectionManager implements SingleServiceListener
     }
 
     protected abstract AbstractConnectionService createConnection ();
+    
+    protected abstract Set<String> getInterfaces ();
 
     /**
      * Create a new connection and register it with OSGi
@@ -184,8 +188,10 @@ public abstract class AbstractConnectionManager implements SingleServiceListener
             properties.put ( DriverFactory.DRIVER_NAME, this.connectionInformation.getDriver () );
             properties.put ( ConnectionService.CONNECTION_URI, this.connectionInformation.toString () );
 
-            logger.info ( "Registered new connection service: " + properties );
-            this.serviceReg = this.context.registerService ( new String[] { ConnectionService.class.getName (), org.openscada.core.connection.provider.ConnectionService.class.getName () }, this.connection, properties );
+            logger.info ( "Registered new connection service: {}", properties );
+            final Set<String> interfaces = new HashSet<String> ( getInterfaces () );
+            interfaces.add ( ConnectionService.class.getName () );
+            this.serviceReg = this.context.registerService ( interfaces.toArray ( new String[interfaces.size()] ), this.connection, properties );
         }
     }
 
