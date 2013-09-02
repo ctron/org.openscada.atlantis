@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.emf.ecore.util.FeatureMapUtil;
 
 import org.eclipse.emf.edit.provider.ComposeableAdapterFactory;
+import org.eclipse.emf.edit.provider.IChildCreationExtender;
 import org.eclipse.emf.edit.provider.IEditingDomainItemProvider;
 import org.eclipse.emf.edit.provider.IItemLabelProvider;
 import org.eclipse.emf.edit.provider.IItemPropertyDescriptor;
@@ -321,7 +322,7 @@ public class DeviceTypeItemProvider extends ItemProviderAdapter implements IEdit
     @Override
     public ResourceLocator getResourceLocator ()
     {
-        return ModbusEditPlugin.INSTANCE;
+        return ( (IChildCreationExtender)adapterFactory ).getResourceLocator ();
     }
 
 }

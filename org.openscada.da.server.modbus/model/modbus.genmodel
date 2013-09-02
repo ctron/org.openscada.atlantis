@@ -7,7 +7,8 @@
     operationReflection="true" importOrganizing="true">
   <foreignModel>modbus.xsd</foreignModel>
   <genPackages prefix="Configuration" basePackage="org.openscada.da.modbus" resource="XML"
-      disposableProviderFactory="true" ecorePackage="configuration.ecore#/">
+      disposableProviderFactory="true" extensibleProviderFactory="true" childCreationExtenders="true"
+      ecorePackage="configuration.ecore#/">
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="configuration.ecore#//ParityType">
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ParityType/NONE"/>
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ParityType/EVEN"/>
