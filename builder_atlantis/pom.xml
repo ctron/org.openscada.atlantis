@@ -1,4 +1,6 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 
 	<groupId>org.openscada.atlantis</groupId>
@@ -7,8 +9,8 @@
 	<packaging>pom</packaging>
 
 	<properties>
-		<tycho-version>0.17.0</tycho-version>
-		<tychoExtrasVersion>0.17.0</tychoExtrasVersion>
+		<tycho-version>0.18.1</tycho-version>
+		<tychoExtrasVersion>0.18.0</tychoExtrasVersion>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
 
@@ -265,6 +267,13 @@
 		<module>../org.openscada.sec.provider.jdbc</module>
 		<module>../org.openscada.sec.provider.script</module>
 		<module>../org.openscada.ae.slave.inject.postgres</module>
-	<module>../org.openscada.da.server.common.edit</module><module>../org.openscada.da.server.common.editor</module><module>../org.openscada.da.server.exec.edit</module><module>../org.openscada.da.server.exec.editor</module><module>../org.openscada.da.server.io.common</module></modules>
+		<module>../org.openscada.da.server.common.edit</module>
+		<module>../org.openscada.da.server.common.editor</module>
+		<module>../org.openscada.da.server.exec.edit</module>
+		<module>../org.openscada.da.server.exec.editor</module>
+		<module>../org.openscada.da.server.io.common</module>
+		<module>../org.openscada.da.server.modbus.edit</module>
+		<module>../org.openscada.da.server.modbus.editor</module>
+	</modules>
 
 </project>
