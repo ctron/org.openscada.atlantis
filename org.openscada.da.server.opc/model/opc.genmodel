@@ -4,10 +4,12 @@
     modelDirectory="/org.openscada.da.server.opc/emfsrc" modelPluginID="org.openscada.da.server.opc"
     modelName="Opc" nonNLSMarkers="true" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     codeFormatting="true" importerID="org.eclipse.xsd.ecore.importer" containmentProxies="true"
-    complianceLevel="6.0" runtimeVersion="2.8" operationReflection="true" importOrganizing="true">
+    complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.8" operationReflection="true"
+    importOrganizing="true">
   <foreignModel>opc.xsd</foreignModel>
   <genPackages prefix="Configuration" basePackage="org.openscada.da.opc" resource="XML"
-      disposableProviderFactory="true" ecorePackage="configuration.ecore#/">
+      disposableProviderFactory="true" extensibleProviderFactory="true" childCreationExtenders="true"
+      ecorePackage="configuration.ecore#/">
     <genDataTypes ecoreDataType="configuration.ecore#//ProgIdType"/>
     <genDataTypes ecoreDataType="configuration.ecore#//UUIDType"/>
     <genClasses ecoreClass="configuration.ecore#//ConfigurationType">

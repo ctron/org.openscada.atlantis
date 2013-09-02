@@ -69,8 +69,8 @@ Export-Package: org.openscada.da.opc.configuration;version="1.2.0";uses:="org.ec
    org.jinterop.dcom.core,
    org.openscada.da.server.common.impl,
    org.openscada.opc.dcom.da,
-   org.openscada.da.server.opc.configuration,
    org.openscada.utils.init,
+   org.openscada.da.server.opc.configuration,
    org.openscada.core,
    org.openscada.opc.dcom.common",
  org.openscada.da.server.opc.browser;version="1.2.0";
@@ -116,8 +116,8 @@ Export-Package: org.openscada.da.opc.configuration;version="1.2.0";uses:="org.ec
    org.openscada.opc.lib.da,
    org.openscada.opc.dcom.common"
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.emf.ecore;bundle-version="2.8.0";visibility:=reexport,
- org.eclipse.emf.ecore.xmi;bundle-version="2.8.0";visibility:=reexport
+ org.eclipse.emf.ecore;visibility:=reexport;bundle-version="2.8.0",
+ org.eclipse.emf.ecore.xmi;visibility:=reexport;bundle-version="2.8.0"
 Bundle-ActivationPolicy: lazy
 Service-Component: OSGI-INF/hive.xml
 

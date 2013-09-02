@@ -425,4 +425,18 @@
          version="0.0.0"
          unpack="false"/>
 
+   <plugin
+         id="org.openscada.da.server.opc.edit"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.server.opc.editor"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
 </feature>
