@@ -327,6 +327,10 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.common.editor"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exec.edit"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.exec.editor"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc.edit"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc.editor"/>
+	<openscada.builder.copyPlugin id="org.openscada.da.server.modbus.edit"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.modbus.editor"/>
   	
   </target>
 
