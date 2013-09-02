@@ -37,22 +37,18 @@ import org.openscada.da.modbus.configuration.RootType;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.RootTypeImpl#getDevices
- * <em>Devices</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.RootTypeImpl#getDevices <em>Devices</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class RootTypeImpl extends MinimalEObjectImpl.Container implements RootType
 {
     /**
-     * The cached value of the '{@link #getDevices() <em>Devices</em>}'
-     * containment reference.
+     * The cached value of the '{@link #getDevices() <em>Devices</em>}' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getDevices()
      * @generated
      * @ordered
@@ -62,7 +58,6 @@ public class RootTypeImpl extends MinimalEObjectImpl.Container implements RootTy
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected RootTypeImpl ()
@@ -73,7 +68,6 @@ public class RootTypeImpl extends MinimalEObjectImpl.Container implements RootTy
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -85,36 +79,30 @@ public class RootTypeImpl extends MinimalEObjectImpl.Container implements RootTy
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public DevicesType getDevices ()
     {
-        return this.devices;
+        return devices;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public NotificationChain basicSetDevices ( final DevicesType newDevices, NotificationChain msgs )
+    public NotificationChain basicSetDevices ( DevicesType newDevices, NotificationChain msgs )
     {
-        final DevicesType oldDevices = this.devices;
-        this.devices = newDevices;
+        DevicesType oldDevices = devices;
+        devices = newDevices;
         if ( eNotificationRequired () )
         {
-            final ENotificationImpl notification = new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.ROOT_TYPE__DEVICES, oldDevices, newDevices );
+            ENotificationImpl notification = new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.ROOT_TYPE__DEVICES, oldDevices, newDevices );
             if ( msgs == null )
-            {
                 msgs = notification;
-            }
             else
-            {
                 msgs.add ( notification );
-            }
         }
         return msgs;
     }
@@ -122,43 +110,33 @@ public class RootTypeImpl extends MinimalEObjectImpl.Container implements RootTy
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setDevices ( final DevicesType newDevices )
+    public void setDevices ( DevicesType newDevices )
     {
-        if ( newDevices != this.devices )
+        if ( newDevices != devices )
         {
             NotificationChain msgs = null;
-            if ( this.devices != null )
-            {
-                msgs = ( (InternalEObject)this.devices ).eInverseRemove ( this, EOPPOSITE_FEATURE_BASE - ConfigurationPackage.ROOT_TYPE__DEVICES, null, msgs );
-            }
+            if ( devices != null )
+                msgs = ( (InternalEObject)devices ).eInverseRemove ( this, EOPPOSITE_FEATURE_BASE - ConfigurationPackage.ROOT_TYPE__DEVICES, null, msgs );
             if ( newDevices != null )
-            {
                 msgs = ( (InternalEObject)newDevices ).eInverseAdd ( this, EOPPOSITE_FEATURE_BASE - ConfigurationPackage.ROOT_TYPE__DEVICES, null, msgs );
-            }
             msgs = basicSetDevices ( newDevices, msgs );
             if ( msgs != null )
-            {
                 msgs.dispatch ();
-            }
         }
         else if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.ROOT_TYPE__DEVICES, newDevices, newDevices ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public NotificationChain eInverseRemove ( final InternalEObject otherEnd, final int featureID, final NotificationChain msgs )
+    public NotificationChain eInverseRemove ( InternalEObject otherEnd, int featureID, NotificationChain msgs )
     {
         switch ( featureID )
         {
@@ -171,11 +149,10 @@ public class RootTypeImpl extends MinimalEObjectImpl.Container implements RootTy
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public Object eGet ( final int featureID, final boolean resolve, final boolean coreType )
+    public Object eGet ( int featureID, boolean resolve, boolean coreType )
     {
         switch ( featureID )
         {
@@ -188,11 +165,10 @@ public class RootTypeImpl extends MinimalEObjectImpl.Container implements RootTy
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void eSet ( final int featureID, final Object newValue )
+    public void eSet ( int featureID, Object newValue )
     {
         switch ( featureID )
         {
@@ -206,11 +182,10 @@ public class RootTypeImpl extends MinimalEObjectImpl.Container implements RootTy
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void eUnset ( final int featureID )
+    public void eUnset ( int featureID )
     {
         switch ( featureID )
         {
@@ -224,16 +199,15 @@ public class RootTypeImpl extends MinimalEObjectImpl.Container implements RootTy
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public boolean eIsSet ( final int featureID )
+    public boolean eIsSet ( int featureID )
     {
         switch ( featureID )
         {
             case ConfigurationPackage.ROOT_TYPE__DEVICES:
-                return this.devices != null;
+                return devices != null;
         }
         return super.eIsSet ( featureID );
     }

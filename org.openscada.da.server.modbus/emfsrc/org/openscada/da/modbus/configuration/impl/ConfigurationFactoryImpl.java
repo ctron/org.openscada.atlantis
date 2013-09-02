@@ -45,7 +45,6 @@ import org.openscada.da.modbus.configuration.TypeType;
  * <!-- begin-user-doc -->
  * An implementation of the model <b>Factory</b>.
  * <!-- end-user-doc -->
- * 
  * @generated
  */
 public class ConfigurationFactoryImpl extends EFactoryImpl implements ConfigurationFactory
@@ -54,20 +53,19 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
      * Creates the default factory implementation.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public static ConfigurationFactory init ()
     {
         try
         {
-            final ConfigurationFactory theConfigurationFactory = (ConfigurationFactory)EPackage.Registry.INSTANCE.getEFactory ( ConfigurationPackage.eNS_URI );
+            ConfigurationFactory theConfigurationFactory = (ConfigurationFactory)EPackage.Registry.INSTANCE.getEFactory ( ConfigurationPackage.eNS_URI );
             if ( theConfigurationFactory != null )
             {
                 return theConfigurationFactory;
             }
         }
-        catch ( final Exception exception )
+        catch ( Exception exception )
         {
             EcorePlugin.INSTANCE.log ( exception );
         }
@@ -78,7 +76,6 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
      * Creates an instance of the factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public ConfigurationFactoryImpl ()
@@ -89,11 +86,10 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public EObject create ( final EClass eClass )
+    public EObject create ( EClass eClass )
     {
         switch ( eClass.getClassifierID () )
         {
@@ -117,11 +113,10 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public Object createFromString ( final EDataType eDataType, final String initialValue )
+    public Object createFromString ( EDataType eDataType, String initialValue )
     {
         switch ( eDataType.getClassifierID () )
         {
@@ -163,11 +158,10 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public String convertToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertToString ( EDataType eDataType, Object instanceValue )
     {
         switch ( eDataType.getClassifierID () )
         {
@@ -209,104 +203,94 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public DevicesType createDevicesType ()
     {
-        final DevicesTypeImpl devicesType = new DevicesTypeImpl ();
+        DevicesTypeImpl devicesType = new DevicesTypeImpl ();
         return devicesType;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public DeviceType createDeviceType ()
     {
-        final DeviceTypeImpl deviceType = new DeviceTypeImpl ();
+        DeviceTypeImpl deviceType = new DeviceTypeImpl ();
         return deviceType;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public DocumentRoot createDocumentRoot ()
     {
-        final DocumentRootImpl documentRoot = new DocumentRootImpl ();
+        DocumentRootImpl documentRoot = new DocumentRootImpl ();
         return documentRoot;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public ItemType createItemType ()
     {
-        final ItemTypeImpl itemType = new ItemTypeImpl ();
+        ItemTypeImpl itemType = new ItemTypeImpl ();
         return itemType;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public ModbusSlave createModbusSlave ()
     {
-        final ModbusSlaveImpl modbusSlave = new ModbusSlaveImpl ();
+        ModbusSlaveImpl modbusSlave = new ModbusSlaveImpl ();
         return modbusSlave;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public RootType createRootType ()
     {
-        final RootTypeImpl rootType = new RootTypeImpl ();
+        RootTypeImpl rootType = new RootTypeImpl ();
         return rootType;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public ParityType createParityTypeFromString ( final EDataType eDataType, final String initialValue )
+    public ParityType createParityTypeFromString ( EDataType eDataType, String initialValue )
     {
-        final ParityType result = ParityType.get ( initialValue );
+        ParityType result = ParityType.get ( initialValue );
         if ( result == null )
-        {
             throw new IllegalArgumentException ( "The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName () + "'" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertParityTypeToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertParityTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return instanceValue == null ? null : instanceValue.toString ();
     }
@@ -314,26 +298,22 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public ProtocolType createProtocolTypeFromString ( final EDataType eDataType, final String initialValue )
+    public ProtocolType createProtocolTypeFromString ( EDataType eDataType, String initialValue )
     {
-        final ProtocolType result = ProtocolType.get ( initialValue );
+        ProtocolType result = ProtocolType.get ( initialValue );
         if ( result == null )
-        {
             throw new IllegalArgumentException ( "The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName () + "'" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertProtocolTypeToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertProtocolTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return instanceValue == null ? null : instanceValue.toString ();
     }
@@ -341,26 +321,22 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public StopBitsType createStopBitsTypeFromString ( final EDataType eDataType, final String initialValue )
+    public StopBitsType createStopBitsTypeFromString ( EDataType eDataType, String initialValue )
     {
-        final StopBitsType result = StopBitsType.get ( initialValue );
+        StopBitsType result = StopBitsType.get ( initialValue );
         if ( result == null )
-        {
             throw new IllegalArgumentException ( "The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName () + "'" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertStopBitsTypeToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertStopBitsTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return instanceValue == null ? null : instanceValue.toString ();
     }
@@ -368,26 +344,22 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public TypeType createTypeTypeFromString ( final EDataType eDataType, final String initialValue )
+    public TypeType createTypeTypeFromString ( EDataType eDataType, String initialValue )
     {
-        final TypeType result = TypeType.get ( initialValue );
+        TypeType result = TypeType.get ( initialValue );
         if ( result == null )
-        {
             throw new IllegalArgumentException ( "The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName () + "'" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertTypeTypeToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertTypeTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return instanceValue == null ? null : instanceValue.toString ();
     }
@@ -395,10 +367,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public Integer createDataBitsTypeFromString ( final EDataType eDataType, final String initialValue )
+    public Integer createDataBitsTypeFromString ( EDataType eDataType, String initialValue )
     {
         return (Integer)XMLTypeFactory.eINSTANCE.createFromString ( XMLTypePackage.Literals.INT, initialValue );
     }
@@ -406,10 +377,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertDataBitsTypeToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertDataBitsTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return XMLTypeFactory.eINSTANCE.convertToString ( XMLTypePackage.Literals.INT, instanceValue );
     }
@@ -417,10 +387,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public Integer createDataBitsTypeObjectFromString ( final EDataType eDataType, final String initialValue )
+    public Integer createDataBitsTypeObjectFromString ( EDataType eDataType, String initialValue )
     {
         return createDataBitsTypeFromString ( ConfigurationPackage.Literals.DATA_BITS_TYPE, initialValue );
     }
@@ -428,10 +397,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertDataBitsTypeObjectToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertDataBitsTypeObjectToString ( EDataType eDataType, Object instanceValue )
     {
         return convertDataBitsTypeToString ( ConfigurationPackage.Literals.DATA_BITS_TYPE, instanceValue );
     }
@@ -439,10 +407,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String createHostTypeFromString ( final EDataType eDataType, final String initialValue )
+    public String createHostTypeFromString ( EDataType eDataType, String initialValue )
     {
         return (String)XMLTypeFactory.eINSTANCE.createFromString ( XMLTypePackage.Literals.STRING, initialValue );
     }
@@ -450,10 +417,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertHostTypeToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertHostTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return XMLTypeFactory.eINSTANCE.convertToString ( XMLTypePackage.Literals.STRING, instanceValue );
     }
@@ -461,10 +427,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String createIdTypeFromString ( final EDataType eDataType, final String initialValue )
+    public String createIdTypeFromString ( EDataType eDataType, String initialValue )
     {
         return (String)XMLTypeFactory.eINSTANCE.createFromString ( XMLTypePackage.Literals.STRING, initialValue );
     }
@@ -472,10 +437,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertIdTypeToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertIdTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return XMLTypeFactory.eINSTANCE.convertToString ( XMLTypePackage.Literals.STRING, instanceValue );
     }
@@ -483,10 +447,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public Integer createIdType1FromString ( final EDataType eDataType, final String initialValue )
+    public Integer createIdType1FromString ( EDataType eDataType, String initialValue )
     {
         return (Integer)XMLTypeFactory.eINSTANCE.createFromString ( XMLTypePackage.Literals.INT, initialValue );
     }
@@ -494,10 +457,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertIdType1ToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertIdType1ToString ( EDataType eDataType, Object instanceValue )
     {
         return XMLTypeFactory.eINSTANCE.convertToString ( XMLTypePackage.Literals.INT, instanceValue );
     }
@@ -505,10 +467,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public Integer createIdTypeObjectFromString ( final EDataType eDataType, final String initialValue )
+    public Integer createIdTypeObjectFromString ( EDataType eDataType, String initialValue )
     {
         return createIdType1FromString ( ConfigurationPackage.Literals.ID_TYPE1, initialValue );
     }
@@ -516,10 +477,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertIdTypeObjectToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertIdTypeObjectToString ( EDataType eDataType, Object instanceValue )
     {
         return convertIdType1ToString ( ConfigurationPackage.Literals.ID_TYPE1, instanceValue );
     }
@@ -527,10 +487,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public ParityType createParityTypeObjectFromString ( final EDataType eDataType, final String initialValue )
+    public ParityType createParityTypeObjectFromString ( EDataType eDataType, String initialValue )
     {
         return createParityTypeFromString ( ConfigurationPackage.Literals.PARITY_TYPE, initialValue );
     }
@@ -538,10 +497,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertParityTypeObjectToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertParityTypeObjectToString ( EDataType eDataType, Object instanceValue )
     {
         return convertParityTypeToString ( ConfigurationPackage.Literals.PARITY_TYPE, instanceValue );
     }
@@ -549,10 +507,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public ProtocolType createProtocolTypeObjectFromString ( final EDataType eDataType, final String initialValue )
+    public ProtocolType createProtocolTypeObjectFromString ( EDataType eDataType, String initialValue )
     {
         return createProtocolTypeFromString ( ConfigurationPackage.Literals.PROTOCOL_TYPE, initialValue );
     }
@@ -560,10 +517,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertProtocolTypeObjectToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertProtocolTypeObjectToString ( EDataType eDataType, Object instanceValue )
     {
         return convertProtocolTypeToString ( ConfigurationPackage.Literals.PROTOCOL_TYPE, instanceValue );
     }
@@ -571,10 +527,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String createStartAddressTypeFromString ( final EDataType eDataType, final String initialValue )
+    public String createStartAddressTypeFromString ( EDataType eDataType, String initialValue )
     {
         return (String)XMLTypeFactory.eINSTANCE.createFromString ( XMLTypePackage.Literals.STRING, initialValue );
     }
@@ -582,10 +537,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertStartAddressTypeToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertStartAddressTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return XMLTypeFactory.eINSTANCE.convertToString ( XMLTypePackage.Literals.STRING, instanceValue );
     }
@@ -593,10 +547,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public StopBitsType createStopBitsTypeObjectFromString ( final EDataType eDataType, final String initialValue )
+    public StopBitsType createStopBitsTypeObjectFromString ( EDataType eDataType, String initialValue )
     {
         return createStopBitsTypeFromString ( ConfigurationPackage.Literals.STOP_BITS_TYPE, initialValue );
     }
@@ -604,10 +557,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertStopBitsTypeObjectToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertStopBitsTypeObjectToString ( EDataType eDataType, Object instanceValue )
     {
         return convertStopBitsTypeToString ( ConfigurationPackage.Literals.STOP_BITS_TYPE, instanceValue );
     }
@@ -615,10 +567,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public TypeType createTypeTypeObjectFromString ( final EDataType eDataType, final String initialValue )
+    public TypeType createTypeTypeObjectFromString ( EDataType eDataType, String initialValue )
     {
         return createTypeTypeFromString ( ConfigurationPackage.Literals.TYPE_TYPE, initialValue );
     }
@@ -626,10 +577,9 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public String convertTypeTypeObjectToString ( final EDataType eDataType, final Object instanceValue )
+    public String convertTypeTypeObjectToString ( EDataType eDataType, Object instanceValue )
     {
         return convertTypeTypeToString ( ConfigurationPackage.Literals.TYPE_TYPE, instanceValue );
     }
@@ -637,7 +587,6 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -649,7 +598,6 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @deprecated
      * @generated
      */

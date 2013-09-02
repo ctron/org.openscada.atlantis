@@ -32,7 +32,6 @@ import org.eclipse.emf.common.util.Enumerator;
  * <em><b>Type Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * 
  * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getTypeType()
  * @model extendedMetaData="name='type_._type'"
  * @generated
@@ -43,7 +42,6 @@ public enum TypeType implements Enumerator
      * The '<em><b>DEFAULT</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #DEFAULT_VALUE
      * @generated
      * @ordered
@@ -54,7 +52,6 @@ public enum TypeType implements Enumerator
      * The '<em><b>BOOLEAN</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #BOOLEAN_VALUE
      * @generated
      * @ordered
@@ -65,7 +62,6 @@ public enum TypeType implements Enumerator
      * The '<em><b>INT16</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #INT16_VALUE
      * @generated
      * @ordered
@@ -76,7 +72,6 @@ public enum TypeType implements Enumerator
      * The '<em><b>INT32</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #INT32_VALUE
      * @generated
      * @ordered
@@ -87,7 +82,6 @@ public enum TypeType implements Enumerator
      * The '<em><b>INT64</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #INT64_VALUE
      * @generated
      * @ordered
@@ -98,7 +92,6 @@ public enum TypeType implements Enumerator
      * The '<em><b>FLOAT16</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #FLOAT16_VALUE
      * @generated
      * @ordered
@@ -109,7 +102,6 @@ public enum TypeType implements Enumerator
      * The '<em><b>FLOAT32</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #FLOAT32_VALUE
      * @generated
      * @ordered
@@ -120,7 +112,6 @@ public enum TypeType implements Enumerator
      * The '<em><b>FLOAT64</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #FLOAT64_VALUE
      * @generated
      * @ordered
@@ -135,7 +126,6 @@ public enum TypeType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #DEFAULT
      * @model
      * @generated
@@ -151,7 +141,6 @@ public enum TypeType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #BOOLEAN
      * @model
      * @generated
@@ -167,7 +156,6 @@ public enum TypeType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #INT16
      * @model
      * @generated
@@ -183,7 +171,6 @@ public enum TypeType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #INT32
      * @model
      * @generated
@@ -199,7 +186,6 @@ public enum TypeType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #INT64
      * @model
      * @generated
@@ -215,7 +201,6 @@ public enum TypeType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #FLOAT16
      * @model
      * @generated
@@ -231,7 +216,6 @@ public enum TypeType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #FLOAT32
      * @model
      * @generated
@@ -247,7 +231,6 @@ public enum TypeType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #FLOAT64
      * @model
      * @generated
@@ -259,34 +242,29 @@ public enum TypeType implements Enumerator
      * An array of all the '<em><b>Type Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private static final TypeType[] VALUES_ARRAY = new TypeType[] { DEFAULT, BOOLEAN, INT16, INT32, INT64, FLOAT16, FLOAT32, FLOAT64, };
 
     /**
-     * A public read-only list of all the '<em><b>Type Type</b></em>'
-     * enumerators.
+     * A public read-only list of all the '<em><b>Type Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public static final List<TypeType> VALUES = Collections.unmodifiableList ( Arrays.asList ( VALUES_ARRAY ) );
 
     /**
-     * Returns the '<em><b>Type Type</b></em>' literal with the specified
-     * literal value.
+     * Returns the '<em><b>Type Type</b></em>' literal with the specified literal value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public static TypeType get ( final String literal )
+    public static TypeType get ( String literal )
     {
         for ( int i = 0; i < VALUES_ARRAY.length; ++i )
         {
-            final TypeType result = VALUES_ARRAY[i];
+            TypeType result = VALUES_ARRAY[i];
             if ( result.toString ().equals ( literal ) )
             {
                 return result;
@@ -299,14 +277,13 @@ public enum TypeType implements Enumerator
      * Returns the '<em><b>Type Type</b></em>' literal with the specified name.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public static TypeType getByName ( final String name )
+    public static TypeType getByName ( String name )
     {
         for ( int i = 0; i < VALUES_ARRAY.length; ++i )
         {
-            final TypeType result = VALUES_ARRAY[i];
+            TypeType result = VALUES_ARRAY[i];
             if ( result.getName ().equals ( name ) )
             {
                 return result;
@@ -316,14 +293,12 @@ public enum TypeType implements Enumerator
     }
 
     /**
-     * Returns the '<em><b>Type Type</b></em>' literal with the specified
-     * integer value.
+     * Returns the '<em><b>Type Type</b></em>' literal with the specified integer value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public static TypeType get ( final int value )
+    public static TypeType get ( int value )
     {
         switch ( value )
         {
@@ -350,7 +325,6 @@ public enum TypeType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private final int value;
@@ -358,7 +332,6 @@ public enum TypeType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private final String name;
@@ -366,7 +339,6 @@ public enum TypeType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private final String literal;
@@ -375,10 +347,9 @@ public enum TypeType implements Enumerator
      * Only this class can construct instances.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    private TypeType ( final int value, final String name, final String literal )
+    private TypeType ( int value, String name, String literal )
     {
         this.value = value;
         this.name = name;
@@ -388,51 +359,46 @@ public enum TypeType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getValue ()
     {
-        return this.value;
+        return value;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String getName ()
     {
-        return this.name;
+        return name;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String getLiteral ()
     {
-        return this.literal;
+        return literal;
     }
 
     /**
-     * Returns the literal value of the enumerator, which is its string
-     * representation.
+     * Returns the literal value of the enumerator, which is its string representation.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String toString ()
     {
-        return this.literal;
+        return literal;
     }
 
 } //TypeType

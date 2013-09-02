@@ -32,7 +32,6 @@ import org.eclipse.emf.common.util.Enumerator;
  * <em><b>Parity Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * 
  * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getParityType()
  * @model extendedMetaData="name='parity_._type'"
  * @generated
@@ -43,7 +42,6 @@ public enum ParityType implements Enumerator
      * The '<em><b>NONE</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #NONE_VALUE
      * @generated
      * @ordered
@@ -54,7 +52,6 @@ public enum ParityType implements Enumerator
      * The '<em><b>EVEN</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #EVEN_VALUE
      * @generated
      * @ordered
@@ -65,7 +62,6 @@ public enum ParityType implements Enumerator
      * The '<em><b>ODD</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #ODD_VALUE
      * @generated
      * @ordered
@@ -76,7 +72,6 @@ public enum ParityType implements Enumerator
      * The '<em><b>MARK</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #MARK_VALUE
      * @generated
      * @ordered
@@ -87,7 +82,6 @@ public enum ParityType implements Enumerator
      * The '<em><b>SPACE</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #SPACE_VALUE
      * @generated
      * @ordered
@@ -102,7 +96,6 @@ public enum ParityType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #NONE
      * @model
      * @generated
@@ -118,7 +111,6 @@ public enum ParityType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #EVEN
      * @model
      * @generated
@@ -134,7 +126,6 @@ public enum ParityType implements Enumerator
      * really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #ODD
      * @model
      * @generated
@@ -150,7 +141,6 @@ public enum ParityType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #MARK
      * @model
      * @generated
@@ -166,7 +156,6 @@ public enum ParityType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #SPACE
      * @model
      * @generated
@@ -178,34 +167,29 @@ public enum ParityType implements Enumerator
      * An array of all the '<em><b>Parity Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private static final ParityType[] VALUES_ARRAY = new ParityType[] { NONE, EVEN, ODD, MARK, SPACE, };
 
     /**
-     * A public read-only list of all the '<em><b>Parity Type</b></em>'
-     * enumerators.
+     * A public read-only list of all the '<em><b>Parity Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public static final List<ParityType> VALUES = Collections.unmodifiableList ( Arrays.asList ( VALUES_ARRAY ) );
 
     /**
-     * Returns the '<em><b>Parity Type</b></em>' literal with the specified
-     * literal value.
+     * Returns the '<em><b>Parity Type</b></em>' literal with the specified literal value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public static ParityType get ( final String literal )
+    public static ParityType get ( String literal )
     {
         for ( int i = 0; i < VALUES_ARRAY.length; ++i )
         {
-            final ParityType result = VALUES_ARRAY[i];
+            ParityType result = VALUES_ARRAY[i];
             if ( result.toString ().equals ( literal ) )
             {
                 return result;
@@ -215,18 +199,16 @@ public enum ParityType implements Enumerator
     }
 
     /**
-     * Returns the '<em><b>Parity Type</b></em>' literal with the specified
-     * name.
+     * Returns the '<em><b>Parity Type</b></em>' literal with the specified name.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public static ParityType getByName ( final String name )
+    public static ParityType getByName ( String name )
     {
         for ( int i = 0; i < VALUES_ARRAY.length; ++i )
         {
-            final ParityType result = VALUES_ARRAY[i];
+            ParityType result = VALUES_ARRAY[i];
             if ( result.getName ().equals ( name ) )
             {
                 return result;
@@ -236,14 +218,12 @@ public enum ParityType implements Enumerator
     }
 
     /**
-     * Returns the '<em><b>Parity Type</b></em>' literal with the specified
-     * integer value.
+     * Returns the '<em><b>Parity Type</b></em>' literal with the specified integer value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public static ParityType get ( final int value )
+    public static ParityType get ( int value )
     {
         switch ( value )
         {
@@ -264,7 +244,6 @@ public enum ParityType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private final int value;
@@ -272,7 +251,6 @@ public enum ParityType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private final String name;
@@ -280,7 +258,6 @@ public enum ParityType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private final String literal;
@@ -289,10 +266,9 @@ public enum ParityType implements Enumerator
      * Only this class can construct instances.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    private ParityType ( final int value, final String name, final String literal )
+    private ParityType ( int value, String name, String literal )
     {
         this.value = value;
         this.name = name;
@@ -302,51 +278,46 @@ public enum ParityType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getValue ()
     {
-        return this.value;
+        return value;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String getName ()
     {
-        return this.name;
+        return name;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String getLiteral ()
     {
-        return this.literal;
+        return literal;
     }
 
     /**
-     * Returns the literal value of the enumerator, which is its string
-     * representation.
+     * Returns the literal value of the enumerator, which is its string representation.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String toString ()
     {
-        return this.literal;
+        return literal;
     }
 
 } //ParityType

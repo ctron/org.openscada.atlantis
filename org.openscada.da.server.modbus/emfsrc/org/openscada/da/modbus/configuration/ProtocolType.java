@@ -32,7 +32,6 @@ import org.eclipse.emf.common.util.Enumerator;
  * <em><b>Protocol Type</b></em>',
  * and utility methods for working with them.
  * <!-- end-user-doc -->
- * 
  * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getProtocolType()
  * @model extendedMetaData="name='protocol_._type'"
  * @generated
@@ -43,7 +42,6 @@ public enum ProtocolType implements Enumerator
      * The '<em><b>TCP</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #TCP_VALUE
      * @generated
      * @ordered
@@ -54,7 +52,6 @@ public enum ProtocolType implements Enumerator
      * The '<em><b>RTU</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #RTU_VALUE
      * @generated
      * @ordered
@@ -65,7 +62,6 @@ public enum ProtocolType implements Enumerator
      * The '<em><b>ASCII</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #ASCII_VALUE
      * @generated
      * @ordered
@@ -80,7 +76,6 @@ public enum ProtocolType implements Enumerator
      * really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #TCP
      * @model
      * @generated
@@ -96,7 +91,6 @@ public enum ProtocolType implements Enumerator
      * really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #RTU
      * @model
      * @generated
@@ -112,7 +106,6 @@ public enum ProtocolType implements Enumerator
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @see #ASCII
      * @model
      * @generated
@@ -124,34 +117,29 @@ public enum ProtocolType implements Enumerator
      * An array of all the '<em><b>Protocol Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private static final ProtocolType[] VALUES_ARRAY = new ProtocolType[] { TCP, RTU, ASCII, };
 
     /**
-     * A public read-only list of all the '<em><b>Protocol Type</b></em>'
-     * enumerators.
+     * A public read-only list of all the '<em><b>Protocol Type</b></em>' enumerators.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public static final List<ProtocolType> VALUES = Collections.unmodifiableList ( Arrays.asList ( VALUES_ARRAY ) );
 
     /**
-     * Returns the '<em><b>Protocol Type</b></em>' literal with the specified
-     * literal value.
+     * Returns the '<em><b>Protocol Type</b></em>' literal with the specified literal value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public static ProtocolType get ( final String literal )
+    public static ProtocolType get ( String literal )
     {
         for ( int i = 0; i < VALUES_ARRAY.length; ++i )
         {
-            final ProtocolType result = VALUES_ARRAY[i];
+            ProtocolType result = VALUES_ARRAY[i];
             if ( result.toString ().equals ( literal ) )
             {
                 return result;
@@ -161,18 +149,16 @@ public enum ProtocolType implements Enumerator
     }
 
     /**
-     * Returns the '<em><b>Protocol Type</b></em>' literal with the specified
-     * name.
+     * Returns the '<em><b>Protocol Type</b></em>' literal with the specified name.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public static ProtocolType getByName ( final String name )
+    public static ProtocolType getByName ( String name )
     {
         for ( int i = 0; i < VALUES_ARRAY.length; ++i )
         {
-            final ProtocolType result = VALUES_ARRAY[i];
+            ProtocolType result = VALUES_ARRAY[i];
             if ( result.getName ().equals ( name ) )
             {
                 return result;
@@ -182,14 +168,12 @@ public enum ProtocolType implements Enumerator
     }
 
     /**
-     * Returns the '<em><b>Protocol Type</b></em>' literal with the specified
-     * integer value.
+     * Returns the '<em><b>Protocol Type</b></em>' literal with the specified integer value.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public static ProtocolType get ( final int value )
+    public static ProtocolType get ( int value )
     {
         switch ( value )
         {
@@ -206,7 +190,6 @@ public enum ProtocolType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private final int value;
@@ -214,7 +197,6 @@ public enum ProtocolType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private final String name;
@@ -222,7 +204,6 @@ public enum ProtocolType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private final String literal;
@@ -231,10 +212,9 @@ public enum ProtocolType implements Enumerator
      * Only this class can construct instances.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    private ProtocolType ( final int value, final String name, final String literal )
+    private ProtocolType ( int value, String name, String literal )
     {
         this.value = value;
         this.name = name;
@@ -244,51 +224,46 @@ public enum ProtocolType implements Enumerator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getValue ()
     {
-        return this.value;
+        return value;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String getName ()
     {
-        return this.name;
+        return name;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String getLiteral ()
     {
-        return this.literal;
+        return literal;
     }
 
     /**
-     * Returns the literal value of the enumerator, which is its string
-     * representation.
+     * Returns the literal value of the enumerator, which is its string representation.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String toString ()
     {
-        return this.literal;
+        return literal;
     }
 
 } //ProtocolType

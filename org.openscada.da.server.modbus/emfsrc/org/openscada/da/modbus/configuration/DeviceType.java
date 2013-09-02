@@ -28,38 +28,25 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Device Type</b></em>'.
  * <!-- end-user-doc -->
+ *
  * <p>
  * The following features are supported:
  * <ul>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getGroup <em>
- * Group</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getSlave <em>
- * Slave</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getBaudRate <em>
- * Baud Rate</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getDataBits <em>
- * Data Bits</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getHost <em>Host
- * </em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getId <em>Id
- * </em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout
- * <em>Inter Character Timeout</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.DeviceType#getInterFrameDelay
- * <em>Inter Frame Delay</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getParity <em>
- * Parity</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getPort <em>Port
- * </em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getProtocol <em>
- * Protocol</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.DeviceType#getStopBits <em>
- * Stop Bits</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getGroup <em>Group</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getSlave <em>Slave</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getBaudRate <em>Baud Rate</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getDataBits <em>Data Bits</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getHost <em>Host</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getId <em>Id</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout <em>Inter Character Timeout</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getInterFrameDelay <em>Inter Frame Delay</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getParity <em>Parity</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getPort <em>Port</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getProtocol <em>Protocol</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DeviceType#getStopBits <em>Stop Bits</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType()
  * @model extendedMetaData="name='DeviceType' kind='elementOnly'"
  * @generated
@@ -68,42 +55,34 @@ public interface DeviceType extends EObject
 {
     /**
      * Returns the value of the '<em><b>Group</b></em>' attribute list.
-     * The list contents are of type
-     * {@link org.eclipse.emf.ecore.util.FeatureMap.Entry}.
+     * The list contents are of type {@link org.eclipse.emf.ecore.util.FeatureMap.Entry}.
      * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Group</em>' attribute list isn't clear, there
      * really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Group</em>' attribute list.
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType_Group()
-     * @model unique="false" dataType="org.eclipse.emf.ecore.EFeatureMapEntry"
-     *        many="true"
+     * @model unique="false" dataType="org.eclipse.emf.ecore.EFeatureMapEntry" many="true"
      *        extendedMetaData="kind='group' name='group:0'"
      * @generated
      */
     FeatureMap getGroup ();
 
     /**
-     * Returns the value of the '<em><b>Slave</b></em>' containment reference
-     * list.
-     * The list contents are of type
-     * {@link org.openscada.da.modbus.configuration.ModbusSlave}.
+     * Returns the value of the '<em><b>Slave</b></em>' containment reference list.
+     * The list contents are of type {@link org.openscada.da.modbus.configuration.ModbusSlave}.
      * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Slave</em>' containment reference list isn't
      * clear, there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Slave</em>' containment reference list.
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType_Slave()
-     * @model containment="true" required="true" transient="true"
-     *        volatile="true" derived="true"
-     *        extendedMetaData=
-     *        "kind='element' name='slave' namespace='##targetNamespace' group='#group:0'"
+     * @model containment="true" required="true" transient="true" volatile="true" derived="true"
+     *        extendedMetaData="kind='element' name='slave' namespace='##targetNamespace' group='#group:0'"
      * @generated
      */
     EList<ModbusSlave> getSlave ();
@@ -117,28 +96,22 @@ public interface DeviceType extends EObject
      * really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Baud Rate</em>' attribute.
      * @see #isSetBaudRate()
      * @see #unsetBaudRate()
      * @see #setBaudRate(int)
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType_BaudRate()
-     * @model default="19200" unsettable="true"
-     *        dataType="org.eclipse.emf.ecore.xml.type.Int"
+     * @model default="19200" unsettable="true" dataType="org.eclipse.emf.ecore.xml.type.Int"
      *        extendedMetaData="kind='attribute' name='baudRate'"
      * @generated
      */
     int getBaudRate ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getBaudRate
-     * <em>Baud Rate</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getBaudRate <em>Baud Rate</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Baud Rate</em>' attribute.
+     * @param value the new value of the '<em>Baud Rate</em>' attribute.
      * @see #isSetBaudRate()
      * @see #unsetBaudRate()
      * @see #getBaudRate()
@@ -147,12 +120,9 @@ public interface DeviceType extends EObject
     void setBaudRate ( int value );
 
     /**
-     * Unsets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getBaudRate
-     * <em>Baud Rate</em>}' attribute.
+     * Unsets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getBaudRate <em>Baud Rate</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #isSetBaudRate()
      * @see #getBaudRate()
      * @see #setBaudRate(int)
@@ -161,12 +131,9 @@ public interface DeviceType extends EObject
     void unsetBaudRate ();
 
     /**
-     * Returns whether the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getBaudRate
-     * <em>Baud Rate</em>}' attribute is set.
+     * Returns whether the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getBaudRate <em>Baud Rate</em>}' attribute is set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @return whether the value of the '<em>Baud Rate</em>' attribute is set.
      * @see #unsetBaudRate()
      * @see #getBaudRate()
@@ -184,28 +151,22 @@ public interface DeviceType extends EObject
      * really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Data Bits</em>' attribute.
      * @see #isSetDataBits()
      * @see #unsetDataBits()
      * @see #setDataBits(int)
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType_DataBits()
-     * @model default="8" unsettable="true"
-     *        dataType="org.openscada.da.modbus.configuration.DataBitsType"
+     * @model default="8" unsettable="true" dataType="org.openscada.da.modbus.configuration.DataBitsType"
      *        extendedMetaData="kind='attribute' name='dataBits'"
      * @generated
      */
     int getDataBits ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getDataBits
-     * <em>Data Bits</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getDataBits <em>Data Bits</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Data Bits</em>' attribute.
+     * @param value the new value of the '<em>Data Bits</em>' attribute.
      * @see #isSetDataBits()
      * @see #unsetDataBits()
      * @see #getDataBits()
@@ -214,12 +175,9 @@ public interface DeviceType extends EObject
     void setDataBits ( int value );
 
     /**
-     * Unsets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getDataBits
-     * <em>Data Bits</em>}' attribute.
+     * Unsets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getDataBits <em>Data Bits</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #isSetDataBits()
      * @see #getDataBits()
      * @see #setDataBits(int)
@@ -228,12 +186,9 @@ public interface DeviceType extends EObject
     void unsetDataBits ();
 
     /**
-     * Returns whether the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getDataBits
-     * <em>Data Bits</em>}' attribute is set.
+     * Returns whether the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getDataBits <em>Data Bits</em>}' attribute is set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @return whether the value of the '<em>Data Bits</em>' attribute is set.
      * @see #unsetDataBits()
      * @see #getDataBits()
@@ -247,28 +202,24 @@ public interface DeviceType extends EObject
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * <!-- begin-model-doc -->
-     * The hostname or IP address of the device
-     * <!-- end-model-doc -->
      * 
+     * 					The hostname or IP address of the device
+     * 				
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Host</em>' attribute.
      * @see #setHost(String)
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType_Host()
-     * @model dataType="org.openscada.da.modbus.configuration.HostType"
-     *        required="true"
+     * @model dataType="org.openscada.da.modbus.configuration.HostType" required="true"
      *        extendedMetaData="kind='attribute' name='host'"
      * @generated
      */
     String getHost ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getHost
-     * <em>Host</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getHost <em>Host</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Host</em>' attribute.
+     * @param value the new value of the '<em>Host</em>' attribute.
      * @see #getHost()
      * @generated
      */
@@ -281,34 +232,27 @@ public interface DeviceType extends EObject
      * <!-- begin-model-doc -->
      * The ID of the device
      * <!-- end-model-doc -->
-     * 
      * @return the value of the '<em>Id</em>' attribute.
      * @see #setId(String)
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType_Id()
-     * @model dataType="org.openscada.da.modbus.configuration.IdType"
-     *        required="true"
+     * @model dataType="org.openscada.da.modbus.configuration.IdType" required="true"
      *        extendedMetaData="kind='attribute' name='id'"
      * @generated
      */
     String getId ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getId
-     * <em>Id</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getId <em>Id</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Id</em>' attribute.
+     * @param value the new value of the '<em>Id</em>' attribute.
      * @see #getId()
      * @generated
      */
     void setId ( String value );
 
     /**
-     * Returns the value of the '<em><b>Inter Character Timeout</b></em>'
-     * attribute.
+     * Returns the value of the '<em><b>Inter Character Timeout</b></em>' attribute.
      * The default value is <code>"1.5"</code>.
      * <!-- begin-user-doc -->
      * <p>
@@ -316,29 +260,22 @@ public interface DeviceType extends EObject
      * clear, there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Inter Character Timeout</em>' attribute.
      * @see #isSetInterCharacterTimeout()
      * @see #unsetInterCharacterTimeout()
      * @see #setInterCharacterTimeout(float)
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType_InterCharacterTimeout()
-     * @model default="1.5" unsettable="true"
-     *        dataType="org.eclipse.emf.ecore.xml.type.Float"
+     * @model default="1.5" unsettable="true" dataType="org.eclipse.emf.ecore.xml.type.Float"
      *        extendedMetaData="kind='attribute' name='interCharacterTimeout'"
      * @generated
      */
     float getInterCharacterTimeout ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout
-     * <em>Inter Character Timeout</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout <em>Inter Character Timeout</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Inter Character Timeout</em>'
-     *            attribute.
+     * @param value the new value of the '<em>Inter Character Timeout</em>' attribute.
      * @see #isSetInterCharacterTimeout()
      * @see #unsetInterCharacterTimeout()
      * @see #getInterCharacterTimeout()
@@ -347,12 +284,9 @@ public interface DeviceType extends EObject
     void setInterCharacterTimeout ( float value );
 
     /**
-     * Unsets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout
-     * <em>Inter Character Timeout</em>}' attribute.
+     * Unsets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout <em>Inter Character Timeout</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #isSetInterCharacterTimeout()
      * @see #getInterCharacterTimeout()
      * @see #setInterCharacterTimeout(float)
@@ -361,14 +295,10 @@ public interface DeviceType extends EObject
     void unsetInterCharacterTimeout ();
 
     /**
-     * Returns whether the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout
-     * <em>Inter Character Timeout</em>}' attribute is set.
+     * Returns whether the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout <em>Inter Character Timeout</em>}' attribute is set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @return whether the value of the '<em>Inter Character Timeout</em>'
-     *         attribute is set.
+     * @return whether the value of the '<em>Inter Character Timeout</em>' attribute is set.
      * @see #unsetInterCharacterTimeout()
      * @see #getInterCharacterTimeout()
      * @see #setInterCharacterTimeout(float)
@@ -385,28 +315,22 @@ public interface DeviceType extends EObject
      * there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Inter Frame Delay</em>' attribute.
      * @see #isSetInterFrameDelay()
      * @see #unsetInterFrameDelay()
      * @see #setInterFrameDelay(float)
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType_InterFrameDelay()
-     * @model default="3.5" unsettable="true"
-     *        dataType="org.eclipse.emf.ecore.xml.type.Float"
+     * @model default="3.5" unsettable="true" dataType="org.eclipse.emf.ecore.xml.type.Float"
      *        extendedMetaData="kind='attribute' name='interFrameDelay'"
      * @generated
      */
     float getInterFrameDelay ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getInterFrameDelay
-     * <em>Inter Frame Delay</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getInterFrameDelay <em>Inter Frame Delay</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Inter Frame Delay</em>' attribute.
+     * @param value the new value of the '<em>Inter Frame Delay</em>' attribute.
      * @see #isSetInterFrameDelay()
      * @see #unsetInterFrameDelay()
      * @see #getInterFrameDelay()
@@ -415,12 +339,9 @@ public interface DeviceType extends EObject
     void setInterFrameDelay ( float value );
 
     /**
-     * Unsets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getInterFrameDelay
-     * <em>Inter Frame Delay</em>}' attribute.
+     * Unsets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getInterFrameDelay <em>Inter Frame Delay</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #isSetInterFrameDelay()
      * @see #getInterFrameDelay()
      * @see #setInterFrameDelay(float)
@@ -429,14 +350,10 @@ public interface DeviceType extends EObject
     void unsetInterFrameDelay ();
 
     /**
-     * Returns whether the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getInterFrameDelay
-     * <em>Inter Frame Delay</em>}' attribute is set.
+     * Returns whether the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getInterFrameDelay <em>Inter Frame Delay</em>}' attribute is set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @return whether the value of the '<em>Inter Frame Delay</em>' attribute
-     *         is set.
+     * @return whether the value of the '<em>Inter Frame Delay</em>' attribute is set.
      * @see #unsetInterFrameDelay()
      * @see #getInterFrameDelay()
      * @see #setInterFrameDelay(float)
@@ -447,15 +364,13 @@ public interface DeviceType extends EObject
     /**
      * Returns the value of the '<em><b>Parity</b></em>' attribute.
      * The default value is <code>"NONE"</code>.
-     * The literals are from the enumeration
-     * {@link org.openscada.da.modbus.configuration.ParityType}.
+     * The literals are from the enumeration {@link org.openscada.da.modbus.configuration.ParityType}.
      * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Parity</em>' attribute isn't clear, there
      * really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Parity</em>' attribute.
      * @see org.openscada.da.modbus.configuration.ParityType
      * @see #isSetParity()
@@ -469,14 +384,10 @@ public interface DeviceType extends EObject
     ParityType getParity ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getParity
-     * <em>Parity</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getParity <em>Parity</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Parity</em>' attribute.
+     * @param value the new value of the '<em>Parity</em>' attribute.
      * @see org.openscada.da.modbus.configuration.ParityType
      * @see #isSetParity()
      * @see #unsetParity()
@@ -486,12 +397,9 @@ public interface DeviceType extends EObject
     void setParity ( ParityType value );
 
     /**
-     * Unsets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getParity
-     * <em>Parity</em>}' attribute.
+     * Unsets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getParity <em>Parity</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #isSetParity()
      * @see #getParity()
      * @see #setParity(ParityType)
@@ -500,12 +408,9 @@ public interface DeviceType extends EObject
     void unsetParity ();
 
     /**
-     * Returns whether the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getParity
-     * <em>Parity</em>}' attribute is set.
+     * Returns whether the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getParity <em>Parity</em>}' attribute is set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @return whether the value of the '<em>Parity</em>' attribute is set.
      * @see #unsetParity()
      * @see #getParity()
@@ -519,30 +424,26 @@ public interface DeviceType extends EObject
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * <!-- begin-model-doc -->
-     * The port number of the device
-     * <!-- end-model-doc -->
      * 
+     * 					The port number of the device
+     * 				
+     * <!-- end-model-doc -->
      * @return the value of the '<em>Port</em>' attribute.
      * @see #isSetPort()
      * @see #unsetPort()
      * @see #setPort(short)
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDeviceType_Port()
-     * @model unsettable="true" dataType="org.eclipse.emf.ecore.xml.type.Short"
-     *        required="true"
+     * @model unsettable="true" dataType="org.eclipse.emf.ecore.xml.type.Short" required="true"
      *        extendedMetaData="kind='attribute' name='port'"
      * @generated
      */
     short getPort ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getPort
-     * <em>Port</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getPort <em>Port</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Port</em>' attribute.
+     * @param value the new value of the '<em>Port</em>' attribute.
      * @see #isSetPort()
      * @see #unsetPort()
      * @see #getPort()
@@ -551,12 +452,9 @@ public interface DeviceType extends EObject
     void setPort ( short value );
 
     /**
-     * Unsets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getPort
-     * <em>Port</em>}' attribute.
+     * Unsets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getPort <em>Port</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #isSetPort()
      * @see #getPort()
      * @see #setPort(short)
@@ -565,12 +463,9 @@ public interface DeviceType extends EObject
     void unsetPort ();
 
     /**
-     * Returns whether the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getPort
-     * <em>Port</em>}' attribute is set.
+     * Returns whether the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getPort <em>Port</em>}' attribute is set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @return whether the value of the '<em>Port</em>' attribute is set.
      * @see #unsetPort()
      * @see #getPort()
@@ -582,15 +477,13 @@ public interface DeviceType extends EObject
     /**
      * Returns the value of the '<em><b>Protocol</b></em>' attribute.
      * The default value is <code>"TCP"</code>.
-     * The literals are from the enumeration
-     * {@link org.openscada.da.modbus.configuration.ProtocolType}.
+     * The literals are from the enumeration {@link org.openscada.da.modbus.configuration.ProtocolType}.
      * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Protocol</em>' attribute isn't clear, there
      * really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Protocol</em>' attribute.
      * @see org.openscada.da.modbus.configuration.ProtocolType
      * @see #isSetProtocol()
@@ -604,14 +497,10 @@ public interface DeviceType extends EObject
     ProtocolType getProtocol ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getProtocol
-     * <em>Protocol</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getProtocol <em>Protocol</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Protocol</em>' attribute.
+     * @param value the new value of the '<em>Protocol</em>' attribute.
      * @see org.openscada.da.modbus.configuration.ProtocolType
      * @see #isSetProtocol()
      * @see #unsetProtocol()
@@ -621,12 +510,9 @@ public interface DeviceType extends EObject
     void setProtocol ( ProtocolType value );
 
     /**
-     * Unsets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getProtocol
-     * <em>Protocol</em>}' attribute.
+     * Unsets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getProtocol <em>Protocol</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #isSetProtocol()
      * @see #getProtocol()
      * @see #setProtocol(ProtocolType)
@@ -635,12 +521,9 @@ public interface DeviceType extends EObject
     void unsetProtocol ();
 
     /**
-     * Returns whether the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getProtocol
-     * <em>Protocol</em>}' attribute is set.
+     * Returns whether the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getProtocol <em>Protocol</em>}' attribute is set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @return whether the value of the '<em>Protocol</em>' attribute is set.
      * @see #unsetProtocol()
      * @see #getProtocol()
@@ -652,15 +535,13 @@ public interface DeviceType extends EObject
     /**
      * Returns the value of the '<em><b>Stop Bits</b></em>' attribute.
      * The default value is <code>"1"</code>.
-     * The literals are from the enumeration
-     * {@link org.openscada.da.modbus.configuration.StopBitsType}.
+     * The literals are from the enumeration {@link org.openscada.da.modbus.configuration.StopBitsType}.
      * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Stop Bits</em>' attribute isn't clear, there
      * really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Stop Bits</em>' attribute.
      * @see org.openscada.da.modbus.configuration.StopBitsType
      * @see #isSetStopBits()
@@ -674,14 +555,10 @@ public interface DeviceType extends EObject
     StopBitsType getStopBits ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getStopBits
-     * <em>Stop Bits</em>}' attribute.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getStopBits <em>Stop Bits</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Stop Bits</em>' attribute.
+     * @param value the new value of the '<em>Stop Bits</em>' attribute.
      * @see org.openscada.da.modbus.configuration.StopBitsType
      * @see #isSetStopBits()
      * @see #unsetStopBits()
@@ -691,12 +568,9 @@ public interface DeviceType extends EObject
     void setStopBits ( StopBitsType value );
 
     /**
-     * Unsets the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getStopBits
-     * <em>Stop Bits</em>}' attribute.
+     * Unsets the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getStopBits <em>Stop Bits</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #isSetStopBits()
      * @see #getStopBits()
      * @see #setStopBits(StopBitsType)
@@ -705,12 +579,9 @@ public interface DeviceType extends EObject
     void unsetStopBits ();
 
     /**
-     * Returns whether the value of the '
-     * {@link org.openscada.da.modbus.configuration.DeviceType#getStopBits
-     * <em>Stop Bits</em>}' attribute is set.
+     * Returns whether the value of the '{@link org.openscada.da.modbus.configuration.DeviceType#getStopBits <em>Stop Bits</em>}' attribute is set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @return whether the value of the '<em>Stop Bits</em>' attribute is set.
      * @see #unsetStopBits()
      * @see #getStopBits()

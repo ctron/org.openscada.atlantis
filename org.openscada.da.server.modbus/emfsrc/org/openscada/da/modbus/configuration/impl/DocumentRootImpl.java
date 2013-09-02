@@ -43,31 +43,21 @@ import org.openscada.da.modbus.configuration.RootType;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DocumentRootImpl#getMixed
- * <em>Mixed</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DocumentRootImpl#getXMLNSPrefixMap
- * <em>XMLNS Prefix Map</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DocumentRootImpl#getXSISchemaLocation
- * <em>XSI Schema Location</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DocumentRootImpl#getRoot
- * <em>Root</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DocumentRootImpl#getMixed <em>Mixed</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DocumentRootImpl#getXMLNSPrefixMap <em>XMLNS Prefix Map</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DocumentRootImpl#getXSISchemaLocation <em>XSI Schema Location</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DocumentRootImpl#getRoot <em>Root</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class DocumentRootImpl extends MinimalEObjectImpl.Container implements DocumentRoot
 {
     /**
-     * The cached value of the '{@link #getMixed() <em>Mixed</em>}' attribute
-     * list.
+     * The cached value of the '{@link #getMixed() <em>Mixed</em>}' attribute list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getMixed()
      * @generated
      * @ordered
@@ -75,11 +65,9 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     protected FeatureMap mixed;
 
     /**
-     * The cached value of the '{@link #getXMLNSPrefixMap()
-     * <em>XMLNS Prefix Map</em>}' map.
+     * The cached value of the '{@link #getXMLNSPrefixMap() <em>XMLNS Prefix Map</em>}' map.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getXMLNSPrefixMap()
      * @generated
      * @ordered
@@ -87,11 +75,9 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     protected EMap<String, String> xMLNSPrefixMap;
 
     /**
-     * The cached value of the '{@link #getXSISchemaLocation()
-     * <em>XSI Schema Location</em>}' map.
+     * The cached value of the '{@link #getXSISchemaLocation() <em>XSI Schema Location</em>}' map.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getXSISchemaLocation()
      * @generated
      * @ordered
@@ -101,7 +87,6 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected DocumentRootImpl ()
@@ -112,7 +97,6 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -124,55 +108,51 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public FeatureMap getMixed ()
     {
-        if ( this.mixed == null )
+        if ( mixed == null )
         {
-            this.mixed = new BasicFeatureMap ( this, ConfigurationPackage.DOCUMENT_ROOT__MIXED );
+            mixed = new BasicFeatureMap ( this, ConfigurationPackage.DOCUMENT_ROOT__MIXED );
         }
-        return this.mixed;
+        return mixed;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public EMap<String, String> getXMLNSPrefixMap ()
     {
-        if ( this.xMLNSPrefixMap == null )
+        if ( xMLNSPrefixMap == null )
         {
-            this.xMLNSPrefixMap = new EcoreEMap<String, String> ( EcorePackage.Literals.ESTRING_TO_STRING_MAP_ENTRY, EStringToStringMapEntryImpl.class, this, ConfigurationPackage.DOCUMENT_ROOT__XMLNS_PREFIX_MAP );
+            xMLNSPrefixMap = new EcoreEMap<String, String> ( EcorePackage.Literals.ESTRING_TO_STRING_MAP_ENTRY, EStringToStringMapEntryImpl.class, this, ConfigurationPackage.DOCUMENT_ROOT__XMLNS_PREFIX_MAP );
         }
-        return this.xMLNSPrefixMap;
+        return xMLNSPrefixMap;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public EMap<String, String> getXSISchemaLocation ()
     {
-        if ( this.xSISchemaLocation == null )
+        if ( xSISchemaLocation == null )
         {
-            this.xSISchemaLocation = new EcoreEMap<String, String> ( EcorePackage.Literals.ESTRING_TO_STRING_MAP_ENTRY, EStringToStringMapEntryImpl.class, this, ConfigurationPackage.DOCUMENT_ROOT__XSI_SCHEMA_LOCATION );
+            xSISchemaLocation = new EcoreEMap<String, String> ( EcorePackage.Literals.ESTRING_TO_STRING_MAP_ENTRY, EStringToStringMapEntryImpl.class, this, ConfigurationPackage.DOCUMENT_ROOT__XSI_SCHEMA_LOCATION );
         }
-        return this.xSISchemaLocation;
+        return xSISchemaLocation;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -184,10 +164,9 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public NotificationChain basicSetRoot ( final RootType newRoot, final NotificationChain msgs )
+    public NotificationChain basicSetRoot ( RootType newRoot, NotificationChain msgs )
     {
         return ( (FeatureMap.Internal)getMixed () ).basicAdd ( ConfigurationPackage.Literals.DOCUMENT_ROOT__ROOT, newRoot, msgs );
     }
@@ -195,11 +174,10 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setRoot ( final RootType newRoot )
+    public void setRoot ( RootType newRoot )
     {
         ( (FeatureMap.Internal)getMixed () ).set ( ConfigurationPackage.Literals.DOCUMENT_ROOT__ROOT, newRoot );
     }
@@ -207,11 +185,10 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public NotificationChain eInverseRemove ( final InternalEObject otherEnd, final int featureID, final NotificationChain msgs )
+    public NotificationChain eInverseRemove ( InternalEObject otherEnd, int featureID, NotificationChain msgs )
     {
         switch ( featureID )
         {
@@ -230,38 +207,27 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public Object eGet ( final int featureID, final boolean resolve, final boolean coreType )
+    public Object eGet ( int featureID, boolean resolve, boolean coreType )
     {
         switch ( featureID )
         {
             case ConfigurationPackage.DOCUMENT_ROOT__MIXED:
                 if ( coreType )
-                {
                     return getMixed ();
-                }
                 return ( (FeatureMap.Internal)getMixed () ).getWrapper ();
             case ConfigurationPackage.DOCUMENT_ROOT__XMLNS_PREFIX_MAP:
                 if ( coreType )
-                {
                     return getXMLNSPrefixMap ();
-                }
                 else
-                {
                     return getXMLNSPrefixMap ().map ();
-                }
             case ConfigurationPackage.DOCUMENT_ROOT__XSI_SCHEMA_LOCATION:
                 if ( coreType )
-                {
                     return getXSISchemaLocation ();
-                }
                 else
-                {
                     return getXSISchemaLocation ().map ();
-                }
             case ConfigurationPackage.DOCUMENT_ROOT__ROOT:
                 return getRoot ();
         }
@@ -271,11 +237,10 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void eSet ( final int featureID, final Object newValue )
+    public void eSet ( int featureID, Object newValue )
     {
         switch ( featureID )
         {
@@ -298,11 +263,10 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void eUnset ( final int featureID )
+    public void eUnset ( int featureID )
     {
         switch ( featureID )
         {
@@ -325,20 +289,19 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public boolean eIsSet ( final int featureID )
+    public boolean eIsSet ( int featureID )
     {
         switch ( featureID )
         {
             case ConfigurationPackage.DOCUMENT_ROOT__MIXED:
-                return this.mixed != null && !this.mixed.isEmpty ();
+                return mixed != null && !mixed.isEmpty ();
             case ConfigurationPackage.DOCUMENT_ROOT__XMLNS_PREFIX_MAP:
-                return this.xMLNSPrefixMap != null && !this.xMLNSPrefixMap.isEmpty ();
+                return xMLNSPrefixMap != null && !xMLNSPrefixMap.isEmpty ();
             case ConfigurationPackage.DOCUMENT_ROOT__XSI_SCHEMA_LOCATION:
-                return this.xSISchemaLocation != null && !this.xSISchemaLocation.isEmpty ();
+                return xSISchemaLocation != null && !xSISchemaLocation.isEmpty ();
             case ConfigurationPackage.DOCUMENT_ROOT__ROOT:
                 return getRoot () != null;
         }
@@ -348,20 +311,17 @@ public class DocumentRootImpl extends MinimalEObjectImpl.Container implements Do
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String toString ()
     {
         if ( eIsProxy () )
-        {
             return super.toString ();
-        }
 
-        final StringBuffer result = new StringBuffer ( super.toString () );
+        StringBuffer result = new StringBuffer ( super.toString () );
         result.append ( " (mixed: " ); //$NON-NLS-1$
-        result.append ( this.mixed );
+        result.append ( mixed );
         result.append ( ')' );
         return result.toString ();
     }

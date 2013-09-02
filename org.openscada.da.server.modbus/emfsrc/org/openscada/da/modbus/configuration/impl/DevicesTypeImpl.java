@@ -40,22 +40,18 @@ import org.openscada.da.modbus.configuration.DevicesType;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DevicesTypeImpl#getDevice
- * <em>Device</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DevicesTypeImpl#getDevice <em>Device</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class DevicesTypeImpl extends MinimalEObjectImpl.Container implements DevicesType
 {
     /**
-     * The cached value of the '{@link #getDevice() <em>Device</em>}'
-     * containment reference list.
+     * The cached value of the '{@link #getDevice() <em>Device</em>}' containment reference list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getDevice()
      * @generated
      * @ordered
@@ -65,7 +61,6 @@ public class DevicesTypeImpl extends MinimalEObjectImpl.Container implements Dev
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected DevicesTypeImpl ()
@@ -76,7 +71,6 @@ public class DevicesTypeImpl extends MinimalEObjectImpl.Container implements Dev
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -88,27 +82,25 @@ public class DevicesTypeImpl extends MinimalEObjectImpl.Container implements Dev
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public EList<DeviceType> getDevice ()
     {
-        if ( this.device == null )
+        if ( device == null )
         {
-            this.device = new EObjectContainmentEList<DeviceType> ( DeviceType.class, this, ConfigurationPackage.DEVICES_TYPE__DEVICE );
+            device = new EObjectContainmentEList<DeviceType> ( DeviceType.class, this, ConfigurationPackage.DEVICES_TYPE__DEVICE );
         }
-        return this.device;
+        return device;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public NotificationChain eInverseRemove ( final InternalEObject otherEnd, final int featureID, final NotificationChain msgs )
+    public NotificationChain eInverseRemove ( InternalEObject otherEnd, int featureID, NotificationChain msgs )
     {
         switch ( featureID )
         {
@@ -121,11 +113,10 @@ public class DevicesTypeImpl extends MinimalEObjectImpl.Container implements Dev
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public Object eGet ( final int featureID, final boolean resolve, final boolean coreType )
+    public Object eGet ( int featureID, boolean resolve, boolean coreType )
     {
         switch ( featureID )
         {
@@ -138,12 +129,11 @@ public class DevicesTypeImpl extends MinimalEObjectImpl.Container implements Dev
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @SuppressWarnings ( "unchecked" )
     @Override
-    public void eSet ( final int featureID, final Object newValue )
+    public void eSet ( int featureID, Object newValue )
     {
         switch ( featureID )
         {
@@ -158,11 +148,10 @@ public class DevicesTypeImpl extends MinimalEObjectImpl.Container implements Dev
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void eUnset ( final int featureID )
+    public void eUnset ( int featureID )
     {
         switch ( featureID )
         {
@@ -176,16 +165,15 @@ public class DevicesTypeImpl extends MinimalEObjectImpl.Container implements Dev
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public boolean eIsSet ( final int featureID )
+    public boolean eIsSet ( int featureID )
     {
         switch ( featureID )
         {
             case ConfigurationPackage.DEVICES_TYPE__DEVICE:
-                return this.device != null && !this.device.isEmpty ();
+                return device != null && !device.isEmpty ();
         }
         return super.eIsSet ( featureID );
     }

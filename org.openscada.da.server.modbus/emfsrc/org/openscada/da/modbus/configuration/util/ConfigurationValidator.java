@@ -21,7 +21,6 @@
 package org.openscada.da.modbus.configuration.util;
 
 import java.util.Map;
-
 import org.eclipse.emf.common.util.DiagnosticChain;
 import org.eclipse.emf.common.util.ResourceLocator;
 import org.eclipse.emf.ecore.EPackage;
@@ -44,7 +43,6 @@ import org.openscada.da.modbus.configuration.TypeType;
  * <!-- begin-user-doc -->
  * The <b>Validator</b> for the model.
  * <!-- end-user-doc -->
- * 
  * @see org.openscada.da.modbus.configuration.ConfigurationPackage
  * @generated
  */
@@ -54,19 +52,14 @@ public class ConfigurationValidator extends EObjectValidator
      * The cached model package
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public static final ConfigurationValidator INSTANCE = new ConfigurationValidator ();
 
     /**
-     * A constant for the
-     * {@link org.eclipse.emf.common.util.Diagnostic#getSource() source} of
-     * diagnostic {@link org.eclipse.emf.common.util.Diagnostic#getCode() codes}
-     * from this package.
+     * A constant for the {@link org.eclipse.emf.common.util.Diagnostic#getSource() source} of diagnostic {@link org.eclipse.emf.common.util.Diagnostic#getCode() codes} from this package.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see org.eclipse.emf.common.util.Diagnostic#getSource()
      * @see org.eclipse.emf.common.util.Diagnostic#getCode()
      * @generated
@@ -74,21 +67,17 @@ public class ConfigurationValidator extends EObjectValidator
     public static final String DIAGNOSTIC_SOURCE = "org.openscada.da.modbus.configuration"; //$NON-NLS-1$
 
     /**
-     * A constant with a fixed name that can be used as the base value for
-     * additional hand written constants.
+     * A constant with a fixed name that can be used as the base value for additional hand written constants.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     private static final int GENERATED_DIAGNOSTIC_CODE_COUNT = 0;
 
     /**
-     * A constant with a fixed name that can be used as the base value for
-     * additional hand written constants in a derived class.
+     * A constant with a fixed name that can be used as the base value for additional hand written constants in a derived class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected static final int DIAGNOSTIC_CODE_COUNT = GENERATED_DIAGNOSTIC_CODE_COUNT;
@@ -97,7 +86,6 @@ public class ConfigurationValidator extends EObjectValidator
      * The cached base package validator.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected XMLTypeValidator xmlTypeValidator;
@@ -106,20 +94,18 @@ public class ConfigurationValidator extends EObjectValidator
      * Creates an instance of the switch.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public ConfigurationValidator ()
     {
         super ();
-        this.xmlTypeValidator = XMLTypeValidator.INSTANCE;
+        xmlTypeValidator = XMLTypeValidator.INSTANCE;
     }
 
     /**
      * Returns the package of this validator switch.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -129,15 +115,13 @@ public class ConfigurationValidator extends EObjectValidator
     }
 
     /**
-     * Calls <code>validateXXX</code> for the corresponding classifier of the
-     * model.
+     * Calls <code>validateXXX</code> for the corresponding classifier of the model.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    protected boolean validate ( final int classifierID, final Object value, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    protected boolean validate ( int classifierID, Object value, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         switch ( classifierID )
         {
@@ -191,10 +175,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateDevicesType ( final DevicesType devicesType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateDevicesType ( DevicesType devicesType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validate_EveryDefaultConstraint ( devicesType, diagnostics, context );
     }
@@ -202,10 +185,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateDeviceType ( final DeviceType deviceType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateDeviceType ( DeviceType deviceType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validate_EveryDefaultConstraint ( deviceType, diagnostics, context );
     }
@@ -213,10 +195,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateDocumentRoot ( final DocumentRoot documentRoot, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateDocumentRoot ( DocumentRoot documentRoot, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validate_EveryDefaultConstraint ( documentRoot, diagnostics, context );
     }
@@ -224,10 +205,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateItemType ( final ItemType itemType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateItemType ( ItemType itemType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validate_EveryDefaultConstraint ( itemType, diagnostics, context );
     }
@@ -235,10 +215,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateModbusSlave ( final ModbusSlave modbusSlave, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateModbusSlave ( ModbusSlave modbusSlave, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validate_EveryDefaultConstraint ( modbusSlave, diagnostics, context );
     }
@@ -246,10 +225,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateRootType ( final RootType rootType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateRootType ( RootType rootType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validate_EveryDefaultConstraint ( rootType, diagnostics, context );
     }
@@ -257,10 +235,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateParityType ( final ParityType parityType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateParityType ( ParityType parityType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
     }
@@ -268,10 +245,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateProtocolType ( final ProtocolType protocolType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateProtocolType ( ProtocolType protocolType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
     }
@@ -279,10 +255,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateStopBitsType ( final StopBitsType stopBitsType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateStopBitsType ( StopBitsType stopBitsType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
     }
@@ -290,10 +265,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateTypeType ( final TypeType typeType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateTypeType ( TypeType typeType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
     }
@@ -301,23 +275,19 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateDataBitsType ( final int dataBitsType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateDataBitsType ( int dataBitsType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         boolean result = validateDataBitsType_Min ( dataBitsType, diagnostics, context );
         if ( result || diagnostics != null )
-        {
             result &= validateDataBitsType_Max ( dataBitsType, diagnostics, context );
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @see #validateDataBitsType_Min
      */
@@ -327,23 +297,19 @@ public class ConfigurationValidator extends EObjectValidator
      * Validates the Min constraint of '<em>Data Bits Type</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateDataBitsType_Min ( final int dataBitsType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateDataBitsType_Min ( int dataBitsType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
-        final boolean result = dataBitsType >= DATA_BITS_TYPE__MIN__VALUE;
+        boolean result = dataBitsType >= DATA_BITS_TYPE__MIN__VALUE;
         if ( !result && diagnostics != null )
-        {
             reportMinViolation ( ConfigurationPackage.Literals.DATA_BITS_TYPE, dataBitsType, DATA_BITS_TYPE__MIN__VALUE, true, diagnostics, context );
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @see #validateDataBitsType_Max
      */
@@ -353,51 +319,43 @@ public class ConfigurationValidator extends EObjectValidator
      * Validates the Max constraint of '<em>Data Bits Type</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateDataBitsType_Max ( final int dataBitsType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateDataBitsType_Max ( int dataBitsType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
-        final boolean result = dataBitsType <= DATA_BITS_TYPE__MAX__VALUE;
+        boolean result = dataBitsType <= DATA_BITS_TYPE__MAX__VALUE;
         if ( !result && diagnostics != null )
-        {
             reportMaxViolation ( ConfigurationPackage.Literals.DATA_BITS_TYPE, dataBitsType, DATA_BITS_TYPE__MAX__VALUE, true, diagnostics, context );
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateDataBitsTypeObject ( final Integer dataBitsTypeObject, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateDataBitsTypeObject ( Integer dataBitsTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         boolean result = validateDataBitsType_Min ( dataBitsTypeObject, diagnostics, context );
         if ( result || diagnostics != null )
-        {
             result &= validateDataBitsType_Max ( dataBitsTypeObject, diagnostics, context );
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateHostType ( final String hostType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateHostType ( String hostType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
-        final boolean result = validateHostType_Pattern ( hostType, diagnostics, context );
+        boolean result = validateHostType_Pattern ( hostType, diagnostics, context );
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @see #validateHostType_Pattern
      */
@@ -407,10 +365,9 @@ public class ConfigurationValidator extends EObjectValidator
      * Validates the Pattern constraint of '<em>Host Type</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateHostType_Pattern ( final String hostType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateHostType_Pattern ( String hostType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validatePattern ( ConfigurationPackage.Literals.HOST_TYPE, hostType, HOST_TYPE__PATTERN__VALUES, diagnostics, context );
     }
@@ -418,19 +375,17 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateIdType ( final String idType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateIdType ( String idType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
-        final boolean result = validateIdType_Pattern ( idType, diagnostics, context );
+        boolean result = validateIdType_Pattern ( idType, diagnostics, context );
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @see #validateIdType_Pattern
      */
@@ -440,10 +395,9 @@ public class ConfigurationValidator extends EObjectValidator
      * Validates the Pattern constraint of '<em>Id Type</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateIdType_Pattern ( final String idType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateIdType_Pattern ( String idType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validatePattern ( ConfigurationPackage.Literals.ID_TYPE, idType, ID_TYPE__PATTERN__VALUES, diagnostics, context );
     }
@@ -451,23 +405,19 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateIdType1 ( final int idType1, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateIdType1 ( int idType1, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         boolean result = validateIdType1_Min ( idType1, diagnostics, context );
         if ( result || diagnostics != null )
-        {
             result &= validateIdType1_Max ( idType1, diagnostics, context );
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @see #validateIdType1_Min
      */
@@ -477,23 +427,19 @@ public class ConfigurationValidator extends EObjectValidator
      * Validates the Min constraint of '<em>Id Type1</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateIdType1_Min ( final int idType1, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateIdType1_Min ( int idType1, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
-        final boolean result = idType1 >= ID_TYPE1__MIN__VALUE;
+        boolean result = idType1 >= ID_TYPE1__MIN__VALUE;
         if ( !result && diagnostics != null )
-        {
             reportMinViolation ( ConfigurationPackage.Literals.ID_TYPE1, idType1, ID_TYPE1__MIN__VALUE, true, diagnostics, context );
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @see #validateIdType1_Max
      */
@@ -503,42 +449,35 @@ public class ConfigurationValidator extends EObjectValidator
      * Validates the Max constraint of '<em>Id Type1</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateIdType1_Max ( final int idType1, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateIdType1_Max ( int idType1, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
-        final boolean result = idType1 <= ID_TYPE1__MAX__VALUE;
+        boolean result = idType1 <= ID_TYPE1__MAX__VALUE;
         if ( !result && diagnostics != null )
-        {
             reportMaxViolation ( ConfigurationPackage.Literals.ID_TYPE1, idType1, ID_TYPE1__MAX__VALUE, true, diagnostics, context );
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateIdTypeObject ( final Integer idTypeObject, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateIdTypeObject ( Integer idTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         boolean result = validateIdType1_Min ( idTypeObject, diagnostics, context );
         if ( result || diagnostics != null )
-        {
             result &= validateIdType1_Max ( idTypeObject, diagnostics, context );
-        }
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateParityTypeObject ( final ParityType parityTypeObject, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateParityTypeObject ( ParityType parityTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
     }
@@ -546,10 +485,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateProtocolTypeObject ( final ProtocolType protocolTypeObject, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateProtocolTypeObject ( ProtocolType protocolTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
     }
@@ -557,19 +495,17 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateStartAddressType ( final String startAddressType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateStartAddressType ( String startAddressType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
-        final boolean result = validateStartAddressType_Pattern ( startAddressType, diagnostics, context );
+        boolean result = validateStartAddressType_Pattern ( startAddressType, diagnostics, context );
         return result;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @see #validateStartAddressType_Pattern
      */
@@ -579,10 +515,9 @@ public class ConfigurationValidator extends EObjectValidator
      * Validates the Pattern constraint of '<em>Start Address Type</em>'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateStartAddressType_Pattern ( final String startAddressType, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateStartAddressType_Pattern ( String startAddressType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validatePattern ( ConfigurationPackage.Literals.START_ADDRESS_TYPE, startAddressType, START_ADDRESS_TYPE__PATTERN__VALUES, diagnostics, context );
     }
@@ -590,10 +525,9 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateStopBitsTypeObject ( final StopBitsType stopBitsTypeObject, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateStopBitsTypeObject ( StopBitsType stopBitsTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
     }
@@ -601,20 +535,17 @@ public class ConfigurationValidator extends EObjectValidator
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
-    public boolean validateTypeTypeObject ( final TypeType typeTypeObject, final DiagnosticChain diagnostics, final Map<Object, Object> context )
+    public boolean validateTypeTypeObject ( TypeType typeTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
     }
 
     /**
-     * Returns the resource locator that will be used to fetch messages for this
-     * validator's diagnostics.
+     * Returns the resource locator that will be used to fetch messages for this validator's diagnostics.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override

@@ -41,7 +41,6 @@ import org.openscada.da.modbus.configuration.RootType;
  * until a non-null result is returned,
  * which is the result of the switch.
  * <!-- end-user-doc -->
- * 
  * @see org.openscada.da.modbus.configuration.ConfigurationPackage
  * @generated
  */
@@ -51,7 +50,6 @@ public class ConfigurationSwitch<T> extends Switch<T>
      * The cached model package
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected static ConfigurationPackage modelPackage;
@@ -60,7 +58,6 @@ public class ConfigurationSwitch<T> extends Switch<T>
      * Creates an instance of the switch.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public ConfigurationSwitch ()
@@ -75,90 +72,74 @@ public class ConfigurationSwitch<T> extends Switch<T>
      * Checks whether this is a switch for the given package.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @parameter ePackage the package in question.
      * @return whether this is a switch for the given package.
      * @generated
      */
     @Override
-    protected boolean isSwitchFor ( final EPackage ePackage )
+    protected boolean isSwitchFor ( EPackage ePackage )
     {
         return ePackage == modelPackage;
     }
 
     /**
-     * Calls <code>caseXXX</code> for each class of the model until one returns
-     * a non null result; it yields that result.
+     * Calls <code>caseXXX</code> for each class of the model until one returns a non null result; it yields that result.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @return the first non-null result returned by a <code>caseXXX</code>
-     *         call.
+     * @return the first non-null result returned by a <code>caseXXX</code> call.
      * @generated
      */
     @Override
-    protected T doSwitch ( final int classifierID, final EObject theEObject )
+    protected T doSwitch ( int classifierID, EObject theEObject )
     {
         switch ( classifierID )
         {
             case ConfigurationPackage.DEVICES_TYPE:
             {
-                final DevicesType devicesType = (DevicesType)theEObject;
+                DevicesType devicesType = (DevicesType)theEObject;
                 T result = caseDevicesType ( devicesType );
                 if ( result == null )
-                {
                     result = defaultCase ( theEObject );
-                }
                 return result;
             }
             case ConfigurationPackage.DEVICE_TYPE:
             {
-                final DeviceType deviceType = (DeviceType)theEObject;
+                DeviceType deviceType = (DeviceType)theEObject;
                 T result = caseDeviceType ( deviceType );
                 if ( result == null )
-                {
                     result = defaultCase ( theEObject );
-                }
                 return result;
             }
             case ConfigurationPackage.DOCUMENT_ROOT:
             {
-                final DocumentRoot documentRoot = (DocumentRoot)theEObject;
+                DocumentRoot documentRoot = (DocumentRoot)theEObject;
                 T result = caseDocumentRoot ( documentRoot );
                 if ( result == null )
-                {
                     result = defaultCase ( theEObject );
-                }
                 return result;
             }
             case ConfigurationPackage.ITEM_TYPE:
             {
-                final ItemType itemType = (ItemType)theEObject;
+                ItemType itemType = (ItemType)theEObject;
                 T result = caseItemType ( itemType );
                 if ( result == null )
-                {
                     result = defaultCase ( theEObject );
-                }
                 return result;
             }
             case ConfigurationPackage.MODBUS_SLAVE:
             {
-                final ModbusSlave modbusSlave = (ModbusSlave)theEObject;
+                ModbusSlave modbusSlave = (ModbusSlave)theEObject;
                 T result = caseModbusSlave ( modbusSlave );
                 if ( result == null )
-                {
                     result = defaultCase ( theEObject );
-                }
                 return result;
             }
             case ConfigurationPackage.ROOT_TYPE:
             {
-                final RootType rootType = (RootType)theEObject;
+                RootType rootType = (RootType)theEObject;
                 T result = caseRootType ( rootType );
                 if ( result == null )
-                {
                     result = defaultCase ( theEObject );
-                }
                 return result;
             }
             default:
@@ -167,143 +148,115 @@ public class ConfigurationSwitch<T> extends Switch<T>
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '
-     * <em>Devices Type</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Devices Type</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
-     * 
-     * @param object
-     *            the target of the switch.
-     * @return the result of interpreting the object as an instance of '
-     *         <em>Devices Type</em>'.
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Devices Type</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseDevicesType ( final DevicesType object )
+    public T caseDevicesType ( DevicesType object )
     {
         return null;
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '
-     * <em>Device Type</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Device Type</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
-     * 
-     * @param object
-     *            the target of the switch.
-     * @return the result of interpreting the object as an instance of '
-     *         <em>Device Type</em>'.
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Device Type</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseDeviceType ( final DeviceType object )
+    public T caseDeviceType ( DeviceType object )
     {
         return null;
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '
-     * <em>Document Root</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Document Root</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
-     * 
-     * @param object
-     *            the target of the switch.
-     * @return the result of interpreting the object as an instance of '
-     *         <em>Document Root</em>'.
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Document Root</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseDocumentRoot ( final DocumentRoot object )
+    public T caseDocumentRoot ( DocumentRoot object )
     {
         return null;
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '
-     * <em>Item Type</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Item Type</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
-     * 
-     * @param object
-     *            the target of the switch.
-     * @return the result of interpreting the object as an instance of '
-     *         <em>Item Type</em>'.
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Item Type</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseItemType ( final ItemType object )
+    public T caseItemType ( ItemType object )
     {
         return null;
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '
-     * <em>Modbus Slave</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Modbus Slave</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
-     * 
-     * @param object
-     *            the target of the switch.
-     * @return the result of interpreting the object as an instance of '
-     *         <em>Modbus Slave</em>'.
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Modbus Slave</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseModbusSlave ( final ModbusSlave object )
+    public T caseModbusSlave ( ModbusSlave object )
     {
         return null;
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '
-     * <em>Root Type</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>Root Type</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch.
      * <!-- end-user-doc -->
-     * 
-     * @param object
-     *            the target of the switch.
-     * @return the result of interpreting the object as an instance of '
-     *         <em>Root Type</em>'.
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>Root Type</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
      * @generated
      */
-    public T caseRootType ( final RootType object )
+    public T caseRootType ( RootType object )
     {
         return null;
     }
 
     /**
-     * Returns the result of interpreting the object as an instance of '
-     * <em>EObject</em>'.
+     * Returns the result of interpreting the object as an instance of '<em>EObject</em>'.
      * <!-- begin-user-doc -->
      * This implementation returns null;
      * returning a non-null result will terminate the switch, but this is the
      * last case anyway.
      * <!-- end-user-doc -->
-     * 
-     * @param object
-     *            the target of the switch.
-     * @return the result of interpreting the object as an instance of '
-     *         <em>EObject</em>'.
+     * @param object the target of the switch.
+     * @return the result of interpreting the object as an instance of '<em>EObject</em>'.
      * @see #doSwitch(org.eclipse.emf.ecore.EObject)
      * @generated
      */
     @Override
-    public T defaultCase ( final EObject object )
+    public T defaultCase ( EObject object )
     {
         return null;
     }

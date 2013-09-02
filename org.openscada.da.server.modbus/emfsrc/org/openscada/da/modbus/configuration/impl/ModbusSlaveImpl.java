@@ -43,60 +43,31 @@ import org.openscada.da.modbus.configuration.ModbusSlave;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getGroup
- * <em>Group</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getDiscreteInput
- * <em>Discrete Input</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getGroup1
- * <em>Group1</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getCoil
- * <em>Coil</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getGroup2
- * <em>Group2</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getInputRegister
- * <em>Input Register</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getGroup3
- * <em>Group3</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getHoldingRegister
- * <em>Holding Register</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getCoilOffset
- * <em>Coil Offset</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getDiscreteInputOffset
- * <em>Discrete Input Offset</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getHoldingRegisterOffset
- * <em>Holding Register Offset</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getId
- * <em>Id</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getInputRegisterOffset
- * <em>Input Register Offset</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getName
- * <em>Name</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getGroup <em>Group</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getDiscreteInput <em>Discrete Input</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getGroup1 <em>Group1</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getCoil <em>Coil</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getGroup2 <em>Group2</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getInputRegister <em>Input Register</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getGroup3 <em>Group3</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getHoldingRegister <em>Holding Register</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getCoilOffset <em>Coil Offset</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getDiscreteInputOffset <em>Discrete Input Offset</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getHoldingRegisterOffset <em>Holding Register Offset</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getInputRegisterOffset <em>Input Register Offset</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.ModbusSlaveImpl#getName <em>Name</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements ModbusSlave
 {
     /**
-     * The cached value of the '{@link #getGroup() <em>Group</em>}' attribute
-     * list.
+     * The cached value of the '{@link #getGroup() <em>Group</em>}' attribute list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getGroup()
      * @generated
      * @ordered
@@ -104,11 +75,9 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     protected FeatureMap group;
 
     /**
-     * The cached value of the '{@link #getGroup1() <em>Group1</em>}' attribute
-     * list.
+     * The cached value of the '{@link #getGroup1() <em>Group1</em>}' attribute list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getGroup1()
      * @generated
      * @ordered
@@ -116,11 +85,9 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     protected FeatureMap group1;
 
     /**
-     * The cached value of the '{@link #getGroup2() <em>Group2</em>}' attribute
-     * list.
+     * The cached value of the '{@link #getGroup2() <em>Group2</em>}' attribute list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getGroup2()
      * @generated
      * @ordered
@@ -128,11 +95,9 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     protected FeatureMap group2;
 
     /**
-     * The cached value of the '{@link #getGroup3() <em>Group3</em>}' attribute
-     * list.
+     * The cached value of the '{@link #getGroup3() <em>Group3</em>}' attribute list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getGroup3()
      * @generated
      * @ordered
@@ -140,11 +105,9 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     protected FeatureMap group3;
 
     /**
-     * The default value of the '{@link #getCoilOffset() <em>Coil Offset</em>}'
-     * attribute.
+     * The default value of the '{@link #getCoilOffset() <em>Coil Offset</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getCoilOffset()
      * @generated
      * @ordered
@@ -152,11 +115,9 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     protected static final int COIL_OFFSET_EDEFAULT = 0;
 
     /**
-     * The cached value of the '{@link #getCoilOffset() <em>Coil Offset</em>}'
-     * attribute.
+     * The cached value of the '{@link #getCoilOffset() <em>Coil Offset</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getCoilOffset()
      * @generated
      * @ordered
@@ -167,18 +128,15 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
      * This is true if the Coil Offset attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
     protected boolean coilOffsetESet;
 
     /**
-     * The default value of the '{@link #getDiscreteInputOffset()
-     * <em>Discrete Input Offset</em>}' attribute.
+     * The default value of the '{@link #getDiscreteInputOffset() <em>Discrete Input Offset</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getDiscreteInputOffset()
      * @generated
      * @ordered
@@ -186,11 +144,9 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     protected static final int DISCRETE_INPUT_OFFSET_EDEFAULT = 0;
 
     /**
-     * The cached value of the '{@link #getDiscreteInputOffset()
-     * <em>Discrete Input Offset</em>}' attribute.
+     * The cached value of the '{@link #getDiscreteInputOffset() <em>Discrete Input Offset</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getDiscreteInputOffset()
      * @generated
      * @ordered
@@ -201,18 +157,15 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
      * This is true if the Discrete Input Offset attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
     protected boolean discreteInputOffsetESet;
 
     /**
-     * The default value of the '{@link #getHoldingRegisterOffset()
-     * <em>Holding Register Offset</em>}' attribute.
+     * The default value of the '{@link #getHoldingRegisterOffset() <em>Holding Register Offset</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getHoldingRegisterOffset()
      * @generated
      * @ordered
@@ -220,11 +173,9 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     protected static final int HOLDING_REGISTER_OFFSET_EDEFAULT = 0;
 
     /**
-     * The cached value of the '{@link #getHoldingRegisterOffset()
-     * <em>Holding Register Offset</em>}' attribute.
+     * The cached value of the '{@link #getHoldingRegisterOffset() <em>Holding Register Offset</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getHoldingRegisterOffset()
      * @generated
      * @ordered
@@ -235,7 +186,6 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
      * This is true if the Holding Register Offset attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
@@ -245,7 +195,6 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
      * The default value of the '{@link #getId() <em>Id</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getId()
      * @generated
      * @ordered
@@ -256,7 +205,6 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
      * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getId()
      * @generated
      * @ordered
@@ -267,18 +215,15 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
      * This is true if the Id attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
     protected boolean idESet;
 
     /**
-     * The default value of the '{@link #getInputRegisterOffset()
-     * <em>Input Register Offset</em>}' attribute.
+     * The default value of the '{@link #getInputRegisterOffset() <em>Input Register Offset</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getInputRegisterOffset()
      * @generated
      * @ordered
@@ -286,11 +231,9 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     protected static final int INPUT_REGISTER_OFFSET_EDEFAULT = 0;
 
     /**
-     * The cached value of the '{@link #getInputRegisterOffset()
-     * <em>Input Register Offset</em>}' attribute.
+     * The cached value of the '{@link #getInputRegisterOffset() <em>Input Register Offset</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getInputRegisterOffset()
      * @generated
      * @ordered
@@ -301,7 +244,6 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
      * This is true if the Input Register Offset attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
@@ -311,7 +253,6 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
      * The default value of the '{@link #getName() <em>Name</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getName()
      * @generated
      * @ordered
@@ -322,7 +263,6 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
      * The cached value of the '{@link #getName() <em>Name</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getName()
      * @generated
      * @ordered
@@ -332,7 +272,6 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected ModbusSlaveImpl ()
@@ -343,7 +282,6 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -355,23 +293,21 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public FeatureMap getGroup ()
     {
-        if ( this.group == null )
+        if ( group == null )
         {
-            this.group = new BasicFeatureMap ( this, ConfigurationPackage.MODBUS_SLAVE__GROUP );
+            group = new BasicFeatureMap ( this, ConfigurationPackage.MODBUS_SLAVE__GROUP );
         }
-        return this.group;
+        return group;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -383,23 +319,21 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public FeatureMap getGroup1 ()
     {
-        if ( this.group1 == null )
+        if ( group1 == null )
         {
-            this.group1 = new BasicFeatureMap ( this, ConfigurationPackage.MODBUS_SLAVE__GROUP1 );
+            group1 = new BasicFeatureMap ( this, ConfigurationPackage.MODBUS_SLAVE__GROUP1 );
         }
-        return this.group1;
+        return group1;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -411,23 +345,21 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public FeatureMap getGroup2 ()
     {
-        if ( this.group2 == null )
+        if ( group2 == null )
         {
-            this.group2 = new BasicFeatureMap ( this, ConfigurationPackage.MODBUS_SLAVE__GROUP2 );
+            group2 = new BasicFeatureMap ( this, ConfigurationPackage.MODBUS_SLAVE__GROUP2 );
         }
-        return this.group2;
+        return group2;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -439,23 +371,21 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public FeatureMap getGroup3 ()
     {
-        if ( this.group3 == null )
+        if ( group3 == null )
         {
-            this.group3 = new BasicFeatureMap ( this, ConfigurationPackage.MODBUS_SLAVE__GROUP3 );
+            group3 = new BasicFeatureMap ( this, ConfigurationPackage.MODBUS_SLAVE__GROUP3 );
         }
-        return this.group3;
+        return group3;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -467,350 +397,305 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getCoilOffset ()
     {
-        return this.coilOffset;
+        return coilOffset;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setCoilOffset ( final int newCoilOffset )
+    public void setCoilOffset ( int newCoilOffset )
     {
-        final int oldCoilOffset = this.coilOffset;
-        this.coilOffset = newCoilOffset;
-        final boolean oldCoilOffsetESet = this.coilOffsetESet;
-        this.coilOffsetESet = true;
+        int oldCoilOffset = coilOffset;
+        coilOffset = newCoilOffset;
+        boolean oldCoilOffsetESet = coilOffsetESet;
+        coilOffsetESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__COIL_OFFSET, oldCoilOffset, this.coilOffset, !oldCoilOffsetESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__COIL_OFFSET, oldCoilOffset, coilOffset, !oldCoilOffsetESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetCoilOffset ()
     {
-        final int oldCoilOffset = this.coilOffset;
-        final boolean oldCoilOffsetESet = this.coilOffsetESet;
-        this.coilOffset = COIL_OFFSET_EDEFAULT;
-        this.coilOffsetESet = false;
+        int oldCoilOffset = coilOffset;
+        boolean oldCoilOffsetESet = coilOffsetESet;
+        coilOffset = COIL_OFFSET_EDEFAULT;
+        coilOffsetESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.MODBUS_SLAVE__COIL_OFFSET, oldCoilOffset, COIL_OFFSET_EDEFAULT, oldCoilOffsetESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetCoilOffset ()
     {
-        return this.coilOffsetESet;
+        return coilOffsetESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getDiscreteInputOffset ()
     {
-        return this.discreteInputOffset;
+        return discreteInputOffset;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setDiscreteInputOffset ( final int newDiscreteInputOffset )
+    public void setDiscreteInputOffset ( int newDiscreteInputOffset )
     {
-        final int oldDiscreteInputOffset = this.discreteInputOffset;
-        this.discreteInputOffset = newDiscreteInputOffset;
-        final boolean oldDiscreteInputOffsetESet = this.discreteInputOffsetESet;
-        this.discreteInputOffsetESet = true;
+        int oldDiscreteInputOffset = discreteInputOffset;
+        discreteInputOffset = newDiscreteInputOffset;
+        boolean oldDiscreteInputOffsetESet = discreteInputOffsetESet;
+        discreteInputOffsetESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__DISCRETE_INPUT_OFFSET, oldDiscreteInputOffset, this.discreteInputOffset, !oldDiscreteInputOffsetESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__DISCRETE_INPUT_OFFSET, oldDiscreteInputOffset, discreteInputOffset, !oldDiscreteInputOffsetESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetDiscreteInputOffset ()
     {
-        final int oldDiscreteInputOffset = this.discreteInputOffset;
-        final boolean oldDiscreteInputOffsetESet = this.discreteInputOffsetESet;
-        this.discreteInputOffset = DISCRETE_INPUT_OFFSET_EDEFAULT;
-        this.discreteInputOffsetESet = false;
+        int oldDiscreteInputOffset = discreteInputOffset;
+        boolean oldDiscreteInputOffsetESet = discreteInputOffsetESet;
+        discreteInputOffset = DISCRETE_INPUT_OFFSET_EDEFAULT;
+        discreteInputOffsetESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.MODBUS_SLAVE__DISCRETE_INPUT_OFFSET, oldDiscreteInputOffset, DISCRETE_INPUT_OFFSET_EDEFAULT, oldDiscreteInputOffsetESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetDiscreteInputOffset ()
     {
-        return this.discreteInputOffsetESet;
+        return discreteInputOffsetESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getHoldingRegisterOffset ()
     {
-        return this.holdingRegisterOffset;
+        return holdingRegisterOffset;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setHoldingRegisterOffset ( final int newHoldingRegisterOffset )
+    public void setHoldingRegisterOffset ( int newHoldingRegisterOffset )
     {
-        final int oldHoldingRegisterOffset = this.holdingRegisterOffset;
-        this.holdingRegisterOffset = newHoldingRegisterOffset;
-        final boolean oldHoldingRegisterOffsetESet = this.holdingRegisterOffsetESet;
-        this.holdingRegisterOffsetESet = true;
+        int oldHoldingRegisterOffset = holdingRegisterOffset;
+        holdingRegisterOffset = newHoldingRegisterOffset;
+        boolean oldHoldingRegisterOffsetESet = holdingRegisterOffsetESet;
+        holdingRegisterOffsetESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__HOLDING_REGISTER_OFFSET, oldHoldingRegisterOffset, this.holdingRegisterOffset, !oldHoldingRegisterOffsetESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__HOLDING_REGISTER_OFFSET, oldHoldingRegisterOffset, holdingRegisterOffset, !oldHoldingRegisterOffsetESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetHoldingRegisterOffset ()
     {
-        final int oldHoldingRegisterOffset = this.holdingRegisterOffset;
-        final boolean oldHoldingRegisterOffsetESet = this.holdingRegisterOffsetESet;
-        this.holdingRegisterOffset = HOLDING_REGISTER_OFFSET_EDEFAULT;
-        this.holdingRegisterOffsetESet = false;
+        int oldHoldingRegisterOffset = holdingRegisterOffset;
+        boolean oldHoldingRegisterOffsetESet = holdingRegisterOffsetESet;
+        holdingRegisterOffset = HOLDING_REGISTER_OFFSET_EDEFAULT;
+        holdingRegisterOffsetESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.MODBUS_SLAVE__HOLDING_REGISTER_OFFSET, oldHoldingRegisterOffset, HOLDING_REGISTER_OFFSET_EDEFAULT, oldHoldingRegisterOffsetESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetHoldingRegisterOffset ()
     {
-        return this.holdingRegisterOffsetESet;
+        return holdingRegisterOffsetESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getId ()
     {
-        return this.id;
+        return id;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setId ( final int newId )
+    public void setId ( int newId )
     {
-        final int oldId = this.id;
-        this.id = newId;
-        final boolean oldIdESet = this.idESet;
-        this.idESet = true;
+        int oldId = id;
+        id = newId;
+        boolean oldIdESet = idESet;
+        idESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__ID, oldId, this.id, !oldIdESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__ID, oldId, id, !oldIdESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetId ()
     {
-        final int oldId = this.id;
-        final boolean oldIdESet = this.idESet;
-        this.id = ID_EDEFAULT;
-        this.idESet = false;
+        int oldId = id;
+        boolean oldIdESet = idESet;
+        id = ID_EDEFAULT;
+        idESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.MODBUS_SLAVE__ID, oldId, ID_EDEFAULT, oldIdESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetId ()
     {
-        return this.idESet;
+        return idESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getInputRegisterOffset ()
     {
-        return this.inputRegisterOffset;
+        return inputRegisterOffset;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setInputRegisterOffset ( final int newInputRegisterOffset )
+    public void setInputRegisterOffset ( int newInputRegisterOffset )
     {
-        final int oldInputRegisterOffset = this.inputRegisterOffset;
-        this.inputRegisterOffset = newInputRegisterOffset;
-        final boolean oldInputRegisterOffsetESet = this.inputRegisterOffsetESet;
-        this.inputRegisterOffsetESet = true;
+        int oldInputRegisterOffset = inputRegisterOffset;
+        inputRegisterOffset = newInputRegisterOffset;
+        boolean oldInputRegisterOffsetESet = inputRegisterOffsetESet;
+        inputRegisterOffsetESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__INPUT_REGISTER_OFFSET, oldInputRegisterOffset, this.inputRegisterOffset, !oldInputRegisterOffsetESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__INPUT_REGISTER_OFFSET, oldInputRegisterOffset, inputRegisterOffset, !oldInputRegisterOffsetESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetInputRegisterOffset ()
     {
-        final int oldInputRegisterOffset = this.inputRegisterOffset;
-        final boolean oldInputRegisterOffsetESet = this.inputRegisterOffsetESet;
-        this.inputRegisterOffset = INPUT_REGISTER_OFFSET_EDEFAULT;
-        this.inputRegisterOffsetESet = false;
+        int oldInputRegisterOffset = inputRegisterOffset;
+        boolean oldInputRegisterOffsetESet = inputRegisterOffsetESet;
+        inputRegisterOffset = INPUT_REGISTER_OFFSET_EDEFAULT;
+        inputRegisterOffsetESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.MODBUS_SLAVE__INPUT_REGISTER_OFFSET, oldInputRegisterOffset, INPUT_REGISTER_OFFSET_EDEFAULT, oldInputRegisterOffsetESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetInputRegisterOffset ()
     {
-        return this.inputRegisterOffsetESet;
+        return inputRegisterOffsetESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String getName ()
     {
-        return this.name;
+        return name;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setName ( final String newName )
+    public void setName ( String newName )
     {
-        final String oldName = this.name;
-        this.name = newName;
+        String oldName = name;
+        name = newName;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__NAME, oldName, this.name ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.MODBUS_SLAVE__NAME, oldName, name ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public NotificationChain eInverseRemove ( final InternalEObject otherEnd, final int featureID, final NotificationChain msgs )
+    public NotificationChain eInverseRemove ( InternalEObject otherEnd, int featureID, NotificationChain msgs )
     {
         switch ( featureID )
         {
@@ -837,43 +722,34 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public Object eGet ( final int featureID, final boolean resolve, final boolean coreType )
+    public Object eGet ( int featureID, boolean resolve, boolean coreType )
     {
         switch ( featureID )
         {
             case ConfigurationPackage.MODBUS_SLAVE__GROUP:
                 if ( coreType )
-                {
                     return getGroup ();
-                }
                 return ( (FeatureMap.Internal)getGroup () ).getWrapper ();
             case ConfigurationPackage.MODBUS_SLAVE__DISCRETE_INPUT:
                 return getDiscreteInput ();
             case ConfigurationPackage.MODBUS_SLAVE__GROUP1:
                 if ( coreType )
-                {
                     return getGroup1 ();
-                }
                 return ( (FeatureMap.Internal)getGroup1 () ).getWrapper ();
             case ConfigurationPackage.MODBUS_SLAVE__COIL:
                 return getCoil ();
             case ConfigurationPackage.MODBUS_SLAVE__GROUP2:
                 if ( coreType )
-                {
                     return getGroup2 ();
-                }
                 return ( (FeatureMap.Internal)getGroup2 () ).getWrapper ();
             case ConfigurationPackage.MODBUS_SLAVE__INPUT_REGISTER:
                 return getInputRegister ();
             case ConfigurationPackage.MODBUS_SLAVE__GROUP3:
                 if ( coreType )
-                {
                     return getGroup3 ();
-                }
                 return ( (FeatureMap.Internal)getGroup3 () ).getWrapper ();
             case ConfigurationPackage.MODBUS_SLAVE__HOLDING_REGISTER:
                 return getHoldingRegister ();
@@ -896,12 +772,11 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @SuppressWarnings ( "unchecked" )
     @Override
-    public void eSet ( final int featureID, final Object newValue )
+    public void eSet ( int featureID, Object newValue )
     {
         switch ( featureID )
         {
@@ -958,11 +833,10 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void eUnset ( final int featureID )
+    public void eUnset ( int featureID )
     {
         switch ( featureID )
         {
@@ -1015,28 +889,27 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public boolean eIsSet ( final int featureID )
+    public boolean eIsSet ( int featureID )
     {
         switch ( featureID )
         {
             case ConfigurationPackage.MODBUS_SLAVE__GROUP:
-                return this.group != null && !this.group.isEmpty ();
+                return group != null && !group.isEmpty ();
             case ConfigurationPackage.MODBUS_SLAVE__DISCRETE_INPUT:
                 return !getDiscreteInput ().isEmpty ();
             case ConfigurationPackage.MODBUS_SLAVE__GROUP1:
-                return this.group1 != null && !this.group1.isEmpty ();
+                return group1 != null && !group1.isEmpty ();
             case ConfigurationPackage.MODBUS_SLAVE__COIL:
                 return !getCoil ().isEmpty ();
             case ConfigurationPackage.MODBUS_SLAVE__GROUP2:
-                return this.group2 != null && !this.group2.isEmpty ();
+                return group2 != null && !group2.isEmpty ();
             case ConfigurationPackage.MODBUS_SLAVE__INPUT_REGISTER:
                 return !getInputRegister ().isEmpty ();
             case ConfigurationPackage.MODBUS_SLAVE__GROUP3:
-                return this.group3 != null && !this.group3.isEmpty ();
+                return group3 != null && !group3.isEmpty ();
             case ConfigurationPackage.MODBUS_SLAVE__HOLDING_REGISTER:
                 return !getHoldingRegister ().isEmpty ();
             case ConfigurationPackage.MODBUS_SLAVE__COIL_OFFSET:
@@ -1050,7 +923,7 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
             case ConfigurationPackage.MODBUS_SLAVE__INPUT_REGISTER_OFFSET:
                 return isSetInputRegisterOffset ();
             case ConfigurationPackage.MODBUS_SLAVE__NAME:
-                return NAME_EDEFAULT == null ? this.name != null : !NAME_EDEFAULT.equals ( this.name );
+                return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals ( name );
         }
         return super.eIsSet ( featureID );
     }
@@ -1058,73 +931,50 @@ public class ModbusSlaveImpl extends MinimalEObjectImpl.Container implements Mod
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String toString ()
     {
         if ( eIsProxy () )
-        {
             return super.toString ();
-        }
 
-        final StringBuffer result = new StringBuffer ( super.toString () );
+        StringBuffer result = new StringBuffer ( super.toString () );
         result.append ( " (group: " ); //$NON-NLS-1$
-        result.append ( this.group );
+        result.append ( group );
         result.append ( ", group1: " ); //$NON-NLS-1$
-        result.append ( this.group1 );
+        result.append ( group1 );
         result.append ( ", group2: " ); //$NON-NLS-1$
-        result.append ( this.group2 );
+        result.append ( group2 );
         result.append ( ", group3: " ); //$NON-NLS-1$
-        result.append ( this.group3 );
+        result.append ( group3 );
         result.append ( ", coilOffset: " ); //$NON-NLS-1$
-        if ( this.coilOffsetESet )
-        {
-            result.append ( this.coilOffset );
-        }
+        if ( coilOffsetESet )
+            result.append ( coilOffset );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", discreteInputOffset: " ); //$NON-NLS-1$
-        if ( this.discreteInputOffsetESet )
-        {
-            result.append ( this.discreteInputOffset );
-        }
+        if ( discreteInputOffsetESet )
+            result.append ( discreteInputOffset );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", holdingRegisterOffset: " ); //$NON-NLS-1$
-        if ( this.holdingRegisterOffsetESet )
-        {
-            result.append ( this.holdingRegisterOffset );
-        }
+        if ( holdingRegisterOffsetESet )
+            result.append ( holdingRegisterOffset );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", id: " ); //$NON-NLS-1$
-        if ( this.idESet )
-        {
-            result.append ( this.id );
-        }
+        if ( idESet )
+            result.append ( id );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", inputRegisterOffset: " ); //$NON-NLS-1$
-        if ( this.inputRegisterOffsetESet )
-        {
-            result.append ( this.inputRegisterOffset );
-        }
+        if ( inputRegisterOffsetESet )
+            result.append ( inputRegisterOffset );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", name: " ); //$NON-NLS-1$
-        result.append ( this.name );
+        result.append ( name );
         result.append ( ')' );
         return result.toString ();
     }

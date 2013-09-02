@@ -1,0 +1,17 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: %pluginName
+Bundle-SymbolicName: org.openscada.da.server.modbus.edit;singleton:=true
+Bundle-Version: 1.0.0.qualifier
+Bundle-ClassPath: .
+Bundle-Activator: org.openscada.da.modbus.configuration.provider.ModbusEditPlugin$Implementation
+Bundle-Vendor: %providerName
+Bundle-Localization: plugin
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Export-Package: org.openscada.da.modbus.configuration.provider
+Require-Bundle: org.eclipse.core.runtime,
+ org.openscada.da.server.modbus;visibility:=reexport,
+ org.eclipse.emf.edit;visibility:=reexport,
+ org.openscada.da.server.common;visibility:=reexport,
+ org.openscada.da.server.common.edit;visibility:=reexport
+Bundle-ActivationPolicy: lazy

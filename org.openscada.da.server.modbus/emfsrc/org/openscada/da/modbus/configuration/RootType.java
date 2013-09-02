@@ -26,14 +26,14 @@ import org.eclipse.emf.ecore.EObject;
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Root Type</b></em>'.
  * <!-- end-user-doc -->
+ *
  * <p>
  * The following features are supported:
  * <ul>
- * <li>{@link org.openscada.da.modbus.configuration.RootType#getDevices <em>
- * Devices</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.RootType#getDevices <em>Devices</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getRootType()
  * @model extendedMetaData="name='RootType' kind='elementOnly'"
  * @generated
@@ -48,26 +48,20 @@ public interface RootType extends EObject
      * clear, there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Devices</em>' containment reference.
      * @see #setDevices(DevicesType)
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getRootType_Devices()
      * @model containment="true" required="true"
-     *        extendedMetaData=
-     *        "kind='element' name='devices' namespace='##targetNamespace'"
+     *        extendedMetaData="kind='element' name='devices' namespace='##targetNamespace'"
      * @generated
      */
     DevicesType getDevices ();
 
     /**
-     * Sets the value of the '
-     * {@link org.openscada.da.modbus.configuration.RootType#getDevices
-     * <em>Devices</em>}' containment reference.
+     * Sets the value of the '{@link org.openscada.da.modbus.configuration.RootType#getDevices <em>Devices</em>}' containment reference.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param value
-     *            the new value of the '<em>Devices</em>' containment reference.
+     * @param value the new value of the '<em>Devices</em>' containment reference.
      * @see #getDevices()
      * @generated
      */

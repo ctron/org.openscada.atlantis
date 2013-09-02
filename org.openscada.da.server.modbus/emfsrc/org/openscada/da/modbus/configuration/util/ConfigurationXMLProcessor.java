@@ -31,7 +31,6 @@ import org.openscada.da.modbus.configuration.ConfigurationPackage;
  * This class contains helper methods to serialize and deserialize XML documents
  * <!-- begin-user-doc -->
  * <!-- end-user-doc -->
- * 
  * @generated
  */
 public class ConfigurationXMLProcessor extends XMLProcessor
@@ -41,33 +40,30 @@ public class ConfigurationXMLProcessor extends XMLProcessor
      * Public constructor to instantiate the helper.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public ConfigurationXMLProcessor ()
     {
-        super ( EPackage.Registry.INSTANCE );
+        super ( ( EPackage.Registry.INSTANCE ) );
         ConfigurationPackage.eINSTANCE.eClass ();
     }
 
     /**
-     * Register for "*" and "xml" file extensions the
-     * ConfigurationResourceFactoryImpl factory.
+     * Register for "*" and "xml" file extensions the ConfigurationResourceFactoryImpl factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     protected Map<String, Resource.Factory> getRegistrations ()
     {
-        if ( this.registrations == null )
+        if ( registrations == null )
         {
             super.getRegistrations ();
-            this.registrations.put ( XML_EXTENSION, new ConfigurationResourceFactoryImpl () );
-            this.registrations.put ( STAR_EXTENSION, new ConfigurationResourceFactoryImpl () );
+            registrations.put ( XML_EXTENSION, new ConfigurationResourceFactoryImpl () );
+            registrations.put ( STAR_EXTENSION, new ConfigurationResourceFactoryImpl () );
         }
-        return this.registrations;
+        return registrations;
     }
 
 } //ConfigurationXMLProcessor

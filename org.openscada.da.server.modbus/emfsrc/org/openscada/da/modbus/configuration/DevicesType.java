@@ -27,14 +27,14 @@ import org.eclipse.emf.ecore.EObject;
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Devices Type</b></em>'.
  * <!-- end-user-doc -->
+ *
  * <p>
  * The following features are supported:
  * <ul>
- * <li>{@link org.openscada.da.modbus.configuration.DevicesType#getDevice <em>
- * Device</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.DevicesType#getDevice <em>Device</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDevicesType()
  * @model extendedMetaData="name='DevicesType' kind='elementOnly'"
  * @generated
@@ -42,22 +42,18 @@ import org.eclipse.emf.ecore.EObject;
 public interface DevicesType extends EObject
 {
     /**
-     * Returns the value of the '<em><b>Device</b></em>' containment reference
-     * list.
-     * The list contents are of type
-     * {@link org.openscada.da.modbus.configuration.DeviceType}.
+     * Returns the value of the '<em><b>Device</b></em>' containment reference list.
+     * The list contents are of type {@link org.openscada.da.modbus.configuration.DeviceType}.
      * <!-- begin-user-doc -->
      * <p>
      * If the meaning of the '<em>Device</em>' containment reference list isn't
      * clear, there really should be more of a description here...
      * </p>
      * <!-- end-user-doc -->
-     * 
      * @return the value of the '<em>Device</em>' containment reference list.
      * @see org.openscada.da.modbus.configuration.ConfigurationPackage#getDevicesType_Device()
      * @model containment="true"
-     *        extendedMetaData=
-     *        "kind='element' name='device' namespace='##targetNamespace'"
+     *        extendedMetaData="kind='element' name='device' namespace='##targetNamespace'"
      * @generated
      */
     EList<DeviceType> getDevice ();

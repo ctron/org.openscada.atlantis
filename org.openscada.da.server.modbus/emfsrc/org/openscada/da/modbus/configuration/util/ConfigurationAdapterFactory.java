@@ -38,7 +38,6 @@ import org.openscada.da.modbus.configuration.RootType;
  * It provides an adapter <code>createXXX</code> method for each class of the
  * model.
  * <!-- end-user-doc -->
- * 
  * @see org.openscada.da.modbus.configuration.ConfigurationPackage
  * @generated
  */
@@ -48,7 +47,6 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
      * The cached model package.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected static ConfigurationPackage modelPackage;
@@ -57,7 +55,6 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
      * Creates an instance of the adapter factory.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     public ConfigurationAdapterFactory ()
@@ -74,12 +71,11 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
      * This implementation returns <code>true</code> if the object is either the
      * model's package or is an instance object of the model.
      * <!-- end-user-doc -->
-     * 
      * @return whether this factory is applicable for the type of the object.
      * @generated
      */
     @Override
-    public boolean isFactoryForType ( final Object object )
+    public boolean isFactoryForType ( Object object )
     {
         if ( object == modelPackage )
         {
@@ -96,48 +92,47 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
      * The switch that delegates to the <code>createXXX</code> methods.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected ConfigurationSwitch<Adapter> modelSwitch = new ConfigurationSwitch<Adapter> () {
         @Override
-        public Adapter caseDevicesType ( final DevicesType object )
+        public Adapter caseDevicesType ( DevicesType object )
         {
             return createDevicesTypeAdapter ();
         }
 
         @Override
-        public Adapter caseDeviceType ( final DeviceType object )
+        public Adapter caseDeviceType ( DeviceType object )
         {
             return createDeviceTypeAdapter ();
         }
 
         @Override
-        public Adapter caseDocumentRoot ( final DocumentRoot object )
+        public Adapter caseDocumentRoot ( DocumentRoot object )
         {
             return createDocumentRootAdapter ();
         }
 
         @Override
-        public Adapter caseItemType ( final ItemType object )
+        public Adapter caseItemType ( ItemType object )
         {
             return createItemTypeAdapter ();
         }
 
         @Override
-        public Adapter caseModbusSlave ( final ModbusSlave object )
+        public Adapter caseModbusSlave ( ModbusSlave object )
         {
             return createModbusSlaveAdapter ();
         }
 
         @Override
-        public Adapter caseRootType ( final RootType object )
+        public Adapter caseRootType ( RootType object )
         {
             return createRootTypeAdapter ();
         }
 
         @Override
-        public Adapter defaultCase ( final EObject object )
+        public Adapter defaultCase ( EObject object )
         {
             return createEObjectAdapter ();
         }
@@ -147,29 +142,24 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
      * Creates an adapter for the <code>target</code>.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
-     * @param target
-     *            the object to adapt.
+     * @param target the object to adapt.
      * @return the adapter for the <code>target</code>.
      * @generated
      */
     @Override
-    public Adapter createAdapter ( final Notifier target )
+    public Adapter createAdapter ( Notifier target )
     {
-        return this.modelSwitch.doSwitch ( (EObject)target );
+        return modelSwitch.doSwitch ( (EObject)target );
     }
 
     /**
-     * Creates a new adapter for an object of class '
-     * {@link org.openscada.da.modbus.configuration.DevicesType
-     * <em>Devices Type</em>}'.
+     * Creates a new adapter for an object of class '{@link org.openscada.da.modbus.configuration.DevicesType <em>Devices Type</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore
      * cases;
      * it's useful to ignore a case when inheritance will catch all the cases
      * anyway.
      * <!-- end-user-doc -->
-     * 
      * @return the new adapter.
      * @see org.openscada.da.modbus.configuration.DevicesType
      * @generated
@@ -180,16 +170,13 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
     }
 
     /**
-     * Creates a new adapter for an object of class '
-     * {@link org.openscada.da.modbus.configuration.DeviceType
-     * <em>Device Type</em>}'.
+     * Creates a new adapter for an object of class '{@link org.openscada.da.modbus.configuration.DeviceType <em>Device Type</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore
      * cases;
      * it's useful to ignore a case when inheritance will catch all the cases
      * anyway.
      * <!-- end-user-doc -->
-     * 
      * @return the new adapter.
      * @see org.openscada.da.modbus.configuration.DeviceType
      * @generated
@@ -200,16 +187,13 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
     }
 
     /**
-     * Creates a new adapter for an object of class '
-     * {@link org.openscada.da.modbus.configuration.DocumentRoot
-     * <em>Document Root</em>}'.
+     * Creates a new adapter for an object of class '{@link org.openscada.da.modbus.configuration.DocumentRoot <em>Document Root</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore
      * cases;
      * it's useful to ignore a case when inheritance will catch all the cases
      * anyway.
      * <!-- end-user-doc -->
-     * 
      * @return the new adapter.
      * @see org.openscada.da.modbus.configuration.DocumentRoot
      * @generated
@@ -220,16 +204,13 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
     }
 
     /**
-     * Creates a new adapter for an object of class '
-     * {@link org.openscada.da.modbus.configuration.ItemType <em>Item Type</em>}
-     * '.
+     * Creates a new adapter for an object of class '{@link org.openscada.da.modbus.configuration.ItemType <em>Item Type</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore
      * cases;
      * it's useful to ignore a case when inheritance will catch all the cases
      * anyway.
      * <!-- end-user-doc -->
-     * 
      * @return the new adapter.
      * @see org.openscada.da.modbus.configuration.ItemType
      * @generated
@@ -240,16 +221,13 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
     }
 
     /**
-     * Creates a new adapter for an object of class '
-     * {@link org.openscada.da.modbus.configuration.ModbusSlave
-     * <em>Modbus Slave</em>}'.
+     * Creates a new adapter for an object of class '{@link org.openscada.da.modbus.configuration.ModbusSlave <em>Modbus Slave</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore
      * cases;
      * it's useful to ignore a case when inheritance will catch all the cases
      * anyway.
      * <!-- end-user-doc -->
-     * 
      * @return the new adapter.
      * @see org.openscada.da.modbus.configuration.ModbusSlave
      * @generated
@@ -260,16 +238,13 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
     }
 
     /**
-     * Creates a new adapter for an object of class '
-     * {@link org.openscada.da.modbus.configuration.RootType <em>Root Type</em>}
-     * '.
+     * Creates a new adapter for an object of class '{@link org.openscada.da.modbus.configuration.RootType <em>Root Type</em>}'.
      * <!-- begin-user-doc -->
      * This default implementation returns null so that we can easily ignore
      * cases;
      * it's useful to ignore a case when inheritance will catch all the cases
      * anyway.
      * <!-- end-user-doc -->
-     * 
      * @return the new adapter.
      * @see org.openscada.da.modbus.configuration.RootType
      * @generated
@@ -284,7 +259,6 @@ public class ConfigurationAdapterFactory extends AdapterFactoryImpl
      * <!-- begin-user-doc -->
      * This default implementation returns null.
      * <!-- end-user-doc -->
-     * 
      * @return the new adapter.
      * @generated
      */

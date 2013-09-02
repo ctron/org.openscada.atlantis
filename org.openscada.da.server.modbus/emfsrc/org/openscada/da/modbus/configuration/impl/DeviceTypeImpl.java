@@ -46,52 +46,29 @@ import org.openscada.da.modbus.configuration.StopBitsType;
  * <p>
  * The following features are implemented:
  * <ul>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getGroup
- * <em>Group</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getSlave
- * <em>Slave</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getBaudRate
- * <em>Baud Rate</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getDataBits
- * <em>Data Bits</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getHost
- * <em>Host</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getId
- * <em>Id</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getInterCharacterTimeout
- * <em>Inter Character Timeout</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getInterFrameDelay
- * <em>Inter Frame Delay</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getParity
- * <em>Parity</em>}</li>
- * <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getPort
- * <em>Port</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getProtocol
- * <em>Protocol</em>}</li>
- * <li>
- * {@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getStopBits
- * <em>Stop Bits</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getGroup <em>Group</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getSlave <em>Slave</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getBaudRate <em>Baud Rate</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getDataBits <em>Data Bits</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getHost <em>Host</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getId <em>Id</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getInterCharacterTimeout <em>Inter Character Timeout</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getInterFrameDelay <em>Inter Frame Delay</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getParity <em>Parity</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getPort <em>Port</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getProtocol <em>Protocol</em>}</li>
+ *   <li>{@link org.openscada.da.modbus.configuration.impl.DeviceTypeImpl#getStopBits <em>Stop Bits</em>}</li>
  * </ul>
  * </p>
- * 
+ *
  * @generated
  */
 public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements DeviceType
 {
     /**
-     * The cached value of the '{@link #getGroup() <em>Group</em>}' attribute
-     * list.
+     * The cached value of the '{@link #getGroup() <em>Group</em>}' attribute list.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getGroup()
      * @generated
      * @ordered
@@ -99,11 +76,9 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     protected FeatureMap group;
 
     /**
-     * The default value of the '{@link #getBaudRate() <em>Baud Rate</em>}'
-     * attribute.
+     * The default value of the '{@link #getBaudRate() <em>Baud Rate</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getBaudRate()
      * @generated
      * @ordered
@@ -111,11 +86,9 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     protected static final int BAUD_RATE_EDEFAULT = 19200;
 
     /**
-     * The cached value of the '{@link #getBaudRate() <em>Baud Rate</em>}'
-     * attribute.
+     * The cached value of the '{@link #getBaudRate() <em>Baud Rate</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getBaudRate()
      * @generated
      * @ordered
@@ -126,18 +99,15 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * This is true if the Baud Rate attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
     protected boolean baudRateESet;
 
     /**
-     * The default value of the '{@link #getDataBits() <em>Data Bits</em>}'
-     * attribute.
+     * The default value of the '{@link #getDataBits() <em>Data Bits</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getDataBits()
      * @generated
      * @ordered
@@ -145,11 +115,9 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     protected static final int DATA_BITS_EDEFAULT = 8;
 
     /**
-     * The cached value of the '{@link #getDataBits() <em>Data Bits</em>}'
-     * attribute.
+     * The cached value of the '{@link #getDataBits() <em>Data Bits</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getDataBits()
      * @generated
      * @ordered
@@ -160,7 +128,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * This is true if the Data Bits attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
@@ -170,7 +137,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * The default value of the '{@link #getHost() <em>Host</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getHost()
      * @generated
      * @ordered
@@ -181,7 +147,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * The cached value of the '{@link #getHost() <em>Host</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getHost()
      * @generated
      * @ordered
@@ -192,7 +157,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * The default value of the '{@link #getId() <em>Id</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getId()
      * @generated
      * @ordered
@@ -203,7 +167,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * The cached value of the '{@link #getId() <em>Id</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getId()
      * @generated
      * @ordered
@@ -211,11 +174,9 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     protected String id = ID_EDEFAULT;
 
     /**
-     * The default value of the '{@link #getInterCharacterTimeout()
-     * <em>Inter Character Timeout</em>}' attribute.
+     * The default value of the '{@link #getInterCharacterTimeout() <em>Inter Character Timeout</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getInterCharacterTimeout()
      * @generated
      * @ordered
@@ -223,11 +184,9 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     protected static final float INTER_CHARACTER_TIMEOUT_EDEFAULT = 1.5F;
 
     /**
-     * The cached value of the '{@link #getInterCharacterTimeout()
-     * <em>Inter Character Timeout</em>}' attribute.
+     * The cached value of the '{@link #getInterCharacterTimeout() <em>Inter Character Timeout</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getInterCharacterTimeout()
      * @generated
      * @ordered
@@ -238,18 +197,15 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * This is true if the Inter Character Timeout attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
     protected boolean interCharacterTimeoutESet;
 
     /**
-     * The default value of the '{@link #getInterFrameDelay()
-     * <em>Inter Frame Delay</em>}' attribute.
+     * The default value of the '{@link #getInterFrameDelay() <em>Inter Frame Delay</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getInterFrameDelay()
      * @generated
      * @ordered
@@ -257,11 +213,9 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     protected static final float INTER_FRAME_DELAY_EDEFAULT = 3.5F;
 
     /**
-     * The cached value of the '{@link #getInterFrameDelay()
-     * <em>Inter Frame Delay</em>}' attribute.
+     * The cached value of the '{@link #getInterFrameDelay() <em>Inter Frame Delay</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getInterFrameDelay()
      * @generated
      * @ordered
@@ -272,18 +226,15 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * This is true if the Inter Frame Delay attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
     protected boolean interFrameDelayESet;
 
     /**
-     * The default value of the '{@link #getParity() <em>Parity</em>}'
-     * attribute.
+     * The default value of the '{@link #getParity() <em>Parity</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getParity()
      * @generated
      * @ordered
@@ -294,7 +245,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * The cached value of the '{@link #getParity() <em>Parity</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getParity()
      * @generated
      * @ordered
@@ -305,7 +255,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * This is true if the Parity attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
@@ -315,7 +264,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * The default value of the '{@link #getPort() <em>Port</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getPort()
      * @generated
      * @ordered
@@ -326,7 +274,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * The cached value of the '{@link #getPort() <em>Port</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getPort()
      * @generated
      * @ordered
@@ -337,18 +284,15 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * This is true if the Port attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
     protected boolean portESet;
 
     /**
-     * The default value of the '{@link #getProtocol() <em>Protocol</em>}'
-     * attribute.
+     * The default value of the '{@link #getProtocol() <em>Protocol</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getProtocol()
      * @generated
      * @ordered
@@ -356,11 +300,9 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     protected static final ProtocolType PROTOCOL_EDEFAULT = ProtocolType.TCP;
 
     /**
-     * The cached value of the '{@link #getProtocol() <em>Protocol</em>}'
-     * attribute.
+     * The cached value of the '{@link #getProtocol() <em>Protocol</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getProtocol()
      * @generated
      * @ordered
@@ -371,18 +313,15 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * This is true if the Protocol attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
     protected boolean protocolESet;
 
     /**
-     * The default value of the '{@link #getStopBits() <em>Stop Bits</em>}'
-     * attribute.
+     * The default value of the '{@link #getStopBits() <em>Stop Bits</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getStopBits()
      * @generated
      * @ordered
@@ -390,11 +329,9 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     protected static final StopBitsType STOP_BITS_EDEFAULT = StopBitsType._1;
 
     /**
-     * The cached value of the '{@link #getStopBits() <em>Stop Bits</em>}'
-     * attribute.
+     * The cached value of the '{@link #getStopBits() <em>Stop Bits</em>}' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @see #getStopBits()
      * @generated
      * @ordered
@@ -405,7 +342,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
      * This is true if the Stop Bits attribute has been set.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      * @ordered
      */
@@ -414,7 +350,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     protected DeviceTypeImpl ()
@@ -425,7 +360,6 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -437,23 +371,21 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public FeatureMap getGroup ()
     {
-        if ( this.group == null )
+        if ( group == null )
         {
-            this.group = new BasicFeatureMap ( this, ConfigurationPackage.DEVICE_TYPE__GROUP );
+            group = new BasicFeatureMap ( this, ConfigurationPackage.DEVICE_TYPE__GROUP );
         }
-        return this.group;
+        return group;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
@@ -465,565 +397,492 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getBaudRate ()
     {
-        return this.baudRate;
+        return baudRate;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setBaudRate ( final int newBaudRate )
+    public void setBaudRate ( int newBaudRate )
     {
-        final int oldBaudRate = this.baudRate;
-        this.baudRate = newBaudRate;
-        final boolean oldBaudRateESet = this.baudRateESet;
-        this.baudRateESet = true;
+        int oldBaudRate = baudRate;
+        baudRate = newBaudRate;
+        boolean oldBaudRateESet = baudRateESet;
+        baudRateESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__BAUD_RATE, oldBaudRate, this.baudRate, !oldBaudRateESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__BAUD_RATE, oldBaudRate, baudRate, !oldBaudRateESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetBaudRate ()
     {
-        final int oldBaudRate = this.baudRate;
-        final boolean oldBaudRateESet = this.baudRateESet;
-        this.baudRate = BAUD_RATE_EDEFAULT;
-        this.baudRateESet = false;
+        int oldBaudRate = baudRate;
+        boolean oldBaudRateESet = baudRateESet;
+        baudRate = BAUD_RATE_EDEFAULT;
+        baudRateESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.DEVICE_TYPE__BAUD_RATE, oldBaudRate, BAUD_RATE_EDEFAULT, oldBaudRateESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetBaudRate ()
     {
-        return this.baudRateESet;
+        return baudRateESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public int getDataBits ()
     {
-        return this.dataBits;
+        return dataBits;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setDataBits ( final int newDataBits )
+    public void setDataBits ( int newDataBits )
     {
-        final int oldDataBits = this.dataBits;
-        this.dataBits = newDataBits;
-        final boolean oldDataBitsESet = this.dataBitsESet;
-        this.dataBitsESet = true;
+        int oldDataBits = dataBits;
+        dataBits = newDataBits;
+        boolean oldDataBitsESet = dataBitsESet;
+        dataBitsESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__DATA_BITS, oldDataBits, this.dataBits, !oldDataBitsESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__DATA_BITS, oldDataBits, dataBits, !oldDataBitsESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetDataBits ()
     {
-        final int oldDataBits = this.dataBits;
-        final boolean oldDataBitsESet = this.dataBitsESet;
-        this.dataBits = DATA_BITS_EDEFAULT;
-        this.dataBitsESet = false;
+        int oldDataBits = dataBits;
+        boolean oldDataBitsESet = dataBitsESet;
+        dataBits = DATA_BITS_EDEFAULT;
+        dataBitsESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.DEVICE_TYPE__DATA_BITS, oldDataBits, DATA_BITS_EDEFAULT, oldDataBitsESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetDataBits ()
     {
-        return this.dataBitsESet;
+        return dataBitsESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String getHost ()
     {
-        return this.host;
+        return host;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setHost ( final String newHost )
+    public void setHost ( String newHost )
     {
-        final String oldHost = this.host;
-        this.host = newHost;
+        String oldHost = host;
+        host = newHost;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__HOST, oldHost, this.host ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__HOST, oldHost, host ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String getId ()
     {
-        return this.id;
+        return id;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setId ( final String newId )
+    public void setId ( String newId )
     {
-        final String oldId = this.id;
-        this.id = newId;
+        String oldId = id;
+        id = newId;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__ID, oldId, this.id ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__ID, oldId, id ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public float getInterCharacterTimeout ()
     {
-        return this.interCharacterTimeout;
+        return interCharacterTimeout;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setInterCharacterTimeout ( final float newInterCharacterTimeout )
+    public void setInterCharacterTimeout ( float newInterCharacterTimeout )
     {
-        final float oldInterCharacterTimeout = this.interCharacterTimeout;
-        this.interCharacterTimeout = newInterCharacterTimeout;
-        final boolean oldInterCharacterTimeoutESet = this.interCharacterTimeoutESet;
-        this.interCharacterTimeoutESet = true;
+        float oldInterCharacterTimeout = interCharacterTimeout;
+        interCharacterTimeout = newInterCharacterTimeout;
+        boolean oldInterCharacterTimeoutESet = interCharacterTimeoutESet;
+        interCharacterTimeoutESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__INTER_CHARACTER_TIMEOUT, oldInterCharacterTimeout, this.interCharacterTimeout, !oldInterCharacterTimeoutESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__INTER_CHARACTER_TIMEOUT, oldInterCharacterTimeout, interCharacterTimeout, !oldInterCharacterTimeoutESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetInterCharacterTimeout ()
     {
-        final float oldInterCharacterTimeout = this.interCharacterTimeout;
-        final boolean oldInterCharacterTimeoutESet = this.interCharacterTimeoutESet;
-        this.interCharacterTimeout = INTER_CHARACTER_TIMEOUT_EDEFAULT;
-        this.interCharacterTimeoutESet = false;
+        float oldInterCharacterTimeout = interCharacterTimeout;
+        boolean oldInterCharacterTimeoutESet = interCharacterTimeoutESet;
+        interCharacterTimeout = INTER_CHARACTER_TIMEOUT_EDEFAULT;
+        interCharacterTimeoutESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.DEVICE_TYPE__INTER_CHARACTER_TIMEOUT, oldInterCharacterTimeout, INTER_CHARACTER_TIMEOUT_EDEFAULT, oldInterCharacterTimeoutESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetInterCharacterTimeout ()
     {
-        return this.interCharacterTimeoutESet;
+        return interCharacterTimeoutESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public float getInterFrameDelay ()
     {
-        return this.interFrameDelay;
+        return interFrameDelay;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setInterFrameDelay ( final float newInterFrameDelay )
+    public void setInterFrameDelay ( float newInterFrameDelay )
     {
-        final float oldInterFrameDelay = this.interFrameDelay;
-        this.interFrameDelay = newInterFrameDelay;
-        final boolean oldInterFrameDelayESet = this.interFrameDelayESet;
-        this.interFrameDelayESet = true;
+        float oldInterFrameDelay = interFrameDelay;
+        interFrameDelay = newInterFrameDelay;
+        boolean oldInterFrameDelayESet = interFrameDelayESet;
+        interFrameDelayESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__INTER_FRAME_DELAY, oldInterFrameDelay, this.interFrameDelay, !oldInterFrameDelayESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__INTER_FRAME_DELAY, oldInterFrameDelay, interFrameDelay, !oldInterFrameDelayESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetInterFrameDelay ()
     {
-        final float oldInterFrameDelay = this.interFrameDelay;
-        final boolean oldInterFrameDelayESet = this.interFrameDelayESet;
-        this.interFrameDelay = INTER_FRAME_DELAY_EDEFAULT;
-        this.interFrameDelayESet = false;
+        float oldInterFrameDelay = interFrameDelay;
+        boolean oldInterFrameDelayESet = interFrameDelayESet;
+        interFrameDelay = INTER_FRAME_DELAY_EDEFAULT;
+        interFrameDelayESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.DEVICE_TYPE__INTER_FRAME_DELAY, oldInterFrameDelay, INTER_FRAME_DELAY_EDEFAULT, oldInterFrameDelayESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetInterFrameDelay ()
     {
-        return this.interFrameDelayESet;
+        return interFrameDelayESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public ParityType getParity ()
     {
-        return this.parity;
+        return parity;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setParity ( final ParityType newParity )
+    public void setParity ( ParityType newParity )
     {
-        final ParityType oldParity = this.parity;
-        this.parity = newParity == null ? PARITY_EDEFAULT : newParity;
-        final boolean oldParityESet = this.parityESet;
-        this.parityESet = true;
+        ParityType oldParity = parity;
+        parity = newParity == null ? PARITY_EDEFAULT : newParity;
+        boolean oldParityESet = parityESet;
+        parityESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__PARITY, oldParity, this.parity, !oldParityESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__PARITY, oldParity, parity, !oldParityESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetParity ()
     {
-        final ParityType oldParity = this.parity;
-        final boolean oldParityESet = this.parityESet;
-        this.parity = PARITY_EDEFAULT;
-        this.parityESet = false;
+        ParityType oldParity = parity;
+        boolean oldParityESet = parityESet;
+        parity = PARITY_EDEFAULT;
+        parityESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.DEVICE_TYPE__PARITY, oldParity, PARITY_EDEFAULT, oldParityESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetParity ()
     {
-        return this.parityESet;
+        return parityESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public short getPort ()
     {
-        return this.port;
+        return port;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setPort ( final short newPort )
+    public void setPort ( short newPort )
     {
-        final short oldPort = this.port;
-        this.port = newPort;
-        final boolean oldPortESet = this.portESet;
-        this.portESet = true;
+        short oldPort = port;
+        port = newPort;
+        boolean oldPortESet = portESet;
+        portESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__PORT, oldPort, this.port, !oldPortESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__PORT, oldPort, port, !oldPortESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetPort ()
     {
-        final short oldPort = this.port;
-        final boolean oldPortESet = this.portESet;
-        this.port = PORT_EDEFAULT;
-        this.portESet = false;
+        short oldPort = port;
+        boolean oldPortESet = portESet;
+        port = PORT_EDEFAULT;
+        portESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.DEVICE_TYPE__PORT, oldPort, PORT_EDEFAULT, oldPortESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetPort ()
     {
-        return this.portESet;
+        return portESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public ProtocolType getProtocol ()
     {
-        return this.protocol;
+        return protocol;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setProtocol ( final ProtocolType newProtocol )
+    public void setProtocol ( ProtocolType newProtocol )
     {
-        final ProtocolType oldProtocol = this.protocol;
-        this.protocol = newProtocol == null ? PROTOCOL_EDEFAULT : newProtocol;
-        final boolean oldProtocolESet = this.protocolESet;
-        this.protocolESet = true;
+        ProtocolType oldProtocol = protocol;
+        protocol = newProtocol == null ? PROTOCOL_EDEFAULT : newProtocol;
+        boolean oldProtocolESet = protocolESet;
+        protocolESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__PROTOCOL, oldProtocol, this.protocol, !oldProtocolESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__PROTOCOL, oldProtocol, protocol, !oldProtocolESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetProtocol ()
     {
-        final ProtocolType oldProtocol = this.protocol;
-        final boolean oldProtocolESet = this.protocolESet;
-        this.protocol = PROTOCOL_EDEFAULT;
-        this.protocolESet = false;
+        ProtocolType oldProtocol = protocol;
+        boolean oldProtocolESet = protocolESet;
+        protocol = PROTOCOL_EDEFAULT;
+        protocolESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.DEVICE_TYPE__PROTOCOL, oldProtocol, PROTOCOL_EDEFAULT, oldProtocolESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetProtocol ()
     {
-        return this.protocolESet;
+        return protocolESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public StopBitsType getStopBits ()
     {
-        return this.stopBits;
+        return stopBits;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void setStopBits ( final StopBitsType newStopBits )
+    public void setStopBits ( StopBitsType newStopBits )
     {
-        final StopBitsType oldStopBits = this.stopBits;
-        this.stopBits = newStopBits == null ? STOP_BITS_EDEFAULT : newStopBits;
-        final boolean oldStopBitsESet = this.stopBitsESet;
-        this.stopBitsESet = true;
+        StopBitsType oldStopBits = stopBits;
+        stopBits = newStopBits == null ? STOP_BITS_EDEFAULT : newStopBits;
+        boolean oldStopBitsESet = stopBitsESet;
+        stopBitsESet = true;
         if ( eNotificationRequired () )
-        {
-            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__STOP_BITS, oldStopBits, this.stopBits, !oldStopBitsESet ) );
-        }
+            eNotify ( new ENotificationImpl ( this, Notification.SET, ConfigurationPackage.DEVICE_TYPE__STOP_BITS, oldStopBits, stopBits, !oldStopBitsESet ) );
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public void unsetStopBits ()
     {
-        final StopBitsType oldStopBits = this.stopBits;
-        final boolean oldStopBitsESet = this.stopBitsESet;
-        this.stopBits = STOP_BITS_EDEFAULT;
-        this.stopBitsESet = false;
+        StopBitsType oldStopBits = stopBits;
+        boolean oldStopBitsESet = stopBitsESet;
+        stopBits = STOP_BITS_EDEFAULT;
+        stopBitsESet = false;
         if ( eNotificationRequired () )
-        {
             eNotify ( new ENotificationImpl ( this, Notification.UNSET, ConfigurationPackage.DEVICE_TYPE__STOP_BITS, oldStopBits, STOP_BITS_EDEFAULT, oldStopBitsESet ) );
-        }
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public boolean isSetStopBits ()
     {
-        return this.stopBitsESet;
+        return stopBitsESet;
     }
 
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public NotificationChain eInverseRemove ( final InternalEObject otherEnd, final int featureID, final NotificationChain msgs )
+    public NotificationChain eInverseRemove ( InternalEObject otherEnd, int featureID, NotificationChain msgs )
     {
         switch ( featureID )
         {
@@ -1038,19 +897,16 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public Object eGet ( final int featureID, final boolean resolve, final boolean coreType )
+    public Object eGet ( int featureID, boolean resolve, boolean coreType )
     {
         switch ( featureID )
         {
             case ConfigurationPackage.DEVICE_TYPE__GROUP:
                 if ( coreType )
-                {
                     return getGroup ();
-                }
                 return ( (FeatureMap.Internal)getGroup () ).getWrapper ();
             case ConfigurationPackage.DEVICE_TYPE__SLAVE:
                 return getSlave ();
@@ -1081,12 +937,11 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @SuppressWarnings ( "unchecked" )
     @Override
-    public void eSet ( final int featureID, final Object newValue )
+    public void eSet ( int featureID, Object newValue )
     {
         switch ( featureID )
         {
@@ -1134,11 +989,10 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public void eUnset ( final int featureID )
+    public void eUnset ( int featureID )
     {
         switch ( featureID )
         {
@@ -1185,16 +1039,15 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
-    public boolean eIsSet ( final int featureID )
+    public boolean eIsSet ( int featureID )
     {
         switch ( featureID )
         {
             case ConfigurationPackage.DEVICE_TYPE__GROUP:
-                return this.group != null && !this.group.isEmpty ();
+                return group != null && !group.isEmpty ();
             case ConfigurationPackage.DEVICE_TYPE__SLAVE:
                 return !getSlave ().isEmpty ();
             case ConfigurationPackage.DEVICE_TYPE__BAUD_RATE:
@@ -1202,9 +1055,9 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
             case ConfigurationPackage.DEVICE_TYPE__DATA_BITS:
                 return isSetDataBits ();
             case ConfigurationPackage.DEVICE_TYPE__HOST:
-                return HOST_EDEFAULT == null ? this.host != null : !HOST_EDEFAULT.equals ( this.host );
+                return HOST_EDEFAULT == null ? host != null : !HOST_EDEFAULT.equals ( host );
             case ConfigurationPackage.DEVICE_TYPE__ID:
-                return ID_EDEFAULT == null ? this.id != null : !ID_EDEFAULT.equals ( this.id );
+                return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals ( id );
             case ConfigurationPackage.DEVICE_TYPE__INTER_CHARACTER_TIMEOUT:
                 return isSetInterCharacterTimeout ();
             case ConfigurationPackage.DEVICE_TYPE__INTER_FRAME_DELAY:
@@ -1224,96 +1077,61 @@ public class DeviceTypeImpl extends MinimalEObjectImpl.Container implements Devi
     /**
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
-     * 
      * @generated
      */
     @Override
     public String toString ()
     {
         if ( eIsProxy () )
-        {
             return super.toString ();
-        }
 
-        final StringBuffer result = new StringBuffer ( super.toString () );
+        StringBuffer result = new StringBuffer ( super.toString () );
         result.append ( " (group: " ); //$NON-NLS-1$
-        result.append ( this.group );
+        result.append ( group );
         result.append ( ", baudRate: " ); //$NON-NLS-1$
-        if ( this.baudRateESet )
-        {
-            result.append ( this.baudRate );
-        }
+        if ( baudRateESet )
+            result.append ( baudRate );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", dataBits: " ); //$NON-NLS-1$
-        if ( this.dataBitsESet )
-        {
-            result.append ( this.dataBits );
-        }
+        if ( dataBitsESet )
+            result.append ( dataBits );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", host: " ); //$NON-NLS-1$
-        result.append ( this.host );
+        result.append ( host );
         result.append ( ", id: " ); //$NON-NLS-1$
-        result.append ( this.id );
+        result.append ( id );
         result.append ( ", interCharacterTimeout: " ); //$NON-NLS-1$
-        if ( this.interCharacterTimeoutESet )
-        {
-            result.append ( this.interCharacterTimeout );
-        }
+        if ( interCharacterTimeoutESet )
+            result.append ( interCharacterTimeout );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", interFrameDelay: " ); //$NON-NLS-1$
-        if ( this.interFrameDelayESet )
-        {
-            result.append ( this.interFrameDelay );
-        }
+        if ( interFrameDelayESet )
+            result.append ( interFrameDelay );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", parity: " ); //$NON-NLS-1$
-        if ( this.parityESet )
-        {
-            result.append ( this.parity );
-        }
+        if ( parityESet )
+            result.append ( parity );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", port: " ); //$NON-NLS-1$
-        if ( this.portESet )
-        {
-            result.append ( this.port );
-        }
+        if ( portESet )
+            result.append ( port );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", protocol: " ); //$NON-NLS-1$
-        if ( this.protocolESet )
-        {
-            result.append ( this.protocol );
-        }
+        if ( protocolESet )
+            result.append ( protocol );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ", stopBits: " ); //$NON-NLS-1$
-        if ( this.stopBitsESet )
-        {
-            result.append ( this.stopBits );
-        }
+        if ( stopBitsESet )
+            result.append ( stopBits );
         else
-        {
             result.append ( "<unset>" ); //$NON-NLS-1$
-        }
         result.append ( ')' );
         return result.toString ();
     }
