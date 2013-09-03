@@ -143,31 +143,13 @@ public interface ConfigurationPackage extends EPackage
     int DEVICE_TYPE__SLAVE = 1;
 
     /**
-     * The feature id for the '<em><b>Baud Rate</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int DEVICE_TYPE__BAUD_RATE = 2;
-
-    /**
-     * The feature id for the '<em><b>Data Bits</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int DEVICE_TYPE__DATA_BITS = 3;
-
-    /**
      * The feature id for the '<em><b>Host</b></em>' attribute.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      * @ordered
      */
-    int DEVICE_TYPE__HOST = 4;
+    int DEVICE_TYPE__HOST = 2;
 
     /**
      * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -176,16 +158,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int DEVICE_TYPE__ID = 5;
-
-    /**
-     * The feature id for the '<em><b>Inter Character Timeout</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int DEVICE_TYPE__INTER_CHARACTER_TIMEOUT = 6;
+    int DEVICE_TYPE__ID = 3;
 
     /**
      * The feature id for the '<em><b>Inter Frame Delay</b></em>' attribute.
@@ -194,16 +167,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int DEVICE_TYPE__INTER_FRAME_DELAY = 7;
-
-    /**
-     * The feature id for the '<em><b>Parity</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int DEVICE_TYPE__PARITY = 8;
+    int DEVICE_TYPE__INTER_FRAME_DELAY = 4;
 
     /**
      * The feature id for the '<em><b>Port</b></em>' attribute.
@@ -212,7 +176,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int DEVICE_TYPE__PORT = 9;
+    int DEVICE_TYPE__PORT = 5;
 
     /**
      * The feature id for the '<em><b>Protocol</b></em>' attribute.
@@ -221,16 +185,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int DEVICE_TYPE__PROTOCOL = 10;
-
-    /**
-     * The feature id for the '<em><b>Stop Bits</b></em>' attribute.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @ordered
-     */
-    int DEVICE_TYPE__STOP_BITS = 11;
+    int DEVICE_TYPE__PROTOCOL = 6;
 
     /**
      * The number of structural features of the '<em>Device Type</em>' class.
@@ -239,7 +194,7 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      * @ordered
      */
-    int DEVICE_TYPE_FEATURE_COUNT = 12;
+    int DEVICE_TYPE_FEATURE_COUNT = 7;
 
     /**
      * The number of operations of the '<em>Device Type</em>' class.
@@ -579,16 +534,6 @@ public interface ConfigurationPackage extends EPackage
     int ROOT_TYPE_OPERATION_COUNT = 0;
 
     /**
-     * The meta object id for the '{@link org.openscada.da.modbus.configuration.ParityType <em>Parity Type</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.openscada.da.modbus.configuration.ParityType
-     * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getParityType()
-     * @generated
-     */
-    int PARITY_TYPE = 6;
-
-    /**
      * The meta object id for the '{@link org.openscada.da.modbus.configuration.ProtocolType <em>Protocol Type</em>}' enum.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -596,17 +541,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getProtocolType()
      * @generated
      */
-    int PROTOCOL_TYPE = 7;
-
-    /**
-     * The meta object id for the '{@link org.openscada.da.modbus.configuration.StopBitsType <em>Stop Bits Type</em>}' enum.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.openscada.da.modbus.configuration.StopBitsType
-     * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getStopBitsType()
-     * @generated
-     */
-    int STOP_BITS_TYPE = 8;
+    int PROTOCOL_TYPE = 6;
 
     /**
      * The meta object id for the '{@link org.openscada.da.modbus.configuration.TypeType <em>Type Type</em>}' enum.
@@ -616,26 +551,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getTypeType()
      * @generated
      */
-    int TYPE_TYPE = 9;
-
-    /**
-     * The meta object id for the '<em>Data Bits Type</em>' data type.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getDataBitsType()
-     * @generated
-     */
-    int DATA_BITS_TYPE = 10;
-
-    /**
-     * The meta object id for the '<em>Data Bits Type Object</em>' data type.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see java.lang.Integer
-     * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getDataBitsTypeObject()
-     * @generated
-     */
-    int DATA_BITS_TYPE_OBJECT = 11;
+    int TYPE_TYPE = 7;
 
     /**
      * The meta object id for the '<em>Host Type</em>' data type.
@@ -645,7 +561,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getHostType()
      * @generated
      */
-    int HOST_TYPE = 12;
+    int HOST_TYPE = 8;
 
     /**
      * The meta object id for the '<em>Id Type</em>' data type.
@@ -655,7 +571,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getIdType()
      * @generated
      */
-    int ID_TYPE = 13;
+    int ID_TYPE = 9;
 
     /**
      * The meta object id for the '<em>Id Type1</em>' data type.
@@ -664,7 +580,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getIdType1()
      * @generated
      */
-    int ID_TYPE1 = 14;
+    int ID_TYPE1 = 10;
 
     /**
      * The meta object id for the '<em>Id Type Object</em>' data type.
@@ -674,17 +590,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getIdTypeObject()
      * @generated
      */
-    int ID_TYPE_OBJECT = 15;
-
-    /**
-     * The meta object id for the '<em>Parity Type Object</em>' data type.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.openscada.da.modbus.configuration.ParityType
-     * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getParityTypeObject()
-     * @generated
-     */
-    int PARITY_TYPE_OBJECT = 16;
+    int ID_TYPE_OBJECT = 11;
 
     /**
      * The meta object id for the '<em>Protocol Type Object</em>' data type.
@@ -694,7 +600,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getProtocolTypeObject()
      * @generated
      */
-    int PROTOCOL_TYPE_OBJECT = 17;
+    int PROTOCOL_TYPE_OBJECT = 12;
 
     /**
      * The meta object id for the '<em>Start Address Type</em>' data type.
@@ -704,17 +610,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getStartAddressType()
      * @generated
      */
-    int START_ADDRESS_TYPE = 18;
-
-    /**
-     * The meta object id for the '<em>Stop Bits Type Object</em>' data type.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.openscada.da.modbus.configuration.StopBitsType
-     * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getStopBitsTypeObject()
-     * @generated
-     */
-    int STOP_BITS_TYPE_OBJECT = 19;
+    int START_ADDRESS_TYPE = 13;
 
     /**
      * The meta object id for the '<em>Type Type Object</em>' data type.
@@ -724,7 +620,7 @@ public interface ConfigurationPackage extends EPackage
      * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getTypeTypeObject()
      * @generated
      */
-    int TYPE_TYPE_OBJECT = 20;
+    int TYPE_TYPE_OBJECT = 14;
 
     /**
      * Returns the meta object for class '{@link org.openscada.da.modbus.configuration.DevicesType <em>Devices Type</em>}'.
@@ -780,28 +676,6 @@ public interface ConfigurationPackage extends EPackage
     EReference getDeviceType_Slave ();
 
     /**
-     * Returns the meta object for the attribute '{@link org.openscada.da.modbus.configuration.DeviceType#getBaudRate <em>Baud Rate</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Baud Rate</em>'.
-     * @see org.openscada.da.modbus.configuration.DeviceType#getBaudRate()
-     * @see #getDeviceType()
-     * @generated
-     */
-    EAttribute getDeviceType_BaudRate ();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.openscada.da.modbus.configuration.DeviceType#getDataBits <em>Data Bits</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Data Bits</em>'.
-     * @see org.openscada.da.modbus.configuration.DeviceType#getDataBits()
-     * @see #getDeviceType()
-     * @generated
-     */
-    EAttribute getDeviceType_DataBits ();
-
-    /**
      * Returns the meta object for the attribute '{@link org.openscada.da.modbus.configuration.DeviceType#getHost <em>Host</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -824,17 +698,6 @@ public interface ConfigurationPackage extends EPackage
     EAttribute getDeviceType_Id ();
 
     /**
-     * Returns the meta object for the attribute '{@link org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout <em>Inter Character Timeout</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Inter Character Timeout</em>'.
-     * @see org.openscada.da.modbus.configuration.DeviceType#getInterCharacterTimeout()
-     * @see #getDeviceType()
-     * @generated
-     */
-    EAttribute getDeviceType_InterCharacterTimeout ();
-
-    /**
      * Returns the meta object for the attribute '{@link org.openscada.da.modbus.configuration.DeviceType#getInterFrameDelay <em>Inter Frame Delay</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -844,17 +707,6 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      */
     EAttribute getDeviceType_InterFrameDelay ();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.openscada.da.modbus.configuration.DeviceType#getParity <em>Parity</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Parity</em>'.
-     * @see org.openscada.da.modbus.configuration.DeviceType#getParity()
-     * @see #getDeviceType()
-     * @generated
-     */
-    EAttribute getDeviceType_Parity ();
 
     /**
      * Returns the meta object for the attribute '{@link org.openscada.da.modbus.configuration.DeviceType#getPort <em>Port</em>}'.
@@ -877,17 +729,6 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      */
     EAttribute getDeviceType_Protocol ();
-
-    /**
-     * Returns the meta object for the attribute '{@link org.openscada.da.modbus.configuration.DeviceType#getStopBits <em>Stop Bits</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for the attribute '<em>Stop Bits</em>'.
-     * @see org.openscada.da.modbus.configuration.DeviceType#getStopBits()
-     * @see #getDeviceType()
-     * @generated
-     */
-    EAttribute getDeviceType_StopBits ();
 
     /**
      * Returns the meta object for class '{@link org.openscada.da.modbus.configuration.DocumentRoot <em>Document Root</em>}'.
@@ -1194,16 +1035,6 @@ public interface ConfigurationPackage extends EPackage
     EReference getRootType_Devices ();
 
     /**
-     * Returns the meta object for enum '{@link org.openscada.da.modbus.configuration.ParityType <em>Parity Type</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for enum '<em>Parity Type</em>'.
-     * @see org.openscada.da.modbus.configuration.ParityType
-     * @generated
-     */
-    EEnum getParityType ();
-
-    /**
      * Returns the meta object for enum '{@link org.openscada.da.modbus.configuration.ProtocolType <em>Protocol Type</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1214,16 +1045,6 @@ public interface ConfigurationPackage extends EPackage
     EEnum getProtocolType ();
 
     /**
-     * Returns the meta object for enum '{@link org.openscada.da.modbus.configuration.StopBitsType <em>Stop Bits Type</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for enum '<em>Stop Bits Type</em>'.
-     * @see org.openscada.da.modbus.configuration.StopBitsType
-     * @generated
-     */
-    EEnum getStopBitsType ();
-
-    /**
      * Returns the meta object for enum '{@link org.openscada.da.modbus.configuration.TypeType <em>Type Type</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1232,29 +1053,6 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      */
     EEnum getTypeType ();
-
-    /**
-     * Returns the meta object for data type '<em>Data Bits Type</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for data type '<em>Data Bits Type</em>'.
-     * @model instanceClass="int"
-     *        extendedMetaData="name='dataBits_._type' baseType='http://www.eclipse.org/emf/2003/XMLType#int' whiteSpace='collapse' minInclusive='1' maxInclusive='8'"
-     * @generated
-     */
-    EDataType getDataBitsType ();
-
-    /**
-     * Returns the meta object for data type '{@link java.lang.Integer <em>Data Bits Type Object</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for data type '<em>Data Bits Type Object</em>'.
-     * @see java.lang.Integer
-     * @model instanceClass="java.lang.Integer"
-     *        extendedMetaData="name='dataBits_._type:Object' baseType='dataBits_._type'"
-     * @generated
-     */
-    EDataType getDataBitsTypeObject ();
 
     /**
      * Returns the meta object for data type '{@link java.lang.String <em>Host Type</em>}'.
@@ -1304,18 +1102,6 @@ public interface ConfigurationPackage extends EPackage
     EDataType getIdTypeObject ();
 
     /**
-     * Returns the meta object for data type '{@link org.openscada.da.modbus.configuration.ParityType <em>Parity Type Object</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for data type '<em>Parity Type Object</em>'.
-     * @see org.openscada.da.modbus.configuration.ParityType
-     * @model instanceClass="org.openscada.da.modbus.configuration.ParityType"
-     *        extendedMetaData="name='parity_._type:Object' baseType='parity_._type'"
-     * @generated
-     */
-    EDataType getParityTypeObject ();
-
-    /**
      * Returns the meta object for data type '{@link org.openscada.da.modbus.configuration.ProtocolType <em>Protocol Type Object</em>}'.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -1338,18 +1124,6 @@ public interface ConfigurationPackage extends EPackage
      * @generated
      */
     EDataType getStartAddressType ();
-
-    /**
-     * Returns the meta object for data type '{@link org.openscada.da.modbus.configuration.StopBitsType <em>Stop Bits Type Object</em>}'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @return the meta object for data type '<em>Stop Bits Type Object</em>'.
-     * @see org.openscada.da.modbus.configuration.StopBitsType
-     * @model instanceClass="org.openscada.da.modbus.configuration.StopBitsType"
-     *        extendedMetaData="name='stopBits_._type:Object' baseType='stopBits_._type'"
-     * @generated
-     */
-    EDataType getStopBitsTypeObject ();
 
     /**
      * Returns the meta object for data type '{@link org.openscada.da.modbus.configuration.TypeType <em>Type Type Object</em>}'.
@@ -1432,22 +1206,6 @@ public interface ConfigurationPackage extends EPackage
         EReference DEVICE_TYPE__SLAVE = eINSTANCE.getDeviceType_Slave ();
 
         /**
-         * The meta object literal for the '<em><b>Baud Rate</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute DEVICE_TYPE__BAUD_RATE = eINSTANCE.getDeviceType_BaudRate ();
-
-        /**
-         * The meta object literal for the '<em><b>Data Bits</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute DEVICE_TYPE__DATA_BITS = eINSTANCE.getDeviceType_DataBits ();
-
-        /**
          * The meta object literal for the '<em><b>Host</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1464,28 +1222,12 @@ public interface ConfigurationPackage extends EPackage
         EAttribute DEVICE_TYPE__ID = eINSTANCE.getDeviceType_Id ();
 
         /**
-         * The meta object literal for the '<em><b>Inter Character Timeout</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute DEVICE_TYPE__INTER_CHARACTER_TIMEOUT = eINSTANCE.getDeviceType_InterCharacterTimeout ();
-
-        /**
          * The meta object literal for the '<em><b>Inter Frame Delay</b></em>' attribute feature.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
          * @generated
          */
         EAttribute DEVICE_TYPE__INTER_FRAME_DELAY = eINSTANCE.getDeviceType_InterFrameDelay ();
-
-        /**
-         * The meta object literal for the '<em><b>Parity</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute DEVICE_TYPE__PARITY = eINSTANCE.getDeviceType_Parity ();
 
         /**
          * The meta object literal for the '<em><b>Port</b></em>' attribute feature.
@@ -1502,14 +1244,6 @@ public interface ConfigurationPackage extends EPackage
          * @generated
          */
         EAttribute DEVICE_TYPE__PROTOCOL = eINSTANCE.getDeviceType_Protocol ();
-
-        /**
-         * The meta object literal for the '<em><b>Stop Bits</b></em>' attribute feature.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        EAttribute DEVICE_TYPE__STOP_BITS = eINSTANCE.getDeviceType_StopBits ();
 
         /**
          * The meta object literal for the '{@link org.openscada.da.modbus.configuration.impl.DocumentRootImpl <em>Document Root</em>}' class.
@@ -1744,16 +1478,6 @@ public interface ConfigurationPackage extends EPackage
         EReference ROOT_TYPE__DEVICES = eINSTANCE.getRootType_Devices ();
 
         /**
-         * The meta object literal for the '{@link org.openscada.da.modbus.configuration.ParityType <em>Parity Type</em>}' enum.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.openscada.da.modbus.configuration.ParityType
-         * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getParityType()
-         * @generated
-         */
-        EEnum PARITY_TYPE = eINSTANCE.getParityType ();
-
-        /**
          * The meta object literal for the '{@link org.openscada.da.modbus.configuration.ProtocolType <em>Protocol Type</em>}' enum.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1764,16 +1488,6 @@ public interface ConfigurationPackage extends EPackage
         EEnum PROTOCOL_TYPE = eINSTANCE.getProtocolType ();
 
         /**
-         * The meta object literal for the '{@link org.openscada.da.modbus.configuration.StopBitsType <em>Stop Bits Type</em>}' enum.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.openscada.da.modbus.configuration.StopBitsType
-         * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getStopBitsType()
-         * @generated
-         */
-        EEnum STOP_BITS_TYPE = eINSTANCE.getStopBitsType ();
-
-        /**
          * The meta object literal for the '{@link org.openscada.da.modbus.configuration.TypeType <em>Type Type</em>}' enum.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1782,25 +1496,6 @@ public interface ConfigurationPackage extends EPackage
          * @generated
          */
         EEnum TYPE_TYPE = eINSTANCE.getTypeType ();
-
-        /**
-         * The meta object literal for the '<em>Data Bits Type</em>' data type.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getDataBitsType()
-         * @generated
-         */
-        EDataType DATA_BITS_TYPE = eINSTANCE.getDataBitsType ();
-
-        /**
-         * The meta object literal for the '<em>Data Bits Type Object</em>' data type.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see java.lang.Integer
-         * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getDataBitsTypeObject()
-         * @generated
-         */
-        EDataType DATA_BITS_TYPE_OBJECT = eINSTANCE.getDataBitsTypeObject ();
 
         /**
          * The meta object literal for the '<em>Host Type</em>' data type.
@@ -1842,16 +1537,6 @@ public interface ConfigurationPackage extends EPackage
         EDataType ID_TYPE_OBJECT = eINSTANCE.getIdTypeObject ();
 
         /**
-         * The meta object literal for the '<em>Parity Type Object</em>' data type.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.openscada.da.modbus.configuration.ParityType
-         * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getParityTypeObject()
-         * @generated
-         */
-        EDataType PARITY_TYPE_OBJECT = eINSTANCE.getParityTypeObject ();
-
-        /**
          * The meta object literal for the '<em>Protocol Type Object</em>' data type.
          * <!-- begin-user-doc -->
          * <!-- end-user-doc -->
@@ -1870,16 +1555,6 @@ public interface ConfigurationPackage extends EPackage
          * @generated
          */
         EDataType START_ADDRESS_TYPE = eINSTANCE.getStartAddressType ();
-
-        /**
-         * The meta object literal for the '<em>Stop Bits Type Object</em>' data type.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @see org.openscada.da.modbus.configuration.StopBitsType
-         * @see org.openscada.da.modbus.configuration.impl.ConfigurationPackageImpl#getStopBitsTypeObject()
-         * @generated
-         */
-        EDataType STOP_BITS_TYPE_OBJECT = eINSTANCE.getStopBitsTypeObject ();
 
         /**
          * The meta object literal for the '<em>Type Type Object</em>' data type.

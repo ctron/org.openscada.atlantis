@@ -8,17 +8,10 @@ Bundle-Activator: org.openscada.da.modbus.configuration.provider.ModbusEditPlugi
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.modbus.configuration.provider;version="1.2.0";
-  uses:="org.openscada.da.modbus.configuration.util,
-   org.eclipse.emf.ecore,
-   org.eclipse.emf.common.util,
-   org.eclipse.emf.common,
-   org.eclipse.emf.edit.provider,
-   org.eclipse.emf.common.notify,
-   org.eclipse.emf.edit.domain"
+Export-Package: org.openscada.da.modbus.configuration.provider;uses:="org.openscada.da.modbus.configuration.util,  org.eclipse.emf.ecore,  org.eclipse.emf.common.util,  org.eclipse.emf.common,  org.eclipse.emf.edit.provider,  org.eclipse.emf.common.notify,  org.eclipse.emf.edit.domain";version="1.2.0"
 Require-Bundle: org.eclipse.core.runtime,
- org.openscada.da.server.modbus;bundle-version="1.2.0";visibility:=reexport,
+ org.openscada.da.server.modbus;visibility:=reexport;bundle-version="1.2.0",
  org.eclipse.emf.edit;visibility:=reexport,
- org.openscada.da.server.common;bundle-version="1.2.0";visibility:=reexport,
- org.openscada.da.server.common.edit;bundle-version="1.2.0";visibility:=reexport
+ org.openscada.da.server.common;visibility:=reexport;bundle-version="1.2.0",
+ org.openscada.da.server.common.edit;visibility:=reexport;bundle-version="1.2.0"
 Bundle-ActivationPolicy: lazy

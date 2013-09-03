@@ -2,6 +2,7 @@
  * This file is part of the openSCADA project
  * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
  *
  * openSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -57,40 +58,36 @@ public class DeviceImpl extends StreamBaseDevice implements Device
 
     private final ModbusDeviceType deviceType;
 
-    @SuppressWarnings ( "unused" )
-    private final Rs232Information rs232Information;
-
-    @SuppressWarnings ( "unused" )
-    private final long interCharacterTimeout; // in nanoseconds!
-
     private final long interFrameDelay; // in nanoseconds!
 
     private final Set<DeviceListener> listeners = new CopyOnWriteArraySet<DeviceListener> ();
 
     private final AtomicReference<DeviceState> deviceState = new AtomicReference<DeviceState> ( DeviceState.IDLE );
 
-    final AtomicReference<ScheduledFuture<?>> submitterFuture = new AtomicReference<ScheduledFuture<?>> ( null );
+    private final AtomicReference<ScheduledFuture<?>> submitterFuture = new AtomicReference<ScheduledFuture<?>> ( null );
 
-    private ResetableCodecFactory codecFactory = null;
+    private ResetableCodecFactory codecFactory;
 
     private final Queue<RequestWrapper> requestQueue;
 
-    final AtomicReference<ScheduledFuture<?>> cancelFuture = new AtomicReference<ScheduledFuture<?>> ( null );
+    private final AtomicReference<ScheduledFuture<?>> cancelFuture = new AtomicReference<ScheduledFuture<?>> ( null );
 
-    private long requestTimeout = 1000 * 1000 * 1000; // 1s timeout in ns
+    private long requestTimeout;
 
-    public DeviceImpl ( final ScheduledExecutorService scheduler, final SocketAddress address, final ModbusDeviceType deviceType, final Rs232Information rs232Information, final long interFrameDelay, final long interCharacterTimeout, final Queue<RequestWrapper> requestQueue, final long timeout )
+    public DeviceImpl ( final ScheduledExecutorService scheduler, final SocketAddress address, final ModbusDeviceType deviceType, final long interFrameDelay, final Queue<RequestWrapper> requestQueue, final long timeout )
     {
         super ( address );
         this.scheduler = scheduler;
         this.deviceType = deviceType;
-        this.rs232Information = rs232Information;
         this.interFrameDelay = interFrameDelay;
-        this.interCharacterTimeout = interCharacterTimeout;
         this.requestQueue = requestQueue;
         if ( timeout > 0 )
         {
             this.requestTimeout = timeout * 1000 * 1000;
+        }
+        else
+        {
+            this.requestTimeout = 1000 * 1000 * 1000; // 1s timeout in ns
         }
     }
 
@@ -111,7 +108,7 @@ public class DeviceImpl extends StreamBaseDevice implements Device
         }
         else
         {
-            throw new IllegalArgumentException ( "ModbusDeviceType.ASCII is not implemented" );
+            throw new IllegalArgumentException ( String.format ( "%s is not implemented", this.deviceType ) );
         }
     }
 

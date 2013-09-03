@@ -47,7 +47,6 @@ import org.openscada.da.server.modbus.ModbusConstants;
 import org.openscada.da.server.modbus.ModbusDeviceType;
 import org.openscada.da.server.modbus.ModbusRegisterType;
 import org.openscada.da.server.modbus.ModbusType;
-import org.openscada.da.server.modbus.Rs232Information;
 import org.openscada.utils.concurrent.NamedThreadFactory;
 
 public class Hive extends HiveCommon
@@ -69,7 +68,6 @@ public class Hive extends HiveCommon
         for ( final DeviceType device : root.getDevices ().getDevice () )
         {
             final InetSocketAddress address = new InetSocketAddress ( device.getHost (), device.getPort () );
-            final Rs232Information rs232Information = new Rs232Information ( device.getBaudRate (), device.getParity (), device.getDataBits (), device.getStopBits () );
             // convert both values to nanoseconds! 
             final long interFrameDelay;
             if ( device.getInterFrameDelay () > 10 )
@@ -78,16 +76,7 @@ public class Hive extends HiveCommon
             }
             else
             {
-                interFrameDelay = new Double ( rs232Information.getCharLengthAsNano () * device.getInterFrameDelay () ).longValue ();
-            }
-            final long interCharacterTimeout;
-            if ( device.getInterCharacterTimeout () > 10 )
-            {
-                interCharacterTimeout = new Double ( device.getInterCharacterTimeout () ).longValue () * 1000;
-            }
-            else
-            {
-                interCharacterTimeout = new Double ( rs232Information.getCharLengthAsNano () * device.getInterCharacterTimeout () ).longValue ();
+                interFrameDelay = new Double ( 8 * device.getInterFrameDelay () ).longValue (); // assuming 8bits
             }
             final Map<Byte, SlaveDevice> slaves = toSlaveList ( device.getSlave () );
             ModbusDeviceType deviceType = ModbusDeviceType.RTU;
@@ -98,7 +87,7 @@ public class Hive extends HiveCommon
                     deviceType = t;
                 }
             }
-            new DeviceWrapper ( this, device.getId (), this.scheduler, rootFolder, address, deviceType, rs232Information, interFrameDelay, interCharacterTimeout, slaves );
+            new DeviceWrapper ( this, device.getId (), this.scheduler, rootFolder, address, deviceType, interFrameDelay, slaves );
         }
     }
 

@@ -9,22 +9,9 @@
   <genPackages prefix="Configuration" basePackage="org.openscada.da.modbus" resource="XML"
       disposableProviderFactory="true" extensibleProviderFactory="true" childCreationExtenders="true"
       ecorePackage="configuration.ecore#/">
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="configuration.ecore#//ParityType">
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ParityType/NONE"/>
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ParityType/EVEN"/>
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ParityType/ODD"/>
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ParityType/MARK"/>
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ParityType/SPACE"/>
-    </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="configuration.ecore#//ProtocolType">
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ProtocolType/TCP"/>
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ProtocolType/RTU"/>
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//ProtocolType/ASCII"/>
-    </genEnums>
-    <genEnums typeSafeEnumCompatible="false" ecoreEnum="configuration.ecore#//StopBitsType">
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//StopBitsType/_1"/>
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//StopBitsType/_15"/>
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//StopBitsType/_2"/>
     </genEnums>
     <genEnums typeSafeEnumCompatible="false" ecoreEnum="configuration.ecore#//TypeType">
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//TypeType/DEFAULT"/>
@@ -36,16 +23,12 @@
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//TypeType/FLOAT32"/>
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//TypeType/FLOAT64"/>
     </genEnums>
-    <genDataTypes ecoreDataType="configuration.ecore#//DataBitsType"/>
-    <genDataTypes ecoreDataType="configuration.ecore#//DataBitsTypeObject"/>
     <genDataTypes ecoreDataType="configuration.ecore#//HostType"/>
     <genDataTypes ecoreDataType="configuration.ecore#//IdType"/>
     <genDataTypes ecoreDataType="configuration.ecore#//IdType1"/>
     <genDataTypes ecoreDataType="configuration.ecore#//IdTypeObject"/>
-    <genDataTypes ecoreDataType="configuration.ecore#//ParityTypeObject"/>
     <genDataTypes ecoreDataType="configuration.ecore#//ProtocolTypeObject"/>
     <genDataTypes ecoreDataType="configuration.ecore#//StartAddressType"/>
-    <genDataTypes ecoreDataType="configuration.ecore#//StopBitsTypeObject"/>
     <genDataTypes ecoreDataType="configuration.ecore#//TypeTypeObject"/>
     <genClasses ecoreClass="configuration.ecore#//DevicesType">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference configuration.ecore#//DevicesType/device"/>
@@ -53,16 +36,11 @@
     <genClasses ecoreClass="configuration.ecore#//DeviceType">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/group"/>
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EReference configuration.ecore#//DeviceType/slave"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/baudRate"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/dataBits"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/host"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/id"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/interCharacterTimeout"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/interFrameDelay"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/parity"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/port"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/protocol"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DeviceType/stopBits"/>
     </genClasses>
     <genClasses ecoreClass="configuration.ecore#//DocumentRoot">
       <genFeatures property="None" notify="false" createChild="false" ecoreFeature="ecore:EAttribute configuration.ecore#//DocumentRoot/mixed"/>

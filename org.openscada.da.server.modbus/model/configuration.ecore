@@ -2,21 +2,6 @@
 <ecore:EPackage xmi:version="2.0" xmlns:xmi="http://www.omg.org/XMI" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
     xmlns:ecore="http://www.eclipse.org/emf/2002/Ecore" name="configuration" nsURI="http://openscada.org/DA/Modbus/Configuration"
     nsPrefix="configuration">
-  <eClassifiers xsi:type="ecore:EDataType" name="DataBitsType" instanceClassName="int">
-    <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-      <details key="name" value="dataBits_._type"/>
-      <details key="baseType" value="http://www.eclipse.org/emf/2003/XMLType#int"/>
-      <details key="whiteSpace" value="collapse"/>
-      <details key="minInclusive" value="1"/>
-      <details key="maxInclusive" value="8"/>
-    </eAnnotations>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="DataBitsTypeObject" instanceClassName="java.lang.Integer">
-    <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-      <details key="name" value="dataBits_._type:Object"/>
-      <details key="baseType" value="dataBits_._type"/>
-    </eAnnotations>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="DevicesType">
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
       <details key="name" value="DevicesType"/>
@@ -53,20 +38,6 @@
         <details key="group" value="#group:0"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="baudRate" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Int"
-        defaultValueLiteral="19200" unsettable="true">
-      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-        <details key="kind" value="attribute"/>
-        <details key="name" value="baudRate"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="dataBits" eType="#//DataBitsType"
-        defaultValueLiteral="8" unsettable="true">
-      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-        <details key="kind" value="attribute"/>
-        <details key="name" value="dataBits"/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="host" lowerBound="1" eType="#//HostType">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;The hostname or IP address of the device&#xA;&#x9;&#x9;&#x9;&#x9;"/>
@@ -85,26 +56,11 @@
         <details key="name" value="id"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="interCharacterTimeout"
-        eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Float" defaultValueLiteral="1.5"
-        unsettable="true">
-      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-        <details key="kind" value="attribute"/>
-        <details key="name" value="interCharacterTimeout"/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="interFrameDelay" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Float"
         defaultValueLiteral="3.5" unsettable="true">
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
         <details key="kind" value="attribute"/>
         <details key="name" value="interFrameDelay"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="parity" eType="#//ParityType"
-        defaultValueLiteral="NONE" unsettable="true">
-      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-        <details key="kind" value="attribute"/>
-        <details key="name" value="parity"/>
       </eAnnotations>
     </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="port" lowerBound="1" eType="ecore:EDataType http://www.eclipse.org/emf/2003/XMLType#//Short"
@@ -122,13 +78,6 @@
       <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
         <details key="kind" value="attribute"/>
         <details key="name" value="protocol"/>
-      </eAnnotations>
-    </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EAttribute" name="stopBits" eType="#//StopBitsType"
-        defaultValueLiteral="1" unsettable="true">
-      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-        <details key="kind" value="attribute"/>
-        <details key="name" value="stopBits"/>
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
@@ -353,29 +302,12 @@
       </eAnnotations>
     </eStructuralFeatures>
   </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="ParityType">
-    <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-      <details key="name" value="parity_._type"/>
-    </eAnnotations>
-    <eLiterals name="NONE"/>
-    <eLiterals name="EVEN" value="1"/>
-    <eLiterals name="ODD" value="2"/>
-    <eLiterals name="MARK" value="3"/>
-    <eLiterals name="SPACE" value="4"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="ParityTypeObject" instanceClassName="org.eclipse.emf.common.util.Enumerator">
-    <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-      <details key="name" value="parity_._type:Object"/>
-      <details key="baseType" value="parity_._type"/>
-    </eAnnotations>
-  </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="ProtocolType">
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
       <details key="name" value="protocol_._type"/>
     </eAnnotations>
     <eLiterals name="TCP"/>
     <eLiterals name="RTU" value="1"/>
-    <eLiterals name="ASCII" value="2"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="ProtocolTypeObject" instanceClassName="org.eclipse.emf.common.util.Enumerator">
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
@@ -402,20 +334,6 @@
       <details key="name" value="startAddress_._type"/>
       <details key="baseType" value="http://www.eclipse.org/emf/2003/XMLType#string"/>
       <details key="pattern" value="(0x[0-9a-fA-F]{4}|[0-9]{1,5})"/>
-    </eAnnotations>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EEnum" name="StopBitsType">
-    <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-      <details key="name" value="stopBits_._type"/>
-    </eAnnotations>
-    <eLiterals name="_1" literal="1"/>
-    <eLiterals name="_15" value="1" literal="1.5"/>
-    <eLiterals name="_2" value="2" literal="2"/>
-  </eClassifiers>
-  <eClassifiers xsi:type="ecore:EDataType" name="StopBitsTypeObject" instanceClassName="org.eclipse.emf.common.util.Enumerator">
-    <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-      <details key="name" value="stopBits_._type:Object"/>
-      <details key="baseType" value="stopBits_._type"/>
     </eAnnotations>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EEnum" name="TypeType">

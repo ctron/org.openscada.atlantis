@@ -62,44 +62,13 @@ public class DeviceTypeItemProvider extends ItemProviderAdapter implements IEdit
         {
             super.getPropertyDescriptors ( object );
 
-            addBaudRatePropertyDescriptor ( object );
-            addDataBitsPropertyDescriptor ( object );
             addHostPropertyDescriptor ( object );
             addIdPropertyDescriptor ( object );
-            addInterCharacterTimeoutPropertyDescriptor ( object );
             addInterFrameDelayPropertyDescriptor ( object );
-            addParityPropertyDescriptor ( object );
             addPortPropertyDescriptor ( object );
             addProtocolPropertyDescriptor ( object );
-            addStopBitsPropertyDescriptor ( object );
         }
         return itemPropertyDescriptors;
-    }
-
-    /**
-     * This adds a property descriptor for the Baud Rate feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addBaudRatePropertyDescriptor ( Object object )
-    {
-        itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_DeviceType_baudRate_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_DeviceType_baudRate_feature", "_UI_DeviceType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.DEVICE_TYPE__BAUD_RATE, true, false, false, ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null ) );
-    }
-
-    /**
-     * This adds a property descriptor for the Data Bits feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addDataBitsPropertyDescriptor ( Object object )
-    {
-        itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_DeviceType_dataBits_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_DeviceType_dataBits_feature", "_UI_DeviceType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.DEVICE_TYPE__DATA_BITS, true, false, false, ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -129,19 +98,6 @@ public class DeviceTypeItemProvider extends ItemProviderAdapter implements IEdit
     }
 
     /**
-     * This adds a property descriptor for the Inter Character Timeout feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addInterCharacterTimeoutPropertyDescriptor ( Object object )
-    {
-        itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_DeviceType_interCharacterTimeout_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_DeviceType_interCharacterTimeout_feature", "_UI_DeviceType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.DEVICE_TYPE__INTER_CHARACTER_TIMEOUT, true, false, false, ItemPropertyDescriptor.REAL_VALUE_IMAGE, null, null ) );
-    }
-
-    /**
      * This adds a property descriptor for the Inter Frame Delay feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -152,19 +108,6 @@ public class DeviceTypeItemProvider extends ItemProviderAdapter implements IEdit
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_DeviceType_interFrameDelay_feature" ), //$NON-NLS-1$
                 getString ( "_UI_PropertyDescriptor_description", "_UI_DeviceType_interFrameDelay_feature", "_UI_DeviceType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 ConfigurationPackage.Literals.DEVICE_TYPE__INTER_FRAME_DELAY, true, false, false, ItemPropertyDescriptor.REAL_VALUE_IMAGE, null, null ) );
-    }
-
-    /**
-     * This adds a property descriptor for the Parity feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addParityPropertyDescriptor ( Object object )
-    {
-        itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_DeviceType_parity_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_DeviceType_parity_feature", "_UI_DeviceType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.DEVICE_TYPE__PARITY, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -191,19 +134,6 @@ public class DeviceTypeItemProvider extends ItemProviderAdapter implements IEdit
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_DeviceType_protocol_feature" ), //$NON-NLS-1$
                 getString ( "_UI_PropertyDescriptor_description", "_UI_DeviceType_protocol_feature", "_UI_DeviceType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                 ConfigurationPackage.Literals.DEVICE_TYPE__PROTOCOL, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
-    }
-
-    /**
-     * This adds a property descriptor for the Stop Bits feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected void addStopBitsPropertyDescriptor ( Object object )
-    {
-        itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_DeviceType_stopBits_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_DeviceType_stopBits_feature", "_UI_DeviceType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.DEVICE_TYPE__STOP_BITS, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -279,16 +209,11 @@ public class DeviceTypeItemProvider extends ItemProviderAdapter implements IEdit
 
         switch ( notification.getFeatureID ( DeviceType.class ) )
         {
-            case ConfigurationPackage.DEVICE_TYPE__BAUD_RATE:
-            case ConfigurationPackage.DEVICE_TYPE__DATA_BITS:
             case ConfigurationPackage.DEVICE_TYPE__HOST:
             case ConfigurationPackage.DEVICE_TYPE__ID:
-            case ConfigurationPackage.DEVICE_TYPE__INTER_CHARACTER_TIMEOUT:
             case ConfigurationPackage.DEVICE_TYPE__INTER_FRAME_DELAY:
-            case ConfigurationPackage.DEVICE_TYPE__PARITY:
             case ConfigurationPackage.DEVICE_TYPE__PORT:
             case ConfigurationPackage.DEVICE_TYPE__PROTOCOL:
-            case ConfigurationPackage.DEVICE_TYPE__STOP_BITS:
                 fireNotifyChanged ( new ViewerNotification ( notification, notification.getNotifier (), false, true ) );
                 return;
             case ConfigurationPackage.DEVICE_TYPE__GROUP:

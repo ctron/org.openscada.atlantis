@@ -37,10 +37,8 @@ import org.openscada.da.modbus.configuration.DevicesType;
 import org.openscada.da.modbus.configuration.DocumentRoot;
 import org.openscada.da.modbus.configuration.ItemType;
 import org.openscada.da.modbus.configuration.ModbusSlave;
-import org.openscada.da.modbus.configuration.ParityType;
 import org.openscada.da.modbus.configuration.ProtocolType;
 import org.openscada.da.modbus.configuration.RootType;
-import org.openscada.da.modbus.configuration.StopBitsType;
 import org.openscada.da.modbus.configuration.TypeType;
 import org.openscada.da.modbus.configuration.util.ConfigurationValidator;
 
@@ -99,13 +97,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    private EEnum parityTypeEEnum = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     private EEnum protocolTypeEEnum = null;
 
     /**
@@ -113,28 +104,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    private EEnum stopBitsTypeEEnum = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     private EEnum typeTypeEEnum = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    private EDataType dataBitsTypeEDataType = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    private EDataType dataBitsTypeObjectEDataType = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -169,13 +139,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    private EDataType parityTypeObjectEDataType = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     private EDataType protocolTypeObjectEDataType = null;
 
     /**
@@ -184,13 +147,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     private EDataType startAddressTypeEDataType = null;
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    private EDataType stopBitsTypeObjectEDataType = null;
 
     /**
      * <!-- begin-user-doc -->
@@ -338,7 +294,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     @Override
-    public EAttribute getDeviceType_BaudRate ()
+    public EAttribute getDeviceType_Host ()
     {
         return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 2 );
     }
@@ -349,7 +305,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     @Override
-    public EAttribute getDeviceType_DataBits ()
+    public EAttribute getDeviceType_Id ()
     {
         return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 3 );
     }
@@ -360,7 +316,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     @Override
-    public EAttribute getDeviceType_Host ()
+    public EAttribute getDeviceType_InterFrameDelay ()
     {
         return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 4 );
     }
@@ -371,7 +327,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     @Override
-    public EAttribute getDeviceType_Id ()
+    public EAttribute getDeviceType_Port ()
     {
         return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 5 );
     }
@@ -382,64 +338,9 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     @Override
-    public EAttribute getDeviceType_InterCharacterTimeout ()
-    {
-        return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 6 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public EAttribute getDeviceType_InterFrameDelay ()
-    {
-        return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 7 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public EAttribute getDeviceType_Parity ()
-    {
-        return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 8 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public EAttribute getDeviceType_Port ()
-    {
-        return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 9 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
     public EAttribute getDeviceType_Protocol ()
     {
-        return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 10 );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public EAttribute getDeviceType_StopBits ()
-    {
-        return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 11 );
+        return (EAttribute)deviceTypeEClass.getEStructuralFeatures ().get ( 6 );
     }
 
     /**
@@ -756,17 +657,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     @Override
-    public EEnum getParityType ()
-    {
-        return parityTypeEEnum;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
     public EEnum getProtocolType ()
     {
         return protocolTypeEEnum;
@@ -778,42 +668,9 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     @Override
-    public EEnum getStopBitsType ()
-    {
-        return stopBitsTypeEEnum;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
     public EEnum getTypeType ()
     {
         return typeTypeEEnum;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public EDataType getDataBitsType ()
-    {
-        return dataBitsTypeEDataType;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public EDataType getDataBitsTypeObject ()
-    {
-        return dataBitsTypeObjectEDataType;
     }
 
     /**
@@ -866,17 +723,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * @generated
      */
     @Override
-    public EDataType getParityTypeObject ()
-    {
-        return parityTypeObjectEDataType;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
     public EDataType getProtocolTypeObject ()
     {
         return protocolTypeObjectEDataType;
@@ -891,17 +737,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
     public EDataType getStartAddressType ()
     {
         return startAddressTypeEDataType;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public EDataType getStopBitsTypeObject ()
-    {
-        return stopBitsTypeObjectEDataType;
     }
 
     /**
@@ -953,16 +788,11 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         deviceTypeEClass = createEClass ( DEVICE_TYPE );
         createEAttribute ( deviceTypeEClass, DEVICE_TYPE__GROUP );
         createEReference ( deviceTypeEClass, DEVICE_TYPE__SLAVE );
-        createEAttribute ( deviceTypeEClass, DEVICE_TYPE__BAUD_RATE );
-        createEAttribute ( deviceTypeEClass, DEVICE_TYPE__DATA_BITS );
         createEAttribute ( deviceTypeEClass, DEVICE_TYPE__HOST );
         createEAttribute ( deviceTypeEClass, DEVICE_TYPE__ID );
-        createEAttribute ( deviceTypeEClass, DEVICE_TYPE__INTER_CHARACTER_TIMEOUT );
         createEAttribute ( deviceTypeEClass, DEVICE_TYPE__INTER_FRAME_DELAY );
-        createEAttribute ( deviceTypeEClass, DEVICE_TYPE__PARITY );
         createEAttribute ( deviceTypeEClass, DEVICE_TYPE__PORT );
         createEAttribute ( deviceTypeEClass, DEVICE_TYPE__PROTOCOL );
-        createEAttribute ( deviceTypeEClass, DEVICE_TYPE__STOP_BITS );
 
         documentRootEClass = createEClass ( DOCUMENT_ROOT );
         createEAttribute ( documentRootEClass, DOCUMENT_ROOT__MIXED );
@@ -997,22 +827,16 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         createEReference ( rootTypeEClass, ROOT_TYPE__DEVICES );
 
         // Create enums
-        parityTypeEEnum = createEEnum ( PARITY_TYPE );
         protocolTypeEEnum = createEEnum ( PROTOCOL_TYPE );
-        stopBitsTypeEEnum = createEEnum ( STOP_BITS_TYPE );
         typeTypeEEnum = createEEnum ( TYPE_TYPE );
 
         // Create data types
-        dataBitsTypeEDataType = createEDataType ( DATA_BITS_TYPE );
-        dataBitsTypeObjectEDataType = createEDataType ( DATA_BITS_TYPE_OBJECT );
         hostTypeEDataType = createEDataType ( HOST_TYPE );
         idTypeEDataType = createEDataType ( ID_TYPE );
         idType1EDataType = createEDataType ( ID_TYPE1 );
         idTypeObjectEDataType = createEDataType ( ID_TYPE_OBJECT );
-        parityTypeObjectEDataType = createEDataType ( PARITY_TYPE_OBJECT );
         protocolTypeObjectEDataType = createEDataType ( PROTOCOL_TYPE_OBJECT );
         startAddressTypeEDataType = createEDataType ( START_ADDRESS_TYPE );
-        stopBitsTypeObjectEDataType = createEDataType ( STOP_BITS_TYPE_OBJECT );
         typeTypeObjectEDataType = createEDataType ( TYPE_TYPE_OBJECT );
     }
 
@@ -1057,16 +881,11 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         initEClass ( deviceTypeEClass, DeviceType.class, "DeviceType", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEAttribute ( getDeviceType_Group (), ecorePackage.getEFeatureMapEntry (), "group", null, 0, -1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEReference ( getDeviceType_Slave (), this.getModbusSlave (), null, "slave", null, 1, -1, DeviceType.class, IS_TRANSIENT, IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
-        initEAttribute ( getDeviceType_BaudRate (), theXMLTypePackage.getInt (), "baudRate", "19200", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$ //$NON-NLS-2$
-        initEAttribute ( getDeviceType_DataBits (), this.getDataBitsType (), "dataBits", "8", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$ //$NON-NLS-2$
         initEAttribute ( getDeviceType_Host (), this.getHostType (), "host", null, 1, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEAttribute ( getDeviceType_Id (), this.getIdType (), "id", null, 1, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
-        initEAttribute ( getDeviceType_InterCharacterTimeout (), theXMLTypePackage.getFloat (), "interCharacterTimeout", "1.5", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$ //$NON-NLS-2$
         initEAttribute ( getDeviceType_InterFrameDelay (), theXMLTypePackage.getFloat (), "interFrameDelay", "3.5", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$ //$NON-NLS-2$
-        initEAttribute ( getDeviceType_Parity (), this.getParityType (), "parity", "NONE", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$ //$NON-NLS-2$
         initEAttribute ( getDeviceType_Port (), theXMLTypePackage.getShort (), "port", null, 1, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
         initEAttribute ( getDeviceType_Protocol (), this.getProtocolType (), "protocol", "TCP", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$ //$NON-NLS-2$
-        initEAttribute ( getDeviceType_StopBits (), this.getStopBitsType (), "stopBits", "1", 0, 1, DeviceType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$ //$NON-NLS-2$
 
         initEClass ( documentRootEClass, DocumentRoot.class, "DocumentRoot", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEAttribute ( getDocumentRoot_Mixed (), ecorePackage.getEFeatureMapEntry (), "mixed", null, 0, -1, null, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
@@ -1101,22 +920,9 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         initEReference ( getRootType_Devices (), this.getDevicesType (), null, "devices", null, 1, 1, RootType.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED ); //$NON-NLS-1$
 
         // Initialize enums and add enum literals
-        initEEnum ( parityTypeEEnum, ParityType.class, "ParityType" ); //$NON-NLS-1$
-        addEEnumLiteral ( parityTypeEEnum, ParityType.NONE );
-        addEEnumLiteral ( parityTypeEEnum, ParityType.EVEN );
-        addEEnumLiteral ( parityTypeEEnum, ParityType.ODD );
-        addEEnumLiteral ( parityTypeEEnum, ParityType.MARK );
-        addEEnumLiteral ( parityTypeEEnum, ParityType.SPACE );
-
         initEEnum ( protocolTypeEEnum, ProtocolType.class, "ProtocolType" ); //$NON-NLS-1$
         addEEnumLiteral ( protocolTypeEEnum, ProtocolType.TCP );
         addEEnumLiteral ( protocolTypeEEnum, ProtocolType.RTU );
-        addEEnumLiteral ( protocolTypeEEnum, ProtocolType.ASCII );
-
-        initEEnum ( stopBitsTypeEEnum, StopBitsType.class, "StopBitsType" ); //$NON-NLS-1$
-        addEEnumLiteral ( stopBitsTypeEEnum, StopBitsType._1 );
-        addEEnumLiteral ( stopBitsTypeEEnum, StopBitsType._15 );
-        addEEnumLiteral ( stopBitsTypeEEnum, StopBitsType._2 );
 
         initEEnum ( typeTypeEEnum, TypeType.class, "TypeType" ); //$NON-NLS-1$
         addEEnumLiteral ( typeTypeEEnum, TypeType.DEFAULT );
@@ -1129,16 +935,12 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         addEEnumLiteral ( typeTypeEEnum, TypeType.FLOAT64 );
 
         // Initialize data types
-        initEDataType ( dataBitsTypeEDataType, int.class, "DataBitsType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
-        initEDataType ( dataBitsTypeObjectEDataType, Integer.class, "DataBitsTypeObject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEDataType ( hostTypeEDataType, String.class, "HostType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEDataType ( idTypeEDataType, String.class, "IdType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEDataType ( idType1EDataType, int.class, "IdType1", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEDataType ( idTypeObjectEDataType, Integer.class, "IdTypeObject", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
-        initEDataType ( parityTypeObjectEDataType, ParityType.class, "ParityTypeObject", IS_SERIALIZABLE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEDataType ( protocolTypeObjectEDataType, ProtocolType.class, "ProtocolTypeObject", IS_SERIALIZABLE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEDataType ( startAddressTypeEDataType, String.class, "StartAddressType", IS_SERIALIZABLE, !IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
-        initEDataType ( stopBitsTypeObjectEDataType, StopBitsType.class, "StopBitsTypeObject", IS_SERIALIZABLE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
         initEDataType ( typeTypeObjectEDataType, TypeType.class, "TypeTypeObject", IS_SERIALIZABLE, IS_GENERATED_INSTANCE_CLASS ); //$NON-NLS-1$
 
         // Create resource
@@ -1158,15 +960,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
     protected void createExtendedMetaDataAnnotations ()
     {
         String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData"; //$NON-NLS-1$		
-        addAnnotation ( dataBitsTypeEDataType, source, new String[] { "name", "dataBits_._type", //$NON-NLS-1$ //$NON-NLS-2$
-        "baseType", "http://www.eclipse.org/emf/2003/XMLType#int", //$NON-NLS-1$ //$NON-NLS-2$
-        "whiteSpace", "collapse", //$NON-NLS-1$ //$NON-NLS-2$
-        "minInclusive", "1", //$NON-NLS-1$ //$NON-NLS-2$
-        "maxInclusive", "8" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( dataBitsTypeObjectEDataType, source, new String[] { "name", "dataBits_._type:Object", //$NON-NLS-1$ //$NON-NLS-2$
-        "baseType", "dataBits_._type" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
         addAnnotation ( devicesTypeEClass, source, new String[] { "name", "DevicesType", //$NON-NLS-1$ //$NON-NLS-2$
         "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
         } );
@@ -1185,35 +978,20 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         "namespace", "##targetNamespace", //$NON-NLS-1$ //$NON-NLS-2$
         "group", "#group:0" //$NON-NLS-1$ //$NON-NLS-2$
         } );
-        addAnnotation ( getDeviceType_BaudRate (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "baudRate" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getDeviceType_DataBits (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "dataBits" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
         addAnnotation ( getDeviceType_Host (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
         "name", "host" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( getDeviceType_Id (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
         "name", "id" //$NON-NLS-1$ //$NON-NLS-2$
         } );
-        addAnnotation ( getDeviceType_InterCharacterTimeout (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "interCharacterTimeout" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
         addAnnotation ( getDeviceType_InterFrameDelay (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
         "name", "interFrameDelay" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getDeviceType_Parity (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "parity" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( getDeviceType_Port (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
         "name", "port" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( getDeviceType_Protocol (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
         "name", "protocol" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getDeviceType_StopBits (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "stopBits" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( documentRootEClass, source, new String[] { "name", "", //$NON-NLS-1$ //$NON-NLS-2$
         "kind", "mixed" //$NON-NLS-1$ //$NON-NLS-2$
@@ -1320,11 +1098,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         addAnnotation ( getModbusSlave_Name (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
         "name", "name" //$NON-NLS-1$ //$NON-NLS-2$
         } );
-        addAnnotation ( parityTypeEEnum, source, new String[] { "name", "parity_._type" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( parityTypeObjectEDataType, source, new String[] { "name", "parity_._type:Object", //$NON-NLS-1$ //$NON-NLS-2$
-        "baseType", "parity_._type" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
         addAnnotation ( protocolTypeEEnum, source, new String[] { "name", "protocol_._type" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( protocolTypeObjectEDataType, source, new String[] { "name", "protocol_._type:Object", //$NON-NLS-1$ //$NON-NLS-2$
@@ -1340,11 +1113,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         addAnnotation ( startAddressTypeEDataType, source, new String[] { "name", "startAddress_._type", //$NON-NLS-1$ //$NON-NLS-2$
         "baseType", "http://www.eclipse.org/emf/2003/XMLType#string", //$NON-NLS-1$ //$NON-NLS-2$
         "pattern", "(0x[0-9a-fA-F]{4}|[0-9]{1,5})" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( stopBitsTypeEEnum, source, new String[] { "name", "stopBits_._type" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( stopBitsTypeObjectEDataType, source, new String[] { "name", "stopBits_._type:Object", //$NON-NLS-1$ //$NON-NLS-2$
-        "baseType", "stopBits_._type" //$NON-NLS-1$ //$NON-NLS-2$
         } );
         addAnnotation ( typeTypeEEnum, source, new String[] { "name", "type_._type" //$NON-NLS-1$ //$NON-NLS-2$
         } );

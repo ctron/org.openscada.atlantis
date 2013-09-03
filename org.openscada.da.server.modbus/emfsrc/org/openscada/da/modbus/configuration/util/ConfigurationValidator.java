@@ -33,10 +33,8 @@ import org.openscada.da.modbus.configuration.DevicesType;
 import org.openscada.da.modbus.configuration.DocumentRoot;
 import org.openscada.da.modbus.configuration.ItemType;
 import org.openscada.da.modbus.configuration.ModbusSlave;
-import org.openscada.da.modbus.configuration.ParityType;
 import org.openscada.da.modbus.configuration.ProtocolType;
 import org.openscada.da.modbus.configuration.RootType;
-import org.openscada.da.modbus.configuration.StopBitsType;
 import org.openscada.da.modbus.configuration.TypeType;
 
 /**
@@ -137,18 +135,10 @@ public class ConfigurationValidator extends EObjectValidator
                 return validateModbusSlave ( (ModbusSlave)value, diagnostics, context );
             case ConfigurationPackage.ROOT_TYPE:
                 return validateRootType ( (RootType)value, diagnostics, context );
-            case ConfigurationPackage.PARITY_TYPE:
-                return validateParityType ( (ParityType)value, diagnostics, context );
             case ConfigurationPackage.PROTOCOL_TYPE:
                 return validateProtocolType ( (ProtocolType)value, diagnostics, context );
-            case ConfigurationPackage.STOP_BITS_TYPE:
-                return validateStopBitsType ( (StopBitsType)value, diagnostics, context );
             case ConfigurationPackage.TYPE_TYPE:
                 return validateTypeType ( (TypeType)value, diagnostics, context );
-            case ConfigurationPackage.DATA_BITS_TYPE:
-                return validateDataBitsType ( (Integer)value, diagnostics, context );
-            case ConfigurationPackage.DATA_BITS_TYPE_OBJECT:
-                return validateDataBitsTypeObject ( (Integer)value, diagnostics, context );
             case ConfigurationPackage.HOST_TYPE:
                 return validateHostType ( (String)value, diagnostics, context );
             case ConfigurationPackage.ID_TYPE:
@@ -157,14 +147,10 @@ public class ConfigurationValidator extends EObjectValidator
                 return validateIdType1 ( (Integer)value, diagnostics, context );
             case ConfigurationPackage.ID_TYPE_OBJECT:
                 return validateIdTypeObject ( (Integer)value, diagnostics, context );
-            case ConfigurationPackage.PARITY_TYPE_OBJECT:
-                return validateParityTypeObject ( (ParityType)value, diagnostics, context );
             case ConfigurationPackage.PROTOCOL_TYPE_OBJECT:
                 return validateProtocolTypeObject ( (ProtocolType)value, diagnostics, context );
             case ConfigurationPackage.START_ADDRESS_TYPE:
                 return validateStartAddressType ( (String)value, diagnostics, context );
-            case ConfigurationPackage.STOP_BITS_TYPE_OBJECT:
-                return validateStopBitsTypeObject ( (StopBitsType)value, diagnostics, context );
             case ConfigurationPackage.TYPE_TYPE_OBJECT:
                 return validateTypeTypeObject ( (TypeType)value, diagnostics, context );
             default:
@@ -237,27 +223,7 @@ public class ConfigurationValidator extends EObjectValidator
      * <!-- end-user-doc -->
      * @generated
      */
-    public boolean validateParityType ( ParityType parityType, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return true;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public boolean validateProtocolType ( ProtocolType protocolType, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return true;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateStopBitsType ( StopBitsType stopBitsType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
     }
@@ -270,76 +236,6 @@ public class ConfigurationValidator extends EObjectValidator
     public boolean validateTypeType ( TypeType typeType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateDataBitsType ( int dataBitsType, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        boolean result = validateDataBitsType_Min ( dataBitsType, diagnostics, context );
-        if ( result || diagnostics != null )
-            result &= validateDataBitsType_Max ( dataBitsType, diagnostics, context );
-        return result;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @see #validateDataBitsType_Min
-     */
-    public static final int DATA_BITS_TYPE__MIN__VALUE = 1;
-
-    /**
-     * Validates the Min constraint of '<em>Data Bits Type</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateDataBitsType_Min ( int dataBitsType, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        boolean result = dataBitsType >= DATA_BITS_TYPE__MIN__VALUE;
-        if ( !result && diagnostics != null )
-            reportMinViolation ( ConfigurationPackage.Literals.DATA_BITS_TYPE, dataBitsType, DATA_BITS_TYPE__MIN__VALUE, true, diagnostics, context );
-        return result;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @see #validateDataBitsType_Max
-     */
-    public static final int DATA_BITS_TYPE__MAX__VALUE = 8;
-
-    /**
-     * Validates the Max constraint of '<em>Data Bits Type</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateDataBitsType_Max ( int dataBitsType, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        boolean result = dataBitsType <= DATA_BITS_TYPE__MAX__VALUE;
-        if ( !result && diagnostics != null )
-            reportMaxViolation ( ConfigurationPackage.Literals.DATA_BITS_TYPE, dataBitsType, DATA_BITS_TYPE__MAX__VALUE, true, diagnostics, context );
-        return result;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateDataBitsTypeObject ( Integer dataBitsTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        boolean result = validateDataBitsType_Min ( dataBitsTypeObject, diagnostics, context );
-        if ( result || diagnostics != null )
-            result &= validateDataBitsType_Max ( dataBitsTypeObject, diagnostics, context );
-        return result;
     }
 
     /**
@@ -477,16 +373,6 @@ public class ConfigurationValidator extends EObjectValidator
      * <!-- end-user-doc -->
      * @generated
      */
-    public boolean validateParityTypeObject ( ParityType parityTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return true;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public boolean validateProtocolTypeObject ( ProtocolType protocolTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return true;
@@ -520,16 +406,6 @@ public class ConfigurationValidator extends EObjectValidator
     public boolean validateStartAddressType_Pattern ( String startAddressType, DiagnosticChain diagnostics, Map<Object, Object> context )
     {
         return validatePattern ( ConfigurationPackage.Literals.START_ADDRESS_TYPE, startAddressType, START_ADDRESS_TYPE__PATTERN__VALUES, diagnostics, context );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateStopBitsTypeObject ( StopBitsType stopBitsTypeObject, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return true;
     }
 
     /**

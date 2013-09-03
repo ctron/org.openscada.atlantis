@@ -48,7 +48,6 @@ import org.openscada.da.server.modbus.DeviceImpl;
 import org.openscada.da.server.modbus.DeviceListener;
 import org.openscada.da.server.modbus.ModbusDeviceType;
 import org.openscada.da.server.modbus.ModbusRegisterType;
-import org.openscada.da.server.modbus.Rs232Information;
 import org.openscada.da.server.modbus.driver.SlaveDevice.Block;
 import org.openscada.da.server.modbus.driver.SlaveDevice.ItemValue;
 import org.openscada.da.server.modbus.driver.SlaveDevice.Tag;
@@ -86,13 +85,9 @@ public class DeviceWrapper extends BaseDeviceWrapper implements DeviceListener
 
     private final ModbusDeviceType deviceType;
 
-    private final Rs232Information rs232Information;
-
     private final SocketAddress address;
 
     private final long interFrameDelay;
-
-    private final long interCharacterTimeout;
 
     private Device device;
 
@@ -107,7 +102,7 @@ public class DeviceWrapper extends BaseDeviceWrapper implements DeviceListener
 
     private final ConcurrentMap<Byte, Map<String, DataItemInputChained>> items = new ConcurrentHashMap<Byte, Map<String, DataItemInputChained>> ();
 
-    public DeviceWrapper ( final Hive hive, final String deviceTag, final ScheduledExecutorService scheduler, final FolderCommon rootFolder, final InetSocketAddress address, final ModbusDeviceType deviceType, final Rs232Information rs232Information, final long interFrameDelay, final long interCharacterTimeout, final Map<Byte, SlaveDevice> slaves )
+    public DeviceWrapper ( final Hive hive, final String deviceTag, final ScheduledExecutorService scheduler, final FolderCommon rootFolder, final InetSocketAddress address, final ModbusDeviceType deviceType, final long interFrameDelay, final Map<Byte, SlaveDevice> slaves )
     {
         super ( hive, deviceTag, scheduler, rootFolder );
         this.slaves.putAll ( slaves );
@@ -115,10 +110,8 @@ public class DeviceWrapper extends BaseDeviceWrapper implements DeviceListener
         // setup fields
         this.scheduler = scheduler;
         this.deviceType = deviceType;
-        this.rs232Information = rs232Information;
         this.address = address;
         this.interFrameDelay = interFrameDelay;
-        this.interCharacterTimeout = interCharacterTimeout;
 
         // setup items
         this.commandStateItem = createInput ( "commandState" );
@@ -132,7 +125,7 @@ public class DeviceWrapper extends BaseDeviceWrapper implements DeviceListener
     @Override
     protected BaseDevice createDevice ()
     {
-        this.device = new DeviceImpl ( this.scheduler, this.address, this.deviceType, this.rs232Information, this.interFrameDelay, this.interCharacterTimeout, this.requestQueue, REQUEST_TIMEOUT );
+        this.device = new DeviceImpl ( this.scheduler, this.address, this.deviceType, this.interFrameDelay, this.requestQueue, REQUEST_TIMEOUT );
         this.device.addDeviceListener ( this );
         return this.device;
     }

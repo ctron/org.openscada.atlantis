@@ -35,10 +35,8 @@ import org.openscada.da.modbus.configuration.DevicesType;
 import org.openscada.da.modbus.configuration.DocumentRoot;
 import org.openscada.da.modbus.configuration.ItemType;
 import org.openscada.da.modbus.configuration.ModbusSlave;
-import org.openscada.da.modbus.configuration.ParityType;
 import org.openscada.da.modbus.configuration.ProtocolType;
 import org.openscada.da.modbus.configuration.RootType;
-import org.openscada.da.modbus.configuration.StopBitsType;
 import org.openscada.da.modbus.configuration.TypeType;
 
 /**
@@ -120,18 +118,10 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     {
         switch ( eDataType.getClassifierID () )
         {
-            case ConfigurationPackage.PARITY_TYPE:
-                return createParityTypeFromString ( eDataType, initialValue );
             case ConfigurationPackage.PROTOCOL_TYPE:
                 return createProtocolTypeFromString ( eDataType, initialValue );
-            case ConfigurationPackage.STOP_BITS_TYPE:
-                return createStopBitsTypeFromString ( eDataType, initialValue );
             case ConfigurationPackage.TYPE_TYPE:
                 return createTypeTypeFromString ( eDataType, initialValue );
-            case ConfigurationPackage.DATA_BITS_TYPE:
-                return createDataBitsTypeFromString ( eDataType, initialValue );
-            case ConfigurationPackage.DATA_BITS_TYPE_OBJECT:
-                return createDataBitsTypeObjectFromString ( eDataType, initialValue );
             case ConfigurationPackage.HOST_TYPE:
                 return createHostTypeFromString ( eDataType, initialValue );
             case ConfigurationPackage.ID_TYPE:
@@ -140,14 +130,10 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
                 return createIdType1FromString ( eDataType, initialValue );
             case ConfigurationPackage.ID_TYPE_OBJECT:
                 return createIdTypeObjectFromString ( eDataType, initialValue );
-            case ConfigurationPackage.PARITY_TYPE_OBJECT:
-                return createParityTypeObjectFromString ( eDataType, initialValue );
             case ConfigurationPackage.PROTOCOL_TYPE_OBJECT:
                 return createProtocolTypeObjectFromString ( eDataType, initialValue );
             case ConfigurationPackage.START_ADDRESS_TYPE:
                 return createStartAddressTypeFromString ( eDataType, initialValue );
-            case ConfigurationPackage.STOP_BITS_TYPE_OBJECT:
-                return createStopBitsTypeObjectFromString ( eDataType, initialValue );
             case ConfigurationPackage.TYPE_TYPE_OBJECT:
                 return createTypeTypeObjectFromString ( eDataType, initialValue );
             default:
@@ -165,18 +151,10 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     {
         switch ( eDataType.getClassifierID () )
         {
-            case ConfigurationPackage.PARITY_TYPE:
-                return convertParityTypeToString ( eDataType, instanceValue );
             case ConfigurationPackage.PROTOCOL_TYPE:
                 return convertProtocolTypeToString ( eDataType, instanceValue );
-            case ConfigurationPackage.STOP_BITS_TYPE:
-                return convertStopBitsTypeToString ( eDataType, instanceValue );
             case ConfigurationPackage.TYPE_TYPE:
                 return convertTypeTypeToString ( eDataType, instanceValue );
-            case ConfigurationPackage.DATA_BITS_TYPE:
-                return convertDataBitsTypeToString ( eDataType, instanceValue );
-            case ConfigurationPackage.DATA_BITS_TYPE_OBJECT:
-                return convertDataBitsTypeObjectToString ( eDataType, instanceValue );
             case ConfigurationPackage.HOST_TYPE:
                 return convertHostTypeToString ( eDataType, instanceValue );
             case ConfigurationPackage.ID_TYPE:
@@ -185,14 +163,10 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
                 return convertIdType1ToString ( eDataType, instanceValue );
             case ConfigurationPackage.ID_TYPE_OBJECT:
                 return convertIdTypeObjectToString ( eDataType, instanceValue );
-            case ConfigurationPackage.PARITY_TYPE_OBJECT:
-                return convertParityTypeObjectToString ( eDataType, instanceValue );
             case ConfigurationPackage.PROTOCOL_TYPE_OBJECT:
                 return convertProtocolTypeObjectToString ( eDataType, instanceValue );
             case ConfigurationPackage.START_ADDRESS_TYPE:
                 return convertStartAddressTypeToString ( eDataType, instanceValue );
-            case ConfigurationPackage.STOP_BITS_TYPE_OBJECT:
-                return convertStopBitsTypeObjectToString ( eDataType, instanceValue );
             case ConfigurationPackage.TYPE_TYPE_OBJECT:
                 return convertTypeTypeObjectToString ( eDataType, instanceValue );
             default:
@@ -277,29 +251,6 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public ParityType createParityTypeFromString ( EDataType eDataType, String initialValue )
-    {
-        ParityType result = ParityType.get ( initialValue );
-        if ( result == null )
-            throw new IllegalArgumentException ( "The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName () + "'" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        return result;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String convertParityTypeToString ( EDataType eDataType, Object instanceValue )
-    {
-        return instanceValue == null ? null : instanceValue.toString ();
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public ProtocolType createProtocolTypeFromString ( EDataType eDataType, String initialValue )
     {
         ProtocolType result = ProtocolType.get ( initialValue );
@@ -314,29 +265,6 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
      * @generated
      */
     public String convertProtocolTypeToString ( EDataType eDataType, Object instanceValue )
-    {
-        return instanceValue == null ? null : instanceValue.toString ();
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public StopBitsType createStopBitsTypeFromString ( EDataType eDataType, String initialValue )
-    {
-        StopBitsType result = StopBitsType.get ( initialValue );
-        if ( result == null )
-            throw new IllegalArgumentException ( "The value '" + initialValue + "' is not a valid enumerator of '" + eDataType.getName () + "'" ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-        return result;
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String convertStopBitsTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return instanceValue == null ? null : instanceValue.toString ();
     }
@@ -362,46 +290,6 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     public String convertTypeTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return instanceValue == null ? null : instanceValue.toString ();
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Integer createDataBitsTypeFromString ( EDataType eDataType, String initialValue )
-    {
-        return (Integer)XMLTypeFactory.eINSTANCE.createFromString ( XMLTypePackage.Literals.INT, initialValue );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String convertDataBitsTypeToString ( EDataType eDataType, Object instanceValue )
-    {
-        return XMLTypeFactory.eINSTANCE.convertToString ( XMLTypePackage.Literals.INT, instanceValue );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public Integer createDataBitsTypeObjectFromString ( EDataType eDataType, String initialValue )
-    {
-        return createDataBitsTypeFromString ( ConfigurationPackage.Literals.DATA_BITS_TYPE, initialValue );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String convertDataBitsTypeObjectToString ( EDataType eDataType, Object instanceValue )
-    {
-        return convertDataBitsTypeToString ( ConfigurationPackage.Literals.DATA_BITS_TYPE, instanceValue );
     }
 
     /**
@@ -489,26 +377,6 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
-    public ParityType createParityTypeObjectFromString ( EDataType eDataType, String initialValue )
-    {
-        return createParityTypeFromString ( ConfigurationPackage.Literals.PARITY_TYPE, initialValue );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String convertParityTypeObjectToString ( EDataType eDataType, Object instanceValue )
-    {
-        return convertParityTypeToString ( ConfigurationPackage.Literals.PARITY_TYPE, instanceValue );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
     public ProtocolType createProtocolTypeObjectFromString ( EDataType eDataType, String initialValue )
     {
         return createProtocolTypeFromString ( ConfigurationPackage.Literals.PROTOCOL_TYPE, initialValue );
@@ -542,26 +410,6 @@ public class ConfigurationFactoryImpl extends EFactoryImpl implements Configurat
     public String convertStartAddressTypeToString ( EDataType eDataType, Object instanceValue )
     {
         return XMLTypeFactory.eINSTANCE.convertToString ( XMLTypePackage.Literals.STRING, instanceValue );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public StopBitsType createStopBitsTypeObjectFromString ( EDataType eDataType, String initialValue )
-    {
-        return createStopBitsTypeFromString ( ConfigurationPackage.Literals.STOP_BITS_TYPE, initialValue );
-    }
-
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public String convertStopBitsTypeObjectToString ( EDataType eDataType, Object instanceValue )
-    {
-        return convertStopBitsTypeToString ( ConfigurationPackage.Literals.STOP_BITS_TYPE, instanceValue );
     }
 
     /**

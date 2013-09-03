@@ -56,42 +56,6 @@
 				</restriction>
 			</simpleType>
 		</attribute>
-		<attribute name="baudRate" type="int" use="optional"
-			default="19200">
-		</attribute>
-		<attribute name="parity" use="optional" default="NONE">
-			<simpleType>
-				<restriction base="string">
-					<enumeration value="NONE"></enumeration>
-					<enumeration value="EVEN"></enumeration>
-					<enumeration value="ODD"></enumeration>
-					<enumeration value="MARK"></enumeration>
-					<enumeration value="SPACE"></enumeration>
-				</restriction>
-			</simpleType>
-		</attribute>
-		<attribute name="dataBits" default="8" use="optional">
-			<simpleType>
-				<restriction base="int">
-					<whiteSpace value="collapse"></whiteSpace>
-					<minInclusive value="1"></minInclusive>
-					<maxInclusive value="8"></maxInclusive>
-				</restriction>
-			</simpleType>
-		</attribute>
-		<attribute name="stopBits" use="optional" default="1">
-			<simpleType>
-				<restriction base="float">
-					<enumeration value="1"></enumeration>
-					<enumeration value="1.5"></enumeration>
-					<enumeration value="2"></enumeration>
-				</restriction>
-			</simpleType>
-		</attribute>
-
-		<attribute name="interCharacterTimeout" use="optional" default="1.5"
-			type="float">
-		</attribute>
 		<attribute name="interFrameDelay" type="float" use="optional"
 			default="3.5">
 		</attribute>
@@ -100,7 +64,6 @@
 				<restriction base="string">
 					<enumeration value="TCP"></enumeration>
 					<enumeration value="RTU"></enumeration>
-					<enumeration value="ASCII"></enumeration>
 				</restriction>
 			</simpleType>
 		</attribute>
