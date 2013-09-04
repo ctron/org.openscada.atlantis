@@ -114,11 +114,18 @@ public abstract class TimedEndDecoder implements ProtocolDecoder
 
     protected void tick ()
     {
+        LOGGER.trace ( "Checking contexts" );
+
+        int i = 0;
+
         // check each registered context object
         for ( final Context ctx : this.contextSet )
         {
             ctx.check ();
+            i++;
         }
+
+        LOGGER.trace ( "Checked {}", i );
     }
 
     @Override
@@ -205,7 +212,7 @@ public abstract class TimedEndDecoder implements ProtocolDecoder
      */
     public void tick ( final IoSession session, final ProtocolDecoderOutput out )
     {
-        getTimedContext ( session ).tick ( out );
+        getTimedContext ( session, true ).tick ( out );
     }
 
     /**
@@ -216,7 +223,11 @@ public abstract class TimedEndDecoder implements ProtocolDecoder
      */
     public void clear ( final IoSession session )
     {
-        getTimedContext ( session ).clear ();
+        final Context ctx = getTimedContext ( session, false );
+        if ( ctx != null )
+        {
+            ctx.clear ();
+        }
     }
 
     /**
@@ -226,10 +237,10 @@ public abstract class TimedEndDecoder implements ProtocolDecoder
      *            the session
      * @return the context
      */
-    private Context getTimedContext ( final IoSession session )
+    private Context getTimedContext ( final IoSession session, final boolean create )
     {
         Context ctx = (Context)session.getAttribute ( CONTEXT );
-        if ( ctx == null )
+        if ( ctx == null && create )
         {
             ctx = new Context ( this, this.timeout, session );
             registerContext ( ctx );
