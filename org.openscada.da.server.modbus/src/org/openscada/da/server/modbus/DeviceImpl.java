@@ -209,9 +209,12 @@ public class DeviceImpl extends StreamBaseDevice implements Device
                         {
                             listener.messageQueueEmpty ();
                         }
-                        if ( DeviceImpl.this.submitterFuture.get () != null )
+
+                        final ScheduledFuture<?> future = DeviceImpl.this.submitterFuture.getAndSet ( null );
+                        if ( future != null )
                         {
-                            DeviceImpl.this.submitterFuture.get ().cancel ( false );
+                            logger.trace ( "Cancel submitter future" );
+                            future.cancel ( false );
                         }
                     }
                     else
