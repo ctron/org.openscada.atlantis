@@ -72,11 +72,11 @@ public class Hive extends HiveCommon
             final long interFrameDelay;
             if ( device.getInterFrameDelay () > 10 )
             {
-                interFrameDelay = new Double ( device.getInterFrameDelay () ).longValue () * 1000;
+                interFrameDelay = Double.valueOf ( device.getInterFrameDelay () ).longValue () * 1000;
             }
             else
             {
-                interFrameDelay = new Double ( 8 * device.getInterFrameDelay () ).longValue (); // assuming 8bits
+                interFrameDelay = Double.valueOf ( 8 * device.getInterFrameDelay () ).longValue (); // assuming 8bits
             }
             final Map<Byte, SlaveDevice> slaves = toSlaveList ( device.getSlave () );
             ModbusDeviceType deviceType = ModbusDeviceType.RTU;
