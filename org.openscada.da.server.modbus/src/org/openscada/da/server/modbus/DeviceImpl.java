@@ -72,7 +72,7 @@ public class DeviceImpl extends StreamBaseDevice implements Device
 
     private final AtomicReference<ScheduledFuture<?>> cancelFuture = new AtomicReference<ScheduledFuture<?>> ( null );
 
-    private long requestTimeout;
+    private final long requestTimeout;
 
     public DeviceImpl ( final ScheduledExecutorService scheduler, final SocketAddress address, final ModbusDeviceType deviceType, final long interFrameDelay, final Queue<RequestWrapper> requestQueue, final long timeout )
     {
@@ -209,7 +209,7 @@ public class DeviceImpl extends StreamBaseDevice implements Device
                         {
                             listener.messageQueueEmpty ();
                         }
-                        if ( DeviceImpl.this.submitterFuture.get () == null )
+                        if ( DeviceImpl.this.submitterFuture.get () != null )
                         {
                             DeviceImpl.this.submitterFuture.get ().cancel ( false );
                         }
@@ -221,6 +221,7 @@ public class DeviceImpl extends StreamBaseDevice implements Device
                 }
             }
         };
+
         this.submitterFuture.set ( this.scheduler.scheduleAtFixedRate ( submitter, this.interFrameDelay, this.interFrameDelay, TimeUnit.NANOSECONDS ) );
     }
 
@@ -233,9 +234,10 @@ public class DeviceImpl extends StreamBaseDevice implements Device
             @Override
             public void run ()
             {
-                logger.warn ( "request timed out = {}, reset request queue", requestWrapper );
+                logger.warn ( "request timed out = {}", requestWrapper );
                 if ( Boolean.getBoolean ( "org.openscada.da.server.modbus.clearaftertimeout" ) )
                 {
+                    logger.info ( "reset request queue" );
                     DeviceImpl.this.requestQueue.clear ();
                     DeviceImpl.this.deviceState.set ( DeviceState.IDLE );
                 }

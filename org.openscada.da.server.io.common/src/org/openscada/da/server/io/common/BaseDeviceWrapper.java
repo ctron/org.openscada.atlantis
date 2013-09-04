@@ -110,7 +110,7 @@ public abstract class BaseDeviceWrapper implements ConnectionListener
                 }
                 catch ( final Throwable e )
                 {
-                    e.printStackTrace ();
+                    logger.debug ( "Failed to tick", e );
                 }
             }
         }, JOB_PERIOD, JOB_PERIOD, TimeUnit.MILLISECONDS );
