@@ -393,7 +393,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     private Collection<TypeEntry> parseConfig ( final Map<String, String> properties )
     {
         // 'definition' is: "var1:UDT:test:2 var2:BYTE:1 var3:BIT:1:0"
-        // 'attribute.XXX' is attribute for XXX : "attr1:BYTE:1 attr2:BIT:1:0"
+        // 'attribute.ABC' is attribute for ABC : "attr1:BYTE:1 attr2:BIT:1:0"
 
         final Collection<TypeEntry> result = new LinkedList<TypeEntry> ();
 
