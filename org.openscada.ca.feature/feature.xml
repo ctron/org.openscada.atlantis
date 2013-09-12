@@ -19,15 +19,15 @@ authority.
    </license>
 
    <requires>
-      <import plugin="org.openscada.utils"/>
-      <import plugin="org.openscada.utils.propertyeditors"/>
+      <import plugin="org.eclipse.scada.utils"/>
+      <import plugin="org.eclipse.scada.utils.propertyeditors"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.slf4j.api"/>
       <import plugin="javax.servlet"/>
       <import plugin="org.eclipse.osgi.services"/>
-      <import plugin="org.openscada.utils.osgi"/>
-      <import plugin="org.openscada.utils.osgi.jaxws"/>
-      <import plugin="org.openscada.utils.osgi.jdbc"/>
+      <import plugin="org.eclipse.scada.utils.osgi"/>
+      <import plugin="org.eclipse.scada.utils.osgi.jaxws"/>
+      <import plugin="org.eclipse.scada.utils.osgi.jdbc"/>
       <import plugin="com.google.gson"/>
    </requires>
 

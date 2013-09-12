@@ -22,7 +22,7 @@
    <requires>
       <import feature="org.openscada.external" version="1.1.0.qualifier"/>
       <import plugin="org.eclipse.osgi"/>
-      <import feature="org.openscada.sec" version="1.1.0.qualifier"/>
+      <import feature="org.eclipse.scada.sec" version="0.1.0.qualifier"/>
    </requires>
 
    <plugin

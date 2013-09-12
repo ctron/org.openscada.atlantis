@@ -22,11 +22,11 @@
          version="0.0.0"/>
 
    <requires>
-      <import plugin="org.openscada.core"/>
+      <import plugin="org.eclipse.scada.core"/>
       <import plugin="org.openscada.core.client"/>
       <import plugin="org.openscada.core.server"/>
-      <import plugin="org.openscada.sec"/>
-      <import plugin="org.openscada.utils"/>
+      <import plugin="org.eclipse.scada.sec"/>
+      <import plugin="org.eclipse.scada.utils"/>
       <import plugin="org.apache.mina.core"/>
       <import plugin="org.openscada.core.client.net"/>
       <import plugin="org.openscada.core.net"/>
@@ -34,22 +34,22 @@
       <import plugin="org.openscada.net"/>
       <import plugin="org.eclipse.osgi"/>
       <import plugin="org.openscada.core.connection.provider"/>
-      <import plugin="org.openscada.utils.osgi"/>
-      <import plugin="org.openscada.utils.filter"/>
-      <import plugin="org.openscada.utils.propertyeditors"/>
+      <import plugin="org.eclipse.scada.utils.osgi"/>
+      <import plugin="org.eclipse.scada.utils.filter"/>
+      <import plugin="org.eclipse.scada.utils.propertyeditors"/>
       <import plugin="com.google.guava"/>
       <import plugin="org.openscada.ca"/>
       <import plugin="org.openscada.core.server.common"/>
       <import plugin="org.openscada.da.client"/>
-      <import plugin="org.openscada.ds"/>
-      <import plugin="org.openscada.sec.osgi"/>
+      <import plugin="org.eclipse.scada.ds"/>
+      <import plugin="org.eclipse.scada.sec.osgi"/>
       <import plugin="org.openscada.ca.common"/>
       <import plugin="org.openscada.core.server.net"/>
       <import plugin="org.openscada.da.core.server"/>
       <import plugin="org.openscada.da.datasource"/>
       <import plugin="org.openscada.da.master"/>
-      <import plugin="org.openscada.utils.osgi.jdbc"/>
-      <import plugin="org.openscada.utils.osgi.jdbc.pool"/>
+      <import plugin="org.eclipse.scada.utils.osgi.jdbc"/>
+      <import plugin="org.eclipse.scada.utils.osgi.jdbc.pool"/>
       <import plugin="com.google.gson"/>
       <import plugin="javax.servlet"/>
       <import plugin="org.eclipse.osgi.services"/>
@@ -58,7 +58,7 @@
       <import plugin="org.openscada.core.data"/>
       <import plugin="org.openscada.core.subscription"/>
       <import plugin="org.slf4j.api"/>
-      <import plugin="org.openscada.core.info"/>
+      <import plugin="org.eclipse.scada.core.info"/>
       <import plugin="org.openscada.ae" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="org.openscada.ae.server.net" version="1.0.0" match="greaterOrEqual"/>
       <import plugin="osgi.enterprise"/>

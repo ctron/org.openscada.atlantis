@@ -23,11 +23,11 @@
       <import plugin="org.openscada.da.client"/>
       <import plugin="org.openscada.da.master"/>
       <import plugin="org.openscada.da.server.common"/>
-      <import feature="org.openscada.aurora" version="1.2.0.qualifier"/>
+      <import feature="org.eclipse.scada.aurora" version="0.1.0.qualifier"/>
       <import feature="org.openscada.external" version="1.2.0.qualifier"/>
       <import feature="org.openscada.core" version="1.2.0.qualifier"/>
       <import plugin="com.google.gson"/>
-      <import plugin="org.openscada.hds"/>
+      <import plugin="org.eclipse.scada.hds"/>
    </requires>
 
    <plugin
