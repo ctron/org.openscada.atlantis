@@ -31,9 +31,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.utils.filter.Filter;
 import org.openscada.ae.Event;
 import org.openscada.ae.server.storage.Query;
-import org.openscada.utils.filter.Filter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -23,8 +23,8 @@ package org.openscada.core.client.ngp;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.info.StatisticsImpl;
-import org.openscada.sec.callback.CallbackHandler;
+import org.eclipse.scada.core.info.StatisticsImpl;
+import org.eclipse.scada.sec.callback.CallbackHandler;
 
 public class CallbackHandlerManager
 {

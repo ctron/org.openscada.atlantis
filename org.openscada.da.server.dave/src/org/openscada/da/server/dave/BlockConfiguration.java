@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.dave;
 
-import org.openscada.utils.lang.Immutable;
+import org.eclipse.scada.utils.lang.Immutable;
 
 @Immutable
 public class BlockConfiguration

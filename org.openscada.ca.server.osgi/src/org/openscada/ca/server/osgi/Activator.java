@@ -25,11 +25,11 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.utils.concurrent.ExportedExecutorService;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.server.Service;
-import org.openscada.utils.concurrent.ExportedExecutorService;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

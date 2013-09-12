@@ -23,7 +23,7 @@ package org.openscada.da.server.common.chain.item;
 
 import java.util.regex.Pattern;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 
 /**
  * A chain item that summarizes based on a pattern.

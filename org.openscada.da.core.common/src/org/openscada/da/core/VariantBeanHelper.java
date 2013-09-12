@@ -31,8 +31,8 @@ import java.util.Map;
 import org.apache.commons.beanutils.ConvertUtilsBean2;
 import org.apache.commons.beanutils.Converter;
 import org.apache.commons.beanutils.converters.AbstractConverter;
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
 
 public class VariantBeanHelper
 {

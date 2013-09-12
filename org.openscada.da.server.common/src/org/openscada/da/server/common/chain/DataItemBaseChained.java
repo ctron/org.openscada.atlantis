@@ -32,7 +32,9 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.FutureTask;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResult;
@@ -41,8 +43,6 @@ import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.AttributeManager;
 import org.openscada.da.server.common.DataItemBase;
 import org.openscada.da.server.common.WriteAttributesHelper;
-import org.openscada.utils.concurrent.FutureTask;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemBaseChained extends DataItemBase
 {

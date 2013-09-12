@@ -6,9 +6,15 @@ Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-ManifestVersion: 2
 Bundle-SymbolicName: org.openscada.da.server.opc;singleton:=true
-Import-Package: org.jinterop.dcom.common;version="2.0.0",
+Import-Package: org.eclipse.scada.core;version="1.0.0",
+ org.eclipse.scada.sec;version="1.0.0",
+ org.eclipse.scada.utils.beans;version="1.0.0",
+ org.eclipse.scada.utils.collection;version="1.0.0",
+ org.eclipse.scada.utils.concurrent;version="1.0.0",
+ org.eclipse.scada.utils.init;version="1.2.0",
+ org.eclipse.scada.utils.str;version="1.0.0",
+ org.jinterop.dcom.common;version="2.0.0",
  org.jinterop.dcom.core;version="2.0.0",
- org.openscada.core;version="1.0.0",
  org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
  org.openscada.core.server.common;version="1.0.0",
@@ -33,12 +39,6 @@ Import-Package: org.jinterop.dcom.common;version="2.0.0",
  org.openscada.opc.lib.common;version="1.0.0",
  org.openscada.opc.lib.da;version="1.0.0",
  org.openscada.opc.lib.da.browser;version="1.0.0",
- org.openscada.sec;version="1.0.0",
- org.openscada.utils.beans;version="1.0.0",
- org.openscada.utils.collection;version="1.0.0",
- org.openscada.utils.concurrent;version="1.0.0",
- org.openscada.utils.init;version="1.2.0",
- org.openscada.utils.str;version="1.0.0",
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.opc.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",

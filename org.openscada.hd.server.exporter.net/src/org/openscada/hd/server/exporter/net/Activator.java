@@ -19,7 +19,7 @@
 
 package org.openscada.hd.server.exporter.net;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.net.Exporter;
 import org.osgi.framework.BundleActivator;

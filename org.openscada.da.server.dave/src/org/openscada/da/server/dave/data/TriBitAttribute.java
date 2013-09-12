@@ -22,7 +22,7 @@ package org.openscada.da.server.dave.data;
 import java.util.Map;
 
 import org.apache.mina.core.buffer.IoBuffer;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.dave.DaveDevice;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

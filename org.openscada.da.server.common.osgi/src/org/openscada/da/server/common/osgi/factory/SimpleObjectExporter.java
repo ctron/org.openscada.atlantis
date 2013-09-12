@@ -27,7 +27,7 @@ import java.beans.PropertyDescriptor;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.item.ChainCreator;

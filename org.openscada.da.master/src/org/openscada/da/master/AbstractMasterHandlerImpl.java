@@ -29,13 +29,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolListener;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolServiceTracker;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.pool.ObjectPoolListener;
-import org.openscada.utils.osgi.pool.ObjectPoolServiceTracker;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

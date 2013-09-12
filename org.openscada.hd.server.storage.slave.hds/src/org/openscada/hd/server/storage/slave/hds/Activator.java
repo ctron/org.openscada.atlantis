@@ -26,9 +26,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.hds.DataFilePool;
-import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
-import org.openscada.utils.str.StringReplacer;
+import org.eclipse.scada.hds.DataFilePool;
+import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
+import org.eclipse.scada.utils.str.StringReplacer;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 

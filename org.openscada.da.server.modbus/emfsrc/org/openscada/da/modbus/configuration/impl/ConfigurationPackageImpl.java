@@ -930,7 +930,6 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         addEEnumLiteral ( typeTypeEEnum, TypeType.INT16 );
         addEEnumLiteral ( typeTypeEEnum, TypeType.INT32 );
         addEEnumLiteral ( typeTypeEEnum, TypeType.INT64 );
-        addEEnumLiteral ( typeTypeEEnum, TypeType.FLOAT16 );
         addEEnumLiteral ( typeTypeEEnum, TypeType.FLOAT32 );
         addEEnumLiteral ( typeTypeEEnum, TypeType.FLOAT64 );
 

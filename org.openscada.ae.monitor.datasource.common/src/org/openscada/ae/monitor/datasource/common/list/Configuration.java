@@ -23,10 +23,10 @@ package org.openscada.ae.monitor.datasource.common.list;
 
 import java.util.Map;
 
+import org.eclipse.scada.core.Variant;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
 import org.openscada.ae.monitor.datasource.AbstractMasterItemMonitor;
 import org.openscada.ae.monitor.datasource.common.ListSeverity;
-import org.openscada.core.Variant;
 
 class Configuration extends AbstractConfiguration
 {

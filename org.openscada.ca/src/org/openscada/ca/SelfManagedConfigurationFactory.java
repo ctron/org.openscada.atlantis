@@ -21,7 +21,7 @@ package org.openscada.ca;
 
 import java.util.Map;
 
-import org.openscada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 
 public interface SelfManagedConfigurationFactory
 {

@@ -23,12 +23,12 @@ package org.openscada.ae.client;
 
 import java.util.Date;
 
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.core.data.OperationParameters;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 /**
  * Interface for client connection

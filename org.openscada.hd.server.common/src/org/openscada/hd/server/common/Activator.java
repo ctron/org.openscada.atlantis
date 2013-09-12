@@ -25,9 +25,9 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.utils.concurrent.ExportedExecutorService;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.common.internal.ServiceImpl;
-import org.openscada.utils.concurrent.ExportedExecutorService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

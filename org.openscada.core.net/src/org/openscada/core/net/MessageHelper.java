@@ -27,9 +27,9 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.NullValueException;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.data.OperationParameters;
 import org.openscada.core.data.UserInformation;
 import org.openscada.net.base.data.BooleanValue;

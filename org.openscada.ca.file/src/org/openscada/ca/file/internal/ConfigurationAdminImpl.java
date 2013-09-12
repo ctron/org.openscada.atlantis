@@ -39,11 +39,11 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.str.StringReplacer;
 import org.openscada.ca.common.AbstractConfigurationAdministrator;
 import org.openscada.ca.common.ConfigurationImpl;
 import org.openscada.ca.oscar.OscarLoader;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.str.StringReplacer;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

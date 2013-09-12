@@ -25,11 +25,11 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.utils.interner.InternerHelper;
 import org.openscada.ae.data.MonitorStatus;
 import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.utils.interner.InternerHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

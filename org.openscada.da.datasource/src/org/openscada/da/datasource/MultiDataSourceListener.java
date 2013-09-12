@@ -24,8 +24,8 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.VariantType;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.eclipse.scada.core.VariantType;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

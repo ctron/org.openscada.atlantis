@@ -24,9 +24,9 @@ import java.util.Dictionary;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.openscada.utils.osgi.pool.ObjectPoolListener;
-import org.openscada.utils.osgi.pool.ObjectPoolServiceTracker;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolListener;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolServiceTracker;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 
 public class MultiDataSourceTracker

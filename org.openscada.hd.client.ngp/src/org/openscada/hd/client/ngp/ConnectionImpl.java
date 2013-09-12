@@ -27,7 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Random;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ngp.ConnectionBaseImpl;
 import org.openscada.hd.ItemListListener;

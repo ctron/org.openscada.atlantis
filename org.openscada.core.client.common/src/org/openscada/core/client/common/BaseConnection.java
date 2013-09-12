@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.core.ConnectionInformation;
-import org.openscada.core.info.StatisticEntry;
-import org.openscada.core.info.StatisticsImpl;
-import org.openscada.core.info.StatisticsProvider;
-import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.core.info.StatisticEntry;
+import org.eclipse.scada.core.info.StatisticsImpl;
+import org.eclipse.scada.core.info.StatisticsProvider;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 
 public class BaseConnection implements StatisticsProvider
 {

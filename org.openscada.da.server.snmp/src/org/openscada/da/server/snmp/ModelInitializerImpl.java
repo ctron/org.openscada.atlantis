@@ -20,8 +20,8 @@
 
 package org.openscada.da.server.snmp;
 
+import org.eclipse.scada.utils.init.Initializer;
 import org.openscada.da.snmp.configuration.ConfigurationPackage;
-import org.openscada.utils.init.Initializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -24,13 +24,13 @@ package org.openscada.core.connection.provider;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import org.eclipse.scada.core.info.StatisticEntry;
+import org.eclipse.scada.core.info.StatisticsImpl;
+import org.eclipse.scada.core.info.StatisticsProvider;
+import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.core.client.Connection;
 import org.openscada.core.connection.provider.info.ConnectionInformationProvider;
-import org.openscada.core.info.StatisticEntry;
-import org.openscada.core.info.StatisticsImpl;
-import org.openscada.core.info.StatisticsProvider;
-import org.openscada.sec.callback.CallbackHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

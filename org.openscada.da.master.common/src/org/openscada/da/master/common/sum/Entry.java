@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.str.StringHelper;
 import org.openscada.da.client.DataItemValue.Builder;
-import org.openscada.utils.str.StringHelper;
 
 public class Entry
 {

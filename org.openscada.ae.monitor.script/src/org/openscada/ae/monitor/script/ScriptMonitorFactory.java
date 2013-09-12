@@ -4,15 +4,15 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 

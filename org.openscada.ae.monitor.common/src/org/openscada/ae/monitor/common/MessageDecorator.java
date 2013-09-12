@@ -21,10 +21,10 @@ package org.openscada.ae.monitor.common;
 
 import java.util.Map;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.lang.Immutable;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.core.Variant;
-import org.openscada.utils.lang.Immutable;
 
 @Immutable
 public class MessageDecorator implements MonitorDecorator

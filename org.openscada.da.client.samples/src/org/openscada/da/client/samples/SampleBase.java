@@ -21,7 +21,7 @@
 
 package org.openscada.da.client.samples;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectWaitController;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.ConnectionState;

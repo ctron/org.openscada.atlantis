@@ -30,15 +30,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.VariantEditor;
+import org.eclipse.scada.utils.filter.Assertion;
+import org.eclipse.scada.utils.filter.Filter;
+import org.eclipse.scada.utils.filter.FilterAssertion;
+import org.eclipse.scada.utils.filter.FilterExpression;
+import org.eclipse.scada.utils.filter.Operator;
+import org.eclipse.scada.utils.str.StringHelper;
 import org.openscada.ae.Event.Fields;
-import org.openscada.core.Variant;
-import org.openscada.core.VariantEditor;
-import org.openscada.utils.filter.Assertion;
-import org.openscada.utils.filter.Filter;
-import org.openscada.utils.filter.FilterAssertion;
-import org.openscada.utils.filter.FilterExpression;
-import org.openscada.utils.filter.Operator;
-import org.openscada.utils.str.StringHelper;
 
 public class SqlConverter
 {

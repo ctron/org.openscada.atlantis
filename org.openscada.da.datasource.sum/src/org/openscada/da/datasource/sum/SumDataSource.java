@@ -28,8 +28,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.DataItemValue;
@@ -40,9 +43,6 @@ import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceHandler;
 import org.openscada.da.datasource.MultiDataSourceListener;
 import org.openscada.da.datasource.base.AbstractDataSource;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

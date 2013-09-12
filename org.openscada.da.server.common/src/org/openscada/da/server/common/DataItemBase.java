@@ -23,7 +23,7 @@ package org.openscada.da.server.common;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.server.common.chain.DataItemBaseChained;
 import org.slf4j.Logger;

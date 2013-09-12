@@ -19,8 +19,8 @@
 
 package org.openscada.da.datasource.base;
 
-import org.openscada.core.Variant;
-import org.openscada.sec.UserInformation;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.UserInformation;
 
 public interface WriteHandler
 {

@@ -26,12 +26,12 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.utils.concurrent.ExportedExecutorService;
+import org.eclipse.scada.utils.osgi.pool.AllObjectPoolServiceTracker;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolListener;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.utils.concurrent.ExportedExecutorService;
-import org.openscada.utils.osgi.pool.AllObjectPoolServiceTracker;
-import org.openscada.utils.osgi.pool.ObjectPoolListener;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

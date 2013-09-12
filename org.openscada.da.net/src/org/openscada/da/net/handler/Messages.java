@@ -23,7 +23,8 @@ import java.util.EnumSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.lang.Holder;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.data.IODirection;
 import org.openscada.net.base.data.IntegerValue;
@@ -33,7 +34,6 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
-import org.openscada.utils.lang.Holder;
 
 public class Messages extends org.openscada.core.net.MessageHelper
 {

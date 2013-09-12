@@ -19,13 +19,13 @@
 
 package org.openscada.net.base;
 
+import org.eclipse.scada.utils.exec.LongRunningListener;
+import org.eclipse.scada.utils.exec.LongRunningState;
 import org.openscada.net.base.data.Message;
-import org.openscada.utils.exec.LongRunningListener;
-import org.openscada.utils.exec.LongRunningState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class LongRunningOperation implements org.openscada.utils.exec.LongRunningOperation
+public class LongRunningOperation implements org.eclipse.scada.utils.exec.LongRunningOperation
 {
 
     private final static Logger logger = LoggerFactory.getLogger ( LongRunningOperation.class );

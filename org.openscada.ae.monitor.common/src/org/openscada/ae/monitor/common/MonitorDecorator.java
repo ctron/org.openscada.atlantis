@@ -21,8 +21,8 @@ package org.openscada.ae.monitor.common;
 
 import java.util.Map;
 
+import org.eclipse.scada.core.Variant;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.core.Variant;
 
 public interface MonitorDecorator
 {

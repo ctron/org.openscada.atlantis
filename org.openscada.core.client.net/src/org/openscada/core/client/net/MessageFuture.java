@@ -20,9 +20,9 @@
 
 package org.openscada.core.client.net;
 
+import org.eclipse.scada.utils.concurrent.AbstractFuture;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
-import org.openscada.utils.concurrent.AbstractFuture;
 
 public abstract class MessageFuture<T> extends AbstractFuture<T> implements MessageStateListener
 {

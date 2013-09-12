@@ -21,13 +21,13 @@ package org.openscada.ae.monitor.datasource.common.remote;
 
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.common.DataItemMonitor;
 import org.openscada.ae.monitor.datasource.AbstractMonitorFactory;
 import org.openscada.da.master.MasterItem;
-import org.openscada.utils.osgi.pool.ManageableObjectPool;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
 public class RemoteAttributeMonitorFactoryImpl extends AbstractMonitorFactory

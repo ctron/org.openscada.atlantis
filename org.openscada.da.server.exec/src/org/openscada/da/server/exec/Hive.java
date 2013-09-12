@@ -26,7 +26,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 
 import org.eclipse.emf.common.util.URI;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.da.exec.configuration.RootType;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
@@ -35,7 +36,6 @@ import org.openscada.da.server.exec.command.ContinuousCommand;
 import org.openscada.da.server.exec.command.TriggerCommand;
 import org.openscada.da.server.exec.configuration.ConfigurationException;
 import org.openscada.da.server.exec.configuration.XmlConfigurator;
-import org.openscada.utils.collection.MapBuilder;
 
 public class Hive extends HiveCommon
 {

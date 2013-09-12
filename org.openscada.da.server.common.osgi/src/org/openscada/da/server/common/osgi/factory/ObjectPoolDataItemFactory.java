@@ -28,7 +28,8 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
 import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
@@ -37,7 +38,6 @@ import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.ItemFactory;
-import org.openscada.utils.osgi.pool.ManageableObjectPool;
 
 public class ObjectPoolDataItemFactory implements ItemFactory
 {

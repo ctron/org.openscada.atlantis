@@ -31,14 +31,14 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
-import org.openscada.utils.osgi.jdbc.CommonConnectionAccessor;
-import org.openscada.utils.osgi.jdbc.DataSourceConnectionAccessor;
-import org.openscada.utils.osgi.jdbc.data.RowMapper;
-import org.openscada.utils.osgi.jdbc.data.RowMapperAdapter;
-import org.openscada.utils.osgi.jdbc.data.RowMapperMappingException;
-import org.openscada.utils.osgi.jdbc.pool.PoolConnectionAccessor;
-import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
-import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
+import org.eclipse.scada.utils.osgi.jdbc.CommonConnectionAccessor;
+import org.eclipse.scada.utils.osgi.jdbc.DataSourceConnectionAccessor;
+import org.eclipse.scada.utils.osgi.jdbc.data.RowMapper;
+import org.eclipse.scada.utils.osgi.jdbc.data.RowMapperAdapter;
+import org.eclipse.scada.utils.osgi.jdbc.data.RowMapperMappingException;
+import org.eclipse.scada.utils.osgi.jdbc.pool.PoolConnectionAccessor;
+import org.eclipse.scada.utils.osgi.jdbc.task.CommonConnectionTask;
+import org.eclipse.scada.utils.osgi.jdbc.task.ConnectionContext;
 import org.osgi.service.jdbc.DataSourceFactory;
 
 public class JdbcStorageDAOImpl implements JdbcStorageDAO

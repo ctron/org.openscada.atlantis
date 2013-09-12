@@ -21,11 +21,11 @@ package org.openscada.da.datasource.base;
 
 import java.util.Map;
 
-import org.openscada.core.VariantType;
+import org.eclipse.scada.core.VariantType;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceHandler;
 import org.openscada.da.datasource.MultiDataSourceListener;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 
 public abstract class AbstractMultiSourceDataSource extends AbstractDataSource

@@ -25,14 +25,14 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.openscada.core.OperationException;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.info.StatisticsImpl;
+import org.eclipse.scada.utils.concurrent.ExecutorFuture;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.data.Request;
 import org.openscada.core.data.RequestMessage;
 import org.openscada.core.data.ResponseMessage;
-import org.openscada.core.info.StatisticsImpl;
-import org.openscada.utils.concurrent.ExecutorFuture;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public class ResponseManager
 {

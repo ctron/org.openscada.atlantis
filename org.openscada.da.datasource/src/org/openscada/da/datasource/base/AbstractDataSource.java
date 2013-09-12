@@ -28,7 +28,7 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;

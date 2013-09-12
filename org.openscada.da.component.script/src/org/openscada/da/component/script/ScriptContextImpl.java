@@ -28,7 +28,8 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.core.connection.provider.ConnectionIdTracker;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.core.server.OperationParametersHelper;
@@ -37,7 +38,6 @@ import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
 
 public class ScriptContextImpl implements ScriptContext

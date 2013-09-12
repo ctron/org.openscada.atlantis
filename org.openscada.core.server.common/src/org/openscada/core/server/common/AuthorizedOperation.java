@@ -23,17 +23,17 @@ package org.openscada.core.server.common;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import org.eclipse.scada.sec.AuthorizationReply;
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.AuthorizationResult;
+import org.eclipse.scada.sec.PermissionDeniedException;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.AbstractFuture;
+import org.eclipse.scada.utils.concurrent.FutureListener;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.data.OperationParameters;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.sec.AuthorizationReply;
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.PermissionDeniedException;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.AbstractFuture;
-import org.openscada.utils.concurrent.FutureListener;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 /**
  * @since 1.1

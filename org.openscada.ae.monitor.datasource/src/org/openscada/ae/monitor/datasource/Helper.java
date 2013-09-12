@@ -19,7 +19,7 @@
 
 package org.openscada.ae.monitor.datasource;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.client.DataItemValue.Builder;
 
 public class Helper

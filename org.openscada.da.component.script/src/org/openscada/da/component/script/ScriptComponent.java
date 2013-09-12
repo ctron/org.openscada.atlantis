@@ -30,10 +30,10 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
+import org.eclipse.scada.utils.script.ScriptExecutor;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
-import org.openscada.utils.script.ScriptExecutor;
 import org.osgi.framework.BundleContext;
 
 public class ScriptComponent

@@ -22,10 +22,10 @@ package org.openscada.da.server.exporter.mqtt;
 
 import java.util.Map;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolHelper;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.pool.ObjectPoolHelper;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 

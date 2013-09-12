@@ -24,15 +24,15 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.NullValueException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.SuspendableDataItem;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemOutputChained extends DataItemBaseChained implements SuspendableDataItem
 {

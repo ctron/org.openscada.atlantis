@@ -19,10 +19,10 @@
 
 package org.openscada.hd.server.proxy;
 
+import org.eclipse.scada.utils.osgi.FilterUtil;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.hd.server.common.HistoricalItem;
-import org.openscada.utils.osgi.FilterUtil;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;

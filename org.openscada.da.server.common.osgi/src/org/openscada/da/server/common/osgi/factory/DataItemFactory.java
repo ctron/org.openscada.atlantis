@@ -25,7 +25,7 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.AttributeWriteHandler;

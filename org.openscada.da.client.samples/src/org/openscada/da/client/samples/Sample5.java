@@ -25,7 +25,7 @@ import java.util.Map;
 import java.util.Observable;
 import java.util.Observer;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.client.DataItem;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemManager;

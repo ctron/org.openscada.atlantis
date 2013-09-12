@@ -23,7 +23,7 @@ package org.openscada.da.client.samples;
 
 import java.util.Collection;
 
-import org.openscada.core.OperationException;
+import org.eclipse.scada.core.OperationException;
 import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.FolderManager;
 import org.openscada.da.core.Location;

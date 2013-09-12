@@ -21,7 +21,7 @@ package org.openscada.net.mina;
 
 import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IoSession;
-import org.openscada.core.info.StatisticsImpl;
+import org.eclipse.scada.core.info.StatisticsImpl;
 import org.openscada.net.base.data.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

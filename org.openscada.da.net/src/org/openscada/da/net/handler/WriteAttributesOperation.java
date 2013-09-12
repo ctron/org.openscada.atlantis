@@ -23,7 +23,8 @@ package org.openscada.da.net.handler;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.lang.Holder;
 import org.openscada.core.data.OperationParameters;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.da.core.WriteAttributeResult;
@@ -34,7 +35,6 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.base.data.VoidValue;
-import org.openscada.utils.lang.Holder;
 
 public class WriteAttributesOperation
 {

@@ -31,12 +31,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.mina.core.future.WriteFuture;
-import org.openscada.core.info.StatisticsImpl;
+import org.eclipse.scada.core.info.StatisticsImpl;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.utils.MessageCreator;
-import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

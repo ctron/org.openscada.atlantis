@@ -21,10 +21,10 @@ package org.openscada.da.server.common;
 
 import java.util.EnumSet;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.da.data.IODirection;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemOutput extends DataItemBase
 {

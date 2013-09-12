@@ -30,10 +30,10 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;

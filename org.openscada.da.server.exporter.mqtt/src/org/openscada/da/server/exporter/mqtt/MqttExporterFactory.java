@@ -23,8 +23,8 @@ package org.openscada.da.server.exporter.mqtt;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
-import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

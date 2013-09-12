@@ -22,7 +22,7 @@ package org.openscada.da.connection.provider.internal;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import org.openscada.core.info.StatisticsImpl;
+import org.eclipse.scada.core.info.StatisticsImpl;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemUpdateListener;
 

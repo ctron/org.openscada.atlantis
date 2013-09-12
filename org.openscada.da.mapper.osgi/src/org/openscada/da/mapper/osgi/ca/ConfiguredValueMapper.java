@@ -21,9 +21,9 @@ package org.openscada.da.mapper.osgi.ca;
 
 import java.util.Map;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.VariantEditor;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.Variant;
-import org.openscada.core.VariantEditor;
 import org.openscada.da.mapper.AbstractValueMapper;
 import org.openscada.da.mapper.ValueMapper;
 

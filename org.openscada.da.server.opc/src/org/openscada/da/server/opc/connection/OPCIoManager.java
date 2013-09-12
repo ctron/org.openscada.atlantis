@@ -35,8 +35,12 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.beans.AbstractPropertyChange;
+import org.eclipse.scada.utils.concurrent.FutureTask;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.jinterop.dcom.core.JIVariant;
-import org.openscada.core.Variant;
 import org.openscada.da.server.opc.Helper;
 import org.openscada.da.server.opc.connection.data.ControllerState;
 import org.openscada.da.server.opc.job.Worker;
@@ -53,10 +57,6 @@ import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
-import org.openscada.utils.beans.AbstractPropertyChange;
-import org.openscada.utils.concurrent.FutureTask;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -21,9 +21,9 @@ package org.openscada.core.connection.provider;
 
 import java.util.Map;
 
-import org.openscada.utils.osgi.FilterUtil;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
+import org.eclipse.scada.utils.osgi.FilterUtil;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;

@@ -23,7 +23,7 @@ package org.openscada.da.component.script;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.WriteHandler;

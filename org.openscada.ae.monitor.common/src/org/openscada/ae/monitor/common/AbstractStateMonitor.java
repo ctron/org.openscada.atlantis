@@ -26,6 +26,8 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
@@ -34,8 +36,6 @@ import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.StateInformation.Builder;
-import org.openscada.core.Variant;
-import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

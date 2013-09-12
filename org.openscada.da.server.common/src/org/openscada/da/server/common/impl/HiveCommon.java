@@ -37,8 +37,19 @@ import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.openscada.core.InvalidSessionException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.AuthorizationReply;
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.AuthorizationResult;
+import org.eclipse.scada.sec.PermissionDeniedException;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.collection.MapBuilder;
+import org.eclipse.scada.utils.concurrent.CallingFuture;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.data.OperationParameters;
 import org.openscada.core.server.common.AuthorizationProvider;
 import org.openscada.core.server.common.AuthorizedOperation;
@@ -61,17 +72,6 @@ import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.common.factory.DataItemValidator;
 import org.openscada.da.server.common.impl.stats.HiveCommonStatisticsGenerator;
-import org.openscada.sec.AuthorizationReply;
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.PermissionDeniedException;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.concurrent.CallingFuture;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -506,7 +506,12 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
             @Override
             public void execute ( final Runnable command )
             {
-                getOperationServiceInstance ().execute ( command );
+                final Executor executor = getOperationServiceInstance ();
+                if ( executor == null )
+                {
+                    throw new IllegalStateException ( "Hive is disposed" );
+                }
+                executor.execute ( command );
             }
         };
     }

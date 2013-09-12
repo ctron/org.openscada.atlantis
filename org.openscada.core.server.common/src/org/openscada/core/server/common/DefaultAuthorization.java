@@ -20,16 +20,16 @@
 
 package org.openscada.core.server.common;
 
-import org.openscada.sec.AuthenticationImplementation;
-import org.openscada.sec.AuthorizationImplementation;
-import org.openscada.sec.AuthorizationReply;
-import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.auth.logon.LogonAuthorizationService;
-import org.openscada.sec.authz.AuthorizationContext;
-import org.openscada.sec.authz.AuthorizationRule;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.concurrent.TransformResultFuture;
+import org.eclipse.scada.sec.AuthenticationImplementation;
+import org.eclipse.scada.sec.AuthorizationImplementation;
+import org.eclipse.scada.sec.AuthorizationReply;
+import org.eclipse.scada.sec.AuthorizationResult;
+import org.eclipse.scada.sec.auth.logon.LogonAuthorizationService;
+import org.eclipse.scada.sec.authz.AuthorizationContext;
+import org.eclipse.scada.sec.authz.AuthorizationRule;
+import org.eclipse.scada.utils.concurrent.InstantFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.utils.concurrent.TransformResultFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

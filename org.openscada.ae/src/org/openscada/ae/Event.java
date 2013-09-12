@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.UUID;
 
-import org.openscada.core.Variant;
-import org.openscada.utils.lang.Immutable;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.lang.Immutable;
 
 /**
  * A class holding the AE event information

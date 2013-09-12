@@ -19,10 +19,10 @@
 
 package org.openscada.da.datasource;
 
-import org.openscada.core.VariantType;
+import org.eclipse.scada.core.VariantType;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

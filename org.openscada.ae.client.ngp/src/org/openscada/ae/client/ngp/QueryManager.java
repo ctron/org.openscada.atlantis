@@ -27,11 +27,11 @@ import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.ExecutorService;
 
+import org.eclipse.scada.core.OperationException;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.data.EventInformation;
 import org.openscada.ae.data.QueryState;
-import org.openscada.core.OperationException;
 import org.openscada.core.data.ErrorInformation;
 
 public class QueryManager

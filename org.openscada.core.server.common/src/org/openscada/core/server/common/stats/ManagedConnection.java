@@ -30,7 +30,7 @@ import java.util.Collection;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.openscada.core.info.StatisticEntry;
+import org.eclipse.scada.core.info.StatisticEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

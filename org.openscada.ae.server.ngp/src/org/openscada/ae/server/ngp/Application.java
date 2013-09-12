@@ -19,8 +19,8 @@
 
 package org.openscada.ae.server.ngp;
 
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.ae.server.Service;
-import org.openscada.core.ConnectionInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

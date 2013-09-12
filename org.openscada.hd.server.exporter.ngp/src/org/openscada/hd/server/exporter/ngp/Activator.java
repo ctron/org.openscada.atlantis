@@ -19,11 +19,11 @@
 
 package org.openscada.hd.server.exporter.ngp;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.ngp.Exporter;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

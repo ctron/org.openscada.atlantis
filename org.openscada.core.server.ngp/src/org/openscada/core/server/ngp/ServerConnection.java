@@ -28,8 +28,8 @@ import javax.net.ssl.SSLSession;
 
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.ssl.SslFilter;
-import org.openscada.core.info.StatisticEntry;
-import org.openscada.core.info.StatisticsImpl;
+import org.eclipse.scada.core.info.StatisticEntry;
+import org.eclipse.scada.core.info.StatisticsImpl;
 import org.openscada.core.server.common.stats.ManagedConnection;
 import org.openscada.protocol.common.StatisticsFilter;
 import org.openscada.protocol.ngp.common.mc.MessageChannelFilter;
@@ -87,7 +87,7 @@ public abstract class ServerConnection
                     return null;
                 }
             }
-        }, session.getRemoteAddress (), "org.openscada.core.server.ngp" );
+        }, session.getRemoteAddress (), "org.eclipse.scada.core.server.ngp" );
 
         this.statistics.setLabel ( STATS_MESSAGES_SENT, "Messages sent" );
         this.statistics.setLabel ( STATS_MESSAGES_RECEIVED, "Messages received" );

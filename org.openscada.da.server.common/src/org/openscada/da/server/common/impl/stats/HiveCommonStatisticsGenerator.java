@@ -23,9 +23,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.utils.concurrent.NamedThreadFactory;
 
 public class HiveCommonStatisticsGenerator extends HiveStatisticsGenerator
 {

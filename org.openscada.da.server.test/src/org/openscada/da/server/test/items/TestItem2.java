@@ -25,10 +25,13 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.NullValueException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.InstantFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.data.IODirection;
@@ -37,9 +40,6 @@ import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.common.chain.item.SumErrorChainItem;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public class TestItem2 extends MemoryItemChained
 {

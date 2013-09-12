@@ -22,12 +22,12 @@ package org.openscada.sec.osgi.manager;
 
 import java.util.Map;
 
-import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.AuthorizationService;
-import org.openscada.sec.authz.AuthorizationContext;
-import org.openscada.sec.authz.AuthorizationRule;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.sec.AuthorizationResult;
+import org.eclipse.scada.sec.AuthorizationService;
+import org.eclipse.scada.sec.authz.AuthorizationContext;
+import org.eclipse.scada.sec.authz.AuthorizationRule;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

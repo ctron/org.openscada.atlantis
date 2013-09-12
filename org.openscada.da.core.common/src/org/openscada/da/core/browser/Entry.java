@@ -21,7 +21,7 @@ package org.openscada.da.core.browser;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 
 public interface Entry
 {

@@ -28,14 +28,14 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.scada.utils.collection.BoundedPriorityQueueSet;
+import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
+import org.eclipse.scada.utils.filter.FilterParser;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.server.storage.BaseStorage;
 import org.openscada.ae.server.storage.Query;
 import org.openscada.ae.server.storage.StoreListener;
-import org.openscada.utils.collection.BoundedPriorityQueueSet;
-import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
-import org.openscada.utils.filter.FilterParser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

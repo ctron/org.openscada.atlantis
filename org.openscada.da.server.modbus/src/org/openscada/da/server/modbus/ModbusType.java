@@ -22,9 +22,9 @@ package org.openscada.da.server.modbus;
 
 import java.nio.ByteBuffer;
 
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.NullValueException;
+import org.eclipse.scada.core.Variant;
 
 public enum ModbusType
 {
@@ -32,7 +32,6 @@ public enum ModbusType
     INT16 ( 1 ),
     INT32 ( 2 ),
     INT64 ( 4 ),
-    FLOAT16 ( 1 ),
     FLOAT32 ( 2 ),
     FLOAT64 ( 4 );
 
@@ -78,8 +77,6 @@ public enum ModbusType
             case INT64:
                 buffer.putLong ( value.asLong () );
                 break;
-            case FLOAT16:
-                throw new NotConvertableException ( value );
             case FLOAT32:
                 buffer.putFloat ( (float)value.asDouble () );
                 break;

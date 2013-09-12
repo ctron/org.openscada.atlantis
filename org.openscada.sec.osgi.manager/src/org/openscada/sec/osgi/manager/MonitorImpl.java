@@ -20,11 +20,11 @@
 
 package org.openscada.sec.osgi.manager;
 
-import org.openscada.sec.AuthorizationReply;
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.authz.AuthorizationContext;
-import org.openscada.sec.osgi.AuthorizationTracker.Listener;
-import org.openscada.sec.osgi.AuthorizationTracker.Monitor;
+import org.eclipse.scada.sec.AuthorizationReply;
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.authz.AuthorizationContext;
+import org.eclipse.scada.sec.osgi.AuthorizationTracker.Listener;
+import org.eclipse.scada.sec.osgi.AuthorizationTracker.Monitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

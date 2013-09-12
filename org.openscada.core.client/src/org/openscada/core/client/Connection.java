@@ -24,9 +24,9 @@ package org.openscada.core.client;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.core.ConnectionInformation;
-import org.openscada.sec.callback.CallbackFactory;
-import org.openscada.sec.callback.CallbackHandler;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.sec.callback.CallbackFactory;
+import org.eclipse.scada.sec.callback.CallbackHandler;
 
 public interface Connection
 {

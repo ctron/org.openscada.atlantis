@@ -25,15 +25,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
+import org.eclipse.scada.utils.str.StringHelper;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.MasterItem;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.utils.str.StringHelper;
 import org.osgi.framework.Constants;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

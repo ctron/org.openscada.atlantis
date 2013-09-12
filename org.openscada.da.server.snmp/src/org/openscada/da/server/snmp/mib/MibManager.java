@@ -20,10 +20,10 @@
 
 package org.openscada.da.server.snmp.mib;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.snmp.configuration.MibsType;
-import org.openscada.utils.collection.MapBuilder;
 
 public interface MibManager
 {

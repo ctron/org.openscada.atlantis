@@ -34,10 +34,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.regex.Pattern;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.NullValueException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
+import org.eclipse.scada.utils.lifecycle.LifecycleAware;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.ItemManager;
@@ -58,8 +60,6 @@ import org.openscada.da.server.proxy.item.ProxyWriteHandlerImpl;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.da.server.proxy.utils.ProxyUtils;
-import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.lifecycle.LifecycleAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

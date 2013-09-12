@@ -26,7 +26,7 @@ import java.util.Set;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -89,16 +89,6 @@ public enum TypeType implements Enumerator
     INT64 ( 4, "INT64", "INT64" ), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
-     * The '<em><b>FLOAT16</b></em>' literal object.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see #FLOAT16_VALUE
-     * @generated
-     * @ordered
-     */
-    FLOAT16 ( 5, "FLOAT16", "FLOAT16" ), //$NON-NLS-1$ //$NON-NLS-2$
-
-    /**
      * The '<em><b>FLOAT32</b></em>' literal object.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -106,7 +96,7 @@ public enum TypeType implements Enumerator
      * @generated
      * @ordered
      */
-    FLOAT32 ( 6, "FLOAT32", "FLOAT32" ), //$NON-NLS-1$ //$NON-NLS-2$
+    FLOAT32 ( 5, "FLOAT32", "FLOAT32" ), //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * The '<em><b>FLOAT64</b></em>' literal object.
@@ -116,7 +106,7 @@ public enum TypeType implements Enumerator
      * @generated
      * @ordered
      */
-    FLOAT64 ( 7, "FLOAT64", "FLOAT64" ); //$NON-NLS-1$ //$NON-NLS-2$
+    FLOAT64 ( 6, "FLOAT64", "FLOAT64" ); //$NON-NLS-1$ //$NON-NLS-2$
 
     /**
      * The '<em><b>DEFAULT</b></em>' literal value.
@@ -194,21 +184,6 @@ public enum TypeType implements Enumerator
     public static final int INT64_VALUE = 4;
 
     /**
-     * The '<em><b>FLOAT16</b></em>' literal value.
-     * <!-- begin-user-doc -->
-     * <p>
-     * If the meaning of '<em><b>FLOAT16</b></em>' literal object isn't clear,
-     * there really should be more of a description here...
-     * </p>
-     * <!-- end-user-doc -->
-     * @see #FLOAT16
-     * @model
-     * @generated
-     * @ordered
-     */
-    public static final int FLOAT16_VALUE = 5;
-
-    /**
      * The '<em><b>FLOAT32</b></em>' literal value.
      * <!-- begin-user-doc -->
      * <p>
@@ -221,7 +196,7 @@ public enum TypeType implements Enumerator
      * @generated
      * @ordered
      */
-    public static final int FLOAT32_VALUE = 6;
+    public static final int FLOAT32_VALUE = 5;
 
     /**
      * The '<em><b>FLOAT64</b></em>' literal value.
@@ -236,7 +211,7 @@ public enum TypeType implements Enumerator
      * @generated
      * @ordered
      */
-    public static final int FLOAT64_VALUE = 7;
+    public static final int FLOAT64_VALUE = 6;
 
     /**
      * An array of all the '<em><b>Type Type</b></em>' enumerators.
@@ -244,7 +219,7 @@ public enum TypeType implements Enumerator
      * <!-- end-user-doc -->
      * @generated
      */
-    private static final TypeType[] VALUES_ARRAY = new TypeType[] { DEFAULT, BOOLEAN, INT16, INT32, INT64, FLOAT16, FLOAT32, FLOAT64, };
+    private static final TypeType[] VALUES_ARRAY = new TypeType[] { DEFAULT, BOOLEAN, INT16, INT32, INT64, FLOAT32, FLOAT64, };
 
     /**
      * A public read-only list of all the '<em><b>Type Type</b></em>' enumerators.
@@ -312,8 +287,6 @@ public enum TypeType implements Enumerator
                 return INT32;
             case INT64_VALUE:
                 return INT64;
-            case FLOAT16_VALUE:
-                return FLOAT16;
             case FLOAT32_VALUE:
                 return FLOAT32;
             case FLOAT64_VALUE:

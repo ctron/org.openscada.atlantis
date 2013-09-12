@@ -30,11 +30,11 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
+import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.pool.ManageableObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

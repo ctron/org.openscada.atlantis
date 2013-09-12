@@ -22,8 +22,8 @@ package org.openscada.da.server.dave;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.scada.utils.osgi.FilterUtil;
 import org.openscada.protocols.dave.DaveReadRequest.Request;
-import org.openscada.utils.osgi.FilterUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.ServiceReference;

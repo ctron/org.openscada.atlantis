@@ -26,10 +26,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicReference;
 
+import org.eclipse.scada.hds.ValueVisitor;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.data.QueryParameters;
-import org.openscada.hds.ValueVisitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

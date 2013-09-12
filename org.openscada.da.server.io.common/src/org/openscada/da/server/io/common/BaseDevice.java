@@ -31,4 +31,6 @@ public interface BaseDevice
 
     public abstract void connect ();
 
+    public abstract void dispose ();
+
 }

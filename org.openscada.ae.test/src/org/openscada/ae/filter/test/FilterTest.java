@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.scada.core.Variant;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openscada.ae.Event;
 import org.openscada.ae.server.storage.Query;
 import org.openscada.ae.server.storage.memory.MemoryStorage;
-import org.openscada.core.Variant;
 
 public class FilterTest
 {

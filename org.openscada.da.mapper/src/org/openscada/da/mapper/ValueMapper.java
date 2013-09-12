@@ -19,7 +19,7 @@
 
 package org.openscada.da.mapper;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 
 public interface ValueMapper
 {

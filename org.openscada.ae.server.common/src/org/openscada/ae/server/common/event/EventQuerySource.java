@@ -27,11 +27,11 @@ import java.util.List;
 import java.util.Queue;
 import java.util.Set;
 
+import org.eclipse.scada.utils.collection.BoundedPriorityQueueSet;
 import org.openscada.ae.Event;
 import org.openscada.ae.server.EventListener;
 import org.openscada.core.subscription.SubscriptionInformation;
 import org.openscada.core.subscription.SubscriptionSource;
-import org.openscada.utils.collection.BoundedPriorityQueueSet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

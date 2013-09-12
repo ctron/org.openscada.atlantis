@@ -24,10 +24,10 @@ package org.openscada.da.server.proxy.configuration;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.ConnectionInformation;
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.NullValueException;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.da.client.Connection;
 import org.openscada.da.proxy.configuration.ConnectionType;

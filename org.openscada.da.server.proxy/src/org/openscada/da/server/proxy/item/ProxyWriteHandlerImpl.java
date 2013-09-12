@@ -24,8 +24,9 @@ package org.openscada.da.server.proxy.item;
 import java.util.Collections;
 import java.util.Map;
 
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.AbstractFuture;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.core.server.OperationParametersHelper;
@@ -37,7 +38,6 @@ import org.openscada.da.server.proxy.connection.ProxySubConnection;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
 import org.openscada.da.server.proxy.utils.ProxyUtils;
-import org.openscada.utils.concurrent.AbstractFuture;
 
 public class ProxyWriteHandlerImpl extends ProxyItemSupport implements ProxyWriteHandler
 {
@@ -92,7 +92,7 @@ public class ProxyWriteHandlerImpl extends ProxyItemSupport implements ProxyWrit
     }
 
     /* (non-Javadoc)
-     * @see org.openscada.da.server.proxy.ProxyWriteHandler#write(java.lang.String, org.openscada.core.Variant)
+     * @see org.openscada.da.server.proxy.ProxyWriteHandler#write(java.lang.String, org.eclipse.scada.core.Variant)
      */
     @Override
     public void write ( final String itemId, final Variant value, final OperationParameters operationParameters ) throws NoConnectionException, OperationException

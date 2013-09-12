@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 
+import org.eclipse.scada.utils.concurrent.FutureTask;
 import org.openscada.da.server.opc.job.Worker;
 import org.openscada.da.server.opc.job.impl.SyncReadJob;
 import org.openscada.da.server.opc.job.impl.SyncWriteJob;
@@ -38,7 +39,6 @@ import org.openscada.opc.dcom.da.OPCDATASOURCE;
 import org.openscada.opc.dcom.da.OPCITEMSTATE;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
-import org.openscada.utils.concurrent.FutureTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

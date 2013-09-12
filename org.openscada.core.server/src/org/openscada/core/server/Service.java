@@ -23,11 +23,11 @@ package org.openscada.core.server;
 
 import java.util.Properties;
 
-import org.openscada.core.InvalidSessionException;
-import org.openscada.core.UnableToCreateSessionException;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.lifecycle.LifecycleAware;
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.core.UnableToCreateSessionException;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.utils.lifecycle.LifecycleAware;
 
 public interface Service<S extends Session> extends LifecycleAware
 {

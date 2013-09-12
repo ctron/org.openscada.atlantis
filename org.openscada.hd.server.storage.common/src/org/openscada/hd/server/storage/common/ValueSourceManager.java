@@ -21,8 +21,8 @@
 
 package org.openscada.hd.server.storage.common;
 
+import org.eclipse.scada.hds.ValueVisitor;
 import org.openscada.hd.data.QueryParameters;
-import org.openscada.hds.ValueVisitor;
 
 public interface ValueSourceManager
 {

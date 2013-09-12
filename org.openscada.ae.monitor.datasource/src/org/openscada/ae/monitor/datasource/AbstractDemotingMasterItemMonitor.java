@@ -22,14 +22,14 @@ package org.openscada.ae.monitor.datasource;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.DemoteImpl;
-import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.master.MasterItem;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
 import com.google.common.collect.Interner;

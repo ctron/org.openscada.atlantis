@@ -26,6 +26,7 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.eclipse.scada.hds.ValueVisitor;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.data.HistoricalItemInformation;
@@ -33,7 +34,6 @@ import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.storage.common.QueryImpl;
 import org.openscada.hd.server.storage.common.ValueSourceManager;
-import org.openscada.hds.ValueVisitor;
 
 public class HSDBHistoricalItem implements HistoricalItem, ValueSourceManager
 {

@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.proxy.connection;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;

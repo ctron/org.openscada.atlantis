@@ -23,7 +23,7 @@ import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.DataItemEntry;
 import org.openscada.da.data.IODirection;

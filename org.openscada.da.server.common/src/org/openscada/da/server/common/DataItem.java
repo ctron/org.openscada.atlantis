@@ -23,16 +23,16 @@ package org.openscada.da.server.common;
 
 import java.util.Map;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.NullValueException;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public interface DataItem
 {

@@ -25,8 +25,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.core.Variant;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 
 public class TimeDataItem extends DataItemInputChained

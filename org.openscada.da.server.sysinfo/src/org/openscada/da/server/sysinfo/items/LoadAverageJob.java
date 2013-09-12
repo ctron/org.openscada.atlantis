@@ -23,12 +23,12 @@ import java.io.File;
 import java.io.IOException;
 import java.util.StringTokenizer;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemInputCommon;
 import org.openscada.da.server.sysinfo.Hive;
 import org.openscada.da.server.sysinfo.utils.FileUtils;
-import org.openscada.utils.collection.MapBuilder;
 
 public class LoadAverageJob implements Runnable
 {

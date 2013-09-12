@@ -27,16 +27,16 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.Future;
 
-import org.openscada.core.InvalidSessionException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.da.core.server.ItemChangeListener;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.core.server.browser.FolderListener;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

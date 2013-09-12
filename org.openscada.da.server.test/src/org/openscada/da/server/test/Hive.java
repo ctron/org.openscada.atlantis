@@ -28,7 +28,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Timer;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.query.GroupFolder;
 import org.openscada.da.server.browser.common.query.GroupProvider;
@@ -53,7 +54,6 @@ import org.openscada.da.server.test.items.TestItem2;
 import org.openscada.da.server.test.items.TimeDataItem;
 import org.openscada.da.server.test.items.WriteDelayItem;
 import org.openscada.da.server.test.model.TestModelObject;
-import org.openscada.utils.collection.MapBuilder;
 
 public class Hive extends HiveCommon
 {

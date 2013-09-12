@@ -34,22 +34,22 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.sec.AuthorizationReply;
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.AuthorizationResult;
+import org.eclipse.scada.sec.AuthorizationService;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.authz.AuthorizationContext;
+import org.eclipse.scada.sec.osgi.AuthorizationHelper;
+import org.eclipse.scada.sec.osgi.AuthorizationManager;
+import org.eclipse.scada.sec.osgi.AuthorizationTracker;
+import org.eclipse.scada.utils.ExceptionHelper;
+import org.eclipse.scada.utils.concurrent.ExportedExecutorService;
+import org.eclipse.scada.utils.concurrent.FutureListener;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.utils.str.Tables;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.ca.ConfigurationFactory;
-import org.openscada.sec.AuthorizationReply;
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.AuthorizationService;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.authz.AuthorizationContext;
-import org.openscada.sec.osgi.AuthorizationHelper;
-import org.openscada.sec.osgi.AuthorizationManager;
-import org.openscada.sec.osgi.AuthorizationTracker;
-import org.openscada.utils.ExceptionHelper;
-import org.openscada.utils.concurrent.ExportedExecutorService;
-import org.openscada.utils.concurrent.FutureListener;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.str.Tables;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 import org.slf4j.Logger;
@@ -100,7 +100,7 @@ public class AuthorizationManagerImpl implements AuthorizationManager, Configura
     }
 
     /* (non-Javadoc)
-     * @see org.openscada.sec.osgi.manager.AuthorizationTracker#createMonitor(org.openscada.sec.osgi.manager.Listener, org.openscada.sec.AuthorizationRequest)
+     * @see org.eclipse.scada.sec.osgi.manager.AuthorizationTracker#createMonitor(org.eclipse.scada.sec.osgi.manager.Listener, org.eclipse.scada.sec.AuthorizationRequest)
      */
     @Override
     public synchronized Monitor createMonitor ( final Listener listener, final AuthorizationRequest request )

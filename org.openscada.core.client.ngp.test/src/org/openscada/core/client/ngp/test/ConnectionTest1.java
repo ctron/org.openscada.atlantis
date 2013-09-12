@@ -23,7 +23,7 @@ package org.openscada.core.client.ngp.test;
 
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.client.common.ClientBaseConnection;
 import org.openscada.core.client.ngp.ProtocolIoHandlerFactory;
 import org.openscada.protocol.ngp.common.DefaultProtocolConfigurationFactory;

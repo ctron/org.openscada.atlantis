@@ -23,11 +23,11 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.Variant;
-import org.openscada.core.VariantEditor;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.VariantEditor;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
+import org.eclipse.scada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.openscada.da.datasource.DataSource;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

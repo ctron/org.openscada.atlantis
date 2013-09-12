@@ -24,13 +24,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.utils.osgi.pool.AllObjectPoolServiceTracker;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolListener;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.base.AbstractInputDataSource;
-import org.openscada.utils.osgi.pool.AllObjectPoolServiceTracker;
-import org.openscada.utils.osgi.pool.ObjectPoolListener;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -26,13 +26,13 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Properties;
 
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.jdbc.DataSourceFactoryTracker;
+import org.eclipse.scada.utils.osgi.jdbc.DataSourceHelper;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.FreezableConfigurationAdministrator;
 import org.openscada.ca.jdbc.internal.ConfigurationAdministratorImpl;
 import org.openscada.ca.jdbc.internal.JdbcStorageDAOImpl;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.jdbc.DataSourceFactoryTracker;
-import org.openscada.utils.osgi.jdbc.DataSourceHelper;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

@@ -47,9 +47,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ca.common.AbstractConfigurationAdministrator;
 import org.openscada.ca.common.ConfigurationImpl;
-import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

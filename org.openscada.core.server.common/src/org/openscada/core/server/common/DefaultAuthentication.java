@@ -29,6 +29,6 @@ public class DefaultAuthentication extends AbstractBasicAuthentication
     @Override
     protected String getPlainPassword ()
     {
-        return System.getProperty ( "org.openscada.core.server.common.ServiceCommon.password" ); //$NON-NLS-1$
+        return System.getProperty ( "org.eclipse.scada.core.server.common.ServiceCommon.password" ); //$NON-NLS-1$
     }
 }

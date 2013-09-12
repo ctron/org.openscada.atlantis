@@ -20,7 +20,7 @@
 
 package org.openscada.da.client.sfp;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.core.client.DriverInformation;
 

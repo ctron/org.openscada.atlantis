@@ -42,22 +42,22 @@ import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.core.session.IoSessionConfig;
 import org.apache.mina.transport.socket.SocketSessionConfig;
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.core.info.StatisticEntry;
+import org.eclipse.scada.core.info.StatisticsImpl;
+import org.eclipse.scada.core.info.StatisticsProvider;
+import org.eclipse.scada.sec.callback.CallbackFactory;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
-import org.openscada.core.info.StatisticEntry;
-import org.openscada.core.info.StatisticsImpl;
-import org.openscada.core.info.StatisticsProvider;
 import org.openscada.core.net.ConnectionHelper;
 import org.openscada.net.base.PingService;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.IoSessionSender;
 import org.openscada.net.mina.Messenger;
 import org.openscada.net.mina.SocketImpl;
-import org.openscada.sec.callback.CallbackFactory;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -780,12 +780,12 @@ public abstract class ConnectionBase implements Connection, IoHandler, Statistic
 
     public Integer getSocketReceiveBufferSize ()
     {
-        return getIntProperty ( "socketReceiveBufferSize", Integer.getInteger ( "org.openscada.core.client.net.socketReceiveBufferSize", null ) );
+        return getIntProperty ( "socketReceiveBufferSize", Integer.getInteger ( "org.eclipse.scada.core.client.net.socketReceiveBufferSize", null ) );
     }
 
     public Integer getSocketSendBufferSize ()
     {
-        return getIntProperty ( "socketSendBufferSize", Integer.getInteger ( "org.openscada.core.client.net.socketSendBufferSize", null ) );
+        return getIntProperty ( "socketSendBufferSize", Integer.getInteger ( "org.eclipse.scada.core.client.net.socketSendBufferSize", null ) );
     }
 
     public int getMessageTimeout ()

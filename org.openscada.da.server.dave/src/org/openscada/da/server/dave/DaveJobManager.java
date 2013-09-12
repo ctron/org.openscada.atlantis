@@ -33,12 +33,12 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.mina.core.session.IoSession;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.openscada.protocols.dave.DaveMessage;
 import org.openscada.protocols.dave.DaveReadRequest;
 import org.openscada.protocols.dave.DaveReadResult;
 import org.openscada.protocols.dave.DaveReadResult.Result;
 import org.openscada.protocols.dave.DaveWriteRequest;
-import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

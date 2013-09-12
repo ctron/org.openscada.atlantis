@@ -25,17 +25,17 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import org.openscada.core.Variant;
-import org.openscada.core.VariantEditor;
-import org.openscada.utils.filter.Assertion;
-import org.openscada.utils.filter.Filter;
-import org.openscada.utils.filter.FilterAssertion;
-import org.openscada.utils.filter.FilterExpression;
-import org.openscada.utils.propertyeditors.DateEditor;
-import org.openscada.utils.propertyeditors.IntegerEditor;
-import org.openscada.utils.propertyeditors.PropertyEditorRegistry;
-import org.openscada.utils.propertyeditors.StringEditor;
-import org.openscada.utils.propertyeditors.UUIDEditor;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.VariantEditor;
+import org.eclipse.scada.utils.filter.Assertion;
+import org.eclipse.scada.utils.filter.Filter;
+import org.eclipse.scada.utils.filter.FilterAssertion;
+import org.eclipse.scada.utils.filter.FilterExpression;
+import org.eclipse.scada.utils.propertyeditors.DateEditor;
+import org.eclipse.scada.utils.propertyeditors.IntegerEditor;
+import org.eclipse.scada.utils.propertyeditors.PropertyEditorRegistry;
+import org.eclipse.scada.utils.propertyeditors.StringEditor;
+import org.eclipse.scada.utils.propertyeditors.UUIDEditor;
 
 public class FilterUtils
 {

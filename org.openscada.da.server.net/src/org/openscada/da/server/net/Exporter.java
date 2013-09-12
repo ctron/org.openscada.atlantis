@@ -26,11 +26,11 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
 import org.apache.mina.handler.multiton.SingleSessionIoHandlerDelegate;
 import org.apache.mina.handler.multiton.SingleSessionIoHandlerFactory;
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.utils.lifecycle.LifecycleAware;
 import org.openscada.core.server.net.Server;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.common.impl.ExporterBase;
-import org.openscada.utils.lifecycle.LifecycleAware;
 
 public class Exporter extends ExporterBase implements LifecycleAware
 {

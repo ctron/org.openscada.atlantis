@@ -31,7 +31,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.Stack;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;

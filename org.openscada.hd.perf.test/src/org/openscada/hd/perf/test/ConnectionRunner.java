@@ -29,7 +29,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.connection.provider.ConnectionRequest;
 import org.openscada.core.connection.provider.ConnectionRequestTracker;

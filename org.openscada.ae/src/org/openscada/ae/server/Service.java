@@ -23,13 +23,13 @@ package org.openscada.ae.server;
 
 import java.util.Date;
 
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
 import org.openscada.ae.UnknownQueryException;
-import org.openscada.core.InvalidSessionException;
 import org.openscada.core.data.OperationParameters;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public interface Service extends org.openscada.core.server.Service<Session>
 {

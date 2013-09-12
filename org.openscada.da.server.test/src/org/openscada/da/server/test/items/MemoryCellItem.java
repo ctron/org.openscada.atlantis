@@ -24,7 +24,11 @@ package org.openscada.da.server.test.items;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.InstantFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
@@ -34,10 +38,6 @@ import org.openscada.da.server.common.DataItemOutput;
 import org.openscada.da.server.common.WriteAttributesHelper;
 import org.openscada.da.server.common.chain.MemoryItemChained;
 import org.openscada.da.server.test.Hive;
-import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public class MemoryCellItem extends DataItemOutput
 {

@@ -21,8 +21,8 @@ package org.openscada.da.datasource;
 
 import java.util.Dictionary;
 
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
+import org.eclipse.scada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.osgi.framework.InvalidSyntaxException;
 
 public class SingleDataSourceTracker

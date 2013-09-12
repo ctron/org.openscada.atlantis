@@ -25,15 +25,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.Variant;
 import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.protocols.arduino.ArduinoDeviceListener;
 import org.openscada.protocols.arduino.DeviceState;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleContext;
 
 public class ArduinoDevice

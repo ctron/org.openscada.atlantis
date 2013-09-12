@@ -21,7 +21,7 @@ package org.openscada.da.server.common.chain;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.core.WriteAttributeResults;
 
 public interface AttributeWriteHandler

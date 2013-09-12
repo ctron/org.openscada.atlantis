@@ -20,8 +20,8 @@
 
 package org.openscada.sec.authz.signature;
 
-import org.openscada.utils.statuscodes.SeverityLevel;
-import org.openscada.utils.statuscodes.StatusCode;
+import org.eclipse.scada.utils.statuscodes.SeverityLevel;
+import org.eclipse.scada.utils.statuscodes.StatusCode;
 
 public interface StatusCodes
 {

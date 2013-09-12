@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.exec.configuration;
 
-import org.openscada.utils.statuscodes.CodedException;
+import org.eclipse.scada.utils.statuscodes.CodedException;
 
 public class ConfigurationException extends CodedException
 {

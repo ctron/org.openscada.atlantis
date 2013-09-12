@@ -24,6 +24,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.scada.utils.str.StringHelper;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JIVariant;
 import org.openscada.da.data.IODirection;
@@ -37,7 +38,6 @@ import org.openscada.opc.dcom.da.OPCBROWSEDIRECTION;
 import org.openscada.opc.dcom.da.OPCBROWSETYPE;
 import org.openscada.opc.dcom.da.impl.OPCBrowseServerAddressSpace;
 import org.openscada.opc.lib.da.browser.Access;
-import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

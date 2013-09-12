@@ -19,7 +19,7 @@
 
 package org.openscada.hd.client.ngp;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -23,15 +23,15 @@ package org.openscada.da.client.net.operations;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.exec.LongRunningListener;
+import org.eclipse.scada.utils.exec.LongRunningOperation;
 import org.openscada.core.data.OperationParameters;
 import org.openscada.da.net.handler.Messages;
 import org.openscada.da.net.handler.WriteAttributesOperation;
 import org.openscada.net.base.LongRunningController;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.mina.Messenger;
-import org.openscada.utils.exec.LongRunningListener;
-import org.openscada.utils.exec.LongRunningOperation;
 
 public class WriteAttributesOperationController
 {

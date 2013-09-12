@@ -21,7 +21,7 @@ package org.openscada.da.client.ngp.internal;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.core.browser.Entry;
 
 public class EntryCommon implements Entry

@@ -27,11 +27,11 @@ import java.util.Properties;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
+import org.eclipse.scada.utils.osgi.jdbc.DataSourceHelper;
 import org.openscada.ae.server.storage.Storage;
-import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
-import org.openscada.utils.osgi.jdbc.DataSourceHelper;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

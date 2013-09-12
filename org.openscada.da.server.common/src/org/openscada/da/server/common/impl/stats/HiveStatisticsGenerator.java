@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.common.impl.stats;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.da.core.server.Session;
 import org.openscada.da.server.common.DataItem;

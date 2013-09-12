@@ -19,11 +19,11 @@
 
 package org.openscada.da.core.server.browser;
 
-import org.openscada.core.InvalidSessionException;
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.Session;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public interface HiveBrowser
 {

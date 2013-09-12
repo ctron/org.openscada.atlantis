@@ -30,7 +30,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.proxy.configuration.ConfigurationPackage;
 import org.openscada.da.proxy.configuration.RootType;
 import org.openscada.da.proxy.configuration.util.ConfigurationResourceFactoryImpl;

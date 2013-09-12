@@ -24,8 +24,8 @@ package org.openscada.ae.server.common;
 import java.util.Hashtable;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.utils.concurrent.ExportedExecutorService;
 import org.openscada.ae.server.Service;
-import org.openscada.utils.concurrent.ExportedExecutorService;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;

@@ -26,8 +26,8 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.core.VariantEditor;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.VariantEditor;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;

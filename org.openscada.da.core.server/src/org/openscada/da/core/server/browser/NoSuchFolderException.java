@@ -19,8 +19,8 @@
 
 package org.openscada.da.core.server.browser;
 
-import org.openscada.utils.statuscodes.CodedException;
-import org.openscada.utils.str.StringHelper;
+import org.eclipse.scada.utils.statuscodes.CodedException;
+import org.eclipse.scada.utils.str.StringHelper;
 
 public class NoSuchFolderException extends CodedException
 {

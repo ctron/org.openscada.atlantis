@@ -26,8 +26,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.eclipse.scada.core.Variant;
 import org.openscada.ae.Event;
-import org.openscada.core.Variant;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;

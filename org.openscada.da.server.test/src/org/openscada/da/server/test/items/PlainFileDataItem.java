@@ -23,10 +23,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Timer;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.test.utils.FileUtils;
-import org.openscada.utils.collection.MapBuilder;
 
 public class PlainFileDataItem extends ScheduledDataItem
 {

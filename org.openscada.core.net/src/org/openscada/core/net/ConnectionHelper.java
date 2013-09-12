@@ -42,7 +42,7 @@ import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.compression.CompressionFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
 import org.apache.mina.filter.ssl.SslFilter;
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.net.mina.GMPPProtocolDecoder;
 import org.openscada.net.mina.GMPPProtocolEncoder;
 import org.slf4j.Logger;

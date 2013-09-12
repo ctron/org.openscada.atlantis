@@ -26,14 +26,14 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.impl.HiveCommon;
 import org.openscada.da.server.stock.business.YahooStockQuoteService;
 import org.openscada.da.server.stock.items.StockQuoteItem;
 import org.openscada.da.server.stock.items.UpdateManager;
-import org.openscada.utils.collection.MapBuilder;
 
 public class Hive extends HiveCommon
 {

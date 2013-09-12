@@ -25,9 +25,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
+import org.eclipse.scada.utils.osgi.jdbc.task.ConnectionContext;
 import org.openscada.ae.Event;
-import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
 import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

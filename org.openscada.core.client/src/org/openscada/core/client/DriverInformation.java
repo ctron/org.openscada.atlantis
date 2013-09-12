@@ -19,7 +19,7 @@
 
 package org.openscada.core.client;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 
 public interface DriverInformation
 {

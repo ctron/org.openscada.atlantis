@@ -21,7 +21,7 @@ package org.openscada.da.net.handler;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.core.browser.FolderEntry;
 
 public class FolderEntryCommon extends EntryCommon implements FolderEntry

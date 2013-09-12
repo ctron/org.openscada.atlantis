@@ -26,9 +26,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.AttributesHelper;
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.AttributesHelper;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.InstantFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteResult;
@@ -36,9 +39,6 @@ import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.item.AutoTimestampChainItem;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public class DataItemInputChained extends DataItemBaseChained
 {

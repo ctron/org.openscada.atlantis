@@ -21,7 +21,7 @@ package org.openscada.da.server.test.items;
 
 import java.util.Collections;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.common.factory.DataItemFactory;
 import org.openscada.da.server.test.Hive;
 

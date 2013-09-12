@@ -26,6 +26,8 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.LinkedList;
 
+import org.eclipse.scada.utils.interner.InternerHelper;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
@@ -38,8 +40,6 @@ import org.openscada.da.master.common.negate.NegateHandlerFactoryImpl;
 import org.openscada.da.master.common.round.RoundHandlerFactoryImpl;
 import org.openscada.da.master.common.scale.ScaleHandlerFactoryImpl;
 import org.openscada.da.master.common.sum.CommonSumHandlerFactoryImpl;
-import org.openscada.utils.interner.InternerHelper;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

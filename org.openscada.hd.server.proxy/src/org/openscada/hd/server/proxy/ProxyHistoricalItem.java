@@ -30,8 +30,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.core.Variant;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.Variant;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.data.HistoricalItemInformation;

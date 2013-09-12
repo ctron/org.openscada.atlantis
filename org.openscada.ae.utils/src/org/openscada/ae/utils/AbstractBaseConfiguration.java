@@ -22,9 +22,9 @@ package org.openscada.ae.utils;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

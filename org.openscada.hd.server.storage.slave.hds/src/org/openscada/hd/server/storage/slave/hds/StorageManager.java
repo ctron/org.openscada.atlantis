@@ -31,8 +31,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.eclipse.scada.hds.DataFilePool;
 import org.openscada.hd.server.storage.hds.AbstractStorageManager;
-import org.openscada.hds.DataFilePool;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

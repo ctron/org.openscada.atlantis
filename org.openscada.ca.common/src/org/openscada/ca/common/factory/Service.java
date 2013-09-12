@@ -21,8 +21,8 @@ package org.openscada.ca.common.factory;
 
 import java.util.Map;
 
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.lang.Disposable;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.lang.Disposable;
 
 public interface Service extends Disposable
 {

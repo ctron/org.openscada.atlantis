@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.lang.Immutable;
 import org.openscada.core.data.SubscriptionState;
-import org.openscada.utils.lang.Immutable;
 
 /**
  * A current value snapshot of the {@link DataItem}

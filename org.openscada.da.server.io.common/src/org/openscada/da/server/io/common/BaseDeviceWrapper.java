@@ -24,12 +24,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.utils.collection.MapBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +60,6 @@ public abstract class BaseDeviceWrapper implements ConnectionListener
 
     private final DataItemInputChained timeoutItem;
 
-    @SuppressWarnings ( "unused" )
     private ScheduledFuture<?> tickJob;
 
     private long lastReply = 0;
@@ -92,7 +91,7 @@ public abstract class BaseDeviceWrapper implements ConnectionListener
         updateDeviceState ();
     }
 
-    protected void initialize ()
+    public void start ()
     {
         if ( this.device != null )
         {
@@ -123,6 +122,19 @@ public abstract class BaseDeviceWrapper implements ConnectionListener
 
         // and connect the device
         connect ();
+    }
+
+    public void stop ()
+    {
+        if ( this.device != null )
+        {
+            this.tickJob.cancel ( false );
+            this.device.dispose ();
+
+            setConnectionState ( ConnectionState.DISCONNECTED );
+            this.rootFolder.remove ( this.baseFolder );
+        }
+        this.device = null;
     }
 
     protected abstract BaseDevice createDevice ();
@@ -201,6 +213,11 @@ public abstract class BaseDeviceWrapper implements ConnectionListener
      */
     protected synchronized void connect ()
     {
+        if ( this.device == null )
+        {
+            return;
+        }
+
         if ( !this.device.isConnected () )
         {
             this.device.connect ();
@@ -217,6 +234,11 @@ public abstract class BaseDeviceWrapper implements ConnectionListener
     {
         if ( this.state.equals ( ConnectionState.DISCONNECTED ) )
         {
+            if ( this.device == null )
+            {
+                return;
+            }
+
             setConnectionState ( ConnectionState.WAITING );
             this.scheduler.schedule ( new Runnable () {
 

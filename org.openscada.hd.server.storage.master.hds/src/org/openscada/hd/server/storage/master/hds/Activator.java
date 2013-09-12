@@ -24,8 +24,8 @@ package org.openscada.hd.server.storage.master.hds;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.scada.hds.DataFilePool;
 import org.openscada.hd.server.storage.master.hds.console.Console;
-import org.openscada.hds.DataFilePool;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;

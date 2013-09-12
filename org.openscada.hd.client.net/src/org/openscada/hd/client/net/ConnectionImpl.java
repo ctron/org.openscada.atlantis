@@ -31,7 +31,7 @@ import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.SessionConnectionBase;
 import org.openscada.hd.ItemListListener;

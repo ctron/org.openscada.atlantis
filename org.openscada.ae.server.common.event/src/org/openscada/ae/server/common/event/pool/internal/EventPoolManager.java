@@ -24,13 +24,13 @@ import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
+import org.eclipse.scada.utils.osgi.FilterUtil;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.ae.event.EventManager;
 import org.openscada.ae.server.common.event.EventQuery;
 import org.openscada.ae.server.storage.Storage;
-import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.FilterUtil;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;

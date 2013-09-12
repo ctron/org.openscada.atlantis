@@ -33,7 +33,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
@@ -65,7 +66,6 @@ import org.openscada.da.server.modbus.io.message.response.ReadCoilsResponse;
 import org.openscada.da.server.modbus.io.message.response.ReadDiscreteInputsResponse;
 import org.openscada.da.server.modbus.io.message.response.ReadHoldingRegistersResponse;
 import org.openscada.da.server.modbus.io.message.response.ReadInputRegistersResponse;
-import org.openscada.utils.collection.MapBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,8 +117,6 @@ public class DeviceWrapper extends BaseDeviceWrapper implements DeviceListener
         this.commandStateItem = createInput ( "commandState" );
         initItems ();
 
-        // TODO: move to start()
-        initialize ();
         logger.trace ( "hive initialized" );
     }
 

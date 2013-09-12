@@ -21,8 +21,8 @@
 
 package org.openscada.da.server.opc.connection.data;
 
+import org.eclipse.scada.utils.beans.AbstractPropertyChange;
 import org.openscada.opc.dcom.da.OPCGroupState;
-import org.openscada.utils.beans.AbstractPropertyChange;
 
 public class GroupState extends AbstractPropertyChange
 {

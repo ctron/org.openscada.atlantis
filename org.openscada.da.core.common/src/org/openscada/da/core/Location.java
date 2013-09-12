@@ -25,8 +25,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Stack;
 
-import org.openscada.utils.lang.Immutable;
-import org.openscada.utils.str.StringHelper;
+import org.eclipse.scada.utils.lang.Immutable;
+import org.eclipse.scada.utils.str.StringHelper;
 
 @Immutable
 public class Location

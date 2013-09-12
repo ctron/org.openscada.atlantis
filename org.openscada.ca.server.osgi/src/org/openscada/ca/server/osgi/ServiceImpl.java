@@ -27,6 +27,12 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.ExportedExecutorService;
+import org.eclipse.scada.utils.concurrent.FutureTask;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.Factory;
@@ -34,16 +40,10 @@ import org.openscada.ca.data.DiffEntry;
 import org.openscada.ca.server.FactoryWithData;
 import org.openscada.ca.server.Service;
 import org.openscada.ca.server.Session;
-import org.openscada.core.InvalidSessionException;
 import org.openscada.core.data.OperationParameters;
 import org.openscada.core.server.common.AuthorizedOperation;
 import org.openscada.core.server.common.osgi.AbstractServiceImpl;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.ExportedExecutorService;
-import org.openscada.utils.concurrent.FutureTask;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
 
 public class ServiceImpl extends AbstractServiceImpl<Session, SessionImpl> implements Service

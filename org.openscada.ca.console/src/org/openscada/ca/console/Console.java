@@ -29,12 +29,12 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.apache.felix.service.command.Descriptor;
+import org.eclipse.scada.utils.concurrent.FutureListener;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.utils.str.Tables;
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.Factory;
-import org.openscada.utils.concurrent.FutureListener;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.str.Tables;
 
 public class Console
 {

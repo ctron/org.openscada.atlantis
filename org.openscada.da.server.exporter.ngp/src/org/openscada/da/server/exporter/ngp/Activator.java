@@ -25,12 +25,12 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.Set;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.core.server.exporter.ExporterInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.ngp.Exporter;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

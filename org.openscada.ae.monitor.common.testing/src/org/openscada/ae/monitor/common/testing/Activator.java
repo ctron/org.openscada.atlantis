@@ -23,10 +23,10 @@ import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolHelper;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.utils.osgi.pool.ObjectPoolHelper;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;

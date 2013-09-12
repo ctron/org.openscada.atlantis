@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.connection.provider.AbstractConnectionManager;
 import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.da.client.Connection;

@@ -22,7 +22,7 @@ package org.openscada.da.server.proxy.item;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.server.common.AttributeMode;

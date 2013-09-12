@@ -23,13 +23,13 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolHelper;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.osgi.pool.ObjectPoolHelper;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceRegistration;

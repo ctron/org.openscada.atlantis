@@ -22,8 +22,8 @@ package org.openscada.ca.testing;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ca.ConfigurationFactory;
-import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

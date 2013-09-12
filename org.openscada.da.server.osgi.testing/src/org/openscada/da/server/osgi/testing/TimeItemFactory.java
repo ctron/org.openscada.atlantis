@@ -24,9 +24,9 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 

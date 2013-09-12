@@ -26,9 +26,9 @@ import java.lang.reflect.Method;
 import java.util.Collections;
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.lang.Disposable;
 import org.openscada.da.server.common.item.factory.ItemFactory;
-import org.openscada.utils.lang.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

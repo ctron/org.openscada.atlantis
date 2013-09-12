@@ -25,7 +25,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

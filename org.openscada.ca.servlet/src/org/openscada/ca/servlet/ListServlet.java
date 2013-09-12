@@ -42,10 +42,10 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.ca.Configuration;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.Factory;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
 import org.osgi.util.tracker.ServiceTracker;
 

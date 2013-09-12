@@ -29,9 +29,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.eclipse.scada.hds.DataFilePool;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.storage.hds.AbstractStorageImpl;
-import org.openscada.hds.DataFilePool;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;

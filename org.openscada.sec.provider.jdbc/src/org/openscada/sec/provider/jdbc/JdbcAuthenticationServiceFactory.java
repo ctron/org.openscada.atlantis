@@ -23,10 +23,10 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.eclipse.scada.sec.AuthenticationService;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.UserManagerService;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
-import org.openscada.sec.AuthenticationService;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.UserManagerService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;

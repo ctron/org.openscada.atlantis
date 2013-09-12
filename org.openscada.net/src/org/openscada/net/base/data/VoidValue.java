@@ -19,7 +19,7 @@
 
 package org.openscada.net.base.data;
 
-import org.openscada.utils.lang.Immutable;
+import org.eclipse.scada.utils.lang.Immutable;
 
 /**
  * A void value type.

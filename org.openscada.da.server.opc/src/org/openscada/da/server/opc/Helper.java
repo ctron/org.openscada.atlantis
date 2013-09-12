@@ -23,11 +23,11 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.scada.core.Variant;
 import org.jinterop.dcom.common.JIException;
 import org.jinterop.dcom.core.JICurrency;
 import org.jinterop.dcom.core.JIString;
 import org.jinterop.dcom.core.JIVariant;
-import org.openscada.core.Variant;
 import org.openscada.da.data.IODirection;
 import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.da.OPCITEMDEF;

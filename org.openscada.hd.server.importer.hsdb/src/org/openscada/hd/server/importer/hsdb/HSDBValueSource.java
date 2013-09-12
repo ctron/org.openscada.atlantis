@@ -31,9 +31,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.Properties;
 
-import org.openscada.hds.AbstractValueSource;
-import org.openscada.hds.ValueVisitor;
-import org.openscada.utils.lang.Immutable;
+import org.eclipse.scada.hds.AbstractValueSource;
+import org.eclipse.scada.hds.ValueVisitor;
+import org.eclipse.scada.utils.lang.Immutable;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

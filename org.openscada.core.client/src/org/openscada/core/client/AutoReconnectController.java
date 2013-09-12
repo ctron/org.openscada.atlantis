@@ -27,8 +27,8 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -122,7 +122,7 @@ public class AutoReconnectController implements ConnectionStateListener
 
         this.connection.addConnectionStateListener ( this );
 
-        if ( !Boolean.getBoolean ( "org.openscada.core.client.AutoReconnectController.disableZombieMode" ) )
+        if ( !Boolean.getBoolean ( "org.eclipse.scada.core.client.AutoReconnectController.disableZombieMode" ) )
         {
             this.zombieJob = this.executor.scheduleWithFixedDelay ( new Runnable () {
 

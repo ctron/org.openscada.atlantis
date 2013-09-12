@@ -23,8 +23,8 @@ package org.openscada.da.server.proxy.item;
 
 import java.util.Map;
 
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.WriteAttributeResults;

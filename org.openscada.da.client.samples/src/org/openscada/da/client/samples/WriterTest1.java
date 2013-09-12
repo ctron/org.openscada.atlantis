@@ -22,8 +22,8 @@ package org.openscada.da.client.samples;
 import java.util.Calendar;
 import java.util.Random;
 
-import org.openscada.core.ConnectionInformation;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.client.ConnectionFactory;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.WriteOperationCallback;

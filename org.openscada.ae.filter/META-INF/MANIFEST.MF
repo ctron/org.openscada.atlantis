@@ -4,12 +4,12 @@ Bundle-Name: openSCADA AE Filter Support
 Bundle-SymbolicName: org.openscada.ae.filter
 Bundle-Version: 1.0.0.qualifier
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ae;version="1.0.0",
- org.openscada.core;version="1.0.0",
- org.openscada.utils.filter;version="1.0.0",
- org.openscada.utils.lang;version="1.0.0",
- org.openscada.utils.propertyeditors;version="1.0.0",
- org.openscada.utils.str;version="1.0.0"
+Import-Package: org.eclipse.scada.core;version="1.0.0",
+ org.eclipse.scada.utils.filter;version="1.0.0",
+ org.eclipse.scada.utils.lang;version="1.0.0",
+ org.eclipse.scada.utils.propertyeditors;version="1.0.0",
+ org.eclipse.scada.utils.str;version="1.0.0",
+ org.openscada.ae;version="1.0.0"
 Export-Package: org.openscada.ae.filter;version="1.0.0";uses:="org.openscada.ae",
  org.openscada.ae.filter.internal;version="1.0.0";uses:="org.openscada.ae.filter,org.openscada.utils.filter,org.openscada.ae"
 Bundle-Vendor: openSCADA.org

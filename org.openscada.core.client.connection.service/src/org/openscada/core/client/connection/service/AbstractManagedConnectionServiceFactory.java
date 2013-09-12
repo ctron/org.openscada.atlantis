@@ -22,9 +22,9 @@ package org.openscada.core.client.connection.service;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.core.connection.provider.ConnectionService;
-import org.openscada.sec.UserInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -25,11 +25,11 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.core.info.StatisticsImpl;
-import org.openscada.sec.callback.Callback;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.sec.callback.Callbacks;
-import org.openscada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.core.info.StatisticsImpl;
+import org.eclipse.scada.sec.callback.Callback;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.sec.callback.Callbacks;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

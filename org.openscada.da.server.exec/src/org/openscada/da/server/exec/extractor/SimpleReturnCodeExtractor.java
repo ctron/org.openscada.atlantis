@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.exec.extractor;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.exec.Hive;

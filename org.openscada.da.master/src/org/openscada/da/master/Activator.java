@@ -22,11 +22,11 @@ package org.openscada.da.master;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.master.internal.MasterFactory;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

@@ -21,7 +21,7 @@ package org.openscada.core.connection.provider.info;
 
 import java.util.Collection;
 
-import org.openscada.core.info.StatisticEntry;
+import org.eclipse.scada.core.info.StatisticEntry;
 
 public interface ConnectionInformationProvider
 {

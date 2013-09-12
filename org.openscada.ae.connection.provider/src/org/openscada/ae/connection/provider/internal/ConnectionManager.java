@@ -4,10 +4,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.ae.client.Connection;
 import org.openscada.ae.connection.provider.ConnectionService;
 import org.openscada.ae.connection.provider.ConnectionServiceImpl;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.connection.provider.AbstractConnectionManager;
 import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.osgi.framework.BundleContext;

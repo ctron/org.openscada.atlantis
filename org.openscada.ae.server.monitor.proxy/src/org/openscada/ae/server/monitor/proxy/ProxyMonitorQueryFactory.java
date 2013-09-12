@@ -23,9 +23,9 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
-import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;

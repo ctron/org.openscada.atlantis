@@ -22,16 +22,16 @@ package org.openscada.da.master.mapper;
 import java.util.Dictionary;
 import java.util.Map;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
+import org.eclipse.scada.utils.osgi.pool.SingleObjectPoolServiceTracker;
+import org.eclipse.scada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.mapper.ValueMapper;
 import org.openscada.da.mapper.ValueMapperListener;
 import org.openscada.da.master.AbstractMasterHandlerImpl;
 import org.openscada.da.master.MasterItem;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker;
-import org.openscada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
 
 public class MapperMasterHandler extends AbstractMasterHandlerImpl implements ValueMapperListener
 {
@@ -56,7 +56,7 @@ public class MapperMasterHandler extends AbstractMasterHandlerImpl implements Va
     }
 
     @Override
-    public synchronized void update ( final org.openscada.sec.UserInformation userInformation, final java.util.Map<String, String> parameters ) throws Exception
+    public synchronized void update ( final org.eclipse.scada.sec.UserInformation userInformation, final java.util.Map<String, String> parameters ) throws Exception
     {
         super.update ( userInformation, parameters );
 

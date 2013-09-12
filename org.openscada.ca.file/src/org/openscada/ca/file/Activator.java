@@ -22,11 +22,11 @@ package org.openscada.ca.file;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.scada.utils.interner.InternerHelper;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.FreezableConfigurationAdministrator;
 import org.openscada.ca.common.AbstractConfigurationAdministrator;
 import org.openscada.ca.file.internal.ConfigurationAdminImpl;
-import org.openscada.utils.interner.InternerHelper;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

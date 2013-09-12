@@ -22,17 +22,17 @@ package org.openscada.sec.audit.log.ae;
 
 import java.util.Date;
 
+import org.eclipse.scada.sec.AuthorizationReply;
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.audit.AuditLogService;
+import org.eclipse.scada.sec.authz.AuthorizationContext;
+import org.eclipse.scada.utils.ExceptionHelper;
+import org.eclipse.scada.utils.statuscodes.CodedExceptionBase;
+import org.eclipse.scada.utils.statuscodes.StatusCode;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventService;
-import org.openscada.sec.AuthorizationReply;
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.audit.AuditLogService;
-import org.openscada.sec.authz.AuthorizationContext;
-import org.openscada.utils.ExceptionHelper;
-import org.openscada.utils.statuscodes.CodedExceptionBase;
-import org.openscada.utils.statuscodes.StatusCode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.helpers.MessageFormatter;
@@ -42,9 +42,9 @@ public class AuditLogServiceImpl implements AuditLogService
 
     private final static Logger logger = LoggerFactory.getLogger ( AuditLogServiceImpl.class );
 
-    private static final String PROP_ENABLE_DEBUG = "org.openscada.sec.audit.log.ae.debug";
+    private static final String PROP_ENABLE_DEBUG = "org.eclipse.scada.sec.audit.log.ae.debug";
 
-    private static final String PROP_LOG_ALL = "org.openscada.sec.audit.log.ae.logAll";
+    private static final String PROP_LOG_ALL = "org.eclipse.scada.sec.audit.log.ae.logAll";
 
     private EventService eventService;
 

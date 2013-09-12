@@ -5,14 +5,14 @@ Bundle-SymbolicName: org.openscada.hd
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.core;version="1.0.0",
+Import-Package: org.eclipse.scada.core;version="1.0.0",
+ org.eclipse.scada.sec.callback;version="1.1.0",
+ org.eclipse.scada.utils.lang;version="1.0.0",
+ org.eclipse.scada.utils.lifecycle;version="1.0.0",
+ org.eclipse.scada.utils.statuscodes;version="1.0.0",
  org.openscada.core.client;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
- org.openscada.hd.data;version="1.0.0",
- org.openscada.sec.callback;version="1.1.0",
- org.openscada.utils.lang;version="1.0.0",
- org.openscada.utils.lifecycle;version="1.0.0",
- org.openscada.utils.statuscodes;version="1.0.0"
+ org.openscada.hd.data;version="1.0.0"
 Export-Package: org.openscada.hd;version="1.1.0";uses:="org.openscada.utils.statuscodes",
  org.openscada.hd.client;version="1.1.0";uses:="org.openscada.core.client,org.openscada.hd",
  org.openscada.hd.server;version="1.1.0";uses:="org.openscada.hd,org.openscada.core.server"

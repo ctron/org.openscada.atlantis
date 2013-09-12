@@ -1,6 +1,12 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Import-Package: org.openscada.core;version="1.0.0",
+Import-Package: org.eclipse.scada.core;version="1.0.0",
+ org.eclipse.scada.sec;version="1.0.0",
+ org.eclipse.scada.utils.concurrent;version="1.0.0",
+ org.eclipse.scada.utils.init;version="1.2.0",
+ org.eclipse.scada.utils.lang;version="1.0.0",
+ org.eclipse.scada.utils.lifecycle;version="1.0.0",
+ org.eclipse.scada.utils.sql;version="1.0.0",
  org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
  org.openscada.core.server.common;version="1.0.0",
@@ -14,12 +20,6 @@ Import-Package: org.openscada.core;version="1.0.0",
  org.openscada.da.server.common.exporter;version="1.2.0",
  org.openscada.da.server.common.impl;version="1.0.0",
  org.openscada.da.server.common.item.factory;version="1.0.0",
- org.openscada.sec;version="1.0.0",
- org.openscada.utils.concurrent;version="1.0.0",
- org.openscada.utils.init;version="1.2.0",
- org.openscada.utils.lang;version="1.0.0",
- org.openscada.utils.lifecycle;version="1.0.0",
- org.openscada.utils.sql;version="1.0.0",
  org.osgi.service.jdbc;version="1.0.0";resolution:=optional,
  org.slf4j;version="1.5.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7

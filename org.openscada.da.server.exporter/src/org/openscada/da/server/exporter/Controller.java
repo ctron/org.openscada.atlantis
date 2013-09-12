@@ -32,9 +32,9 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.scada.utils.init.ServiceLoaderProcessor;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.exporter.util.ExporterResourceFactoryImpl;
-import org.openscada.utils.init.ServiceLoaderProcessor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

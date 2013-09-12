@@ -23,7 +23,7 @@ package org.openscada.da.client.samples;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.ItemManager;
 import org.openscada.da.client.ItemManagerImpl;

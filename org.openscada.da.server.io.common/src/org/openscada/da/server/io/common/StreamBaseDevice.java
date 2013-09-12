@@ -100,6 +100,16 @@ public abstract class StreamBaseDevice extends GenericBaseDevice implements Base
     }
 
     @Override
+    public synchronized void dispose ()
+    {
+        if ( this.connector != null )
+        {
+            this.connector.dispose ();
+            this.connector = null;
+        }
+    }
+
+    @Override
     public void sessionCreated ( final IoSession session ) throws Exception
     {
         logger.debug ( "Session created" );

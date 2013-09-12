@@ -22,7 +22,7 @@ package org.openscada.ca.servlet.jaxws;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
-import org.openscada.utils.osgi.exporter.JaxWsExporter;
+import org.eclipse.scada.utils.osgi.exporter.JaxWsExporter;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

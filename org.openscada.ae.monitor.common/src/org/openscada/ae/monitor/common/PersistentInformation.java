@@ -23,7 +23,7 @@ package org.openscada.ae.monitor.common;
 
 import java.io.Serializable;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 
 public final class PersistentInformation implements Serializable
 {

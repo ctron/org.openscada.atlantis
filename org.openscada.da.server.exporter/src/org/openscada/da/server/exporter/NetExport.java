@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.exporter;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.da.core.server.Hive;
 import org.openscada.da.server.net.Exporter;
 import org.slf4j.Logger;

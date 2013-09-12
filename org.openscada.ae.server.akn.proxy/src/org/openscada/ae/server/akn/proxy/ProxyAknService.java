@@ -32,6 +32,8 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 import java.util.regex.Pattern;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.openscada.ae.connection.provider.ConnectionService;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.ca.ConfigurationDataHelper;
@@ -39,8 +41,6 @@ import org.openscada.ca.ConfigurationFactory;
 import org.openscada.core.connection.provider.ConnectionIdTracker;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.core.server.OperationParametersHelper;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.callback.CallbackHandler;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

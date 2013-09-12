@@ -24,8 +24,8 @@ import java.io.FileOutputStream;
 import java.util.Properties;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.hds.DataFilePool;
-import org.openscada.hds.DataStoreAccesor;
+import org.eclipse.scada.hds.DataFilePool;
+import org.eclipse.scada.hds.DataStoreAccesor;
 
 public class StorageHelper
 {

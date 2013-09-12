@@ -30,6 +30,11 @@ import java.util.Set;
 import java.util.concurrent.Future;
 
 import org.apache.mina.core.session.IoSession;
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.ExceptionHelper;
+import org.eclipse.scada.utils.concurrent.FutureListener;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.ae.Event;
 import org.openscada.ae.Query;
 import org.openscada.ae.UnknownQueryException;
@@ -59,15 +64,10 @@ import org.openscada.ae.server.EventListener;
 import org.openscada.ae.server.MonitorListener;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.Session;
-import org.openscada.core.InvalidSessionException;
 import org.openscada.core.data.ErrorInformation;
 import org.openscada.core.data.Response;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.ngp.ServiceServerConnection;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.ExceptionHelper;
-import org.openscada.utils.concurrent.FutureListener;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

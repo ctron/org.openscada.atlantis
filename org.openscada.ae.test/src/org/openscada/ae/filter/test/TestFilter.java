@@ -3,13 +3,13 @@ package org.openscada.ae.filter.test;
 import java.text.SimpleDateFormat;
 import java.util.UUID;
 
+import org.eclipse.scada.core.Variant;
 import org.junit.Assert;
 import org.junit.Test;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.filter.internal.EventMatcherImpl;
-import org.openscada.core.Variant;
 
 public class TestFilter
 {

@@ -19,10 +19,10 @@
 
 package org.openscada.ae.monitor.script;
 
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.da.master.AbstractConfigurableMasterHandlerImpl;
 import org.openscada.da.master.MasterItem;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 
 public abstract class MultiMasterHandler extends AbstractConfigurableMasterHandlerImpl

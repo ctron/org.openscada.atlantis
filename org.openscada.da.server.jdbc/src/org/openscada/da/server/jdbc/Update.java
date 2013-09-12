@@ -29,15 +29,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.lang.Immutable;
+import org.eclipse.scada.utils.sql.SqlHelper;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.chain.WriteHandlerItem;
 import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
 import org.openscada.da.server.common.item.factory.FolderItemFactory;
-import org.openscada.utils.lang.Immutable;
-import org.openscada.utils.sql.SqlHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -23,13 +23,13 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.utils.osgi.FilterUtil;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.core.client.DriverFactory;
 import org.openscada.core.connection.provider.AbstractConnectionService;
 import org.openscada.core.connection.provider.ConnectionService;
-import org.openscada.utils.osgi.FilterUtil;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.Filter;

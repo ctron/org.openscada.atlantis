@@ -24,8 +24,8 @@ import java.sql.SQLException;
 import java.util.Collection;
 import java.util.UUID;
 
+import org.eclipse.scada.utils.filter.Filter;
 import org.openscada.ae.Event;
-import org.openscada.utils.filter.Filter;
 
 public interface StorageDao
 {

@@ -36,8 +36,8 @@ import javax.xml.transform.dom.DOMResult;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.UserInformation;
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.UserInformation;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;

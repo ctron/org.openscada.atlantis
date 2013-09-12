@@ -31,7 +31,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.modbus.ModbusConstants;
 import org.openscada.da.server.modbus.ModbusRegisterType;
 import org.openscada.da.server.modbus.ModbusType;
@@ -453,7 +453,6 @@ public class SlaveDevice
             case INT32:
                 this.tagsByAddress.get ( registerType ).put ( address + 1, tag );
                 //$FALL-THROUGH$
-            case FLOAT16:
             case INT16:
             case BOOLEAN:
                 this.tagsByAddress.get ( registerType ).put ( address, tag );
@@ -510,8 +509,6 @@ public class SlaveDevice
             case INT64:
                 no = buffer.getLong ();
                 break;
-            case FLOAT16:
-                throw new IllegalArgumentException ( "16 bit floats are not supported at the moment" );
             case FLOAT32:
                 no = buffer.getFloat ();
                 break;

@@ -31,13 +31,13 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.hds.DataFilePool;
+import org.eclipse.scada.utils.concurrent.FutureListener;
+import org.eclipse.scada.utils.concurrent.FutureTask;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.openscada.hd.server.storage.hds.AbstractStorageImpl;
-import org.openscada.hds.DataFilePool;
-import org.openscada.utils.concurrent.FutureListener;
-import org.openscada.utils.concurrent.FutureTask;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;

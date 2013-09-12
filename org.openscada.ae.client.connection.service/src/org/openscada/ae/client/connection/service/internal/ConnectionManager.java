@@ -19,10 +19,10 @@
 
 package org.openscada.ae.client.connection.service.internal;
 
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.ae.client.Connection;
 import org.openscada.ae.connection.provider.ConnectionService;
 import org.openscada.ae.connection.provider.ConnectionServiceImpl;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.DriverFactory;
 import org.openscada.core.client.connection.service.AbstractConnectionManager;
 import org.openscada.core.connection.provider.AbstractConnectionService;

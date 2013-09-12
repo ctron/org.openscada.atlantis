@@ -22,8 +22,8 @@ package org.openscada.da.server.proxy.item;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.AttributesHelper;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.AttributesHelper;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemUpdateListener;

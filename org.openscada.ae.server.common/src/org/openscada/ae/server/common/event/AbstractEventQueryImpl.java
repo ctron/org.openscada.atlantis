@@ -26,11 +26,11 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.utils.collection.BoundedPriorityQueueSet;
+import org.eclipse.scada.utils.collection.BoundedQueue;
 import org.openscada.ae.Event;
 import org.openscada.ae.event.EventListener;
 import org.openscada.ae.filter.EventMatcher;
-import org.openscada.utils.collection.BoundedPriorityQueueSet;
-import org.openscada.utils.collection.BoundedQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

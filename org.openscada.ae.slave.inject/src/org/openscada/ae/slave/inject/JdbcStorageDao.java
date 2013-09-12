@@ -29,13 +29,13 @@ import java.sql.Timestamp;
 import java.util.List;
 import java.util.Properties;
 
+import org.eclipse.scada.utils.osgi.BundleObjectInputStream;
+import org.eclipse.scada.utils.osgi.jdbc.data.SingleColumnRowMapper;
+import org.eclipse.scada.utils.osgi.jdbc.task.CommonConnectionTask;
+import org.eclipse.scada.utils.osgi.jdbc.task.ConnectionContext;
+import org.eclipse.scada.utils.osgi.jdbc.task.RowCallback;
 import org.openscada.ae.Event;
 import org.openscada.ae.server.storage.jdbc.AbstractJdbcStorageDao;
-import org.openscada.utils.osgi.BundleObjectInputStream;
-import org.openscada.utils.osgi.jdbc.data.SingleColumnRowMapper;
-import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
-import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
-import org.openscada.utils.osgi.jdbc.task.RowCallback;
 import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

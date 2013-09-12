@@ -24,12 +24,14 @@ package org.openscada.da.master.common.marker;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.Variant;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
@@ -37,8 +39,6 @@ import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.master.MasterItem;
 import org.openscada.da.master.common.AbstractCommonHandlerImpl;
 import org.openscada.da.master.common.internal.Activator;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.util.tracker.ServiceTracker;
 
 public class MarkerHandlerImpl extends AbstractCommonHandlerImpl

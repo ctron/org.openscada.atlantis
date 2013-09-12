@@ -21,7 +21,7 @@ package org.openscada.ae.monitor;
 
 import java.util.Date;
 
-import org.openscada.sec.UserInformation;
+import org.eclipse.scada.sec.UserInformation;
 
 public interface MonitorService
 {

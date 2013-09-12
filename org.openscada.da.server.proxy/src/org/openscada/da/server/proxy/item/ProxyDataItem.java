@@ -27,10 +27,12 @@ import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.FutureTask;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.OperationParameters;
@@ -42,8 +44,6 @@ import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
-import org.openscada.utils.concurrent.FutureTask;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;

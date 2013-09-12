@@ -125,7 +125,6 @@
 					<enumeration value="INT16"></enumeration>
 					<enumeration value="INT32"></enumeration>
 					<enumeration value="INT64"></enumeration>
-					<enumeration value="FLOAT16"></enumeration>
 					<enumeration value="FLOAT32"></enumeration>
 					<enumeration value="FLOAT64"></enumeration>
 				</restriction>

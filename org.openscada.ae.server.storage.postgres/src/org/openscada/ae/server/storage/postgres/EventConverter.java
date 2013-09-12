@@ -22,9 +22,9 @@ package org.openscada.ae.server.storage.postgres;
 
 import java.lang.reflect.Type;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.VariantEditor;
 import org.openscada.ae.Event;
-import org.openscada.core.Variant;
-import org.openscada.core.VariantEditor;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;

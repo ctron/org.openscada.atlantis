@@ -20,7 +20,7 @@
 
 package org.openscada.sec.osgi.manager;
 
-import org.openscada.sec.AuthorizationService;
+import org.eclipse.scada.sec.AuthorizationService;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.osgi.util.tracker.ServiceTrackerCustomizer;

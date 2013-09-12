@@ -21,7 +21,7 @@ package org.openscada.da.core.server;
 
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
 
 /**

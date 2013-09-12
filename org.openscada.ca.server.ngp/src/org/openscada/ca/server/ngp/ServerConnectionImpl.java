@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.concurrent.Future;
 
 import org.apache.mina.core.session.IoSession;
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.utils.ExceptionHelper;
+import org.eclipse.scada.utils.concurrent.FutureListener;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.ca.Configuration;
 import org.openscada.ca.Factory;
 import org.openscada.ca.data.ConfigurationInformation;
@@ -43,15 +47,11 @@ import org.openscada.ca.data.message.GetFactoryWithDataResponse;
 import org.openscada.ca.server.FactoryWithData;
 import org.openscada.ca.server.Service;
 import org.openscada.ca.server.Session;
-import org.openscada.core.InvalidSessionException;
 import org.openscada.core.data.ErrorInformation;
 import org.openscada.core.data.Request;
 import org.openscada.core.data.Response;
 import org.openscada.core.data.ResponseMessage;
 import org.openscada.core.server.ngp.ServiceServerConnection;
-import org.openscada.utils.ExceptionHelper;
-import org.openscada.utils.concurrent.FutureListener;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

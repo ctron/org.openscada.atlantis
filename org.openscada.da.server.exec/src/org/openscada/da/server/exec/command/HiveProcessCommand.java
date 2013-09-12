@@ -24,8 +24,8 @@ package org.openscada.da.server.exec.command;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.Variant;
-import org.openscada.core.VariantEditor;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.VariantEditor;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputChained;

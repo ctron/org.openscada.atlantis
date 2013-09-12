@@ -23,11 +23,11 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import org.eclipse.scada.utils.filter.FilterParseException;
 import org.openscada.ae.Event;
 import org.openscada.ae.filter.EventMatcher;
 import org.openscada.ae.filter.internal.EventMatcherImpl;
 import org.openscada.ae.server.storage.Query;
-import org.openscada.utils.filter.FilterParseException;
 
 public class ListQuery implements Query
 {

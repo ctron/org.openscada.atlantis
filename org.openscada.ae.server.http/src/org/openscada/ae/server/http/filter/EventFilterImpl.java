@@ -30,13 +30,13 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ae.Event;
 import org.openscada.ae.filter.EventMatcher;
 import org.openscada.ae.filter.internal.EventMatcherImpl;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.ca.ConfigurationFactory;
-import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.ServiceRegistration;

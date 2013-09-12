@@ -29,9 +29,12 @@ import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.core.ConnectionInformation;
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.common.ClientBaseConnection;
@@ -50,9 +53,6 @@ import org.openscada.da.core.WriteResult;
 import org.openscada.protocol.sfp.Sessions;
 import org.openscada.protocol.sfp.messages.Hello;
 import org.openscada.protocol.sfp.messages.Welcome;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

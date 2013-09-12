@@ -31,7 +31,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.apache.mina.core.service.IoAcceptor;
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

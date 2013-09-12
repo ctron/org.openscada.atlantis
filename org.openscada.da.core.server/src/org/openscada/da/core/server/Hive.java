@@ -23,16 +23,16 @@ package org.openscada.da.core.server;
 
 import java.util.Map;
 
-import org.openscada.core.InvalidSessionException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.PermissionDeniedException;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.data.OperationParameters;
 import org.openscada.core.server.Service;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.server.browser.HiveBrowser;
-import org.openscada.sec.PermissionDeniedException;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public interface Hive extends Service<Session>
 {

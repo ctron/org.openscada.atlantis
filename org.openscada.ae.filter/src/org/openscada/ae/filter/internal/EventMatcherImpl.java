@@ -28,23 +28,23 @@ import java.util.Date;
 import java.util.UUID;
 import java.util.regex.Pattern;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.VariantEditor;
+import org.eclipse.scada.utils.filter.Assertion;
+import org.eclipse.scada.utils.filter.Filter;
+import org.eclipse.scada.utils.filter.FilterAssertion;
+import org.eclipse.scada.utils.filter.FilterExpression;
+import org.eclipse.scada.utils.filter.FilterParser;
+import org.eclipse.scada.utils.filter.Operator;
+import org.eclipse.scada.utils.lang.Apply;
+import org.eclipse.scada.utils.propertyeditors.DateEditor;
+import org.eclipse.scada.utils.propertyeditors.IntegerEditor;
+import org.eclipse.scada.utils.propertyeditors.PropertyEditorRegistry;
+import org.eclipse.scada.utils.propertyeditors.StringEditor;
+import org.eclipse.scada.utils.propertyeditors.UUIDEditor;
+import org.eclipse.scada.utils.str.StringHelper;
 import org.openscada.ae.Event;
 import org.openscada.ae.filter.EventMatcher;
-import org.openscada.core.Variant;
-import org.openscada.core.VariantEditor;
-import org.openscada.utils.filter.Assertion;
-import org.openscada.utils.filter.Filter;
-import org.openscada.utils.filter.FilterAssertion;
-import org.openscada.utils.filter.FilterExpression;
-import org.openscada.utils.filter.FilterParser;
-import org.openscada.utils.filter.Operator;
-import org.openscada.utils.lang.Apply;
-import org.openscada.utils.propertyeditors.DateEditor;
-import org.openscada.utils.propertyeditors.IntegerEditor;
-import org.openscada.utils.propertyeditors.PropertyEditorRegistry;
-import org.openscada.utils.propertyeditors.StringEditor;
-import org.openscada.utils.propertyeditors.UUIDEditor;
-import org.openscada.utils.str.StringHelper;
 
 public class EventMatcherImpl implements EventMatcher
 {

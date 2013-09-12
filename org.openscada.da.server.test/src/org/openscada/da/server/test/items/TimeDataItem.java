@@ -21,7 +21,7 @@ package org.openscada.da.server.test.items;
 
 import java.util.Timer;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 
 public class TimeDataItem extends ScheduledDataItem
 {

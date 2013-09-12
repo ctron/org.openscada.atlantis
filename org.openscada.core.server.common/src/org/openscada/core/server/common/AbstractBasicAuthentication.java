@@ -20,18 +20,18 @@
 
 package org.openscada.core.server.common;
 
-import org.openscada.sec.AuthenticationException;
-import org.openscada.sec.AuthenticationImplementation;
-import org.openscada.sec.StatusCodes;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.callback.Callback;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.sec.callback.Callbacks;
-import org.openscada.sec.callback.PasswordCallback;
-import org.openscada.sec.utils.password.PasswordType;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.concurrent.TransformResultFuture;
+import org.eclipse.scada.sec.AuthenticationException;
+import org.eclipse.scada.sec.AuthenticationImplementation;
+import org.eclipse.scada.sec.StatusCodes;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.callback.Callback;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.sec.callback.Callbacks;
+import org.eclipse.scada.sec.callback.PasswordCallback;
+import org.eclipse.scada.sec.utils.password.PasswordType;
+import org.eclipse.scada.utils.concurrent.InstantFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.utils.concurrent.TransformResultFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -105,7 +105,7 @@ public abstract class AbstractBasicAuthentication implements AuthenticationImple
         if ( ! ( cb instanceof PasswordCallback ) )
         {
             logger.debug ( "Password requested using system properties. But none was provided." );
-            throw new AuthenticationException ( org.openscada.sec.StatusCodes.INVALID_USER_OR_PASSWORD, "Invalid username or wrong password" );
+            throw new AuthenticationException ( org.eclipse.scada.sec.StatusCodes.INVALID_USER_OR_PASSWORD, "Invalid username or wrong password" );
         }
 
         try
@@ -113,7 +113,7 @@ public abstract class AbstractBasicAuthentication implements AuthenticationImple
             if ( !PasswordType.PLAIN.createValdiator ().validatePassword ( ( (PasswordCallback)cb ).getPasswords (), plainPassword ) )
             {
                 logger.debug ( "Password requested using system properties. But none or wrong provided." );
-                throw new AuthenticationException ( org.openscada.sec.StatusCodes.INVALID_USER_OR_PASSWORD, "Invalid username or wrong password" );
+                throw new AuthenticationException ( org.eclipse.scada.sec.StatusCodes.INVALID_USER_OR_PASSWORD, "Invalid username or wrong password" );
             }
         }
         catch ( final Exception e )

@@ -25,6 +25,9 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.lang.Pair;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
@@ -37,9 +40,6 @@ import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
 import org.openscada.ae.monitor.common.AbstractStateMonitor;
 import org.openscada.ae.monitor.common.MessageDecorator;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.Variant;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.lang.Pair;
 import org.osgi.framework.BundleContext;
 
 public class EventMonitorImpl extends AbstractPersistentStateMonitor implements EventMonitor

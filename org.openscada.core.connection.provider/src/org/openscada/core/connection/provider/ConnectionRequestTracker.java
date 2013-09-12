@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.client.DriverFactory;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

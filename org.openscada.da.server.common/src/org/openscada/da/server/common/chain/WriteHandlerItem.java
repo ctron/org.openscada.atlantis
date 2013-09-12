@@ -24,14 +24,14 @@ package org.openscada.da.server.common.chain;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.FutureTask;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteResult;
-import org.openscada.utils.concurrent.FutureTask;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public class WriteHandlerItem extends DataItemInputOutputChained
 {

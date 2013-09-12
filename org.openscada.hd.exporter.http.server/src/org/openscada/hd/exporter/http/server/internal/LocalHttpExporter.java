@@ -29,6 +29,7 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.utils.concurrent.AbstractFuture;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryState;
@@ -38,7 +39,6 @@ import org.openscada.hd.exporter.http.DataPoint;
 import org.openscada.hd.exporter.http.HttpExporter;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
-import org.openscada.utils.concurrent.AbstractFuture;
 
 public class LocalHttpExporter implements HttpExporter
 {

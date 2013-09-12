@@ -19,8 +19,8 @@
 
 package org.openscada.core.connection.provider;
 
-import org.openscada.core.ConnectionInformation;
-import org.openscada.utils.lang.Immutable;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.utils.lang.Immutable;
 
 @Immutable
 public class ConnectionRequest

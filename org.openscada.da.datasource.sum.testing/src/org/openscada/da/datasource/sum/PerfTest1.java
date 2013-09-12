@@ -26,17 +26,17 @@ import java.util.Random;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.VariantType;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-import org.openscada.core.Variant;
-import org.openscada.core.VariantType;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceHandler;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 
 public class PerfTest1

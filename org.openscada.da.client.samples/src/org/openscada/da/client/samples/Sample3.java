@@ -21,7 +21,7 @@
 
 package org.openscada.da.client.samples;
 
-import org.openscada.core.OperationException;
+import org.eclipse.scada.core.OperationException;
 import org.openscada.da.client.BrowseOperationCallback;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.DataItemEntry;

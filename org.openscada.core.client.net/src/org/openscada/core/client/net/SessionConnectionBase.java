@@ -29,7 +29,8 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.mina.core.session.IoSession;
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.openscada.core.client.PrivilegeListener;
 import org.openscada.core.net.ConnectionHelper;
 import org.openscada.core.net.MessageHelper;
@@ -37,7 +38,6 @@ import org.openscada.net.Constants;
 import org.openscada.net.base.MessageListener;
 import org.openscada.net.base.MessageStateListener;
 import org.openscada.net.base.data.Message;
-import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

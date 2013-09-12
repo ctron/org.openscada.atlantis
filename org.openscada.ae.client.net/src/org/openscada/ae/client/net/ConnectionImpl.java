@@ -33,6 +33,9 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.Executor;
 
 import org.apache.mina.core.session.IoSession;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Event;
 import org.openscada.ae.Query;
@@ -46,7 +49,6 @@ import org.openscada.ae.net.BrowserMessageHelper;
 import org.openscada.ae.net.EventMessageHelper;
 import org.openscada.ae.net.Messages;
 import org.openscada.ae.net.MonitorMessageHelper;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.net.MessageFuture;
 import org.openscada.core.client.net.SessionConnectionBase;
 import org.openscada.core.data.OperationParameters;
@@ -59,8 +61,6 @@ import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.utils.MessageCreator;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

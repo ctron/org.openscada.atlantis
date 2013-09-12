@@ -24,22 +24,22 @@ package org.openscada.da.datasource.ds;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.ds.DataListener;
+import org.eclipse.scada.ds.DataNode;
+import org.eclipse.scada.ds.DataNodeTracker;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.InstantFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.datasource.base.AbstractDataSource;
-import org.openscada.ds.DataListener;
-import org.openscada.ds.DataNode;
-import org.openscada.ds.DataNodeTracker;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.osgi.framework.BundleContext;
 
 public class DataStoreDataSource extends AbstractDataSource implements DataListener

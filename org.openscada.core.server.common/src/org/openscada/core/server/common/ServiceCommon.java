@@ -27,23 +27,23 @@ import java.util.Properties;
 import java.util.Set;
 import java.util.concurrent.Future;
 
+import org.eclipse.scada.sec.AuthenticationImplementation;
+import org.eclipse.scada.sec.AuthorizationImplementation;
+import org.eclipse.scada.sec.AuthorizationReply;
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.AuthorizationResult;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.audit.AuditLogService;
+import org.eclipse.scada.sec.audit.log.slf4j.LogServiceImpl;
+import org.eclipse.scada.sec.authz.AuthorizationContext;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.CallingFuture;
+import org.eclipse.scada.utils.concurrent.FutureListener;
+import org.eclipse.scada.utils.concurrent.InstantFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.server.Service;
 import org.openscada.core.server.Session;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.sec.AuthenticationImplementation;
-import org.openscada.sec.AuthorizationImplementation;
-import org.openscada.sec.AuthorizationReply;
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.audit.AuditLogService;
-import org.openscada.sec.audit.log.slf4j.LogServiceImpl;
-import org.openscada.sec.authz.AuthorizationContext;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.CallingFuture;
-import org.openscada.utils.concurrent.FutureListener;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -52,7 +52,7 @@ public abstract class ServiceCommon<S extends Session, SI extends AbstractSessio
 
     private final static Logger logger = LoggerFactory.getLogger ( ServiceCommon.class );
 
-    protected static final AuthorizationResult DEFAULT_RESULT = AuthorizationResult.createReject ( org.openscada.sec.StatusCodes.AUTHORIZATION_FAILED, Messages.getString ( "ServiceCommon.DefaultMessage" ) ); //$NON-NLS-1$
+    protected static final AuthorizationResult DEFAULT_RESULT = AuthorizationResult.createReject ( org.eclipse.scada.sec.StatusCodes.AUTHORIZATION_FAILED, Messages.getString ( "ServiceCommon.DefaultMessage" ) ); //$NON-NLS-1$
 
     private AuthorizationImplementation authorizationImplementation;
 

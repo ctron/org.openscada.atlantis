@@ -21,12 +21,12 @@ package org.openscada.ae.monitor.datasource;
 
 import java.security.KeyStore.Builder;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.interner.InternerHelper;
 import org.openscada.ae.data.MonitorStatus;
 import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.data.Severity;
-import org.openscada.core.Variant;
 import org.openscada.da.client.DataItemValue;
-import org.openscada.utils.interner.InternerHelper;
 
 import com.google.common.collect.Interner;
 

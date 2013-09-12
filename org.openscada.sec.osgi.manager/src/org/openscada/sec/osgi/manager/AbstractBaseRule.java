@@ -28,15 +28,15 @@ import javax.script.ScriptContext;
 import javax.script.ScriptEngineManager;
 import javax.script.SimpleScriptContext;
 
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.AuthorizationResult;
+import org.eclipse.scada.sec.authz.AuthorizationContext;
+import org.eclipse.scada.sec.authz.AuthorizationRule;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.InstantFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.utils.script.ScriptExecutor;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.AuthorizationResult;
-import org.openscada.sec.authz.AuthorizationContext;
-import org.openscada.sec.authz.AuthorizationRule;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.script.ScriptExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

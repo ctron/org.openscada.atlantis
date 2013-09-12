@@ -32,7 +32,9 @@ import java.util.Set;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.FolderListener;
@@ -46,8 +48,6 @@ import org.openscada.protocol.sfp.messages.DataUpdate.Entry;
 import org.openscada.protocol.sfp.messages.ReadAll;
 import org.openscada.protocol.sfp.messages.SubscribeBrowse;
 import org.openscada.protocol.sfp.messages.WriteCommand;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

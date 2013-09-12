@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.common.chain;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 
 public class VariantBinder implements AttributeBinder
 {

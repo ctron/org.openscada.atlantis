@@ -21,12 +21,12 @@ package org.openscada.ae.monitor.common;
 
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.ds.DataListener;
+import org.eclipse.scada.ds.DataNode;
+import org.eclipse.scada.ds.DataStore;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.ae.event.EventProcessor;
-import org.openscada.ds.DataListener;
-import org.openscada.ds.DataNode;
-import org.openscada.ds.DataStore;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;

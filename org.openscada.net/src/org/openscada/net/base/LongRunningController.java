@@ -25,12 +25,12 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.scada.utils.exec.LongRunningListener;
+import org.eclipse.scada.utils.exec.LongRunningState;
 import org.openscada.net.base.data.LongValue;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.Value;
 import org.openscada.net.mina.Messenger;
-import org.openscada.utils.exec.LongRunningListener;
-import org.openscada.utils.exec.LongRunningState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

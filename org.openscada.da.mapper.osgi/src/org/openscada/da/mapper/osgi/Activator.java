@@ -22,14 +22,14 @@ package org.openscada.da.mapper.osgi;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolHelper;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.da.mapper.ValueMapper;
 import org.openscada.da.mapper.osgi.ca.ConfiguredValueMapperFactory;
 import org.openscada.da.mapper.osgi.jdbc.JdbcValueMapperFactory;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.utils.osgi.pool.ObjectPoolHelper;
-import org.openscada.utils.osgi.pool.ObjectPoolImpl;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
 
-import org.openscada.utils.str.StringHelper;
+import org.eclipse.scada.utils.str.StringHelper;
 
 public class ConfigurationDataHelper
 {

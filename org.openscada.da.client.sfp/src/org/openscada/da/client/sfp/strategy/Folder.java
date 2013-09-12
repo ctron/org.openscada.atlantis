@@ -31,7 +31,7 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.client.FolderListener;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.DataItemEntry;

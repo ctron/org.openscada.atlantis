@@ -22,9 +22,9 @@ package org.openscada.core.connection.provider;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.utils.osgi.FilterUtil;
 import org.openscada.core.client.DriverFactory;
-import org.openscada.utils.osgi.FilterUtil;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;

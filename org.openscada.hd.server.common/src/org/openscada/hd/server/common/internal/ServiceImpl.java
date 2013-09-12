@@ -28,7 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.InvalidSessionException;
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.core.server.common.osgi.AbstractServiceImpl;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.Query;
@@ -38,7 +39,6 @@ import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
 import org.openscada.hd.server.common.HistoricalItem;
-import org.openscada.sec.UserInformation;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.InvalidSyntaxException;

@@ -26,14 +26,14 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.Map;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.monitor.common.DataItemMonitor;
 import org.openscada.ae.server.common.akn.AknHandler;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.core.server.OperationParameters;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.pool.ManageableObjectPool;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

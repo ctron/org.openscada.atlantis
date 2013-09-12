@@ -28,16 +28,6 @@
         <details key="name" value="group:0"/>
       </eAnnotations>
     </eStructuralFeatures>
-    <eStructuralFeatures xsi:type="ecore:EReference" name="slave" lowerBound="1" upperBound="-1"
-        eType="#//ModbusSlave" volatile="true" transient="true" derived="true" containment="true"
-        resolveProxies="false">
-      <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-        <details key="kind" value="element"/>
-        <details key="name" value="slave"/>
-        <details key="namespace" value="##targetNamespace"/>
-        <details key="group" value="#group:0"/>
-      </eAnnotations>
-    </eStructuralFeatures>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="host" lowerBound="1" eType="#//HostType">
       <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
         <details key="documentation" value="&#xA;&#x9;&#x9;&#x9;&#x9;&#x9;The hostname or IP address of the device&#xA;&#x9;&#x9;&#x9;&#x9;"/>
@@ -345,9 +335,8 @@
     <eLiterals name="INT16" value="2"/>
     <eLiterals name="INT32" value="3"/>
     <eLiterals name="INT64" value="4"/>
-    <eLiterals name="FLOAT16" value="5"/>
-    <eLiterals name="FLOAT32" value="6"/>
-    <eLiterals name="FLOAT64" value="7"/>
+    <eLiterals name="FLOAT32" value="5"/>
+    <eLiterals name="FLOAT64" value="6"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EDataType" name="TypeTypeObject" instanceClassName="org.eclipse.emf.common.util.Enumerator">
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">

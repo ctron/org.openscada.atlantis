@@ -23,12 +23,12 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.datasource.DataSourceListener;
 import org.openscada.da.datasource.SingleDataSourceTracker;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.InvalidSyntaxException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

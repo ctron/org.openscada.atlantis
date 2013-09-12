@@ -21,13 +21,13 @@ package org.openscada.da.server.opc.connection;
 
 import java.util.concurrent.Future;
 
-import org.openscada.core.OperationException;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.utils.concurrent.AbstractFuture;
+import org.eclipse.scada.utils.concurrent.FutureListener;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.da.core.WriteResult;
 import org.openscada.opc.dcom.common.Result;
 import org.openscada.opc.dcom.da.WriteRequest;
-import org.openscada.utils.concurrent.AbstractFuture;
-import org.openscada.utils.concurrent.FutureListener;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

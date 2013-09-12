@@ -23,15 +23,15 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.apache.mina.core.buffer.IoBuffer;
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.InstantFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.dave.DaveDevice;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.InstantFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
-import org.openscada.utils.osgi.pool.ManageableObjectPool;
 
 public class BitVariable extends ScalarVariable
 {

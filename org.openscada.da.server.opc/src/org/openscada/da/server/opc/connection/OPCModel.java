@@ -24,6 +24,7 @@ package org.openscada.da.server.opc.connection;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.eclipse.scada.utils.beans.AbstractPropertyChange;
 import org.jinterop.dcom.core.JISession;
 import org.openscada.da.server.opc.connection.data.ConnectionState;
 import org.openscada.da.server.opc.connection.data.ControllerState;
@@ -34,7 +35,6 @@ import org.openscada.opc.dcom.da.impl.OPCGroupStateMgt;
 import org.openscada.opc.dcom.da.impl.OPCItemMgt;
 import org.openscada.opc.dcom.da.impl.OPCServer;
 import org.openscada.opc.dcom.da.impl.OPCSyncIO;
-import org.openscada.utils.beans.AbstractPropertyChange;
 
 public class OPCModel extends AbstractPropertyChange
 {

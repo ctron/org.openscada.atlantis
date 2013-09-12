@@ -28,7 +28,7 @@ import java.util.Set;
 import org.apache.mina.core.service.IoAcceptor;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.handler.multiton.SingleSessionIoHandlerDelegate;
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.net.ConnectionHelper;
 import org.openscada.core.server.common.NetworkHelper;
 import org.openscada.net.mina.SocketImpl;

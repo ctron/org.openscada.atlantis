@@ -36,13 +36,13 @@ import java.util.Map;
 import javax.security.auth.x500.X500Principal;
 import javax.xml.crypto.KeySelector;
 
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.UserInformation;
 import org.openscada.sec.authz.signature.RequestValidator.Result;
-import org.openscada.utils.collection.MapBuilder;
 import org.w3c.dom.Document;
 
 /**
@@ -67,18 +67,18 @@ public class SignatureRequestBuilderTest
 
     private RequestValidator validator2;
 
-    private static final String CERT_FILE_1 = "platform:/plugin/org.openscada.sec.authz.signature/resources/Test1.p12";
+    private static final String CERT_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/Test1.p12";
 
-    private static final String CA_FILE_1 = "platform:/plugin/org.openscada.sec.authz.signature/resources/openSCADASignTest1.crt";
+    private static final String CA_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/openSCADASignTest1.crt";
 
-    private static final String CERT_REV_FILE_1 = "platform:/plugin/org.openscada.sec.authz.signature/resources/TestRevoke1.p12";
+    private static final String CERT_REV_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/TestRevoke1.p12";
 
-    private static final String CRL_FILE_1 = "platform:/plugin/org.openscada.sec.authz.signature/resources/openSCADASignTest1.CRL.pem";
+    private static final String CRL_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/openSCADASignTest1.CRL.pem";
 
     @SuppressWarnings ( "unused" )
-    private static final String CERT_FILE_2 = "platform:/plugin/org.openscada.sec.authz.signature/resources/Test2.p12";
+    private static final String CERT_FILE_2 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/Test2.p12";
 
-    private static final String CA_FILE_2 = "platform:/plugin/org.openscada.sec.authz.signature/resources/openSCADASignTest2.crt";
+    private static final String CA_FILE_2 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/openSCADASignTest2.crt";
 
     @Before
     public void setup () throws Exception

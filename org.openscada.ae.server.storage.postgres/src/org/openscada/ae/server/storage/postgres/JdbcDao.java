@@ -33,14 +33,14 @@ import java.sql.Timestamp;
 import java.util.Date;
 import java.util.UUID;
 
+import org.eclipse.scada.utils.filter.Filter;
+import org.eclipse.scada.utils.osgi.jdbc.CommonConnectionAccessor;
+import org.eclipse.scada.utils.osgi.jdbc.data.RowMapperAdapter;
+import org.eclipse.scada.utils.osgi.jdbc.data.RowMapperMappingException;
+import org.eclipse.scada.utils.osgi.jdbc.task.CommonConnectionTask;
+import org.eclipse.scada.utils.osgi.jdbc.task.ConnectionContext;
 import org.openscada.ae.Event;
 import org.openscada.ae.server.storage.postgres.internal.SqlConverter;
-import org.openscada.utils.filter.Filter;
-import org.openscada.utils.osgi.jdbc.CommonConnectionAccessor;
-import org.openscada.utils.osgi.jdbc.data.RowMapperAdapter;
-import org.openscada.utils.osgi.jdbc.data.RowMapperMappingException;
-import org.openscada.utils.osgi.jdbc.task.CommonConnectionTask;
-import org.openscada.utils.osgi.jdbc.task.ConnectionContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

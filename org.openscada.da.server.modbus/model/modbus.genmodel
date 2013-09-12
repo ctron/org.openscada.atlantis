@@ -19,7 +19,6 @@
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//TypeType/INT16"/>
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//TypeType/INT32"/>
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//TypeType/INT64"/>
-      <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//TypeType/FLOAT16"/>
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//TypeType/FLOAT32"/>
       <genEnumLiterals ecoreEnumLiteral="configuration.ecore#//TypeType/FLOAT64"/>
     </genEnums>

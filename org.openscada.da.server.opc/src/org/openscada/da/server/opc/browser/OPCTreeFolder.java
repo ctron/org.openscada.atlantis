@@ -25,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
+import org.eclipse.scada.utils.str.StringHelper;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
@@ -33,7 +34,6 @@ import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.FolderListener;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.opc.connection.OPCController;
-import org.openscada.utils.str.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

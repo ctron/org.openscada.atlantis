@@ -21,7 +21,7 @@ package org.openscada.da.server.dave;
 
 import org.apache.commons.collections.buffer.CircularFifoBuffer;
 import org.apache.mina.core.buffer.IoBuffer;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.osgi.factory.DataItemFactory;
 import org.openscada.da.server.dave.data.Variable;

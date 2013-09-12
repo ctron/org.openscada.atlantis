@@ -20,7 +20,7 @@
 
 package org.openscada.da.server.modbus.io.message.request;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.modbus.ModbusConstants;
 import org.openscada.da.server.modbus.ModbusType;
 

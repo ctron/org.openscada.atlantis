@@ -29,11 +29,11 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectInstance;
 import javax.management.ObjectName;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.DirectExecutor;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.utils.concurrent.DirectExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

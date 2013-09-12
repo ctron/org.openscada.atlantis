@@ -19,8 +19,8 @@
 
 package org.openscada.ae.client.connection.service.internal;
 
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.ae.connection.provider.ConnectionService;
-import org.openscada.core.ConnectionInformation;
 import org.openscada.core.client.connection.service.AbstractConnectionManager;
 import org.openscada.core.client.connection.service.AbstractManagedConnectionServiceFactory;
 import org.osgi.framework.BundleContext;

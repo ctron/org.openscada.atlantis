@@ -34,8 +34,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.scada.utils.str.StringHelper;
 import org.openscada.da.server.stock.domain.StockQuote;
-import org.openscada.utils.str.StringHelper;
 
 public class YahooStockQuoteService implements StockQuoteService
 {

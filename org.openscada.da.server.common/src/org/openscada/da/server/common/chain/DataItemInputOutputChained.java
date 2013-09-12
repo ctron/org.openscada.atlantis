@@ -27,13 +27,13 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public abstract class DataItemInputOutputChained extends DataItemInputChained
 {

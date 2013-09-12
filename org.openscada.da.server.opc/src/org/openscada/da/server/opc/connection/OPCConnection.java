@@ -28,8 +28,9 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.jinterop.dcom.common.JIException;
-import org.openscada.core.Variant;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.data.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -44,7 +45,6 @@ import org.openscada.da.server.opc.Hive;
 import org.openscada.da.server.opc.browser.OPCRootTreeFolder;
 import org.openscada.da.server.opc.connection.data.ConnectionSetup;
 import org.openscada.opc.dcom.da.OPCSERVERSTATUS;
-import org.openscada.utils.collection.MapBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

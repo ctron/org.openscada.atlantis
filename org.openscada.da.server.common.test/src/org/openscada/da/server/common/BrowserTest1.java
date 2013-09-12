@@ -21,8 +21,8 @@ package org.openscada.da.server.common;
 
 import java.util.HashMap;
 
+import org.eclipse.scada.core.Variant;
 import org.junit.Test;
-import org.openscada.core.Variant;
 import org.openscada.da.server.browser.common.query.IDNameProvider;
 import org.openscada.da.server.browser.common.query.ItemDescriptor;
 import org.openscada.da.server.browser.common.query.SplitGroupProvider;

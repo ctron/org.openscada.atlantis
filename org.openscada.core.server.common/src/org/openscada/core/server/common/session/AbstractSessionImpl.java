@@ -29,11 +29,11 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArraySet;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.callback.Callback;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.server.Session;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.callback.Callback;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

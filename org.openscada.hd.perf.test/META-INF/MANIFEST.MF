@@ -13,8 +13,8 @@ Require-Bundle: org.eclipse.ui,
  org.openscada.hd.connection.provider;bundle-version="1.0.0",
  org.openscada.core.client;bundle-version="1.0.0",
  org.openscada.core.connection.provider;bundle-version="1.0.0",
- org.openscada.utils;bundle-version="1.0.0",
- org.openscada.core;bundle-version="1.0.0"
+ org.eclipse.scada.utils;bundle-version="0.1.0",
+ org.eclipse.scada.core;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-ActivationPolicy: lazy
 Import-Package: org.openscada.hd.data;version="1.0.0",

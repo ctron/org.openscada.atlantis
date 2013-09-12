@@ -5,11 +5,11 @@ Bundle-SymbolicName: org.openscada.ca.console
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.ca;version="1.0.0",
- org.openscada.ca.data;version="1.0.0",
- org.openscada.sec;version="1.1.0",
- org.openscada.utils.concurrent;version="1.1.0",
- org.openscada.utils.str;version="1.1.0"
+Import-Package: org.eclipse.scada.sec;version="1.1.0",
+ org.eclipse.scada.utils.concurrent;version="1.1.0",
+ org.eclipse.scada.utils.str;version="1.1.0",
+ org.openscada.ca;version="1.0.0",
+ org.openscada.ca.data;version="1.0.0"
 Service-Component: OSGI-INF/freezableConsole.xml,
  OSGI-INF/console.xml
 Require-Bundle: org.apache.felix.gogo.runtime;bundle-version="0.8.0"

@@ -21,7 +21,7 @@ package org.openscada.ca;
 
 import java.util.Map;
 
-import org.openscada.sec.UserInformation;
+import org.eclipse.scada.sec.UserInformation;
 
 public interface ConfigurationFactory
 {

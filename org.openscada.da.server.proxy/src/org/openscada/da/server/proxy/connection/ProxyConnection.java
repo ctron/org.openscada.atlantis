@@ -23,10 +23,12 @@ package org.openscada.da.server.proxy.connection;
 
 import java.util.HashMap;
 
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.NullValueException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
+import org.eclipse.scada.utils.lifecycle.LifecycleAware;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.Connection;
 import org.openscada.da.server.browser.common.FolderCommon;
@@ -39,8 +41,6 @@ import org.openscada.da.server.proxy.Hive;
 import org.openscada.da.server.proxy.item.ProxyDataItem;
 import org.openscada.da.server.proxy.utils.ProxyPrefixName;
 import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
-import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.lifecycle.LifecycleAware;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

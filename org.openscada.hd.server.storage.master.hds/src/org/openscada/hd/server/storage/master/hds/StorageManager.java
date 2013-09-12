@@ -32,14 +32,14 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import org.apache.commons.io.FileUtils;
+import org.eclipse.scada.hds.DataFilePool;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
+import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
+import org.eclipse.scada.utils.str.StringReplacer;
 import org.openscada.hd.server.storage.hds.AbstractStorageManager;
 import org.openscada.hd.server.storage.hds.StorageConfiguration;
 import org.openscada.hd.server.storage.hds.StorageHelper;
 import org.openscada.hd.server.storage.hds.StorageInformation;
-import org.openscada.hds.DataFilePool;
-import org.openscada.utils.concurrent.NamedThreadFactory;
-import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
-import org.openscada.utils.str.StringReplacer;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

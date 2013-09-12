@@ -21,9 +21,9 @@
 
 package org.openscada.core.connection.provider;
 
+import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.openscada.core.client.AutoReconnectController;
 import org.openscada.core.client.Connection;
-import org.openscada.sec.callback.CallbackHandler;
 
 public interface ConnectionService
 {

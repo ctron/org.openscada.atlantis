@@ -19,7 +19,7 @@
 
 package org.openscada.hd.client.net;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.core.client.Connection;
 
 public class DriverInformationImpl implements org.openscada.core.client.DriverInformation

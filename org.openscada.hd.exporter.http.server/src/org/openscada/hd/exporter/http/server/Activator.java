@@ -22,13 +22,13 @@ package org.openscada.hd.exporter.http.server;
 import java.util.Dictionary;
 import java.util.Hashtable;
 
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.hd.exporter.http.HttpExporter;
 import org.openscada.hd.exporter.http.server.internal.JsonServlet;
 import org.openscada.hd.exporter.http.server.internal.LocalHttpExporter;
 import org.openscada.hd.exporter.http.server.internal.RemoteHttpExporter;
 import org.openscada.hd.server.Service;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

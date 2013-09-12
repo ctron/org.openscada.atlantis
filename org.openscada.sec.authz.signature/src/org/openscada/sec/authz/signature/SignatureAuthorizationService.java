@@ -28,13 +28,13 @@ import java.util.Map;
 
 import javax.script.ScriptEngineManager;
 
+import org.eclipse.scada.sec.AuthenticationImplementation;
+import org.eclipse.scada.sec.AuthorizationService;
+import org.eclipse.scada.sec.audit.AuditLogService;
+import org.eclipse.scada.sec.authz.AuthorizationRule;
+import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
+import org.eclipse.scada.utils.script.ScriptExecutor;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.sec.AuthenticationImplementation;
-import org.openscada.sec.AuthorizationService;
-import org.openscada.sec.audit.AuditLogService;
-import org.openscada.sec.authz.AuthorizationRule;
-import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
-import org.openscada.utils.script.ScriptExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,7 +71,7 @@ public class SignatureAuthorizationService implements AuthorizationService
 
     public void activate ()
     {
-        this.executor = new ScheduledExportedExecutorService ( "org.openscada.sec.authz.signature", 1 );
+        this.executor = new ScheduledExportedExecutorService ( "org.eclipse.scada.sec.authz.signature", 1 );
     }
 
     public void deactivate ()

@@ -26,15 +26,15 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.scada.utils.osgi.FilterUtil;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.ae.Event;
 import org.openscada.ae.event.EventListener;
 import org.openscada.ae.event.EventManager;
 import org.openscada.ae.event.EventService;
 import org.openscada.ae.server.storage.Storage;
 import org.openscada.ae.server.storage.StoreListener;
-import org.openscada.utils.osgi.FilterUtil;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
 import org.osgi.framework.InvalidSyntaxException;

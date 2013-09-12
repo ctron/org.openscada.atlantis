@@ -19,9 +19,9 @@
 
 package org.openscada.ae.server.exporter.net;
 
+import org.eclipse.scada.core.ConnectionInformation;
 import org.openscada.ae.server.Service;
 import org.openscada.ae.server.net.Exporter;
-import org.openscada.core.ConnectionInformation;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

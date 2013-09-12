@@ -26,12 +26,12 @@ import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
-import org.openscada.sec.AuthorizationReply;
-import org.openscada.sec.AuthorizationRequest;
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.osgi.AuthorizationTracker;
-import org.openscada.sec.osgi.AuthorizationTracker.Listener;
-import org.openscada.sec.osgi.AuthorizationTracker.Monitor;
+import org.eclipse.scada.sec.AuthorizationReply;
+import org.eclipse.scada.sec.AuthorizationRequest;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.osgi.AuthorizationTracker;
+import org.eclipse.scada.sec.osgi.AuthorizationTracker.Listener;
+import org.eclipse.scada.sec.osgi.AuthorizationTracker.Monitor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

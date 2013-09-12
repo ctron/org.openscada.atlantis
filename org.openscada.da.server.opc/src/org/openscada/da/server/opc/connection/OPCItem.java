@@ -25,10 +25,14 @@ import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.eclipse.scada.core.InvalidOperationException;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
+import org.eclipse.scada.utils.concurrent.DirectExecutor;
+import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.jinterop.dcom.core.JIVariant;
-import org.openscada.core.InvalidOperationException;
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.Variant;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteAttributeResults;
@@ -45,10 +49,6 @@ import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.ValueData;
 import org.openscada.opc.dcom.da.WriteRequest;
-import org.openscada.utils.collection.MapBuilder;
-import org.openscada.utils.concurrent.DirectExecutor;
-import org.openscada.utils.concurrent.InstantErrorFuture;
-import org.openscada.utils.concurrent.NotifyFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

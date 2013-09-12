@@ -19,7 +19,7 @@
 
 package org.openscada.hd.server;
 
-import org.openscada.core.InvalidSessionException;
+import org.eclipse.scada.core.InvalidSessionException;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;

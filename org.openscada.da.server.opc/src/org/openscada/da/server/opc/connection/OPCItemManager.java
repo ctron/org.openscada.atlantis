@@ -27,7 +27,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.beans.AbstractPropertyChange;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.da.data.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.query.AttributeNameProvider;
@@ -46,8 +48,6 @@ import org.openscada.opc.dcom.common.KeyedResult;
 import org.openscada.opc.dcom.da.OPCITEMDEF;
 import org.openscada.opc.dcom.da.OPCITEMRESULT;
 import org.openscada.opc.dcom.da.ValueData;
-import org.openscada.utils.beans.AbstractPropertyChange;
-import org.openscada.utils.collection.MapBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

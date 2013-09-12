@@ -1,6 +1,6 @@
 package org.openscada.da.datasource;
 
-import org.openscada.core.VariantType;
+import org.eclipse.scada.core.VariantType;
 import org.openscada.da.client.DataItemValue;
 
 public interface DataSourceHandler

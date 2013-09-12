@@ -23,9 +23,9 @@ package org.openscada.ae.slave.inject;
 
 import java.sql.SQLException;
 
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.jdbc.DataSourceFactoryTracker;
-import org.openscada.utils.osgi.jdbc.DataSourceHelper;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.jdbc.DataSourceFactoryTracker;
+import org.eclipse.scada.utils.osgi.jdbc.DataSourceHelper;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;

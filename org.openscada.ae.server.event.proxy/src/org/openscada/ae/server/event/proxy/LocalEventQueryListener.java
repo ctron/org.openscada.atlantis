@@ -22,12 +22,12 @@ package org.openscada.ae.server.event.proxy;
 import java.util.List;
 import java.util.concurrent.locks.Lock;
 
+import org.eclipse.scada.utils.osgi.FilterUtil;
+import org.eclipse.scada.utils.osgi.SingleServiceListener;
+import org.eclipse.scada.utils.osgi.SingleServiceTracker;
 import org.openscada.ae.Event;
 import org.openscada.ae.event.EventListener;
 import org.openscada.ae.server.common.event.EventQuery;
-import org.openscada.utils.osgi.FilterUtil;
-import org.openscada.utils.osgi.SingleServiceListener;
-import org.openscada.utils.osgi.SingleServiceTracker;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.InvalidSyntaxException;
 import org.osgi.framework.ServiceReference;

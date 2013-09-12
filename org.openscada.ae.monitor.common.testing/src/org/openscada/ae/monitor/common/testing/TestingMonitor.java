@@ -28,12 +28,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.core.Variant;
 import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractStateMonitor;
 import org.openscada.ae.monitor.common.PersistentInformation;
 import org.openscada.ae.server.common.akn.AknHandler;
-import org.openscada.core.Variant;
 import org.openscada.core.server.OperationParameters;
 import org.osgi.framework.BundleContext;
 

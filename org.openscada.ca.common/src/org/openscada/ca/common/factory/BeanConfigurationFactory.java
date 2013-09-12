@@ -24,8 +24,8 @@ import java.util.Hashtable;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtilsBean2;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.lang.Disposable;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.lang.Disposable;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 import org.slf4j.Logger;

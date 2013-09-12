@@ -21,9 +21,9 @@ package org.openscada.ca.server.osgi;
 
 import java.util.Map;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ca.server.Session;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.sec.UserInformation;
 
 public class SessionImpl extends AbstractSessionImpl implements Session
 {

@@ -23,14 +23,14 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.collection.MapBuilder;
 import org.openscada.da.core.browser.Entry;
 import org.openscada.da.core.server.browser.NoSuchFolderException;
 import org.openscada.da.server.browser.common.Folder;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.FolderListener;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.utils.collection.MapBuilder;
 
 public class GroupSubFolder implements Folder
 {

@@ -24,7 +24,7 @@ import java.util.Map;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.client.Connection;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
@@ -55,7 +55,7 @@ public class NotifyConnectionErrorListener implements ConnectionStateListener
 
     /**
      * either sends connection state straight away, or schedules it for later execution
-     * @see org.openscada.core.client.ConnectionStateListener#stateChange(org.openscada.core.client.Connection, org.openscada.core.client.ConnectionState, java.lang.Throwable)
+     * @see org.eclipse.scada.core.client.ConnectionStateListener#stateChange(org.eclipse.scada.core.client.Connection, org.eclipse.scada.core.client.ConnectionState, java.lang.Throwable)
      */
     @Override
     public void stateChange ( final Connection connection, final ConnectionState state, final Throwable error )

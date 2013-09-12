@@ -21,11 +21,11 @@
 
 package org.openscada.net.utils;
 
+import org.eclipse.scada.utils.ExceptionHelper;
+import org.eclipse.scada.utils.statuscodes.CodedExceptionBase;
+import org.eclipse.scada.utils.statuscodes.StatusCode;
 import org.openscada.net.base.data.Message;
 import org.openscada.net.base.data.StringValue;
-import org.openscada.utils.ExceptionHelper;
-import org.openscada.utils.statuscodes.CodedExceptionBase;
-import org.openscada.utils.statuscodes.StatusCode;
 
 public class MessageCreator
 {

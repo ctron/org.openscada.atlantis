@@ -22,10 +22,10 @@ package org.openscada.da.client;
 
 import java.util.concurrent.Future;
 
+import org.eclipse.scada.utils.concurrent.FutureListener;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
-import org.openscada.utils.concurrent.FutureListener;
-import org.openscada.utils.concurrent.NotifyFuture;
 
 public class Helper
 {

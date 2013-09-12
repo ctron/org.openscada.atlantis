@@ -22,7 +22,7 @@ package org.openscada.da.server.stock.items;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInputCommon;
 import org.openscada.da.server.common.ItemListener;

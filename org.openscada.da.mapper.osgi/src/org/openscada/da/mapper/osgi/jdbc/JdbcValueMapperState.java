@@ -19,7 +19,7 @@
 
 package org.openscada.da.mapper.osgi.jdbc;
 
-import org.openscada.utils.beans.AbstractPropertyChange;
+import org.eclipse.scada.utils.beans.AbstractPropertyChange;
 
 public class JdbcValueMapperState extends AbstractPropertyChange
 {

@@ -21,7 +21,7 @@ package org.openscada.da.server.sysinfo.items;
 
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 
 public class TimeDataItem extends ScheduledDataItem
 {

@@ -24,8 +24,10 @@ package org.openscada.da.server.modbus.driver;
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 
@@ -34,6 +36,7 @@ import org.eclipse.emf.ecore.resource.Resource;
 import org.eclipse.emf.ecore.resource.ResourceSet;
 import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl;
 import org.eclipse.emf.ecore.util.EcoreUtil;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.openscada.da.modbus.configuration.ConfigurationPackage;
 import org.openscada.da.modbus.configuration.DeviceType;
 import org.openscada.da.modbus.configuration.DocumentRoot;
@@ -47,11 +50,20 @@ import org.openscada.da.server.modbus.ModbusConstants;
 import org.openscada.da.server.modbus.ModbusDeviceType;
 import org.openscada.da.server.modbus.ModbusRegisterType;
 import org.openscada.da.server.modbus.ModbusType;
-import org.openscada.utils.concurrent.NamedThreadFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Hive extends HiveCommon
 {
+    private final static Logger logger = LoggerFactory.getLogger ( Hive.class );
+
     private final ScheduledExecutorService scheduler;
+
+    private final Set<DeviceWrapper> devices = new HashSet<DeviceWrapper> ();
+
+    private final RootType root;
+
+    private final FolderCommon rootFolder;
 
     public Hive ( final String uri ) throws IOException
     {
@@ -61,11 +73,30 @@ public class Hive extends HiveCommon
     public Hive ( final RootType root )
     {
         this.scheduler = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( "modbusScheduler" ) );
+        this.root = root;
 
-        final FolderCommon rootFolder = new FolderCommon ();
-        setRootFolder ( rootFolder );
+        this.rootFolder = new FolderCommon ();
+        setRootFolder ( this.rootFolder );
+    }
 
-        for ( final DeviceType device : root.getDevices ().getDevice () )
+    private static RootType parse ( final URI uri ) throws IOException
+    {
+        final ResourceSet rs = new ResourceSetImpl ();
+        rs.getResourceFactoryRegistry ().getExtensionToFactoryMap ().put ( "*", new ConfigurationResourceFactoryImpl () );
+        final Resource r = rs.createResource ( uri );
+        r.load ( null );
+        final DocumentRoot dr = (DocumentRoot)EcoreUtil.getObjectByType ( r.getContents (), ConfigurationPackage.Literals.DOCUMENT_ROOT );
+        if ( dr == null )
+        {
+            return null;
+        }
+        return dr.getRoot ();
+    }
+
+    @Override
+    protected void performStart () throws Exception
+    {
+        for ( final DeviceType device : this.root.getDevices ().getDevice () )
         {
             final InetSocketAddress address = new InetSocketAddress ( device.getHost (), device.getPort () );
             // convert both values to nanoseconds! 
@@ -87,22 +118,27 @@ public class Hive extends HiveCommon
                     deviceType = t;
                 }
             }
-            new DeviceWrapper ( this, device.getId (), this.scheduler, rootFolder, address, deviceType, interFrameDelay, slaves );
+            final DeviceWrapper newDevice = new DeviceWrapper ( this, device.getId (), this.scheduler, this.rootFolder, address, deviceType, interFrameDelay, slaves );
+            newDevice.start ();
+            this.devices.add ( newDevice );
         }
     }
 
-    private static RootType parse ( final URI uri ) throws IOException
+    @Override
+    protected void performStop () throws Exception
     {
-        final ResourceSet rs = new ResourceSetImpl ();
-        rs.getResourceFactoryRegistry ().getExtensionToFactoryMap ().put ( "*", new ConfigurationResourceFactoryImpl () );
-        final Resource r = rs.createResource ( uri );
-        r.load ( null );
-        final DocumentRoot dr = (DocumentRoot)EcoreUtil.getObjectByType ( r.getContents (), ConfigurationPackage.Literals.DOCUMENT_ROOT );
-        if ( dr == null )
+        for ( final DeviceWrapper device : this.devices )
         {
-            return null;
+            try
+            {
+                device.stop ();
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to stop device: " + device, e );
+            }
         }
-        return dr.getRoot ();
+        this.devices.clear ();
     }
 
     @Override

@@ -20,8 +20,8 @@
 
 package org.openscada.da.client.sfp.strategy;
 
+import org.eclipse.scada.utils.concurrent.AbstractFuture;
 import org.openscada.da.core.WriteResult;
-import org.openscada.utils.concurrent.AbstractFuture;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

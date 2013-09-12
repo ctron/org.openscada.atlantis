@@ -28,7 +28,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.mina.core.session.IoSession;
-import org.openscada.core.InvalidSessionException;
+import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.openscada.core.data.ErrorInformation;
 import org.openscada.core.data.Response;
 import org.openscada.core.server.ngp.ServiceServerConnection;
@@ -52,7 +53,6 @@ import org.openscada.hd.data.message.UpdateQueryParameters;
 import org.openscada.hd.data.message.UpdateQueryState;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
-import org.openscada.utils.concurrent.NamedThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.profiler.Profiler;

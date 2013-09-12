@@ -27,11 +27,11 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.eclipse.scada.sec.AuthenticationImplementation;
+import org.eclipse.scada.sec.AuthorizationService;
+import org.eclipse.scada.sec.authz.AuthorizationRule;
+import org.eclipse.scada.utils.script.ScriptExecutor;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.sec.AuthenticationImplementation;
-import org.openscada.sec.AuthorizationService;
-import org.openscada.sec.authz.AuthorizationRule;
-import org.openscada.utils.script.ScriptExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

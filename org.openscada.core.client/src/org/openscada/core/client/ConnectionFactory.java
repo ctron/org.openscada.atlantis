@@ -22,7 +22,7 @@ package org.openscada.core.client;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

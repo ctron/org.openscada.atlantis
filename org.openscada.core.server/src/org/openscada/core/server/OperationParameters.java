@@ -24,9 +24,9 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.sec.UserInformation;
-import org.openscada.sec.callback.CallbackHandler;
-import org.openscada.utils.lang.Immutable;
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.sec.callback.CallbackHandler;
+import org.eclipse.scada.utils.lang.Immutable;
 
 /**
  * @since 1.1

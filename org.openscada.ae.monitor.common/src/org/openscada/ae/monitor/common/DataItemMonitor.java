@@ -21,8 +21,8 @@ package org.openscada.ae.monitor.common;
 
 import java.util.Map;
 
+import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.sec.UserInformation;
 
 public interface DataItemMonitor extends MonitorService
 {

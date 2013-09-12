@@ -147,7 +147,7 @@ public class ItemManagerImpl implements ConnectionStateListener, ItemManager
     }
 
     /* (non-Javadoc)
-     * @see org.openscada.da.client.ItemManager#stateChange(org.openscada.core.client.Connection, org.openscada.core.client.ConnectionState, java.lang.Throwable)
+     * @see org.openscada.da.client.ItemManager#stateChange(org.eclipse.scada.core.client.Connection, org.eclipse.scada.core.client.ConnectionState, java.lang.Throwable)
      */
     @Override
     public synchronized void stateChange ( final org.openscada.core.client.Connection connection, final ConnectionState state, final Throwable error )

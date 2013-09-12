@@ -28,7 +28,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.exporter.TabularExporter;

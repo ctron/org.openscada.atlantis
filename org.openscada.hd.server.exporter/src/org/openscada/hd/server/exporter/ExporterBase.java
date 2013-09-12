@@ -19,9 +19,9 @@
 
 package org.openscada.hd.server.exporter;
 
-import org.openscada.core.ConnectionInformation;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.utils.lifecycle.LifecycleAware;
 import org.openscada.hd.server.Service;
-import org.openscada.utils.lifecycle.LifecycleAware;
 
 public abstract class ExporterBase implements LifecycleAware
 {

@@ -19,7 +19,7 @@
 
 package org.openscada.hd;
 
-import org.openscada.utils.statuscodes.CodedException;
+import org.eclipse.scada.utils.statuscodes.CodedException;
 
 public class InvalidItemException extends CodedException
 {

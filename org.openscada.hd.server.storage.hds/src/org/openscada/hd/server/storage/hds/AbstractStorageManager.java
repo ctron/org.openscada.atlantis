@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.openscada.utils.concurrent.ScheduledExportedExecutorService;
+import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

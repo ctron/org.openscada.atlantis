@@ -24,11 +24,11 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
+import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.openscada.da.datasource.DataSource;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.osgi.pool.ManageableObjectPool;
-import org.openscada.utils.osgi.pool.ObjectPoolTracker;
 import org.osgi.framework.BundleContext;
 
 public class FactoryImpl extends AbstractServiceConfigurationFactory<AttributeDataSourceSummarizer>

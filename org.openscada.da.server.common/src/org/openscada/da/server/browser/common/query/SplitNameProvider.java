@@ -23,7 +23,7 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
-import org.openscada.utils.str.StringHelper;
+import org.eclipse.scada.utils.str.StringHelper;
 
 public class SplitNameProvider implements NameProvider
 {

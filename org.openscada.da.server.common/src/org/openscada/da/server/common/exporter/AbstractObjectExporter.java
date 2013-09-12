@@ -34,9 +34,10 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.core.NotConvertableException;
-import org.openscada.core.NullValueException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.NotConvertableException;
+import org.eclipse.scada.core.NullValueException;
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.utils.lang.Disposable;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItem;
@@ -44,7 +45,6 @@ import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;
 import org.openscada.da.server.common.item.factory.ItemFactory;
-import org.openscada.utils.lang.Disposable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

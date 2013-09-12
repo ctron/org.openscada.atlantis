@@ -24,8 +24,8 @@ package org.openscada.da.client.samples;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.openscada.core.OperationException;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.client.NoConnectionException;
 
 /**

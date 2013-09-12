@@ -21,10 +21,10 @@ package org.openscada.ae.server.http.monitor;
 
 import java.util.Map;
 
+import org.eclipse.scada.sec.UserInformation;
+import org.eclipse.scada.utils.lang.Pair;
 import org.openscada.ae.Event;
 import org.openscada.ae.monitor.MonitorService;
-import org.openscada.sec.UserInformation;
-import org.openscada.utils.lang.Pair;
 
 public interface EventMonitor extends MonitorService
 {

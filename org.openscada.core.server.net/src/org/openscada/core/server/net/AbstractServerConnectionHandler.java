@@ -30,9 +30,9 @@ import java.util.Set;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.handler.multiton.SingleSessionIoHandler;
-import org.openscada.core.ConnectionInformation;
-import org.openscada.core.info.StatisticEntry;
-import org.openscada.core.info.StatisticsImpl;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.core.info.StatisticEntry;
+import org.eclipse.scada.core.info.StatisticsImpl;
 import org.openscada.core.net.ConnectionHelper;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.core.server.common.stats.ManagedConnection;
@@ -109,7 +109,7 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
             {
                 AbstractServerConnectionHandler.this.ioSession.close ( false );
             }
-        }, ioSession.getRemoteAddress (), "org.openscada.core.server.net" );
+        }, ioSession.getRemoteAddress (), "org.eclipse.scada.core.server.net" );
 
         this.statistics.setLabel ( STATS_PINGS_SENT, "Pings sent" );
         this.statistics.setLabel ( STATS_SESSION_BYTES_READ, "Bytes read in session" );
@@ -161,7 +161,7 @@ public abstract class AbstractServerConnectionHandler implements SingleSessionIo
         {
             return true;
         }
-        else if ( Boolean.getBoolean ( "org.openscada.core.server.net.rejectCompression" ) )
+        else if ( Boolean.getBoolean ( "org.eclipse.scada.core.server.net.rejectCompression" ) )
         {
             return true;
         }

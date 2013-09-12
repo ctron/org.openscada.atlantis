@@ -5,12 +5,12 @@ Bundle-SymbolicName: org.openscada.core.connection.provider
 Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.openscada.core;version="1.0.0",
+Import-Package: org.eclipse.scada.core;version="1.0.0",
+ org.eclipse.scada.core.info;version="1.0.0",
+ org.eclipse.scada.sec.callback;version="1.1.0",
+ org.eclipse.scada.utils.lang;version="1.0.0",
+ org.eclipse.scada.utils.osgi;version="1.0.0",
  org.openscada.core.client;version="1.0.0",
- org.openscada.core.info;version="1.0.0",
- org.openscada.sec.callback;version="1.1.0",
- org.openscada.utils.lang;version="1.0.0",
- org.openscada.utils.osgi;version="1.0.0",
  org.osgi.framework;version="1.5.0",
  org.osgi.util.tracker;version="1.4.0",
  org.slf4j;version="1.5.8"

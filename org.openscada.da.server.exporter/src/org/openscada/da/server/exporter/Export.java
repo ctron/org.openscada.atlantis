@@ -19,8 +19,8 @@
 
 package org.openscada.da.server.exporter;
 
-import org.openscada.core.ConnectionInformation;
-import org.openscada.utils.lifecycle.LifecycleAware;
+import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.utils.lifecycle.LifecycleAware;
 
 /**
  * A service that can be exported

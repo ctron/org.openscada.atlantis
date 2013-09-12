@@ -21,7 +21,7 @@ package org.openscada.da.datasource.movingaverage;
 
 import java.util.Date;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 
