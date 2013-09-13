@@ -276,6 +276,7 @@
 		<module>../org.openscada.da.server.modbus.editor</module>
 		<module>../org.openscada.da.server.opc.edit</module>
 		<module>../org.openscada.da.server.opc.editor</module>
+		<module>../org.openscada.da.server.common.memory</module>
 	</modules>
 
 </project>
