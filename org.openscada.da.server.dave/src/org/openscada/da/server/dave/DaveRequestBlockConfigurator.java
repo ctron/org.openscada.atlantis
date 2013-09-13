@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 IBH SYSTEMS GmbH (http://ibh-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -21,8 +23,9 @@ package org.openscada.da.server.dave;
 
 import java.util.concurrent.Executor;
 
-import org.openscada.da.server.dave.data.Variable;
-import org.openscada.da.server.dave.data.VariableListener;
+import org.openscada.da.server.common.memory.Activator;
+import org.openscada.da.server.common.memory.Variable;
+import org.openscada.da.server.common.memory.VariableListener;
 
 public class DaveRequestBlockConfigurator implements VariableListener
 {
@@ -43,6 +46,7 @@ public class DaveRequestBlockConfigurator implements VariableListener
         Activator.getVariableManager ().removeVariableListener ( this.type, this );
     }
 
+    @Override
     public void variableConfigurationChanged ( final Variable[] variables )
     {
         this.block.setVariables ( variables );

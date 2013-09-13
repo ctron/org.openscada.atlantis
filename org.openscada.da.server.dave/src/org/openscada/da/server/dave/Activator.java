@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 IBH SYSTEMS GmbH (http://ibh-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -31,8 +33,6 @@ import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.ca.common.factory.BeanConfigurationFactory;
 import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.dave.data.VariableManager;
-import org.openscada.da.server.dave.data.VariableManagerImpl;
 import org.openscada.da.server.dave.factory.ConfigurationFactoryImpl;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
@@ -45,18 +45,11 @@ public class Activator implements BundleActivator
 
     private BeanConfigurationFactory blockFactory;
 
-    private static VariableManagerImpl variableManager;
-
     private ExecutorService executor;
 
     private ObjectPoolImpl<DataItem> itemPool;
 
     private ServiceRegistration<?> itemPoolHandle;
-
-    public static VariableManager getVariableManager ()
-    {
-        return variableManager;
-    }
 
     /*
      * (non-Javadoc)
@@ -85,13 +78,6 @@ public class Activator implements BundleActivator
             this.blockFactory = new BeanConfigurationFactory ( context, BlockConfiguration.class );
             context.registerService ( ConfigurationFactory.class.getName (), this.blockFactory, properties );
         }
-
-        {
-            Activator.variableManager = new VariableManagerImpl ( this.executor, this.itemPool );
-            final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-            properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.dave.types" );
-            context.registerService ( ConfigurationFactory.class.getName (), Activator.variableManager, properties );
-        }
     }
 
     /*
@@ -106,9 +92,6 @@ public class Activator implements BundleActivator
 
         this.blockFactory.dispose ();
         this.service.dispose ();
-
-        Activator.variableManager.dispose ();
-        Activator.variableManager = null;
 
         this.executor.shutdown ();
         this.executor = null;

@@ -23,8 +23,8 @@ import org.apache.commons.collections.buffer.CircularFifoBuffer;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.eclipse.scada.core.Variant;
 import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.openscada.da.server.common.memory.Variable;
 import org.openscada.da.server.common.osgi.factory.DataItemFactory;
-import org.openscada.da.server.dave.data.Variable;
 import org.openscada.protocols.dave.DaveReadRequest.Request;
 import org.openscada.protocols.dave.DaveReadResult.Result;
 import org.osgi.framework.BundleContext;
@@ -155,8 +155,9 @@ public class DaveRequestBlock
     }
 
     /**
-     * The the update priority used to find the next block to request 
-     * @param now 
+     * The the update priority used to find the next block to request
+     * 
+     * @param now
      * @return the update priority
      */
     public long updatePriority ( final long now )
@@ -166,6 +167,7 @@ public class DaveRequestBlock
 
     /**
      * The the configured request
+     * 
      * @return the request
      */
     public Request getRequest ()
@@ -217,7 +219,9 @@ public class DaveRequestBlock
 
     /**
      * Handle a response from the device
-     * @param response the response to handle
+     * 
+     * @param response
+     *            the response to handle
      */
     public synchronized void handleResponse ( final Result response )
     {
@@ -299,7 +303,9 @@ public class DaveRequestBlock
 
     /**
      * Set the new variable configuration
-     * @param variables the new variables to set
+     * 
+     * @param variables
+     *            the new variables to set
      */
     public synchronized void setVariables ( final Variable[] variables )
     {
@@ -325,7 +331,7 @@ public class DaveRequestBlock
         {
             for ( final Variable var : this.variables )
             {
-                var.start ( this.device.getVarItemId ( this.name ), this.context, this.device, this, this.request.getStart () );
+                var.start ( this.device.getVarItemId ( this.name ), this.context, new MemoryRequestBlockImpl ( this.device, this ), this.request.getStart () );
             }
         }
 
