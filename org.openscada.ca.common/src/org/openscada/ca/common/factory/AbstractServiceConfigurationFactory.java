@@ -108,6 +108,7 @@ public abstract class AbstractServiceConfigurationFactory<T> implements Configur
             disposeService ( null, entry.getId (), entry.getService () );
             unregisterService ( entry );
         }
+        this.services.clear ();
     }
 
     /**
