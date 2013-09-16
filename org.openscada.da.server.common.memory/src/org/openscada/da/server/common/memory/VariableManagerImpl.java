@@ -352,34 +352,24 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             {
                 continue;
             }
-            final String varName = key.substring ( "variable.".length () );
 
+            final String varName = key.substring ( "variable.".length () );
             final String toks[] = entry.getValue ().split ( ":" );
 
-            switch ( TYPE.valueOf ( toks[0] ) )
-            {
-                case BIT:
-                    result.add ( new TypeEntry ( varName, Integer.parseInt ( toks[1] ), Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, varName ) ) );
-                    break;
-                case BYTE:
-                    result.add ( new TypeEntry ( varName, TYPE.BYTE, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
-                    break;
-                case FLOAT:
-                    result.add ( new TypeEntry ( varName, TYPE.FLOAT, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
-                    break;
-                case WORD:
-                    result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
-                    break;
-                case DINT:
-                    result.add ( new TypeEntry ( varName, TYPE.DINT, Integer.parseInt ( toks[1] ), 0, parseAttributes ( properties, varName ) ) );
-                    break;
-                case UDT:
-                    result.add ( new TypeEntry ( varName, toks[1], Integer.parseInt ( toks[2] ) ) );
-                    break;
-            }
+            parseType ( properties, result, varName, toks[0], makeArgs ( toks, 1 ) );
         }
 
         return result;
+    }
+
+    protected String[] makeArgs ( final String[] toks, final int start )
+    {
+        final String[] args = new String[toks.length - start];
+        for ( int i = start; i < toks.length; i++ )
+        {
+            args[i - start] = toks[i];
+        }
+        return args;
     }
 
     private Collection<TypeEntry> parseConfig ( final Map<String, String> properties )
@@ -405,30 +395,37 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 continue;
             }
 
-            switch ( TYPE.valueOf ( toks[1] ) )
-            {
-                case BIT:
-                    result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                    break;
-                case BYTE:
-                    result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                    break;
-                case FLOAT:
-                    result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                    break;
-                case WORD:
-                    result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                    break;
-                case DINT:
-                    result.add ( new TypeEntry ( toks[0], TYPE.DINT, Integer.parseInt ( toks[2] ), 0, parseAttributes ( properties, toks[0] ) ) );
-                    break;
-                case UDT:
-                    result.add ( new TypeEntry ( toks[0], toks[2], Integer.parseInt ( toks[3] ) ) );
-                    break;
-            }
+            parseType ( properties, result, toks[0], toks[1], makeArgs ( toks, 2 ) );
         }
 
         return result;
+    }
+
+    protected void parseType ( final Map<String, String> properties, final Collection<TypeEntry> result, final String varName, final String typeName, final String[] args )
+    {
+        switch ( TYPE.valueOf ( typeName ) )
+        {
+            case BIT:
+                result.add ( new TypeEntry ( varName, Integer.parseInt ( args[0] ), Integer.parseInt ( args[1] ), 0, parseAttributes ( properties, varName ) ) );
+                break;
+            case BYTE:
+                result.add ( new TypeEntry ( varName, TYPE.BYTE, Integer.parseInt ( args[0] ), 0, parseAttributes ( properties, varName ) ) );
+                break;
+            case FLOAT:
+                result.add ( new TypeEntry ( varName, TYPE.FLOAT, Integer.parseInt ( args[0] ), 0, parseAttributes ( properties, varName ) ) );
+                break;
+            case WORD:
+                result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( args[0] ), 0, parseAttributes ( properties, varName ) ) );
+                break;
+            case DINT:
+                result.add ( new TypeEntry ( varName, TYPE.DINT, Integer.parseInt ( args[0] ), 0, parseAttributes ( properties, varName ) ) );
+                break;
+            case UDT:
+                result.add ( new TypeEntry ( varName, args[0], Integer.parseInt ( args[1] ) ) );
+                break;
+            default:
+                throw new IllegalArgumentException ( String.format ( "Type %s is not supported at the moment", typeName ) );
+        }
     }
 
     private TypeEntry[] parseAttributes ( final Map<String, String> properties, final String varName )
