@@ -4,9 +4,9 @@ Bundle-Name: openSCADA Monitor Plug-in
 Bundle-SymbolicName: org.openscada.ae.monitor
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: openSCADA.org
+Export-Package: org.openscada.ae.monitor;version="1.0.0";uses:="org.openscada.sec,org.openscada.ae"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.sec;version="1.0.0",
+Import-Package: org.eclipse.scada.sec;version="0.1.0",
  org.openscada.ae;version="1.0.0",
  org.openscada.ae.data;version="1.0.0",
  org.osgi.framework;version="1.7.0"
-Export-Package: org.openscada.ae.monitor;version="1.0.0";uses:="org.openscada.sec,org.openscada.ae"

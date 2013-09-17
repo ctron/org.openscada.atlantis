@@ -4,10 +4,10 @@ Bundle-Name: openSCADA Configuration Admin Plug-in
 Bundle-SymbolicName: org.openscada.ca
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.ca;version="1.0.0";uses:="org.openscada.utils.concurrent"
-Import-Package: org.eclipse.scada.sec;version="1.0.0",
- org.eclipse.scada.utils.concurrent;version="1.0.0",
- org.eclipse.scada.utils.lang;version="1.0.0",
- org.eclipse.scada.utils.str;version="1.0.0",
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.scada.sec;version="0.1.0",
+ org.eclipse.scada.utils.concurrent;version="0.1.0",
+ org.eclipse.scada.utils.lang;version="0.1.0",
+ org.eclipse.scada.utils.str;version="0.1.0",
  org.openscada.ca.data;version="1.0.0"

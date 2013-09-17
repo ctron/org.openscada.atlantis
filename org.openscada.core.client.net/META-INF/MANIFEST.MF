@@ -1,23 +1,9 @@
 Manifest-Version: 1.0
-Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
-Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
- org.apache.mina.core.future;version="2.0.0",
- org.apache.mina.core.service;version="2.0.0",
- org.apache.mina.core.session;version="2.0.0",
- org.apache.mina.transport.socket;version="2.0.0",
- org.eclipse.scada.core;version="1.0.0",
- org.eclipse.scada.core.info;version="1.0.0",
- org.eclipse.scada.sec.callback;version="1.1.0",
- org.eclipse.scada.utils.concurrent;version="1.0.0",
- org.openscada.core.client;version="1.0.0",
- org.openscada.core.client.net;version="1.0.0",
- org.openscada.core.net;version="1.0.0",
- org.openscada.net;version="1.0.0",
- org.openscada.net.base;version="1.0.0",
- org.openscada.net.base.data;version="1.0.0",
- org.openscada.net.mina;version="1.0.0",
- org.slf4j;version="1.5.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA Core Client NET
+Bundle-SymbolicName: org.openscada.core.client.net
+Bundle-Version: 1.1.0.qualifier
+Bundle-Vendor: openSCADA.org
 Export-Package: org.openscada.core.client.net;version="1.1.0";
   uses:="org.openscada.core.client,
    org.apache.mina.core.session,
@@ -26,8 +12,22 @@ Export-Package: org.openscada.core.client.net;version="1.1.0";
    org.apache.mina.core.service,
    org.openscada.core,
    org.openscada.net.mina"
-Bundle-Version: 1.1.0.qualifier
-Bundle-Name: openSCADA Core Client NET
-Bundle-ManifestVersion: 2
-Bundle-Vendor: openSCADA.org
-Bundle-SymbolicName: org.openscada.core.client.net
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-License: http://www.gnu.org/licenses/gpl-2.0.html
+Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
+ org.apache.mina.core.future;version="2.0.0",
+ org.apache.mina.core.service;version="2.0.0",
+ org.apache.mina.core.session;version="2.0.0",
+ org.apache.mina.transport.socket;version="2.0.0",
+ org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.core.info;version="0.1.0",
+ org.eclipse.scada.sec.callback;version="0.1.0",
+ org.eclipse.scada.utils.concurrent;version="0.1.0",
+ org.openscada.core.client;version="1.0.0",
+ org.openscada.core.client.net;version="1.0.0",
+ org.openscada.core.net;version="1.0.0",
+ org.openscada.net;version="1.0.0",
+ org.openscada.net.base;version="1.0.0",
+ org.openscada.net.base.data;version="1.0.0",
+ org.openscada.net.mina;version="1.0.0",
+ org.slf4j;version="1.5.0"

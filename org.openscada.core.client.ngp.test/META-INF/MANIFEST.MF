@@ -4,11 +4,11 @@ Bundle-Name: openSCADA NextGenerationProtocol Client Test
 Bundle-SymbolicName: org.openscada.core.client.ngp.test;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-Vendor: openSCADA.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.equinox.app
-Import-Package: org.eclipse.scada.core;version="1.0.0",
- org.eclipse.scada.core.info;version="1.0.0",
- org.eclipse.scada.sec.callback;version="1.1.0",
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.core.info;version="0.1.0",
+ org.eclipse.scada.sec.callback;version="0.1.0",
  org.openscada.core.client;version="1.0.0",
  org.openscada.core.client.common;version="1.2.0",
  org.openscada.core.client.ngp;version="1.2.0",

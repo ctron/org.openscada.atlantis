@@ -1,19 +1,19 @@
 Manifest-Version: 1.0
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA AE Interface
+Bundle-SymbolicName: org.openscada.ae
+Bundle-Version: 1.1.0.qualifier
+Bundle-Vendor: openSCADA.org
 Export-Package: org.openscada.ae;version="1.1.0";uses:="org.openscada.core",
  org.openscada.ae.client;version="1.1.0";uses:="org.openscada.core.client,org.openscada.core.subscription,org.openscada.ae",
  org.openscada.ae.server;version="1.1.0";uses:="org.openscada.core.server,org.openscada.core.subscription,org.openscada.ae"
-Bundle-Version: 1.1.0.qualifier
-Bundle-Name: openSCADA AE Interface
-Bundle-ManifestVersion: 2
-Bundle-SymbolicName: org.openscada.ae
-Bundle-Vendor: openSCADA.org
-Import-Package: org.eclipse.scada.core;version="1.0.0",
- org.eclipse.scada.sec;version="1.0.0",
- org.eclipse.scada.sec.callback;version="1.1.0",
- org.eclipse.scada.utils.concurrent;version="1.1.0",
- org.eclipse.scada.utils.lang;version="1.0.0",
- org.eclipse.scada.utils.lifecycle;version="1.0.0",
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.sec;version="0.1.0",
+ org.eclipse.scada.sec.callback;version="0.1.0",
+ org.eclipse.scada.utils.concurrent;version="0.1.0",
+ org.eclipse.scada.utils.lang;version="0.1.0",
+ org.eclipse.scada.utils.lifecycle;version="0.1.0",
  org.openscada.ae.data;version="1.0.0",
  org.openscada.core.client;version="1.0.0",
  org.openscada.core.data;version="1.0.0",

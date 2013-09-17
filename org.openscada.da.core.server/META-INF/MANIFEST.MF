@@ -1,17 +1,9 @@
 Manifest-Version: 1.0
-Import-Package: org.eclipse.scada.core;version="1.0.0",
- org.eclipse.scada.sec;version="1.0.0",
- org.eclipse.scada.sec.callback;version="1.1.0",
- org.eclipse.scada.utils.concurrent;version="1.0.0",
- org.eclipse.scada.utils.lang;version="1.0.0",
- org.eclipse.scada.utils.statuscodes;version="1.0.0",
- org.eclipse.scada.utils.str;version="1.0.0",
- org.openscada.core.data;version="1.0.0",
- org.openscada.core.server;version="1.0.0",
- org.openscada.core.subscription;version="1.0.0",
- org.openscada.da.core;version="1.0.0",
- org.openscada.da.core.browser;version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA DA Core Server
+Bundle-SymbolicName: org.openscada.da.core.server
+Bundle-Version: 1.2.0.qualifier
+Bundle-Vendor: openSCADA.org
 Export-Package: org.openscada.da.core.server;version="1.2.0";
   uses:="org.openscada.core.data,
    org.openscada.core.server,
@@ -25,8 +17,16 @@ Export-Package: org.openscada.da.core.server;version="1.2.0";
    org.openscada.utils.concurrent,
    org.openscada.utils.statuscodes,
    org.openscada.da.core"
-Bundle-Version: 1.2.0.qualifier
-Bundle-Name: openSCADA DA Core Server
-Bundle-ManifestVersion: 2
-Bundle-Vendor: openSCADA.org
-Bundle-SymbolicName: org.openscada.da.core.server
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.sec;version="0.1.0",
+ org.eclipse.scada.sec.callback;version="0.1.0",
+ org.eclipse.scada.utils.concurrent;version="0.1.0",
+ org.eclipse.scada.utils.lang;version="0.1.0",
+ org.eclipse.scada.utils.statuscodes;version="0.1.0",
+ org.eclipse.scada.utils.str;version="0.1.0",
+ org.openscada.core.data;version="1.0.0",
+ org.openscada.core.server;version="1.0.0",
+ org.openscada.core.subscription;version="1.0.0",
+ org.openscada.da.core;version="1.0.0",
+ org.openscada.da.core.browser;version="1.0.0"

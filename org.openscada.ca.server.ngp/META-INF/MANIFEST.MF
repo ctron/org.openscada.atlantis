@@ -4,16 +4,23 @@ Bundle-Name: openSCADA NextGenerationProtocol CA Server
 Bundle-SymbolicName: org.openscada.ca.server.ngp
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: openSCADA.org
+Export-Package: org.openscada.ca.server.ngp;version="1.1.0";
+  uses:="org.apache.mina.core.session,
+   org.openscada.ca.server,
+   org.openscada.core.server.ngp,
+   org.openscada.protocol.ngp.common,
+   org.openscada.core,
+   org.openscada.utils.lifecycle"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core.filterchain;version="2.0.7",
  org.apache.mina.core.session;version="2.0.4",
  org.apache.mina.filter.ssl;version="2.0.4",
- org.eclipse.scada.core;version="1.0.0",
- org.eclipse.scada.sec.callback;version="1.1.0",
- org.eclipse.scada.utils;version="1.0.0",
- org.eclipse.scada.utils.concurrent;version="1.0.0",
- org.eclipse.scada.utils.lifecycle;version="1.0.0",
- org.eclipse.scada.utils.statuscodes;version="1.0.0",
+ org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.sec.callback;version="0.1.0",
+ org.eclipse.scada.utils;version="0.1.0",
+ org.eclipse.scada.utils.concurrent;version="0.1.0",
+ org.eclipse.scada.utils.lifecycle;version="0.1.0",
+ org.eclipse.scada.utils.statuscodes;version="0.1.0",
  org.openscada.ca;version="1.0.0",
  org.openscada.ca.common.ngp;version="1.0.0",
  org.openscada.ca.data;version="1.0.0",
@@ -27,10 +34,3 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0.7",
  org.openscada.protocol.ngp.common;version="1.0.0",
  org.slf4j;version="1.6.0",
  org.slf4j.profiler;version="1.6.0"
-Export-Package: org.openscada.ca.server.ngp;version="1.1.0";
-  uses:="org.apache.mina.core.session,
-   org.openscada.ca.server,
-   org.openscada.core.server.ngp,
-   org.openscada.protocol.ngp.common,
-   org.openscada.core,
-   org.openscada.utils.lifecycle"

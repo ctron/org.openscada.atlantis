@@ -3,8 +3,8 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA A&E Net Client Plug-in
 Bundle-SymbolicName: org.openscada.ae.client.net
 Bundle-Version: 1.1.0.qualifier
+Bundle-Activator: org.openscada.ae.client.net.Activator
 Bundle-Vendor: openSCADA.org
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.ae.client.net;version="1.1.0";
   uses:="org.openscada.core.client,
    org.openscada.ae.client,
@@ -13,13 +13,14 @@ Export-Package: org.openscada.ae.client.net;version="1.1.0";
    org.openscada.core.client.net,
    org.openscada.core,
    org.openscada.ae"
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core;version="2.0.0",
  org.apache.mina.core.session;version="2.0.0",
- org.eclipse.scada.core;version="1.0.0",
- org.eclipse.scada.core.info;version="1.0.0",
- org.eclipse.scada.sec;version="1.0.0",
- org.eclipse.scada.sec.callback;version="1.1.0",
- org.eclipse.scada.utils.concurrent;version="1.0.0",
+ org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.core.info;version="0.1.0",
+ org.eclipse.scada.sec;version="0.1.0",
+ org.eclipse.scada.sec.callback;version="0.1.0",
+ org.eclipse.scada.utils.concurrent;version="0.1.0",
  org.openscada.ae;version="1.0.0",
  org.openscada.ae.client;version="1.0.0",
  org.openscada.ae.data;version="1.0.0",
@@ -37,4 +38,3 @@ Import-Package: org.apache.mina.core;version="2.0.0",
  org.openscada.net.utils;version="1.0.0",
  org.osgi.framework;version="1.6.0",
  org.slf4j;version="1.5.0"
-Bundle-Activator: org.openscada.ae.client.net.Activator
