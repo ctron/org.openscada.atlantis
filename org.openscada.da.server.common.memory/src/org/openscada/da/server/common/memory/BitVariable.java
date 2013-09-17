@@ -52,7 +52,7 @@ public class BitVariable extends ScalarVariable
             return new InstantErrorFuture<WriteResult> ( new OperationException ( "Device not connected" ).fillInStackTrace () );
         }
 
-        block.getDevice ().writeBit ( toGlobalAddress ( this.index ), this.subIndex, value.asBoolean () );
+        block.writeBit ( toAddress ( this.index ), this.subIndex, value.asBoolean () );
 
         return new InstantFuture<WriteResult> ( new WriteResult () );
     }

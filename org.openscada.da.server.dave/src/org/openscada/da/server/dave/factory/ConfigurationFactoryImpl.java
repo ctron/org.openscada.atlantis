@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 IBH SYSTEMS GmbH (http://ibh-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -20,7 +22,6 @@
 package org.openscada.da.server.dave.factory;
 
 import java.util.Dictionary;
-import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 
@@ -31,38 +32,12 @@ import org.osgi.framework.BundleContext;
 
 public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactory<DaveDevice>
 {
-
-    private final Map<String, DaveDevice> devices = new HashMap<String, DaveDevice> ();
-
     private final BundleContext context;
 
     public ConfigurationFactoryImpl ( final BundleContext context )
     {
-        super ( context );
+        super ( context, true );
         this.context = context;
-    }
-
-    public synchronized void delete ( final String configurationId ) throws Exception
-    {
-        final DaveDevice device = this.devices.remove ( configurationId );
-        if ( device != null )
-        {
-            device.dispose ();
-        }
-    }
-
-    public synchronized void update ( final String configurationId, final Map<String, String> properties ) throws Exception
-    {
-        DaveDevice device = this.devices.get ( configurationId );
-        if ( device == null )
-        {
-            device = new DaveDevice ( this.context, configurationId, properties );
-            this.devices.put ( configurationId, device );
-        }
-        else
-        {
-            device.update ( properties );
-        }
     }
 
     @Override
@@ -72,13 +47,13 @@ public class ConfigurationFactoryImpl extends AbstractServiceConfigurationFactor
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( "daveDevice", configurationId );
-        return new Entry<DaveDevice> ( configurationId, device, context.registerService ( DaveDevice.class.getName (), device, properties ) );
+        return new Entry<DaveDevice> ( configurationId, device, context.registerService ( DaveDevice.class, device, properties ) );
     }
 
     @Override
     protected Entry<DaveDevice> updateService ( final UserInformation userInformation, final String configurationId, final Entry<DaveDevice> entry, final Map<String, String> parameters ) throws Exception
     {
-        entry.getService ().update ( parameters );
+        // we never get called since are ware createOnly
         return null;
     }
 

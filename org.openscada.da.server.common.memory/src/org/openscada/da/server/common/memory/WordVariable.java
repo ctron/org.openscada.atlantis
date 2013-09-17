@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.openscada.da.server.common.memory;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -42,7 +43,9 @@ public class WordVariable extends ScalarVariable
         final Integer i = value.asInteger ( null );
         if ( i != null )
         {
-            block.getDevice ().writeWord ( toGlobalAddress ( this.index ), i.shortValue () );
+            final ByteBuffer b = ByteBuffer.allocate ( 2 );
+            b.putShort ( i.shortValue () );
+            block.writeData ( toAddress ( this.index ), b.array () );
             return new InstantFuture<WriteResult> ( new WriteResult () );
         }
         else

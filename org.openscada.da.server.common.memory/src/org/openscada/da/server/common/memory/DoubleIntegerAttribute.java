@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.openscada.da.server.common.memory;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -76,7 +77,9 @@ public class DoubleIntegerAttribute extends AbstractAttribute implements Attribu
         final Integer i = value.asInteger ( null );
         if ( i != null )
         {
-            block.getDevice ().writeDoubleInteger ( this.offset + this.index, i );
+            final ByteBuffer b = ByteBuffer.allocate ( 4 );
+            b.putInt ( i );
+            block.writeData ( toAddress ( this.index ), b.array () );
         }
     }
 

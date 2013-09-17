@@ -8,17 +8,31 @@
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
  *******************************************************************************/
-package org.openscada.da.server.common.memory;
+package org.openscada.da.server.common.io;
 
-public interface MemoryDevice
+public interface PollRequest
 {
-    public void writeBit ( int globalAddress, int subIndex, boolean value );
 
-    public void writeFloat ( int globalAddress, float value );
+    /**
+     * Create poll request
+     */
+    public Object createPollRequest ();
 
-    public void writeDoubleInteger ( int globalAddress, int value );
+    /**
+     * Handle an incoming message while the job was active
+     * 
+     * @param message
+     *            the incoming message
+     * @return if the message as processed
+     */
+    public boolean handleMessage ( Object message );
 
-    public void writeWord ( int globalAddress, short value );
+    public void handleFailure ();
 
-    public void writeByte ( int globalAddress, byte value );
+    public void handleDisconnect ();
+
+    public long updatePriority ( long now );
+
+    public void dispose ();
+
 }

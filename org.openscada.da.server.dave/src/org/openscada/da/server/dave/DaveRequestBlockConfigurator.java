@@ -21,8 +21,6 @@
 
 package org.openscada.da.server.dave;
 
-import java.util.concurrent.Executor;
-
 import org.openscada.da.server.common.memory.Activator;
 import org.openscada.da.server.common.memory.Variable;
 import org.openscada.da.server.common.memory.VariableListener;
@@ -33,7 +31,7 @@ public class DaveRequestBlockConfigurator implements VariableListener
 
     private final String type;
 
-    public DaveRequestBlockConfigurator ( final Executor executor, final DaveRequestBlock block, final String type )
+    public DaveRequestBlockConfigurator ( final DaveRequestBlock block, final String type )
     {
         this.block = block;
         this.type = type;

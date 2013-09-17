@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.openscada.da.server.common.memory;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -42,7 +43,9 @@ public class FloatVariable extends ScalarVariable
         final Double d = value.asDouble ( null );
         if ( d != null )
         {
-            block.getDevice ().writeFloat ( toGlobalAddress ( this.index ), d.floatValue () );
+            final ByteBuffer b = ByteBuffer.allocate ( 4 );
+            b.putFloat ( d.floatValue () );
+            block.writeData ( toAddress ( this.index ), b.array () );
             return new InstantFuture<WriteResult> ( new WriteResult () );
         }
         else

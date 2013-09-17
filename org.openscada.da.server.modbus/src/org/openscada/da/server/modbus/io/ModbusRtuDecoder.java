@@ -87,14 +87,13 @@ public class ModbusRtuDecoder extends TimedEndDecoder
         final ResponseMessage responseMessage = ModbusHelper.decodeResponse ( originalRequest, pdu );
         out.write ( new ResponseWrapper ( unitIdentifier, responseMessage, originalRequest ) );
 
-        logger.trace ( "timeout () flush" );
-
         // flush it
         NextFilter nextFilter;
         synchronized ( this )
         {
             nextFilter = this.nextFilter;
         }
+        logger.trace ( "timeout () flush - nextFilter: {}", nextFilter );
         if ( nextFilter != null )
         {
             out.flush ( nextFilter, session );

@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.openscada.da.server.common.memory;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
@@ -42,7 +43,9 @@ public class DoubleIntegerVariable extends ScalarVariable
         final Integer i = value.asInteger ( null );
         if ( i != null )
         {
-            block.getDevice ().writeDoubleInteger ( toGlobalAddress ( this.index ), i.intValue () );
+            final ByteBuffer b = ByteBuffer.allocate ( 4 );
+            b.putInt ( i );
+            block.writeData ( toAddress ( this.index ), b.array () );
             return new InstantFuture<> ( new WriteResult () );
         }
         else

@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2010 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 IBH SYSTEMS GmbH (http://ibh-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -23,6 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.scada.utils.osgi.FilterUtil;
+import org.openscada.da.server.common.memory.AbstractRequestBlock;
 import org.openscada.protocols.dave.DaveReadRequest.Request;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Filter;
@@ -81,7 +84,7 @@ public class DaveBlockConfigurator
                     final Object o = DaveBlockConfigurator.this.context.getService ( reference );
                     try
                     {
-                        DaveBlockConfigurator.this.addBlock ( reference, (BlockConfiguration)o );
+                        DaveBlockConfigurator.this.addOrReplaceBlock ( reference, (BlockConfiguration)o );
                         return o;
                     }
                     catch ( final Throwable e )
@@ -107,7 +110,7 @@ public class DaveBlockConfigurator
         logger.info ( "Modify block: {}", reference );
 
         // will be a quick remove and add operation
-        addBlock ( reference, service );
+        addOrReplaceBlock ( reference, service );
     }
 
     protected boolean removeBlock ( final ServiceReference<?> reference, final BlockConfiguration block )
@@ -121,9 +124,9 @@ public class DaveBlockConfigurator
         return false;
     }
 
-    protected void addBlock ( final ServiceReference<?> reference, final BlockConfiguration block )
+    protected void addOrReplaceBlock ( final ServiceReference<?> reference, final BlockConfiguration block )
     {
-        logger.info ( String.format ( "Adding block - ref: %s, block: %s", new Object[] { reference, block } ) );
+        logger.info ( String.format ( "Adding or replace block - ref: %s, block: %s", new Object[] { reference, block } ) );
 
         final String oldBlock = this.blocks.put ( reference, block.getId () );
 
@@ -133,7 +136,7 @@ public class DaveBlockConfigurator
             this.device.removeBlock ( oldBlock );
         }
 
-        final DaveRequestBlock deviceBlock = makeBlock ( block );
+        final AbstractRequestBlock deviceBlock = makeBlock ( block );
         try
         {
             this.device.addBlock ( block.getId (), deviceBlock );
@@ -145,14 +148,13 @@ public class DaveBlockConfigurator
         }
     }
 
-    private DaveRequestBlock makeBlock ( final BlockConfiguration block )
+    private AbstractRequestBlock makeBlock ( final BlockConfiguration block )
     {
         logger.debug ( "Make new block: {}", block );
 
         final Request request = new Request ( (byte)block.getArea (), (short)block.getBlock (), (short)block.getStart (), (short)block.getCount () );
 
-        final DaveRequestBlock deviceBlock = new DaveRequestBlock ( block.getId (), block.getName (), this.device, this.context, request, block.isEnableStatistics (), block.getPeriod () );
-        new DaveRequestBlockConfigurator ( this.device.getExecutor (), deviceBlock, block.getType () );
+        final DaveRequestBlock deviceBlock = new DaveRequestBlock ( block.getId (), block.getName (), block.getType (), this.device, this.context, request, block.isEnableStatistics (), block.getPeriod () );
         return deviceBlock;
     }
 

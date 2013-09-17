@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.openscada.da.server.common.memory;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -76,7 +77,9 @@ public class FloatAttribute extends AbstractAttribute implements Attribute
         final Double d = value.asDouble ( null );
         if ( d != null )
         {
-            block.getDevice ().writeFloat ( this.offset + this.index, d.floatValue () );
+            final ByteBuffer b = ByteBuffer.allocate ( 4 );
+            b.putFloat ( d.floatValue () );
+            block.writeData ( toAddress ( this.index ), b.array () );
         }
     }
 

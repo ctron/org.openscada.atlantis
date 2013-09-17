@@ -166,17 +166,14 @@ public abstract class ScalarVariable implements Variable
             attr.handleData ( data, attributes, timestamp );
         }
 
+        attributes.put ( "globalIndex", Variant.valueOf ( this.offset + this.index ) );
+
         this.item.updateData ( value, attributes, AttributeMode.SET );
     }
 
-    public int toAddress ( final int localAddress )
+    protected int toAddress ( final int localAddress )
     {
         return this.offset + localAddress - this.block.getStartAddress ();
-    }
-
-    public int toGlobalAddress ( final int localAddress )
-    {
-        return this.offset + localAddress;
     }
 
     public Map<String, WriteAttributeResult> handleAttributes ( final Map<String, Variant> requests )

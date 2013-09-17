@@ -117,12 +117,11 @@ public class TriBitAttribute extends AbstractAttribute implements Attribute
         final boolean flag = value.asBoolean ();
         if ( flag )
         {
-            block.getDevice ().writeBit ( this.offset + this.writeTrueIndex, this.writeTrueSubIndex, true );
+            block.writeBit ( toAddress ( this.writeTrueIndex ), this.writeTrueSubIndex, true );
         }
         else
         {
-            block.getDevice ().writeBit ( this.offset + this.writeFalseIndex, this.writeFalseSubIndex, true );
+            block.writeBit ( toAddress ( this.writeFalseIndex ), this.writeFalseSubIndex, true );
         }
     }
-
 }

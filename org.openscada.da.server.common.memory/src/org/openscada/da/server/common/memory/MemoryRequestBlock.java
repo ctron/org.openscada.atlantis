@@ -12,7 +12,19 @@ package org.openscada.da.server.common.memory;
 
 public interface MemoryRequestBlock
 {
-    public MemoryDevice getDevice ();
+    /**
+     * Write a bit
+     * 
+     * @param blockAddress
+     *            the address relative to the block start address
+     * @param subIndex
+     *            the bit index at the block address (normally 0..8)
+     * @param value
+     *            the value to write
+     */
+    public void writeBit ( int blockAddress, int subIndex, boolean value );
+
+    public void writeData ( int blockAddress, byte[] data );
 
     public int getStartAddress ();
 }

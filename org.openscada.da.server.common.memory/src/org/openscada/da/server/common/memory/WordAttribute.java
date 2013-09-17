@@ -11,6 +11,7 @@
  *******************************************************************************/
 package org.openscada.da.server.common.memory;
 
+import java.nio.ByteBuffer;
 import java.util.Map;
 
 import org.apache.mina.core.buffer.IoBuffer;
@@ -76,7 +77,9 @@ public class WordAttribute extends AbstractAttribute implements Attribute
         final Integer i = value.asInteger ( null );
         if ( i != null )
         {
-            block.getDevice ().writeWord ( this.offset + this.index, i.shortValue () );
+            final ByteBuffer b = ByteBuffer.allocate ( 2 );
+            b.putShort ( i.shortValue () );
+            block.writeData ( toAddress ( this.index ), b.array () );
         }
     }
 

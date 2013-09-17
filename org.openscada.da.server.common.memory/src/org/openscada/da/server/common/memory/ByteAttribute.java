@@ -76,7 +76,7 @@ public class ByteAttribute extends AbstractAttribute implements Attribute
         final Integer i = value.asInteger ( null );
         if ( i != null )
         {
-            block.getDevice ().writeByte ( this.offset + this.index, i.byteValue () );
+            block.writeData ( toAddress ( this.index ), new byte[] { i.byteValue () } );
         }
     }
 

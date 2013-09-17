@@ -78,7 +78,7 @@ public class BitAttribute extends AbstractAttribute implements Attribute
             throw new IllegalStateException ( "Device is not connected" );
         }
 
-        block.getDevice ().writeBit ( this.offset + this.index, this.subIndex, value.asBoolean () );
+        block.writeBit ( toAddress ( this.index ), this.subIndex, value.asBoolean () );
     }
 
 }

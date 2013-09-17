@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 IBH SYSTEMS GmbH (http://ibh-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -19,19 +21,16 @@
 
 package org.openscada.da.server.dave;
 
-import org.apache.commons.collections.buffer.CircularFifoBuffer;
-import org.apache.mina.core.buffer.IoBuffer;
-import org.eclipse.scada.core.Variant;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.memory.Variable;
-import org.openscada.da.server.common.osgi.factory.DataItemFactory;
+import org.openscada.da.server.common.memory.AbstractRequestBlock;
+import org.openscada.protocols.dave.DaveReadRequest;
 import org.openscada.protocols.dave.DaveReadRequest.Request;
+import org.openscada.protocols.dave.DaveReadResult;
 import org.openscada.protocols.dave.DaveReadResult.Result;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DaveRequestBlock
+public class DaveRequestBlock extends AbstractRequestBlock
 {
     private final static Logger logger = LoggerFactory.getLogger ( DaveRequestBlock.class );
 
@@ -39,130 +38,12 @@ public class DaveRequestBlock
 
     private final DaveDevice device;
 
-    private final BundleContext context;
-
-    private final String id;
-
-    private Variable[] variables;
-
-    private long lastUpdate;
-
-    private final DataItemFactory blockItemFactory;
-
-    private final DataItemInputChained settingVariablesItem;
-
-    private final Statistics statistics;
-
-    private final long period;
-
-    private final String name;
-
-    private boolean disposed;
-
-    private static class Statistics
+    public DaveRequestBlock ( final String id, final String name, final String mainTypeName, final DaveDevice device, final BundleContext context, final Request request, final boolean enableStatistics, final long period )
     {
-        private final DataItemInputChained lastUpdateItem;
+        super ( context, device.getExecutor (), mainTypeName, device.getVarItemId ( name ), device.getItemId ( id ), enableStatistics, period, request.getCount () );
 
-        private final DataItemInputChained lastTimeDiffItem;
-
-        private long lastUpdate;
-
-        private final CircularFifoBuffer diffBuffer;
-
-        private final DataItemInputChained avgDiffItem;
-
-        private final DataItemInputChained stateItem;
-
-        private final DataItemInputChained sizeItem;
-
-        public Statistics ( final DataItemFactory itemFactory, final Request request )
-        {
-            this.stateItem = itemFactory.createInput ( "state", null );
-            this.lastUpdateItem = itemFactory.createInput ( "lastUpdate", null );
-            this.lastTimeDiffItem = itemFactory.createInput ( "lastDiff", null );
-            this.avgDiffItem = itemFactory.createInput ( "avgDiff", null );
-
-            this.sizeItem = itemFactory.createInput ( "size", null );
-            this.sizeItem.updateData ( Variant.valueOf ( request.getCount () ), null, null );
-
-            this.lastUpdate = System.currentTimeMillis ();
-            this.diffBuffer = new CircularFifoBuffer ( 20 );
-        }
-
-        public void dispose ()
-        {
-        }
-
-        public void receivedError ( final long now )
-        {
-            tickNow ( now );
-            this.stateItem.updateData ( Variant.FALSE, null, null );
-        }
-
-        public void receivedUpdate ( final long now )
-        {
-            tickNow ( now );
-            this.stateItem.updateData ( Variant.TRUE, null, null );
-        }
-
-        private void tickNow ( final long now )
-        {
-            final long diff = now - this.lastUpdate;
-            this.lastUpdate = now;
-            this.lastUpdateItem.updateData ( Variant.valueOf ( this.lastUpdate ), null, null );
-            this.lastTimeDiffItem.updateData ( Variant.valueOf ( diff ), null, null );
-
-            this.diffBuffer.add ( diff );
-
-            update ();
-        }
-
-        /**
-         * internal update
-         */
-        private void update ()
-        {
-            long sum = 0;
-            for ( final Object o : this.diffBuffer )
-            {
-                sum += ( (Number)o ).longValue ();
-            }
-            final double avgDiff = (double)sum / (double)this.diffBuffer.size ();
-            this.avgDiffItem.updateData ( Variant.valueOf ( avgDiff ), null, null );
-        }
-    }
-
-    public DaveRequestBlock ( final String id, final String name, final DaveDevice device, final BundleContext context, final Request request, final boolean enableStatistics, final long period )
-    {
-        this.request = request;
         this.device = device;
-        this.context = context;
-        this.id = id;
-        this.name = name;
-        this.period = period;
-        this.blockItemFactory = new DataItemFactory ( context, device.getExecutor (), device.getItemId ( id ) );
-
-        this.settingVariablesItem = this.blockItemFactory.createInput ( "settingVariables", null );
-
-        if ( enableStatistics )
-        {
-            this.statistics = new Statistics ( this.blockItemFactory, request );
-        }
-        else
-        {
-            this.statistics = null;
-        }
-    }
-
-    /**
-     * The the update priority used to find the next block to request
-     * 
-     * @param now
-     * @return the update priority
-     */
-    public long updatePriority ( final long now )
-    {
-        return now - this.lastUpdate - this.period;
+        this.request = request;
     }
 
     /**
@@ -176,48 +57,6 @@ public class DaveRequestBlock
     }
 
     /**
-     * Handle a device disconnect
-     */
-    public synchronized void handleDisconnect ()
-    {
-        if ( this.disposed )
-        {
-            return;
-        }
-
-        if ( this.variables != null )
-        {
-            for ( final Variable reg : this.variables )
-            {
-                reg.handleDisconnect ();
-            }
-        }
-    }
-
-    public synchronized void handleFailure ()
-    {
-        if ( this.disposed )
-        {
-            return;
-        }
-
-        this.lastUpdate = System.currentTimeMillis ();
-
-        if ( this.statistics != null )
-        {
-            this.statistics.receivedError ( this.lastUpdate );
-        }
-
-        if ( this.variables != null )
-        {
-            for ( final Variable reg : this.variables )
-            {
-                reg.handleFailure ( new RuntimeException ( "Wrong reply" ).fillInStackTrace () );
-            }
-        }
-    }
-
-    /**
      * Handle a response from the device
      * 
      * @param response
@@ -225,117 +64,15 @@ public class DaveRequestBlock
      */
     public synchronized void handleResponse ( final Result response )
     {
-        if ( this.disposed )
-        {
-            return;
-        }
-
-        this.lastUpdate = System.currentTimeMillis ();
-
-        if ( this.statistics != null )
-        {
-            this.statistics.receivedUpdate ( this.lastUpdate );
-        }
-
         if ( response.isError () )
         {
-            if ( this.variables != null )
-            {
-                for ( final Variable reg : this.variables )
-                {
-                    reg.handleError ( response.getError () );
-                }
-            }
+            handleError ( response.getError () );
         }
         else
         {
-            final IoBuffer data = response.getData ();
-
-            if ( this.variables != null )
-            {
-                final Variant timestamp = Variant.valueOf ( System.currentTimeMillis () );
-                for ( final Variable reg : this.variables )
-                {
-                    try
-                    {
-                        reg.handleData ( data, timestamp );
-                    }
-                    catch ( final Exception e )
-                    {
-                        logger.warn ( "Failed in block {}", this.id );
-                        logger.warn ( "Failed to handle register", e );
-                        reg.handleFailure ( e );
-                    }
-                }
-            }
+            handleData ( response.getData () );
         }
 
-    }
-
-    public synchronized void dispose ()
-    {
-        if ( this.disposed )
-        {
-            return;
-        }
-
-        logger.info ( "Disposing: {}", this );
-        this.disposed = true;
-
-        if ( this.statistics != null )
-        {
-            this.statistics.dispose ();
-        }
-
-        if ( this.blockItemFactory != null )
-        {
-            this.blockItemFactory.dispose ();
-        }
-
-        if ( this.variables != null )
-        {
-            for ( final Variable reg : this.variables )
-            {
-                reg.stop ( this.context );
-            }
-        }
-    }
-
-    /**
-     * Set the new variable configuration
-     * 
-     * @param variables
-     *            the new variables to set
-     */
-    public synchronized void setVariables ( final Variable[] variables )
-    {
-        if ( this.disposed )
-        {
-            return;
-        }
-
-        this.settingVariablesItem.updateData ( Variant.TRUE, null, null );
-
-        // dispose old
-        if ( this.variables != null )
-        {
-            for ( final Variable var : this.variables )
-            {
-                var.stop ( this.context );
-            }
-        }
-
-        // set new
-        this.variables = variables;
-        if ( this.variables != null )
-        {
-            for ( final Variable var : this.variables )
-            {
-                var.start ( this.device.getVarItemId ( this.name ), this.context, new MemoryRequestBlockImpl ( this.device, this ), this.request.getStart () );
-            }
-        }
-
-        this.settingVariablesItem.updateData ( Variant.FALSE, null, null );
     }
 
     @Override
@@ -344,4 +81,53 @@ public class DaveRequestBlock
         return String.format ( "[Request - %s]", this.request );
     }
 
+    @Override
+    public boolean handleMessage ( final Object message )
+    {
+        if ( message instanceof DaveReadResult )
+        {
+            // we should have exactly one reply
+            for ( final Result result : ( (DaveReadResult)message ).getResult () )
+            {
+                handleResponse ( result );
+                return true;
+            }
+        }
+        else
+        {
+            logger.warn ( "Got wrong message as reply: {}", message );
+        }
+        return false;
+    }
+
+    @Override
+    public Object createPollRequest ()
+    {
+        final DaveReadRequest request = new DaveReadRequest ();
+        request.addRequest ( this.request );
+        return request;
+    }
+
+    @Override
+    public int getStartAddress ()
+    {
+        return this.request.getStart ();
+    }
+
+    private int toGlobalAddress ( final int address )
+    {
+        return address + this.request.getStart ();
+    }
+
+    @Override
+    public void writeBit ( final int address, final int subIndex, final boolean value )
+    {
+        this.device.writeBit ( this, toGlobalAddress ( address ), subIndex, value );
+    }
+
+    @Override
+    public void writeData ( final int blockAddress, final byte[] data )
+    {
+        this.device.writeData ( this, toGlobalAddress ( blockAddress ), data );
+    }
 }
