@@ -185,7 +185,7 @@ public class ModbusSlave implements Listener
 
         for ( final Map.Entry<String, ModbusRequestBlock> entry : this.blocks.entrySet () )
         {
-            jobManager.addBlock ( entry.getKey (), entry.getValue () );
+            jobManager.addBlock ( this.id + "." + entry.getKey (), entry.getValue () );
         }
     }
 
