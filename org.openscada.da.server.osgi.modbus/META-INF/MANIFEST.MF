@@ -25,3 +25,4 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0.7",
  org.openscada.protocol.modbus.message;version="0.1.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.7.2"
+Export-Package: org.openscada.da.server.osgi.modbus
