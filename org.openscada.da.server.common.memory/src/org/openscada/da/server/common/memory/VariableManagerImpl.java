@@ -477,8 +477,8 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                 case DINT:
                     result.add ( new TypeEntry ( toks[0], TYPE.DINT, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
                     break;
-                default:
-                    break;
+                case UDT:
+                    throw new IllegalArgumentException ( "Attribute must be of scalar type. UDTs are not allowed." );
             }
         }
         return result.toArray ( new TypeEntry[0] );
