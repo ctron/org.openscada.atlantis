@@ -321,7 +321,7 @@ public abstract class AbstractConnectionDevice
     {
         if ( this.session != null && session != null )
         {
-            logger.error ( "We already have a session set!" );
+            logger.error ( "We already have a session set!", new IllegalStateException () );
         }
 
         if ( session != null )
@@ -450,7 +450,7 @@ public abstract class AbstractConnectionDevice
             checkSession ( session );
         }
 
-        setSession ( session );
+        // we don't set the session here since we set it already in the connect future
     }
 
 }
