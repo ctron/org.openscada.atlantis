@@ -19,6 +19,14 @@ public interface PollRequest
     public Object createPollRequest ();
 
     /**
+     * Get the requested timeout in milliseconds
+     * 
+     * @return the poll request timeout in milliseconds, less then or equal to
+     *         zero means no timeout handling
+     */
+    public long getPollRequestTimeout ();
+
+    /**
      * Handle an incoming message while the job was active
      * 
      * @param message
@@ -31,7 +39,9 @@ public interface PollRequest
 
     public void handleDisconnect ();
 
-    public long updatePriority ( long now );
+    public void handleTimeout ();
+
+    public Long updatePriority ( long now );
 
     public void dispose ();
 

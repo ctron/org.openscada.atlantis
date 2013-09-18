@@ -30,6 +30,7 @@ import org.openscada.protocol.modbus.message.WriteDataRequest;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.slf4j.MDC;
 
 public class ModbusRequestBlock extends AbstractRequestBlock
 {
@@ -39,12 +40,22 @@ public class ModbusRequestBlock extends AbstractRequestBlock
 
     private final ModbusSlave slave;
 
+    private final String id;
+
     public ModbusRequestBlock ( final Executor executor, final String id, final String name, final String mainTypeName, final ModbusSlave slave, final BundleContext context, final Request request, final boolean enableStatistics, final long period )
     {
-        super ( context, executor, mainTypeName, id, name, enableStatistics, period, request.getCount () );
+        super ( context, executor, mainTypeName, "modbus." + id, "modbus." + id, enableStatistics, period, request.getCount (), slave.getTimeoutQuietPeriod () );
+
+        this.id = id;
 
         this.request = request;
         this.slave = slave;
+    }
+
+    @Override
+    public long getPollRequestTimeout ()
+    {
+        return this.request.getTimeout ();
     }
 
     /**
@@ -66,24 +77,45 @@ public class ModbusRequestBlock extends AbstractRequestBlock
     @Override
     public boolean handleMessage ( final Object message )
     {
-        logger.debug ( "Handle message - message: {}", message );
+        MDC.put ( "modbus.block", this.id );
+        try
+        {
+            logger.debug ( "Handle message - message: {}", message );
 
-        if ( message instanceof ErrorResponse )
-        {
-            logger.debug ( "Handle error" );
-            handleError ( ( (ErrorResponse)message ).getExceptionCode () );
-            return true;
+            if ( message instanceof ErrorResponse )
+            {
+                logger.debug ( "Handle error" );
+                final byte slaveAddress = ( (ErrorResponse)message ).getUnitIdentifier ();
+                if ( this.slave.getSlaveAddress () != slaveAddress )
+                {
+                    logger.info ( "Reply was not for us" );
+                    return false;
+                }
+                handleError ( ( (ErrorResponse)message ).getExceptionCode () );
+
+                return true;
+            }
+            else if ( message instanceof ReadResponse )
+            {
+                logger.debug ( "Handle data" );
+                final byte slaveAddress = ( (ReadResponse)message ).getUnitIdentifier ();
+                if ( this.slave.getSlaveAddress () != slaveAddress )
+                {
+                    logger.info ( "Reply was not for us (we: {}, they: {})", this.slave.getSlaveAddress (), slaveAddress );
+                    return false;
+                }
+                handleData ( ( (ReadResponse)message ).getData () );
+                return true;
+            }
+            else
+            {
+                logger.info ( "Unknown message" );
+                return false;
+            }
         }
-        else if ( message instanceof ReadResponse )
+        finally
         {
-            logger.debug ( "Handle data" );
-            handleData ( ( (ReadResponse)message ).getData () );
-            return true;
-        }
-        else
-        {
-            logger.info ( "Unknown message" );
-            return false;
+            MDC.remove ( "modbus.block" );
         }
     }
 

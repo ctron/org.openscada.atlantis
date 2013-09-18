@@ -196,23 +196,23 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     {
         logger.debug ( "Fire type change: {}", type );
 
-        // make a clone
-        final Collection<VariableListener> listeners = new ArrayList<VariableListener> ( this.listeners.get ( type ) );
+        for ( final VariableListener listener : this.listeners.get ( type ) )
+        {
+            /*
+             * Create variables for each listener instance, so we need to do this
+             * inside this thread and provide the executor with the result.
+             */
+            final Variable[] vars = createVariables ( type );
+            this.executor.execute ( new Runnable () {
 
-        final Variable[] vars = createVariables ( type );
-
-        this.executor.execute ( new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                for ( final VariableListener listener : listeners )
+                @Override
+                public void run ()
                 {
                     logger.info ( "Apply type change: {}", type );
                     listener.variableConfigurationChanged ( vars );
                 }
-            }
-        } );
+            } );
+        }
     }
 
     @Override

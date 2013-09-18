@@ -16,6 +16,7 @@ import org.openscada.protocol.modbus.codec.ModbusMasterProtocolFilter;
 import org.openscada.protocol.modbus.codec.ModbusRtuDecoder;
 import org.openscada.protocol.modbus.codec.ModbusRtuEncoder;
 import org.openscada.protocol.modbus.codec.ModbusRtuProtocolCodecFilter;
+import org.openscada.protocol.modbus.io.ChecksumProtocolException;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -140,6 +141,20 @@ public class ModbusMaster extends AbstractConnectionDevice
         super.handleMessageReceived ( session, message );
 
         this.jobManager.messageReceived ( message );
+    }
+
+    @Override
+    protected synchronized void handleExceptionCaught ( final IoSession session, final Throwable error ) throws Exception
+    {
+        if ( error instanceof ChecksumProtocolException )
+        {
+            // we don't disconnect on checksum errors
+            logger.info ( "Checksum error", error );
+        }
+        else
+        {
+            super.handleExceptionCaught ( session, error );
+        }
     }
 
     @Override

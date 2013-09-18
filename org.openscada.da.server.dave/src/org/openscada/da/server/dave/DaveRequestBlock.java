@@ -40,10 +40,16 @@ public class DaveRequestBlock extends AbstractRequestBlock
 
     public DaveRequestBlock ( final String id, final String name, final String mainTypeName, final DaveDevice device, final BundleContext context, final Request request, final boolean enableStatistics, final long period )
     {
-        super ( context, device.getExecutor (), mainTypeName, device.getVarItemId ( name ), device.getItemId ( id ), enableStatistics, period, request.getCount () );
+        super ( context, device.getExecutor (), mainTypeName, device.getVarItemId ( name ), device.getItemId ( id ), enableStatistics, period, request.getCount (), 0L );
 
         this.device = device;
         this.request = request;
+    }
+
+    @Override
+    public long getPollRequestTimeout ()
+    {
+        return 0;
     }
 
     /**
@@ -72,7 +78,12 @@ public class DaveRequestBlock extends AbstractRequestBlock
         {
             handleData ( response.getData () );
         }
+    }
 
+    @Override
+    public void handleTimeout ()
+    {
+        // this is a no-op since we don't have poll timeouts
     }
 
     @Override

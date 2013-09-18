@@ -118,4 +118,10 @@ public class Request
         return true;
     }
 
+    @Override
+    public String toString ()
+    {
+        return String.format ( "[Request - type: %s, start: %s, count: %s, period: %s, timeout: %s, mainType: %s]", this.type, this.startAddress, this.count, this.period, this.timeout, this.mainTypeName );
+    }
+
 }

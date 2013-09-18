@@ -10,11 +10,7 @@
  *******************************************************************************/
 package org.openscada.da.server.common.io;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
@@ -48,22 +44,44 @@ public class JobManager
     {
         public void handleMessage ( final Object message );
 
+        public long getTimeoutTime ();
+
         public void start ( IoSession session );
+
+        public void handleTimeout ();
     }
 
-    private static class ReadJob implements Job
+    private static abstract class BaseJob implements Job
+    {
+        private final long timeoutTime;
+
+        public BaseJob ( final long timeout )
+        {
+            this.timeoutTime = timeout > 0 ? System.currentTimeMillis () + timeout : 0;
+            logger.trace ( "Job timeout: {} -> {}", timeout, this.timeoutTime );
+        }
+
+        @Override
+        public long getTimeoutTime ()
+        {
+            return this.timeoutTime;
+        }
+    }
+
+    private static class ReadJob extends BaseJob
     {
         private final PollRequest block;
 
         public ReadJob ( final PollRequest block )
         {
+            super ( block.getPollRequestTimeout () );
             this.block = block;
         }
 
         @Override
         public void handleMessage ( final Object message )
         {
-            logger.debug ( "Result: {}", message );
+            logger.debug ( "Result: {} - for: {}", message, this.block );
 
             if ( !this.block.handleMessage ( message ) )
             {
@@ -73,20 +91,33 @@ public class JobManager
         }
 
         @Override
+        public void handleTimeout ()
+        {
+            this.block.handleTimeout ();
+        }
+
+        @Override
         public void start ( final IoSession session )
         {
             final Object request = this.block.createPollRequest ();
             logger.debug ( "Start request: {}", request );
             session.write ( request );
         }
+
+        @Override
+        public String toString ()
+        {
+            return String.format ( "[ReadJob: %s, timeoutTime: %s]", this.block, getTimeoutTime () );
+        }
     }
 
-    private static class WriteJob implements Job
+    private static class WriteJob extends BaseJob
     {
         private final Object request;
 
-        public WriteJob ( final Object request )
+        public WriteJob ( final Object request, final long timeout )
         {
+            super ( timeout );
             this.request = request;
         }
 
@@ -94,6 +125,12 @@ public class JobManager
         public void start ( final IoSession session )
         {
             session.write ( this.request );
+        }
+
+        @Override
+        public void handleTimeout ()
+        {
+            // TODO: no-op for now 
         }
 
         @Override
@@ -144,7 +181,7 @@ public class JobManager
                 {
                     JobManager.this.tick ();
                 }
-            }, 0, 1000, TimeUnit.MILLISECONDS );
+            }, 0, 100, TimeUnit.MILLISECONDS );
         }
         else
         {
@@ -156,6 +193,8 @@ public class JobManager
 
     public synchronized void messageReceived ( final Object message )
     {
+        logger.trace ( "messageReceived - currentJob: {}, message: {}", this.currentJob, message );
+
         if ( this.currentJob != null )
         {
             try
@@ -178,13 +217,32 @@ public class JobManager
     {
         if ( this.currentJob != null )
         {
-            logger.debug ( "Ticked with current job" );
+            logger.trace ( "Ticked with current job" );
+            if ( isCurrentJobTimeout () )
+            {
+                handleTimeout ();
+            }
             return;
         }
 
         logger.info ( "No job active when ticking... adding job!" );
         startNextJob ();
         logger.info ( "New job: {}", this.currentJob );
+    }
+
+    protected boolean isCurrentJobTimeout ()
+    {
+        return this.currentJob.getTimeoutTime () > 0 && this.currentJob.getTimeoutTime () < System.currentTimeMillis ();
+    }
+
+    private void handleTimeout ()
+    {
+        logger.debug ( "Job timed out: {}", this.currentJob );
+
+        this.currentJob.handleTimeout ();
+        this.currentJob = null;
+
+        startNextJob ();
     }
 
     private void startNextJob ()
@@ -211,29 +269,51 @@ public class JobManager
      */
     private Job getNextReadJob ()
     {
-        final List<PollRequest> blocks = new ArrayList<PollRequest> ( this.blocks.values () );
 
         final long now = System.currentTimeMillis ();
 
-        Collections.sort ( blocks, new Comparator<PollRequest> () {
+        final PollRequest request = findNextBestPollRequest ( now );
 
-            @Override
-            public int compare ( final PollRequest o1, final PollRequest o2 )
-            {
-                final long l1 = o1.updatePriority ( now );
-                final long l2 = o2.updatePriority ( now );
-                return Long.valueOf ( l2 ).compareTo ( Long.valueOf ( l1 ) );
-            }
-        } );
-
-        if ( !blocks.isEmpty () )
+        if ( request != null )
         {
-            return new ReadJob ( blocks.get ( 0 ) );
+            return new ReadJob ( request );
         }
         else
         {
             return null;
         }
+    }
+
+    private PollRequest findNextBestPollRequest ( final long now )
+    {
+        PollRequest nextRequest = null;
+        long nextPriority = 0;
+        for ( final PollRequest request : this.blocks.values () )
+        {
+            final Long priority = request.updatePriority ( now );
+
+            logger.trace ( "Checking request: {} - {}", priority, request );
+
+            if ( priority == null )
+            {
+                continue;
+            }
+
+            if ( nextRequest == null )
+            {
+                logger.trace ( "First request" );
+                nextRequest = request;
+                nextPriority = priority;
+            }
+            else if ( priority > nextPriority )
+            {
+                logger.trace ( "Better request" );
+                nextRequest = request;
+                nextPriority = priority;
+            }
+        }
+
+        return nextRequest;
     }
 
     /**
@@ -297,7 +377,7 @@ public class JobManager
 
     public void addWriteRequest ( final Object request )
     {
-        this.writeQueue.add ( new WriteJob ( request ) );
+        this.writeQueue.add ( new WriteJob ( request, 0 ) );
     }
 
 }

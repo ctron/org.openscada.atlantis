@@ -33,9 +33,12 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
 
         private final DataItemInputChained sizeItem;
 
+        private final DataItemInputChained timeoutStateItem;
+
         public Statistics ( final DataItemFactory itemFactory, final int size )
         {
             this.stateItem = itemFactory.createInput ( "state", null );
+            this.timeoutStateItem = itemFactory.createInput ( "timeout", null );
             this.lastUpdateItem = itemFactory.createInput ( "lastUpdate", null );
             this.lastTimeDiffItem = itemFactory.createInput ( "lastDiff", null );
             this.avgDiffItem = itemFactory.createInput ( "avgDiff", null );
@@ -55,12 +58,20 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
         {
             tickNow ( now );
             this.stateItem.updateData ( Variant.FALSE, null, null );
+            this.timeoutStateItem.updateData ( Variant.FALSE, null, null );
         }
 
         public void receivedUpdate ( final long now )
         {
             tickNow ( now );
             this.stateItem.updateData ( Variant.TRUE, null, null );
+            this.timeoutStateItem.updateData ( Variant.FALSE, null, null );
+        }
+
+        public void timeout ()
+        {
+            this.stateItem.updateData ( Variant.FALSE, null, null );
+            this.timeoutStateItem.updateData ( Variant.TRUE, null, null );
         }
 
         private void tickNow ( final long now )
@@ -102,7 +113,7 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
 
     private Variable[] variables;
 
-    private long lastUpdate;
+    private long lastAction;
 
     private boolean disposed;
 
@@ -112,11 +123,16 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
 
     private final RequestBlockConfigurator configurator;
 
-    public AbstractRequestBlock ( final BundleContext context, final Executor executor, final String mainTypeName, final String variablePrefix, final String blockPrefix, final boolean enableStatistics, final long period, final int requestSize )
+    private final long timeoutQuietPeriod;
+
+    private boolean timeout;
+
+    public AbstractRequestBlock ( final BundleContext context, final Executor executor, final String mainTypeName, final String variablePrefix, final String blockPrefix, final boolean enableStatistics, final long period, final int requestSize, final long timeoutQuietPeriod )
     {
         this.context = context;
         this.variablePrefix = variablePrefix;
         this.blockPrefix = blockPrefix;
+        this.timeoutQuietPeriod = timeoutQuietPeriod;
 
         this.period = period;
 
@@ -140,12 +156,21 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
      * The the update priority used to find the next block to request
      * 
      * @param now
-     * @return the update priority
+     * @return the update priority, or <code>null</code> if the block does not
+     *         want to be
+     *         updated right now
      */
     @Override
-    public long updatePriority ( final long now )
+    public Long updatePriority ( final long now )
     {
-        return now - this.lastUpdate - this.period;
+        if ( this.timeout )
+        {
+            return now - this.lastAction - ( this.period + this.timeoutQuietPeriod );
+        }
+        else
+        {
+            return now - this.lastAction - this.period;
+        }
     }
 
     /**
@@ -169,6 +194,27 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
     }
 
     @Override
+    public void handleTimeout ()
+    {
+        if ( this.disposed )
+        {
+            return;
+        }
+
+        this.lastAction = System.currentTimeMillis ();
+        this.timeout = true;
+        this.statistics.timeout ();
+
+        if ( this.variables != null )
+        {
+            for ( final Variable reg : this.variables )
+            {
+                reg.handleFailure ( new RuntimeException ( "Timeout" ) );
+            }
+        }
+    }
+
+    @Override
     public synchronized void handleFailure ()
     {
         if ( this.disposed )
@@ -176,18 +222,15 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
             return;
         }
 
-        this.lastUpdate = System.currentTimeMillis ();
+        this.lastAction = System.currentTimeMillis ();
 
-        if ( this.statistics != null )
-        {
-            this.statistics.receivedError ( this.lastUpdate );
-        }
+        recordUpdate ( true );
 
         if ( this.variables != null )
         {
             for ( final Variable reg : this.variables )
             {
-                reg.handleFailure ( new RuntimeException ( "Wrong reply" ).fillInStackTrace () );
+                reg.handleFailure ( new RuntimeException ( "Wrong reply" ) );
             }
         }
     }
@@ -264,13 +307,21 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
         this.settingVariablesItem.updateData ( Variant.FALSE, null, null );
     }
 
-    protected void recordUpdate ()
+    protected void recordUpdate ( final boolean error )
     {
-        this.lastUpdate = System.currentTimeMillis ();
+        this.timeout = false;
+        this.lastAction = System.currentTimeMillis ();
 
         if ( this.statistics != null )
         {
-            this.statistics.receivedUpdate ( this.lastUpdate );
+            if ( error )
+            {
+                this.statistics.receivedError ( this.lastAction );
+            }
+            else
+            {
+                this.statistics.receivedUpdate ( this.lastAction );
+            }
         }
     }
 
@@ -281,7 +332,9 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
             return;
         }
 
-        recordUpdate ();
+        recordUpdate ( true );
+
+        logger.debug ( "Handle error update - variables: {}", new Object[] { this.variables } );
 
         if ( this.variables != null )
         {
@@ -301,7 +354,7 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
             return;
         }
 
-        recordUpdate ();
+        recordUpdate ( false );
 
         logger.debug ( "Handle data update - variables: {}", new Object[] { this.variables } );
 

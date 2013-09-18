@@ -37,15 +37,20 @@ public class ModbusSlave implements Listener
 
     private final Executor executor;
 
+    private final String id;
+
+    private long timeoutQuietPeriod;
+
     public static ModbusSlave create ( final BundleContext context, final Executor executor, final String configurationId, final Map<String, String> parameters, final MasterFactory masterFactory )
     {
-        final ModbusSlave slave = new ModbusSlave ( context, masterFactory, executor );
+        final ModbusSlave slave = new ModbusSlave ( configurationId, context, masterFactory, executor );
         slave.configure ( parameters );
         return slave;
     }
 
-    public ModbusSlave ( final BundleContext context, final MasterFactory masterFactory, final Executor executor )
+    public ModbusSlave ( final String id, final BundleContext context, final MasterFactory masterFactory, final Executor executor )
     {
+        this.id = id;
         this.executor = executor;
         this.context = context;
         this.masterFactory = masterFactory;
@@ -59,14 +64,16 @@ public class ModbusSlave implements Listener
     public void dispose ()
     {
         this.masterFactory.removeMasterListener ( this );
+        stop ();
     }
 
     protected synchronized void configure ( final Map<String, String> properties )
     {
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( properties );
 
-        this.name = cfg.getStringChecked ( "name", "'name' must be set" );
+        this.name = cfg.getString ( "name", this.id );
         this.slaveAddress = Byte.parseByte ( cfg.getStringChecked ( "slave.id", "'slave.id' must be set to a valid modbus slave id" ) );
+        this.timeoutQuietPeriod = cfg.getLong ( "timeoutQuietPeriod", 10_000 );
 
         final Set<String> ids = new HashSet<> ();
 
@@ -192,7 +199,7 @@ public class ModbusSlave implements Listener
     {
         logger.debug ( "Adding block: {}", id );
 
-        final ModbusRequestBlock block = new ModbusRequestBlock ( this.executor, id, this.name, request.getMainTypeName (), this, this.context, request, true, request.getPeriod () );
+        final ModbusRequestBlock block = new ModbusRequestBlock ( this.executor, this.id + "." + id, this.name, request.getMainTypeName (), this, this.context, request, true, request.getPeriod () );
 
         final ModbusRequestBlock oldBlock = this.blocks.put ( id, block );
 
@@ -236,5 +243,10 @@ public class ModbusSlave implements Listener
     public void writeCommand ( final WriteDataRequest command )
     {
         this.jobManager.addWriteRequest ( command );
+    }
+
+    public long getTimeoutQuietPeriod ()
+    {
+        return this.timeoutQuietPeriod;
     }
 }
