@@ -10,7 +10,6 @@ import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.da.server.common.io.JobManager;
 import org.openscada.da.server.osgi.modbus.MasterFactory.Listener;
 import org.openscada.protocol.modbus.message.ReadRequest;
-import org.openscada.protocol.modbus.message.WriteDataRequest;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -240,9 +239,9 @@ public class ModbusSlave implements Listener
         return this.slaveAddress;
     }
 
-    public void writeCommand ( final WriteDataRequest command )
+    public void writeCommand ( final Object command, final long timeout )
     {
-        this.jobManager.addWriteRequest ( command );
+        this.jobManager.addWriteRequest ( command, timeout );
     }
 
     public long getTimeoutQuietPeriod ()

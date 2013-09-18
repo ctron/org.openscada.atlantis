@@ -375,9 +375,9 @@ public class JobManager
         }
     }
 
-    public void addWriteRequest ( final Object request )
+    public void addWriteRequest ( final Object request, final long timeout )
     {
-        this.writeQueue.add ( new WriteJob ( request, 0 ) );
+        this.writeQueue.add ( new WriteJob ( request, timeout ) );
     }
 
 }

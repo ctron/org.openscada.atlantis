@@ -27,6 +27,7 @@ import org.openscada.da.server.common.memory.AbstractRequestBlock;
 import org.openscada.protocol.modbus.message.ErrorResponse;
 import org.openscada.protocol.modbus.message.ReadResponse;
 import org.openscada.protocol.modbus.message.WriteDataRequest;
+import org.openscada.protocol.modbus.message.WriteSingleCoilRequest;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -139,13 +140,21 @@ public class ModbusRequestBlock extends AbstractRequestBlock
     @Override
     public void writeBit ( final int blockAddress, final int subIndex, final boolean value )
     {
-        this.slave.writeCommand ( WriteDataRequest.createWriteCoil ( this.slave.getSlaveAddress (), toGlobalAddress ( blockAddress ), value ) );
+        if ( this.request.getType () != RequestType.COIL )
+        {
+            throw new IllegalStateException ( String.format ( "Modbus can only write bits when the block is of type %s", RequestType.COIL ) );
+        }
+        this.slave.writeCommand ( new WriteSingleCoilRequest ( this.slave.getSlaveAddress (), toGlobalAddress ( blockAddress * 8 + subIndex ), value ), this.request.getTimeout () );
     }
 
     @Override
     public void writeData ( final int blockAddress, final byte[] data )
     {
-        this.slave.writeCommand ( new WriteDataRequest ( this.slave.getSlaveAddress (), toGlobalAddress ( blockAddress ), data ) );
+        if ( this.request.getType () != RequestType.HOLDING )
+        {
+            throw new IllegalStateException ( String.format ( "Modbus can only write data when the block is of type %s", RequestType.HOLDING ) );
+        }
+        this.slave.writeCommand ( new WriteDataRequest ( this.slave.getSlaveAddress (), toGlobalAddress ( blockAddress ), data ), this.request.getTimeout () );
     }
 
 }

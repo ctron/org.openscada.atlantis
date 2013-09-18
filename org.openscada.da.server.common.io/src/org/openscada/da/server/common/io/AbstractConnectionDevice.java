@@ -80,6 +80,8 @@ public abstract class AbstractConnectionDevice
 
     private String name;
 
+    private boolean enabled;
+
     public AbstractConnectionDevice ( final BundleContext context, final String id, final String threadPrefix, final String itemPrefix )
     {
         this.id = id;
@@ -176,6 +178,8 @@ public abstract class AbstractConnectionDevice
     {
         disconnect ();
 
+        this.stateItem.updateData ( Variant.valueOf ( "DISPOSED" ), null, null );
+
         if ( this.connector != null )
         {
             this.connector.dispose ();
@@ -192,17 +196,32 @@ public abstract class AbstractConnectionDevice
         this.port = Short.valueOf ( properties.get ( "port" ) );
         this.connectTimeout = getTimeout ( properties, "connectTimeout", 5000/*ms*/);
         this.name = properties.get ( "name" );
+        this.enabled = parseEnabled ( properties );
 
         final Map<String, Variant> stateProps = new HashMap<String, Variant> ();
         stateProps.put ( "host", Variant.valueOf ( this.host ) );
         stateProps.put ( "port", Variant.valueOf ( this.port ) );
+        stateProps.put ( "enabled", Variant.valueOf ( this.enabled ) );
         this.stateItem.updateData ( null, stateProps, AttributeMode.UPDATE );
 
         synchronized ( this )
         {
             disconnect ();
-            connect ();
+            if ( this.enabled )
+            {
+                connect ();
+            }
         }
+    }
+
+    private boolean parseEnabled ( final Map<String, String> properties )
+    {
+        final String str = properties.get ( "disabled" );
+        if ( str == null )
+        {
+            return true;
+        }
+        return !Boolean.parseBoolean ( str );
     }
 
     protected static int getTimeout ( final Map<String, String> properties, final String specificTimeoutKey, final int defaultValue )
@@ -311,14 +330,17 @@ public abstract class AbstractConnectionDevice
         this.stateItem.updateData ( null, Collections.singletonMap ( "connectionError", Variant.valueOf ( ExceptionHelper.getMessage ( e ) ) ), AttributeMode.UPDATE );
 
         setSession ( null );
-        this.executor.schedule ( new Runnable () {
+        if ( this.enabled )
+        {
+            this.executor.schedule ( new Runnable () {
 
-            @Override
-            public void run ()
-            {
-                connect ();
-            }
-        }, 1000, TimeUnit.MILLISECONDS );
+                @Override
+                public void run ()
+                {
+                    connect ();
+                }
+            }, 1000, TimeUnit.MILLISECONDS );
+        }
     }
 
     protected synchronized void disconnect ()

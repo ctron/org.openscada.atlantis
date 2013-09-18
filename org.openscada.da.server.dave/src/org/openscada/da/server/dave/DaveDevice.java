@@ -143,14 +143,14 @@ public class DaveDevice extends AbstractConnectionDevice
 
         request.addRequest ( new DaveWriteRequest.BitRequest ( block.getRequest ().getArea (), block.getRequest ().getBlock (), (short) ( index * 8 + subIndex ), value ) );
 
-        this.jobManager.addWriteRequest ( request );
+        this.jobManager.addWriteRequest ( request, 0 );
     }
 
     public void writeData ( final DaveRequestBlock block, final int index, final byte[] data )
     {
         final DaveWriteRequest request = new DaveWriteRequest ();
         request.addRequest ( new DaveWriteRequest.ByteRequest ( block.getRequest ().getArea (), block.getRequest ().getBlock (), (short)index, data ) );
-        this.jobManager.addWriteRequest ( request );
+        this.jobManager.addWriteRequest ( request, 0 );
     }
 
     public void addBlock ( final String name, final AbstractRequestBlock deviceBlock )
