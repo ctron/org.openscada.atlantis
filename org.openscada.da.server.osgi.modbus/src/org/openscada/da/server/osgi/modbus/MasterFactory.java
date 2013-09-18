@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ScheduledExecutorService;
 
 import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
@@ -22,15 +23,18 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<ModbusMas
 
     private final Map<String, ModbusMaster> masters = new HashMap<> ();
 
-    public MasterFactory ( final BundleContext context )
+    private final ScheduledExecutorService executor;
+
+    public MasterFactory ( final BundleContext context, final ScheduledExecutorService executor )
     {
         super ( context, true );
+        this.executor = executor;
     }
 
     @Override
     protected synchronized Entry<ModbusMaster> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final ModbusMaster master = ModbusMaster.create ( context, configurationId, parameters );
+        final ModbusMaster master = ModbusMaster.create ( context, this.executor, configurationId, parameters );
 
         this.masters.put ( configurationId, master );
         fireAdded ( configurationId, master );

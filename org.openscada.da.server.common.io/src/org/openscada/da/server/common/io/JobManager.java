@@ -40,6 +40,8 @@ public class JobManager
 
     private final Queue<Job> writeQueue = new ConcurrentLinkedQueue<Job> ();
 
+    private ScheduledExecutorService createdExector;
+
     private static interface Job
     {
         public void handleMessage ( final Object message );
@@ -142,7 +144,13 @@ public class JobManager
 
     public JobManager ( final String threadName )
     {
-        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( threadName ) );
+        this.executor = this.createdExector = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( threadName ) );
+    }
+
+    public JobManager ( final ScheduledExecutorService executor )
+    {
+        this.executor = executor;
+        this.createdExector = null;
     }
 
     public synchronized void setSession ( final IoSession session )
@@ -341,7 +349,10 @@ public class JobManager
             }
         }
 
-        this.executor.shutdown ();
+        if ( this.createdExector != null )
+        {
+            this.createdExector.shutdown ();
+        }
     }
 
     protected void handleDataDisconnected ()

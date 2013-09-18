@@ -2,9 +2,8 @@ package org.openscada.da.server.osgi.modbus;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
-import java.util.concurrent.TimeUnit;
 
-import org.eclipse.scada.utils.concurrent.ExportedExecutorService;
+import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
 import org.osgi.framework.BundleActivator;
@@ -23,14 +22,14 @@ public class Activator implements BundleActivator
 
     private ServiceRegistration<ConfigurationFactory> slaveFactoryHandle;
 
-    private ExportedExecutorService executor;
+    private ScheduledExportedExecutorService executor;
 
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
-        this.executor = new ExportedExecutorService ( "org.openscada.da.server.osgi.modbus", 1, 1, 1, TimeUnit.MINUTES );
+        this.executor = new ScheduledExportedExecutorService ( "org.openscada.da.server.osgi.modbus", 1 );
 
-        this.masterFactory = new MasterFactory ( context );
+        this.masterFactory = new MasterFactory ( context, this.executor );
         this.slaveFactory = new SlaveFactory ( context, this.masterFactory, this.executor );
 
         {

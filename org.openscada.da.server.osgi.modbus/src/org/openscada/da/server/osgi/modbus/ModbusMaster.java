@@ -34,15 +34,15 @@ public class ModbusMaster extends AbstractConnectionDevice
 
     private int readTimeout;
 
-    public ModbusMaster ( final BundleContext context, final String id, final String threadPrefix, final String itemPrefix )
+    public ModbusMaster ( final BundleContext context, final String id, final ScheduledExecutorService executor, final String threadPrefix, final String itemPrefix )
     {
         super ( context, id, threadPrefix, itemPrefix );
-        this.jobManager = new JobManager ( threadPrefix + "Job/" + id );
+        this.jobManager = new JobManager ( executor );
     }
 
-    public static ModbusMaster create ( final BundleContext context, final String id, final Map<String, String> parameters ) throws Exception
+    public static ModbusMaster create ( final BundleContext context, final ScheduledExecutorService executor, final String id, final Map<String, String> parameters ) throws Exception
     {
-        final ModbusMaster device = new ModbusMaster ( context, id, "ModbusMaster", "modbus" );
+        final ModbusMaster device = new ModbusMaster ( context, id, executor, "ModbusMaster", "modbus" );
 
         device.configure ( parameters );
 
