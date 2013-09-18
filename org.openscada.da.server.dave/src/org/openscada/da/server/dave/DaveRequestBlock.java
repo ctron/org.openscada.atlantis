@@ -40,7 +40,7 @@ public class DaveRequestBlock extends AbstractRequestBlock
 
     public DaveRequestBlock ( final String id, final String name, final String mainTypeName, final DaveDevice device, final BundleContext context, final Request request, final boolean enableStatistics, final long period )
     {
-        super ( context, device.getExecutor (), mainTypeName, device.getVarItemId ( name ), device.getItemId ( id ), enableStatistics, period, request.getCount (), 0L );
+        super ( context, device.getExecutor (), mainTypeName, device.getVarItemId ( name ), device.getItemId ( id ), enableStatistics, period, request.getCount (), 0L, true );
 
         this.device = device;
         this.request = request;

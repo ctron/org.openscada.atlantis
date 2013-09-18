@@ -156,11 +156,24 @@ public class ModbusSlave implements Listener
         final RequestType type = RequestType.valueOf ( toks[idx++] );
         final int startAddress = Integer.parseInt ( toks[idx++] );
         final int count = Integer.parseInt ( toks[idx++] );
-        final long period = Long.parseLong ( toks[idx++] );
+
+        final boolean eager;
+        String periodString = toks[idx++];
+        if ( periodString.startsWith ( "+" ) )
+        {
+            eager = true;
+            periodString = periodString.substring ( 1 );
+        }
+        else
+        {
+            eager = false;
+        }
+        final long period = Long.parseLong ( periodString );
+
         final long timeout = Long.parseLong ( toks[idx++] );
         final String mainTypeName = toks[idx++];
 
-        return new Request ( type, startAddress, count, period, timeout, mainTypeName );
+        return new Request ( type, startAddress, count, period, timeout, mainTypeName, eager );
     }
 
     public synchronized void start ( final ModbusMaster master, final JobManager jobManager )
@@ -198,7 +211,7 @@ public class ModbusSlave implements Listener
     {
         logger.debug ( "Adding block: {}", id );
 
-        final ModbusRequestBlock block = new ModbusRequestBlock ( this.executor, this.id + "." + id, this.name, request.getMainTypeName (), this, this.context, request, true, request.getPeriod () );
+        final ModbusRequestBlock block = new ModbusRequestBlock ( this.executor, this.id + "." + id, this.name, request.getMainTypeName (), this, this.context, request, true );
 
         final ModbusRequestBlock oldBlock = this.blocks.put ( id, block );
 

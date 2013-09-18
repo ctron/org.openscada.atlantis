@@ -43,9 +43,9 @@ public class ModbusRequestBlock extends AbstractRequestBlock
 
     private final String id;
 
-    public ModbusRequestBlock ( final Executor executor, final String id, final String name, final String mainTypeName, final ModbusSlave slave, final BundleContext context, final Request request, final boolean enableStatistics, final long period )
+    public ModbusRequestBlock ( final Executor executor, final String id, final String name, final String mainTypeName, final ModbusSlave slave, final BundleContext context, final Request request, final boolean enableStatistics )
     {
-        super ( context, executor, mainTypeName, "modbus." + id, "modbus." + id, enableStatistics, period, request.getCount (), slave.getTimeoutQuietPeriod () );
+        super ( context, executor, mainTypeName, "modbus." + id, "modbus." + id, enableStatistics, request.getPeriod (), request.getCount (), slave.getTimeoutQuietPeriod (), request.isEager () );
 
         this.id = id;
 
@@ -145,6 +145,7 @@ public class ModbusRequestBlock extends AbstractRequestBlock
             throw new IllegalStateException ( String.format ( "Modbus can only write bits when the block is of type %s", RequestType.COIL ) );
         }
         this.slave.writeCommand ( new WriteSingleCoilRequest ( this.slave.getSlaveAddress (), toGlobalAddress ( blockAddress * 8 + subIndex ), value ), this.request.getTimeout () );
+        requestUpdate ();
     }
 
     @Override
@@ -155,6 +156,7 @@ public class ModbusRequestBlock extends AbstractRequestBlock
             throw new IllegalStateException ( String.format ( "Modbus can only write data when the block is of type %s", RequestType.HOLDING ) );
         }
         this.slave.writeCommand ( new WriteDataRequest ( this.slave.getSlaveAddress (), toGlobalAddress ( blockAddress ), data ), this.request.getTimeout () );
+        requestUpdate ();
     }
 
 }

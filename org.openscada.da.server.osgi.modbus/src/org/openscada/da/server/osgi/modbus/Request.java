@@ -14,7 +14,9 @@ public class Request
 
     private final RequestType type;
 
-    public Request ( final RequestType type, final int startAddress, final int count, final long period, final long timeout, final String mainTypeName )
+    private final boolean eager;
+
+    public Request ( final RequestType type, final int startAddress, final int count, final long period, final long timeout, final String mainTypeName, final boolean eager )
     {
         this.type = type;
         this.startAddress = startAddress;
@@ -22,6 +24,12 @@ public class Request
         this.period = period;
         this.timeout = timeout;
         this.mainTypeName = mainTypeName;
+        this.eager = eager;
+    }
+
+    public boolean isEager ()
+    {
+        return this.eager;
     }
 
     public String getMainTypeName ()
@@ -60,6 +68,7 @@ public class Request
         final int prime = 31;
         int result = 1;
         result = prime * result + this.count;
+        result = prime * result + ( this.eager ? 1231 : 1237 );
         result = prime * result + ( this.mainTypeName == null ? 0 : this.mainTypeName.hashCode () );
         result = prime * result + (int) ( this.period ^ this.period >>> 32 );
         result = prime * result + this.startAddress;
@@ -85,6 +94,10 @@ public class Request
         }
         final Request other = (Request)obj;
         if ( this.count != other.count )
+        {
+            return false;
+        }
+        if ( this.eager != other.eager )
         {
             return false;
         }
@@ -121,7 +134,7 @@ public class Request
     @Override
     public String toString ()
     {
-        return String.format ( "[Request - type: %s, start: %s, count: %s, period: %s, timeout: %s, mainType: %s]", this.type, this.startAddress, this.count, this.period, this.timeout, this.mainTypeName );
+        return String.format ( "[Request - type: %s, start: %s, count: %s, period: %s, timeout: %s, mainType: %s, eager: %s]", this.type, this.startAddress, this.count, this.period, this.timeout, this.mainTypeName, this.eager );
     }
 
 }

@@ -127,12 +127,15 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
 
     private boolean timeout;
 
-    public AbstractRequestBlock ( final BundleContext context, final Executor executor, final String mainTypeName, final String variablePrefix, final String blockPrefix, final boolean enableStatistics, final long period, final int requestSize, final long timeoutQuietPeriod )
+    private final boolean eager;
+
+    public AbstractRequestBlock ( final BundleContext context, final Executor executor, final String mainTypeName, final String variablePrefix, final String blockPrefix, final boolean enableStatistics, final long period, final int requestSize, final long timeoutQuietPeriod, final boolean eager )
     {
         this.context = context;
         this.variablePrefix = variablePrefix;
         this.blockPrefix = blockPrefix;
         this.timeoutQuietPeriod = timeoutQuietPeriod;
+        this.eager = eager;
 
         this.period = period;
 
@@ -162,6 +165,19 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
      */
     @Override
     public Long updatePriority ( final long now )
+    {
+        final long priority = calculatePriority ( now );
+        if ( !this.eager && priority < 0 )
+        {
+            return null;
+        }
+        else
+        {
+            return priority;
+        }
+    }
+
+    protected long calculatePriority ( final long now )
     {
         if ( this.timeout )
         {
@@ -375,6 +391,14 @@ public abstract class AbstractRequestBlock implements PollRequest, MemoryRequest
                 }
             }
         }
+    }
+
+    /**
+     * Request an update as soon as possible
+     */
+    protected void requestUpdate ()
+    {
+        this.lastAction = 0;
     }
 
 }
