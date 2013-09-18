@@ -138,6 +138,7 @@
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.io.common"/>
   	
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.common.io"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.common.memory"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.test"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.sysinfo"/>
@@ -150,6 +151,7 @@
   	<openscada.builder.copyPlugin id="org.openscada.da.server.opc"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.arduino"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.modbus"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.modbus"/>
   	
   	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation.component" />
   	
