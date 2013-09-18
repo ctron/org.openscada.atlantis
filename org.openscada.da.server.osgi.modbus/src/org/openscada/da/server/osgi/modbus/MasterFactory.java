@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ScheduledExecutorService;
 
+import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
@@ -25,16 +26,19 @@ public class MasterFactory extends AbstractServiceConfigurationFactory<ModbusMas
 
     private final ScheduledExecutorService executor;
 
-    public MasterFactory ( final BundleContext context, final ScheduledExecutorService executor )
+    private final NioProcessor processor;
+
+    public MasterFactory ( final BundleContext context, final ScheduledExecutorService executor, final NioProcessor processor )
     {
         super ( context, true );
         this.executor = executor;
+        this.processor = processor;
     }
 
     @Override
     protected synchronized Entry<ModbusMaster> createService ( final UserInformation userInformation, final String configurationId, final BundleContext context, final Map<String, String> parameters ) throws Exception
     {
-        final ModbusMaster master = ModbusMaster.create ( context, this.executor, configurationId, parameters );
+        final ModbusMaster master = ModbusMaster.create ( context, this.executor, configurationId, this.processor, parameters );
 
         this.masters.put ( configurationId, master );
         fireAdded ( configurationId, master );

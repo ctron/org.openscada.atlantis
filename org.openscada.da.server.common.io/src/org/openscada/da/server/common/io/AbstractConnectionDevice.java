@@ -25,6 +25,7 @@ import org.apache.mina.core.future.IoFutureListener;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
+import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.utils.ExceptionHelper;
@@ -66,7 +67,49 @@ public abstract class AbstractConnectionDevice
 
     private ConnectionState state = ConnectionState.DISCONNECTED;
 
-    private final IoHandler handler;
+    private final IoHandler handler = new IoHandler () {
+        @Override
+        public void exceptionCaught ( final IoSession session, final Throwable error ) throws Exception
+        {
+            handleExceptionCaught ( session, error );
+        }
+
+        @Override
+        public void messageSent ( final IoSession session, final Object message ) throws Exception
+        {
+            handleMessageSent ( session, message );
+        }
+
+        @Override
+        public void sessionCreated ( final IoSession session ) throws Exception
+        {
+            handleSessionCreated ( session );
+        }
+
+        @Override
+        public void sessionClosed ( final IoSession session ) throws Exception
+        {
+            handleSessionClosed ( session );
+        }
+
+        @Override
+        public void sessionIdle ( final IoSession session, final IdleStatus idleStatus ) throws Exception
+        {
+            handleSessionIdle ( session, idleStatus );
+        }
+
+        @Override
+        public void sessionOpened ( final IoSession session ) throws Exception
+        {
+            handleSessionOpened ( session );
+        }
+
+        @Override
+        public void messageReceived ( final IoSession session, final Object message ) throws Exception
+        {
+            handleMessageReceived ( session, message );
+        }
+    };
 
     private NioSocketConnector connector;
 
@@ -82,60 +125,27 @@ public abstract class AbstractConnectionDevice
 
     private boolean enabled;
 
-    public AbstractConnectionDevice ( final BundleContext context, final String id, final String threadPrefix, final String itemPrefix )
+    private final NioProcessor processor;
+
+    private ScheduledExecutorService createdExecutor;
+
+    public AbstractConnectionDevice ( final BundleContext context, final String id, final NioProcessor processor, final ScheduledExecutorService executor, final String itemPrefix )
     {
         this.id = id;
+        this.processor = processor;
         this.context = context;
         this.itemPrefix = itemPrefix;
-        this.executor = Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( threadPrefix + "/" + id ) );
-        this.itemFactory = new DataItemFactory ( context, this.executor, getItemId ( null ) );
+        this.executor = executor;
+        this.itemFactory = new DataItemFactory ( context, executor, getItemId ( null ) );
 
         this.stateItem = this.itemFactory.createInput ( "state", Collections.<String, Variant> emptyMap () );
         this.connectionItem = this.itemFactory.createInput ( "connection", Collections.<String, Variant> emptyMap () );
+    }
 
-        this.handler = new IoHandler () {
-            @Override
-            public void exceptionCaught ( final IoSession session, final Throwable error ) throws Exception
-            {
-                handleExceptionCaught ( session, error );
-            }
-
-            @Override
-            public void messageSent ( final IoSession session, final Object message ) throws Exception
-            {
-                handleMessageSent ( session, message );
-            }
-
-            @Override
-            public void sessionCreated ( final IoSession session ) throws Exception
-            {
-                handleSessionCreated ( session );
-            }
-
-            @Override
-            public void sessionClosed ( final IoSession session ) throws Exception
-            {
-                handleSessionClosed ( session );
-            }
-
-            @Override
-            public void sessionIdle ( final IoSession session, final IdleStatus idleStatus ) throws Exception
-            {
-                handleSessionIdle ( session, idleStatus );
-            }
-
-            @Override
-            public void sessionOpened ( final IoSession session ) throws Exception
-            {
-                handleSessionOpened ( session );
-            }
-
-            @Override
-            public void messageReceived ( final IoSession session, final Object message ) throws Exception
-            {
-                handleMessageReceived ( session, message );
-            }
-        };
+    public AbstractConnectionDevice ( final BundleContext context, final String id, final NioProcessor processor, final String threadPrefix, final String itemPrefix )
+    {
+        this ( context, id, processor, Executors.newSingleThreadScheduledExecutor ( new NamedThreadFactory ( threadPrefix + "/" + id ) ), itemPrefix );
+        this.createdExecutor = this.executor;
     }
 
     public String getItemId ( final String localId )
@@ -187,7 +197,11 @@ public abstract class AbstractConnectionDevice
         }
 
         this.itemFactory.dispose ();
-        this.executor.shutdown ();
+
+        if ( this.createdExecutor != null )
+        {
+            this.createdExecutor.shutdown ();
+        }
     }
 
     protected void configure ( final Map<String, String> properties ) throws Exception
@@ -256,7 +270,14 @@ public abstract class AbstractConnectionDevice
 
         if ( this.connector == null )
         {
-            this.connector = new NioSocketConnector ();
+            if ( this.processor != null )
+            {
+                this.connector = new NioSocketConnector ( this.processor );
+            }
+            else
+            {
+                this.connector = new NioSocketConnector ();
+            }
 
             this.connector.setHandler ( this.handler );
 

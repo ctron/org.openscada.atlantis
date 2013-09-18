@@ -62,7 +62,7 @@ public class DaveDevice extends AbstractConnectionDevice
 
     public DaveDevice ( final BundleContext context, final String id, final Map<String, String> properties ) throws Exception
     {
-        super ( context, id, "DaveDevice", "dave" );
+        super ( context, id, null, "DaveDevice", "dave" );
 
         this.jobManager = new DaveJobManager ( this );
 

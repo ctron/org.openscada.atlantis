@@ -2,7 +2,10 @@ package org.openscada.da.server.osgi.modbus;
 
 import java.util.Dictionary;
 import java.util.Hashtable;
+import java.util.concurrent.Executors;
 
+import org.apache.mina.transport.socket.nio.NioProcessor;
+import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationFactory;
@@ -24,12 +27,16 @@ public class Activator implements BundleActivator
 
     private ScheduledExportedExecutorService executor;
 
+    private NioProcessor processor;
+
     @Override
     public void start ( final BundleContext context ) throws Exception
     {
         this.executor = new ScheduledExportedExecutorService ( "org.openscada.da.server.osgi.modbus", 1 );
 
-        this.masterFactory = new MasterFactory ( context, this.executor );
+        this.processor = new NioProcessor ( Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "org.openscada.da.server.osgi.modbus.NioProcessor" ) ) );
+
+        this.masterFactory = new MasterFactory ( context, this.executor, this.processor );
         this.slaveFactory = new SlaveFactory ( context, this.masterFactory, this.executor );
 
         {
@@ -58,7 +65,10 @@ public class Activator implements BundleActivator
         this.slaveFactoryHandle.unregister ();
         this.slaveFactory.dispose ();
 
+        this.processor.dispose ();
+
         this.executor.shutdown ();
+
     }
 
 }

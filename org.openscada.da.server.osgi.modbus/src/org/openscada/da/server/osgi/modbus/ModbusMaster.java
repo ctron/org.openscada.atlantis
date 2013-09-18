@@ -9,6 +9,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.logging.LoggingFilter;
+import org.apache.mina.transport.socket.nio.NioProcessor;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.openscada.da.server.common.io.AbstractConnectionDevice;
 import org.openscada.da.server.common.io.JobManager;
@@ -34,15 +35,15 @@ public class ModbusMaster extends AbstractConnectionDevice
 
     private int readTimeout;
 
-    public ModbusMaster ( final BundleContext context, final String id, final ScheduledExecutorService executor, final String threadPrefix, final String itemPrefix )
+    public ModbusMaster ( final BundleContext context, final String id, final ScheduledExecutorService executor, final NioProcessor processor, final String threadPrefix, final String itemPrefix )
     {
-        super ( context, id, threadPrefix, itemPrefix );
+        super ( context, id, processor, executor, itemPrefix );
         this.jobManager = new JobManager ( executor );
     }
 
-    public static ModbusMaster create ( final BundleContext context, final ScheduledExecutorService executor, final String id, final Map<String, String> parameters ) throws Exception
+    public static ModbusMaster create ( final BundleContext context, final ScheduledExecutorService executor, final String id, final NioProcessor processor, final Map<String, String> parameters ) throws Exception
     {
-        final ModbusMaster device = new ModbusMaster ( context, id, executor, "ModbusMaster", "modbus" );
+        final ModbusMaster device = new ModbusMaster ( context, id, executor, processor, "ModbusMaster", "modbus" );
 
         device.configure ( parameters );
 
