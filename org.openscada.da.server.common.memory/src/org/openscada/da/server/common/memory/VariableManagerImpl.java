@@ -40,12 +40,30 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
 
     private static enum TYPE
     {
+        /**
+         * A single bit
+         */
         BIT,
         TRIBIT,
+        /**
+         * 8bit unsigned integer
+         */
         BYTE,
+        /**
+         * 32bit floating point
+         */
         FLOAT,
+        /**
+         * 16bit unsigned integer
+         */
         WORD,
+        /**
+         * 32bit unsigned integer
+         */
         DINT,
+        /**
+         * User defined type
+         */
         UDT
     }
 
