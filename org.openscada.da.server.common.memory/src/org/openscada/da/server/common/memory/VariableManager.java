@@ -13,6 +13,8 @@ package org.openscada.da.server.common.memory;
 
 public interface VariableManager
 {
+    public static final String FACTORY_ID = "org.openscada.da.server.common.memory.types";
+
     public void addVariableListener ( String type, VariableListener listener );
 
     public void removeVariableListener ( String type, VariableListener listener );

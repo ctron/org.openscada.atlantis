@@ -238,8 +238,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
     {
         logger.debug ( "Adding type: {}", configurationId );
 
-        final Collection<TypeEntry> config = parseConfig ( properties );
-        config.addAll ( parseConfig2 ( properties ) );
+        final Collection<TypeEntry> config = new ArrayList<> ( parseConfig ( properties ) );
 
         this.types.put ( configurationId, config );
 
@@ -356,10 +355,10 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
                     break;
             }
         }
-        return result.toArray ( new Attribute[0] );
+        return result.toArray ( new Attribute[result.size ()] );
     }
 
-    private Collection<TypeEntry> parseConfig2 ( final Map<String, String> properties )
+    private Collection<TypeEntry> parseConfig ( final Map<String, String> properties )
     {
         final Collection<TypeEntry> result = new LinkedList<TypeEntry> ();
 
@@ -374,7 +373,7 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
             final String varName = key.substring ( "variable.".length () );
             final String toks[] = entry.getValue ().split ( ":" );
 
-            parseType ( properties, result, varName, toks[0], makeArgs ( toks, 1 ) );
+            parseType ( properties, result, varName, toks[0], makeArgs ( toks, 1 ), false );
         }
 
         return result;
@@ -390,115 +389,77 @@ public class VariableManagerImpl implements VariableManager, ConfigurationFactor
         return args;
     }
 
-    private Collection<TypeEntry> parseConfig ( final Map<String, String> properties )
-    {
-        // 'definition' is: "var1:UDT:test:2 var2:BYTE:1 var3:BIT:1:0"
-        // 'attribute.ABC' is attribute for ABC : "attr1:BYTE:1 attr2:BIT:1:0"
-
-        final Collection<TypeEntry> result = new LinkedList<TypeEntry> ();
-
-        final String def = properties.get ( "definition" );
-
-        if ( def == null )
-        {
-            return result;
-        }
-
-        for ( final String tok : def.split ( " " ) )
-        {
-            final String toks[] = tok.split ( ":" );
-            if ( toks.length < 3 )
-            {
-                // FIXME: throw error
-                continue;
-            }
-
-            parseType ( properties, result, toks[0], toks[1], makeArgs ( toks, 2 ) );
-        }
-
-        return result;
-    }
-
-    protected void parseType ( final Map<String, String> properties, final Collection<TypeEntry> result, final String varName, final String typeName, final String[] args )
+    protected void parseType ( final Map<String, String> properties, final Collection<TypeEntry> result, final String varName, final String typeName, final String[] args, final boolean attribute )
     {
         switch ( TYPE.valueOf ( typeName ) )
         {
             case BIT:
-                result.add ( new TypeEntry ( varName, Integer.parseInt ( args[0] ), Integer.parseInt ( args[1] ), 0, parseAttributes ( properties, varName ) ) );
+                result.add ( new TypeEntry ( varName, Integer.parseInt ( args[0] ), Integer.parseInt ( args[1] ), Integer.parseInt ( args[1] ), parseAttributes ( attribute, properties, varName ) ) );
                 break;
             case BYTE:
-                result.add ( new TypeEntry ( varName, TYPE.BYTE, Integer.parseInt ( args[0] ), 0, parseAttributes ( properties, varName ) ) );
+                result.add ( new TypeEntry ( varName, TYPE.BYTE, Integer.parseInt ( args[0] ), Integer.parseInt ( args[1] ), parseAttributes ( attribute, properties, varName ) ) );
                 break;
             case FLOAT:
-                result.add ( new TypeEntry ( varName, TYPE.FLOAT, Integer.parseInt ( args[0] ), 0, parseAttributes ( properties, varName ) ) );
+                result.add ( new TypeEntry ( varName, TYPE.FLOAT, Integer.parseInt ( args[0] ), Integer.parseInt ( args[1] ), parseAttributes ( attribute, properties, varName ) ) );
                 break;
             case WORD:
-                result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( args[0] ), 0, parseAttributes ( properties, varName ) ) );
+                result.add ( new TypeEntry ( varName, TYPE.WORD, Integer.parseInt ( args[0] ), Integer.parseInt ( args[1] ), parseAttributes ( attribute, properties, varName ) ) );
                 break;
             case DINT:
-                result.add ( new TypeEntry ( varName, TYPE.DINT, Integer.parseInt ( args[0] ), 0, parseAttributes ( properties, varName ) ) );
+                result.add ( new TypeEntry ( varName, TYPE.DINT, Integer.parseInt ( args[0] ), Integer.parseInt ( args[1] ), parseAttributes ( attribute, properties, varName ) ) );
                 break;
             case UDT:
-                result.add ( new TypeEntry ( varName, args[0], Integer.parseInt ( args[1] ) ) );
+                if ( attribute )
+                {
+                    throw new IllegalArgumentException ( "Attribute must be of scalar type. UDTs are not allowed." );
+                }
+                else
+                {
+                    result.add ( new TypeEntry ( varName, args[0], Integer.parseInt ( args[1] ) ) );
+                }
+                break;
+            case TRIBIT:
+                result.add ( new TypeEntry ( varName, new int[] {//
+                Integer.parseInt ( args[0] ), Integer.parseInt ( args[1] ),// read bit
+                Integer.parseInt ( args[2] ), Integer.parseInt ( args[3] ),// write true bit
+                Integer.parseInt ( args[4] ), Integer.parseInt ( args[5] ),// write false bit
+                Integer.parseInt ( args[6] ), // invert
+                Integer.parseInt ( args[7] ), // enableTimestamp
+                } ) );
                 break;
             default:
                 throw new IllegalArgumentException ( String.format ( "Type %s is not supported at the moment", typeName ) );
         }
     }
 
-    private TypeEntry[] parseAttributes ( final Map<String, String> properties, final String varName )
+    private TypeEntry[] parseAttributes ( final boolean attribute, final Map<String, String> properties, final String varName )
     {
-        final String definition = properties.get ( "attribute." + varName );
-
-        if ( definition == null )
-        {
-            logger.debug ( "No attributes for '{}'", varName );
+        if ( attribute )
+        { // we are currently parsing an attribute, so no sub-attributes are allowed
             return new TypeEntry[0];
         }
 
-        logger.debug ( "Attribute definition for '{}': {}", new Object[] { varName, definition } );
+        final String attrVarName = "attribute." + varName + "."; //$NON-NLS-1$ //$NON-NLS-2$
 
         final Collection<TypeEntry> result = new LinkedList<TypeEntry> ();
 
-        for ( final String tok : definition.split ( " " ) )
+        for ( final Map.Entry<String, String> entry : properties.entrySet () )
         {
-            final String toks[] = tok.split ( ":" );
-            if ( toks.length < 3 )
+            final String key = entry.getKey ();
+            if ( !key.startsWith ( attrVarName ) )
             {
-                // FIXME: throw error
                 continue;
             }
 
-            switch ( TYPE.valueOf ( toks[1] ) )
-            {
-                case BIT:
-                    result.add ( new TypeEntry ( toks[0], Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ), Integer.parseInt ( toks[4] ) ) );
-                    break;
-                case FLOAT:
-                    result.add ( new TypeEntry ( toks[0], TYPE.FLOAT, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
-                    break;
-                case TRIBIT:
-                    result.add ( new TypeEntry ( toks[0], new int[] {//
-                    Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ),// read bit
-                    Integer.parseInt ( toks[4] ), Integer.parseInt ( toks[5] ),// write true bit
-                    Integer.parseInt ( toks[6] ), Integer.parseInt ( toks[7] ),// write false bit
-                    Integer.parseInt ( toks[8] ), // invert
-                    Integer.parseInt ( toks[9] ), // enableTimestamp
-                    } ) );
-                    break;
-                case BYTE:
-                    result.add ( new TypeEntry ( toks[0], TYPE.BYTE, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
-                    break;
-                case WORD:
-                    result.add ( new TypeEntry ( toks[0], TYPE.WORD, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
-                    break;
-                case DINT:
-                    result.add ( new TypeEntry ( toks[0], TYPE.DINT, Integer.parseInt ( toks[2] ), Integer.parseInt ( toks[3] ) ) );
-                    break;
-                case UDT:
-                    throw new IllegalArgumentException ( "Attribute must be of scalar type. UDTs are not allowed." );
-            }
+            final String attrName = key.substring ( attrVarName.length () );
+            final String toks[] = entry.getValue ().split ( ":" ); //$NON-NLS-1$
+
+            final String typeName = toks[0];
+            final String[] args = makeArgs ( toks, 1 );
+
+            parseType ( properties, result, attrName, typeName, args, true );
         }
+
         return result.toArray ( new TypeEntry[0] );
     }
 }

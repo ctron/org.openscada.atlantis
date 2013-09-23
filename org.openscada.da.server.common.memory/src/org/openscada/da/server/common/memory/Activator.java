@@ -61,7 +61,7 @@ public class Activator implements BundleActivator
         {
             this.variableManager = new VariableManagerImpl ( this.executor, this.itemPool );
             final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-            properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.openscada.da.server.common.memory.types" );
+            properties.put ( ConfigurationAdministrator.FACTORY_ID, VariableManager.FACTORY_ID );
             context.registerService ( ConfigurationFactory.class.getName (), this.variableManager, properties );
         }
     }
