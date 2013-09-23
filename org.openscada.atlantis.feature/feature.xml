@@ -40,10 +40,11 @@
    <requires>
       <import plugin="org.eclipse.osgi"/>
       <import feature="org.openscada.external" version="1.2.0.qualifier"/>
-      <import feature="org.eclipse.scada.aurora" version="0.1.0.qualifier"/>
       <import feature="org.openscada.oxygen" version="1.2.0.qualifier"/>
       <import feature="org.openscada.utgard" version="1.2.0.qualifier"/>
       <import plugin="org.slf4j.api"/>
+      <import feature="org.eclipse.scada.base" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.scada.utils" version="0.1.0.qualifier"/>
    </requires>
 
    <plugin
