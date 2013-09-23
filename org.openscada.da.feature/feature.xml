@@ -18,7 +18,8 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.scada.aurora" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.scada.utils" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.scada.base" version="0.1.0.qualifier"/>
       <import feature="org.openscada.external" version="1.1.0.qualifier"/>
    </requires>
 
