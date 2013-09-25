@@ -243,11 +243,16 @@ public abstract class AbstractConfigurationAdministrator implements FreezableCon
 
     protected synchronized void removeFactoryService ( final String factoryId, final ConfigurationFactory service )
     {
+        logger.debug ( "Removing factory service - factoryId: {}, service: {}", factoryId, service );
+
         final FactoryImpl factory = getFactory ( factoryId );
         if ( factory == null )
         {
+            logger.info ( "Factory was not set" );
             return;
         }
+
+        logger.debug ( "Set factory: {}, removed factory: {}", service, factory.getService () );
 
         if ( factory.getService () == service )
         {
