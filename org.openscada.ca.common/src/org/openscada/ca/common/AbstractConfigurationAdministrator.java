@@ -1,6 +1,8 @@
 /*
  * This file is part of the OpenSCADA project
+ * 
  * Copyright (C) 2006-2012 TH4 SYSTEMS GmbH (http://th4-systems.com)
+ * Copyright (C) 2013 IBH SYSTEMS GmbH (http://ibh-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -399,7 +401,7 @@ public abstract class AbstractConfigurationAdministrator implements FreezableCon
 
         final ConfigurationFactory factoryService = factory.getConfigurationFactoryService ();
 
-        if ( factoryService != null && configuration != null )
+        if ( factoryService != null || configuration != null )
         {
             final ConfigurationImpl applyConfiguration = configuration;
 
