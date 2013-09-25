@@ -4,8 +4,8 @@
    <property name="factoryId" type="String" value="org.openscada.sec.osgi.manager"/>
    <service>
       <provide interface="org.openscada.ca.ConfigurationFactory"/>
-      <provide interface="org.openscada.sec.osgi.AuthorizationManager"/>
-      <provide interface="org.openscada.sec.osgi.AuthorizationTracker"/>
+      <provide interface="org.eclipse.scada.sec.osgi.AuthorizationManager"/>
+      <provide interface="org.eclipse.scada.sec.osgi.AuthorizationTracker"/>
       <provide interface="org.openscada.sec.osgi.manager.AuthorizationManagerImpl"/>
    </service>
    <property name="service.vendor" type="String" value="openSCADA.org"/>

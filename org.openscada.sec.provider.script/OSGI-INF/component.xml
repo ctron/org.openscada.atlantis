@@ -4,8 +4,8 @@
    <property name="service.description" type="String" value="A script based authorization service"/>
    <property name="service.vendor" type="String" value="openSCADA.org"/>
    <service>
-      <provide interface="org.openscada.sec.AuthorizationService"/>
+      <provide interface="org.eclipse.scada.sec.AuthorizationService"/>
    </service>
    <property name="rule.types" type="String" value="script"/>
-   <reference bind="setAuthenticationImplementation" cardinality="1..1" interface="org.openscada.sec.AuthenticationImplementation" name="AuthenticationImplementation" policy="static"/>
+   <reference bind="setAuthenticationImplementation" cardinality="1..1" interface="org.eclipse.scada.sec.AuthenticationImplementation" name="AuthenticationImplementation" policy="static"/>
 </scr:component>
