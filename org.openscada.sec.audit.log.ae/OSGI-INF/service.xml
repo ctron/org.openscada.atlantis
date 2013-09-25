@@ -2,7 +2,7 @@
 <scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" name="org.openscada.sec.audit.log.ae">
    <implementation class="org.openscada.sec.audit.log.ae.AuditLogServiceImpl"/>
    <service>
-      <provide interface="org.openscada.sec.audit.AuditLogService"/>
+      <provide interface="org.eclipse.scada.sec.audit.AuditLogService"/>
    </service>
    <property name="service.vendor" type="String" value="openSCADA.org"/>
    <property name="service.description" type="String" value="The default openSCADA Authorization manager"/>
