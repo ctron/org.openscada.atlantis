@@ -28,8 +28,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
+import org.eclipse.scada.da.server.common.item.factory.DefaultChainItemFactory;
+import org.eclipse.scada.da.server.common.item.factory.FolderItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

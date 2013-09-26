@@ -21,8 +21,8 @@ package org.eclipse.scada.da.server.osgi.exporter.net;
 
 import org.eclipse.scada.core.ConnectionInformation;
 import org.eclipse.scada.da.server.net.Exporter;
-import org.openscada.core.server.exporter.ExporterInformation;
-import org.openscada.da.core.server.Hive;
+import org.eclipse.scada.core.server.exporter.ExporterInformation;
+import org.eclipse.scada.da.core.server.Hive;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

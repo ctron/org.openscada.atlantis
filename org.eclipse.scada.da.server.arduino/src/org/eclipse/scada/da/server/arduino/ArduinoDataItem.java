@@ -33,8 +33,8 @@ import org.eclipse.scada.protocol.arduino.ArduinoDevice;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.InstantFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.chain.DataItemInputOutputChained;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.chain.DataItemInputOutputChained;
 
 public class ArduinoDataItem extends DataItemInputOutputChained
 {

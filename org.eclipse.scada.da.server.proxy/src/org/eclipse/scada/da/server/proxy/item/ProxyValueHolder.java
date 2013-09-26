@@ -27,9 +27,9 @@ import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.data.SubscriptionState;
 import org.eclipse.scada.da.client.DataItemValue;
 import org.eclipse.scada.da.client.ItemUpdateListener;
+import org.eclipse.scada.da.server.common.AttributeMode;
 import org.eclipse.scada.da.server.proxy.utils.ProxyPrefixName;
 import org.eclipse.scada.da.server.proxy.utils.ProxySubConnectionId;
-import org.openscada.da.server.common.AttributeMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

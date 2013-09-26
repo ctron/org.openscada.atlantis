@@ -28,8 +28,8 @@ import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.client.Connection;
 import org.eclipse.scada.core.client.ConnectionState;
 import org.eclipse.scada.core.client.ConnectionStateListener;
+import org.eclipse.scada.da.server.common.AttributeMode;
 import org.eclipse.scada.da.server.proxy.item.ProxyDataItem;
-import org.openscada.da.server.common.AttributeMode;
 
 /**
  * encapsulates notification of items in case of a connection error

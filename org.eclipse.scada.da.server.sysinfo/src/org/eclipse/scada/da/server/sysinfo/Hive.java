@@ -28,12 +28,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
 import org.eclipse.scada.da.server.sysinfo.items.LoadAverageJob;
 import org.eclipse.scada.da.server.sysinfo.items.PlainFileDataItem;
 import org.eclipse.scada.da.server.sysinfo.items.TimeDataItem;
 import org.eclipse.scada.utils.collection.MapBuilder;
-import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.impl.HiveCommon;
 
 public class Hive extends HiveCommon
 {

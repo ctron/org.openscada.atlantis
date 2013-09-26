@@ -27,14 +27,14 @@ import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
+import org.eclipse.scada.da.server.common.item.factory.DefaultChainItemFactory;
+import org.eclipse.scada.da.server.common.item.factory.FolderItemFactory;
 import org.eclipse.scada.da.server.exec.Hive;
 import org.eclipse.scada.da.server.exec.extractor.Extractor;
 import org.eclipse.scada.da.server.exec.util.CommandExecutor;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 public class AbstractSingleCommand
 {

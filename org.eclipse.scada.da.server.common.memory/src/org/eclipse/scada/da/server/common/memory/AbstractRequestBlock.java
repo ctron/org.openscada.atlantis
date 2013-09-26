@@ -7,7 +7,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.common.io.PollRequest;
 import org.eclipse.scada.da.server.common.osgi.factory.DataItemFactory;
-import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

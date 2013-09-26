@@ -29,8 +29,8 @@ import org.eclipse.scada.da.core.server.browser.NoSuchFolderException;
 import org.eclipse.scada.da.server.browser.common.Folder;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.eclipse.scada.da.server.browser.common.FolderListener;
+import org.eclipse.scada.da.server.common.DataItem;
 import org.eclipse.scada.utils.collection.MapBuilder;
-import org.openscada.da.server.common.DataItem;
 
 public class GroupSubFolder implements Folder
 {

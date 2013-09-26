@@ -31,9 +31,9 @@ import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.protocol.arduino.ArduinoDeviceListener;
 import org.eclipse.scada.protocol.arduino.DeviceState;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
-import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItemInformationBase;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
 import org.osgi.framework.BundleContext;
 
 public class ArduinoDevice

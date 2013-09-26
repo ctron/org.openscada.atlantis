@@ -28,8 +28,8 @@ import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.da.server.common.item.factory.FolderItemFactory;
 import org.jinterop.dcom.core.JISession;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.openscada.da.server.opc.Hive;
 import org.openscada.da.server.opc.browser.OPCBrowserManager;
 import org.openscada.da.server.opc.connection.data.ConnectionSetup;

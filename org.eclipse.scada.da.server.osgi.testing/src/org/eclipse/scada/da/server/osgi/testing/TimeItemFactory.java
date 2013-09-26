@@ -26,7 +26,7 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.eclipse.scada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.eclipse.scada.sec.UserInformation;
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceRegistration;
 

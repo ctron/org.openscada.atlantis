@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.opc.connection;
 
-import org.openscada.da.server.common.factory.DataItemFactory;
+import org.eclipse.scada.da.server.common.factory.DataItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

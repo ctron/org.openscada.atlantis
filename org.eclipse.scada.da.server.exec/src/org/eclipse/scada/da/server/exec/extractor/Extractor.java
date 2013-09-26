@@ -19,9 +19,9 @@
 
 package org.eclipse.scada.da.server.exec.extractor;
 
+import org.eclipse.scada.da.server.common.item.factory.FolderItemFactory;
 import org.eclipse.scada.da.server.exec.Hive;
 import org.eclipse.scada.da.server.exec.command.ExecutionResult;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 public interface Extractor
 {

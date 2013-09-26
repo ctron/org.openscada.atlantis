@@ -21,7 +21,7 @@ import org.eclipse.scada.da.core.WriteAttributeResults;
 import org.eclipse.scada.da.core.WriteResult;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.da.server.common.chain.DataItemInputOutputChained;
+import org.eclipse.scada.da.server.common.chain.DataItemInputOutputChained;
 
 public class MemoryDeviceDataitem extends DataItemInputOutputChained
 {

@@ -9,8 +9,8 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.eclipse.scada.da.modbus.configuration.tests
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.scada.da.server.modbus;bundle-version="1.2.0";visibility:=reexport,
- org.eclipse.scada.da.server.common;bundle-version="1.2.0";visibility:=reexport,
+ org.eclipse.scada.da.server.modbus;bundle-version="0.1.0";visibility:=reexport,
+ org.eclipse.scada.da.server.common;bundle-version="0.1.0";visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.junit;visibility:=reexport
 Bundle-ActivationPolicy: lazy

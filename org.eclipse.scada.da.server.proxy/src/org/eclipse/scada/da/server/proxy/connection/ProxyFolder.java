@@ -36,7 +36,7 @@ import org.eclipse.scada.da.core.server.browser.NoSuchFolderException;
 import org.eclipse.scada.da.server.browser.common.Folder;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.eclipse.scada.da.server.browser.common.FolderListener;
-import org.openscada.da.server.common.DataItemInformationBase;
+import org.eclipse.scada.da.server.common.DataItemInformationBase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

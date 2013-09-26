@@ -25,10 +25,10 @@ import java.util.StringTokenizer;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.DataItemInputCommon;
 import org.eclipse.scada.da.server.sysinfo.Hive;
 import org.eclipse.scada.da.server.sysinfo.utils.FileUtils;
 import org.eclipse.scada.utils.collection.MapBuilder;
-import org.openscada.da.server.common.DataItemInputCommon;
 
 public class LoadAverageJob implements Runnable
 {

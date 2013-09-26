@@ -19,8 +19,8 @@
 
 package org.eclipse.scada.da.server.test.items;
 
-import org.openscada.da.server.common.DataItemInputCommon;
-import org.openscada.da.server.common.SuspendableDataItem;
+import org.eclipse.scada.da.server.common.DataItemInputCommon;
+import org.eclipse.scada.da.server.common.SuspendableDataItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

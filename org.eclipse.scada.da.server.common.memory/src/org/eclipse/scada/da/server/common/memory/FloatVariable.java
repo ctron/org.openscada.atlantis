@@ -22,7 +22,7 @@ import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.InstantFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 
 public class FloatVariable extends ScalarVariable
 {

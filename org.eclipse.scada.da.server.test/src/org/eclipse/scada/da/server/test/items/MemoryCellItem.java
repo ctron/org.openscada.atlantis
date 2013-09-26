@@ -29,15 +29,15 @@ import org.eclipse.scada.core.server.OperationParameters;
 import org.eclipse.scada.da.core.WriteAttributeResults;
 import org.eclipse.scada.da.core.WriteResult;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.AttributeManager;
+import org.eclipse.scada.da.server.common.DataItemOutput;
+import org.eclipse.scada.da.server.common.WriteAttributesHelper;
+import org.eclipse.scada.da.server.common.chain.MemoryItemChained;
 import org.eclipse.scada.da.server.test.Hive;
 import org.eclipse.scada.utils.collection.MapBuilder;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.InstantFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.da.server.common.AttributeManager;
-import org.openscada.da.server.common.DataItemOutput;
-import org.openscada.da.server.common.WriteAttributesHelper;
-import org.openscada.da.server.common.chain.MemoryItemChained;
 
 public class MemoryCellItem extends DataItemOutput
 {

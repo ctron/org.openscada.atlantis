@@ -25,8 +25,8 @@ import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.server.OperationParameters;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.chain.WriteHandler;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.chain.WriteHandler;
 
 public interface ScriptContext
 {

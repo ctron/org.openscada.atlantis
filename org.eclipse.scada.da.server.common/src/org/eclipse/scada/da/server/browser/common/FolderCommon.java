@@ -35,7 +35,7 @@ import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.core.DataItemInformation;
 import org.eclipse.scada.da.core.browser.Entry;
 import org.eclipse.scada.da.core.server.browser.NoSuchFolderException;
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 
 /**
  * A common folder implementation which can be used to easily implement folders.

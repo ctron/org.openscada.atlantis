@@ -1,16 +1,16 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.openscada.da.server.opc.editor;singleton:=true
+Bundle-SymbolicName: org.eclipse.scada.da.server.opc.editor;singleton:=true
 Bundle-Version: 0.1.0.qualifier
 Bundle-ClassPath: .
 Bundle-Activator: org.openscada.da.opc.configuration.presentation.OpcEditorPlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.openscada.da.opc.configuration.presentation;version="0.1.0"
+Export-Package: org.openscada.da.opc.configuration.presentation;version="1.2.0"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;visibility:=reexport,
- org.openscada.da.server.opc.edit;bundle-version="1.2.0";visibility:=reexport,
+ org.eclipse.scada.da.server.opc.edit;bundle-version="1.2.0";visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.eclipse.emf.edit.ui;visibility:=reexport,
  org.eclipse.ui.ide;visibility:=reexport

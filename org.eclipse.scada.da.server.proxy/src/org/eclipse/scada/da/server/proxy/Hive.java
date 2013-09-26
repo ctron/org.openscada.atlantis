@@ -35,10 +35,10 @@ import org.eclipse.scada.da.proxy.configuration.ConfigurationPackage;
 import org.eclipse.scada.da.proxy.configuration.RootType;
 import org.eclipse.scada.da.proxy.configuration.util.ConfigurationResourceFactoryImpl;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
 import org.eclipse.scada.da.server.proxy.configuration.XMLConfigurator;
 import org.eclipse.scada.da.server.proxy.connection.ProxyConnection;
 import org.eclipse.scada.da.server.proxy.utils.ProxyPrefixName;
-import org.openscada.da.server.common.impl.HiveCommon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

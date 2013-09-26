@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.Map;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.subscription.SubscriptionState;
 import org.eclipse.scada.da.client.ItemUpdateListener;
 

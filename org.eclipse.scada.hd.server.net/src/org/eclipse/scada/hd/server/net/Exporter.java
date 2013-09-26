@@ -28,7 +28,7 @@ import org.apache.mina.handler.multiton.SingleSessionIoHandlerFactory;
 import org.eclipse.scada.core.ConnectionInformation;
 import org.eclipse.scada.hd.server.Service;
 import org.eclipse.scada.hd.server.exporter.ExporterBase;
-import org.openscada.core.server.net.Server;
+import org.eclipse.scada.core.server.net.Server;
 
 public class Exporter extends ExporterBase
 {

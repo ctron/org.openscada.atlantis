@@ -39,11 +39,11 @@ import org.eclipse.scada.da.core.WriteAttributeResult;
 import org.eclipse.scada.da.core.WriteAttributeResults;
 import org.eclipse.scada.da.core.WriteResult;
 import org.eclipse.scada.da.data.IODirection;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.DataItemInformationBase;
+import org.eclipse.scada.da.server.common.chain.DataItemInputOutputChained;
 import org.eclipse.scada.utils.concurrent.FutureTask;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.chain.DataItemInputOutputChained;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;

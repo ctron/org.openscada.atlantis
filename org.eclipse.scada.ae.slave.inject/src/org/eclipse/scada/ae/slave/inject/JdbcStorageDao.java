@@ -35,7 +35,7 @@ import org.eclipse.scada.utils.osgi.jdbc.data.SingleColumnRowMapper;
 import org.eclipse.scada.utils.osgi.jdbc.task.CommonConnectionTask;
 import org.eclipse.scada.utils.osgi.jdbc.task.ConnectionContext;
 import org.eclipse.scada.utils.osgi.jdbc.task.RowCallback;
-import org.openscada.ae.server.storage.jdbc.AbstractJdbcStorageDao;
+import org.eclipse.scada.ae.server.storage.jdbc.AbstractJdbcStorageDao;
 import org.osgi.service.jdbc.DataSourceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -38,7 +38,7 @@ import org.eclipse.scada.da.core.WriteResult;
 import org.eclipse.scada.da.datasource.base.AbstractDataSource;
 import org.eclipse.scada.utils.concurrent.FutureTask;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.da.server.common.WriteAttributesHelper;
+import org.eclipse.scada.da.server.common.WriteAttributesHelper;
 
 public class MemoryDataSource extends AbstractDataSource
 {

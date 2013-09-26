@@ -19,10 +19,10 @@
 
 package org.eclipse.scada.da.server.proxy.connection;
 
+import org.eclipse.scada.da.server.common.factory.DataItemFactory;
 import org.eclipse.scada.da.server.proxy.Hive;
 import org.eclipse.scada.da.server.proxy.item.ProxyDataItem;
 import org.eclipse.scada.da.server.proxy.utils.ProxyPrefixName;
-import org.openscada.da.server.common.factory.DataItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

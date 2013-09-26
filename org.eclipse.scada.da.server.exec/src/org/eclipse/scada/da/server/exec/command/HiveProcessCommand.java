@@ -27,11 +27,11 @@ import java.util.Map;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.VariantEditor;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.item.factory.FolderItemFactory;
 import org.eclipse.scada.da.server.exec.Hive;
 import org.eclipse.scada.da.server.exec.splitter.SplitSplitter;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 public class HiveProcessCommand extends AbstractContinuousCommand
 {

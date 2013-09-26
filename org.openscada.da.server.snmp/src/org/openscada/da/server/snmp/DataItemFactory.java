@@ -21,7 +21,7 @@ package org.openscada.da.server.snmp;
 
 import org.snmp4j.smi.OID;
 
-public class DataItemFactory implements org.openscada.da.server.common.factory.DataItemFactory
+public class DataItemFactory implements org.eclipse.scada.da.server.common.factory.DataItemFactory
 {
 
     private final String connectionPrefix;

@@ -31,7 +31,7 @@ import org.apache.mina.handler.multiton.SingleSessionIoHandlerDelegate;
 import org.eclipse.scada.core.ConnectionInformation;
 import org.eclipse.scada.core.net.ConnectionHelper;
 import org.eclipse.scada.net.mina.SocketImpl;
-import org.openscada.core.server.common.NetworkHelper;
+import org.eclipse.scada.core.server.common.NetworkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

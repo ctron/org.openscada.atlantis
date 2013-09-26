@@ -19,8 +19,8 @@
 
 package org.eclipse.scada.da.server.test.items;
 
+import org.eclipse.scada.da.server.common.chain.MemoryItemChained;
 import org.eclipse.scada.da.server.test.Hive;
-import org.openscada.da.server.common.chain.MemoryItemChained;
 
 public class FactoryMemoryCell extends MemoryItemChained
 {

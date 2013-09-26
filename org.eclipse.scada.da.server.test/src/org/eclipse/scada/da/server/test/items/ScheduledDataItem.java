@@ -22,7 +22,7 @@ package org.eclipse.scada.da.server.test.items;
 import java.util.Timer;
 import java.util.TimerTask;
 
-import org.openscada.da.server.common.DataItemInputCommon;
+import org.eclipse.scada.da.server.common.DataItemInputCommon;
 
 public abstract class ScheduledDataItem extends DataItemInputCommon implements Runnable
 {

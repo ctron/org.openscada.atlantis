@@ -28,12 +28,12 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.ValidationStrategy;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
 import org.eclipse.scada.da.server.stock.business.YahooStockQuoteService;
 import org.eclipse.scada.da.server.stock.items.StockQuoteItem;
 import org.eclipse.scada.da.server.stock.items.UpdateManager;
 import org.eclipse.scada.utils.collection.MapBuilder;
-import org.openscada.da.server.common.ValidationStrategy;
-import org.openscada.da.server.common.impl.HiveCommon;
 
 public class Hive extends HiveCommon
 {

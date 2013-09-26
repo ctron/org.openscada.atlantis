@@ -26,9 +26,9 @@ import java.util.Map;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.component.script.ScriptContext.Item;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
 import org.osgi.framework.Constants;
 
 public class ItemWrapper implements Item

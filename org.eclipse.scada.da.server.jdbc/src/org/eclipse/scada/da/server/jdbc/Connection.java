@@ -26,7 +26,7 @@ import java.util.LinkedList;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
+import org.eclipse.scada.da.server.common.item.factory.DefaultChainItemFactory;
 
 public class Connection
 {

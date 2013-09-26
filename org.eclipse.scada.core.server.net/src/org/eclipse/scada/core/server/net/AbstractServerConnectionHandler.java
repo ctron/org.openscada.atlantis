@@ -40,7 +40,7 @@ import org.eclipse.scada.net.base.PingService;
 import org.eclipse.scada.net.base.data.Message;
 import org.eclipse.scada.net.mina.IoSessionSender;
 import org.eclipse.scada.net.mina.Messenger;
-import org.openscada.core.server.common.stats.ManagedConnection;
+import org.eclipse.scada.core.server.common.stats.ManagedConnection;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

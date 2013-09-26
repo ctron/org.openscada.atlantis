@@ -4,7 +4,7 @@
     modelDirectory="/org.eclipse.scada.da.server.exec/emfsrc" modelPluginID="org.eclipse.scada.da.server.exec"
     modelName="Exec" nonNLSMarkers="true" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     codeFormatting="true" importerID="org.eclipse.xsd.ecore.importer" containmentProxies="true"
-    complianceLevel="6.0" runtimeVersion="2.8" usedGenPackages="../../org.openscada.da.server.common/model/Common.genmodel#//common"
+    complianceLevel="6.0" runtimeVersion="2.8" usedGenPackages="../../org.eclipse.scada.da.server.common/model/Common.genmodel#//common"
     operationReflection="true" importOrganizing="true">
   <foreignModel>exec.xsd</foreignModel>
   <genPackages prefix="Configuration" basePackage="org.openscada.da.exec" resource="XML"

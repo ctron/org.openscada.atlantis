@@ -29,8 +29,8 @@ import org.apache.mina.handler.multiton.SingleSessionIoHandlerFactory;
 import org.eclipse.scada.core.ConnectionInformation;
 import org.eclipse.scada.da.core.server.Hive;
 import org.eclipse.scada.utils.lifecycle.LifecycleAware;
-import org.openscada.core.server.net.Server;
-import org.openscada.da.server.common.impl.ExporterBase;
+import org.eclipse.scada.core.server.net.Server;
+import org.eclipse.scada.da.server.common.impl.ExporterBase;
 
 public class Exporter extends ExporterBase implements LifecycleAware
 {

@@ -23,11 +23,11 @@ import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.chain.item.SumAlarmChainItem;
-import org.openscada.da.server.common.chain.item.SumErrorChainItem;
-import org.openscada.da.server.common.chain.item.SumPatternAttributesChainItem;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.chain.item.SumAlarmChainItem;
+import org.eclipse.scada.da.server.common.chain.item.SumErrorChainItem;
+import org.eclipse.scada.da.server.common.chain.item.SumPatternAttributesChainItem;
 import org.osgi.framework.BundleContext;
 
 public abstract class ScalarVariable implements Variable

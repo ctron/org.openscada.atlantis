@@ -25,8 +25,8 @@ import java.util.concurrent.Executor;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.data.SubscriptionState;
 import org.eclipse.scada.da.client.ItemUpdateListener;
+import org.eclipse.scada.da.server.common.AttributeMode;
 import org.eclipse.scada.da.server.proxy.connection.ProxySubConnection;
-import org.openscada.da.server.common.AttributeMode;
 
 public class ProxyItemUpdateListener implements ItemUpdateListener
 {

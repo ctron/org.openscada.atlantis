@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 import org.eclipse.scada.ca.ConfigurationAdministrator;
 import org.eclipse.scada.ca.ConfigurationFactory;
 import org.eclipse.scada.utils.concurrent.NamedThreadFactory;

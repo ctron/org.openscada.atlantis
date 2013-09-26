@@ -26,15 +26,15 @@ import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.data.IODirection;
-import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.chain.BaseChainItemCommon;
-import org.openscada.da.server.common.chain.ChainItem;
-import org.openscada.da.server.common.chain.ChainProcessEntry;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.chain.MemoryItemChained;
-import org.openscada.da.server.common.chain.item.SumAlarmChainItem;
-import org.openscada.da.server.common.chain.item.SumErrorChainItem;
-import org.openscada.da.server.common.impl.HiveCommon;
+import org.eclipse.scada.da.server.common.DataItemInformationBase;
+import org.eclipse.scada.da.server.common.chain.BaseChainItemCommon;
+import org.eclipse.scada.da.server.common.chain.ChainItem;
+import org.eclipse.scada.da.server.common.chain.ChainProcessEntry;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.chain.MemoryItemChained;
+import org.eclipse.scada.da.server.common.chain.item.SumAlarmChainItem;
+import org.eclipse.scada.da.server.common.chain.item.SumErrorChainItem;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
 
 public class MemoryChainedItem extends MemoryItemChained
 {

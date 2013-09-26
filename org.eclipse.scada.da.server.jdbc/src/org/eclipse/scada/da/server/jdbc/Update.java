@@ -31,13 +31,13 @@ import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.server.OperationParameters;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.chain.WriteHandler;
+import org.eclipse.scada.da.server.common.chain.WriteHandlerItem;
+import org.eclipse.scada.da.server.common.item.factory.DefaultChainItemFactory;
+import org.eclipse.scada.da.server.common.item.factory.FolderItemFactory;
 import org.eclipse.scada.utils.lang.Immutable;
 import org.eclipse.scada.utils.sql.SqlHelper;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.chain.WriteHandler;
-import org.openscada.da.server.common.chain.WriteHandlerItem;
-import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

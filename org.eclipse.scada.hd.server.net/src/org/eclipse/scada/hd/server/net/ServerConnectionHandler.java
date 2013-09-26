@@ -57,7 +57,7 @@ import org.eclipse.scada.net.utils.MessageCreator;
 import org.eclipse.scada.sec.callback.PropertiesCredentialsCallback;
 import org.eclipse.scada.utils.concurrent.FutureListener;
 import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
-import org.openscada.core.server.net.AbstractServerConnectionHandler;
+import org.eclipse.scada.core.server.net.AbstractServerConnectionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.slf4j.profiler.Profiler;

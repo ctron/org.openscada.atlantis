@@ -24,10 +24,10 @@ import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.query.ItemDescriptor;
+import org.eclipse.scada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItemCommand;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
 import org.eclipse.scada.da.server.simulation.component.Hive;
-import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.DataItemCommand;
-import org.openscada.da.server.common.chain.DataItemInputChained;
 
 public class BaseModule
 {

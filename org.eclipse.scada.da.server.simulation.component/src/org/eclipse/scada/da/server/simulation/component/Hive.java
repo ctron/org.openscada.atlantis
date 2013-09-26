@@ -36,10 +36,10 @@ import org.eclipse.scada.da.server.browser.common.query.ItemStorage;
 import org.eclipse.scada.da.server.browser.common.query.Matcher;
 import org.eclipse.scada.da.server.browser.common.query.QueryFolder;
 import org.eclipse.scada.da.server.browser.common.query.SplitGroupProvider;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
 import org.eclipse.scada.da.server.simulation.component.modules.BaseModule;
 import org.eclipse.scada.da.server.simulation.component.modules.SimpleMOV;
 import org.eclipse.scada.da.server.simulation.component.modules.SimpleScale;
-import org.openscada.da.server.common.impl.HiveCommon;
 
 public class Hive extends HiveCommon
 {

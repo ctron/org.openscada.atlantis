@@ -40,7 +40,7 @@ import org.eclipse.scada.da.server.exporter.ExporterPackage;
 import org.eclipse.scada.da.server.exporter.HiveType;
 import org.eclipse.scada.da.server.exporter.util.ExporterResourceFactoryImpl;
 import org.eclipse.scada.utils.init.ServiceLoaderProcessor;
-import org.openscada.da.core.server.Hive;
+import org.eclipse.scada.da.core.server.Hive;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

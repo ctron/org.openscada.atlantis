@@ -22,8 +22,8 @@ package org.eclipse.scada.da.server.test.items;
 import java.util.Collections;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.server.common.factory.DataItemFactory;
 import org.eclipse.scada.da.server.test.Hive;
-import org.openscada.da.server.common.factory.DataItemFactory;
 
 public class MemoryCellFactory implements DataItemFactory
 {

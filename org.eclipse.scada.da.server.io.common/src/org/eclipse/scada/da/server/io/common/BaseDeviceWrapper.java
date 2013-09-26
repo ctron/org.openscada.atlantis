@@ -26,10 +26,10 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.DataItemCommand;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
 import org.eclipse.scada.utils.collection.MapBuilder;
-import org.openscada.da.server.common.DataItemCommand;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.impl.HiveCommon;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

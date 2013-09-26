@@ -9,7 +9,7 @@ import org.eclipse.scada.da.server.browser.common.query.SplitGroupProvider;
 import org.eclipse.scada.da.server.browser.common.query.SplitNameProvider;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openscada.da.server.common.DataItemInputCommon;
+import org.eclipse.scada.da.server.common.DataItemInputCommon;
 
 public class BrowserTest2
 {

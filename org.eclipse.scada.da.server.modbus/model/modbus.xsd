@@ -2,7 +2,7 @@
 <schema targetNamespace="http://openscada.org/DA/Modbus/Configuration"
 	elementFormDefault="qualified" xmlns="http://www.w3.org/2001/XMLSchema" xmlns:components="http://openscada.org/DA/Modbus/Configuration" xmlns:hive="http://openscada.org/DA/Hive" xmlns:common="http://openscada.org/Common">
 
-	<import schemaLocation="../../org.openscada.da.server.common/model/Common.xsd" namespace="http://openscada.org/Common"/>
+	<import schemaLocation="../../org.eclipse.scada.da.server.common/model/Common.xsd" namespace="http://openscada.org/Common"/>
 
 	<element name="root" type="components:RootType"></element>
 

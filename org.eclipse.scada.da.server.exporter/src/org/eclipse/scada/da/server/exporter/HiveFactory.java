@@ -20,7 +20,7 @@
 package org.eclipse.scada.da.server.exporter;
 
 import org.eclipse.scada.da.server.exporter.HiveConfigurationType;
-import org.openscada.da.core.server.Hive;
+import org.eclipse.scada.da.core.server.Hive;
 
 /**
  * A hive factory which needs to create a new hive based on its implementation.

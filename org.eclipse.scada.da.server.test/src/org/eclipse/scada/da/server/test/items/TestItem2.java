@@ -32,14 +32,14 @@ import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.server.OperationParameters;
 import org.eclipse.scada.da.core.WriteResult;
 import org.eclipse.scada.da.data.IODirection;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.DataItemInformationBase;
+import org.eclipse.scada.da.server.common.chain.MemoryItemChained;
+import org.eclipse.scada.da.server.common.chain.item.SumErrorChainItem;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.InstantFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.chain.MemoryItemChained;
-import org.openscada.da.server.common.chain.item.SumErrorChainItem;
-import org.openscada.da.server.common.impl.HiveCommon;
 
 public class TestItem2 extends MemoryItemChained
 {

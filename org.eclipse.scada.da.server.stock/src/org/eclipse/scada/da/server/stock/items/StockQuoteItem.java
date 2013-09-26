@@ -23,10 +23,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.DataItemInputCommon;
+import org.eclipse.scada.da.server.common.ItemListener;
 import org.eclipse.scada.da.server.stock.domain.StockQuote;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.DataItemInputCommon;
-import org.openscada.da.server.common.ItemListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

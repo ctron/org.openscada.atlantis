@@ -25,13 +25,13 @@ import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.data.IODirection;
+import org.eclipse.scada.da.server.common.AttributeMode;
+import org.eclipse.scada.da.server.common.DataItemInformationBase;
+import org.eclipse.scada.da.server.common.ItemListener;
+import org.eclipse.scada.da.server.common.SuspendableDataItem;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
 import org.eclipse.scada.utils.collection.MapBuilder;
 import org.eclipse.scada.utils.concurrent.DirectExecutor;
-import org.openscada.da.server.common.AttributeMode;
-import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.ItemListener;
-import org.openscada.da.server.common.SuspendableDataItem;
-import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.snmp.SNMPNode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

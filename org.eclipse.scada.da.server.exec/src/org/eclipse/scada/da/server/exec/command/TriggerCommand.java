@@ -26,12 +26,12 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.DataItemCommand;
+import org.eclipse.scada.da.server.common.DataItemCommand.Listener;
 import org.eclipse.scada.da.server.exec.Hive;
 import org.eclipse.scada.da.server.exec.StatusCodes;
 import org.eclipse.scada.da.server.exec.extractor.Extractor;
 import org.eclipse.scada.utils.statuscodes.CodedRuntimeException;
-import org.openscada.da.server.common.DataItemCommand;
-import org.openscada.da.server.common.DataItemCommand.Listener;
 
 public class TriggerCommand extends AbstractSingleCommand implements Listener, ProcessListener
 {

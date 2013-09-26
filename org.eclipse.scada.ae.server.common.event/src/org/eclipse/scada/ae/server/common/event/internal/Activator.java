@@ -24,7 +24,7 @@ import java.util.Hashtable;
 
 import org.eclipse.scada.ca.ConfigurationAdministrator;
 import org.eclipse.scada.ca.ConfigurationFactory;
-import org.openscada.ae.server.common.event.pool.internal.EventPoolConfigurationFactory;
+import org.eclipse.scada.ae.server.common.event.pool.internal.EventPoolConfigurationFactory;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

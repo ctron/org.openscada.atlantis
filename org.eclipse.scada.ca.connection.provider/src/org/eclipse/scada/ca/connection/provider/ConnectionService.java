@@ -19,7 +19,7 @@
 
 package org.eclipse.scada.ca.connection.provider;
 
-import org.openscada.ca.client.Connection;
+import org.eclipse.scada.ca.client.Connection;
 
 public interface ConnectionService extends org.eclipse.scada.core.connection.provider.ConnectionService
 {

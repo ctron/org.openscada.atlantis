@@ -24,10 +24,10 @@ import java.util.Map;
 import java.util.Random;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.server.common.DataItemCommand;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
 import org.eclipse.scada.da.server.simulation.component.Hive;
 import org.eclipse.scada.utils.collection.MapBuilder;
-import org.openscada.da.server.common.DataItemCommand;
-import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

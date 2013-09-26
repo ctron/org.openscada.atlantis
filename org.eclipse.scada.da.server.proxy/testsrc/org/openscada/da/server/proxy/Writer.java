@@ -5,7 +5,7 @@ package org.eclipse.scada.da.server.proxy;
 
 import java.util.concurrent.Callable;
 
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.proxy.item.ProxyValueHolder;
 import org.eclipse.scada.da.server.proxy.utils.ProxySubConnectionId;
 

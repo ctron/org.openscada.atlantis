@@ -34,10 +34,10 @@ import org.eclipse.scada.core.server.OperationParameters;
 import org.eclipse.scada.core.server.OperationParametersHelper;
 import org.eclipse.scada.da.connection.provider.ConnectionService;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
-import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.chain.WriteHandler;
-import org.openscada.da.server.common.chain.WriteHandlerItem;
+import org.eclipse.scada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.chain.WriteHandler;
+import org.eclipse.scada.da.server.common.chain.WriteHandlerItem;
 import org.osgi.framework.BundleContext;
 
 public class ScriptContextImpl implements ScriptContext

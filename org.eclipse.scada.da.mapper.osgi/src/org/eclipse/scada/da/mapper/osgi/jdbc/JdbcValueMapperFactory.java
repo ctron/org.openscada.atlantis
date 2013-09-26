@@ -26,7 +26,7 @@ import org.eclipse.scada.da.mapper.ValueMapper;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 import org.osgi.framework.BundleContext;
 
 public class JdbcValueMapperFactory extends AbstractServiceConfigurationFactory<JdbcValueMapper>

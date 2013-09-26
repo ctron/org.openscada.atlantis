@@ -28,7 +28,7 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 import org.eclipse.scada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.eclipse.scada.mqtt.MqttBroker;
 import org.eclipse.scada.sec.UserInformation;

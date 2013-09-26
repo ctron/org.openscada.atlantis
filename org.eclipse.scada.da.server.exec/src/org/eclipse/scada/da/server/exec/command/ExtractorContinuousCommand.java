@@ -23,10 +23,10 @@ import java.util.Collection;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
 import org.eclipse.scada.da.server.exec.Hive;
 import org.eclipse.scada.da.server.exec.extractor.Extractor;
 import org.eclipse.scada.da.server.exec.splitter.Splitter;
-import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

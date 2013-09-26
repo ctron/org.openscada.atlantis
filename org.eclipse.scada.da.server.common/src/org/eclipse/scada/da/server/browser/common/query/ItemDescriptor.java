@@ -26,7 +26,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 
 public class ItemDescriptor
 {

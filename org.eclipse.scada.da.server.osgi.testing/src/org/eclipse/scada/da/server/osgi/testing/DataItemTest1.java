@@ -24,7 +24,7 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
 
 public class DataItemTest1 extends DataItemInputChained implements Runnable
 {

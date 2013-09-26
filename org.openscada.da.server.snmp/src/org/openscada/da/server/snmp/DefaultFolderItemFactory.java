@@ -22,8 +22,8 @@
 package org.openscada.da.server.snmp;
 
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
-import org.openscada.da.server.common.impl.HiveCommon;
-import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
+import org.eclipse.scada.da.server.common.item.factory.DefaultChainItemFactory;
 
 /**
  * our default item factory for folders

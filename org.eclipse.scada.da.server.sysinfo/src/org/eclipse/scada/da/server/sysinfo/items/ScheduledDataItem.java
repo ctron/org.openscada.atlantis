@@ -23,8 +23,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-import org.openscada.da.server.common.DataItemInputCommon;
-import org.openscada.da.server.common.SuspendableDataItem;
+import org.eclipse.scada.da.server.common.DataItemInputCommon;
+import org.eclipse.scada.da.server.common.SuspendableDataItem;
 
 public abstract class ScheduledDataItem extends DataItemInputCommon implements Runnable, SuspendableDataItem
 {

@@ -28,12 +28,12 @@ import org.eclipse.scada.da.client.FolderManager;
 import org.eclipse.scada.da.client.ItemManager;
 import org.eclipse.scada.da.client.ItemManagerImpl;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.DataItemCommand;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.item.factory.FolderItemFactory;
 import org.eclipse.scada.da.server.proxy.Hive;
 import org.eclipse.scada.da.server.proxy.utils.ProxyPrefixName;
 import org.eclipse.scada.da.server.proxy.utils.ProxySubConnectionId;
-import org.openscada.da.server.common.DataItemCommand;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
 
 /**
  * @author Juergen Rose &lt;juergen.rose@th4-systems.com&gt;

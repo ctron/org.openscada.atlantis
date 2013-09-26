@@ -31,13 +31,13 @@ import java.util.concurrent.Executor;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
-import org.openscada.da.server.common.DataItem;
-import org.openscada.da.server.common.DataItemCommand;
-import org.openscada.da.server.common.DataItemInformationBase;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.chain.WriteHandler;
-import org.openscada.da.server.common.chain.WriteHandlerItem;
-import org.openscada.da.server.common.item.factory.ItemFactory;
+import org.eclipse.scada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItemCommand;
+import org.eclipse.scada.da.server.common.DataItemInformationBase;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.chain.WriteHandler;
+import org.eclipse.scada.da.server.common.chain.WriteHandlerItem;
+import org.eclipse.scada.da.server.common.item.factory.ItemFactory;
 
 public class ObjectPoolDataItemFactory implements ItemFactory
 {

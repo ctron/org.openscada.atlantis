@@ -24,8 +24,8 @@ import java.util.Iterator;
 import java.util.ServiceLoader;
 
 import org.eclipse.scada.da.server.exporter.HiveConfigurationType;
-import org.openscada.da.core.server.Hive;
-import org.openscada.da.core.server.HiveCreator;
+import org.eclipse.scada.da.core.server.Hive;
+import org.eclipse.scada.da.core.server.HiveCreator;
 
 /**
  * This hive factory creates hives by locating its {@link HiveCreator} first

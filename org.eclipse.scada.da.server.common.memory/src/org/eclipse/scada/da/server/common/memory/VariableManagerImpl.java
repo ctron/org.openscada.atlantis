@@ -26,7 +26,7 @@ import org.eclipse.scada.ca.ConfigurationFactory;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

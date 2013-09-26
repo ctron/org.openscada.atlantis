@@ -21,7 +21,7 @@ package org.eclipse.scada.ca.connection.provider;
 
 import org.eclipse.scada.core.connection.provider.AbstractConnectionService;
 import org.eclipse.scada.core.connection.provider.info.ConnectionInformationProvider;
-import org.openscada.ca.client.Connection;
+import org.eclipse.scada.ca.client.Connection;
 
 public class ConnectionServiceImpl extends AbstractConnectionService implements ConnectionService
 {
@@ -34,7 +34,7 @@ public class ConnectionServiceImpl extends AbstractConnectionService implements 
     }
 
     @Override
-    public org.openscada.ca.client.Connection getConnection ()
+    public org.eclipse.scada.ca.client.Connection getConnection ()
     {
         return this.connection;
     }

@@ -10,7 +10,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
-import org.openscada.core.Variant;
+import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.subscription.SubscriptionState;
 import org.eclipse.scada.da.client.ItemUpdateListener;
 import org.eclipse.scada.da.server.proxy.item.ProxyValueHolder;

@@ -63,7 +63,7 @@ import org.eclipse.scada.utils.concurrent.task.ResultFutureHandler;
 import org.eclipse.scada.utils.concurrent.task.ResultHandler;
 import org.eclipse.scada.utils.concurrent.task.TaskHandler;
 import org.eclipse.scada.utils.lang.Holder;
-import org.openscada.core.server.net.AbstractServerConnectionHandler;
+import org.eclipse.scada.core.server.net.AbstractServerConnectionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -33,7 +33,7 @@ import javax.script.SimpleScriptContext;
 import org.eclipse.scada.ca.ConfigurationDataHelper;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.eclipse.scada.utils.script.ScriptExecutor;
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 import org.osgi.framework.BundleContext;
 
 public class ScriptComponent

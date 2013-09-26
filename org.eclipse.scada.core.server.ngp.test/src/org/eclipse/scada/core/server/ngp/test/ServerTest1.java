@@ -32,8 +32,8 @@ import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.scada.protocol.ngp.common.ProtocolConfiguration;
 import org.eclipse.scada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.eclipse.scada.protocol.ngp.common.SslHelper;
-import org.openscada.core.server.ngp.ServerBase;
-import org.openscada.core.server.ngp.ServerConnection;
+import org.eclipse.scada.core.server.ngp.ServerBase;
+import org.eclipse.scada.core.server.ngp.ServerConnection;
 
 public class ServerTest1 implements IApplication
 {
@@ -70,7 +70,7 @@ public class ServerTest1 implements IApplication
 
         this.server = new ServerBase ( Arrays.asList ( new InetSocketAddress ( 1202 ) ), factory ) {
             @Override
-            public org.openscada.core.server.ngp.ServerConnection createNewConnection ( final IoSession session )
+            public org.eclipse.scada.core.server.ngp.ServerConnection createNewConnection ( final IoSession session )
             {
                 return new ServerConnection ( session ) {
 

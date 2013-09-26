@@ -32,7 +32,7 @@ import org.eclipse.scada.da.core.browser.Entry;
 import org.eclipse.scada.da.core.server.browser.NoSuchFolderException;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.eclipse.scada.da.server.browser.common.FolderListener;
-import org.openscada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.DataItem;
 
 public class QueryFolder implements StorageBasedFolder
 {

@@ -25,14 +25,14 @@ import java.io.IOException;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.DataItemCommand;
+import org.eclipse.scada.da.server.common.chain.DataItemInputChained;
+import org.eclipse.scada.da.server.common.item.factory.DefaultChainItemFactory;
+import org.eclipse.scada.da.server.common.item.factory.FolderItemFactory;
 import org.eclipse.scada.da.server.exec.Hive;
 import org.eclipse.scada.da.server.exec.splitter.SplitResult;
 import org.eclipse.scada.da.server.exec.splitter.Splitter;
 import org.eclipse.scada.da.server.exec.util.StreamProcessor;
-import org.openscada.da.server.common.DataItemCommand;
-import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
-import org.openscada.da.server.common.item.factory.FolderItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

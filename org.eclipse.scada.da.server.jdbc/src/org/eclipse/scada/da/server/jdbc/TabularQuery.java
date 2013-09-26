@@ -30,11 +30,11 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.server.OperationParameters;
-import org.openscada.da.server.common.chain.WriteHandler;
-import org.openscada.da.server.common.exporter.TabularExporter;
-import org.openscada.da.server.common.exporter.TabularExporter.Entry;
-import org.openscada.da.server.common.exporter.TabularExporter.WriteHandlerFactory;
-import org.openscada.da.server.common.item.factory.DefaultChainItemFactory;
+import org.eclipse.scada.da.server.common.chain.WriteHandler;
+import org.eclipse.scada.da.server.common.exporter.TabularExporter;
+import org.eclipse.scada.da.server.common.exporter.TabularExporter.Entry;
+import org.eclipse.scada.da.server.common.exporter.TabularExporter.WriteHandlerFactory;
+import org.eclipse.scada.da.server.common.item.factory.DefaultChainItemFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

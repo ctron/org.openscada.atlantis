@@ -27,7 +27,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.eclipse.scada.ca.ConfigurationAdministrator;
 import org.eclipse.scada.ca.ConfigurationFactory;
 import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
-import org.openscada.ae.event.EventProcessor;
+import org.eclipse.scada.ae.event.EventProcessor;
 import org.osgi.framework.BundleActivator;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

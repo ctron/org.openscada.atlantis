@@ -29,13 +29,13 @@ import org.eclipse.emf.common.util.URI;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.exec.configuration.RootType;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.common.impl.HiveCommon;
 import org.eclipse.scada.da.server.exec.command.CommandQueue;
 import org.eclipse.scada.da.server.exec.command.ContinuousCommand;
 import org.eclipse.scada.da.server.exec.command.TriggerCommand;
 import org.eclipse.scada.da.server.exec.configuration.ConfigurationException;
 import org.eclipse.scada.da.server.exec.configuration.XmlConfigurator;
 import org.eclipse.scada.utils.collection.MapBuilder;
-import org.openscada.da.server.common.impl.HiveCommon;
 
 public class Hive extends HiveCommon
 {
