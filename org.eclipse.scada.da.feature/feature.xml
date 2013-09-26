@@ -20,7 +20,7 @@
    <requires>
       <import feature="org.eclipse.scada.utils" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.scada.base" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.scada.external" version="1.1.0.qualifier"/>
+      <import feature="org.openscada.external" version="1.1.0.qualifier"/>
    </requires>
 
    <plugin
@@ -94,7 +94,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.scada.da.server.opc"
+         id="org.openscada.da.server.opc"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -420,7 +420,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.openscada.da.server.modbus.editor"
+         id="org.eclipse.scada.da.server.modbus.editor"
          download-size="0"
          install-size="0"
          version="0.0.0"

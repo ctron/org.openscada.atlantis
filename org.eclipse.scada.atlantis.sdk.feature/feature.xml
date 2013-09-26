@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <feature
-      id="org.openscada.atlantis.sdk"
+      id="org.eclipse.scada.atlantis.sdk"
       label="openSCADA Atlantis SDK"
       version="1.2.0.qualifier"
       provider-name="openSCADA.org">
