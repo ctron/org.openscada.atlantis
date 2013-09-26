@@ -2,37 +2,30 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA A&E Net Client Plug-in
 Bundle-SymbolicName: org.eclipse.scada.ae.client.net
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.ae.client.net.Activator
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.ae.client.net;version="1.1.0";
-  uses:="org.openscada.core.client,
-   org.openscada.ae.client,
-   org.apache.mina.core.session,
-   org.openscada.net.base.data,
-   org.openscada.core.client.net,
-   org.openscada.core,
-   org.openscada.ae"
+Export-Package: org.eclipse.scada.ae.client.net;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core;version="2.0.0",
  org.apache.mina.core.session;version="2.0.0",
- org.eclipse.scada.ae;version="1.0.0",
- org.eclipse.scada.ae.client;version="1.0.0",
+ org.eclipse.scada.ae;version="0.1.0",
+ org.eclipse.scada.ae.client;version="0.1.0",
  org.eclipse.scada.ae.data;version="0.1.0",
- org.eclipse.scada.ae.net;version="1.0.0",
+ org.eclipse.scada.ae.net;version="0.1.0",
  org.eclipse.scada.core;version="0.1.0",
- org.eclipse.scada.core.client;version="1.0.0",
- org.eclipse.scada.core.client.net;version="1.0.0",
+ org.eclipse.scada.core.client;version="0.1.0",
+ org.eclipse.scada.core.client.net;version="0.1.0",
  org.eclipse.scada.core.data;version="0.1.0",
  org.eclipse.scada.core.info;version="0.1.0",
- org.eclipse.scada.core.net;version="1.1.0",
- org.eclipse.scada.core.subscription;version="1.0.0",
- org.eclipse.scada.da.core.browser;version="1.0.0",
- org.eclipse.scada.net.base;version="1.0.0",
- org.eclipse.scada.net.base.data;version="1.0.0",
- org.eclipse.scada.net.base.handlers;version="1.0.0",
- org.eclipse.scada.net.mina;version="1.0.0",
- org.eclipse.scada.net.utils;version="1.0.0",
+ org.eclipse.scada.core.net;version="0.1.0",
+ org.eclipse.scada.core.subscription;version="0.1.0",
+ org.eclipse.scada.da.core.browser;version="0.1.0",
+ org.eclipse.scada.net.base;version="0.1.0",
+ org.eclipse.scada.net.base.data;version="0.1.0",
+ org.eclipse.scada.net.base.handlers;version="0.1.0",
+ org.eclipse.scada.net.mina;version="0.1.0",
+ org.eclipse.scada.net.utils;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.sec.callback;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",

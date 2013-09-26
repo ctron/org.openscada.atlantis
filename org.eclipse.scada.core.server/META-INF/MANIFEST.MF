@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Core Server
 Bundle-SymbolicName: org.eclipse.scada.core.server
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.core.server;version="1.1.0";uses:="org.openscada.sec.callback,org.openscada.utils.lifecycle"
+Export-Package: org.eclipse.scada.core.server;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
  org.eclipse.scada.core.data;version="0.1.0",

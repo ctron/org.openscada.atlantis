@@ -2,20 +2,20 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Formula Datasource
 Bundle-SymbolicName: org.eclipse.scada.da.datasource.formula
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.da.datasource.formula.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.ca;version="1.0.0",
- org.eclipse.scada.ca.common.factory;version="1.0.0",
+Import-Package: org.eclipse.scada.ca;version="0.1.0",
+ org.eclipse.scada.ca.common.factory;version="0.1.0",
  org.eclipse.scada.core;version="0.1.0",
  org.eclipse.scada.core.data;version="0.1.0",
- org.eclipse.scada.core.server;version="1.1.0",
- org.eclipse.scada.core.subscription;version="1.0.0",
- org.eclipse.scada.da.client;version="1.0.0",
- org.eclipse.scada.da.core;version="1.0.0",
- org.eclipse.scada.da.datasource;version="1.0.0",
- org.eclipse.scada.da.datasource.base;version="1.0.0",
+ org.eclipse.scada.core.server;version="0.1.0",
+ org.eclipse.scada.core.subscription;version="0.1.0",
+ org.eclipse.scada.da.client;version="0.1.0",
+ org.eclipse.scada.da.core;version="0.1.0",
+ org.eclipse.scada.da.datasource;version="0.1.0",
+ org.eclipse.scada.da.datasource.base;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",
  org.eclipse.scada.utils.lang;version="0.1.0",

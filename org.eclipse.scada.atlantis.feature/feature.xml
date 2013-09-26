@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="org.eclipse.scada.atlantis"
-      label="%featureName"
-      version="1.2.0.qualifier"
-      provider-name="openSCADA.org">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="org.eclipse.scada.atlantis" label="%featureName" provider-name="openSCADA.org" version="0.1.0.qualifier">
 
    <description>
       The openSCADA Atlantis Project
@@ -17,25 +12,15 @@
       %license
    </license>
 
-   <includes
-         id="org.eclipse.scada.ae"
-         version="0.0.0"/>
+   <includes id="org.eclipse.scada.ae" version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.scada.da"
-         version="0.0.0"/>
+   <includes id="org.eclipse.scada.da" version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.scada.core"
-         version="0.0.0"/>
+   <includes id="org.eclipse.scada.core" version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.scada.hd"
-         version="0.0.0"/>
+   <includes id="org.eclipse.scada.hd" version="0.0.0"/>
 
-   <includes
-         id="org.eclipse.scada.ca"
-         version="0.0.0"/>
+   <includes id="org.eclipse.scada.ca" version="0.0.0"/>
 
    <requires>
       <import plugin="org.eclipse.osgi"/>
@@ -47,45 +32,16 @@
       <import feature="org.eclipse.scada.utils" version="0.1.0.qualifier"/>
    </requires>
 
-   <plugin
-         id="org.eclipse.scada.net"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.eclipse.scada.net" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.eclipse.scada.sec.provider.jdbc"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.eclipse.scada.sec.provider.jdbc" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.eclipse.scada.sec.provider.script"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.eclipse.scada.sec.provider.script" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.eclipse.scada.sec.authz.signature"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"/>
+   <plugin download-size="0" id="org.eclipse.scada.sec.authz.signature" install-size="0" version="0.0.0"/>
 
-   <plugin
-         id="org.eclipse.scada.sec.osgi.manager"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.eclipse.scada.sec.osgi.manager" install-size="0" unpack="false" version="0.0.0"/>
 
-   <plugin
-         id="org.eclipse.scada.sec.audit.log.ae"
-         download-size="0"
-         install-size="0"
-         version="0.0.0"
-         unpack="false"/>
+   <plugin download-size="0" id="org.eclipse.scada.sec.audit.log.ae" install-size="0" unpack="false" version="0.0.0"/>
 
 </feature>

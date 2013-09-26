@@ -2,22 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA CA Common
 Bundle-SymbolicName: org.eclipse.scada.ca.common
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.ca.common;version="1.0.0";
-  uses:="org.openscada.sec,
-   org.openscada.utils.concurrent,
-   org.openscada.ca,
-   org.osgi.framework,
-   org.openscada.ca.data",
- org.eclipse.scada.ca.common.factory;version="1.0.0";
-  uses:="org.openscada.utils.lang,
-   org.openscada.sec,
-   org.openscada.ca,
-   org.osgi.framework"
+Export-Package: org.eclipse.scada.ca.common;version="0.1.0",
+ org.eclipse.scada.ca.common.factory;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.beanutils;version="1.8.0",
- org.eclipse.scada.ca;version="1.0.0",
+ org.eclipse.scada.ca;version="0.1.0",
  org.eclipse.scada.ca.data;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",

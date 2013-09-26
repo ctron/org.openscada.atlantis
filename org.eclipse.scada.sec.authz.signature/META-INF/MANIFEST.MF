@@ -2,11 +2,11 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Request Signature Module
 Bundle-SymbolicName: org.eclipse.scada.sec.authz.signature
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.sec.authz.signature;version="1.1.0"
+Export-Package: org.eclipse.scada.sec.authz.signature;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.ca;version="1.0.0",
+Import-Package: org.eclipse.scada.ca;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.sec.audit;version="0.1.0",
  org.eclipse.scada.sec.authz;version="0.1.0",

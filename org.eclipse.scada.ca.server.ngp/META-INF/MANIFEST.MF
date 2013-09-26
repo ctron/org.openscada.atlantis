@@ -2,30 +2,24 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA NextGenerationProtocol CA Server
 Bundle-SymbolicName: org.eclipse.scada.ca.server.ngp
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.ca.server.ngp;version="1.1.0";
-  uses:="org.apache.mina.core.session,
-   org.openscada.ca.server,
-   org.openscada.core.server.ngp,
-   org.openscada.protocol.ngp.common,
-   org.openscada.core,
-   org.openscada.utils.lifecycle"
+Export-Package: org.eclipse.scada.ca.server.ngp;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core.filterchain;version="2.0.7",
  org.apache.mina.core.session;version="2.0.4",
  org.apache.mina.filter.ssl;version="2.0.4",
- org.eclipse.scada.ca;version="1.0.0",
- org.eclipse.scada.ca.common.ngp;version="1.0.0",
+ org.eclipse.scada.ca;version="0.1.0",
+ org.eclipse.scada.ca.common.ngp;version="0.1.0",
  org.eclipse.scada.ca.data;version="0.1.0",
  org.eclipse.scada.ca.data.message;version="0.1.0",
- org.eclipse.scada.ca.server;version="1.0.0",
+ org.eclipse.scada.ca.server;version="0.1.0",
  org.eclipse.scada.core;version="0.1.0",
  org.eclipse.scada.core.data;version="0.1.0",
  org.eclipse.scada.core.data.message;version="0.1.0",
- org.eclipse.scada.core.ngp;version="1.1.0",
- org.eclipse.scada.core.server;version="1.0.0",
- org.eclipse.scada.core.server.ngp;version="1.0.0",
+ org.eclipse.scada.core.ngp;version="0.1.0",
+ org.eclipse.scada.core.server;version="0.1.0",
+ org.eclipse.scada.core.server.ngp;version="0.1.0",
  org.eclipse.scada.protocol.ngp.common;version="0.1.0",
  org.eclipse.scada.sec.callback;version="0.1.0",
  org.eclipse.scada.utils;version="0.1.0",

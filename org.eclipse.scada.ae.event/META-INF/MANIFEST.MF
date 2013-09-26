@@ -2,17 +2,13 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Event Plug-in
 Bundle-SymbolicName: org.eclipse.scada.ae.event
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.ae.event.Activator
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.ae.event;version="1.0.0";
-  uses:="org.openscada.utils.propertyeditors,
-   org.openscada.utils.filter,
-   org.osgi.framework,
-   org.openscada.ae"
+Export-Package: org.eclipse.scada.ae.event;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.ae;version="1.0.0",
- org.eclipse.scada.ae.server.storage;version="1.0.0",
+Import-Package: org.eclipse.scada.ae;version="0.1.0",
+ org.eclipse.scada.ae.server.storage;version="0.1.0",
  org.eclipse.scada.core;version="0.1.0",
  org.eclipse.scada.utils.filter;version="0.1.0",
  org.eclipse.scada.utils.osgi;version="0.1.0",

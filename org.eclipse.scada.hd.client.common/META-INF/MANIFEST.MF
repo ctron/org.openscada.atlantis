@@ -2,9 +2,9 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA HD Common Client
 Bundle-SymbolicName: org.eclipse.scada.hd.client.common
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: openSCADA.org
+Import-Package: org.eclipse.scada.core.client;version="0.1.0",
+ org.eclipse.scada.hd;version="0.1.0",
+ org.eclipse.scada.hd.client;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.core.client;version="1.0.0",
- org.eclipse.scada.hd;version="1.0.0",
- org.eclipse.scada.hd.client;version="1.0.0"

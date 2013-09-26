@@ -2,21 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA HD Common Server
 Bundle-SymbolicName: org.eclipse.scada.hd.server.common
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.hd.server.common.Activator
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.hd.server.common;version="1.1.0";uses:="org.openscada.hd,org.openscada.da.client,org.osgi.framework"
+Export-Package: org.eclipse.scada.hd.server.common;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.ca;version="1.0.0",
+Import-Package: org.eclipse.scada.ca;version="0.1.0",
  org.eclipse.scada.core;version="0.1.0",
- org.eclipse.scada.core.server;version="1.0.0",
- org.eclipse.scada.core.server.common;version="1.0.0",
- org.eclipse.scada.core.server.common.osgi;version="1.0.0",
- org.eclipse.scada.core.server.common.session;version="1.0.0",
- org.eclipse.scada.da.client;version="1.0.0",
- org.eclipse.scada.hd;version="1.0.0",
+ org.eclipse.scada.core.server;version="0.1.0",
+ org.eclipse.scada.core.server.common;version="0.1.0",
+ org.eclipse.scada.core.server.common.osgi;version="0.1.0",
+ org.eclipse.scada.core.server.common.session;version="0.1.0",
+ org.eclipse.scada.da.client;version="0.1.0",
+ org.eclipse.scada.hd;version="0.1.0",
  org.eclipse.scada.hd.data;version="0.1.0",
- org.eclipse.scada.hd.server;version="1.0.0",
+ org.eclipse.scada.hd.server;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.sec.osgi;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",

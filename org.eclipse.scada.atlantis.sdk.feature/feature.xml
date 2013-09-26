@@ -1,9 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<feature
-      id="org.eclipse.scada.atlantis.sdk"
-      label="openSCADA Atlantis SDK"
-      version="1.2.0.qualifier"
-      provider-name="openSCADA.org">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><feature id="org.eclipse.scada.atlantis.sdk" label="openSCADA Atlantis SDK" provider-name="openSCADA.org" version="0.1.0.qualifier">
 
    <description>
       Project Atlantis is the reference implementation of OpenSCADA
@@ -18,16 +13,10 @@ based on Java (SDK)
       %license
    </license>
 
-   <includes
-         id="org.openscada.atlantis"
-         version="0.0.0"/>
+   <includes id="org.openscada.atlantis" version="0.0.0"/>
 
-   <includes
-         id="org.openscada.atlantis.source"
-         version="0.0.0"/>
+   <includes id="org.openscada.atlantis.source" version="0.0.0"/>
 
-   <includes
-         id="org.openscada.da.sdk"
-         version="0.0.0"/>
+   <includes id="org.openscada.da.sdk" version="0.0.0"/>
 
 </feature>

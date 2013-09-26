@@ -2,16 +2,16 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA DA Net Exporter Plug-in
 Bundle-SymbolicName: org.eclipse.scada.da.server.osgi.exporter.net
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.da.server.osgi.exporter.net.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
- org.eclipse.scada.core.net;version="1.0.0",
- org.eclipse.scada.core.server.exporter;version="1.0.0",
- org.eclipse.scada.core.server.net;version="1.0.0",
- org.eclipse.scada.da.core.server;version="1.0.0",
- org.eclipse.scada.da.server.net;version="1.0.0",
+ org.eclipse.scada.core.net;version="0.1.0",
+ org.eclipse.scada.core.server.exporter;version="0.1.0",
+ org.eclipse.scada.core.server.net;version="0.1.0",
+ org.eclipse.scada.da.core.server;version="0.1.0",
+ org.eclipse.scada.da.server.net;version="0.1.0",
  org.eclipse.scada.utils;version="0.1.0",
  org.eclipse.scada.utils.lifecycle;version="0.1.0",
  org.openscada.da.server.common;version="1.0.0",

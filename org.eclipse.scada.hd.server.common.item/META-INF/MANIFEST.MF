@@ -2,18 +2,18 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA HD Common Historical Item
 Bundle-SymbolicName: org.eclipse.scada.hd.server.common.item
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.hd.server.common.item.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.ca;version="1.0.0",
+Import-Package: org.eclipse.scada.ca;version="0.1.0",
  org.eclipse.scada.core;version="0.1.0",
- org.eclipse.scada.da.client;version="1.0.0",
- org.eclipse.scada.da.datasource;version="1.0.0",
- org.eclipse.scada.da.master;version="1.0.0",
- org.eclipse.scada.hd;version="1.0.0",
+ org.eclipse.scada.da.client;version="0.1.0",
+ org.eclipse.scada.da.datasource;version="0.1.0",
+ org.eclipse.scada.da.master;version="0.1.0",
+ org.eclipse.scada.hd;version="0.1.0",
  org.eclipse.scada.hd.data;version="0.1.0",
- org.eclipse.scada.hd.server.common;version="1.0.0",
+ org.eclipse.scada.hd.server.common;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.collection;version="0.1.0",
  org.eclipse.scada.utils.osgi;version="0.1.0",

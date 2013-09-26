@@ -2,37 +2,27 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA-DA-Server-Test
 Bundle-SymbolicName: org.eclipse.scada.da.server.test
-Bundle-Version: 1.2.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.da.server.test;version="1.2.0";uses:="org.openscada.da.server.common.configuration,org.openscada.da.server.common.impl,org.openscada.da.server.test.items",
- org.eclipse.scada.da.server.test.items;version="1.2.0";
-  uses:="org.openscada.da.server.browser.common,
-   org.openscada.da.server.common,
-   org.openscada.da.server.common.impl,
-   org.openscada.da.server.test,
-   org.openscada.da.server.common.factory,
-   org.openscada.utils.concurrent,
-   org.openscada.da.data,
-   org.openscada.da.server.common.chain,
-   org.openscada.core.server,
-   org.openscada.core",
- org.eclipse.scada.da.server.test.model;version="1.2.0",
- org.eclipse.scada.da.server.test.utils;version="1.2.0"
+Export-Package: org.eclipse.scada.da.server.test;version="0.1.0",
+ org.eclipse.scada.da.server.test.items;version="0.1.0",
+ org.eclipse.scada.da.server.test.model;version="0.1.0",
+ org.eclipse.scada.da.server.test.utils;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
  org.eclipse.scada.core.data;version="0.1.0",
- org.eclipse.scada.core.server;version="1.0.0",
- org.eclipse.scada.core.server.common;version="1.0.0",
- org.eclipse.scada.core.server.common.session;version="1.0.0",
- org.eclipse.scada.da.core;version="1.0.0",
- org.eclipse.scada.da.core.server;version="1.0.0",
+ org.eclipse.scada.core.server;version="0.1.0",
+ org.eclipse.scada.core.server.common;version="0.1.0",
+ org.eclipse.scada.core.server.common.session;version="0.1.0",
+ org.eclipse.scada.da.core;version="0.1.0",
+ org.eclipse.scada.da.core.server;version="0.1.0",
  org.eclipse.scada.da.data;version="0.1.0",
- org.eclipse.scada.da.server.browser.common;version="1.2.0",
- org.eclipse.scada.da.server.browser.common.query;version="1.2.0",
- org.eclipse.scada.da.server.test;version="1.0.0",
- org.eclipse.scada.da.server.test.items;version="1.0.0",
- org.eclipse.scada.da.server.test.model;version="1.0.0",
- org.eclipse.scada.da.server.test.utils;version="1.0.0",
+ org.eclipse.scada.da.server.browser.common;version="0.1.0",
+ org.eclipse.scada.da.server.browser.common.query;version="0.1.0",
+ org.eclipse.scada.da.server.test;version="0.1.0",
+ org.eclipse.scada.da.server.test.items;version="0.1.0",
+ org.eclipse.scada.da.server.test.model;version="0.1.0",
+ org.eclipse.scada.da.server.test.utils;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.collection;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",

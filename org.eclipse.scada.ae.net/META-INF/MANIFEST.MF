@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA A&E Net Base Plug-in
 Bundle-SymbolicName: org.eclipse.scada.ae.net
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.ae.net;version="1.0.0";uses:="org.openscada.net.base.data,org.openscada.ae"
+Export-Package: org.eclipse.scada.ae.net;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.ae;version="1.0.0",
+Import-Package: org.eclipse.scada.ae;version="0.1.0",
  org.eclipse.scada.ae.data;version="0.1.0",
  org.eclipse.scada.core;version="0.1.0",
- org.eclipse.scada.core.net;version="1.0.0",
- org.eclipse.scada.net.base;version="1.0.0",
- org.eclipse.scada.net.base.data;version="1.0.0",
- org.eclipse.scada.net.base.handlers;version="1.0.0",
- org.eclipse.scada.net.utils;version="1.0.0"
+ org.eclipse.scada.core.net;version="0.1.0",
+ org.eclipse.scada.net.base;version="0.1.0",
+ org.eclipse.scada.net.base.data;version="0.1.0",
+ org.eclipse.scada.net.base.handlers;version="0.1.0",
+ org.eclipse.scada.net.utils;version="0.1.0"

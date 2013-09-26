@@ -2,15 +2,15 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Historical Data
 Bundle-SymbolicName: org.eclipse.scada.hd
-Bundle-Version: 1.1.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.eclipse.scada.hd;version="1.1.0";uses:="org.openscada.utils.statuscodes",
- org.eclipse.scada.hd.client;version="1.1.0";uses:="org.openscada.core.client,org.openscada.hd",
- org.eclipse.scada.hd.server;version="1.1.0";uses:="org.openscada.hd,org.openscada.core.server"
+Export-Package: org.eclipse.scada.hd;version="0.1.0",
+ org.eclipse.scada.hd.client;version="0.1.0",
+ org.eclipse.scada.hd.server;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
- org.eclipse.scada.core.client;version="1.0.0",
- org.eclipse.scada.core.server;version="1.0.0",
+ org.eclipse.scada.core.client;version="0.1.0",
+ org.eclipse.scada.core.server;version="0.1.0",
  org.eclipse.scada.hd.data;version="0.1.0",
  org.eclipse.scada.sec.callback;version="0.1.0",
  org.eclipse.scada.utils.lang;version="0.1.0",

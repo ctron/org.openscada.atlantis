@@ -4,7 +4,7 @@ Bundle-Name: Random HD Exporter for testing purposes
 Bundle-SymbolicName: org.eclipse.scada.hd.exporter.http.random
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.scada.hd.exporter.http.random.Activator
-Import-Package: org.eclipse.scada.hd.exporter.http;version="1.0.0",
- org.osgi.framework;version="1.7.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Bundle-Vendor: openSCADA.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.scada.hd.exporter.http;version="0.1.0",
+ org.osgi.framework;version="1.7.0"

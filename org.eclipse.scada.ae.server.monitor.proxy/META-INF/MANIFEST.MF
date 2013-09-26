@@ -2,21 +2,21 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: Monitor Proxy Query
 Bundle-SymbolicName: org.eclipse.scada.ae.server.monitor.proxy
-Bundle-Version: 1.0.0.qualifier
+Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.ae.server.monitor.proxy.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.ae;version="1.0.0",
- org.eclipse.scada.ae.client;version="1.0.0",
- org.eclipse.scada.ae.connection.provider;version="1.0.0",
+Import-Package: org.eclipse.scada.ae;version="0.1.0",
+ org.eclipse.scada.ae.client;version="0.1.0",
+ org.eclipse.scada.ae.connection.provider;version="0.1.0",
  org.eclipse.scada.ae.data;version="0.1.0",
- org.eclipse.scada.ae.server.common.monitor;version="1.0.0",
- org.eclipse.scada.ca;version="1.0.0",
- org.eclipse.scada.ca.common.factory;version="1.0.0",
- org.eclipse.scada.core.client;version="1.0.0",
- org.eclipse.scada.core.connection.provider;version="1.0.0",
+ org.eclipse.scada.ae.server.common.monitor;version="0.1.0",
+ org.eclipse.scada.ca;version="0.1.0",
+ org.eclipse.scada.ca.common.factory;version="0.1.0",
+ org.eclipse.scada.core.client;version="0.1.0",
+ org.eclipse.scada.core.connection.provider;version="0.1.0",
  org.eclipse.scada.core.data;version="0.1.0",
- org.eclipse.scada.core.subscription;version="1.0.0",
+ org.eclipse.scada.core.subscription;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",
  org.eclipse.scada.utils.osgi;version="0.1.0",
