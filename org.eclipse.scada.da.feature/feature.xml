@@ -115,7 +115,7 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.scada.da.server.snmp"
+         id="org.openscada.da.server.snmp"
          download-size="0"
          install-size="0"
          version="0.0.0"
@@ -420,21 +420,21 @@
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.scada.da.server.modbus.editor"
+         id="org.openscada.da.server.modbus.editor"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.scada.da.server.opc.edit"
+         id="org.openscada.da.server.opc.edit"
          download-size="0"
          install-size="0"
          version="0.0.0"
          unpack="false"/>
 
    <plugin
-         id="org.eclipse.scada.da.server.opc.editor"
+         id="org.openscada.da.server.opc.editor"
          download-size="0"
          install-size="0"
          version="0.0.0"
