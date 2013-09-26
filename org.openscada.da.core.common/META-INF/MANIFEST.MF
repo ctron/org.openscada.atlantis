@@ -10,7 +10,7 @@ Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.beanutils;version="1.8.0",
  org.apache.commons.beanutils.converters;version="1.8.0",
  org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.da.data;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.lang;version="0.1.0",
- org.eclipse.scada.utils.str;version="0.1.0",
- org.openscada.da.data;version="1.0.0"
+ org.eclipse.scada.utils.str;version="0.1.0"

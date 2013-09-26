@@ -22,6 +22,7 @@ package org.openscada.sec.audit.log.ae;
 
 import java.util.Date;
 
+import org.eclipse.scada.ae.data.Severity;
 import org.eclipse.scada.sec.AuthorizationReply;
 import org.eclipse.scada.sec.AuthorizationRequest;
 import org.eclipse.scada.sec.audit.AuditLogService;
@@ -31,7 +32,6 @@ import org.eclipse.scada.utils.statuscodes.CodedExceptionBase;
 import org.eclipse.scada.utils.statuscodes.StatusCode;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

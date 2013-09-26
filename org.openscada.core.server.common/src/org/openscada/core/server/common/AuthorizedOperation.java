@@ -23,6 +23,7 @@ package org.openscada.core.server.common;
 import java.util.Map;
 import java.util.concurrent.Future;
 
+import org.eclipse.scada.core.data.OperationParameters;
 import org.eclipse.scada.sec.AuthorizationReply;
 import org.eclipse.scada.sec.AuthorizationRequest;
 import org.eclipse.scada.sec.AuthorizationResult;
@@ -32,7 +33,6 @@ import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.eclipse.scada.utils.concurrent.AbstractFuture;
 import org.eclipse.scada.utils.concurrent.FutureListener;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.core.data.OperationParameters;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
 
 /**

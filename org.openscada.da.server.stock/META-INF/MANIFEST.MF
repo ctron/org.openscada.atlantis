@@ -10,10 +10,10 @@ Export-Package: org.openscada.da.server.stock;version="1.2.0";uses:="org.opensca
  org.openscada.da.server.stock.items;version="1.2.0";uses:="org.openscada.da.server.common,org.openscada.da.server.stock.domain,org.openscada.da.server.stock.business"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.core.data;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.collection;version="0.1.0",
  org.eclipse.scada.utils.str;version="0.1.0",
- org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
  org.openscada.core.server.common;version="1.0.0",
  org.openscada.da.core;version="1.0.0",

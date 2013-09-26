@@ -28,8 +28,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.ae.data.BrowserEntry;
 import org.openscada.ae.BrowserListener;
-import org.openscada.ae.data.BrowserEntry;
 
 public class BrowserManager
 {

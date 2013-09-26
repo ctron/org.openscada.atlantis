@@ -32,9 +32,9 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.data.QueryParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

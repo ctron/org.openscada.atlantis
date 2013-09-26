@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.protocol.modbus.message.ReadRequest;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.da.server.common.io.JobManager;
 import org.openscada.da.server.osgi.modbus.MasterFactory.Listener;
-import org.openscada.protocol.modbus.message.ReadRequest;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

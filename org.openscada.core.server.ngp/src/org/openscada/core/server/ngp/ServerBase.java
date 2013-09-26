@@ -28,9 +28,9 @@ import java.util.Set;
 
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.transport.socket.nio.NioSocketAcceptor;
+import org.eclipse.scada.protocol.ngp.common.FilterChainBuilder;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.core.server.common.NetworkHelper;
-import org.openscada.protocol.ngp.common.FilterChainBuilder;
-import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

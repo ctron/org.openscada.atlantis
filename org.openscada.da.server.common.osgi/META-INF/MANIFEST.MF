@@ -12,10 +12,10 @@ Export-Package: org.openscada.da.server.common.osgi.factory;version="1.2.0";
    org.osgi.framework"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.da.data;version="0.1.0",
  org.eclipse.scada.utils.osgi.pool;version="0.1.0",
  org.openscada.da.core;version="1.0.0",
  org.openscada.da.core.server;version="1.0.0",
- org.openscada.da.data;version="1.1.0",
  org.openscada.da.server.common;version="1.0.0",
  org.openscada.da.server.common.chain;version="1.0.0",
  org.openscada.da.server.common.chain.item;version="1.0.0",

@@ -26,19 +26,19 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.data.IODirection;
+import org.eclipse.scada.protocol.arduino.ArduinoDeviceListener;
+import org.eclipse.scada.protocol.arduino.DeviceState;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.DataItemInputChained;
-import org.openscada.protocols.arduino.ArduinoDeviceListener;
-import org.openscada.protocols.arduino.DeviceState;
 import org.osgi.framework.BundleContext;
 
 public class ArduinoDevice
 {
-    private final org.openscada.protocols.arduino.ArduinoDevice device;
+    private final org.eclipse.scada.protocol.arduino.ArduinoDevice device;
 
     private final ObjectPoolImpl<DataItem> itemPool;
 
@@ -67,7 +67,7 @@ public class ArduinoDevice
         this.stateItem = new DataItemInputChained ( new DataItemInformationBase ( makeId ( "state" ), EnumSet.of ( IODirection.INPUT ) ), executor );
         itemPool.addService ( this.stateItem.getInformation ().getName (), this.stateItem, null );
 
-        this.device = new org.openscada.protocols.arduino.ArduinoDevice ( new InetSocketAddress ( cfg.getStringChecked ( "host", "'host' not set" ), cfg.getIntegerChecked ( "port", "'port' not set" ) ), new ArduinoDeviceListener () {
+        this.device = new org.eclipse.scada.protocol.arduino.ArduinoDevice ( new InetSocketAddress ( cfg.getStringChecked ( "host", "'host' not set" ), cfg.getIntegerChecked ( "port", "'port' not set" ) ), new ArduinoDeviceListener () {
 
             @Override
             public void stateChange ( final DeviceState deviceState )

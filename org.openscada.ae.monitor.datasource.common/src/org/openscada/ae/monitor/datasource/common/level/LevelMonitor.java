@@ -22,10 +22,10 @@ package org.openscada.ae.monitor.datasource.common.level;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.ae.data.Severity;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.level.LevelHelper;
 import org.openscada.ae.monitor.datasource.AbstractNumericMonitor;

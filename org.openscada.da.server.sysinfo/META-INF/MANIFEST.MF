@@ -9,9 +9,9 @@ Export-Package: org.openscada.da.server.sysinfo;version="1.2.0";uses:="org.opens
  org.openscada.da.server.sysinfo.utils;version="1.2.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.core.data;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.collection;version="0.1.0",
- org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
  org.openscada.core.server.common;version="1.0.0",
  org.openscada.da.core;version="1.0.0",

@@ -19,11 +19,11 @@
 
 package org.openscada.hd.client;
 
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.data.QueryParameters;
 
 /**
  * A client connection to the historical data server

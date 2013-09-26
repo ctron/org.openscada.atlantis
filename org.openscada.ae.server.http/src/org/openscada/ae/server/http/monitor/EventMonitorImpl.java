@@ -25,13 +25,13 @@ import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.ae.data.Severity;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.lang.Pair;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
 import org.openscada.ae.Event.Fields;
-import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.filter.EventMatcher;
 import org.openscada.ae.filter.internal.EventMatcherImpl;

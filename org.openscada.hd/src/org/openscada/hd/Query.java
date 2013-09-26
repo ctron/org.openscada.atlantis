@@ -19,7 +19,7 @@
 
 package org.openscada.hd;
 
-import org.openscada.hd.data.QueryParameters;
+import org.eclipse.scada.hd.data.QueryParameters;
 
 /**
  * An interface for querying historical value data

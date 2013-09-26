@@ -22,7 +22,7 @@ package org.openscada.ae.server;
 import java.util.List;
 import java.util.Set;
 
-import org.openscada.ae.data.MonitorStatusInformation;
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
 import org.openscada.core.subscription.SubscriptionListener;
 
 public interface MonitorListener extends SubscriptionListener

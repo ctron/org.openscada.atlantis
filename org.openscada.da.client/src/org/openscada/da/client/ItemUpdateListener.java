@@ -22,7 +22,7 @@ package org.openscada.da.client;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.core.data.SubscriptionState;
+import org.eclipse.scada.core.data.SubscriptionState;
 
 /**
  * Notifies a item on the client that data changed.

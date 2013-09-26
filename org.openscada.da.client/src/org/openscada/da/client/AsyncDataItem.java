@@ -24,8 +24,8 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
-import org.openscada.core.data.SubscriptionState;
 
 /**
  * A data item which performs the notification asynchronously

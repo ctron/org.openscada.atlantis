@@ -29,11 +29,11 @@ import java.util.LinkedList;
 import java.util.Set;
 
 import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.eclipse.scada.utils.lifecycle.LifecycleAware;
 import org.openscada.core.server.exporter.ExporterInformation;
 import org.openscada.da.common.ngp.ProtocolConfigurationFactoryImpl;
 import org.openscada.da.core.server.Hive;
-import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 
 public class Exporter implements LifecycleAware
 {

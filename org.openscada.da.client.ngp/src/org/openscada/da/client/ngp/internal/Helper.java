@@ -21,8 +21,8 @@ package org.openscada.da.client.ngp.internal;
 
 import java.util.List;
 
+import org.eclipse.scada.da.data.BrowserEntry;
 import org.openscada.da.core.browser.Entry;
-import org.openscada.da.data.BrowserEntry;
 
 public final class Helper
 {

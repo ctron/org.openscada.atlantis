@@ -21,7 +21,7 @@ package org.openscada.ca;
 
 import java.util.Map;
 
-import org.openscada.ca.data.ConfigurationState;
+import org.eclipse.scada.ca.data.ConfigurationState;
 
 public interface Configuration
 {

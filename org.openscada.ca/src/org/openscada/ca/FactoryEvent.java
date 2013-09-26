@@ -19,8 +19,8 @@
 
 package org.openscada.ca;
 
+import org.eclipse.scada.ca.data.FactoryState;
 import org.eclipse.scada.utils.lang.Immutable;
-import org.openscada.ca.data.FactoryState;
 
 @Immutable
 public class FactoryEvent

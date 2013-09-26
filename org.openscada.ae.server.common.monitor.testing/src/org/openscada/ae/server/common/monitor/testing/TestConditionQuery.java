@@ -27,9 +27,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.ae.data.MonitorStatus;
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
 import org.eclipse.scada.core.Variant;
-import org.openscada.ae.data.MonitorStatus;
-import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 
 public class TestConditionQuery extends MonitorQuery

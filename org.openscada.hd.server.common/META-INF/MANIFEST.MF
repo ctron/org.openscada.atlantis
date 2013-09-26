@@ -8,6 +8,7 @@ Bundle-Vendor: openSCADA.org
 Export-Package: org.openscada.hd.server.common;version="1.1.0";uses:="org.openscada.hd,org.openscada.da.client,org.osgi.framework"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.hd.data;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.sec.osgi;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",
@@ -19,7 +20,6 @@ Import-Package: org.eclipse.scada.core;version="0.1.0",
  org.openscada.core.server.common.session;version="1.0.0",
  org.openscada.da.client;version="1.0.0",
  org.openscada.hd;version="1.0.0",
- org.openscada.hd.data;version="1.0.0",
  org.openscada.hd.server;version="1.0.0",
  org.osgi.framework;version="1.6.0",
  org.osgi.util.tracker;version="1.5.0",

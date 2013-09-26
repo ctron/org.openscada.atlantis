@@ -25,7 +25,7 @@ import java.util.EnumSet;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.da.data.IODirection;
+import org.eclipse.scada.da.data.IODirection;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.chain.BaseChainItemCommon;
 import org.openscada.da.server.common.chain.ChainItem;

@@ -21,8 +21,8 @@ package org.openscada.ae.monitor.common;
 
 import java.util.Map;
 
+import org.eclipse.scada.ae.data.Severity;
 import org.eclipse.scada.sec.UserInformation;
-import org.openscada.ae.data.Severity;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.da.client.DataItemValue;
 import org.slf4j.Logger;

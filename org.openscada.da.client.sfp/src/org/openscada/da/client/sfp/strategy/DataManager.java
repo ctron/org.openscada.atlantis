@@ -27,8 +27,8 @@ import java.util.Set;
 
 import org.eclipse.scada.core.AttributesHelper;
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.openscada.core.client.ConnectionState;
-import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.sfp.ConnectionHandler;

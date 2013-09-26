@@ -30,11 +30,11 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.connection.provider.ConnectionRequest;
 import org.openscada.core.connection.provider.ConnectionRequestTracker;
 import org.openscada.hd.connection.provider.ConnectionService;
-import org.openscada.hd.data.QueryParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

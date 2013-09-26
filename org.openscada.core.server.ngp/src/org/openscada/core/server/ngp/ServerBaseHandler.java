@@ -22,8 +22,8 @@ package org.openscada.core.server.ngp;
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
-import org.openscada.protocol.ngp.common.mc.message.CloseMessage;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfiguration;
+import org.eclipse.scada.protocol.ngp.common.mc.message.CloseMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

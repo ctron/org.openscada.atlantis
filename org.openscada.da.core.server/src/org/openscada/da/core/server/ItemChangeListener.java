@@ -22,7 +22,7 @@ package org.openscada.da.core.server;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.core.data.SubscriptionState;
+import org.eclipse.scada.core.data.SubscriptionState;
 
 /**
  * Interface for listening to data items

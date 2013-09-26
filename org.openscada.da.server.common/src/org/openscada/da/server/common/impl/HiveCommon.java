@@ -39,6 +39,7 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.scada.core.InvalidSessionException;
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.OperationParameters;
 import org.eclipse.scada.sec.AuthorizationReply;
 import org.eclipse.scada.sec.AuthorizationRequest;
 import org.eclipse.scada.sec.AuthorizationResult;
@@ -50,7 +51,6 @@ import org.eclipse.scada.utils.concurrent.CallingFuture;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.core.data.OperationParameters;
 import org.openscada.core.server.common.AuthorizationProvider;
 import org.openscada.core.server.common.AuthorizedOperation;
 import org.openscada.core.server.common.ServiceCommon;

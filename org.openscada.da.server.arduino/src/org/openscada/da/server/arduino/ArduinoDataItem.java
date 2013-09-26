@@ -26,6 +26,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.protocol.arduino.ArduinoDevice;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.InstantFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
@@ -34,7 +35,6 @@ import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.chain.DataItemInputOutputChained;
-import org.openscada.protocols.arduino.ArduinoDevice;
 
 public class ArduinoDataItem extends DataItemInputOutputChained
 {

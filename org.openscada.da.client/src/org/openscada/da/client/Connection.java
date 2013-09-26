@@ -26,10 +26,10 @@ import java.util.concurrent.ScheduledExecutorService;
 
 import org.eclipse.scada.core.OperationException;
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.OperationParameters;
 import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.client.NoConnectionException;
-import org.openscada.core.data.OperationParameters;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;

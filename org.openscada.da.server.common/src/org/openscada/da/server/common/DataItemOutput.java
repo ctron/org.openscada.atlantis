@@ -23,8 +23,8 @@ import java.util.EnumSet;
 
 import org.eclipse.scada.core.InvalidOperationException;
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.da.data.IODirection;
 
 public abstract class DataItemOutput extends DataItemBase
 {

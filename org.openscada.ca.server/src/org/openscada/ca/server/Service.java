@@ -23,13 +23,13 @@ package org.openscada.ca.server;
 
 import java.util.Collection;
 
+import org.eclipse.scada.ca.data.DiffEntry;
 import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.core.data.OperationParameters;
 import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.ca.Configuration;
 import org.openscada.ca.Factory;
-import org.openscada.ca.data.DiffEntry;
-import org.openscada.core.data.OperationParameters;
 
 /**
  * This interface specifies the operations provided by the server

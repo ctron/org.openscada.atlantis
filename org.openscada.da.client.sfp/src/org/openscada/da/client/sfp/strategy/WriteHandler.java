@@ -30,7 +30,7 @@ public class WriteHandler extends AbstractFuture<WriteResult>
 
     private final static Logger logger = LoggerFactory.getLogger ( WriteHandler.class );
 
-    public void complete ( final org.openscada.protocol.sfp.messages.WriteResult writeResult )
+    public void complete ( final org.eclipse.scada.protocol.sfp.messages.WriteResult writeResult )
     {
         logger.debug ( "Completing write operation - errorCode: {}, errorMessage: {}", writeResult.getErrorCode (), writeResult.getErrorMessage () );
 
@@ -44,7 +44,7 @@ public class WriteHandler extends AbstractFuture<WriteResult>
         }
     }
 
-    public static String makeErrorString ( final org.openscada.protocol.sfp.messages.WriteResult writeResult )
+    public static String makeErrorString ( final org.eclipse.scada.protocol.sfp.messages.WriteResult writeResult )
     {
         if ( writeResult.getErrorMessage () == null )
         {

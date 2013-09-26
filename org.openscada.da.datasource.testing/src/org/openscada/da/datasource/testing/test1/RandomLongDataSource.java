@@ -25,7 +25,7 @@ import java.util.Random;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.core.data.SubscriptionState;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.datasource.testing.DefaultDataSource;
 

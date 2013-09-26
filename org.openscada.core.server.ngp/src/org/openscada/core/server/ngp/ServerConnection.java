@@ -30,9 +30,9 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.eclipse.scada.core.info.StatisticEntry;
 import org.eclipse.scada.core.info.StatisticsImpl;
+import org.eclipse.scada.protocol.common.StatisticsFilter;
+import org.eclipse.scada.protocol.ngp.common.mc.MessageChannelFilter;
 import org.openscada.core.server.common.stats.ManagedConnection;
-import org.openscada.protocol.common.StatisticsFilter;
-import org.openscada.protocol.ngp.common.mc.MessageChannelFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

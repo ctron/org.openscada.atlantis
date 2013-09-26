@@ -24,8 +24,8 @@ package org.openscada.da.net.handler;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.OperationParameters;
 import org.eclipse.scada.utils.lang.Holder;
-import org.openscada.core.data.OperationParameters;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;

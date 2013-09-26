@@ -21,7 +21,7 @@
 
 package org.openscada.da.server.common.chain.item;
 
-import org.openscada.da.data.IODirection;
+import org.eclipse.scada.da.data.IODirection;
 import org.openscada.da.server.common.chain.DataItemBaseChained;
 
 /**

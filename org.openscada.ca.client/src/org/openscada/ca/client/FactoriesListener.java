@@ -19,7 +19,7 @@
 
 package org.openscada.ca.client;
 
-import org.openscada.ca.data.FactoryInformation;
+import org.eclipse.scada.ca.data.FactoryInformation;
 
 public interface FactoriesListener
 {

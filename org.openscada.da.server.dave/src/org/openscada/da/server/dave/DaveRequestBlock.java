@@ -21,11 +21,11 @@
 
 package org.openscada.da.server.dave;
 
+import org.eclipse.scada.protocol.dave.DaveReadRequest;
+import org.eclipse.scada.protocol.dave.DaveReadResult;
+import org.eclipse.scada.protocol.dave.DaveReadRequest.Request;
+import org.eclipse.scada.protocol.dave.DaveReadResult.Result;
 import org.openscada.da.server.common.memory.AbstractRequestBlock;
-import org.openscada.protocols.dave.DaveReadRequest;
-import org.openscada.protocols.dave.DaveReadRequest.Request;
-import org.openscada.protocols.dave.DaveReadResult;
-import org.openscada.protocols.dave.DaveReadResult.Result;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

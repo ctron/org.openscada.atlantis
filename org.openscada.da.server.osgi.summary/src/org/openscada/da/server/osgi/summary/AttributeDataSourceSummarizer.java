@@ -26,10 +26,10 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.eclipse.scada.utils.str.StringHelper;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;

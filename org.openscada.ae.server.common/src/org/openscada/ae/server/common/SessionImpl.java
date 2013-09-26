@@ -26,15 +26,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.scada.ae.data.BrowserEntry;
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.eclipse.scada.sec.UserInformation;
 import org.openscada.ae.BrowserListener;
 import org.openscada.ae.Event;
-import org.openscada.ae.data.BrowserEntry;
-import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.server.EventListener;
 import org.openscada.ae.server.MonitorListener;
 import org.openscada.ae.server.Session;
-import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -21,7 +21,7 @@ package org.openscada.da.core.browser;
 
 import java.util.Set;
 
-import org.openscada.da.data.IODirection;
+import org.eclipse.scada.da.data.IODirection;
 
 public interface DataItemEntry extends Entry
 {

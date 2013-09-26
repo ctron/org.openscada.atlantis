@@ -27,10 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.scada.ae.data.MonitorStatus;
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
+import org.eclipse.scada.ae.data.Severity;
 import org.eclipse.scada.core.Variant;
-import org.openscada.ae.data.MonitorStatus;
-import org.openscada.ae.data.MonitorStatusInformation;
-import org.openscada.ae.data.Severity;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.LongValue;

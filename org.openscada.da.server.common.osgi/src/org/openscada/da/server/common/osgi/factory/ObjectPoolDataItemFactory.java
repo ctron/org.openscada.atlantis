@@ -29,8 +29,8 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
-import org.openscada.da.data.IODirection;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.DataItemInformationBase;

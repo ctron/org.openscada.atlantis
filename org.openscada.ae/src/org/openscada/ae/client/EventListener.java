@@ -21,8 +21,8 @@ package org.openscada.ae.client;
 
 import java.util.List;
 
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.openscada.ae.Event;
-import org.openscada.core.data.SubscriptionState;
 
 public interface EventListener
 {

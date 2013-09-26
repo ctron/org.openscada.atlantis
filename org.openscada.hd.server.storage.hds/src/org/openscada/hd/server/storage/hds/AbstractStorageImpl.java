@@ -39,6 +39,8 @@ import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.eclipse.scada.hds.DataFilePool;
 import org.eclipse.scada.hds.DataStoreAccesor;
 import org.eclipse.scada.hds.DataStoreListener;
@@ -46,8 +48,6 @@ import org.eclipse.scada.hds.ValueVisitor;
 import org.eclipse.scada.utils.concurrent.FutureTask;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.data.HistoricalItemInformation;
-import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.storage.common.QueryImpl;
 import org.openscada.hd.server.storage.common.ValueSourceManager;

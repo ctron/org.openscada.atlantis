@@ -22,8 +22,8 @@ package org.openscada.ae.server.ngp;
 import java.util.List;
 import java.util.Set;
 
+import org.eclipse.scada.ae.data.BrowserEntry;
 import org.openscada.ae.BrowserListener;
-import org.openscada.ae.data.BrowserEntry;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

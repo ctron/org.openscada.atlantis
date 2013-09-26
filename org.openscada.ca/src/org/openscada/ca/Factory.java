@@ -19,7 +19,7 @@
 
 package org.openscada.ca;
 
-import org.openscada.ca.data.FactoryState;
+import org.eclipse.scada.ca.data.FactoryState;
 
 public interface Factory
 {

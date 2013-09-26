@@ -23,9 +23,9 @@ package org.openscada.core.client.ngp;
 
 import org.apache.mina.core.service.IoHandler;
 import org.apache.mina.core.session.IoSession;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfiguration;
 import org.openscada.core.client.common.ClientBaseConnection;
 import org.openscada.core.client.common.ClientConnectionHandler;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -23,7 +23,7 @@ import java.util.Map;
 import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.core.data.SubscriptionState;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.proxy.connection.ProxySubConnection;

@@ -19,8 +19,8 @@
 
 package org.openscada.ae.monitor.script;
 
+import org.eclipse.scada.ae.data.Severity;
 import org.eclipse.scada.core.Variant;
-import org.openscada.ae.data.Severity;
 import org.openscada.da.client.DataItemValue;
 
 public class ScriptMonitorResult

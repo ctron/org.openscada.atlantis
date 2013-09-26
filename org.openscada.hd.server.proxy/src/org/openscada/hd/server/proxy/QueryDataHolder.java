@@ -22,9 +22,9 @@ package org.openscada.hd.server.proxy;
 import java.util.HashMap;
 import java.util.List;
 
+import org.eclipse.scada.hd.data.QueryParameters;
+import org.eclipse.scada.hd.data.ValueInformation;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.data.QueryParameters;
-import org.openscada.hd.data.ValueInformation;
 
 public interface QueryDataHolder
 {

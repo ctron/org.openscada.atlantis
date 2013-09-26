@@ -19,7 +19,7 @@
 
 package org.openscada.core.subscription;
 
-import org.openscada.core.data.SubscriptionState;
+import org.eclipse.scada.core.data.SubscriptionState;
 
 public class SubscriptionStateEvent
 {

@@ -22,10 +22,10 @@ package org.openscada.ca.common.ngp;
 import java.util.Arrays;
 import java.util.Map;
 
+import org.eclipse.scada.ca.protocol.ngp.codec.ProtocolFactory;
 import org.eclipse.scada.core.ConnectionInformation;
-import org.openscada.ca.protocol.ngp.codec.ProtocolFactory;
-import org.openscada.protocol.ngp.common.DefaultProtocolConfigurationFactory;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
+import org.eclipse.scada.protocol.ngp.common.DefaultProtocolConfigurationFactory;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfiguration;
 
 public class ProtocolConfigurationFactoryImpl extends DefaultProtocolConfigurationFactory
 {

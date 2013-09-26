@@ -19,11 +19,11 @@
 
 package org.openscada.hd.server.common;
 
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.data.HistoricalItemInformation;
-import org.openscada.hd.data.QueryParameters;
 
 /**
  * An interface of a historical item

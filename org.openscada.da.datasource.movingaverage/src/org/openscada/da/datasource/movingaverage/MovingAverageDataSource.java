@@ -32,10 +32,10 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;

@@ -25,8 +25,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.openscada.ae.data.BrowserEntry;
-import org.openscada.ae.data.BrowserType;
+import org.eclipse.scada.ae.data.BrowserEntry;
+import org.eclipse.scada.ae.data.BrowserType;
 import org.openscada.core.net.MessageHelper;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;

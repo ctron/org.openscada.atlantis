@@ -29,13 +29,13 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.eclipse.scada.sec.UserInformation;
 import org.openscada.core.server.common.osgi.AbstractServiceImpl;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.data.HistoricalItemInformation;
-import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.Service;
 import org.openscada.hd.server.Session;
 import org.openscada.hd.server.common.HistoricalItem;

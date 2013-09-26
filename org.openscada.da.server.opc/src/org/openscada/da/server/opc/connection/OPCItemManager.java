@@ -28,9 +28,9 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.utils.beans.AbstractPropertyChange;
 import org.eclipse.scada.utils.collection.MapBuilder;
-import org.openscada.da.data.IODirection;
 import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.browser.common.query.AttributeNameProvider;
 import org.openscada.da.server.browser.common.query.GroupFolder;

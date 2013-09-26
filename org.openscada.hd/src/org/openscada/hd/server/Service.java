@@ -20,10 +20,10 @@
 package org.openscada.hd.server;
 
 import org.eclipse.scada.core.InvalidSessionException;
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.openscada.hd.InvalidItemException;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.data.QueryParameters;
 
 /**
  * This interface specifies the operations provided by the server

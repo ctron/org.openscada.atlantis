@@ -26,7 +26,7 @@ import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.hd.data.HistoricalItemInformation;
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;

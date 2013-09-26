@@ -22,7 +22,7 @@ package org.openscada.core.subscription;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.openscada.core.data.SubscriptionState;
+import org.eclipse.scada.core.data.SubscriptionState;
 
 public class SubscriptionRecorder implements SubscriptionListener
 {

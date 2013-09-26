@@ -26,6 +26,8 @@ import java.util.Queue;
 import java.util.Set;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.eclipse.scada.utils.collection.MapBuilder;
 import org.eclipse.scada.utils.osgi.FilterUtil;
 import org.eclipse.scada.utils.osgi.SingleServiceListener;
@@ -38,8 +40,6 @@ import org.openscada.da.datasource.SingleDataSourceTracker;
 import org.openscada.da.datasource.SingleDataSourceTracker.ServiceListener;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.data.HistoricalItemInformation;
-import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.common.HistoricalItem;
 import org.openscada.hd.server.common.StorageHistoricalItem;
 import org.osgi.framework.BundleContext;

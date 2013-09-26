@@ -36,6 +36,8 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.ssl.SslFilter;
 import org.apache.mina.transport.socket.nio.NioSocketConnector;
 import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.protocol.common.IoLoggerFilterChainBuilder;
+import org.eclipse.scada.protocol.common.StatisticsFilter;
 import org.eclipse.scada.sec.callback.CallbackFactory;
 import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.openscada.core.client.Connection;
@@ -43,8 +45,6 @@ import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.ConnectionStateListener;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.PrivilegeListener;
-import org.openscada.protocol.common.IoLoggerFilterChainBuilder;
-import org.openscada.protocol.common.StatisticsFilter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

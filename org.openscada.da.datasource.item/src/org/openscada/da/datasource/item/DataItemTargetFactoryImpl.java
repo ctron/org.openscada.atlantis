@@ -25,13 +25,13 @@ import java.util.Hashtable;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolHelper;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ca.ConfigurationDataHelper;
 import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
-import org.openscada.da.data.IODirection;
 import org.openscada.da.datasource.DataSource;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemInformationBase;

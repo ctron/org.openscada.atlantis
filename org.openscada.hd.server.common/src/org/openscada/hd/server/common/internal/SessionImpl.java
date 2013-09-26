@@ -27,10 +27,10 @@ import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
 
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
 import org.eclipse.scada.sec.UserInformation;
 import org.openscada.core.server.common.session.AbstractSessionImpl;
 import org.openscada.hd.ItemListListener;
-import org.openscada.hd.data.HistoricalItemInformation;
 import org.openscada.hd.server.Session;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -25,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.eclipse.scada.ae.data.EventInformation;
 import org.eclipse.scada.core.Variant;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.data.EventInformation;
 
 public final class Events
 {

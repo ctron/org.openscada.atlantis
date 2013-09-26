@@ -24,9 +24,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.ae.data.EventInformation;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.openscada.ae.client.EventListener;
-import org.openscada.ae.data.EventInformation;
-import org.openscada.core.data.SubscriptionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

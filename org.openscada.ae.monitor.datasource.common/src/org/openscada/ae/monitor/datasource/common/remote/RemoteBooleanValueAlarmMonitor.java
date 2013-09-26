@@ -27,11 +27,11 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.ae.data.MonitorStatus;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.VariantEditor;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.ae.data.MonitorStatus;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.DataItemMonitor;
 import org.openscada.ca.ConfigurationDataHelper;

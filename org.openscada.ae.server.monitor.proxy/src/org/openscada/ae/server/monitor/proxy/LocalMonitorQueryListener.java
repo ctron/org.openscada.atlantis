@@ -23,10 +23,10 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
 import org.eclipse.scada.utils.osgi.FilterUtil;
 import org.eclipse.scada.utils.osgi.SingleServiceListener;
 import org.eclipse.scada.utils.osgi.SingleServiceTracker;
-import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.server.common.monitor.MonitorQuery;
 import org.openscada.ae.server.common.monitor.MonitorQueryListener;
 import org.osgi.framework.BundleContext;

@@ -23,10 +23,10 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Random;
 
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.data.QueryParameters;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

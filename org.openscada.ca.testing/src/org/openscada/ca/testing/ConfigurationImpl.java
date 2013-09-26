@@ -21,8 +21,8 @@ package org.openscada.ca.testing;
 
 import java.util.Map;
 
+import org.eclipse.scada.ca.data.ConfigurationState;
 import org.openscada.ca.Configuration;
-import org.openscada.ca.data.ConfigurationState;
 
 public class ConfigurationImpl implements Configuration
 {

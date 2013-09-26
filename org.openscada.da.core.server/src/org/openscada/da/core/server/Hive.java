@@ -25,10 +25,10 @@ import java.util.Map;
 
 import org.eclipse.scada.core.InvalidSessionException;
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.OperationParameters;
 import org.eclipse.scada.sec.PermissionDeniedException;
 import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.core.data.OperationParameters;
 import org.openscada.core.server.Service;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;

@@ -21,9 +21,9 @@
 package org.openscada.core.client.ngp;
 
 import org.apache.mina.core.service.IoHandler;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.core.client.common.ClientBaseConnection;
 import org.openscada.core.client.common.IoHandlerFactory;
-import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 
 public class ProtocolIoHandlerFactory implements IoHandlerFactory
 {

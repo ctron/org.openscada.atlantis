@@ -9,10 +9,10 @@ Export-Package: org.openscada.hd;version="1.1.0";uses:="org.openscada.utils.stat
  org.openscada.hd.server;version="1.1.0";uses:="org.openscada.hd,org.openscada.core.server"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.hd.data;version="0.1.0",
  org.eclipse.scada.sec.callback;version="0.1.0",
  org.eclipse.scada.utils.lang;version="0.1.0",
  org.eclipse.scada.utils.lifecycle;version="0.1.0",
  org.eclipse.scada.utils.statuscodes;version="0.1.0",
  org.openscada.core.client;version="1.0.0",
- org.openscada.core.server;version="1.0.0",
- org.openscada.hd.data;version="1.0.0"
+ org.openscada.core.server;version="1.0.0"

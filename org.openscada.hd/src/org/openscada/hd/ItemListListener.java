@@ -21,7 +21,7 @@ package org.openscada.hd;
 
 import java.util.Set;
 
-import org.openscada.hd.data.HistoricalItemInformation;
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
 
 public interface ItemListListener
 {

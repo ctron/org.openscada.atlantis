@@ -19,7 +19,7 @@
 
 package org.openscada.ca;
 
-import org.openscada.ca.data.ConfigurationState;
+import org.eclipse.scada.ca.data.ConfigurationState;
 
 public class ConfigurationEvent
 {

@@ -21,7 +21,7 @@ package org.openscada.ae;
 
 import java.util.List;
 
-import org.openscada.ae.data.QueryState;
+import org.eclipse.scada.ae.data.QueryState;
 
 public interface QueryListener
 {

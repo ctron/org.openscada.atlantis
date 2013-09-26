@@ -21,9 +21,9 @@
 
 package org.openscada.ae.monitor.common;
 
+import org.eclipse.scada.ae.data.Severity;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.utils.lang.Immutable;
-import org.openscada.ae.data.Severity;
 
 @Immutable
 public class StateInformation

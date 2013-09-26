@@ -22,7 +22,7 @@ package org.openscada.ae;
 import java.util.List;
 import java.util.Set;
 
-import org.openscada.ae.data.BrowserEntry;
+import org.eclipse.scada.ae.data.BrowserEntry;
 
 public interface BrowserListener
 {

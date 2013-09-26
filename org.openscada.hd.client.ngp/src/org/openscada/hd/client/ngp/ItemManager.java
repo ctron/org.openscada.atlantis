@@ -31,8 +31,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
 import org.openscada.hd.ItemListListener;
-import org.openscada.hd.data.HistoricalItemInformation;
 
 public class ItemManager
 {

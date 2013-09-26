@@ -29,11 +29,11 @@ import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.ssl.SslContextFactory;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfiguration;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfigurationFactory;
+import org.eclipse.scada.protocol.ngp.common.SslHelper;
 import org.openscada.core.server.ngp.ServerBase;
 import org.openscada.core.server.ngp.ServerConnection;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
-import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
-import org.openscada.protocol.ngp.common.SslHelper;
 
 public class ServerTest1 implements IApplication
 {

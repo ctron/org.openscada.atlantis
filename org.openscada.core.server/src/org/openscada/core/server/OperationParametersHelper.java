@@ -30,7 +30,7 @@ public final class OperationParametersHelper
     {
     }
 
-    public static org.openscada.core.data.OperationParameters toData ( final org.openscada.core.server.OperationParameters operationParameters )
+    public static org.eclipse.scada.core.data.OperationParameters toData ( final org.openscada.core.server.OperationParameters operationParameters )
     {
         if ( operationParameters == null )
         {

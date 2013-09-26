@@ -26,13 +26,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.eclipse.scada.core.OperationException;
+import org.eclipse.scada.core.data.Request;
+import org.eclipse.scada.core.data.RequestMessage;
+import org.eclipse.scada.core.data.ResponseMessage;
 import org.eclipse.scada.core.info.StatisticsImpl;
 import org.eclipse.scada.utils.concurrent.ExecutorFuture;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.core.data.Request;
-import org.openscada.core.data.RequestMessage;
-import org.openscada.core.data.ResponseMessage;
 
 public class ResponseManager
 {

@@ -26,9 +26,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.openscada.ae.client.MonitorListener;
-import org.openscada.ae.data.MonitorStatusInformation;
-import org.openscada.core.data.SubscriptionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

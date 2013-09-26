@@ -68,9 +68,9 @@ public class OperationParameters
         return String.format ( "[OperationParameters - userInformation: %s, properties: %s, callbackHandler: %s]", this.userInformation, this.properties, this.callbackHandler );
     }
 
-    public org.openscada.core.data.OperationParameters asData ()
+    public org.eclipse.scada.core.data.OperationParameters asData ()
     {
-        final org.openscada.core.data.UserInformation ui = this.userInformation == null ? null : new org.openscada.core.data.UserInformation ( this.userInformation.getName () );
-        return new org.openscada.core.data.OperationParameters ( ui, this.properties );
+        final org.eclipse.scada.core.data.UserInformation ui = this.userInformation == null ? null : new org.eclipse.scada.core.data.UserInformation ( this.userInformation.getName () );
+        return new org.eclipse.scada.core.data.OperationParameters ( ui, this.properties );
     }
 }

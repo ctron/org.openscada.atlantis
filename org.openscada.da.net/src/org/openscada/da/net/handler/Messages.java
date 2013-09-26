@@ -24,9 +24,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.SubscriptionState;
+import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.utils.lang.Holder;
-import org.openscada.core.data.SubscriptionState;
-import org.openscada.da.data.IODirection;
 import org.openscada.net.base.data.IntegerValue;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;

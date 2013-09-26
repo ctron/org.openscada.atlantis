@@ -34,17 +34,32 @@ import java.util.concurrent.ScheduledExecutorService;
 import org.eclipse.scada.core.ConnectionInformation;
 import org.eclipse.scada.core.OperationException;
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.ErrorInformation;
+import org.eclipse.scada.core.data.OperationParameters;
+import org.eclipse.scada.core.data.Request;
+import org.eclipse.scada.core.data.ResponseMessage;
+import org.eclipse.scada.core.data.UserInformation;
+import org.eclipse.scada.da.data.AttributeWriteResultEntry;
+import org.eclipse.scada.da.data.BrowserEntry;
+import org.eclipse.scada.da.data.message.BrowseFolder;
+import org.eclipse.scada.da.data.message.BrowseResult;
+import org.eclipse.scada.da.data.message.FolderDataUpdate;
+import org.eclipse.scada.da.data.message.ItemDataUpdate;
+import org.eclipse.scada.da.data.message.ItemStateUpdate;
+import org.eclipse.scada.da.data.message.StartWriteAttributes;
+import org.eclipse.scada.da.data.message.StartWriteValue;
+import org.eclipse.scada.da.data.message.SubscribeFolder;
+import org.eclipse.scada.da.data.message.SubscribeItem;
+import org.eclipse.scada.da.data.message.UnsubscibeItem;
+import org.eclipse.scada.da.data.message.UnsubscribeFolder;
+import org.eclipse.scada.da.data.message.WriteAttributesResult;
+import org.eclipse.scada.da.data.message.WriteValueResult;
 import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.eclipse.scada.utils.concurrent.ExecutorFuture;
 import org.eclipse.scada.utils.concurrent.FutureListener;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.core.client.NoConnectionException;
 import org.openscada.core.client.ngp.ConnectionBaseImpl;
-import org.openscada.core.data.ErrorInformation;
-import org.openscada.core.data.OperationParameters;
-import org.openscada.core.data.Request;
-import org.openscada.core.data.ResponseMessage;
-import org.openscada.core.data.UserInformation;
 import org.openscada.da.client.BrowseOperationCallback;
 import org.openscada.da.client.Connection;
 import org.openscada.da.client.FolderListener;
@@ -58,21 +73,6 @@ import org.openscada.da.core.WriteAttributeResult;
 import org.openscada.da.core.WriteAttributeResults;
 import org.openscada.da.core.WriteResult;
 import org.openscada.da.core.browser.Entry;
-import org.openscada.da.data.AttributeWriteResultEntry;
-import org.openscada.da.data.BrowserEntry;
-import org.openscada.da.data.message.BrowseFolder;
-import org.openscada.da.data.message.BrowseResult;
-import org.openscada.da.data.message.FolderDataUpdate;
-import org.openscada.da.data.message.ItemDataUpdate;
-import org.openscada.da.data.message.ItemStateUpdate;
-import org.openscada.da.data.message.StartWriteAttributes;
-import org.openscada.da.data.message.StartWriteValue;
-import org.openscada.da.data.message.SubscribeFolder;
-import org.openscada.da.data.message.SubscribeItem;
-import org.openscada.da.data.message.UnsubscibeItem;
-import org.openscada.da.data.message.UnsubscribeFolder;
-import org.openscada.da.data.message.WriteAttributesResult;
-import org.openscada.da.data.message.WriteValueResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -426,7 +426,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
         return Arrays.asList ( Helper.convert ( addedOrModified ) );
     }
 
-    protected static org.openscada.core.data.OperationParameters makeParameters ( final OperationParameters operationParameters )
+    protected static org.eclipse.scada.core.data.OperationParameters makeParameters ( final OperationParameters operationParameters )
     {
         if ( operationParameters == null )
         {
@@ -442,7 +442,7 @@ public class ConnectionImpl extends ConnectionBaseImpl implements Connection
             userInformation = new UserInformation ( operationParameters.getUserInformation ().getName () );
         }
 
-        return new org.openscada.core.data.OperationParameters ( userInformation, properties );
+        return new org.eclipse.scada.core.data.OperationParameters ( userInformation, properties );
     }
 
 }

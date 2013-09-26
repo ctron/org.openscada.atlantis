@@ -31,12 +31,12 @@ import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 import javax.script.SimpleScriptContext;
 
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
+import org.eclipse.scada.ae.data.Severity;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.eclipse.scada.utils.script.ScriptExecutor;
-import org.openscada.ae.data.MonitorStatusInformation;
-import org.openscada.ae.data.Severity;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;
 import org.openscada.ae.monitor.common.DemoteImpl;

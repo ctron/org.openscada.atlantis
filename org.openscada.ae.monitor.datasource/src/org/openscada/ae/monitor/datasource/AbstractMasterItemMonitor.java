@@ -27,6 +27,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
@@ -34,7 +35,6 @@ import org.eclipse.scada.utils.osgi.pool.SingleObjectPoolServiceTracker;
 import org.eclipse.scada.utils.osgi.pool.SingleObjectPoolServiceTracker.ServiceListener;
 import org.openscada.ae.Event;
 import org.openscada.ae.Event.EventBuilder;
-import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ae.monitor.common.AbstractConfiguration;
 import org.openscada.ae.monitor.common.AbstractPersistentStateMonitor;

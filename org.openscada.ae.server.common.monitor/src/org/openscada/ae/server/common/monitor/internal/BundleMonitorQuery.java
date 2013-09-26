@@ -30,13 +30,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
 import org.eclipse.scada.utils.filter.Filter;
 import org.eclipse.scada.utils.filter.FilterParser;
 import org.eclipse.scada.utils.filter.bean.BeanMatcher;
 import org.eclipse.scada.utils.osgi.pool.AllObjectPoolServiceTracker;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolListener;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.ae.server.common.monitor.MonitorQuery;

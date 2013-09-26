@@ -6,11 +6,11 @@ Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.openscada.hd.server.storage.slave.hds.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
-Import-Package: org.eclipse.scada.hds;version="0.1.0",
+Import-Package: org.eclipse.scada.hd.data;version="0.1.0",
+ org.eclipse.scada.hds;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",
  org.eclipse.scada.utils.str;version="0.1.0",
  org.openscada.hd;version="1.0.0",
- org.openscada.hd.data;version="1.0.0",
  org.openscada.hd.server.common;version="1.0.0",
  org.openscada.hd.server.storage.common;version="1.0.0",
  org.openscada.hd.server.storage.hds;version="1.0.0",

@@ -21,10 +21,10 @@ package org.openscada.ae.client.net;
 
 import java.util.List;
 
+import org.eclipse.scada.ae.data.QueryState;
 import org.openscada.ae.Event;
 import org.openscada.ae.Query;
 import org.openscada.ae.QueryListener;
-import org.openscada.ae.data.QueryState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

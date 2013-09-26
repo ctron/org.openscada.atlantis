@@ -33,21 +33,21 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.SubscriptionState;
+import org.eclipse.scada.protocol.sfp.messages.BrowseUpdate;
+import org.eclipse.scada.protocol.sfp.messages.DataUpdate;
+import org.eclipse.scada.protocol.sfp.messages.ReadAll;
+import org.eclipse.scada.protocol.sfp.messages.SubscribeBrowse;
+import org.eclipse.scada.protocol.sfp.messages.WriteCommand;
+import org.eclipse.scada.protocol.sfp.messages.DataUpdate.Entry;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.FolderListener;
 import org.openscada.da.client.ItemUpdateListener;
 import org.openscada.da.client.sfp.ConnectionHandler;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.WriteResult;
-import org.openscada.protocol.sfp.messages.BrowseUpdate;
-import org.openscada.protocol.sfp.messages.DataUpdate;
-import org.openscada.protocol.sfp.messages.DataUpdate.Entry;
-import org.openscada.protocol.sfp.messages.ReadAll;
-import org.openscada.protocol.sfp.messages.SubscribeBrowse;
-import org.openscada.protocol.sfp.messages.WriteCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -100,13 +100,13 @@ public class ReadAllStrategy
         {
             processBrowseUpdate ( (BrowseUpdate)message );
         }
-        else if ( message instanceof org.openscada.protocol.sfp.messages.WriteResult )
+        else if ( message instanceof org.eclipse.scada.protocol.sfp.messages.WriteResult )
         {
-            processWriteResult ( (org.openscada.protocol.sfp.messages.WriteResult)message );
+            processWriteResult ( (org.eclipse.scada.protocol.sfp.messages.WriteResult)message );
         }
     }
 
-    private void processWriteResult ( final org.openscada.protocol.sfp.messages.WriteResult message )
+    private void processWriteResult ( final org.eclipse.scada.protocol.sfp.messages.WriteResult message )
     {
         logger.debug ( "Processing write result" );
 

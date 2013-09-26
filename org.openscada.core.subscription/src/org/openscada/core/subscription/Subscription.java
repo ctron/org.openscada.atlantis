@@ -24,7 +24,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.core.data.SubscriptionState;
+import org.eclipse.scada.core.data.SubscriptionState;
 
 public class Subscription
 {

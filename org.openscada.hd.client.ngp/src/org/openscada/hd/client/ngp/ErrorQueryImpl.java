@@ -21,10 +21,10 @@ package org.openscada.hd.client.ngp;
 
 import java.util.concurrent.ExecutorService;
 
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.data.QueryParameters;
 
 public class ErrorQueryImpl implements Query
 {

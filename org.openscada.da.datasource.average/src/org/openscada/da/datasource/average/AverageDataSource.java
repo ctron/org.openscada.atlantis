@@ -31,9 +31,9 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ExecutorService;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.core.data.SubscriptionState;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;
 import org.openscada.da.datasource.DataSource;

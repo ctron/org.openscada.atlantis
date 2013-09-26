@@ -23,8 +23,8 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
 import org.openscada.core.net.MessageHelper;
-import org.openscada.hd.data.HistoricalItemInformation;
 import org.openscada.net.base.data.ListValue;
 import org.openscada.net.base.data.MapValue;
 import org.openscada.net.base.data.Message;

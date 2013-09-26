@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.hd.data.QueryParameters;
-import org.openscada.hd.data.ValueInformation;
+import org.eclipse.scada.hd.data.QueryParameters;
+import org.eclipse.scada.hd.data.ValueInformation;
 
 /**
  * A query listener interface

@@ -32,15 +32,15 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
+import org.eclipse.scada.hd.data.QueryParameters;
+import org.eclipse.scada.hd.data.ValueInformation;
 import org.openscada.core.client.ConnectionState;
 import org.openscada.core.client.net.SessionConnectionBase;
 import org.openscada.hd.ItemListListener;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
 import org.openscada.hd.QueryState;
-import org.openscada.hd.data.HistoricalItemInformation;
-import org.openscada.hd.data.QueryParameters;
-import org.openscada.hd.data.ValueInformation;
 import org.openscada.hd.net.ItemListHelper;
 import org.openscada.hd.net.Messages;
 import org.openscada.hd.net.QueryHelper;

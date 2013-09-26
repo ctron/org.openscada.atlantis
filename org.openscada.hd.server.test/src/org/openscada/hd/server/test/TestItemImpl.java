@@ -26,10 +26,10 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.hd.data.HistoricalItemInformation;
+import org.eclipse.scada.hd.data.QueryParameters;
 import org.openscada.hd.Query;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.data.HistoricalItemInformation;
-import org.openscada.hd.data.QueryParameters;
 import org.openscada.hd.server.common.HistoricalItem;
 
 public class TestItemImpl implements HistoricalItem

@@ -28,8 +28,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.eclipse.scada.hd.data.ValueInformation;
 import org.openscada.hd.QueryListener;
-import org.openscada.hd.data.ValueInformation;
 
 public class ValueBuffer
 {

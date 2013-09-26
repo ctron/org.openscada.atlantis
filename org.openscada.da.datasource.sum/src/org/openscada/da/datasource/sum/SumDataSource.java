@@ -30,10 +30,10 @@ import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.OperationException;
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;

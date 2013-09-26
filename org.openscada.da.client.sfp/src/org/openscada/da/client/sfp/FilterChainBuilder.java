@@ -26,10 +26,10 @@ import org.apache.mina.core.session.IdleStatus;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.filter.logging.LoggingFilter;
-import org.openscada.protocol.common.IoLoggerFilterChainBuilder;
-import org.openscada.protocol.common.StatisticsFilter;
-import org.openscada.protocol.sfp.ProtocolDecoderImpl;
-import org.openscada.protocol.sfp.ProtocolEncoderImpl;
+import org.eclipse.scada.protocol.common.IoLoggerFilterChainBuilder;
+import org.eclipse.scada.protocol.common.StatisticsFilter;
+import org.eclipse.scada.protocol.sfp.ProtocolDecoderImpl;
+import org.eclipse.scada.protocol.sfp.ProtocolEncoderImpl;
 
 public class FilterChainBuilder implements IoLoggerFilterChainBuilder
 {
@@ -49,17 +49,17 @@ public class FilterChainBuilder implements IoLoggerFilterChainBuilder
     @Override
     public void buildFilterChain ( final IoFilterChain chain )
     {
-        if ( this.loggerName != null && Boolean.getBoolean ( "org.openscada.protocol.sfp.common.logger.raw" ) )
+        if ( this.loggerName != null && Boolean.getBoolean ( "org.eclipse.scada.protocol.sfp.common.logger.raw" ) )
         {
             chain.addFirst ( "logger.raw", new LoggingFilter ( this.loggerName ) );
         }
 
-        if ( !Boolean.getBoolean ( "org.openscada.protocol.sfp.common.disableStats" ) )
+        if ( !Boolean.getBoolean ( "org.eclipse.scada.protocol.sfp.common.disableStats" ) )
         {
             chain.addFirst ( StatisticsFilter.DEFAULT_NAME, new StatisticsFilter () );
         }
 
-        if ( this.loggerName != null && Boolean.getBoolean ( "org.openscada.protocol.sfp.common.logger" ) )
+        if ( this.loggerName != null && Boolean.getBoolean ( "org.eclipse.scada.protocol.sfp.common.logger" ) )
         {
             chain.addFirst ( "logger", new LoggingFilter ( this.loggerName ) );
         }

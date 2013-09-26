@@ -23,8 +23,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.data.IODirection;
 import org.openscada.da.core.browser.DataItemEntry;
-import org.openscada.da.data.IODirection;
 
 public class DataItemEntryCommon extends EntryCommon implements DataItemEntry
 {

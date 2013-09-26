@@ -22,11 +22,11 @@ package org.openscada.ca.common;
 import java.util.Map;
 import java.util.TreeMap;
 
+import org.eclipse.scada.ca.data.FactoryState;
 import org.openscada.ca.ConfigurationFactory;
 import org.openscada.ca.ConfigurationListener;
 import org.openscada.ca.Factory;
 import org.openscada.ca.SelfManagedConfigurationFactory;
-import org.openscada.ca.data.FactoryState;
 
 public class FactoryImpl implements Factory
 {

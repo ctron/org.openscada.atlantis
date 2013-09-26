@@ -21,12 +21,12 @@ package org.openscada.ca.client;
 
 import java.util.List;
 
+import org.eclipse.scada.ca.data.ConfigurationInformation;
+import org.eclipse.scada.ca.data.DiffEntry;
+import org.eclipse.scada.ca.data.FactoryInformation;
+import org.eclipse.scada.core.data.OperationParameters;
 import org.eclipse.scada.sec.callback.CallbackHandler;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.ca.data.ConfigurationInformation;
-import org.openscada.ca.data.DiffEntry;
-import org.openscada.ca.data.FactoryInformation;
-import org.openscada.core.data.OperationParameters;
 
 public interface Connection extends org.openscada.core.client.Connection
 {

@@ -22,9 +22,9 @@ package org.openscada.ca;
 import java.util.Collection;
 import java.util.Map;
 
+import org.eclipse.scada.ca.data.DiffEntry;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.ca.data.DiffEntry;
 
 public interface ConfigurationAdministrator
 {

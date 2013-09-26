@@ -7,6 +7,7 @@ Bundle-Activator: org.openscada.da.datasource.average.Activator
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.core.data;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",
@@ -15,7 +16,6 @@ Import-Package: org.eclipse.scada.core;version="0.1.0",
  org.eclipse.scada.utils.osgi.pool;version="0.1.0",
  org.openscada.ca;version="1.0.0",
  org.openscada.ca.common.factory;version="1.0.0",
- org.openscada.core.data;version="1.0.0",
  org.openscada.core.subscription;version="1.0.0",
  org.openscada.da.client;version="1.0.0",
  org.openscada.da.core;version="1.0.0",

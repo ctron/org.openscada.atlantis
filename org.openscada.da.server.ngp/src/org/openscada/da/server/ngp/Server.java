@@ -23,10 +23,10 @@ import java.net.InetSocketAddress;
 import java.util.Collection;
 
 import org.apache.mina.core.session.IoSession;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.core.server.ngp.ServerBase;
 import org.openscada.core.server.ngp.ServerConnection;
 import org.openscada.da.core.server.Hive;
-import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 
 public class Server extends ServerBase
 {

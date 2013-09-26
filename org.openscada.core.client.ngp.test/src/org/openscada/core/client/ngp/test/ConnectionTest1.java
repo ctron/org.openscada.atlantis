@@ -24,12 +24,12 @@ package org.openscada.core.client.ngp.test;
 import org.eclipse.equinox.app.IApplication;
 import org.eclipse.equinox.app.IApplicationContext;
 import org.eclipse.scada.core.ConnectionInformation;
+import org.eclipse.scada.protocol.ngp.common.DefaultProtocolConfigurationFactory;
+import org.eclipse.scada.protocol.ngp.common.FilterChainBuilder;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfiguration;
+import org.eclipse.scada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.openscada.core.client.common.ClientBaseConnection;
 import org.openscada.core.client.ngp.ProtocolIoHandlerFactory;
-import org.openscada.protocol.ngp.common.DefaultProtocolConfigurationFactory;
-import org.openscada.protocol.ngp.common.FilterChainBuilder;
-import org.openscada.protocol.ngp.common.ProtocolConfiguration;
-import org.openscada.protocol.ngp.common.ProtocolConfigurationFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

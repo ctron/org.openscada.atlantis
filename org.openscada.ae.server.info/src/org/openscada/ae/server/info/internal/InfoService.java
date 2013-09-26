@@ -29,14 +29,14 @@ import java.util.Properties;
 import java.util.concurrent.Executor;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.eclipse.scada.ae.data.MonitorStatus;
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.osgi.pool.AllObjectPoolServiceTracker;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolImpl;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolListener;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
-import org.openscada.ae.data.MonitorStatus;
-import org.openscada.ae.data.MonitorStatusInformation;
 import org.openscada.ae.monitor.MonitorListener;
 import org.openscada.ae.monitor.MonitorService;
 import org.openscada.da.client.DataItemValue;

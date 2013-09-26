@@ -24,9 +24,9 @@ package org.openscada.da.client.net.operations;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.data.OperationParameters;
 import org.eclipse.scada.utils.exec.LongRunningListener;
 import org.eclipse.scada.utils.exec.LongRunningOperation;
-import org.openscada.core.data.OperationParameters;
 import org.openscada.da.net.handler.Messages;
 import org.openscada.da.net.handler.WriteAttributesOperation;
 import org.openscada.net.base.LongRunningController;

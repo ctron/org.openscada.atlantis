@@ -21,7 +21,7 @@ package org.openscada.da.core;
 
 import java.util.Set;
 
-import org.openscada.da.data.IODirection;
+import org.eclipse.scada.da.data.IODirection;
 
 /**
  * Data item information

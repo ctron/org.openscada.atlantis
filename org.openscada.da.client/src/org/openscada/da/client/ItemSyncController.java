@@ -25,7 +25,7 @@ import java.util.Map;
 
 import org.eclipse.scada.core.AttributesHelper;
 import org.eclipse.scada.core.Variant;
-import org.openscada.core.data.SubscriptionState;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

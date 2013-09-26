@@ -23,11 +23,11 @@ package org.openscada.da.server.osgi.modbus;
 
 import java.util.concurrent.Executor;
 
+import org.eclipse.scada.protocol.modbus.message.ErrorResponse;
+import org.eclipse.scada.protocol.modbus.message.ReadResponse;
+import org.eclipse.scada.protocol.modbus.message.WriteDataRequest;
+import org.eclipse.scada.protocol.modbus.message.WriteSingleCoilRequest;
 import org.openscada.da.server.common.memory.AbstractRequestBlock;
-import org.openscada.protocol.modbus.message.ErrorResponse;
-import org.openscada.protocol.modbus.message.ReadResponse;
-import org.openscada.protocol.modbus.message.WriteDataRequest;
-import org.openscada.protocol.modbus.message.WriteSingleCoilRequest;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

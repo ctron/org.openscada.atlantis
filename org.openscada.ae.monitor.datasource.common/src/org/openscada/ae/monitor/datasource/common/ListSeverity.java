@@ -1,6 +1,6 @@
 package org.openscada.ae.monitor.datasource.common;
 
-import org.openscada.ae.data.Severity;
+import org.eclipse.scada.ae.data.Severity;
 
 public enum ListSeverity
 {

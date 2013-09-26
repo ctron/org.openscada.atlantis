@@ -20,16 +20,16 @@ Export-Package: org.openscada.da.server.test;version="1.2.0";uses:="org.openscad
  org.openscada.da.server.test.utils;version="1.2.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.core.data;version="0.1.0",
+ org.eclipse.scada.da.data;version="0.1.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.collection;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",
- org.openscada.core.data;version="1.0.0",
  org.openscada.core.server;version="1.0.0",
  org.openscada.core.server.common;version="1.0.0",
  org.openscada.core.server.common.session;version="1.0.0",
  org.openscada.da.core;version="1.0.0",
  org.openscada.da.core.server;version="1.0.0",
- org.openscada.da.data;version="1.0.0",
  org.openscada.da.server.browser.common;version="1.2.0",
  org.openscada.da.server.browser.common.query;version="1.2.0",
  org.openscada.da.server.common;version="1.2.0",

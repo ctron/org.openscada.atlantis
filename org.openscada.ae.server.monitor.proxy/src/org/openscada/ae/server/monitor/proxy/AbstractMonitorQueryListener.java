@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.locks.Lock;
 
-import org.openscada.ae.data.MonitorStatusInformation;
+import org.eclipse.scada.ae.data.MonitorStatusInformation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -21,9 +21,9 @@ package org.openscada.hd.testing;
 
 import java.util.Calendar;
 
+import org.eclipse.scada.hd.data.ValueInformation;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openscada.hd.data.ValueInformation;
 
 public class ValueInformationTest
 {

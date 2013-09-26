@@ -19,7 +19,7 @@
 
 package org.openscada.core.subscription;
 
-import org.openscada.core.data.SubscriptionState;
+import org.eclipse.scada.core.data.SubscriptionState;
 
 /**
  * A basic subscription listener that acts as a base interface for all

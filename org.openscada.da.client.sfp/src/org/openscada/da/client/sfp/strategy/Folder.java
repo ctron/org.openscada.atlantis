@@ -32,10 +32,10 @@ import java.util.Stack;
 import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.data.IODirection;
 import org.openscada.da.client.FolderListener;
 import org.openscada.da.core.Location;
 import org.openscada.da.core.browser.DataItemEntry;
-import org.openscada.da.data.IODirection;
 
 public class Folder
 {

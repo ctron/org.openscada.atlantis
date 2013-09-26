@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.VariantEditor;
+import org.eclipse.scada.core.data.SubscriptionState;
 import org.eclipse.scada.sec.UserInformation;
 import org.eclipse.scada.utils.osgi.pool.ObjectPoolTracker;
 import org.openscada.ae.Event;
@@ -35,7 +36,6 @@ import org.openscada.ae.Event.Fields;
 import org.openscada.ae.event.EventProcessor;
 import org.openscada.ca.ConfigurationAdministrator;
 import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.core.data.SubscriptionState;
 import org.openscada.core.server.OperationParameters;
 import org.openscada.da.client.DataItemValue;
 import org.openscada.da.client.DataItemValue.Builder;

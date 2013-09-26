@@ -25,9 +25,9 @@ import java.util.concurrent.TimeoutException;
 
 import javax.jws.WebService;
 
-import org.openscada.ca.data.ConfigurationInformation;
-import org.openscada.ca.data.DiffEntry;
-import org.openscada.ca.data.FactoryInformation;
+import org.eclipse.scada.ca.data.ConfigurationInformation;
+import org.eclipse.scada.ca.data.DiffEntry;
+import org.eclipse.scada.ca.data.FactoryInformation;
 
 @WebService
 public interface RemoteConfigurationAdministrator
