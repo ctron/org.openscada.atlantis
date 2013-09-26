@@ -13,7 +13,7 @@
    </license>
 
    <requires>
-      <import feature="org.eclipse.scada.external" version="1.1.0.qualifier"/>
+      <import feature="org.openscada.external" version="1.2.0.qualifier"/>
       <import plugin="org.eclipse.osgi"/>
       <import feature="org.eclipse.scada.sec" version="0.1.0.qualifier"/>
    </requires>

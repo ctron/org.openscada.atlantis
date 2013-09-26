@@ -1,7 +1,7 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
-Bundle-SymbolicName: org.eclipse.scada.da.server.opc.tests;singleton:=true
+Bundle-SymbolicName: org.openscada.da.server.opc.tests;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
@@ -9,7 +9,7 @@ Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Export-Package: org.openscada.da.opc.configuration.tests;version="1.2.0";uses:="junit.framework,org.eclipse.emf.common.util"
 Require-Bundle: org.eclipse.core.runtime,
- org.eclipse.scada.da.server.opc;bundle-version="1.2.0";visibility:=reexport,
+ org.openscada.da.server.opc;bundle-version="1.2.0";visibility:=reexport,
  org.eclipse.emf.ecore.xmi;visibility:=reexport,
  org.junit;visibility:=reexport
 Bundle-ActivationPolicy: lazy
