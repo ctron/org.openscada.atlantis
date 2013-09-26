@@ -1,0 +1,12 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: openSCADA HD Server Base
+Bundle-SymbolicName: org.eclipse.scada.hd.server.exporter
+Bundle-Version: 1.0.0.qualifier
+Bundle-Vendor: openSCADA.org
+Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Import-Package: org.eclipse.scada.core,
+ org.eclipse.scada.utils.lifecycle,
+ org.openscada.core.server;version="1.0.0",
+ org.openscada.hd.server;version="1.0.0"
+Export-Package: org.openscada.hd.server.exporter;version="1.0.0";uses:="org.openscada.hd.server,org.openscada.core,org.openscada.utils.lifecycle"

@@ -100,240 +100,240 @@
 
     <!-- OpenSCADA Core -->
   	
-  	<openscada.builder.copyFeature id="org.openscada.core"/>
+  	<openscada.builder.copyFeature id="org.eclipse.scada.core"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.core.subscription"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.subscription"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.core.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.client.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.server"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.server.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.client"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.client.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.server"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.server.common"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.net"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.core.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.server.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.client.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.server.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.client.net"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.core.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.server.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.core.client.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.server.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.client.ngp"/>
   	
-	<openscada.builder.copyPlugin id="org.openscada.core.server.exporter"/>
+	<openscada.builder.copyPlugin id="org.eclipse.scada.core.server.exporter"/>
   	
   	<!-- OpenSCADA DA -->
   	
-  	<openscada.builder.copyFeature id="org.openscada.da"/>
-  	<openscada.builder.copyFeature id="org.openscada.da.sdk"/>
+  	<openscada.builder.copyFeature id="org.eclipse.scada.da"/>
+  	<openscada.builder.copyFeature id="org.eclipse.scada.da.sdk"/>
 
-  	<openscada.builder.copyPlugin id="org.openscada.da.core.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.core.server"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.common.osgi"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.core.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.core.server"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.client"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.client.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.common.osgi"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.net"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.io.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.io.common"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.common.io"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.common.memory"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.test"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.sysinfo"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.stock"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.jdbc"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.proxy"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.dave" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exec" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.arduino"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.modbus"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.modbus"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.common.io"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.common.memory"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.test"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.sysinfo"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.stock"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.jdbc"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.proxy"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.snmp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.dave" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.exec" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.opc"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.arduino"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.modbus"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.osgi.modbus"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.simulation.component" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.simulation.component" />
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.exporter"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.summary"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.testing"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.osgi.exporter.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.osgi"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.osgi.summary"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.osgi.testing"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.osgi.exporter.net"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.component.script"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.component.script"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.utils.daemon"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.utils.daemon"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.mapper"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.mapper.osgi"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.master.mapper"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.mapper"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.mapper.osgi"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.master.mapper"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.common.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exporter.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.common.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.client.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.exporter.ngp"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.sfp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.client.sfp"/>
   	
   	<!-- OpenSCADA HD -->
   	
-  	<openscada.builder.copyFeature id="org.openscada.hd"/>
+  	<openscada.builder.copyFeature id="org.eclipse.scada.hd"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.hd"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.client.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.client.common"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.common.item"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.common.item"/>
 
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.exporter"/>
 	
-  	<openscada.builder.copyPlugin id="org.openscada.hd.common.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.client.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.common.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.client.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.exporter.ngp"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.hd.net"/>
-	<openscada.builder.copyPlugin id="org.openscada.hd.server.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.client.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.exporter.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.net"/>
+	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.client.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.exporter.net"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.hds"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.master.hds"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.storage.slave.hds"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.proxy"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.storage.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.storage.hds"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.storage.master.hds"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.storage.slave.hds"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.proxy"/>
   	
-	<openscada.builder.copyPlugin id="org.openscada.hd.exporter.http"/>
-	<openscada.builder.copyPlugin id="org.openscada.hd.exporter.http.server"/>
+	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.exporter.http"/>
+	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.exporter.http.server"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.hd.server.importer.hsdb"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.importer.hsdb"/>
   	
   	<!-- OpenSCADA AE -->
   	
-  	<openscada.builder.copyFeature id="org.openscada.ae"/>
+  	<openscada.builder.copyFeature id="org.eclipse.scada.ae"/>
   	  	
-  	<openscada.builder.copyPlugin id="org.openscada.ae"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.filter"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.client.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.filter"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.client.net"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.common.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.client.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.ngp"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.common.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.client.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.exporter.ngp"/>
   	
-	<openscada.builder.copyPlugin id="org.openscada.ae.connection.provider"/>
+	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.connection.provider"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.event"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.event.logger"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.event"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.event.logger"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.monitor"/>
-	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.monitor"/>
+	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.monitor.common"/>
   	
-	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.script"/>
+	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.monitor.script"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.datasource"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.monitor.datasource.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.monitor.datasource"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.monitor.datasource.common"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.utils"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.utils"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.slave.pull"/>
-    <openscada.builder.copyPlugin id="org.openscada.ae.slave.inject"/>
-    <openscada.builder.copyPlugin id="org.openscada.ae.slave.inject.postgres"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.slave.pull"/>
+    <openscada.builder.copyPlugin id="org.eclipse.scada.ae.slave.inject"/>
+    <openscada.builder.copyPlugin id="org.eclipse.scada.ae.slave.inject.postgres"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.common"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.common.monitor"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.common.event"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.exporter.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.net"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.jdbc"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.storage.memory"/>
-    <openscada.builder.copyPlugin id="org.openscada.ae.server.storage.postgres"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.common"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.common.monitor"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.common.event"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.exporter"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.exporter.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.net"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.storage"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.storage.jdbc"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.storage.memory"/>
+    <openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.storage.postgres"/>
   		
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.event.proxy"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.monitor.proxy"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.akn.proxy"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.event.proxy"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.monitor.proxy"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.akn.proxy"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.http"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.server.info"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.http"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.info"/>
   	
   	<!-- OpenSCADA CA -->
 
-  	<openscada.builder.copyFeature id="org.openscada.ca" />
+  	<openscada.builder.copyFeature id="org.eclipse.scada.ca" />
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ca.client"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ca.client.ngp"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.client"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.client.ngp"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ca.connection.provider"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.connection.provider"/>
 
-  	<openscada.builder.copyPlugin id="org.openscada.ca" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.servlet" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.servlet.jaxws" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.common" />
-	<openscada.builder.copyPlugin id="org.openscada.ca.console" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.oscar" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.servlet" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.servlet.jaxws" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.common" />
+	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.console" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.oscar" />
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ca.file" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.jdbc" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.file" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.jdbc" />
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ca.common.ngp" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.common.ngp" />
   	
-  	<openscada.builder.copyPlugin id="org.openscada.ca.server" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.server.osgi" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.server.ngp" />
-  	<openscada.builder.copyPlugin id="org.openscada.ca.server.exporter.ngp" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.server" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.server.osgi" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.server.ngp" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ca.server.exporter.ngp" />
   	
   	<!-- SEC stuff for Master -->
   	
-  	<openscada.builder.copyPlugin id="org.openscada.sec.osgi.manager" />
-  	<openscada.builder.copyPlugin id="org.openscada.sec.provider.script" />
-  	<openscada.builder.copyPlugin id="org.openscada.sec.provider.jdbc" />
-  	<openscada.builder.copyPlugin id="org.openscada.sec.authz.signature" />
-  	<openscada.builder.copyPlugin id="org.openscada.sec.audit.log.ae" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.sec.osgi.manager" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.sec.provider.script" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.sec.provider.jdbc" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.sec.authz.signature" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.sec.audit.log.ae" />
   	
   	<!-- Additional stuff -->
   	
-  	<openscada.builder.copyPlugin id="org.openscada.core.client.connection.service"/>
-  	<openscada.builder.copyPlugin id="org.openscada.ae.client.connection.service"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.client.connection.service"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.client.connection.service"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.client.connection.service"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.client.connection.service"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.client.connection.service"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.client.connection.service"/>
   	
-  	<openscada.builder.copyPlugin id="org.openscada.core.connection.provider"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.connection.provider"/>
-  	<openscada.builder.copyPlugin id="org.openscada.hd.connection.provider"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.core.connection.provider"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.connection.provider"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.connection.provider"/>
   		
-  	<openscada.builder.copyPlugin id="org.openscada.da.master" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.master.analyzer"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.master.common" />
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.memory"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.sum"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.proxy"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.item"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.script"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.ds"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.formula"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.average"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.movingaverage"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.datasource.constant"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.master" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.master.analyzer"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.master.common" />
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.memory"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.sum"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.proxy"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.item"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.script"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.ds"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.formula"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.average"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.movingaverage"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.datasource.constant"/>
   	
-  	<openscada.builder.copyFeature id="org.openscada.atlantis" />
-  	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk" />
+  	<openscada.builder.copyFeature id="org.eclipse.scada.atlantis" />
+  	<openscada.builder.copyFeature id="org.eclipse.scada.atlantis.sdk" />
   	
   	<!-- editors -->
 	
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.common.edit"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.common.editor"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exec.edit"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.exec.editor"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc.edit"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc.editor"/>
-	<openscada.builder.copyPlugin id="org.openscada.da.server.modbus.edit"/>
-  	<openscada.builder.copyPlugin id="org.openscada.da.server.modbus.editor"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.common.edit"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.common.editor"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.exec.edit"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.exec.editor"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.opc.edit"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.opc.editor"/>
+	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.modbus.edit"/>
+  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.modbus.editor"/>
   	
   </target>
 
@@ -367,8 +367,8 @@
   <!-- ===================================================================== -->
   <target name="preProcess">
 	<property file="${buildDirectory}/finalFeaturesVersions.properties"/>
-  	<echo message="Setting about versions: ${org.openscada.atlantis}"/>
-  	<replace dir="${buildDirectory}/plugins" value="${org.openscada.atlantis}">
+  	<echo message="Setting about versions: ${org.eclipse.scada.atlantis}"/>
+  	<replace dir="${buildDirectory}/plugins" value="${org.eclipse.scada.atlantis}">
   		<include name="**/about.mappings"/>
   		<replacetoken>@@VERSION@@</replacetoken>
   	</replace>
@@ -409,7 +409,7 @@
   <!-- ===================================================================== -->
   <target name="postBuild">
     <antcall target="gatherLogs" />
-  	<openscada.deploy.repository name="org.openscada.atlantis.sdk"/>
+  	<openscada.deploy.repository name="org.eclipse.scada.atlantis.sdk"/>
   </target>
 
   <!-- ===================================================================== -->

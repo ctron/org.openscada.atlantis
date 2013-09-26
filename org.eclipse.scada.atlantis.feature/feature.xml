@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<feature
+      id="org.openscada.atlantis"
+      label="%featureName"
+      version="1.2.0.qualifier"
+      provider-name="openSCADA.org">
+
+   <description>
+      The openSCADA Atlantis Project
+   </description>
+
+   <copyright>
+      %copyright
+   </copyright>
+
+   <license url="http://opensource.org/licenses/lgpl-3.0.html">
+      %license
+   </license>
+
+   <includes
+         id="org.eclipse.scada.ae"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.scada.da"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.scada.core"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.scada.hd"
+         version="0.0.0"/>
+
+   <includes
+         id="org.eclipse.scada.ca"
+         version="0.0.0"/>
+
+   <requires>
+      <import plugin="org.eclipse.osgi"/>
+      <import feature="org.openscada.external" version="1.2.0.qualifier"/>
+      <import feature="org.eclipse.scada.protocols" version="0.1.0.qualifier"/>
+      <import feature="org.openscada.utgard" version="1.2.0.qualifier"/>
+      <import plugin="org.slf4j.api"/>
+      <import feature="org.eclipse.scada.base" version="0.1.0.qualifier"/>
+      <import feature="org.eclipse.scada.utils" version="0.1.0.qualifier"/>
+   </requires>
+
+   <plugin
+         id="org.openscada.net"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.sec.provider.jdbc"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.sec.provider.script"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.sec.authz.signature"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"/>
+
+   <plugin
+         id="org.openscada.sec.osgi.manager"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.sec.audit.log.ae"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+</feature>

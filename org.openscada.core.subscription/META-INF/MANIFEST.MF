@@ -1,9 +1,0 @@
-Manifest-Version: 1.0
-Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA Core Subscription
-Bundle-SymbolicName: org.openscada.core.subscription
-Bundle-Version: 1.0.0.qualifier
-Bundle-Vendor: openSCADA.org
-Export-Package: org.openscada.core.subscription;version="1.0.0"
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.eclipse.scada.core.data;version="0.1.0"
