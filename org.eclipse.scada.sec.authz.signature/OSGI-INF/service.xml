@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="org.openscada.sec.authz.signature">
-   <implementation class="org.openscada.sec.authz.signature.SignatureAuthorizationService"/>
+<scr:component xmlns:scr="http://www.osgi.org/xmlns/scr/v1.1.0" activate="activate" name="org.eclipse.scada.sec.authz.signature">
+   <implementation class="org.eclipse.scada.sec.authz.signature.SignatureAuthorizationService"/>
    <service>
       <provide interface="org.eclipse.scada.sec.AuthorizationService"/>
    </service>

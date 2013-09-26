@@ -8,7 +8,7 @@
     <relativePath>../builder_atlantis</relativePath>
   </parent>
   <groupId>org.openscada.atlantis</groupId>
-  <artifactId>org.openscada.da.server.common.memory</artifactId>
+  <artifactId>org.eclipse.scada.da.server.common.memory</artifactId>
   <version>0.1.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

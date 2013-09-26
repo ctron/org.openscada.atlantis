@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA HD Performance Test
 Bundle-SymbolicName: org.eclipse.scada.hd.perf.test;singleton:=true
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.openscada.hd.perf.test.Activator
+Bundle-Activator: org.eclipse.scada.hd.perf.test.Activator
 Bundle-Vendor: openSCADA.org
 Require-Bundle: org.eclipse.ui,
  org.eclipse.core.runtime,

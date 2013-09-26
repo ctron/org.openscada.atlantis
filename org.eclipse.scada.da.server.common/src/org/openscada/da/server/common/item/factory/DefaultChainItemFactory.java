@@ -21,7 +21,7 @@
 
 package org.openscada.da.server.common.item.factory;
 
-import org.openscada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.chain.DataItemBaseChained;
 import org.openscada.da.server.common.chain.DataItemInputChained;
 import org.openscada.da.server.common.chain.WriteHandler;

@@ -22,8 +22,8 @@ package org.openscada.da.server.common.impl;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.core.subscription.SubscriptionListener;
-import org.openscada.da.core.server.ItemChangeListener;
+import org.eclipse.scada.core.subscription.SubscriptionListener;
+import org.eclipse.scada.da.core.server.ItemChangeListener;
 import org.openscada.da.server.common.DataItem;
 
 /**

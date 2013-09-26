@@ -20,8 +20,8 @@
 package org.openscada.da.server.common.impl.stats;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.da.core.server.Session;
+import org.eclipse.scada.core.server.common.session.AbstractSessionImpl;
+import org.eclipse.scada.da.core.server.Session;
 import org.openscada.da.server.common.DataItem;
 
 public interface HiveEventListener

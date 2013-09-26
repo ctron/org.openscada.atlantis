@@ -26,14 +26,14 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.server.OperationParameters;
+import org.eclipse.scada.da.core.DataItemInformation;
+import org.eclipse.scada.da.core.WriteAttributeResults;
+import org.eclipse.scada.da.core.WriteResult;
 import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.utils.concurrent.DirectExecutor;
 import org.eclipse.scada.utils.concurrent.InstantFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.core.server.OperationParameters;
-import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.core.WriteResult;
 import org.openscada.da.server.common.AttributeMode;
 import org.openscada.da.server.common.DataItemInformationBase;
 

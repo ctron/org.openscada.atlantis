@@ -27,14 +27,14 @@ import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-import org.openscada.ae.Event;
-import org.openscada.ae.event.EventListener;
-import org.openscada.ae.event.EventManager;
-import org.openscada.ae.filter.EventMatcher;
-import org.openscada.ae.filter.internal.EventMatcherImpl;
-import org.openscada.ae.server.common.event.AbstractEventQueryImpl;
-import org.openscada.ae.server.storage.Query;
-import org.openscada.ae.server.storage.Storage;
+import org.eclipse.scada.ae.Event;
+import org.eclipse.scada.ae.event.EventListener;
+import org.eclipse.scada.ae.event.EventManager;
+import org.eclipse.scada.ae.filter.EventMatcher;
+import org.eclipse.scada.ae.filter.internal.EventMatcherImpl;
+import org.eclipse.scada.ae.server.common.event.AbstractEventQueryImpl;
+import org.eclipse.scada.ae.server.storage.Query;
+import org.eclipse.scada.ae.server.storage.Storage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -45,7 +45,7 @@ public class EventPoolImpl extends AbstractEventQueryImpl implements EventListen
 {
     private final static Logger logger = LoggerFactory.getLogger ( EventPoolImpl.class );
 
-    private final static int daysToRetrieve = Integer.getInteger ( "org.openscada.ae.common.event.pool.daysToRetrieve", 90 );
+    private final static int daysToRetrieve = Integer.getInteger ( "org.eclipse.scada.ae.common.event.pool.daysToRetrieve", 90 );
 
     private static final String isoDatePattern = "yyyy-MM-dd HH:mm:ss.SSS";
 
@@ -132,7 +132,7 @@ public class EventPoolImpl extends AbstractEventQueryImpl implements EventListen
                         final UnmodifiableIterator<List<Event>> it = Iterators.partition ( this.events.iterator (), chunkSize );
                         while ( it.hasNext () )
                         {
-                            final List<org.openscada.ae.Event> chunk = it.next ();
+                            final List<org.eclipse.scada.ae.Event> chunk = it.next ();
                             notifyEvent ( chunk );
                         }
                     }

@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.codec.test;
+package org.eclipse.scada.net.codec.test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -25,8 +25,8 @@ import java.util.Iterator;
 import java.util.List;
 
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
-import org.openscada.net.mina.GMPPProtocolDecoder;
-import org.openscada.net.mina.GMPPProtocolEncoder;
+import org.eclipse.scada.net.mina.GMPPProtocolDecoder;
+import org.eclipse.scada.net.mina.GMPPProtocolEncoder;
 
 public class InputStreamTestImpl
 {

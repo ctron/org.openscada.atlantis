@@ -10,7 +10,7 @@
       <!-- @generated exporter -->
       <package
             uri="http://openscada.org/DA/Server/Exporter"
-            class="org.openscada.da.server.exporter.ExporterPackage"
+            class="org.eclipse.scada.da.server.exporter.ExporterPackage"
             genModel="model/exporter.genmodel"/>
    </extension>
 
@@ -18,7 +18,7 @@
       <!-- @generated exporter -->
       <parser
             type="xml"
-            class="org.openscada.da.server.exporter.util.ExporterResourceFactoryImpl"/>
+            class="org.eclipse.scada.da.server.exporter.util.ExporterResourceFactoryImpl"/>
    </extension>
    <extension
          point="org.eclipse.wst.xml.core.catalogContributions">

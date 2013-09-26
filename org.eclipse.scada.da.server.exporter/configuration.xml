@@ -136,7 +136,7 @@
 		<exporter:export uri="da:ice://hive?hive=tcp+-p+10002" />
 	</exporter:hive>
 	
-	<exporter:hive ref="classpath:beans.xml#hive" factory="org.openscada.da.server.exporter.spring.SpringHiveFactory">
+	<exporter:hive ref="classpath:beans.xml#hive" factory="org.eclipse.scada.da.server.exporter.spring.SpringHiveFactory">
 		<exporter:export uri="da:net://0.0.0.0:1205"/>
 	</exporter:hive>
 	

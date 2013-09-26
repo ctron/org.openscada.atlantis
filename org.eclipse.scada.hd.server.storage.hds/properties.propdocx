@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <properties:properties xmlns:properties="urn:openscada:doc:content:properties">
-  <properties:groups properties:prefix="org.openscada.hd.server.storage.hds">
-    <properties:properties properties:name="org.openscada.hd.server.storage.hds.coreQueryThread" properties:dataType="INTEGER" properties:shortDescription="The number of query threads. Stick with one!">
+  <properties:groups properties:prefix="org.eclipse.scada.hd.server.storage.hds">
+    <properties:properties properties:name="org.eclipse.scada.hd.server.storage.hds.coreQueryThread" properties:dataType="INTEGER" properties:shortDescription="The number of query threads. Stick with one!">
       <properties:defaultValue>1</properties:defaultValue>
     </properties:properties>
   </properties:groups>

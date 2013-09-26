@@ -22,7 +22,7 @@ package org.openscada.da.server.common;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.da.core.server.ItemChangeListener;
+import org.eclipse.scada.da.core.server.ItemChangeListener;
 
 /**
  * A listener for internal data item changes

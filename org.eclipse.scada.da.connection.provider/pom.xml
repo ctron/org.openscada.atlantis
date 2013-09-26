@@ -7,7 +7,7 @@
     <relativePath>../builder_atlantis</relativePath>
   </parent>
   <groupId>org.openscada.atlantis</groupId>
-  <artifactId>org.openscada.da.connection.provider</artifactId>
+  <artifactId>org.eclipse.scada.da.connection.provider</artifactId>
   <version>1.2.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

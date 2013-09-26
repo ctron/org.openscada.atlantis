@@ -10,7 +10,7 @@
       <!-- @generated modbus -->
       <package
             uri="http://openscada.org/DA/Modbus/Configuration"
-            class="org.openscada.da.modbus.configuration.ConfigurationPackage"
+            class="org.eclipse.scada.da.modbus.configuration.ConfigurationPackage"
             genModel="model/modbus.genmodel"/>
    </extension>
 
@@ -18,7 +18,7 @@
       <!-- @generated modbus -->
       <parser
             type="configuration"
-            class="org.openscada.da.modbus.configuration.util.ConfigurationResourceFactoryImpl"/>
+            class="org.eclipse.scada.da.modbus.configuration.util.ConfigurationResourceFactoryImpl"/>
    </extension>
 
 </plugin>

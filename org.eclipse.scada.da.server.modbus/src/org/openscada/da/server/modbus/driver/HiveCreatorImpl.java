@@ -20,9 +20,9 @@
 
 package org.openscada.da.server.modbus.driver;
 
-import org.openscada.da.core.server.Hive;
-import org.openscada.da.core.server.HiveCreator;
-import org.openscada.da.modbus.configuration.RootType;
+import org.eclipse.scada.da.core.server.Hive;
+import org.eclipse.scada.da.core.server.HiveCreator;
+import org.eclipse.scada.da.modbus.configuration.RootType;
 
 public class HiveCreatorImpl implements HiveCreator
 {

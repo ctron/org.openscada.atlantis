@@ -1,13 +1,13 @@
 /**
  * 
  */
-package org.openscada.da.server.proxy;
+package org.eclipse.scada.da.server.proxy;
 
 import java.util.concurrent.Callable;
 
-import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.da.server.proxy.item.ProxyValueHolder;
-import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
+import org.eclipse.scada.core.subscription.SubscriptionState;
+import org.eclipse.scada.da.server.proxy.item.ProxyValueHolder;
+import org.eclipse.scada.da.server.proxy.utils.ProxySubConnectionId;
 
 final class SubscriptionChanger implements Callable<Object>
 {

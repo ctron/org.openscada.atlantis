@@ -35,7 +35,7 @@ import java.util.concurrent.atomic.AtomicReference;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
 import org.apache.mina.transport.socket.SocketConnector;
-import org.openscada.da.server.io.common.StreamBaseDevice;
+import org.eclipse.scada.da.server.io.common.StreamBaseDevice;
 import org.openscada.da.server.modbus.io.ModbusRtuCodecFactory;
 import org.openscada.da.server.modbus.io.ModbusTcpCodecFactory;
 import org.openscada.da.server.modbus.io.ResetableCodecFactory;

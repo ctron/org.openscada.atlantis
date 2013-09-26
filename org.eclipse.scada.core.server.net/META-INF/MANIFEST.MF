@@ -4,7 +4,7 @@ Bundle-Name: openSCADA Core Server NET
 Bundle-SymbolicName: org.eclipse.scada.core.server.net
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.openscada.core.server.net;version="1.1.0";
+Export-Package: org.eclipse.scada.core.server.net;version="1.1.0";
   uses:="org.apache.mina.core.session,
    org.openscada.net.base,
    org.apache.mina.handler.multiton,
@@ -18,12 +18,12 @@ Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
  org.apache.mina.handler.multiton;version="2.0.0",
  org.eclipse.scada.core;version="0.1.0",
  org.eclipse.scada.core.info;version="0.1.0",
- org.openscada.core.net;version="1.0.0",
- org.openscada.core.server.common;version="1.1.0",
- org.openscada.core.server.common.stats;version="1.0.0",
- org.openscada.core.server.net;version="1.0.0",
- org.openscada.net;version="1.0.0",
- org.openscada.net.base;version="1.0.0",
- org.openscada.net.base.data;version="1.0.0",
- org.openscada.net.mina;version="1.0.0",
+ org.eclipse.scada.core.net;version="1.0.0",
+ org.eclipse.scada.core.server.common;version="1.1.0",
+ org.eclipse.scada.core.server.common.stats;version="1.0.0",
+ org.eclipse.scada.core.server.net;version="1.0.0",
+ org.eclipse.scada.net;version="1.0.0",
+ org.eclipse.scada.net.base;version="1.0.0",
+ org.eclipse.scada.net.base.data;version="1.0.0",
+ org.eclipse.scada.net.mina;version="1.0.0",
  org.slf4j;version="1.5.0"

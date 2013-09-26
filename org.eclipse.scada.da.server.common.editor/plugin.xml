@@ -29,9 +29,9 @@
             id="org.eclipse.emf.ecore.Wizard.category.ID"
             name="%_UI_Wizard_category"/>
       <wizard
-            id="org.openscada.common.presentation.CommonModelWizardID"
+            id="org.eclipse.scada.common.presentation.CommonModelWizardID"
             name="%_UI_CommonModelWizard_label"
-            class="org.openscada.common.presentation.CommonModelWizard"
+            class="org.eclipse.scada.common.presentation.CommonModelWizard"
             category="org.eclipse.emf.ecore.Wizard.category.ID"
             icon="icons/full/obj16/CommonModelFile.gif">
          <description>%_UI_CommonModelWizard_description</description>
@@ -42,12 +42,12 @@
    <extension point="org.eclipse.ui.editors">
       <!-- @generated Common -->
       <editor
-            id="org.openscada.common.presentation.CommonEditorID"
+            id="org.eclipse.scada.common.presentation.CommonEditorID"
             name="%_UI_CommonEditor_label"
             icon="icons/full/obj16/CommonModelFile.gif"
             extensions="common"
-            class="org.openscada.common.presentation.CommonEditor"
-            contributorClass="org.openscada.common.presentation.CommonActionBarContributor">
+            class="org.eclipse.scada.common.presentation.CommonEditor"
+            contributorClass="org.eclipse.scada.common.presentation.CommonActionBarContributor">
       </editor>
    </extension>
 

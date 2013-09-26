@@ -22,10 +22,10 @@ package org.openscada.da.server.common;
 import java.util.EnumSet;
 import java.util.Set;
 
+import org.eclipse.scada.da.core.DataItemInformation;
 import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.utils.lang.Immutable;
 import org.eclipse.scada.utils.str.StringHelper;
-import org.openscada.da.core.DataItemInformation;
 
 /**
  * Default implementation of data {@link DataItemInformation}
@@ -33,7 +33,7 @@ import org.openscada.da.core.DataItemInformation;
  * @author Jens Reimann
  */
 @Immutable
-public class DataItemInformationBase implements org.openscada.da.core.DataItemInformation
+public class DataItemInformationBase implements org.eclipse.scada.da.core.DataItemInformation
 {
     private final String id;
 

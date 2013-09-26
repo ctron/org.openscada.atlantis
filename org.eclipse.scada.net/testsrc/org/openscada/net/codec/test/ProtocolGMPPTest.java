@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.codec.test;
+package org.eclipse.scada.net.codec.test;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -27,13 +27,13 @@ import org.apache.log4j.Logger;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.junit.Assert;
 import org.junit.Test;
-import org.openscada.net.base.data.DoubleValue;
-import org.openscada.net.base.data.ListValue;
-import org.openscada.net.base.data.LongValue;
-import org.openscada.net.base.data.Message;
-import org.openscada.net.base.data.StringValue;
-import org.openscada.net.mina.GMPPProtocolDecoder;
-import org.openscada.net.mina.GMPPProtocolEncoder;
+import org.eclipse.scada.net.base.data.DoubleValue;
+import org.eclipse.scada.net.base.data.ListValue;
+import org.eclipse.scada.net.base.data.LongValue;
+import org.eclipse.scada.net.base.data.Message;
+import org.eclipse.scada.net.base.data.StringValue;
+import org.eclipse.scada.net.mina.GMPPProtocolDecoder;
+import org.eclipse.scada.net.mina.GMPPProtocolEncoder;
 
 public class ProtocolGMPPTest
 {

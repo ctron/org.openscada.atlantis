@@ -17,7 +17,7 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.codec.test;
+package org.eclipse.scada.net.codec.test;
 
 import java.util.Collection;
 import java.util.Iterator;
@@ -29,8 +29,8 @@ import org.apache.mina.core.filterchain.IoFilter.NextFilter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
 import org.junit.Assert;
-import org.openscada.net.base.data.Message;
-import org.openscada.net.base.data.Value;
+import org.eclipse.scada.net.base.data.Message;
+import org.eclipse.scada.net.base.data.Value;
 
 public class InputAssertions implements ProtocolDecoderOutput
 {

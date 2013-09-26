@@ -27,8 +27,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.da.core.WriteAttributeResult;
-import org.openscada.da.core.WriteAttributeResults;
+import org.eclipse.scada.da.core.WriteAttributeResult;
+import org.eclipse.scada.da.core.WriteAttributeResults;
 
 public abstract class BaseChainItemCommon implements ChainItem
 {

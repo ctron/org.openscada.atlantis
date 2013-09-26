@@ -28,8 +28,8 @@ import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.AttributesHelper;
 import org.eclipse.scada.core.Variant;
-import org.openscada.core.subscription.SubscriptionInformation;
-import org.openscada.core.subscription.SubscriptionSource;
+import org.eclipse.scada.core.subscription.SubscriptionInformation;
+import org.eclipse.scada.core.subscription.SubscriptionSource;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ItemListener;
 import org.openscada.da.server.common.impl.stats.HiveEventListener;

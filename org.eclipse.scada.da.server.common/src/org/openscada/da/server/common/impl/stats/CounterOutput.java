@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.common.impl.stats;
 
-import org.openscada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.impl.HiveCommon;
 
 public interface CounterOutput

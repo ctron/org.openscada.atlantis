@@ -7,7 +7,7 @@
     <relativePath>../builder_atlantis</relativePath>
   </parent>
   <groupId>org.openscada.atlantis</groupId>
-  <artifactId>org.openscada.core.client</artifactId>
+  <artifactId>org.eclipse.scada.core.client</artifactId>
   <version>1.2.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

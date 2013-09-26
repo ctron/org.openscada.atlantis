@@ -40,6 +40,22 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
 import org.eclipse.scada.core.InvalidSessionException;
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.core.data.OperationParameters;
+import org.eclipse.scada.core.server.common.AuthorizationProvider;
+import org.eclipse.scada.core.server.common.AuthorizedOperation;
+import org.eclipse.scada.core.server.common.ServiceCommon;
+import org.eclipse.scada.core.server.common.session.AbstractSessionImpl;
+import org.eclipse.scada.core.subscription.SubscriptionListener;
+import org.eclipse.scada.core.subscription.SubscriptionManager;
+import org.eclipse.scada.core.subscription.SubscriptionValidator;
+import org.eclipse.scada.core.subscription.ValidationException;
+import org.eclipse.scada.da.core.WriteAttributeResults;
+import org.eclipse.scada.da.core.WriteResult;
+import org.eclipse.scada.da.core.server.Hive;
+import org.eclipse.scada.da.core.server.InvalidItemException;
+import org.eclipse.scada.da.core.server.Session;
+import org.eclipse.scada.da.core.server.browser.HiveBrowser;
+import org.eclipse.scada.da.server.browser.common.Folder;
+import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.eclipse.scada.sec.AuthorizationReply;
 import org.eclipse.scada.sec.AuthorizationRequest;
 import org.eclipse.scada.sec.AuthorizationResult;
@@ -51,22 +67,6 @@ import org.eclipse.scada.utils.concurrent.CallingFuture;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.core.server.common.AuthorizationProvider;
-import org.openscada.core.server.common.AuthorizedOperation;
-import org.openscada.core.server.common.ServiceCommon;
-import org.openscada.core.server.common.session.AbstractSessionImpl;
-import org.openscada.core.subscription.SubscriptionListener;
-import org.openscada.core.subscription.SubscriptionManager;
-import org.openscada.core.subscription.SubscriptionValidator;
-import org.openscada.core.subscription.ValidationException;
-import org.openscada.da.core.WriteAttributeResults;
-import org.openscada.da.core.WriteResult;
-import org.openscada.da.core.server.Hive;
-import org.openscada.da.core.server.InvalidItemException;
-import org.openscada.da.core.server.Session;
-import org.openscada.da.core.server.browser.HiveBrowser;
-import org.openscada.da.server.browser.common.Folder;
-import org.openscada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.ValidationStrategy;
 import org.openscada.da.server.common.factory.DataItemFactory;
@@ -329,7 +329,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
      * @throws InvalidSessionException
      *             in the case of an invalid session
      */
-    public SessionCommon validateSession ( final org.openscada.core.server.Session session ) throws InvalidSessionException
+    public SessionCommon validateSession ( final org.eclipse.scada.core.server.Session session ) throws InvalidSessionException
     {
         if ( ! ( session instanceof SessionCommon ) )
         {
@@ -656,7 +656,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         return new AuthorizedOperation<WriteAttributeResults, AbstractSessionImpl> ( this.authorizationProvider, sessionCommon, DATA_ITEM_OBJECT_TYPE, itemId, "WRITE_ATTRIBUTES", makeSetAttributesContext ( attributes ), operationParameters, sessionCommon.wrapCallbackHandler ( callbackHandler ), DEFAULT_RESULT ) {
 
             @Override
-            protected NotifyFuture<WriteAttributeResults> granted ( final org.openscada.core.server.OperationParameters effectiveOperationParameters )
+            protected NotifyFuture<WriteAttributeResults> granted ( final org.eclipse.scada.core.server.OperationParameters effectiveOperationParameters )
             {
                 return processWriteAttributes ( sessionCommon, itemId, attributes, effectiveOperationParameters );
             }
@@ -666,7 +666,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     /**
      * @since 1.1
      */
-    protected NotifyFuture<WriteAttributeResults> processWriteAttributes ( final SessionCommon session, final String itemId, final Map<String, Variant> attributes, final org.openscada.core.server.OperationParameters operationParameters )
+    protected NotifyFuture<WriteAttributeResults> processWriteAttributes ( final SessionCommon session, final String itemId, final Map<String, Variant> attributes, final org.eclipse.scada.core.server.OperationParameters operationParameters )
     {
         logger.debug ( "Process write attributes - itemId: {}, attributes: {}", itemId, attributes );
 
@@ -718,7 +718,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
         return new AuthorizedOperation<WriteResult, AbstractSessionImpl> ( this.authorizationProvider, sessionCommon, DATA_ITEM_OBJECT_TYPE, itemId, "WRITE", makeWriteValueContext ( value ), operationParameters, sessionCommon.wrapCallbackHandler ( callbackHandler ), DEFAULT_RESULT ) {
 
             @Override
-            protected NotifyFuture<WriteResult> granted ( final org.openscada.core.server.OperationParameters effectiveOperationParameters )
+            protected NotifyFuture<WriteResult> granted ( final org.eclipse.scada.core.server.OperationParameters effectiveOperationParameters )
             {
                 return processWrite ( sessionCommon, itemId, value, effectiveOperationParameters );
             }
@@ -728,7 +728,7 @@ public abstract class HiveCommon extends ServiceCommon<Session, SessionCommon> i
     /**
      * @since 1.1
      */
-    protected NotifyFuture<WriteResult> processWrite ( final SessionCommon session, final String itemId, final Variant value, final org.openscada.core.server.OperationParameters effectiveOperationParameters )
+    protected NotifyFuture<WriteResult> processWrite ( final SessionCommon session, final String itemId, final Variant value, final org.eclipse.scada.core.server.OperationParameters effectiveOperationParameters )
     {
         logger.debug ( "Processing write - granted - itemId: {}, value: {}", itemId, value );
 

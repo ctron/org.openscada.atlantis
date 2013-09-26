@@ -1,4 +1,4 @@
-package org.openscada.da.server.proxy;
+package org.eclipse.scada.da.server.proxy;
 
 import java.util.Arrays;
 import java.util.Collection;
@@ -11,11 +11,11 @@ import java.util.concurrent.Executors;
 
 import org.apache.log4j.Logger;
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.da.client.ItemUpdateListener;
-import org.openscada.da.server.proxy.item.ProxyValueHolder;
-import org.openscada.da.server.proxy.utils.ProxyPrefixName;
-import org.openscada.da.server.proxy.utils.ProxySubConnectionId;
+import org.eclipse.scada.core.subscription.SubscriptionState;
+import org.eclipse.scada.da.client.ItemUpdateListener;
+import org.eclipse.scada.da.server.proxy.item.ProxyValueHolder;
+import org.eclipse.scada.da.server.proxy.utils.ProxyPrefixName;
+import org.eclipse.scada.da.server.proxy.utils.ProxySubConnectionId;
 
 public class ApplicationRunner1
 {

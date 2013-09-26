@@ -1,4 +1,4 @@
-package org.openscada.da.server.proxy;
+package org.eclipse.scada.da.server.proxy;
 
 import java.util.Arrays;
 import java.util.Calendar;
@@ -8,8 +8,8 @@ import java.util.LinkedList;
 import java.util.Map;
 
 import org.openscada.core.Variant;
-import org.openscada.core.subscription.SubscriptionState;
-import org.openscada.da.client.ItemUpdateListener;
+import org.eclipse.scada.core.subscription.SubscriptionState;
+import org.eclipse.scada.da.client.ItemUpdateListener;
 
 public class RecordItemUpdateListener implements ItemUpdateListener
 {

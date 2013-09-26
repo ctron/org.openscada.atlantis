@@ -4,7 +4,7 @@ Bundle-Name: openSCADA Core NGP
 Bundle-SymbolicName: org.eclipse.scada.core.ngp
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.openscada.core.ngp;version="1.1.0"
+Export-Package: org.eclipse.scada.core.ngp;version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.core;version="0.1.0",
  org.eclipse.scada.core.data;version="0.1.0",

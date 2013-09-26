@@ -1,0 +1,216 @@
+/**
+ * This file is part of the openSCADA project
+ * 
+ * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
+ * 
+ * openSCADA is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Lesser General Public License version 3
+ * only, as published by the Free Software Foundation.
+ * 
+ * openSCADA is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Lesser General Public License version 3 for more details
+ * (a copy is included in the LICENSE file that accompanied this code).
+ * 
+ * You should have received a copy of the GNU Lesser General Public License
+ * version 3 along with openSCADA. If not, see
+ * <http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.
+ */
+package org.eclipse.scada.common;
+
+import org.eclipse.emf.ecore.EObject;
+
+/**
+ * <!-- begin-user-doc -->
+ * A representation of the model object '<em><b>Variant Type</b></em>'.
+ * <!-- end-user-doc -->
+ *
+ * <p>
+ * The following features are supported:
+ * <ul>
+ *   <li>{@link org.eclipse.scada.common.VariantType#getNull <em>Null</em>}</li>
+ *   <li>{@link org.eclipse.scada.common.VariantType#getString <em>String</em>}</li>
+ *   <li>{@link org.eclipse.scada.common.VariantType#getInt32 <em>Int32</em>}</li>
+ *   <li>{@link org.eclipse.scada.common.VariantType#getDouble <em>Double</em>}</li>
+ *   <li>{@link org.eclipse.scada.common.VariantType#getBoolean <em>Boolean</em>}</li>
+ *   <li>{@link org.eclipse.scada.common.VariantType#getInt64 <em>Int64</em>}</li>
+ * </ul>
+ * </p>
+ *
+ * @see org.eclipse.scada.common.CommonPackage#getVariantType()
+ * @model extendedMetaData="name='VariantType' kind='elementOnly'"
+ * @generated
+ */
+public interface VariantType extends EObject
+{
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License.";
+
+    /**
+     * Returns the value of the '<em><b>Null</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Null</em>' containment reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Null</em>' containment reference.
+     * @see #setNull(VariantNullType)
+     * @see org.eclipse.scada.common.CommonPackage#getVariantType_Null()
+     * @model containment="true"
+     *        extendedMetaData="kind='element' name='null'"
+     * @generated
+     */
+    VariantNullType getNull ();
+
+    /**
+     * Sets the value of the '{@link org.eclipse.scada.common.VariantType#getNull <em>Null</em>}' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Null</em>' containment reference.
+     * @see #getNull()
+     * @generated
+     */
+    void setNull ( VariantNullType value );
+
+    /**
+     * Returns the value of the '<em><b>String</b></em>' attribute.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>String</em>' attribute isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>String</em>' attribute.
+     * @see #setString(String)
+     * @see org.eclipse.scada.common.CommonPackage#getVariantType_String()
+     * @model dataType="org.eclipse.emf.ecore.xml.type.String"
+     *        extendedMetaData="kind='element' name='string'"
+     * @generated
+     */
+    String getString ();
+
+    /**
+     * Sets the value of the '{@link org.eclipse.scada.common.VariantType#getString <em>String</em>}' attribute.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>String</em>' attribute.
+     * @see #getString()
+     * @generated
+     */
+    void setString ( String value );
+
+    /**
+     * Returns the value of the '<em><b>Int32</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Int32</em>' containment reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Int32</em>' containment reference.
+     * @see #setInt32(VariantInt32Type)
+     * @see org.eclipse.scada.common.CommonPackage#getVariantType_Int32()
+     * @model containment="true"
+     *        extendedMetaData="kind='element' name='int32'"
+     * @generated
+     */
+    VariantInt32Type getInt32 ();
+
+    /**
+     * Sets the value of the '{@link org.eclipse.scada.common.VariantType#getInt32 <em>Int32</em>}' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Int32</em>' containment reference.
+     * @see #getInt32()
+     * @generated
+     */
+    void setInt32 ( VariantInt32Type value );
+
+    /**
+     * Returns the value of the '<em><b>Double</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Double</em>' containment reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Double</em>' containment reference.
+     * @see #setDouble(VariantDoubleType)
+     * @see org.eclipse.scada.common.CommonPackage#getVariantType_Double()
+     * @model containment="true"
+     *        extendedMetaData="kind='element' name='double'"
+     * @generated
+     */
+    VariantDoubleType getDouble ();
+
+    /**
+     * Sets the value of the '{@link org.eclipse.scada.common.VariantType#getDouble <em>Double</em>}' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Double</em>' containment reference.
+     * @see #getDouble()
+     * @generated
+     */
+    void setDouble ( VariantDoubleType value );
+
+    /**
+     * Returns the value of the '<em><b>Boolean</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Boolean</em>' containment reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Boolean</em>' containment reference.
+     * @see #setBoolean(VariantBooleanType)
+     * @see org.eclipse.scada.common.CommonPackage#getVariantType_Boolean()
+     * @model containment="true"
+     *        extendedMetaData="kind='element' name='boolean'"
+     * @generated
+     */
+    VariantBooleanType getBoolean ();
+
+    /**
+     * Sets the value of the '{@link org.eclipse.scada.common.VariantType#getBoolean <em>Boolean</em>}' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Boolean</em>' containment reference.
+     * @see #getBoolean()
+     * @generated
+     */
+    void setBoolean ( VariantBooleanType value );
+
+    /**
+     * Returns the value of the '<em><b>Int64</b></em>' containment reference.
+     * <!-- begin-user-doc -->
+     * <p>
+     * If the meaning of the '<em>Int64</em>' containment reference isn't clear,
+     * there really should be more of a description here...
+     * </p>
+     * <!-- end-user-doc -->
+     * @return the value of the '<em>Int64</em>' containment reference.
+     * @see #setInt64(VariantInt64Type)
+     * @see org.eclipse.scada.common.CommonPackage#getVariantType_Int64()
+     * @model containment="true"
+     *        extendedMetaData="kind='element' name='int64'"
+     * @generated
+     */
+    VariantInt64Type getInt64 ();
+
+    /**
+     * Sets the value of the '{@link org.eclipse.scada.common.VariantType#getInt64 <em>Int64</em>}' containment reference.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @param value the new value of the '<em>Int64</em>' containment reference.
+     * @see #getInt64()
+     * @generated
+     */
+    void setInt64 ( VariantInt64Type value );
+
+} // VariantType

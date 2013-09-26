@@ -20,7 +20,7 @@
 package org.openscada.da.server.common.impl;
 
 import org.eclipse.scada.core.ConnectionInformation;
-import org.openscada.da.core.server.Hive;
+import org.eclipse.scada.da.core.server.Hive;
 
 public abstract class ExporterBase implements HiveExporter
 {

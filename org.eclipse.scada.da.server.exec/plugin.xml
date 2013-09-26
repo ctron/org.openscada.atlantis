@@ -27,7 +27,7 @@
       <!-- @generated exec -->
       <package
             uri="http://openscada.org/DA/Exec/Configuration"
-            class="org.openscada.da.exec.configuration.ConfigurationPackage"
+            class="org.eclipse.scada.da.exec.configuration.ConfigurationPackage"
             genModel="model/exec.genmodel"/>
    </extension>
 
@@ -35,7 +35,7 @@
       <!-- @generated exec -->
       <parser
             type="configuration"
-            class="org.openscada.da.exec.configuration.util.ConfigurationResourceFactoryImpl"/>
+            class="org.eclipse.scada.da.exec.configuration.util.ConfigurationResourceFactoryImpl"/>
    </extension>
 
 </plugin>

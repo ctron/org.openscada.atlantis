@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <properties:properties xmlns:properties="urn:openscada:doc:content:properties">
-  <properties:groups properties:prefix="org.openscada.da.master">
-    <properties:properties properties:name="org.openscada.da.master.internal.masterItemLogSuppressProcess" properties:dataType="BOOLEAN">
+  <properties:groups properties:prefix="org.eclipse.scada.da.master">
+    <properties:properties properties:name="org.eclipse.scada.da.master.internal.masterItemLogSuppressProcess" properties:dataType="BOOLEAN">
       <properties:defaultValue>false</properties:defaultValue>
     </properties:properties>
   </properties:groups>

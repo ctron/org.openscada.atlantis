@@ -3,13 +3,13 @@ Bundle-ManifestVersion: 2
 Bundle-Name: Mqtt
 Bundle-SymbolicName: org.eclipse.scada.mqtt
 Bundle-Version: 1.0.0.qualifier
-Bundle-Activator: org.openscada.mqtt.Activator
+Bundle-Activator: org.eclipse.scada.mqtt.Activator
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: org.eclipse.paho.client.mqttv3,
- org.openscada.ca;version="1.0.0",
- org.openscada.ca.common.factory;version="1.0.0",
+ org.eclipse.scada.ca;version="1.0.0",
+ org.eclipse.scada.ca.common.factory;version="1.0.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",
  org.osgi.framework;version="1.3.0",
  org.slf4j;version="1.7.2"
-Export-Package: org.openscada.mqtt
+Export-Package: org.eclipse.scada.mqtt

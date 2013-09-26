@@ -22,7 +22,7 @@ package org.openscada.da.server.modbus;
 
 import java.util.Queue;
 
-import org.openscada.da.server.io.common.BaseDevice;
+import org.eclipse.scada.da.server.io.common.BaseDevice;
 import org.openscada.da.server.modbus.io.message.RequestWrapper;
 
 public interface Device extends BaseDevice

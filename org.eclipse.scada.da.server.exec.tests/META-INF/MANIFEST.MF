@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.exec.configuration.tests
+Export-Package: org.eclipse.scada.da.exec.configuration.tests
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.scada.da.server.exec;visibility:=reexport,
  org.eclipse.scada.da.server.common;visibility:=reexport,

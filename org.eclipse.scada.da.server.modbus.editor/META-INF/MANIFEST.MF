@@ -4,11 +4,11 @@ Bundle-Name: %pluginName
 Bundle-SymbolicName: org.eclipse.scada.da.server.modbus.editor;singleton:=true
 Bundle-Version: 1.2.0.qualifier
 Bundle-ClassPath: .
-Bundle-Activator: org.openscada.da.modbus.configuration.presentation.ModbusEditorPlugin$Implementation
+Bundle-Activator: org.eclipse.scada.da.modbus.configuration.presentation.ModbusEditorPlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Export-Package: org.openscada.da.modbus.configuration.presentation;version="1.2.0"
+Export-Package: org.eclipse.scada.da.modbus.configuration.presentation;version="1.2.0"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.core.resources;visibility:=reexport,
  org.eclipse.scada.da.server.modbus.edit;bundle-version="1.2.0";visibility:=reexport,

@@ -27,7 +27,7 @@
       <!-- @generated Common -->
       <factory
             uri="http://openscada.org/Common"
-            class="org.openscada.common.provider.CommonItemProviderAdapterFactory"
+            class="org.eclipse.scada.common.provider.CommonItemProviderAdapterFactory"
             supportedTypes=
               "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
                org.eclipse.emf.edit.provider.IStructuredItemContentProvider

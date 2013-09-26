@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <properties:properties xmlns:properties="urn:openscada:doc:content:properties">
-  <properties:groups properties:prefix="org.openscada.ae.slave.pull">
-    <properties:properties properties:name="org.openscada.ae.slave.pull.local.schema" properties:shortDescription="The schema name of the local schema for pulling in replicated events">
+  <properties:groups properties:prefix="org.eclipse.scada.ae.slave.pull">
+    <properties:properties properties:name="org.eclipse.scada.ae.slave.pull.local.schema" properties:shortDescription="The schema name of the local schema for pulling in replicated events">
       <properties:defaultValue></properties:defaultValue>
     </properties:properties>
   </properties:groups>

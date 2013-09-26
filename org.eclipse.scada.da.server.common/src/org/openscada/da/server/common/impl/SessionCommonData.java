@@ -24,7 +24,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-import org.openscada.da.core.Location;
+import org.eclipse.scada.da.core.Location;
 import org.openscada.da.server.common.DataItem;
 
 public class SessionCommonData

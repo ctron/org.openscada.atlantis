@@ -26,12 +26,12 @@ import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.InvalidOperationException;
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.server.OperationParameters;
+import org.eclipse.scada.da.core.DataItemInformation;
+import org.eclipse.scada.da.core.WriteResult;
 import org.eclipse.scada.utils.concurrent.FutureTask;
 import org.eclipse.scada.utils.concurrent.InstantErrorFuture;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.core.server.OperationParameters;
-import org.openscada.da.core.DataItemInformation;
-import org.openscada.da.core.WriteResult;
 
 public class WriteHandlerItem extends DataItemInputOutputChained
 {

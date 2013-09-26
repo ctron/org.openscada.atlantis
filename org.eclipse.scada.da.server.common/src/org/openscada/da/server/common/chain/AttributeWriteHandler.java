@@ -22,7 +22,7 @@ package org.openscada.da.server.common.chain;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.da.core.WriteAttributeResults;
+import org.eclipse.scada.da.core.WriteAttributeResults;
 
 public interface AttributeWriteHandler
 {

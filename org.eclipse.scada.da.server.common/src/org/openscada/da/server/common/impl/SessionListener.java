@@ -19,7 +19,7 @@
 
 package org.openscada.da.server.common.impl;
 
-import org.openscada.core.server.common.session.AbstractSessionImpl;
+import org.eclipse.scada.core.server.common.session.AbstractSessionImpl;
 
 public interface SessionListener
 {

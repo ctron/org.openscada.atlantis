@@ -28,9 +28,9 @@ import org.eclipse.scada.core.InvalidOperationException;
 import org.eclipse.scada.core.NotConvertableException;
 import org.eclipse.scada.core.NullValueException;
 import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.da.core.DataItemInformation;
 import org.eclipse.scada.da.data.IODirection;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
-import org.openscada.da.core.DataItemInformation;
 import org.openscada.da.server.common.DataItemInformationBase;
 import org.openscada.da.server.common.SuspendableDataItem;
 

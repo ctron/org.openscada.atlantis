@@ -10,7 +10,7 @@
       <!-- @generated proxy -->
       <package
             uri="http://openscada.org/DA/Proxy/Configuration"
-            class="org.openscada.da.proxy.configuration.ConfigurationPackage"
+            class="org.eclipse.scada.da.proxy.configuration.ConfigurationPackage"
             genModel="model/proxy.genmodel"/>
    </extension>
 
@@ -18,7 +18,7 @@
       <!-- @generated proxy -->
       <parser
             type="configuration"
-            class="org.openscada.da.proxy.configuration.util.ConfigurationResourceFactoryImpl"/>
+            class="org.eclipse.scada.da.proxy.configuration.util.ConfigurationResourceFactoryImpl"/>
    </extension>
 
 </plugin>

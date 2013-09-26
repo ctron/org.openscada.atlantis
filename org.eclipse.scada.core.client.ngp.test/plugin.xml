@@ -9,7 +9,7 @@
             thread="main"
             visible="true">
          <run
-               class="org.openscada.core.client.ngp.test.ConnectionTest1">
+               class="org.eclipse.scada.core.client.ngp.test.ConnectionTest1">
          </run>
       </application>
    </extension>

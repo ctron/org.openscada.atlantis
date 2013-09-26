@@ -21,9 +21,9 @@ package org.openscada.ae.server.common.event.pool.internal;
 
 import java.util.Map;
 
+import org.eclipse.scada.ca.ConfigurationDataHelper;
+import org.eclipse.scada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.eclipse.scada.sec.UserInformation;
-import org.openscada.ca.ConfigurationDataHelper;
-import org.openscada.ca.common.factory.AbstractServiceConfigurationFactory;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

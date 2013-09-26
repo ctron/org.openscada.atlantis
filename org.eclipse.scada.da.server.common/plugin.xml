@@ -10,7 +10,7 @@
       <!-- @generated Common -->
       <package
             uri="http://openscada.org/Common"
-            class="org.openscada.common.CommonPackage"
+            class="org.eclipse.scada.common.CommonPackage"
             genModel="model/Common.genmodel"/>
    </extension>
 
@@ -18,7 +18,7 @@
       <!-- @generated Common -->
       <parser
             type="common"
-            class="org.openscada.common.util.CommonResourceFactoryImpl"/>
+            class="org.eclipse.scada.common.util.CommonResourceFactoryImpl"/>
    </extension>
 
 </plugin>

@@ -9,7 +9,7 @@
             thread="main"
             visible="true">
          <run
-               class="org.openscada.hd.perf.test.Application">
+               class="org.eclipse.scada.hd.perf.test.Application">
          </run>
       </application>
    </extension>

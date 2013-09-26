@@ -6,15 +6,15 @@ Bundle-Version: 1.2.0.qualifier
 Bundle-ClassPath: .
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Export-Package: org.openscada.da.proxy.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
- org.openscada.da.proxy.configuration.impl;version="1.2.0";
+Export-Package: org.eclipse.scada.da.proxy.configuration;version="1.2.0";uses:="org.eclipse.emf.ecore.util,org.eclipse.emf.ecore,org.eclipse.emf.common.util",
+ org.eclipse.scada.da.proxy.configuration.impl;version="1.2.0";
   uses:="org.eclipse.emf.ecore.util,
    org.eclipse.emf.ecore,
    org.eclipse.emf.common.util,
    org.openscada.da.proxy.configuration,
    org.eclipse.emf.common.notify,
    org.eclipse.emf.ecore.impl",
- org.openscada.da.proxy.configuration.util;version="1.2.0";
+ org.eclipse.scada.da.proxy.configuration.util;version="1.2.0";
   uses:="org.eclipse.emf.ecore.xmi.impl,
    org.eclipse.emf.ecore.resource,
    org.eclipse.emf.common.util,
@@ -25,7 +25,7 @@ Export-Package: org.openscada.da.proxy.configuration;version="1.2.0";uses:="org.
    org.eclipse.emf.ecore.util,
    org.eclipse.emf.ecore,
    org.eclipse.emf.common.notify.impl",
- org.openscada.da.server.proxy;version="1.2.0";
+ org.eclipse.scada.da.server.proxy;version="1.2.0";
   uses:="org.openscada.da.core.server,
    org.openscada.da.server.proxy.connection,
    org.openscada.da.server.common.impl,
@@ -33,8 +33,8 @@ Export-Package: org.openscada.da.proxy.configuration;version="1.2.0";uses:="org.
    org.openscada.utils.init,
    org.openscada.da.proxy.configuration,
    org.openscada.da.server.proxy.configuration",
- org.openscada.da.server.proxy.configuration;version="1.2.0";uses:="org.openscada.da.server.proxy,org.openscada.da.proxy.configuration",
- org.openscada.da.server.proxy.connection;version="1.2.0";
+ org.eclipse.scada.da.server.proxy.configuration;version="1.2.0";uses:="org.openscada.da.server.proxy,org.openscada.da.proxy.configuration",
+ org.eclipse.scada.da.server.proxy.connection;version="1.2.0";
   uses:="org.openscada.core.client,
    org.openscada.da.server.common.chain,
    org.openscada.da.server.browser.common,
@@ -45,7 +45,7 @@ Export-Package: org.openscada.da.proxy.configuration;version="1.2.0";uses:="org.
    org.openscada.da.client,
    org.openscada.da.core,
    org.openscada.utils.lifecycle",
- org.openscada.da.server.proxy.item;version="1.2.0";
+ org.eclipse.scada.da.server.proxy.item;version="1.2.0";
   uses:="org.openscada.da.server.common,
    org.openscada.da.server.proxy.connection,
    org.openscada.core.data,
@@ -56,40 +56,40 @@ Export-Package: org.openscada.da.proxy.configuration;version="1.2.0";uses:="org.
    org.openscada.da.client,
    org.openscada.core.server,
    org.openscada.core",
- org.openscada.da.server.proxy.utils;version="1.2.0"
+ org.eclipse.scada.da.server.proxy.utils;version="1.2.0"
 Require-Bundle: org.eclipse.core.runtime,
  org.eclipse.emf.ecore;bundle-version="2.8.0";visibility:=reexport,
  org.eclipse.emf.ecore.xmi;bundle-version="2.8.0";visibility:=reexport
 Import-Package: org.eclipse.scada.core;version="0.1.0",
+ org.eclipse.scada.core.client;version="1.0.0",
  org.eclipse.scada.core.data;version="0.1.0",
+ org.eclipse.scada.core.server;version="1.1.0",
+ org.eclipse.scada.core.server.common;version="1.0.0",
+ org.eclipse.scada.core.server.common.session;version="1.0.0",
+ org.eclipse.scada.core.subscription;version="1.0.0",
+ org.eclipse.scada.da.client;version="1.0.0",
+ org.eclipse.scada.da.core;version="1.0.0",
+ org.eclipse.scada.da.core.browser;version="1.0.0",
+ org.eclipse.scada.da.core.server;version="1.0.0",
+ org.eclipse.scada.da.core.server.browser;version="1.0.0",
  org.eclipse.scada.da.data;version="0.1.0",
+ org.eclipse.scada.da.server.browser.common;version="1.2.0",
+ org.eclipse.scada.da.server.browser.common.query;version="1.2.0",
+ org.eclipse.scada.da.server.proxy;version="1.0.0",
+ org.eclipse.scada.da.server.proxy.configuration;version="1.0.0",
+ org.eclipse.scada.da.server.proxy.connection;version="1.0.0",
+ org.eclipse.scada.da.server.proxy.item;version="1.0.0",
+ org.eclipse.scada.da.server.proxy.utils;version="1.0.0",
  org.eclipse.scada.sec;version="0.1.0",
  org.eclipse.scada.utils.collection;version="0.1.0",
  org.eclipse.scada.utils.concurrent;version="0.1.0",
  org.eclipse.scada.utils.init;version="0.1.0",
  org.eclipse.scada.utils.lifecycle;version="0.1.0",
- org.openscada.core.client;version="1.0.0",
- org.openscada.core.server;version="1.1.0",
- org.openscada.core.server.common;version="1.0.0",
- org.openscada.core.server.common.session;version="1.0.0",
- org.openscada.core.subscription;version="1.0.0",
- org.openscada.da.client;version="1.0.0",
- org.openscada.da.core;version="1.0.0",
- org.openscada.da.core.browser;version="1.0.0",
- org.openscada.da.core.server;version="1.0.0",
- org.openscada.da.core.server.browser;version="1.0.0",
- org.openscada.da.server.browser.common;version="1.2.0",
- org.openscada.da.server.browser.common.query;version="1.2.0",
  org.openscada.da.server.common;version="1.2.0",
  org.openscada.da.server.common.chain;version="1.2.0",
  org.openscada.da.server.common.factory;version="1.2.0",
  org.openscada.da.server.common.impl;version="1.2.0",
  org.openscada.da.server.common.item.factory;version="1.2.0",
- org.openscada.da.server.proxy;version="1.0.0",
- org.openscada.da.server.proxy.configuration;version="1.0.0",
- org.openscada.da.server.proxy.connection;version="1.0.0",
- org.openscada.da.server.proxy.item;version="1.0.0",
- org.openscada.da.server.proxy.utils;version="1.0.0",
  org.slf4j;version="1.5.8"
 Service-Component: OSGI-INF/hive.xml
 Bundle-ActivationPolicy: lazy

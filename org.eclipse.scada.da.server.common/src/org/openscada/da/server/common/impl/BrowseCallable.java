@@ -21,10 +21,10 @@ package org.openscada.da.server.common.impl;
 
 import java.util.concurrent.Callable;
 
-import org.openscada.da.core.Location;
-import org.openscada.da.core.browser.Entry;
-import org.openscada.da.core.server.browser.NoSuchFolderException;
-import org.openscada.da.server.browser.common.Folder;
+import org.eclipse.scada.da.core.Location;
+import org.eclipse.scada.da.core.browser.Entry;
+import org.eclipse.scada.da.core.server.browser.NoSuchFolderException;
+import org.eclipse.scada.da.server.browser.common.Folder;
 
 public class BrowseCallable implements Callable<Entry[]>
 {

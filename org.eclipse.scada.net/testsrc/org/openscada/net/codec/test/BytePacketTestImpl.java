@@ -17,13 +17,13 @@
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301  USA
  */
 
-package org.openscada.net.codec.test;
+package org.eclipse.scada.net.codec.test;
 
 import org.apache.log4j.Logger;
 import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
-import org.openscada.net.mina.GMPPProtocolDecoder;
-import org.openscada.net.mina.GMPPProtocolEncoder;
+import org.eclipse.scada.net.mina.GMPPProtocolDecoder;
+import org.eclipse.scada.net.mina.GMPPProtocolEncoder;
 
 public class BytePacketTestImpl
 {

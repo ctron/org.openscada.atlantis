@@ -28,7 +28,7 @@ import org.apache.mina.core.buffer.IoBuffer;
 import org.apache.mina.core.filterchain.IoFilter.NextFilter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolDecoderOutput;
-import org.openscada.da.server.io.common.TimedEndDecoder;
+import org.eclipse.scada.da.server.io.common.TimedEndDecoder;
 import org.openscada.da.server.modbus.ModbusConstants;
 import org.openscada.da.server.modbus.io.message.ResponseWrapper;
 import org.openscada.da.server.modbus.io.message.request.RequestMessage;

@@ -4,7 +4,7 @@ Bundle-Name: openSCADA NextGenerationProtocol AE Common
 Bundle-SymbolicName: org.eclipse.scada.ae.common.ngp
 Bundle-Version: 1.0.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.openscada.ae.common.ngp;version="1.0.0";uses:="org.openscada.protocol.ngp.common,org.openscada.core"
+Export-Package: org.eclipse.scada.ae.common.ngp;version="1.0.0";uses:="org.openscada.protocol.ngp.common,org.openscada.core"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.ae.data;version="0.1.0",
  org.eclipse.scada.ae.data.message;version="0.1.0",

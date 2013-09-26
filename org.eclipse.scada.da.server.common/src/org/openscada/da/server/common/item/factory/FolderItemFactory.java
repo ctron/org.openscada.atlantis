@@ -25,7 +25,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.da.server.browser.common.FolderCommon;
+import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.openscada.da.server.common.DataItem;
 import org.openscada.da.server.common.DataItemCommand;
 import org.openscada.da.server.common.chain.DataItemInputChained;

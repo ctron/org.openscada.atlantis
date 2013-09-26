@@ -27,7 +27,7 @@
       <!-- @generated exec -->
       <factory
             uri="http://openscada.org/DA/Exec/Configuration"
-            class="org.openscada.da.exec.configuration.provider.ConfigurationItemProviderAdapterFactory"
+            class="org.eclipse.scada.da.exec.configuration.provider.ConfigurationItemProviderAdapterFactory"
             supportedTypes=
               "org.eclipse.emf.edit.provider.IEditingDomainItemProvider
                org.eclipse.emf.edit.provider.IStructuredItemContentProvider

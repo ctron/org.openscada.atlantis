@@ -22,7 +22,7 @@
 package org.openscada.da.server.common.chain;
 
 import org.eclipse.scada.core.Variant;
-import org.openscada.core.server.OperationParameters;
+import org.eclipse.scada.core.server.OperationParameters;
 
 public interface WriteHandler
 {

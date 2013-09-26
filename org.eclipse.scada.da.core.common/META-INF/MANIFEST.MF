@@ -4,8 +4,8 @@ Bundle-Name: openSCADA DA Core Common
 Bundle-SymbolicName: org.eclipse.scada.da.core.common
 Bundle-Version: 1.1.0.qualifier
 Bundle-Vendor: openSCADA.org
-Export-Package: org.openscada.da.core;version="1.1.0";uses:="org.openscada.sec,org.openscada.core",
- org.openscada.da.core.browser;version="1.1.0"
+Export-Package: org.eclipse.scada.da.core;version="1.1.0";uses:="org.openscada.sec,org.openscada.core",
+ org.eclipse.scada.da.core.browser;version="1.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.beanutils;version="1.8.0",
  org.apache.commons.beanutils.converters;version="1.8.0",

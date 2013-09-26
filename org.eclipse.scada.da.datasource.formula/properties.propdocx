@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="ASCII"?>
 <properties:properties xmlns:properties="urn:openscada:doc:content:properties">
-  <properties:groups properties:prefix="org.openscada.da.datasource.formula">
-    <properties:properties properties:name="org.openscada.da.datasource.formula.defaultScriptEngine" properties:shortDescription="The name of the default script engine">
+  <properties:groups properties:prefix="org.eclipse.scada.da.datasource.formula">
+    <properties:properties properties:name="org.eclipse.scada.da.datasource.formula.defaultScriptEngine" properties:shortDescription="The name of the default script engine">
       <properties:defaultValue>JavaScript</properties:defaultValue>
     </properties:properties>
   </properties:groups>
