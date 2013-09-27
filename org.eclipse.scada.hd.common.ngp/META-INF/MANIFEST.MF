@@ -1,6 +1,6 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: openSCADA NextGenerationProtocol HD Common
+Bundle-Name: Eclipse SCADA NextGenerationProtocol HD Common
 Bundle-SymbolicName: org.eclipse.scada.hd.common.ngp
 Bundle-Version: 0.1.0.qualifier
 Bundle-Vendor: Eclipse SCADA Project
