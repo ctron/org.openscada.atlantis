@@ -98,7 +98,7 @@
   <target name="postSetup">
     <antcall target="getBaseComponents" />
 
-    <!-- OpenSCADA Core -->
+    <!-- Eclipse SCADA Core -->
   	
   	<openscada.builder.copyFeature id="org.eclipse.scada.core"/>
   	
@@ -121,7 +121,7 @@
   	
 	<openscada.builder.copyPlugin id="org.eclipse.scada.core.server.exporter"/>
   	
-  	<!-- OpenSCADA DA -->
+  	<!-- Eclipse SCADA DA -->
   	
   	<openscada.builder.copyFeature id="org.eclipse.scada.da"/>
   	<openscada.builder.copyFeature id="org.eclipse.scada.da.sdk"/>
@@ -145,10 +145,8 @@
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.stock"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.jdbc"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.proxy"/>
-  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.snmp"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.dave" />
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.exec" />
-  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.opc"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.arduino"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.modbus"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.osgi.modbus"/>
@@ -177,7 +175,7 @@
   	
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.client.sfp"/>
   	
-  	<!-- OpenSCADA HD -->
+  	<!-- Eclipse SCADA HD -->
   	
   	<openscada.builder.copyFeature id="org.eclipse.scada.hd"/>
   	
@@ -210,7 +208,7 @@
   	
   	<openscada.builder.copyPlugin id="org.eclipse.scada.hd.server.importer.hsdb"/>
   	
-  	<!-- OpenSCADA AE -->
+  	<!-- Eclipse SCADA AE -->
   	
   	<openscada.builder.copyFeature id="org.eclipse.scada.ae"/>
   	  	
@@ -261,7 +259,7 @@
   	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.http"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.ae.server.info"/>
   	
-  	<!-- OpenSCADA CA -->
+  	<!-- Eclipse SCADA CA -->
 
   	<openscada.builder.copyFeature id="org.eclipse.scada.ca" />
   	
@@ -330,10 +328,14 @@
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.common.editor"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.exec.edit"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.exec.editor"/>
-  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.opc.edit"/>
-  	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.opc.editor"/>
 	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.modbus.edit"/>
   	<openscada.builder.copyPlugin id="org.eclipse.scada.da.server.modbus.editor"/>
+  	
+  	<!-- openSCADA -->
+	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc.edit"/>
+  	<openscada.builder.copyPlugin id="org.openscada.da.server.opc.editor"/>
   	
   </target>
 
