@@ -14,12 +14,16 @@ do
 start=`git log --format=format:%ai -- "$i" | awk '{ print $1 }' | awk -F- '{ print $1 }' | sort -u | head -1`
 end=`git log --format=format:%ai -- "$i" | awk '{ print $1 }' | awk -F- '{ print $1 }' | sort -u | tail -1`
 
+n=`echo $i | sed 's/org\/openscada/org\/eclipse\/scada/'`
+n=`echo $n | sed s/org.openscada/org.eclipse.scada/`
+
 TF="$ES/$n"
 
-egrep "Copyright.*TH4" "$TF" && auth="$auth:TH4 SYSTEMS GmbH"
-egrep "Copyright.*Jens Reimann" "$TF" && auth="Jens Reimann"
-egrep "Copyright.*Rose" "$TF" && auth="$auth:Jürgen Rose"
-egrep "Copyright.*IBH" "$TF" && auth="$auth:IBH SYSTEMS GmbH"
+auth=""
+egrep -q "Copyright.*TH4" "$TF" && auth="$auth:TH4 SYSTEMS GmbH"
+egrep -q "Copyright.*Jens Reimann" "$TF" && auth="$auth:Jens Reimann"
+egrep -q "Copyright.*Rose" "$TF" && auth="$auth:Jürgen Rose"
+egrep -q "Copyright.*IBH" "$TF" && auth="$auth:IBH SYSTEMS GmbH"
 
 if [ "$start" -eq "$end" ]; then
 y="$start"
@@ -27,11 +31,8 @@ else
 y="$start, $end"
 fi
 
-n=`echo $i | sed 's/org\/openscada/org\/eclipse\/scada/'`
-n=`echo $n | sed s/org.openscada/org.eclipse.scada/`
-
 if [ -f "$TF" ]; then
-echo $i - $n - $y - $c
+echo $i - $n - $y - $auth
 "$S" "$TF" "$y" "$auth"
 fi
 
