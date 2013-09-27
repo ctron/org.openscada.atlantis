@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Application to export a storage using the OpenSCADA NGP protocol
+ * Application to export a storage using the Eclipse SCADA NGP protocol
  * 
  * @author Jens Reimann
  */
@@ -41,7 +41,7 @@ public class Application
             }
             if ( ci == null )
             {
-                ci = ConnectionInformation.fromURI ( "hd:ngp://0.0.0.0:" + System.getProperty ( "openscada.hd.ngp.server.port", "2301" ) );
+                ci = ConnectionInformation.fromURI ( "hd:ngp://0.0.0.0:" + System.getProperty ( "org.eclipse.scada.hd.server.ngp.serverPort", "2301" ) );
             }
 
             // create exporter
@@ -57,7 +57,7 @@ public class Application
         catch ( final Throwable e )
         {
             // ops
-            logger.error ( "Error in openSCADA HD[NGP] Server", e );
+            logger.error ( "Error in Eclipse SCADA HD[NGP] Server", e );
             System.exit ( 1 );
         }
     }

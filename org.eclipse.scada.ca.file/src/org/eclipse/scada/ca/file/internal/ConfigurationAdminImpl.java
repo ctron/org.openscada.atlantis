@@ -61,7 +61,7 @@ public class ConfigurationAdminImpl extends AbstractConfigurationAdministrator
 
     private final static Logger logger = LoggerFactory.getLogger ( ConfigurationAdminImpl.class );
 
-    private static final String STORE = "openscadaConfigStore";
+    private static final String STORE = "scadaConfigStore";
 
     private final BundleContext context;
 

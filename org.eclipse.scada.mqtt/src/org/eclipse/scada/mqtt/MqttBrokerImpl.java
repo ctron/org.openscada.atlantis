@@ -259,7 +259,7 @@ public class MqttBrokerImpl implements MqttBroker, MqttCallback
      */
     private String getDefaultPersistencePath ()
     {
-        return System.getProperty ( "org.eclipse.scada.mqtt.persistence", System.getProperty ( "user.home" ) + File.separator + ".openscada" + File.separator + "mqtt" );
+        return System.getProperty ( "org.eclipse.scada.mqtt.persistence", System.getProperty ( "user.home" ) + File.separator + ".eclipseScada" + File.separator + "mqtt" );
     }
 
     /**

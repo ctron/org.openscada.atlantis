@@ -42,8 +42,8 @@ public class Activator implements BundleActivator
         this.service = new ManagedConnectionServiceFactory ( context );
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, FACTORY_ID );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
-        properties.put ( Constants.SERVICE_DESCRIPTION, "An openSCADA HD connection service factory" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "An Eclipse SCADA HD connection service factory" );
         this.handle = this.context.registerService ( ConfigurationFactory.class, this.service, properties );
     }
 

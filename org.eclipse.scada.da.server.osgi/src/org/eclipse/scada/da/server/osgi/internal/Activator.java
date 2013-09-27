@@ -59,7 +59,7 @@ public class Activator implements BundleActivator
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
 
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A common generic OSGi DA Hive" );
 
         this.handle = context.registerService ( Hive.class, this.service, properties );

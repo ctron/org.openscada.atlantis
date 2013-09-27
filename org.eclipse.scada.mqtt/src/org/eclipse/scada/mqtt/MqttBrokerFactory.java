@@ -42,9 +42,9 @@ public class MqttBrokerFactory extends AbstractServiceConfigurationFactory<MqttB
         mqttBroker.update ( parameters );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
-        properties.put ( Constants.SERVICE_DESCRIPTION, "openSCADA MQTT broker wrapper" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "Eclipse SCADA MQTT broker wrapper" );
         properties.put ( Constants.SERVICE_PID, configurationId );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
 
         return new Entry<MqttBroker> ( configurationId, mqttBroker, context.registerService ( MqttBroker.class, mqttBroker, properties ) );
     }

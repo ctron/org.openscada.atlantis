@@ -35,7 +35,7 @@ public class Activator implements BundleActivator
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_DESCRIPTION, "Proxy data sources" );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, "da.datasource.proxy" );
 
         context.registerService ( ConfigurationFactory.class.getName (), this.factory, properties );

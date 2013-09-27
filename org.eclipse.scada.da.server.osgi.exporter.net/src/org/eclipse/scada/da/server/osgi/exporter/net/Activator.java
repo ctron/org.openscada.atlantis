@@ -47,7 +47,7 @@ public class Activator implements BundleActivator
     {
         try
         {
-            final String uri = System.getProperty ( "openscada.da.net.exportUri", "da:net://0.0.0.0:1202" );
+            final String uri = System.getProperty ( "org.eclipse.scada.da.server.osgi.exporter.net.exportUri", "da:net://0.0.0.0:1202" );
             if ( uri == null || uri.isEmpty () )
             {
                 this.connectionInformation = null;

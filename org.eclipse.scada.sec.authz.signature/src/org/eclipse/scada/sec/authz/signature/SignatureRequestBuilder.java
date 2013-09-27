@@ -40,7 +40,7 @@ import org.xml.sax.InputSource;
  */
 public class SignatureRequestBuilder
 {
-    public static final String NAMESPACE = "urn:openscada:sec:request";
+    public static final String NAMESPACE = System.getProperty("org.eclipse.scada.sec.authz.signature.xmlNamespace", "urn:eclipse:scada:sec:request");
 
     private final DocumentBuilderFactory dbf;
 

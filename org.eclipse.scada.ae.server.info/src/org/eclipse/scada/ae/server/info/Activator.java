@@ -80,7 +80,7 @@ public class Activator implements BundleActivator
 
         this.factory = new InfoServiceFactory ( context, this.executor, this.monitorPoolTracker, this.dataSourcePool );
         final Dictionary<String, String> properties = new Hashtable<String, String> ( 2 );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "An aggregator for all monitor states" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, InfoServiceFactory.FACTORY_ID );
 

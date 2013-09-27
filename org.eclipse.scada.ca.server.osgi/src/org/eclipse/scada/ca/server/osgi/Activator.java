@@ -100,8 +100,8 @@ public class Activator implements BundleActivator
                 this.service = newService;
 
                 final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-                properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
-                properties.put ( Constants.SERVICE_DESCRIPTION, "openSCADA CA Server Interface" );
+                properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
+                properties.put ( Constants.SERVICE_DESCRIPTION, "Eclipse SCADA CA Server Interface" );
                 this.handle = context.registerService ( Service.class, this.service, properties );
             }
             catch ( final Exception e )

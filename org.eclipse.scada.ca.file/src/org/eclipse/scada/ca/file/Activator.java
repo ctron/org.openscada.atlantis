@@ -43,8 +43,8 @@ public class Activator implements BundleActivator
         this.service.start ();
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
-        properties.put ( Constants.SERVICE_DESCRIPTION, "An openSCADA CA File Implementation" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "An Eclipse SCADA CA File Implementation" );
 
         this.handle = context.registerService ( new String[] { ConfigurationAdministrator.class.getName (), FreezableConfigurationAdministrator.class.getName () }, this.service, properties );
     }

@@ -65,16 +65,16 @@ public class SignatureRequestBuilderTest
 
     private static final String CERT_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/Test1.p12";
 
-    private static final String CA_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/openSCADASignTest1.crt";
+    private static final String CA_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/SignTest1.crt";
 
     private static final String CERT_REV_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/TestRevoke1.p12";
 
-    private static final String CRL_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/openSCADASignTest1.CRL.pem";
+    private static final String CRL_FILE_1 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/SignTest1.CRL.pem";
 
     @SuppressWarnings ( "unused" )
     private static final String CERT_FILE_2 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/Test2.p12";
 
-    private static final String CA_FILE_2 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/openSCADASignTest2.crt";
+    private static final String CA_FILE_2 = "platform:/plugin/org.eclipse.scada.sec.authz.signature/resources/SignTest2.crt";
 
     @Before
     public void setup () throws Exception

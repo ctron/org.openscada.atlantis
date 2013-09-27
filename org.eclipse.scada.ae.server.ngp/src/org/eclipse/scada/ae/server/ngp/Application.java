@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Application to export a storage using the OpenSCADA NET protocol
+ * Application to export a storage using the Eclipse SCADA NET protocol
  * 
  * @author Jens Reimann
  */
@@ -41,7 +41,7 @@ public class Application
             }
             if ( ci == null )
             {
-                ci = ConnectionInformation.fromURI ( "ae:ngp://0.0.0.0:" + System.getProperty ( "openscada.ae.ngp.server.port", "2201" ) );
+                ci = ConnectionInformation.fromURI ( "ae:ngp://0.0.0.0:" + System.getProperty ( "org.eclipse.scada.ae.server.ngp.serverPort", "2201" ) );
             }
 
             // create exporter
@@ -57,7 +57,7 @@ public class Application
         catch ( final Throwable e )
         {
             // ops
-            logger.error ( "Error in openSCADA AE[NGP] Server", e );
+            logger.error ( "Error in Eclipse SCADA AE[NGP] Server", e );
             System.exit ( 1 );
         }
     }

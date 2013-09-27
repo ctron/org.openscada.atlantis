@@ -43,8 +43,8 @@ public class Activator implements BundleActivator
         this.factory = new ProxyMonitorQueryFactory ( context, this.executor );
 
         final Hashtable<String, Object> properties = new Hashtable<String, Object> ();
-        properties.put ( Constants.SERVICE_DESCRIPTION, "openSCADA Proxy Monitor Query" );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "Eclipse SCADA Proxy Monitor Query" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, ProxyMonitorQueryFactory.FACTORY_ID );
         this.handle = context.registerService ( ConfigurationFactory.class, this.factory, properties );
     }

@@ -8,8 +8,8 @@
       <provide interface="org.eclipse.scada.sec.osgi.AuthorizationTracker"/>
       <provide interface="org.eclipse.scada.sec.osgi.manager.AuthorizationManagerImpl"/>
    </service>
-   <property name="service.vendor" type="String" value="openSCADA.org"/>
-   <property name="service.description" type="String" value="The default openSCADA Authorization manager"/>
+   <property name="service.vendor" type="String" value="Eclipse SCADA Project"/>
+   <property name="service.description" type="String" value="The default Eclipse SCADA Authorization manager"/>
    <property name="osgi.command.scope" type="String" value="secmgr">
    </property>
    <property name="osgi.command.function" type="String">

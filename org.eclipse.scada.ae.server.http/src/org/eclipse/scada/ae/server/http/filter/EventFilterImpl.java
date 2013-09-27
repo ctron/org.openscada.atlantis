@@ -53,7 +53,7 @@ public class EventFilterImpl implements EventFilter, ConfigurationFactory
     {
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
 
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A configurable event filter" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, factoryId );
 

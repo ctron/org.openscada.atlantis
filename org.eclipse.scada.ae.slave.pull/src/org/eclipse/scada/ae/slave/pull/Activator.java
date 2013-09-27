@@ -48,7 +48,7 @@ public class Activator implements BundleActivator
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
         properties.put ( ConfigurationAdministrator.FACTORY_ID, PullManager.FACTORY_ID );
         properties.put ( Constants.SERVICE_DESCRIPTION, "An AE pull manager configuration" );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
         this.handle = bundleContext.registerService ( ConfigurationFactory.class, this.pullManager, properties );
     }
 

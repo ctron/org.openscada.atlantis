@@ -45,8 +45,8 @@ public class Activator implements BundleActivator
         final ProxyAknService service = new ProxyAknService ( bundleContext );
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-        properties.put ( Constants.SERVICE_DESCRIPTION, "An openSCADA AE proxy acknownldge service" );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "An Eclipse SCADA AE proxy acknownldge service" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, ProxyAknService.FACTORY_ID );
         this.handle = bundleContext.registerService ( new String[] { AknHandler.class.getName (), ConfigurationFactory.class.getName () }, service, properties );
     }

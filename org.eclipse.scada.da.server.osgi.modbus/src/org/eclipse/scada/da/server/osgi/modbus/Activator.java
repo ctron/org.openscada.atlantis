@@ -52,7 +52,7 @@ public class Activator implements BundleActivator
         {
             final Dictionary<String, Object> properties = new Hashtable<> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "Modbus master device factory" );
-            properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+            properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.eclipse.scada.da.server.osgi.modbus.masterDevice" );
             this.masterFactoryHandle = context.registerService ( ConfigurationFactory.class, this.masterFactory, properties );
         }
@@ -60,7 +60,7 @@ public class Activator implements BundleActivator
         {
             final Dictionary<String, Object> properties = new Hashtable<> ();
             properties.put ( Constants.SERVICE_DESCRIPTION, "Modbus slave device factory" );
-            properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+            properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
             properties.put ( ConfigurationAdministrator.FACTORY_ID, "org.eclipse.scada.da.server.osgi.modbus.slaveDevice" );
             this.slaveFactoryHandle = context.registerService ( ConfigurationFactory.class, this.slaveFactory, properties );
         }

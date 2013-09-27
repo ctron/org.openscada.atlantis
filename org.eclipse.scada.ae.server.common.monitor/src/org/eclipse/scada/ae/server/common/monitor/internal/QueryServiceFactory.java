@@ -46,7 +46,7 @@ public class QueryServiceFactory extends AbstractServiceConfigurationFactory<Bun
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, configurationId );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
 
         return new Entry<BundleMonitorQuery> ( configurationId, query, context.registerService ( MonitorQuery.class, query, properties ) );
     }

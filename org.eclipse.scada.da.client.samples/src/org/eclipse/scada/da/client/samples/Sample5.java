@@ -26,7 +26,7 @@ import org.eclipse.scada.da.client.ItemManagerImpl;
  * <p>
  * The example shows how to create a new connection, connect, and listen for
  * events coming using the {@link DataItem} class which simplifies some parts of
- * receiving events from OpenSCADA. The DataItem class performs all the merging
+ * receiving events from Eclipse SCADA. The DataItem class performs all the merging
  * and cache value handling for us. It extends the common {@link Observable}
  * class and therefore simplifies that handling a little bit. You do not get the
  * much more detailed event information since you only get the information

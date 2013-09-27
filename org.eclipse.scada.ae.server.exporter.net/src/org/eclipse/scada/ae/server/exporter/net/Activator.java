@@ -32,7 +32,7 @@ public class Activator implements BundleActivator
 
     private BundleContext context;
 
-    private final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( System.getProperty ( "openscada.ae.net.exportUri", "ae:net://0.0.0.0:1302" ) );
+    private final ConnectionInformation connectionInformation = ConnectionInformation.fromURI ( System.getProperty ( "org.eclipse.scada.ae.server.exporter.net.exportUri", "ae:net://0.0.0.0:1302" ) );
 
     private Exporter exporter;
 

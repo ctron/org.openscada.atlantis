@@ -5,7 +5,11 @@ Bundle-SymbolicName: org.eclipse.scada.ca.servlet.jaxws
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.scada.ca.servlet.jaxws.Activator
 Bundle-Vendor: Eclipse SCADA Project
-Export-Package: org.eclipse.scada.ca.servlet.jaxws;version="1.0.0";uses:="org.openscada.sec,org.openscada.ca,org.osgi.framework"
+Export-Package: org.eclipse.scada.ca.servlet.jaxws;version="1.0.0";
+  uses:="org.eclipse.scada.ca,
+   org.eclipse.scada.ca.data,
+   org.osgi.framework,
+   org.eclipse.scada.sec"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.jws,
  javax.xml.ws,

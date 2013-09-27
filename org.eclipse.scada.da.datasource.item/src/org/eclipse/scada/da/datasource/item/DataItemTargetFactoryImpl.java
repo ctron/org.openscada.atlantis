@@ -113,7 +113,7 @@ public class DataItemTargetFactoryImpl extends AbstractServiceConfigurationFacto
         final DataItemTargetImpl item = new DataItemTargetImpl ( this.poolTracker, new DataItemInformationBase ( itemId, ioDirection ), datasourceId );
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ( 1 );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
 
         final String description = parameters.get ( "description" );
         if ( description != null )

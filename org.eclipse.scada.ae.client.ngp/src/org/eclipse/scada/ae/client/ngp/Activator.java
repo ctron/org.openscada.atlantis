@@ -47,8 +47,8 @@ public class Activator implements BundleActivator
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( org.eclipse.scada.core.client.DriverFactory.INTERFACE_NAME, "ae" );
         properties.put ( org.eclipse.scada.core.client.DriverFactory.DRIVER_NAME, "ngp" );
-        properties.put ( Constants.SERVICE_DESCRIPTION, "openSCADA AE NGP Adapter" );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_DESCRIPTION, "Eclipse SCADA AE NGP Adapter" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
         this.handle = context.registerService ( org.eclipse.scada.core.client.DriverFactory.class, this.factory, properties );
 
     }

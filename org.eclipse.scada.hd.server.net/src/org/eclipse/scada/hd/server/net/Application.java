@@ -16,7 +16,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Application to export a storage using the OpenSCADA NET protocol
+ * Application to export a storage using the Eclipse SCADA NET protocol
  * @author Jens Reimann
  *
  */
@@ -41,7 +41,7 @@ public class Application
             }
             if ( ci == null )
             {
-                ci = ConnectionInformation.fromURI ( "hd:net://0.0.0.0:" + System.getProperty ( "openscada.hd.net.server.port", "1402" ) );
+                ci = ConnectionInformation.fromURI ( "hd:net://0.0.0.0:" + System.getProperty ( "org.eclipse.scada.hd.server.net.serverPort", "1402" ) );
             }
 
             // create exporter
@@ -57,7 +57,7 @@ public class Application
         catch ( final Throwable e )
         {
             // ops
-            logger.error ( "Error in OpenSCADA HD[NET] Server", e );
+            logger.error ( "Error in Eclipse SCADA HD[NET] Server", e );
             System.exit ( 1 );
         }
     }

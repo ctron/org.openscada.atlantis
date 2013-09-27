@@ -27,7 +27,7 @@ public class StorageHelper
 
         final Properties p = new Properties ();
         p.put ( "id", id );
-        p.storeToXML ( new FileOutputStream ( new File ( file, "settings.xml" ) ), "openSCADA HD HDS Storage Settings" );
+        p.storeToXML ( new FileOutputStream ( new File ( file, "settings.xml" ) ), "Eclipse SCADA HD HDS Storage Settings" );
 
         DataStoreAccesor.create ( new File ( file, "native" ), configuration.getTimeSlice (), TimeUnit.MILLISECONDS, configuration.getCount (), pool );
     }

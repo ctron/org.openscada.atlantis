@@ -108,7 +108,7 @@ public class Advertiser
 
         final String interfaceName = service.getConnectionInformation ().getInterface ();
         final String protocolName = service.getConnectionInformation ().getDriver ();
-        final String osType = String.format ( "openscada_%s_%s", interfaceName, protocolName );
+        final String osType = String.format ( "eclipse_scada_%s_%s", interfaceName, protocolName );
         final IServiceTypeID typeId = ServiceIDFactory.getDefault ().createServiceTypeID ( this.advertiser.getServicesNamespace (), new String[] { osType } );
 
         final ConnectionInformation ci = service.getConnectionInformation ();
@@ -123,7 +123,7 @@ public class Advertiser
             description = ci.toString ();
         }
 
-        final URI uri = new URI ( "openscada", null, ci.getTarget (), ci.getSecondaryTarget (), null, null, null );
+        final URI uri = new URI ( "eclipse_scada", null, ci.getTarget (), ci.getSecondaryTarget (), null, null, null );
 
         final IServiceInfo serviceInfo = new ServiceInfo ( uri, description, typeId );
         this.advertiser.registerService ( serviceInfo );

@@ -140,7 +140,7 @@ public class ConfigurationFactoryImpl implements ConfigurationFactory
         final Dictionary<String, String> serviceProperties = new Hashtable<String, String> ();
         serviceProperties.put ( Constants.SERVICE_PID, configurationId );
         serviceProperties.put ( Constants.SERVICE_DESCRIPTION, "A historical item implementation" );
-        serviceProperties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        serviceProperties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
 
         final Map<String, Variant> attributes = new HashMap<String, Variant> ();
         attributes.put ( Constants.SERVICE_DESCRIPTION, Variant.valueOf ( "A historical item implementation" ) );

@@ -71,7 +71,7 @@ public class Activator implements BundleActivator
             }
             if ( service != null )
             {
-                this.exporter = new Exporter ( service, ConnectionInformation.fromURI ( System.getProperty ( "openscada.ae.ngp.exportUri", "ae:ngp://0.0.0.0:2201" ) ) );
+                this.exporter = new Exporter ( service, ConnectionInformation.fromURI ( System.getProperty ( "org.eclipse.scada.ae.server.exporter.ngp.exportUri", "ae:ngp://0.0.0.0:2201" ) ) );
                 this.exporter.start ();
             }
         }

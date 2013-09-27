@@ -50,7 +50,7 @@ public class InfoServiceFactory extends AbstractServiceConfigurationFactory<Info
 
         final Dictionary<String, String> properties = new Hashtable<String, String> ();
         properties.put ( Constants.SERVICE_PID, configurationId );
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
 
         return new Entry<InfoService> ( configurationId, query, context.registerService ( InfoService.class.getName (), query, properties ) );
     }

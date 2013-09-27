@@ -63,7 +63,7 @@ public class Activator implements BundleActivator
         this.factory = new MqttDataItemFactory ( this.executor, context, this.itemPool );
 
         final Dictionary<String, Object> properties = new Hashtable<String, Object> ();
-        properties.put ( Constants.SERVICE_VENDOR, "openSCADA.org" );
+        properties.put ( Constants.SERVICE_VENDOR, "Eclipse SCADA Project" );
         properties.put ( Constants.SERVICE_DESCRIPTION, "A data source status summarizer" );
         properties.put ( ConfigurationAdministrator.FACTORY_ID, MqttDataItemFactory.FACTORY_ID );
 

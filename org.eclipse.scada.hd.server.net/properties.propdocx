@@ -4,7 +4,7 @@
     <properties:properties properties:name="org.eclipse.scada.hd.server.net.maxDataSize" properties:dataType="INTEGER">
       <properties:defaultValue>1024</properties:defaultValue>
     </properties:properties>
-    <properties:properties properties:name="openscada.hd.net.server.port" properties:shortDescription="The default port number for HD NET">
+    <properties:properties properties:name="org.eclipse.scada.hd.server.net.serverPort" properties:shortDescription="The default port number for HD NET">
       <properties:defaultValue>1402</properties:defaultValue>
     </properties:properties>
   </properties:groups>

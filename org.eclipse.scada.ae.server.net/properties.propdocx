@@ -4,7 +4,7 @@
     <properties:properties properties:name="org.eclipse.scada.ae.server.net.ServerConnectionHandler.chunkSize" properties:dataType="INTEGER" properties:shortDescription="The number of entries each update transmission will contain">
       <properties:defaultValue>200</properties:defaultValue>
     </properties:properties>
-    <properties:properties properties:name="openscada.ae.net.server.port" properties:shortDescription="The default binding port for NET AE">
+    <properties:properties properties:name="org.eclipse.scada.ae.server.net.serverPort" properties:shortDescription="The default binding port for NET AE">
       <properties:defaultValue>1302</properties:defaultValue>
     </properties:properties>
   </properties:groups>

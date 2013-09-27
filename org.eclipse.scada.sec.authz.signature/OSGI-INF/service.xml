@@ -6,7 +6,7 @@
    </service>
    <reference bind="setAuditLogService" cardinality="1..1" interface="org.eclipse.scada.sec.audit.AuditLogService" name="AuditLogService" policy="static"/>
    <property name="rule.types" type="String" value="signature"/>
-   <property name="service.vendor" type="String" value="openSCADA.org"/>
+   <property name="service.vendor" type="String" value="Eclipse SCADA Project"/>
    <property name="service.description" type="String" value="An PKI based authorization module"/>
    <reference bind="setAuthenticationImplementation" cardinality="1..1" interface="org.eclipse.scada.sec.AuthenticationImplementation" name="AuthenticationImplementation" policy="static"/>
 </scr:component>
