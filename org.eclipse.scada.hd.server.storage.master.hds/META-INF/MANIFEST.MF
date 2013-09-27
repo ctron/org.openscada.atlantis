@@ -4,7 +4,7 @@ Bundle-Name: openSCADA HDS Master Storage
 Bundle-SymbolicName: org.eclipse.scada.hd.server.storage.master.hds
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.hd.server.storage.master.hds.Activator
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Require-Bundle: org.apache.felix.gogo.runtime;bundle-version="0.8.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.commons.io;version="2.0.1",

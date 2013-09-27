@@ -4,7 +4,7 @@ Bundle-Name: openSCADA Formula Datasource
 Bundle-SymbolicName: org.eclipse.scada.da.datasource.formula
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.da.datasource.formula.Activator
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.ca;version="0.1.0",
  org.eclipse.scada.ca.common.factory;version="0.1.0",

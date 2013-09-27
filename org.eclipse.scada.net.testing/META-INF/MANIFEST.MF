@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Net Base Testing
 Bundle-SymbolicName: org.eclipse.scada.net.testing
 Bundle-Version: 1.2.0.qualifier
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Require-Bundle: org.eclipse.scada.net;bundle-version="0.1.0",
  org.junit;bundle-version="4.8.0"

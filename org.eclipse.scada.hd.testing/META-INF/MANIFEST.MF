@@ -4,7 +4,7 @@ Bundle-Name: openSCADA HD Unit Tests
 Bundle-SymbolicName: org.eclipse.scada.hd.testing
 Bundle-Version: 1.2.0.qualifier
 Bundle-Activator: org.eclipse.scada.hd.testing.Activator
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Require-Bundle: org.junit;bundle-version="4.8.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.hd.data;version="0.1.0",

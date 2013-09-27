@@ -4,7 +4,7 @@ Bundle-Name: openSCADA NextGenerationProtocol HD Server Exporter
 Bundle-SymbolicName: org.eclipse.scada.hd.server.exporter.ngp
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.hd.server.exporter.ngp.Activator
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core.filterchain;version="2.0.7",
  org.eclipse.scada.core;version="0.1.0",

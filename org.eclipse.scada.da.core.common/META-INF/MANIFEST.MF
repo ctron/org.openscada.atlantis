@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA DA Core Common
 Bundle-SymbolicName: org.eclipse.scada.da.core.common
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Export-Package: org.eclipse.scada.da.core;version="0.1.0",
  org.eclipse.scada.da.core.browser;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

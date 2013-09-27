@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA AE Interface
 Bundle-SymbolicName: org.eclipse.scada.ae
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Export-Package: org.eclipse.scada.ae;version="0.1.0",
  org.eclipse.scada.ae.client;version="0.1.0",
  org.eclipse.scada.ae.server;version="0.1.0"

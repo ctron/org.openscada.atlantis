@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA CA Console Handler
 Bundle-SymbolicName: org.eclipse.scada.ca.console
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Require-Bundle: org.apache.felix.gogo.runtime;bundle-version="0.8.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.ca;version="0.1.0",

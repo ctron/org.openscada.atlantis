@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA Historical Data
 Bundle-SymbolicName: org.eclipse.scada.hd
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Export-Package: org.eclipse.scada.hd;version="0.1.0",
  org.eclipse.scada.hd.client;version="0.1.0",
  org.eclipse.scada.hd.server;version="0.1.0"

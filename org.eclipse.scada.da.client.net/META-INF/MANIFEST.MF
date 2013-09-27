@@ -4,7 +4,7 @@ Bundle-Name: openSCADA DA Client Net
 Bundle-SymbolicName: org.eclipse.scada.da.client.net
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.da.client.net.Activator
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Export-Package: org.eclipse.scada.da.client.net;version="0.1.0",
  org.eclipse.scada.da.client.net.operations;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

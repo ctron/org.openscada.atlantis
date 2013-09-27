@@ -4,7 +4,7 @@ Bundle-Name: openSCADA Event Plug-in
 Bundle-SymbolicName: org.eclipse.scada.ae.event
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.ae.event.Activator
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Export-Package: org.eclipse.scada.ae.event;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.eclipse.scada.ae;version="0.1.0",

@@ -4,7 +4,7 @@ Bundle-Name: openSCADA CA WS Interface
 Bundle-SymbolicName: org.eclipse.scada.ca.servlet.jaxws
 Bundle-Version: 1.0.0.qualifier
 Bundle-Activator: org.eclipse.scada.ca.servlet.jaxws.Activator
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Export-Package: org.eclipse.scada.ca.servlet.jaxws;version="1.0.0";uses:="org.openscada.sec,org.openscada.ca,org.osgi.framework"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: javax.jws,

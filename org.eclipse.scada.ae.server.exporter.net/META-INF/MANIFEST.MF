@@ -4,7 +4,7 @@ Bundle-Name: openSCADA AE Net Exporter Plug-in
 Bundle-SymbolicName: org.eclipse.scada.ae.server.exporter.net
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.ae.server.exporter.net.Activator
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Require-Bundle: org.eclipse.scada.ae;bundle-version="0.1.0",
  org.eclipse.scada.ae.server.net;bundle-version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6

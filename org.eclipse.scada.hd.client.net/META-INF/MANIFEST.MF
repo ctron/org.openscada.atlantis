@@ -4,7 +4,7 @@ Bundle-Name: openSCADA HD NET Client
 Bundle-SymbolicName: org.eclipse.scada.hd.client.net
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.hd.client.net.Activator
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Export-Package: org.eclipse.scada.hd.client.net;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: org.apache.mina.core.session;version="2.0.0",

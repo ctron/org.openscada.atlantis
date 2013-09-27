@@ -3,7 +3,7 @@ Bundle-ManifestVersion: 2
 Bundle-Name: openSCADA OSCAR File Utils
 Bundle-SymbolicName: org.eclipse.scada.ca.oscar
 Bundle-Version: 0.1.0.qualifier
-Bundle-Vendor: openSCADA.org
+Bundle-Vendor: Eclipse SCADA Project
 Export-Package: org.eclipse.scada.ca.oscar;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
 Import-Package: com.google.gson;version="1.5.0",

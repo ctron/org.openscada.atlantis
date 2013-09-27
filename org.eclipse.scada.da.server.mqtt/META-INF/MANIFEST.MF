@@ -1,10 +1,10 @@
 Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
-Bundle-Name: Mqtt
+Bundle-Name: MQTT Server
 Bundle-SymbolicName: org.eclipse.scada.da.server.mqtt
 Bundle-Version: 0.1.0.qualifier
 Bundle-Activator: org.eclipse.scada.da.server.mqtt.Activator
-Bundle-Vendor: openSCADA
+Bundle-Vendor: Eclipse SCADA Project
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.gson;version="2.1.0",
  com.google.gson.reflect;version="2.1.0",
