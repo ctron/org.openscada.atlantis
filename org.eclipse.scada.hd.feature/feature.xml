@@ -20,8 +20,8 @@
       <import plugin="org.eclipse.scada.da.server.common"/>
       <import feature="org.eclipse.scada.utils" version="0.1.0.qualifier"/>
       <import feature="org.eclipse.scada.base" version="0.1.0.qualifier"/>
-      <import feature="org.eclipse.scada.external" version="1.2.0.qualifier"/>
-      <import feature="org.eclipse.scada.core" version="1.2.0.qualifier"/>
+      <import feature="org.openscada.external" version="1.2.0.qualifier"/>
+      <import feature="org.eclipse.scada.core" version="0.1.0.qualifier"/>
       <import plugin="com.google.gson"/>
       <import plugin="org.eclipse.scada.hds"/>
    </requires>
