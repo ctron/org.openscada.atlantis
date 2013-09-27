@@ -52,8 +52,8 @@
       <import plugin="org.eclipse.scada.core.subscription"/>
       <import plugin="org.slf4j.api"/>
       <import plugin="org.eclipse.scada.core.info"/>
-      <import match="greaterOrEqual" plugin="org.eclipse.scada.ae" version="1.0.0"/>
-      <import match="greaterOrEqual" plugin="org.eclipse.scada.ae.server.net" version="1.0.0"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.scada.ae" version="0.1.0"/>
+      <import match="greaterOrEqual" plugin="org.eclipse.scada.ae.server.net" version="0.1.0"/>
       <import plugin="osgi.enterprise"/>
       <import plugin="org.eclipse.scada.da.master.common"/>
       <import plugin="org.eclipse.scada.core.client.connection.service"/>
