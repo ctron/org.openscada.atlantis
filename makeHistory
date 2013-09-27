@@ -1,0 +1,39 @@
+#!/bin/bash
+
+SD="/home/jens/git/1.1/org.openscada.atlantis"
+ES="/home/jens/Development/workspace_openscada12/org.openscada.atlantis"
+
+S="$PWD/changeHeader"
+
+pushd  "$SD"
+
+for i in `find -name "*.java" -and -type f`
+do
+
+start=`git log --format=format:%ai -- "$i" | awk '{ print $1 }' | awk -F- '{ print $1 }' | sort -u | head -1`
+end=`git log --format=format:%ai -- "$i" | awk '{ print $1 }' | awk -F- '{ print $1 }' | sort -u | tail -1`
+
+if [ $start -eq 2013 ]; then 
+c='IBH SYSTEMS GmbH'
+else
+c='TH4 SYSTEMS GmbH'
+fi
+
+if [ "$start" -eq "$end" ]; then
+y="$start"
+else
+y="$start, $end"
+fi
+
+n=`echo $i | sed 's/org\/openscada/org\/eclipse\/scada/'`
+n=`echo $n | sed s/org.openscada/org.eclipse.scada/`
+
+if [ -f "$ES/$n" ]; then
+echo $i - $n - $y - $c
+"$S" "$ES/$n" "$y" "$c"
+fi
+
+
+done
+
+popd

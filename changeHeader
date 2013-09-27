@@ -1,0 +1,28 @@
+#!/bin/bash
+
+FILE="$1"
+Y="$2"
+C="$3"
+
+# check
+test -f "$FILE" || exit 1
+
+# strip first
+
+( cat <<_EOT_
+/*******************************************************************************
+ * Copyright (c) $Y $C and others.
+ * All rights reserved. This program and the accompanying materials
+ * are made available under the terms of the Eclipse Public License v1.0
+ * which accompanies this distribution, and is available at
+ * http://www.eclipse.org/legal/epl-v10.html
+ *
+ * Contributors:
+ *     $C - initial API and implementation
+ *******************************************************************************/
+_EOT_
+) > "${FILE}.new"
+
+perl -0777 -pe 's!^/\*(?:.|[\r\n])*?\*/[\r\n]*!!m;' < "$FILE" >> "${FILE}.new"
+rm "$FILE"
+mv "${FILE}.new" "$FILE"
