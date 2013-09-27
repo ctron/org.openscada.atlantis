@@ -13,10 +13,10 @@ based on Java (SDK)
       %license
    </license>
 
-   <includes id="org.openscada.atlantis" version="0.0.0"/>
+   <includes id="org.eclipse.scada.atlantis" version="0.0.0"/>
 
-   <includes id="org.openscada.atlantis.source" version="0.0.0"/>
+   <includes id="org.eclipse.scada.atlantis.source" version="0.0.0"/>
 
-   <includes id="org.openscada.da.sdk" version="0.0.0"/>
+   <includes id="org.eclipse.scada.da.sdk" version="0.0.0"/>
 
 </feature>
