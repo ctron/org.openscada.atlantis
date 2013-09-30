@@ -7,7 +7,7 @@ Bundle-Activator: org.eclipse.scada.ae.client.ngp.Activator
 Bundle-Vendor: Eclipse SCADA Project
 Export-Package: org.eclipse.scada.ae.client.ngp;version="0.1.0"
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
-Import-Package: org.apache.mina.core.filterchain;version="2.0.0",
+Import-Package: org.apache.mina.core.filterchain;version="2.0.2",
  org.eclipse.scada.ae;version="0.1.0",
  org.eclipse.scada.ae.client;version="0.1.0",
  org.eclipse.scada.ae.common.ngp;version="0.1.0",
