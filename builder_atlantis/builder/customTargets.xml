@@ -138,8 +138,8 @@
   <!-- ===================================================================== -->
   <target name="preProcess">
 	<property file="${buildDirectory}/finalFeaturesVersions.properties"/>
-  	<echo message="Setting about versions: ${org.eclipse.scada.atlantis}"/>
-  	<replace dir="${buildDirectory}/plugins" value="${org.eclipse.scada.atlantis}">
+  	<echo message="Setting about versions: ${org.openscada.atlantis}"/>
+  	<replace dir="${buildDirectory}/plugins" value="${org.openscada.atlantis}">
   		<include name="**/about.mappings"/>
   		<replacetoken>@@VERSION@@</replacetoken>
   	</replace>
@@ -180,7 +180,7 @@
   <!-- ===================================================================== -->
   <target name="postBuild">
     <antcall target="gatherLogs" />
-  	<openscada.deploy.repository name="org.eclipse.scada.atlantis.sdk"/>
+  	<openscada.deploy.repository name="org.openscada.atlantis.sdk"/>
   </target>
 
   <!-- ===================================================================== -->
