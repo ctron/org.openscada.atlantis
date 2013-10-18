@@ -6,5 +6,5 @@
    </service>
    <property name="service.vendor" type="String" value="openSCADA.org"/>
    <property name="service.description" type="String" value="openSCADA OPC Hive Creator"/>
-   <property name="openscada.hiveReferenceType" type="String" value="org.openscada.da.server.opc.Hive"/>
+   <property name="eclipse.scada.hiveReferenceType" type="String" value="org.openscada.da.server.opc.Hive"/>
 </scr:component>
