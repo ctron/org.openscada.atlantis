@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.atlantis.sdk"
       label="openSCADA Atlantis SDK"
-      version="0.1.0.qualifier"
+      version="1.2.0.qualifier"
       provider-name="openSCADA.org">
 
    <description>
