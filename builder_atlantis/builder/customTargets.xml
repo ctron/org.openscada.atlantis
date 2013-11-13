@@ -100,8 +100,6 @@
   	
   	<openscada.builder.copyFeature id="org.openscada.atlantis"/>
   	<openscada.builder.copyFeature id="org.openscada.atlantis.sdk"/>
-
-	<openscada.builder.copyPlugin id="org.openscada.da.utils.daemon"/>
   	
 	<openscada.builder.copyPlugin id="org.openscada.da.server.snmp"/>
   	<openscada.builder.copyPlugin id="org.openscada.da.server.opc"/>
