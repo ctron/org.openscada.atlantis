@@ -31,6 +31,11 @@
 			<url>http://download.eclipse.org/eclipsescada/updates/integration</url>
 		</repository>
 		<repository>
+			<id>openscada.p2.external</id>
+			<layout>p2</layout>
+			<url>http://repo.openscada.org/p2/extenal/I/1.2.0/</url>
+		</repository>
+		<repository>
 			<id>openscada.p2.utgard</id>
 			<layout>p2</layout>
 			<url>http://repo.openscada.org/p2/utgard/I/1.2.0/</url>
