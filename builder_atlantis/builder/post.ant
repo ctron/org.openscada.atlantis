@@ -36,6 +36,7 @@ is active.
             <fileset dir=".">
                 <include name="target/**/${repo}*.rpm"/>
                 <include name="target/${repo}_*.deb"/>
+                <include name="target/${repo}_*.changes"/>
                 <include name="target/${repo}-*.zip"/>
             </fileset>
             <mapper type="flatten"/>
