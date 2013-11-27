@@ -31,7 +31,7 @@ public class ConnectionSetup
 
     private AccessMethod accessMethod = AccessMethod.SYNC;
 
-    private int refreshTimeout = 500;
+    private int updateRate = 500;
 
     private boolean flatBrowser = true;
 
@@ -108,14 +108,14 @@ public class ConnectionSetup
         this.initialConnect = initialConnect;
     }
 
-    public int getRefreshTimeout ()
+    public int getUpdateRate ()
     {
-        return this.refreshTimeout;
+        return this.updateRate;
     }
 
-    public void setRefreshTimeout ( final int refreshTimeout )
+    public void setUpdateRate ( final int refreshTimeout )
     {
-        this.refreshTimeout = refreshTimeout;
+        this.updateRate = refreshTimeout;
     }
 
     public boolean isFlatBrowser ()

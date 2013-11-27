@@ -85,6 +85,7 @@ public class OPCController implements Runnable
         this.model = new OPCModel ();
         this.model.setIgnoreTimestampOnlyChange ( config.isIgnoreTimestampOnlyChange () );
         this.model.setQualityErrorIfLessThen ( config.getQualityErrorIfLessThen () );
+        this.model.setUpdateRate ( config.getUpdateRate () );
 
         switch ( this.configuration.getAccessMethod () )
         {

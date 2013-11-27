@@ -96,7 +96,7 @@ public class XMLConfigurator
             setup.setFlatBrowser ( configuration.isFlatBrowser () );
             setup.setTreeBrowser ( configuration.isTreeBrowser () );
 
-            setup.setRefreshTimeout ( configuration.getRefresh () );
+            setup.setUpdateRate ( configuration.getRefresh () );
             setup.setInitialConnect ( configuration.isInitialRefresh () );
             setup.setDeviceTag ( configuration.getAlias () );
 
