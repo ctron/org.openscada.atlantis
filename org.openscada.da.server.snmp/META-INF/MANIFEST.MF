@@ -35,7 +35,14 @@ Import-Package: org.eclipse.scada.core;version="0.1.0",
  org.eclipse.scada.utils.exec;version="0.1.0",
  org.eclipse.scada.utils.init;version="0.1.0",
  org.eclipse.scada.utils.str;version="0.1.0",
- org.slf4j;version="1.5.8"
+ org.slf4j;version="1.5.8",
+ org.snmp4j;version="2.2.5",
+ org.snmp4j.event;version="2.2.5",
+ org.snmp4j.mp;version="2.2.5",
+ org.snmp4j.security;version="2.2.5",
+ org.snmp4j.smi;version="2.2.5",
+ org.snmp4j.transport;version="2.2.5",
+ org.snmp4j.util;version="2.2.5"
 Service-Component: OSGI-INF/hive.xml
 Bundle-ActivationPolicy: lazy
 Bundle-RequiredExecutionEnvironment: JavaSE-1.6
