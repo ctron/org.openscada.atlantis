@@ -1,61 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<xs:schema
-    xmlns:xs="http://www.w3.org/2001/XMLSchema"
-    xmlns:os="http://openscada.org/DA/SNMP/Configuration"
-    targetNamespace="http://openscada.org/DA/SNMP/Configuration"
-    elementFormDefault="qualified">
-    <xs:element name="configuration">
-    
-    <xs:complexType>
-    <xs:sequence>
-                <xs:element name="mibs" type="os:mibsType" maxOccurs="1" minOccurs="1"></xs:element>
-                <xs:element name="connection" maxOccurs="unbounded"
-    		minOccurs="0">
-    		<xs:complexType>
-    			<xs:attribute name="name" use="required"
-    				type="xs:NMTOKEN">
-    			</xs:attribute>
-    			<xs:attribute name="community" use="required"
-    				type="xs:NMTOKEN">
-    			</xs:attribute>
-    			<xs:attribute name="address" use="required"
-    				type="os:address">
-    			</xs:attribute>
-    			<xs:attribute name="version" default="2"
-    				type="os:snmpVersion">
-    			</xs:attribute>
-    		</xs:complexType>
-    	</xs:element>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema"
+	xmlns:os="http://openscada.org/DA/SNMP/Configuration" targetNamespace="http://openscada.org/DA/SNMP/Configuration"
+	elementFormDefault="qualified">
+	
+	<xs:element name="configuration" type="os:configurationType"/>
 
-    </xs:sequence>
+	<xs:complexType name="configurationType">
+		<xs:sequence>
+			<xs:element name="mibs" type="os:mibsType" maxOccurs="1"
+				minOccurs="1"></xs:element>
+			<xs:element name="connection" type="os:connectionType"
+				maxOccurs="unbounded" minOccurs="0">
+			</xs:element>
+		</xs:sequence>
+	</xs:complexType>
 
-    </xs:complexType>
-    
-    </xs:element>
+	<xs:complexType name="connectionType">
+		<xs:attribute name="name" use="required" type="xs:NMTOKEN">
+		</xs:attribute>
+		<xs:attribute name="community" use="required" type="xs:NMTOKEN">
+		</xs:attribute>
+		<xs:attribute name="address" use="required" type="os:address">
+		</xs:attribute>
+		<xs:attribute name="version" default="2" type="os:snmpVersion">
+		</xs:attribute>
+	</xs:complexType>
 
-    <xs:simpleType name="address">
-        <xs:annotation>
-          <xs:documentation>An address to a SNMP device as required by the SNMP4J library</xs:documentation>
-        </xs:annotation>
-        <xs:restriction base="xs:string">
-        <xs:pattern value="(udp|tcp):([a-zA-Z0-9]+\.?)+/[0-9]{1,5}"></xs:pattern>
-      </xs:restriction>
-    </xs:simpleType>
+	<xs:simpleType name="address">
+		<xs:annotation>
+			<xs:documentation>An address to a SNMP device as required by the
+				SNMP4J library
+			</xs:documentation>
+		</xs:annotation>
+		<xs:restriction base="xs:string">
+			<xs:pattern value="(udp|tcp):([a-zA-Z0-9]+\.?)+/[0-9]{1,5}"></xs:pattern>
+		</xs:restriction>
+	</xs:simpleType>
 
-    <xs:simpleType name="snmpVersion">
-      <xs:restriction base="xs:int">
-        <xs:enumeration value="1"></xs:enumeration>
-        <xs:enumeration value="2"></xs:enumeration>
-        <xs:enumeration value="3"></xs:enumeration>
-      </xs:restriction>
-    </xs:simpleType>
+	<xs:simpleType name="snmpVersion">
+		<xs:restriction base="xs:int">
+			<xs:enumeration value="1"></xs:enumeration>
+			<xs:enumeration value="2"></xs:enumeration>
+			<xs:enumeration value="3"></xs:enumeration>
+		</xs:restriction>
+	</xs:simpleType>
 
-    <xs:complexType name="mibsType">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
-    		<xs:element name="staticMibName" type="xs:string">
-    		</xs:element>
-    		<xs:element name="mibDir" type="xs:string"></xs:element>
-    		<xs:element name="recursiveMibDir" type="xs:string"></xs:element>
-    	</xs:choice>
-    </xs:complexType>
+	<xs:complexType name="mibsType">
+		<xs:choice maxOccurs="unbounded" minOccurs="0">
+			<xs:element name="staticMibName" type="xs:string">
+			</xs:element>
+			<xs:element name="mibDir" type="xs:string"></xs:element>
+			<xs:element name="recursiveMibDir" type="xs:string"></xs:element>
+		</xs:choice>
+	</xs:complexType>
 </xs:schema>

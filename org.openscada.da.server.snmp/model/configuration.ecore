@@ -4,7 +4,7 @@
     nsPrefix="configuration">
   <eClassifiers xsi:type="ecore:EDataType" name="Address" instanceClassName="java.lang.String">
     <eAnnotations source="http://www.eclipse.org/emf/2002/GenModel">
-      <details key="documentation" value="An address to a SNMP device as required by the SNMP4J library"/>
+      <details key="documentation" value="An address to a SNMP device as required by the&#xA;&#x9;&#x9;&#x9;&#x9;SNMP4J library&#xA;&#x9;&#x9;&#x9;"/>
     </eAnnotations>
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
       <details key="name" value="address"/>
@@ -14,7 +14,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConfigurationType">
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-      <details key="name" value="configuration_._type"/>
+      <details key="name" value="configurationType"/>
       <details key="kind" value="elementOnly"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EReference" name="mibs" lowerBound="1" eType="#//MibsType"
@@ -36,7 +36,7 @@
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="ConnectionType">
     <eAnnotations source="http:///org/eclipse/emf/ecore/util/ExtendedMetaData">
-      <details key="name" value="connection_._type"/>
+      <details key="name" value="connectionType"/>
       <details key="kind" value="empty"/>
     </eAnnotations>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="address" lowerBound="1"

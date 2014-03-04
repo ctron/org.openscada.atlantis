@@ -52,6 +52,13 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      * <!-- end-user-doc -->
      * @generated
      */
+    public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
+
+    /**
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
     private EClass configurationTypeEClass = null;
 
     /**
@@ -155,12 +162,15 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
         theConfigurationPackage.initializePackageContents ();
 
         // Register package validator
-        EValidator.Registry.INSTANCE.put ( theConfigurationPackage, new EValidator.Descriptor () {
-            public EValidator getEValidator ()
-            {
-                return ConfigurationValidator.INSTANCE;
-            }
-        } );
+        EValidator.Registry.INSTANCE.put
+                ( theConfigurationPackage,
+                        new EValidator.Descriptor ()
+                        {
+                            public EValidator getEValidator ()
+                            {
+                                return ConfigurationValidator.INSTANCE;
+                            }
+                        } );
 
         // Mark meta-data to indicate it can't be changed
         theConfigurationPackage.freeze ();
@@ -525,78 +535,141 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
     protected void createExtendedMetaDataAnnotations ()
     {
         String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData"; //$NON-NLS-1$			
-        addAnnotation ( addressEDataType, source, new String[] { "name", "address", //$NON-NLS-1$ //$NON-NLS-2$
-        "baseType", "http://www.eclipse.org/emf/2003/XMLType#string", //$NON-NLS-1$ //$NON-NLS-2$
-        "pattern", "(udp|tcp):([a-zA-Z0-9]+\\.?)+/[0-9]{1,5}" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( configurationTypeEClass, source, new String[] { "name", "configuration_._type", //$NON-NLS-1$ //$NON-NLS-2$
-        "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getConfigurationType_Mibs (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "mibs", //$NON-NLS-1$ //$NON-NLS-2$
-        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getConfigurationType_Connection (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "connection", //$NON-NLS-1$ //$NON-NLS-2$
-        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( connectionTypeEClass, source, new String[] { "name", "connection_._type", //$NON-NLS-1$ //$NON-NLS-2$
-        "kind", "empty" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getConnectionType_Address (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "address" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getConnectionType_Community (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "community" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getConnectionType_Name (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "name" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getConnectionType_Version (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "version" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( documentRootEClass, source, new String[] { "name", "", //$NON-NLS-1$ //$NON-NLS-2$
-        "kind", "mixed" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getDocumentRoot_Mixed (), source, new String[] { "kind", "elementWildcard", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", ":mixed" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getDocumentRoot_XMLNSPrefixMap (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "xmlns:prefix" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getDocumentRoot_XSISchemaLocation (), source, new String[] { "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "xsi:schemaLocation" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getDocumentRoot_Configuration (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "configuration", //$NON-NLS-1$ //$NON-NLS-2$
-        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( mibsTypeEClass, source, new String[] { "name", "mibsType", //$NON-NLS-1$ //$NON-NLS-2$
-        "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getMibsType_Group (), source, new String[] { "kind", "group", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "group:0" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getMibsType_StaticMibName (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "staticMibName", //$NON-NLS-1$ //$NON-NLS-2$
-        "namespace", "##targetNamespace", //$NON-NLS-1$ //$NON-NLS-2$
-        "group", "#group:0" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getMibsType_MibDir (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "mibDir", //$NON-NLS-1$ //$NON-NLS-2$
-        "namespace", "##targetNamespace", //$NON-NLS-1$ //$NON-NLS-2$
-        "group", "#group:0" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( getMibsType_RecursiveMibDir (), source, new String[] { "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
-        "name", "recursiveMibDir", //$NON-NLS-1$ //$NON-NLS-2$
-        "namespace", "##targetNamespace", //$NON-NLS-1$ //$NON-NLS-2$
-        "group", "#group:0" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( snmpVersionEEnum, source, new String[] { "name", "snmpVersion" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
-        addAnnotation ( snmpVersionObjectEDataType, source, new String[] { "name", "snmpVersion:Object", //$NON-NLS-1$ //$NON-NLS-2$
-        "baseType", "snmpVersion" //$NON-NLS-1$ //$NON-NLS-2$
-        } );
+        addAnnotation ( addressEDataType,
+                source,
+                new String[]
+                {       "name", "address", //$NON-NLS-1$ //$NON-NLS-2$
+                        "baseType", "http://www.eclipse.org/emf/2003/XMLType#string", //$NON-NLS-1$ //$NON-NLS-2$
+                        "pattern", "(udp|tcp):([a-zA-Z0-9]+\\.?)+/[0-9]{1,5}" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( configurationTypeEClass,
+                source,
+                new String[]
+                {       "name", "configurationType", //$NON-NLS-1$ //$NON-NLS-2$
+                        "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getConfigurationType_Mibs (),
+                source,
+                new String[]
+                {       "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "mibs", //$NON-NLS-1$ //$NON-NLS-2$
+                        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getConfigurationType_Connection (),
+                source,
+                new String[]
+                {       "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "connection", //$NON-NLS-1$ //$NON-NLS-2$
+                        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( connectionTypeEClass,
+                source,
+                new String[]
+                {       "name", "connectionType", //$NON-NLS-1$ //$NON-NLS-2$
+                        "kind", "empty" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getConnectionType_Address (),
+                source,
+                new String[]
+                {       "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "address" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getConnectionType_Community (),
+                source,
+                new String[]
+                {       "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "community" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getConnectionType_Name (),
+                source,
+                new String[]
+                {       "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "name" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getConnectionType_Version (),
+                source,
+                new String[]
+                {       "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "version" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( documentRootEClass,
+                source,
+                new String[]
+                {       "name", "", //$NON-NLS-1$ //$NON-NLS-2$
+                        "kind", "mixed" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getDocumentRoot_Mixed (),
+                source,
+                new String[]
+                {       "kind", "elementWildcard", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", ":mixed" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getDocumentRoot_XMLNSPrefixMap (),
+                source,
+                new String[]
+                {       "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "xmlns:prefix" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getDocumentRoot_XSISchemaLocation (),
+                source,
+                new String[]
+                {       "kind", "attribute", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "xsi:schemaLocation" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getDocumentRoot_Configuration (),
+                source,
+                new String[]
+                {       "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "configuration", //$NON-NLS-1$ //$NON-NLS-2$
+                        "namespace", "##targetNamespace" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( mibsTypeEClass,
+                source,
+                new String[]
+                {       "name", "mibsType", //$NON-NLS-1$ //$NON-NLS-2$
+                        "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getMibsType_Group (),
+                source,
+                new String[]
+                {       "kind", "group", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "group:0" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getMibsType_StaticMibName (),
+                source,
+                new String[]
+                {       "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "staticMibName", //$NON-NLS-1$ //$NON-NLS-2$
+                        "namespace", "##targetNamespace", //$NON-NLS-1$ //$NON-NLS-2$
+                        "group", "#group:0" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getMibsType_MibDir (),
+                source,
+                new String[]
+                {       "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "mibDir", //$NON-NLS-1$ //$NON-NLS-2$
+                        "namespace", "##targetNamespace", //$NON-NLS-1$ //$NON-NLS-2$
+                        "group", "#group:0" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( getMibsType_RecursiveMibDir (),
+                source,
+                new String[]
+                {       "kind", "element", //$NON-NLS-1$ //$NON-NLS-2$
+                        "name", "recursiveMibDir", //$NON-NLS-1$ //$NON-NLS-2$
+                        "namespace", "##targetNamespace", //$NON-NLS-1$ //$NON-NLS-2$
+                        "group", "#group:0" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( snmpVersionEEnum,
+                source,
+                new String[]
+                {       "name", "snmpVersion" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
+        addAnnotation ( snmpVersionObjectEDataType,
+                source,
+                new String[]
+                {       "name", "snmpVersion:Object", //$NON-NLS-1$ //$NON-NLS-2$
+                        "baseType", "snmpVersion" //$NON-NLS-1$ //$NON-NLS-2$
+                } );
     }
 
 } //ConfigurationPackageImpl
