@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: %pluginName
 Bundle-SymbolicName: org.openscada.da.server.snmp;singleton:=true
-Bundle-Version: 0.1.0.qualifier
+Bundle-Version: 1.2.0.qualifier
 Bundle-ClassPath: lib/snmp4j-2.2.1.jar,
  .
 Bundle-Vendor: %providerName

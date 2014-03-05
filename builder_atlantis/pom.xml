@@ -120,6 +120,8 @@
 		<module>../org.openscada.da.server.opc.edit</module>
 		<module>../org.openscada.da.server.opc.editor</module>
 		<module>../org.openscada.da.server.snmp</module>
+		<module>../org.openscada.da.server.snmp.edit</module>
+		<module>../org.openscada.da.server.snmp.editor</module>
 	</modules>
 
 </project>
