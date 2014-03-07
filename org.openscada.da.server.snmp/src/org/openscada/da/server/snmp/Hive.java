@@ -3,6 +3,7 @@
  * 
  * Copyright (C) 2006-2011 TH4 SYSTEMS GmbH (http://th4-systems.com)
  * Copyright (C) 2013 Jens Reimann (ctron@dentrassi.de)
+ * Copyright (C) 2014 IBH SYSTEMS GmnH (http://ibh-systems.com)
  *
  * OpenSCADA is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Lesser General Public License version 3
@@ -52,22 +53,11 @@ public class Hive extends HiveCommon
 
     private MibManager mibManager;
 
+    private final ConfigurationType configuration;
+
     public Hive ()
     {
-        // create root folder
-        this.rootFolder = new FolderCommon ();
-        setRootFolder ( this.rootFolder );
-
-        new Thread ( new Runnable () {
-
-            @Override
-            public void run ()
-            {
-                configure ( URI.createFileURI ( "configuration.xml" ) );
-            }
-        } ).start ();
-
-        setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
+        this ( parse ( URI.createFileURI ( "configuration.xml" ) ), null );
     }
 
     public Hive ( final String uri, final MibManager mibManager )
@@ -80,6 +70,7 @@ public class Hive extends HiveCommon
         // create root folder
         this.rootFolder = new FolderCommon ();
         setRootFolder ( this.rootFolder );
+        this.configuration = cfg;
 
         if ( mibManager != null )
         {
@@ -90,16 +81,23 @@ public class Hive extends HiveCommon
             this.mibManager = createMibManager ( cfg );
         }
 
+        setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
+    }
+
+    @Override
+    protected void performStart () throws Exception
+    {
+        super.performStart ();
+
         new Thread ( new Runnable () {
 
             @Override
             public void run ()
             {
-                configure ( cfg );
+                configure ();
             }
         } ).start ();
 
-        setValidatonStrategy ( ValidationStrategy.GRANT_ALL );
     }
 
     @Override
@@ -113,14 +111,14 @@ public class Hive extends HiveCommon
      * 
      * @param doc
      */
-    protected void configure ( final ConfigurationType cfg )
+    protected void configure ()
     {
         if ( this.mibManager != null )
         {
-            this.mibManager.configure ( cfg.getMibs () );
+            this.mibManager.configure ( this.configuration.getMibs () );
         }
 
-        for ( final ConnectionType connection : cfg.getConnection () )
+        for ( final ConnectionType connection : this.configuration.getConnection () )
         {
             configure ( connection );
         }
@@ -147,18 +145,6 @@ public class Hive extends HiveCommon
             }
         }
         return null;
-    }
-
-    /**
-     * configure the hive based on the default config file in the local path
-     * 
-     * @throws IOException
-     */
-    protected void configure ( final URI uri )
-    {
-        final ConfigurationType cfg = parse ( uri );
-
-        configure ( cfg );
     }
 
     private static ConfigurationType parse ( final URI uri )
