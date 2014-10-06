@@ -6,12 +6,12 @@
 	<parent>
 		<artifactId>org.openscada.atlantis-parent</artifactId>
 		<groupId>org.openscada.atlantis</groupId>
-		<version>1.2.0-SNAPSHOT</version>
+		<version>1.3.0-SNAPSHOT</version>
 		<relativePath>..</relativePath>
 	</parent>
 	<groupId>org.openscada.atlantis</groupId>
 	<artifactId>org.openscada.atlantis.p2</artifactId>
-	<version>1.2.0-SNAPSHOT</version>
+	<version>1.3.0-SNAPSHOT</version>
 	<packaging>eclipse-repository</packaging>
 	
 	
