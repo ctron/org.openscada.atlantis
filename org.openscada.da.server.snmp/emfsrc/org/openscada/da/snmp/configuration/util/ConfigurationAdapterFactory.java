@@ -33,185 +33,167 @@ import org.openscada.da.snmp.configuration.*;
  * @see org.openscada.da.snmp.configuration.ConfigurationPackage
  * @generated
  */
-public class ConfigurationAdapterFactory extends AdapterFactoryImpl
-{
-    //$NON-NLS-1$
+public class ConfigurationAdapterFactory extends AdapterFactoryImpl {
+	//$NON-NLS-1$
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
 
-    /**
-     * The cached model package.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected static ConfigurationPackage modelPackage;
+	/**
+	 * The cached model package.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected static ConfigurationPackage modelPackage;
 
-    /**
-     * Creates an instance of the adapter factory.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ConfigurationAdapterFactory ()
-    {
-        if ( modelPackage == null )
-        {
-            modelPackage = ConfigurationPackage.eINSTANCE;
-        }
-    }
+	/**
+	 * Creates an instance of the adapter factory.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ConfigurationAdapterFactory() {
+		if (modelPackage == null) {
+			modelPackage = ConfigurationPackage.eINSTANCE;
+		}
+	}
 
-    /**
-     * Returns whether this factory is applicable for the type of the object.
-     * <!-- begin-user-doc -->
-     * This implementation returns <code>true</code> if the object is either the model's package or is an instance object of the model.
-     * <!-- end-user-doc -->
-     * @return whether this factory is applicable for the type of the object.
-     * @generated
-     */
-    @Override
-    public boolean isFactoryForType ( Object object )
-    {
-        if ( object == modelPackage )
-        {
-            return true;
-        }
-        if ( object instanceof EObject )
-        {
-            return ( (EObject)object ).eClass ().getEPackage () == modelPackage;
-        }
-        return false;
-    }
+	/**
+	 * Returns whether this factory is applicable for the type of the object.
+	 * <!-- begin-user-doc -->
+	 * This implementation returns <code>true</code> if the object is either the model's package or is an instance object of the model.
+	 * <!-- end-user-doc -->
+	 * @return whether this factory is applicable for the type of the object.
+	 * @generated
+	 */
+	@Override
+	public boolean isFactoryForType(Object object) {
+		if (object == modelPackage) {
+			return true;
+		}
+		if (object instanceof EObject) {
+			return ((EObject) object).eClass().getEPackage() == modelPackage;
+		}
+		return false;
+	}
 
-    /**
-     * The switch that delegates to the <code>createXXX</code> methods.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ConfigurationSwitch<Adapter> modelSwitch = new ConfigurationSwitch<Adapter> ()
-    {
-        @Override
-        public Adapter caseConfigurationType ( ConfigurationType object )
-        {
-            return createConfigurationTypeAdapter ();
-        }
+	/**
+	 * The switch that delegates to the <code>createXXX</code> methods.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ConfigurationSwitch<Adapter> modelSwitch = new ConfigurationSwitch<Adapter>() {
+		@Override
+		public Adapter caseConfigurationType(ConfigurationType object) {
+			return createConfigurationTypeAdapter();
+		}
 
-        @Override
-        public Adapter caseConnectionType ( ConnectionType object )
-        {
-            return createConnectionTypeAdapter ();
-        }
+		@Override
+		public Adapter caseConnectionType(ConnectionType object) {
+			return createConnectionTypeAdapter();
+		}
 
-        @Override
-        public Adapter caseDocumentRoot ( DocumentRoot object )
-        {
-            return createDocumentRootAdapter ();
-        }
+		@Override
+		public Adapter caseDocumentRoot(DocumentRoot object) {
+			return createDocumentRootAdapter();
+		}
 
-        @Override
-        public Adapter caseMibsType ( MibsType object )
-        {
-            return createMibsTypeAdapter ();
-        }
+		@Override
+		public Adapter caseMibsType(MibsType object) {
+			return createMibsTypeAdapter();
+		}
 
-        @Override
-        public Adapter defaultCase ( EObject object )
-        {
-            return createEObjectAdapter ();
-        }
-    };
+		@Override
+		public Adapter defaultCase(EObject object) {
+			return createEObjectAdapter();
+		}
+	};
 
-    /**
-     * Creates an adapter for the <code>target</code>.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @param target the object to adapt.
-     * @return the adapter for the <code>target</code>.
-     * @generated
-     */
-    @Override
-    public Adapter createAdapter ( Notifier target )
-    {
-        return modelSwitch.doSwitch ( (EObject)target );
-    }
+	/**
+	 * Creates an adapter for the <code>target</code>.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @param target the object to adapt.
+	 * @return the adapter for the <code>target</code>.
+	 * @generated
+	 */
+	@Override
+	public Adapter createAdapter(Notifier target) {
+		return modelSwitch.doSwitch((EObject) target);
+	}
 
-    /**
-     * Creates a new adapter for an object of class '{@link org.openscada.da.snmp.configuration.ConfigurationType <em>Type</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.openscada.da.snmp.configuration.ConfigurationType
-     * @generated
-     */
-    public Adapter createConfigurationTypeAdapter ()
-    {
-        return null;
-    }
+	/**
+	 * Creates a new adapter for an object of class '{@link org.openscada.da.snmp.configuration.ConfigurationType <em>Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.openscada.da.snmp.configuration.ConfigurationType
+	 * @generated
+	 */
+	public Adapter createConfigurationTypeAdapter() {
+		return null;
+	}
 
-    /**
-     * Creates a new adapter for an object of class '{@link org.openscada.da.snmp.configuration.ConnectionType <em>Connection Type</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.openscada.da.snmp.configuration.ConnectionType
-     * @generated
-     */
-    public Adapter createConnectionTypeAdapter ()
-    {
-        return null;
-    }
+	/**
+	 * Creates a new adapter for an object of class '{@link org.openscada.da.snmp.configuration.ConnectionType <em>Connection Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.openscada.da.snmp.configuration.ConnectionType
+	 * @generated
+	 */
+	public Adapter createConnectionTypeAdapter() {
+		return null;
+	}
 
-    /**
-     * Creates a new adapter for an object of class '{@link org.openscada.da.snmp.configuration.DocumentRoot <em>Document Root</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.openscada.da.snmp.configuration.DocumentRoot
-     * @generated
-     */
-    public Adapter createDocumentRootAdapter ()
-    {
-        return null;
-    }
+	/**
+	 * Creates a new adapter for an object of class '{@link org.openscada.da.snmp.configuration.DocumentRoot <em>Document Root</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.openscada.da.snmp.configuration.DocumentRoot
+	 * @generated
+	 */
+	public Adapter createDocumentRootAdapter() {
+		return null;
+	}
 
-    /**
-     * Creates a new adapter for an object of class '{@link org.openscada.da.snmp.configuration.MibsType <em>Mibs Type</em>}'.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null so that we can easily ignore cases;
-     * it's useful to ignore a case when inheritance will catch all the cases anyway.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @see org.openscada.da.snmp.configuration.MibsType
-     * @generated
-     */
-    public Adapter createMibsTypeAdapter ()
-    {
-        return null;
-    }
+	/**
+	 * Creates a new adapter for an object of class '{@link org.openscada.da.snmp.configuration.MibsType <em>Mibs Type</em>}'.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null so that we can easily ignore cases;
+	 * it's useful to ignore a case when inheritance will catch all the cases anyway.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @see org.openscada.da.snmp.configuration.MibsType
+	 * @generated
+	 */
+	public Adapter createMibsTypeAdapter() {
+		return null;
+	}
 
-    /**
-     * Creates a new adapter for the default case.
-     * <!-- begin-user-doc -->
-     * This default implementation returns null.
-     * <!-- end-user-doc -->
-     * @return the new adapter.
-     * @generated
-     */
-    public Adapter createEObjectAdapter ()
-    {
-        return null;
-    }
+	/**
+	 * Creates a new adapter for the default case.
+	 * <!-- begin-user-doc -->
+	 * This default implementation returns null.
+	 * <!-- end-user-doc -->
+	 * @return the new adapter.
+	 * @generated
+	 */
+	public Adapter createEObjectAdapter() {
+		return null;
+	}
 
 } //ConfigurationAdapterFactory

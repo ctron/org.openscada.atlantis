@@ -49,273 +49,257 @@ import org.openscada.da.snmp.configuration.util.ConfigurationAdapterFactory;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ConfigurationItemProviderAdapterFactory extends ConfigurationAdapterFactory implements ComposeableAdapterFactory, IChangeNotifier, IDisposable
-{
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
+public class ConfigurationItemProviderAdapterFactory extends
+		ConfigurationAdapterFactory implements ComposeableAdapterFactory,
+		IChangeNotifier, IDisposable {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
 
-    /**
-     * This keeps track of the root adapter factory that delegates to this adapter factory.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ComposedAdapterFactory parentAdapterFactory;
+	/**
+	 * This keeps track of the root adapter factory that delegates to this adapter factory.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ComposedAdapterFactory parentAdapterFactory;
 
-    /**
-     * This is used to implement {@link org.eclipse.emf.edit.provider.IChangeNotifier}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected IChangeNotifier changeNotifier = new ChangeNotifier ();
+	/**
+	 * This is used to implement {@link org.eclipse.emf.edit.provider.IChangeNotifier}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected IChangeNotifier changeNotifier = new ChangeNotifier();
 
-    /**
-     * This keeps track of all the supported types checked by {@link #isFactoryForType isFactoryForType}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected Collection<Object> supportedTypes = new ArrayList<Object> ();
+	/**
+	 * This keeps track of all the supported types checked by {@link #isFactoryForType isFactoryForType}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected Collection<Object> supportedTypes = new ArrayList<Object>();
 
-    /**
-     * This constructs an instance.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ConfigurationItemProviderAdapterFactory ()
-    {
-        supportedTypes.add ( IEditingDomainItemProvider.class );
-        supportedTypes.add ( IStructuredItemContentProvider.class );
-        supportedTypes.add ( ITreeItemContentProvider.class );
-        supportedTypes.add ( IItemLabelProvider.class );
-        supportedTypes.add ( IItemPropertySource.class );
-    }
+	/**
+	 * This constructs an instance.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ConfigurationItemProviderAdapterFactory() {
+		supportedTypes.add(IEditingDomainItemProvider.class);
+		supportedTypes.add(IStructuredItemContentProvider.class);
+		supportedTypes.add(ITreeItemContentProvider.class);
+		supportedTypes.add(IItemLabelProvider.class);
+		supportedTypes.add(IItemPropertySource.class);
+	}
 
-    /**
-     * This keeps track of the one adapter used for all {@link org.openscada.da.snmp.configuration.ConfigurationType} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ConfigurationTypeItemProvider configurationTypeItemProvider;
+	/**
+	 * This keeps track of the one adapter used for all {@link org.openscada.da.snmp.configuration.ConfigurationType} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ConfigurationTypeItemProvider configurationTypeItemProvider;
 
-    /**
-     * This creates an adapter for a {@link org.openscada.da.snmp.configuration.ConfigurationType}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Adapter createConfigurationTypeAdapter ()
-    {
-        if ( configurationTypeItemProvider == null )
-        {
-            configurationTypeItemProvider = new ConfigurationTypeItemProvider ( this );
-        }
+	/**
+	 * This creates an adapter for a {@link org.openscada.da.snmp.configuration.ConfigurationType}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createConfigurationTypeAdapter() {
+		if (configurationTypeItemProvider == null) {
+			configurationTypeItemProvider = new ConfigurationTypeItemProvider(
+					this);
+		}
 
-        return configurationTypeItemProvider;
-    }
+		return configurationTypeItemProvider;
+	}
 
-    /**
-     * This keeps track of the one adapter used for all {@link org.openscada.da.snmp.configuration.ConnectionType} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ConnectionTypeItemProvider connectionTypeItemProvider;
+	/**
+	 * This keeps track of the one adapter used for all {@link org.openscada.da.snmp.configuration.ConnectionType} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ConnectionTypeItemProvider connectionTypeItemProvider;
 
-    /**
-     * This creates an adapter for a {@link org.openscada.da.snmp.configuration.ConnectionType}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Adapter createConnectionTypeAdapter ()
-    {
-        if ( connectionTypeItemProvider == null )
-        {
-            connectionTypeItemProvider = new ConnectionTypeItemProvider ( this );
-        }
+	/**
+	 * This creates an adapter for a {@link org.openscada.da.snmp.configuration.ConnectionType}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createConnectionTypeAdapter() {
+		if (connectionTypeItemProvider == null) {
+			connectionTypeItemProvider = new ConnectionTypeItemProvider(this);
+		}
 
-        return connectionTypeItemProvider;
-    }
+		return connectionTypeItemProvider;
+	}
 
-    /**
-     * This keeps track of the one adapter used for all {@link org.openscada.da.snmp.configuration.DocumentRoot} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected DocumentRootItemProvider documentRootItemProvider;
+	/**
+	 * This keeps track of the one adapter used for all {@link org.openscada.da.snmp.configuration.DocumentRoot} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected DocumentRootItemProvider documentRootItemProvider;
 
-    /**
-     * This creates an adapter for a {@link org.openscada.da.snmp.configuration.DocumentRoot}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Adapter createDocumentRootAdapter ()
-    {
-        if ( documentRootItemProvider == null )
-        {
-            documentRootItemProvider = new DocumentRootItemProvider ( this );
-        }
+	/**
+	 * This creates an adapter for a {@link org.openscada.da.snmp.configuration.DocumentRoot}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createDocumentRootAdapter() {
+		if (documentRootItemProvider == null) {
+			documentRootItemProvider = new DocumentRootItemProvider(this);
+		}
 
-        return documentRootItemProvider;
-    }
+		return documentRootItemProvider;
+	}
 
-    /**
-     * This keeps track of the one adapter used for all {@link org.openscada.da.snmp.configuration.MibsType} instances.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected MibsTypeItemProvider mibsTypeItemProvider;
+	/**
+	 * This keeps track of the one adapter used for all {@link org.openscada.da.snmp.configuration.MibsType} instances.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected MibsTypeItemProvider mibsTypeItemProvider;
 
-    /**
-     * This creates an adapter for a {@link org.openscada.da.snmp.configuration.MibsType}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Adapter createMibsTypeAdapter ()
-    {
-        if ( mibsTypeItemProvider == null )
-        {
-            mibsTypeItemProvider = new MibsTypeItemProvider ( this );
-        }
+	/**
+	 * This creates an adapter for a {@link org.openscada.da.snmp.configuration.MibsType}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter createMibsTypeAdapter() {
+		if (mibsTypeItemProvider == null) {
+			mibsTypeItemProvider = new MibsTypeItemProvider(this);
+		}
 
-        return mibsTypeItemProvider;
-    }
+		return mibsTypeItemProvider;
+	}
 
-    /**
-     * This returns the root adapter factory that contains this factory.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ComposeableAdapterFactory getRootAdapterFactory ()
-    {
-        return parentAdapterFactory == null ? this : parentAdapterFactory.getRootAdapterFactory ();
-    }
+	/**
+	 * This returns the root adapter factory that contains this factory.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ComposeableAdapterFactory getRootAdapterFactory() {
+		return parentAdapterFactory == null ? this : parentAdapterFactory
+				.getRootAdapterFactory();
+	}
 
-    /**
-     * This sets the composed adapter factory that contains this factory.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void setParentAdapterFactory ( ComposedAdapterFactory parentAdapterFactory )
-    {
-        this.parentAdapterFactory = parentAdapterFactory;
-    }
+	/**
+	 * This sets the composed adapter factory that contains this factory.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void setParentAdapterFactory(
+			ComposedAdapterFactory parentAdapterFactory) {
+		this.parentAdapterFactory = parentAdapterFactory;
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public boolean isFactoryForType ( Object type )
-    {
-        return supportedTypes.contains ( type ) || super.isFactoryForType ( type );
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean isFactoryForType(Object type) {
+		return supportedTypes.contains(type) || super.isFactoryForType(type);
+	}
 
-    /**
-     * This implementation substitutes the factory itself as the key for the adapter.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Adapter adapt ( Notifier notifier, Object type )
-    {
-        return super.adapt ( notifier, this );
-    }
+	/**
+	 * This implementation substitutes the factory itself as the key for the adapter.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Adapter adapt(Notifier notifier, Object type) {
+		return super.adapt(notifier, this);
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public Object adapt ( Object object, Object type )
-    {
-        if ( isFactoryForType ( type ) )
-        {
-            Object adapter = super.adapt ( object, type );
-            if ( ! ( type instanceof Class<?> ) || ( ( (Class<?>)type ).isInstance ( adapter ) ) )
-            {
-                return adapter;
-            }
-        }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public Object adapt(Object object, Object type) {
+		if (isFactoryForType(type)) {
+			Object adapter = super.adapt(object, type);
+			if (!(type instanceof Class<?>)
+					|| (((Class<?>) type).isInstance(adapter))) {
+				return adapter;
+			}
+		}
 
-        return null;
-    }
+		return null;
+	}
 
-    /**
-     * This adds a listener.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void addListener ( INotifyChangedListener notifyChangedListener )
-    {
-        changeNotifier.addListener ( notifyChangedListener );
-    }
+	/**
+	 * This adds a listener.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void addListener(INotifyChangedListener notifyChangedListener) {
+		changeNotifier.addListener(notifyChangedListener);
+	}
 
-    /**
-     * This removes a listener.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void removeListener ( INotifyChangedListener notifyChangedListener )
-    {
-        changeNotifier.removeListener ( notifyChangedListener );
-    }
+	/**
+	 * This removes a listener.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void removeListener(INotifyChangedListener notifyChangedListener) {
+		changeNotifier.removeListener(notifyChangedListener);
+	}
 
-    /**
-     * This delegates to {@link #changeNotifier} and to {@link #parentAdapterFactory}.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void fireNotifyChanged ( Notification notification )
-    {
-        changeNotifier.fireNotifyChanged ( notification );
+	/**
+	 * This delegates to {@link #changeNotifier} and to {@link #parentAdapterFactory}.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void fireNotifyChanged(Notification notification) {
+		changeNotifier.fireNotifyChanged(notification);
 
-        if ( parentAdapterFactory != null )
-        {
-            parentAdapterFactory.fireNotifyChanged ( notification );
-        }
-    }
+		if (parentAdapterFactory != null) {
+			parentAdapterFactory.fireNotifyChanged(notification);
+		}
+	}
 
-    /**
-     * This disposes all of the item providers created by this factory. 
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void dispose ()
-    {
-        if ( configurationTypeItemProvider != null )
-            configurationTypeItemProvider.dispose ();
-        if ( connectionTypeItemProvider != null )
-            connectionTypeItemProvider.dispose ();
-        if ( documentRootItemProvider != null )
-            documentRootItemProvider.dispose ();
-        if ( mibsTypeItemProvider != null )
-            mibsTypeItemProvider.dispose ();
-    }
+	/**
+	 * This disposes all of the item providers created by this factory. 
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void dispose() {
+		if (configurationTypeItemProvider != null)
+			configurationTypeItemProvider.dispose();
+		if (connectionTypeItemProvider != null)
+			connectionTypeItemProvider.dispose();
+		if (documentRootItemProvider != null)
+			documentRootItemProvider.dispose();
+		if (mibsTypeItemProvider != null)
+			mibsTypeItemProvider.dispose();
+	}
 
 }

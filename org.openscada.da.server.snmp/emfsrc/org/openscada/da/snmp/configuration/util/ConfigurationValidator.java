@@ -40,221 +40,220 @@ import org.openscada.da.snmp.configuration.*;
  * @see org.openscada.da.snmp.configuration.ConfigurationPackage
  * @generated
  */
-public class ConfigurationValidator extends EObjectValidator
-{
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
+public class ConfigurationValidator extends EObjectValidator {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
 
-    /**
-     * The cached model package
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public static final ConfigurationValidator INSTANCE = new ConfigurationValidator ();
+	/**
+	 * The cached model package
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final ConfigurationValidator INSTANCE = new ConfigurationValidator();
 
-    /**
-     * A constant for the {@link org.eclipse.emf.common.util.Diagnostic#getSource() source} of diagnostic {@link org.eclipse.emf.common.util.Diagnostic#getCode() codes} from this package.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @see org.eclipse.emf.common.util.Diagnostic#getSource()
-     * @see org.eclipse.emf.common.util.Diagnostic#getCode()
-     * @generated
-     */
-    public static final String DIAGNOSTIC_SOURCE = "org.openscada.da.snmp.configuration"; //$NON-NLS-1$
+	/**
+	 * A constant for the {@link org.eclipse.emf.common.util.Diagnostic#getSource() source} of diagnostic {@link org.eclipse.emf.common.util.Diagnostic#getCode() codes} from this package.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @see org.eclipse.emf.common.util.Diagnostic#getSource()
+	 * @see org.eclipse.emf.common.util.Diagnostic#getCode()
+	 * @generated
+	 */
+	public static final String DIAGNOSTIC_SOURCE = "org.openscada.da.snmp.configuration"; //$NON-NLS-1$
 
-    /**
-     * A constant with a fixed name that can be used as the base value for additional hand written constants.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    private static final int GENERATED_DIAGNOSTIC_CODE_COUNT = 0;
+	/**
+	 * A constant with a fixed name that can be used as the base value for additional hand written constants.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	private static final int GENERATED_DIAGNOSTIC_CODE_COUNT = 0;
 
-    /**
-     * A constant with a fixed name that can be used as the base value for additional hand written constants in a derived class.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected static final int DIAGNOSTIC_CODE_COUNT = GENERATED_DIAGNOSTIC_CODE_COUNT;
+	/**
+	 * A constant with a fixed name that can be used as the base value for additional hand written constants in a derived class.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected static final int DIAGNOSTIC_CODE_COUNT = GENERATED_DIAGNOSTIC_CODE_COUNT;
 
-    /**
-     * The cached base package validator.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected XMLTypeValidator xmlTypeValidator;
+	/**
+	 * The cached base package validator.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected XMLTypeValidator xmlTypeValidator;
 
-    /**
-     * Creates an instance of the switch.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public ConfigurationValidator ()
-    {
-        super ();
-        xmlTypeValidator = XMLTypeValidator.INSTANCE;
-    }
+	/**
+	 * Creates an instance of the switch.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public ConfigurationValidator() {
+		super();
+		xmlTypeValidator = XMLTypeValidator.INSTANCE;
+	}
 
-    /**
-     * Returns the package of this validator switch.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    protected EPackage getEPackage ()
-    {
-        return ConfigurationPackage.eINSTANCE;
-    }
+	/**
+	 * Returns the package of this validator switch.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	protected EPackage getEPackage() {
+		return ConfigurationPackage.eINSTANCE;
+	}
 
-    /**
-     * Calls <code>validateXXX</code> for the corresponding classifier of the model.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    protected boolean validate ( int classifierID, Object value, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        switch ( classifierID )
-        {
-            case ConfigurationPackage.CONFIGURATION_TYPE:
-                return validateConfigurationType ( (ConfigurationType)value, diagnostics, context );
-            case ConfigurationPackage.CONNECTION_TYPE:
-                return validateConnectionType ( (ConnectionType)value, diagnostics, context );
-            case ConfigurationPackage.DOCUMENT_ROOT:
-                return validateDocumentRoot ( (DocumentRoot)value, diagnostics, context );
-            case ConfigurationPackage.MIBS_TYPE:
-                return validateMibsType ( (MibsType)value, diagnostics, context );
-            case ConfigurationPackage.SNMP_VERSION:
-                return validateSnmpVersion ( (SnmpVersion)value, diagnostics, context );
-            case ConfigurationPackage.ADDRESS:
-                return validateAddress ( (String)value, diagnostics, context );
-            case ConfigurationPackage.SNMP_VERSION_OBJECT:
-                return validateSnmpVersionObject ( (SnmpVersion)value, diagnostics, context );
-            default:
-                return true;
-        }
-    }
+	/**
+	 * Calls <code>validateXXX</code> for the corresponding classifier of the model.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	protected boolean validate(int classifierID, Object value,
+			DiagnosticChain diagnostics, Map<Object, Object> context) {
+		switch (classifierID) {
+		case ConfigurationPackage.CONFIGURATION_TYPE:
+			return validateConfigurationType((ConfigurationType) value,
+					diagnostics, context);
+		case ConfigurationPackage.CONNECTION_TYPE:
+			return validateConnectionType((ConnectionType) value, diagnostics,
+					context);
+		case ConfigurationPackage.DOCUMENT_ROOT:
+			return validateDocumentRoot((DocumentRoot) value, diagnostics,
+					context);
+		case ConfigurationPackage.MIBS_TYPE:
+			return validateMibsType((MibsType) value, diagnostics, context);
+		case ConfigurationPackage.SNMP_VERSION:
+			return validateSnmpVersion((SnmpVersion) value, diagnostics,
+					context);
+		case ConfigurationPackage.ADDRESS:
+			return validateAddress((String) value, diagnostics, context);
+		case ConfigurationPackage.SNMP_VERSION_OBJECT:
+			return validateSnmpVersionObject((SnmpVersion) value, diagnostics,
+					context);
+		default:
+			return true;
+		}
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateConfigurationType ( ConfigurationType configurationType, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return validate_EveryDefaultConstraint ( configurationType, diagnostics, context );
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateConfigurationType(
+			ConfigurationType configurationType, DiagnosticChain diagnostics,
+			Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(configurationType, diagnostics,
+				context);
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateConnectionType ( ConnectionType connectionType, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return validate_EveryDefaultConstraint ( connectionType, diagnostics, context );
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateConnectionType(ConnectionType connectionType,
+			DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(connectionType, diagnostics,
+				context);
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateDocumentRoot ( DocumentRoot documentRoot, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return validate_EveryDefaultConstraint ( documentRoot, diagnostics, context );
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateDocumentRoot(DocumentRoot documentRoot,
+			DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(documentRoot, diagnostics,
+				context);
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateMibsType ( MibsType mibsType, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return validate_EveryDefaultConstraint ( mibsType, diagnostics, context );
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateMibsType(MibsType mibsType,
+			DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validate_EveryDefaultConstraint(mibsType, diagnostics, context);
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateSnmpVersion ( SnmpVersion snmpVersion, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return true;
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateSnmpVersion(SnmpVersion snmpVersion,
+			DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return true;
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateAddress ( String address, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        boolean result = validateAddress_Pattern ( address, diagnostics, context );
-        return result;
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateAddress(String address, DiagnosticChain diagnostics,
+			Map<Object, Object> context) {
+		boolean result = validateAddress_Pattern(address, diagnostics, context);
+		return result;
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     * @see #validateAddress_Pattern
-     */
-    public static final PatternMatcher[][] ADDRESS__PATTERN__VALUES =
-            new PatternMatcher[][]
-            {
-                    new PatternMatcher[]
-                    {
-                            XMLTypeUtil.createPatternMatcher ( "(udp|tcp):([a-zA-Z0-9]+\\.?)+/[0-9]{1,5}" )
-                    }
-            };
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 * @see #validateAddress_Pattern
+	 */
+	public static final PatternMatcher[][] ADDRESS__PATTERN__VALUES = new PatternMatcher[][] { new PatternMatcher[] { XMLTypeUtil
+			.createPatternMatcher("(udp|tcp):([a-zA-Z0-9]+\\.?)+/[0-9]{1,5}") } };
 
-    /**
-     * Validates the Pattern constraint of '<em>Address</em>'.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateAddress_Pattern ( String address, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return validatePattern ( ConfigurationPackage.Literals.ADDRESS, address, ADDRESS__PATTERN__VALUES, diagnostics, context );
-    }
+	/**
+	 * Validates the Pattern constraint of '<em>Address</em>'.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateAddress_Pattern(String address,
+			DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return validatePattern(ConfigurationPackage.Literals.ADDRESS, address,
+				ADDRESS__PATTERN__VALUES, diagnostics, context);
+	}
 
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public boolean validateSnmpVersionObject ( SnmpVersion snmpVersionObject, DiagnosticChain diagnostics, Map<Object, Object> context )
-    {
-        return true;
-    }
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public boolean validateSnmpVersionObject(SnmpVersion snmpVersionObject,
+			DiagnosticChain diagnostics, Map<Object, Object> context) {
+		return true;
+	}
 
-    /**
-     * Returns the resource locator that will be used to fetch messages for this validator's diagnostics.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public ResourceLocator getResourceLocator ()
-    {
-        // TODO
-        // Specialize this to return a resource locator for messages specific to this validator.
-        // Ensure that you remove @generated or mark it @generated NOT
-        return super.getResourceLocator ();
-    }
+	/**
+	 * Returns the resource locator that will be used to fetch messages for this validator's diagnostics.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public ResourceLocator getResourceLocator() {
+		// TODO
+		// Specialize this to return a resource locator for messages specific to this validator.
+		// Ensure that you remove @generated or mark it @generated NOT
+		return super.getResourceLocator();
+	}
 
 } //ConfigurationValidator

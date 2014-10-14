@@ -110,609 +110,595 @@ import org.eclipse.ui.PartInitException;
  * <!-- end-user-doc -->
  * @generated
  */
-public class ConfigurationModelWizard extends Wizard implements INewWizard
-{
-    /**
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
+public class ConfigurationModelWizard extends Wizard implements INewWizard {
+	/**
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final String copyright = "This file is part of the openSCADA project\n\nCopyright (C) 2013 Jens Reimann (ctron@dentrassi.de)\n\nopenSCADA is free software: you can redistribute it and/or modify\nit under the terms of the GNU Lesser General Public License version 3\nonly, as published by the Free Software Foundation.\n\nopenSCADA is distributed in the hope that it will be useful,\nbut WITHOUT ANY WARRANTY; without even the implied warranty of\nMERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the\nGNU Lesser General Public License version 3 for more details\n(a copy is included in the LICENSE file that accompanied this code).\n\nYou should have received a copy of the GNU Lesser General Public License\nversion 3 along with openSCADA. If not, see\n<http://opensource.org/licenses/lgpl-3.0.html> for a copy of the LGPLv3 License."; //$NON-NLS-1$
 
-    /**
-     * The supported extensions for created files.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public static final List<String> FILE_EXTENSIONS =
-            Collections.unmodifiableList ( Arrays.asList ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_ConfigurationEditorFilenameExtensions" ).split ( "\\s*,\\s*" ) ) ); //$NON-NLS-1$ //$NON-NLS-2$
+	/**
+	 * The supported extensions for created files.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final List<String> FILE_EXTENSIONS = Collections
+			.unmodifiableList(Arrays
+					.asList(SnmpEditorPlugin.INSTANCE
+							.getString(
+									"_UI_ConfigurationEditorFilenameExtensions").split("\\s*,\\s*"))); //$NON-NLS-1$ //$NON-NLS-2$
 
-    /**
-     * A formatted list of supported file extensions, suitable for display.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public static final String FORMATTED_FILE_EXTENSIONS =
-            SnmpEditorPlugin.INSTANCE.getString ( "_UI_ConfigurationEditorFilenameExtensions" ).replaceAll ( "\\s*,\\s*", ", " ); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+	/**
+	 * A formatted list of supported file extensions, suitable for display.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public static final String FORMATTED_FILE_EXTENSIONS = SnmpEditorPlugin.INSTANCE
+			.getString("_UI_ConfigurationEditorFilenameExtensions").replaceAll("\\s*,\\s*", ", "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
-    /**
-     * This caches an instance of the model package.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ConfigurationPackage configurationPackage = ConfigurationPackage.eINSTANCE;
+	/**
+	 * This caches an instance of the model package.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ConfigurationPackage configurationPackage = ConfigurationPackage.eINSTANCE;
 
-    /**
-     * This caches an instance of the model factory.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ConfigurationFactory configurationFactory = configurationPackage.getConfigurationFactory ();
+	/**
+	 * This caches an instance of the model factory.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ConfigurationFactory configurationFactory = configurationPackage
+			.getConfigurationFactory();
 
-    /**
-     * This is the file creation page.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ConfigurationModelWizardNewFileCreationPage newFileCreationPage;
+	/**
+	 * This is the file creation page.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ConfigurationModelWizardNewFileCreationPage newFileCreationPage;
 
-    /**
-     * This is the initial object creation page.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected ConfigurationModelWizardInitialObjectCreationPage initialObjectCreationPage;
+	/**
+	 * This is the initial object creation page.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected ConfigurationModelWizardInitialObjectCreationPage initialObjectCreationPage;
 
-    /**
-     * Remember the selection during initialization for populating the default container.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected IStructuredSelection selection;
+	/**
+	 * Remember the selection during initialization for populating the default container.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected IStructuredSelection selection;
 
-    /**
-     * Remember the workbench during initialization.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected IWorkbench workbench;
+	/**
+	 * Remember the workbench during initialization.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected IWorkbench workbench;
 
-    /**
-     * Caches the names of the features representing global elements.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected List<String> initialObjectNames;
+	/**
+	 * Caches the names of the features representing global elements.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected List<String> initialObjectNames;
 
-    /**
-     * This just records the information.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public void init ( IWorkbench workbench, IStructuredSelection selection )
-    {
-        this.workbench = workbench;
-        this.selection = selection;
-        setWindowTitle ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_Wizard_label" ) ); //$NON-NLS-1$
-        setDefaultPageImageDescriptor ( ExtendedImageRegistry.INSTANCE.getImageDescriptor ( SnmpEditorPlugin.INSTANCE.getImage ( "full/wizban/NewConfiguration" ) ) ); //$NON-NLS-1$
-    }
+	/**
+	 * This just records the information.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public void init(IWorkbench workbench, IStructuredSelection selection) {
+		this.workbench = workbench;
+		this.selection = selection;
+		setWindowTitle(SnmpEditorPlugin.INSTANCE.getString("_UI_Wizard_label")); //$NON-NLS-1$
+		setDefaultPageImageDescriptor(ExtendedImageRegistry.INSTANCE
+				.getImageDescriptor(SnmpEditorPlugin.INSTANCE
+						.getImage("full/wizban/NewConfiguration"))); //$NON-NLS-1$
+	}
 
-    /**
-     * Returns the names of the features representing global elements.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected Collection<String> getInitialObjectNames ()
-    {
-        if ( initialObjectNames == null )
-        {
-            initialObjectNames = new ArrayList<String> ();
-            for ( EStructuralFeature eStructuralFeature : ExtendedMetaData.INSTANCE.getAllElements ( ExtendedMetaData.INSTANCE.getDocumentRoot ( configurationPackage ) ) )
-            {
-                if ( eStructuralFeature.isChangeable () )
-                {
-                    EClassifier eClassifier = eStructuralFeature.getEType ();
-                    if ( eClassifier instanceof EClass )
-                    {
-                        EClass eClass = (EClass)eClassifier;
-                        if ( !eClass.isAbstract () )
-                        {
-                            initialObjectNames.add ( eStructuralFeature.getName () );
-                        }
-                    }
-                }
-            }
-            Collections.sort ( initialObjectNames, CommonPlugin.INSTANCE.getComparator () );
-        }
-        return initialObjectNames;
-    }
+	/**
+	 * Returns the names of the features representing global elements.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected Collection<String> getInitialObjectNames() {
+		if (initialObjectNames == null) {
+			initialObjectNames = new ArrayList<String>();
+			for (EStructuralFeature eStructuralFeature : ExtendedMetaData.INSTANCE
+					.getAllElements(ExtendedMetaData.INSTANCE
+							.getDocumentRoot(configurationPackage))) {
+				if (eStructuralFeature.isChangeable()) {
+					EClassifier eClassifier = eStructuralFeature.getEType();
+					if (eClassifier instanceof EClass) {
+						EClass eClass = (EClass) eClassifier;
+						if (!eClass.isAbstract()) {
+							initialObjectNames
+									.add(eStructuralFeature.getName());
+						}
+					}
+				}
+			}
+			Collections.sort(initialObjectNames,
+					CommonPlugin.INSTANCE.getComparator());
+		}
+		return initialObjectNames;
+	}
 
-    /**
-     * Create a new model.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    protected EObject createInitialModel ()
-    {
-        EClass eClass = ExtendedMetaData.INSTANCE.getDocumentRoot ( configurationPackage );
-        EStructuralFeature eStructuralFeature = eClass.getEStructuralFeature ( initialObjectCreationPage.getInitialObjectName () );
-        EObject rootObject = configurationFactory.create ( eClass );
-        rootObject.eSet ( eStructuralFeature, EcoreUtil.create ( (EClass)eStructuralFeature.getEType () ) );
-        return rootObject;
-    }
+	/**
+	 * Create a new model.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	protected EObject createInitialModel() {
+		EClass eClass = ExtendedMetaData.INSTANCE
+				.getDocumentRoot(configurationPackage);
+		EStructuralFeature eStructuralFeature = eClass
+				.getEStructuralFeature(initialObjectCreationPage
+						.getInitialObjectName());
+		EObject rootObject = configurationFactory.create(eClass);
+		rootObject.eSet(eStructuralFeature,
+				EcoreUtil.create((EClass) eStructuralFeature.getEType()));
+		return rootObject;
+	}
 
-    /**
-     * Do the work after everything is specified.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public boolean performFinish ()
-    {
-        try
-        {
-            // Remember the file.
-            //
-            final IFile modelFile = getModelFile ();
+	/**
+	 * Do the work after everything is specified.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public boolean performFinish() {
+		try {
+			// Remember the file.
+			//
+			final IFile modelFile = getModelFile();
 
-            // Do the work within an operation.
-            //
-            WorkspaceModifyOperation operation =
-                    new WorkspaceModifyOperation ()
-                    {
-                        @Override
-                        protected void execute ( IProgressMonitor progressMonitor )
-                        {
-                            try
-                            {
-                                // Create a resource set
-                                //
-                                ResourceSet resourceSet = new ResourceSetImpl ();
+			// Do the work within an operation.
+			//
+			WorkspaceModifyOperation operation = new WorkspaceModifyOperation() {
+				@Override
+				protected void execute(IProgressMonitor progressMonitor) {
+					try {
+						// Create a resource set
+						//
+						ResourceSet resourceSet = new ResourceSetImpl();
 
-                                // Get the URI of the model file.
-                                //
-                                URI fileURI = URI.createPlatformResourceURI ( modelFile.getFullPath ().toString (), true );
+						// Get the URI of the model file.
+						//
+						URI fileURI = URI.createPlatformResourceURI(modelFile
+								.getFullPath().toString(), true);
 
-                                // Create a resource for this file.
-                                //
-                                Resource resource = resourceSet.createResource ( fileURI );
+						// Create a resource for this file.
+						//
+						Resource resource = resourceSet.createResource(fileURI);
 
-                                // Add the initial model object to the contents.
-                                //
-                                EObject rootObject = createInitialModel ();
-                                if ( rootObject != null )
-                                {
-                                    resource.getContents ().add ( rootObject );
-                                }
+						// Add the initial model object to the contents.
+						//
+						EObject rootObject = createInitialModel();
+						if (rootObject != null) {
+							resource.getContents().add(rootObject);
+						}
 
-                                // Save the contents of the resource to the file system.
-                                //
-                                Map<Object, Object> options = new HashMap<Object, Object> ();
-                                options.put ( XMLResource.OPTION_ENCODING, initialObjectCreationPage.getEncoding () );
-                                resource.save ( options );
-                            }
-                            catch ( Exception exception )
-                            {
-                                SnmpEditorPlugin.INSTANCE.log ( exception );
-                            }
-                            finally
-                            {
-                                progressMonitor.done ();
-                            }
-                        }
-                    };
+						// Save the contents of the resource to the file system.
+						//
+						Map<Object, Object> options = new HashMap<Object, Object>();
+						options.put(XMLResource.OPTION_ENCODING,
+								initialObjectCreationPage.getEncoding());
+						resource.save(options);
+					} catch (Exception exception) {
+						SnmpEditorPlugin.INSTANCE.log(exception);
+					} finally {
+						progressMonitor.done();
+					}
+				}
+			};
 
-            getContainer ().run ( false, false, operation );
+			getContainer().run(false, false, operation);
 
-            // Select the new file resource in the current view.
-            //
-            IWorkbenchWindow workbenchWindow = workbench.getActiveWorkbenchWindow ();
-            IWorkbenchPage page = workbenchWindow.getActivePage ();
-            final IWorkbenchPart activePart = page.getActivePart ();
-            if ( activePart instanceof ISetSelectionTarget )
-            {
-                final ISelection targetSelection = new StructuredSelection ( modelFile );
-                getShell ().getDisplay ().asyncExec
-                        ( new Runnable ()
-                        {
-                            public void run ()
-                            {
-                                ( (ISetSelectionTarget)activePart ).selectReveal ( targetSelection );
-                            }
-                        } );
-            }
+			// Select the new file resource in the current view.
+			//
+			IWorkbenchWindow workbenchWindow = workbench
+					.getActiveWorkbenchWindow();
+			IWorkbenchPage page = workbenchWindow.getActivePage();
+			final IWorkbenchPart activePart = page.getActivePart();
+			if (activePart instanceof ISetSelectionTarget) {
+				final ISelection targetSelection = new StructuredSelection(
+						modelFile);
+				getShell().getDisplay().asyncExec(new Runnable() {
+					public void run() {
+						((ISetSelectionTarget) activePart)
+								.selectReveal(targetSelection);
+					}
+				});
+			}
 
-            // Open an editor on the new file.
-            //
-            try
-            {
-                page.openEditor
-                        ( new FileEditorInput ( modelFile ),
-                                workbench.getEditorRegistry ().getDefaultEditor ( modelFile.getFullPath ().toString () ).getId () );
-            }
-            catch ( PartInitException exception )
-            {
-                MessageDialog.openError ( workbenchWindow.getShell (), SnmpEditorPlugin.INSTANCE.getString ( "_UI_OpenEditorError_label" ), exception.getMessage () ); //$NON-NLS-1$
-                return false;
-            }
+			// Open an editor on the new file.
+			//
+			try {
+				page.openEditor(
+						new FileEditorInput(modelFile),
+						workbench
+								.getEditorRegistry()
+								.getDefaultEditor(
+										modelFile.getFullPath().toString())
+								.getId());
+			} catch (PartInitException exception) {
+				MessageDialog
+						.openError(
+								workbenchWindow.getShell(),
+								SnmpEditorPlugin.INSTANCE
+										.getString("_UI_OpenEditorError_label"), exception.getMessage()); //$NON-NLS-1$
+				return false;
+			}
 
-            return true;
-        }
-        catch ( Exception exception )
-        {
-            SnmpEditorPlugin.INSTANCE.log ( exception );
-            return false;
-        }
-    }
+			return true;
+		} catch (Exception exception) {
+			SnmpEditorPlugin.INSTANCE.log(exception);
+			return false;
+		}
+	}
 
-    /**
-     * This is the one page of the wizard.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public class ConfigurationModelWizardNewFileCreationPage extends WizardNewFileCreationPage
-    {
-        /**
-         * Pass in the selection.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public ConfigurationModelWizardNewFileCreationPage ( String pageId, IStructuredSelection selection )
-        {
-            super ( pageId, selection );
-        }
+	/**
+	 * This is the one page of the wizard.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public class ConfigurationModelWizardNewFileCreationPage extends
+			WizardNewFileCreationPage {
+		/**
+		 * Pass in the selection.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public ConfigurationModelWizardNewFileCreationPage(String pageId,
+				IStructuredSelection selection) {
+			super(pageId, selection);
+		}
 
-        /**
-         * The framework calls this to see if the file is correct.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        @Override
-        protected boolean validatePage ()
-        {
-            if ( super.validatePage () )
-            {
-                String extension = new Path ( getFileName () ).getFileExtension ();
-                if ( extension == null || !FILE_EXTENSIONS.contains ( extension ) )
-                {
-                    String key = FILE_EXTENSIONS.size () > 1 ? "_WARN_FilenameExtensions" : "_WARN_FilenameExtension"; //$NON-NLS-1$ //$NON-NLS-2$
-                    setErrorMessage ( SnmpEditorPlugin.INSTANCE.getString ( key, new Object[] { FORMATTED_FILE_EXTENSIONS } ) );
-                    return false;
-                }
-                return true;
-            }
-            return false;
-        }
+		/**
+		 * The framework calls this to see if the file is correct.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		@Override
+		protected boolean validatePage() {
+			if (super.validatePage()) {
+				String extension = new Path(getFileName()).getFileExtension();
+				if (extension == null || !FILE_EXTENSIONS.contains(extension)) {
+					String key = FILE_EXTENSIONS.size() > 1 ? "_WARN_FilenameExtensions" : "_WARN_FilenameExtension"; //$NON-NLS-1$ //$NON-NLS-2$
+					setErrorMessage(SnmpEditorPlugin.INSTANCE.getString(key,
+							new Object[] { FORMATTED_FILE_EXTENSIONS }));
+					return false;
+				}
+				return true;
+			}
+			return false;
+		}
 
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public IFile getModelFile ()
-        {
-            return ResourcesPlugin.getWorkspace ().getRoot ().getFile ( getContainerFullPath ().append ( getFileName () ) );
-        }
-    }
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public IFile getModelFile() {
+			return ResourcesPlugin.getWorkspace().getRoot()
+					.getFile(getContainerFullPath().append(getFileName()));
+		}
+	}
 
-    /**
-     * This is the page where the type of object to create is selected.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public class ConfigurationModelWizardInitialObjectCreationPage extends WizardPage
-    {
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        protected Combo initialObjectField;
+	/**
+	 * This is the page where the type of object to create is selected.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public class ConfigurationModelWizardInitialObjectCreationPage extends
+			WizardPage {
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		protected Combo initialObjectField;
 
-        /**
-         * @generated
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         */
-        protected List<String> encodings;
+		/**
+		 * @generated
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 */
+		protected List<String> encodings;
 
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        protected Combo encodingField;
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		protected Combo encodingField;
 
-        /**
-         * Pass in the selection.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public ConfigurationModelWizardInitialObjectCreationPage ( String pageId )
-        {
-            super ( pageId );
-        }
+		/**
+		 * Pass in the selection.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public ConfigurationModelWizardInitialObjectCreationPage(String pageId) {
+			super(pageId);
+		}
 
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public void createControl ( Composite parent )
-        {
-            Composite composite = new Composite ( parent, SWT.NONE );
-            {
-                GridLayout layout = new GridLayout ();
-                layout.numColumns = 1;
-                layout.verticalSpacing = 12;
-                composite.setLayout ( layout );
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public void createControl(Composite parent) {
+			Composite composite = new Composite(parent, SWT.NONE);
+			{
+				GridLayout layout = new GridLayout();
+				layout.numColumns = 1;
+				layout.verticalSpacing = 12;
+				composite.setLayout(layout);
 
-                GridData data = new GridData ();
-                data.verticalAlignment = GridData.FILL;
-                data.grabExcessVerticalSpace = true;
-                data.horizontalAlignment = GridData.FILL;
-                composite.setLayoutData ( data );
-            }
+				GridData data = new GridData();
+				data.verticalAlignment = GridData.FILL;
+				data.grabExcessVerticalSpace = true;
+				data.horizontalAlignment = GridData.FILL;
+				composite.setLayoutData(data);
+			}
 
-            Label containerLabel = new Label ( composite, SWT.LEFT );
-            {
-                containerLabel.setText ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_ModelObject" ) ); //$NON-NLS-1$
+			Label containerLabel = new Label(composite, SWT.LEFT);
+			{
+				containerLabel.setText(SnmpEditorPlugin.INSTANCE
+						.getString("_UI_ModelObject")); //$NON-NLS-1$
 
-                GridData data = new GridData ();
-                data.horizontalAlignment = GridData.FILL;
-                containerLabel.setLayoutData ( data );
-            }
+				GridData data = new GridData();
+				data.horizontalAlignment = GridData.FILL;
+				containerLabel.setLayoutData(data);
+			}
 
-            initialObjectField = new Combo ( composite, SWT.BORDER );
-            {
-                GridData data = new GridData ();
-                data.horizontalAlignment = GridData.FILL;
-                data.grabExcessHorizontalSpace = true;
-                initialObjectField.setLayoutData ( data );
-            }
+			initialObjectField = new Combo(composite, SWT.BORDER);
+			{
+				GridData data = new GridData();
+				data.horizontalAlignment = GridData.FILL;
+				data.grabExcessHorizontalSpace = true;
+				initialObjectField.setLayoutData(data);
+			}
 
-            for ( String objectName : getInitialObjectNames () )
-            {
-                initialObjectField.add ( getLabel ( objectName ) );
-            }
+			for (String objectName : getInitialObjectNames()) {
+				initialObjectField.add(getLabel(objectName));
+			}
 
-            if ( initialObjectField.getItemCount () == 1 )
-            {
-                initialObjectField.select ( 0 );
-            }
-            initialObjectField.addModifyListener ( validator );
+			if (initialObjectField.getItemCount() == 1) {
+				initialObjectField.select(0);
+			}
+			initialObjectField.addModifyListener(validator);
 
-            Label encodingLabel = new Label ( composite, SWT.LEFT );
-            {
-                encodingLabel.setText ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_XMLEncoding" ) ); //$NON-NLS-1$
+			Label encodingLabel = new Label(composite, SWT.LEFT);
+			{
+				encodingLabel.setText(SnmpEditorPlugin.INSTANCE
+						.getString("_UI_XMLEncoding")); //$NON-NLS-1$
 
-                GridData data = new GridData ();
-                data.horizontalAlignment = GridData.FILL;
-                encodingLabel.setLayoutData ( data );
-            }
-            encodingField = new Combo ( composite, SWT.BORDER );
-            {
-                GridData data = new GridData ();
-                data.horizontalAlignment = GridData.FILL;
-                data.grabExcessHorizontalSpace = true;
-                encodingField.setLayoutData ( data );
-            }
+				GridData data = new GridData();
+				data.horizontalAlignment = GridData.FILL;
+				encodingLabel.setLayoutData(data);
+			}
+			encodingField = new Combo(composite, SWT.BORDER);
+			{
+				GridData data = new GridData();
+				data.horizontalAlignment = GridData.FILL;
+				data.grabExcessHorizontalSpace = true;
+				encodingField.setLayoutData(data);
+			}
 
-            for ( String encoding : getEncodings () )
-            {
-                encodingField.add ( encoding );
-            }
+			for (String encoding : getEncodings()) {
+				encodingField.add(encoding);
+			}
 
-            encodingField.select ( 0 );
-            encodingField.addModifyListener ( validator );
+			encodingField.select(0);
+			encodingField.addModifyListener(validator);
 
-            setPageComplete ( validatePage () );
-            setControl ( composite );
-        }
+			setPageComplete(validatePage());
+			setControl(composite);
+		}
 
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        protected ModifyListener validator =
-                new ModifyListener ()
-                {
-                    public void modifyText ( ModifyEvent e )
-                    {
-                        setPageComplete ( validatePage () );
-                    }
-                };
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		protected ModifyListener validator = new ModifyListener() {
+			public void modifyText(ModifyEvent e) {
+				setPageComplete(validatePage());
+			}
+		};
 
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        protected boolean validatePage ()
-        {
-            return getInitialObjectName () != null && getEncodings ().contains ( encodingField.getText () );
-        }
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		protected boolean validatePage() {
+			return getInitialObjectName() != null
+					&& getEncodings().contains(encodingField.getText());
+		}
 
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        @Override
-        public void setVisible ( boolean visible )
-        {
-            super.setVisible ( visible );
-            if ( visible )
-            {
-                if ( initialObjectField.getItemCount () == 1 )
-                {
-                    initialObjectField.clearSelection ();
-                    encodingField.setFocus ();
-                }
-                else
-                {
-                    encodingField.clearSelection ();
-                    initialObjectField.setFocus ();
-                }
-            }
-        }
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		@Override
+		public void setVisible(boolean visible) {
+			super.setVisible(visible);
+			if (visible) {
+				if (initialObjectField.getItemCount() == 1) {
+					initialObjectField.clearSelection();
+					encodingField.setFocus();
+				} else {
+					encodingField.clearSelection();
+					initialObjectField.setFocus();
+				}
+			}
+		}
 
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public String getInitialObjectName ()
-        {
-            String label = initialObjectField.getText ();
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public String getInitialObjectName() {
+			String label = initialObjectField.getText();
 
-            for ( String name : getInitialObjectNames () )
-            {
-                if ( getLabel ( name ).equals ( label ) )
-                {
-                    return name;
-                }
-            }
-            return null;
-        }
+			for (String name : getInitialObjectNames()) {
+				if (getLabel(name).equals(label)) {
+					return name;
+				}
+			}
+			return null;
+		}
 
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        public String getEncoding ()
-        {
-            return encodingField.getText ();
-        }
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		public String getEncoding() {
+			return encodingField.getText();
+		}
 
-        /**
-         * Returns the label for the specified feature name.
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        protected String getLabel ( String featureName )
-        {
-            try
-            {
-                return SnmpEditPlugin.INSTANCE.getString ( "_UI_DocumentRoot_" + featureName + "_feature" ); //$NON-NLS-1$ //$NON-NLS-2$
-            }
-            catch ( MissingResourceException mre )
-            {
-                SnmpEditorPlugin.INSTANCE.log ( mre );
-            }
-            return featureName;
-        }
+		/**
+		 * Returns the label for the specified feature name.
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		protected String getLabel(String featureName) {
+			try {
+				return SnmpEditPlugin.INSTANCE
+						.getString("_UI_DocumentRoot_" + featureName + "_feature"); //$NON-NLS-1$ //$NON-NLS-2$
+			} catch (MissingResourceException mre) {
+				SnmpEditorPlugin.INSTANCE.log(mre);
+			}
+			return featureName;
+		}
 
-        /**
-         * <!-- begin-user-doc -->
-         * <!-- end-user-doc -->
-         * @generated
-         */
-        protected Collection<String> getEncodings ()
-        {
-            if ( encodings == null )
-            {
-                encodings = new ArrayList<String> ();
-                for ( StringTokenizer stringTokenizer = new StringTokenizer ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_XMLEncodingChoices" ) ); stringTokenizer.hasMoreTokens (); ) //$NON-NLS-1$
-                {
-                    encodings.add ( stringTokenizer.nextToken () );
-                }
-            }
-            return encodings;
-        }
-    }
+		/**
+		 * <!-- begin-user-doc -->
+		 * <!-- end-user-doc -->
+		 * @generated
+		 */
+		protected Collection<String> getEncodings() {
+			if (encodings == null) {
+				encodings = new ArrayList<String>();
+				for (StringTokenizer stringTokenizer = new StringTokenizer(
+						SnmpEditorPlugin.INSTANCE
+								.getString("_UI_XMLEncodingChoices")); stringTokenizer.hasMoreTokens();) //$NON-NLS-1$
+				{
+					encodings.add(stringTokenizer.nextToken());
+				}
+			}
+			return encodings;
+		}
+	}
 
-    /**
-     * The framework calls this to create the contents of the wizard.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    @Override
-    public void addPages ()
-    {
-        // Create a page, set the title, and the initial model file name.
-        //
-        newFileCreationPage = new ConfigurationModelWizardNewFileCreationPage ( "Whatever", selection ); //$NON-NLS-1$
-        newFileCreationPage.setTitle ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_ConfigurationModelWizard_label" ) ); //$NON-NLS-1$
-        newFileCreationPage.setDescription ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_ConfigurationModelWizard_description" ) ); //$NON-NLS-1$
-        newFileCreationPage.setFileName ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_ConfigurationEditorFilenameDefaultBase" ) + "." + FILE_EXTENSIONS.get ( 0 ) ); //$NON-NLS-1$ //$NON-NLS-2$
-        addPage ( newFileCreationPage );
+	/**
+	 * The framework calls this to create the contents of the wizard.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	@Override
+	public void addPages() {
+		// Create a page, set the title, and the initial model file name.
+		//
+		newFileCreationPage = new ConfigurationModelWizardNewFileCreationPage(
+				"Whatever", selection); //$NON-NLS-1$
+		newFileCreationPage.setTitle(SnmpEditorPlugin.INSTANCE
+				.getString("_UI_ConfigurationModelWizard_label")); //$NON-NLS-1$
+		newFileCreationPage.setDescription(SnmpEditorPlugin.INSTANCE
+				.getString("_UI_ConfigurationModelWizard_description")); //$NON-NLS-1$
+		newFileCreationPage
+				.setFileName(SnmpEditorPlugin.INSTANCE
+						.getString("_UI_ConfigurationEditorFilenameDefaultBase") + "." + FILE_EXTENSIONS.get(0)); //$NON-NLS-1$ //$NON-NLS-2$
+		addPage(newFileCreationPage);
 
-        // Try and get the resource selection to determine a current directory for the file dialog.
-        //
-        if ( selection != null && !selection.isEmpty () )
-        {
-            // Get the resource...
-            //
-            Object selectedElement = selection.iterator ().next ();
-            if ( selectedElement instanceof IResource )
-            {
-                // Get the resource parent, if its a file.
-                //
-                IResource selectedResource = (IResource)selectedElement;
-                if ( selectedResource.getType () == IResource.FILE )
-                {
-                    selectedResource = selectedResource.getParent ();
-                }
+		// Try and get the resource selection to determine a current directory for the file dialog.
+		//
+		if (selection != null && !selection.isEmpty()) {
+			// Get the resource...
+			//
+			Object selectedElement = selection.iterator().next();
+			if (selectedElement instanceof IResource) {
+				// Get the resource parent, if its a file.
+				//
+				IResource selectedResource = (IResource) selectedElement;
+				if (selectedResource.getType() == IResource.FILE) {
+					selectedResource = selectedResource.getParent();
+				}
 
-                // This gives us a directory...
-                //
-                if ( selectedResource instanceof IFolder || selectedResource instanceof IProject )
-                {
-                    // Set this for the container.
-                    //
-                    newFileCreationPage.setContainerFullPath ( selectedResource.getFullPath () );
+				// This gives us a directory...
+				//
+				if (selectedResource instanceof IFolder
+						|| selectedResource instanceof IProject) {
+					// Set this for the container.
+					//
+					newFileCreationPage.setContainerFullPath(selectedResource
+							.getFullPath());
 
-                    // Make up a unique new name here.
-                    //
-                    String defaultModelBaseFilename = SnmpEditorPlugin.INSTANCE.getString ( "_UI_ConfigurationEditorFilenameDefaultBase" ); //$NON-NLS-1$
-                    String defaultModelFilenameExtension = FILE_EXTENSIONS.get ( 0 );
-                    String modelFilename = defaultModelBaseFilename + "." + defaultModelFilenameExtension; //$NON-NLS-1$
-                    for ( int i = 1; ( (IContainer)selectedResource ).findMember ( modelFilename ) != null; ++i )
-                    {
-                        modelFilename = defaultModelBaseFilename + i + "." + defaultModelFilenameExtension; //$NON-NLS-1$
-                    }
-                    newFileCreationPage.setFileName ( modelFilename );
-                }
-            }
-        }
-        initialObjectCreationPage = new ConfigurationModelWizardInitialObjectCreationPage ( "Whatever2" ); //$NON-NLS-1$
-        initialObjectCreationPage.setTitle ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_ConfigurationModelWizard_label" ) ); //$NON-NLS-1$
-        initialObjectCreationPage.setDescription ( SnmpEditorPlugin.INSTANCE.getString ( "_UI_Wizard_initial_object_description" ) ); //$NON-NLS-1$
-        addPage ( initialObjectCreationPage );
-    }
+					// Make up a unique new name here.
+					//
+					String defaultModelBaseFilename = SnmpEditorPlugin.INSTANCE
+							.getString("_UI_ConfigurationEditorFilenameDefaultBase"); //$NON-NLS-1$
+					String defaultModelFilenameExtension = FILE_EXTENSIONS
+							.get(0);
+					String modelFilename = defaultModelBaseFilename
+							+ "." + defaultModelFilenameExtension; //$NON-NLS-1$
+					for (int i = 1; ((IContainer) selectedResource)
+							.findMember(modelFilename) != null; ++i) {
+						modelFilename = defaultModelBaseFilename + i
+								+ "." + defaultModelFilenameExtension; //$NON-NLS-1$
+					}
+					newFileCreationPage.setFileName(modelFilename);
+				}
+			}
+		}
+		initialObjectCreationPage = new ConfigurationModelWizardInitialObjectCreationPage(
+				"Whatever2"); //$NON-NLS-1$
+		initialObjectCreationPage.setTitle(SnmpEditorPlugin.INSTANCE
+				.getString("_UI_ConfigurationModelWizard_label")); //$NON-NLS-1$
+		initialObjectCreationPage.setDescription(SnmpEditorPlugin.INSTANCE
+				.getString("_UI_Wizard_initial_object_description")); //$NON-NLS-1$
+		addPage(initialObjectCreationPage);
+	}
 
-    /**
-     * Get the file from the page.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    public IFile getModelFile ()
-    {
-        return newFileCreationPage.getModelFile ();
-    }
+	/**
+	 * Get the file from the page.
+	 * <!-- begin-user-doc -->
+	 * <!-- end-user-doc -->
+	 * @generated
+	 */
+	public IFile getModelFile() {
+		return newFileCreationPage.getModelFile();
+	}
 
 }
