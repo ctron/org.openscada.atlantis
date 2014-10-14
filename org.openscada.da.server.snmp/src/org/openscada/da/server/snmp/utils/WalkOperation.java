@@ -140,7 +140,7 @@ public abstract class WalkOperation
             ResponseEvent responseEvent;
             try
             {
-                //_log.info ( "Requesting: " + request.get ( 0 ).getOid () );
+                logger.trace ( "Requesting: {}", request.get ( 0 ).getOid () );
                 responseEvent = this.node.getConnection ().send ( target, request );
                 currentOID = processResponse ( responseEvent );
                 endOfList = currentOID == null;

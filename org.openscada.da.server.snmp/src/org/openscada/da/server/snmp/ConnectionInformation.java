@@ -38,6 +38,12 @@ public class ConnectionInformation implements Cloneable
 
     private String community;
 
+    private String limitToOid;
+
+    private int retries = 1;
+
+    private long timeout = 5000; // 5sec
+
     public ConnectionInformation ( final Version version, final String name )
     {
         this.version = version;
@@ -50,6 +56,9 @@ public class ConnectionInformation implements Cloneable
         this.name = other.name;
         this.version = other.version;
         this.community = other.community;
+        this.limitToOid = other.limitToOid;
+        this.retries = other.retries;
+        this.timeout = other.timeout;
     }
 
     public String getAddress ()
@@ -96,5 +105,35 @@ public class ConnectionInformation implements Cloneable
     public void setVersion ( final Version version )
     {
         this.version = version;
+    }
+
+    public String getLimitToOid ()
+    {
+        return limitToOid;
+    }
+
+    public void setLimitToOid ( final String limitToOid )
+    {
+        this.limitToOid = limitToOid;
+    }
+
+    public void setRetries ( int retries )
+    {
+        this.retries = retries;
+    }
+
+    public int getRetries ()
+    {
+        return retries;
+    }
+
+    public void setTimeout ( long timeout )
+    {
+        this.timeout = timeout;
+    }
+
+    public long getTimeout ()
+    {
+        return timeout;
     }
 }

@@ -134,7 +134,28 @@ public class SNMPNode
             @Override
             public void command ( final Variant value )
             {
-                rewalk ( value );
+                SNMPNode.this.scheduler.submit ( new Runnable () {
+
+                    @Override
+                    public void run ()
+                    {
+                        if ( value == Variant.NULL )
+                        {
+                            if ( connectionInformation.getLimitToOid () != null )
+                            {
+                                rewalk ( Variant.valueOf ( connectionInformation.getLimitToOid () ) );
+                            }
+                            else
+                            {
+                                rewalk ( Variant.NULL );
+                            }
+                        }
+                        else
+                        {
+                            rewalk ( value );
+                        }
+                    }
+                } );
             }
         } );
 
@@ -185,7 +206,21 @@ public class SNMPNode
 
             this.connectionInfoItem.updateData ( Variant.valueOf ( "CONFIGURED" ), new MapBuilder<String, Variant> ().put ( "address", Variant.valueOf ( this.connectionInformation.getAddress () ) ).getMap (), AttributeMode.UPDATE );
 
-            rewalk ( Variant.NULL );
+            this.scheduler.submit ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    if ( connectionInformation.getLimitToOid () != null )
+                    {
+                        rewalk ( Variant.valueOf ( connectionInformation.getLimitToOid () ) );
+                    }
+                    else
+                    {
+                        rewalk ( Variant.NULL );
+                    }
+                }
+            } );
 
             if ( this.mibManager != null )
             {
@@ -299,6 +334,8 @@ public class SNMPNode
     {
         try
         {
+            logger.debug ( "rewalk called with {}", value );
+
             // flag on
             this.itemRewalkState.updateData ( Variant.TRUE, null, null );
 

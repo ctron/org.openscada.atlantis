@@ -89,15 +89,13 @@ public class Hive extends HiveCommon
     {
         super.performStart ();
 
-        new Thread ( new Runnable () {
-
+        getOperationService ().execute ( new Runnable () {
             @Override
             public void run ()
             {
                 configure ();
             }
-        } ).start ();
-
+        } );
     }
 
     @Override
@@ -191,6 +189,9 @@ public class Hive extends HiveCommon
 
         ci.setAddress ( connection.getAddress () );
         ci.setCommunity ( connection.getCommunity () );
+        ci.setLimitToOid ( connection.getLimitToOid () );
+        ci.setRetries ( connection.getRetries () );
+        ci.setTimeout ( connection.getTimeout () );
 
         final SNMPNode node = new SNMPNode ( this, this.rootFolder, this.mibManager, ci );
         node.register ();

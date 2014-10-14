@@ -88,9 +88,9 @@ public class Connection
                 if ( this.connectionInformation.getCommunity () != null )
                 {
                     final CommunityTarget target = new CommunityTarget ( this.address, new OctetString ( this.connectionInformation.getCommunity () ) );
-                    target.setRetries ( 1 );
+                    target.setRetries ( this.connectionInformation.getRetries () );
                     target.setVersion ( SnmpConstants.version1 );
-                    target.setTimeout ( 5 * 1000 );
+                    target.setTimeout ( this.connectionInformation.getTimeout () );
                     return target;
                 }
                 break;
@@ -98,9 +98,9 @@ public class Connection
                 if ( this.connectionInformation.getCommunity () != null )
                 {
                     final CommunityTarget target = new CommunityTarget ( this.address, new OctetString ( this.connectionInformation.getCommunity () ) );
-                    target.setRetries ( 1 );
+                    target.setRetries ( this.connectionInformation.getRetries () );
                     target.setVersion ( SnmpConstants.version2c );
-                    target.setTimeout ( 5 * 1000 );
+                    target.setTimeout ( this.connectionInformation.getTimeout () );
                     return target;
                 }
                 break;
