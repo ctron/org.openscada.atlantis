@@ -14,7 +14,7 @@ based on Java (SDK)
       %copyright
    </copyright>
 
-   <license url="http://opensource.org/licenses/lgpl-3.0.html">
+   <license url="%licenseURL">
       %license
    </license>
 
