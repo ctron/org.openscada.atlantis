@@ -47,4 +47,4 @@ Import-Package: org.eclipse.scada.core;version="0.1.0",
  org.snmp4j.util;version="2.2.5"
 Service-Component: OSGI-INF/hive.xml
 Bundle-ActivationPolicy: lazy
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7

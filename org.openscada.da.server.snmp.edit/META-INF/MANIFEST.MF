@@ -7,7 +7,7 @@ Bundle-ClassPath: .
 Bundle-Activator: org.openscada.da.snmp.configuration.provider.SnmpEditPlugin$Implementation
 Bundle-Vendor: %providerName
 Bundle-Localization: plugin
-Bundle-RequiredExecutionEnvironment: JavaSE-1.6
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Export-Package: org.openscada.da.snmp.configuration.provider
 Require-Bundle: org.eclipse.core.runtime,
  org.openscada.da.server.snmp;visibility:=reexport,
