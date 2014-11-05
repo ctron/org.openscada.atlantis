@@ -42,7 +42,7 @@
 		<module>../org.openscada.protocol.iec60870.server.data</module>
 		
 		
-		<module>../org.openscada.protocol.iec60870.server.tests</module>
+		<module>../org.openscada.protocol.iec60870.server.data.tests</module>
 		<module>../org.openscada.protocol.iec60870.tests</module>
 	</modules>
 
