@@ -10,7 +10,7 @@
  *******************************************************************************/
 package org.openscada.protocol.iec60870.client.data;
 
-import org.eclipse.scada.protocol.iec60870.asdu.types.ASDUAddress;
+import org.openscada.protocol.iec60870.asdu.types.ASDUAddress;
 
 public interface DataModuleContext
 {

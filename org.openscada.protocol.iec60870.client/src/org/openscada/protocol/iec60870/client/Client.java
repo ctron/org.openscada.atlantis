@@ -30,13 +30,13 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.eclipse.scada.protocol.iec60870.ProtocolOptions;
-import org.eclipse.scada.protocol.iec60870.apci.APDUDecoder;
-import org.eclipse.scada.protocol.iec60870.apci.APDUEncoder;
-import org.eclipse.scada.protocol.iec60870.apci.MessageChannel;
-import org.eclipse.scada.protocol.iec60870.asdu.MessageManager;
-import org.eclipse.scada.protocol.iec60870.io.Module;
 import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
+import org.openscada.protocol.iec60870.ProtocolOptions;
+import org.openscada.protocol.iec60870.apci.APDUDecoder;
+import org.openscada.protocol.iec60870.apci.APDUEncoder;
+import org.openscada.protocol.iec60870.apci.MessageChannel;
+import org.openscada.protocol.iec60870.asdu.MessageManager;
+import org.openscada.protocol.iec60870.io.Module;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

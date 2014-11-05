@@ -6,8 +6,8 @@
     <version>1.3.0-SNAPSHOT</version>
     <relativePath>../org.openscada.atlantis-parent</relativePath>
   </parent>
-  <groupId>org.eclipse.scada.protocols</groupId>
+  <groupId>org.openscada.atlantis</groupId>
   <artifactId>org.openscada.protocol.iec60870</artifactId>
-  <version>0.2.0-SNAPSHOT</version>
+  <version>1.3.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>

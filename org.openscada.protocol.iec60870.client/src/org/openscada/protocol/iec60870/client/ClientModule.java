@@ -10,8 +10,8 @@
  *******************************************************************************/
 package org.openscada.protocol.iec60870.client;
 
-import org.eclipse.scada.protocol.iec60870.asdu.MessageManager;
-import org.eclipse.scada.protocol.iec60870.io.Module;
+import org.openscada.protocol.iec60870.asdu.MessageManager;
+import org.openscada.protocol.iec60870.io.Module;
 
 public interface ClientModule extends Module
 {

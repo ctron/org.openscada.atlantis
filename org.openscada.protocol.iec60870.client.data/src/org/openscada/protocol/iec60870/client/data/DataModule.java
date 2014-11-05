@@ -12,11 +12,11 @@ package org.openscada.protocol.iec60870.client.data;
 
 import io.netty.channel.socket.SocketChannel;
 
-import org.eclipse.scada.protocol.iec60870.apci.MessageChannel;
-import org.eclipse.scada.protocol.iec60870.asdu.MessageManager;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MessageRegistrator;
-import org.eclipse.scada.protocol.iec60870.client.Client;
-import org.eclipse.scada.protocol.iec60870.client.ClientModule;
+import org.openscada.protocol.iec60870.apci.MessageChannel;
+import org.openscada.protocol.iec60870.asdu.MessageManager;
+import org.openscada.protocol.iec60870.asdu.message.MessageRegistrator;
+import org.openscada.protocol.iec60870.client.Client;
+import org.openscada.protocol.iec60870.client.ClientModule;
 
 public class DataModule implements ClientModule
 {

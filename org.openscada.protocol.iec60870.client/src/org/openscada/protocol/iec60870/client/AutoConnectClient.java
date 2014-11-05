@@ -20,8 +20,8 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 
-import org.eclipse.scada.protocol.iec60870.ProtocolOptions;
 import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
+import org.openscada.protocol.iec60870.ProtocolOptions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -15,20 +15,19 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.eclipse.scada.protocol.iec60870.ProtocolOptions;
-import org.eclipse.scada.protocol.iec60870.ProtocolOptions.Builder;
-import org.eclipse.scada.protocol.iec60870.asdu.types.ASDUAddress;
-import org.eclipse.scada.protocol.iec60870.asdu.types.InformationObjectAddress;
-import org.eclipse.scada.protocol.iec60870.asdu.types.Value;
-import org.eclipse.scada.protocol.iec60870.client.AutoConnectClient;
-import org.eclipse.scada.protocol.iec60870.client.AutoConnectClient.ModulesFactory;
-import org.eclipse.scada.protocol.iec60870.client.AutoConnectClient.State;
-import org.eclipse.scada.protocol.iec60870.client.ClientModule;
-import org.eclipse.scada.protocol.iec60870.client.data.DataHandler;
-import org.eclipse.scada.protocol.iec60870.client.data.DataListener;
-import org.eclipse.scada.protocol.iec60870.client.data.DataModule;
-import org.eclipse.scada.protocol.iec60870.client.data.DataModuleOptions;
-import org.eclipse.scada.protocol.iec60870.client.data.DataProcessor;
+import org.openscada.protocol.iec60870.ProtocolOptions;
+import org.openscada.protocol.iec60870.asdu.types.ASDUAddress;
+import org.openscada.protocol.iec60870.asdu.types.InformationObjectAddress;
+import org.openscada.protocol.iec60870.asdu.types.Value;
+import org.openscada.protocol.iec60870.client.AutoConnectClient;
+import org.openscada.protocol.iec60870.client.AutoConnectClient.ModulesFactory;
+import org.openscada.protocol.iec60870.client.AutoConnectClient.State;
+import org.openscada.protocol.iec60870.client.ClientModule;
+import org.openscada.protocol.iec60870.client.data.DataHandler;
+import org.openscada.protocol.iec60870.client.data.DataListener;
+import org.openscada.protocol.iec60870.client.data.DataModule;
+import org.openscada.protocol.iec60870.client.data.DataModuleOptions;
+import org.openscada.protocol.iec60870.client.data.DataProcessor;
 
 public class Application
 {
@@ -36,7 +35,7 @@ public class Application
     {
         final short port = 2404;
 
-        final Builder options = new ProtocolOptions.Builder ();
+        final ProtocolOptions.Builder options = new ProtocolOptions.Builder ();
 
         final ExecutorService dataExecutor = Executors.newSingleThreadExecutor ();
         final DataHandler handler = new DataProcessor ( dataExecutor, new DataListener () {

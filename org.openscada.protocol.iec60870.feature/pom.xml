@@ -9,8 +9,8 @@
 		<relativePath>../org.openscada.atlantis-parent</relativePath>
 	</parent>
 
-	<groupId>org.eclipse.scada.protocols.features</groupId>
-	<artifactId>org.eclipse.scada.protocol.iec60870</artifactId>
+	<groupId>org.openscada.atlantis.features</groupId>
+	<artifactId>org.openscada.protocol.iec60870</artifactId>
 	<version>0.2.0-SNAPSHOT</version>
 	<packaging>eclipse-feature</packaging>
 

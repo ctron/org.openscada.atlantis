@@ -14,24 +14,24 @@ import io.netty.channel.ChannelHandlerContext;
 
 import java.util.concurrent.Executor;
 
-import org.eclipse.scada.protocol.iec60870.asdu.message.DoublePointInformationSequence;
-import org.eclipse.scada.protocol.iec60870.asdu.message.DoublePointInformationSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.DoublePointInformationTimeSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueScaledSequence;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueScaledSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueScaledTimeSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointSequence;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointTimeSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.SinglePointInformationSequence;
-import org.eclipse.scada.protocol.iec60870.asdu.message.SinglePointInformationSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.SinglePointInformationTimeSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.types.ASDUAddress;
-import org.eclipse.scada.protocol.iec60870.asdu.types.DoublePoint;
-import org.eclipse.scada.protocol.iec60870.asdu.types.InformationEntry;
-import org.eclipse.scada.protocol.iec60870.asdu.types.InformationObjectAddress;
-import org.eclipse.scada.protocol.iec60870.asdu.types.QualifierOfInterrogation;
-import org.eclipse.scada.protocol.iec60870.asdu.types.Value;
+import org.openscada.protocol.iec60870.asdu.message.DoublePointInformationSequence;
+import org.openscada.protocol.iec60870.asdu.message.DoublePointInformationSingle;
+import org.openscada.protocol.iec60870.asdu.message.DoublePointInformationTimeSingle;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueScaledSequence;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueScaledSingle;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueScaledTimeSingle;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointSequence;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointSingle;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointTimeSingle;
+import org.openscada.protocol.iec60870.asdu.message.SinglePointInformationSequence;
+import org.openscada.protocol.iec60870.asdu.message.SinglePointInformationSingle;
+import org.openscada.protocol.iec60870.asdu.message.SinglePointInformationTimeSingle;
+import org.openscada.protocol.iec60870.asdu.types.ASDUAddress;
+import org.openscada.protocol.iec60870.asdu.types.DoublePoint;
+import org.openscada.protocol.iec60870.asdu.types.InformationEntry;
+import org.openscada.protocol.iec60870.asdu.types.InformationObjectAddress;
+import org.openscada.protocol.iec60870.asdu.types.QualifierOfInterrogation;
+import org.openscada.protocol.iec60870.asdu.types.Value;
 
 public class DataProcessor implements DataHandler
 {

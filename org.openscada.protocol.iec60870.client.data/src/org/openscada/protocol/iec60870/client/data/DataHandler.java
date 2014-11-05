@@ -12,18 +12,18 @@ package org.openscada.protocol.iec60870.client.data;
 
 import io.netty.channel.ChannelHandlerContext;
 
-import org.eclipse.scada.protocol.iec60870.asdu.message.DoublePointInformationSequence;
-import org.eclipse.scada.protocol.iec60870.asdu.message.DoublePointInformationSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.DoublePointInformationTimeSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueScaledSequence;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueScaledSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueScaledTimeSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointSequence;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointTimeSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.SinglePointInformationSequence;
-import org.eclipse.scada.protocol.iec60870.asdu.message.SinglePointInformationSingle;
-import org.eclipse.scada.protocol.iec60870.asdu.message.SinglePointInformationTimeSingle;
+import org.openscada.protocol.iec60870.asdu.message.DoublePointInformationSequence;
+import org.openscada.protocol.iec60870.asdu.message.DoublePointInformationSingle;
+import org.openscada.protocol.iec60870.asdu.message.DoublePointInformationTimeSingle;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueScaledSequence;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueScaledSingle;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueScaledTimeSingle;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointSequence;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointSingle;
+import org.openscada.protocol.iec60870.asdu.message.MeasuredValueShortFloatingPointTimeSingle;
+import org.openscada.protocol.iec60870.asdu.message.SinglePointInformationSequence;
+import org.openscada.protocol.iec60870.asdu.message.SinglePointInformationSingle;
+import org.openscada.protocol.iec60870.asdu.message.SinglePointInformationTimeSingle;
 
 public interface DataHandler
 {
