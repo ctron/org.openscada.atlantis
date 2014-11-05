@@ -2,7 +2,7 @@
 <feature
       id="org.openscada.protocol.iec60870"
       label="%featureName"
-      version="0.2.0.qualifier"
+      version="1.3.0.qualifier"
       provider-name="%providerName"
       license-feature="org.eclipse.scada.license"
       license-feature-version="0.1.0.qualifier">
@@ -49,6 +49,27 @@
 
    <plugin
          id="org.eclipse.scada.protocol.iec60870.client.data"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.core.common.iec60870"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.server.exporter.iec60870"
+         download-size="0"
+         install-size="0"
+         version="0.0.0"
+         unpack="false"/>
+
+   <plugin
+         id="org.openscada.da.server.iec60870"
          download-size="0"
          install-size="0"
          version="0.0.0"
