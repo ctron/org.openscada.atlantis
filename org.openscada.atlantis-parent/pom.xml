@@ -32,6 +32,18 @@
 		<module>../org.openscada.da.server.opc.edit</module>
 		<module>../org.openscada.da.server.snmp</module>
 		<module>../org.openscada.da.server.snmp.edit</module>
+		
+		<module>../org.openscada.protocol.iec60870.feature</module>
+		
+		<module>../org.openscada.protocol.iec60870</module>
+		<module>../org.openscada.protocol.iec60870.client</module>
+		<module>../org.openscada.protocol.iec60870.client.data</module>
+		<module>../org.openscada.protocol.iec60870.server</module>
+		<module>../org.openscada.protocol.iec60870.server.data</module>
+		
+		
+		<module>../org.openscada.protocol.iec60870.server.tests</module>
+		<module>../org.openscada.protocol.iec60870.tests</module>
 	</modules>
 
 </project>
