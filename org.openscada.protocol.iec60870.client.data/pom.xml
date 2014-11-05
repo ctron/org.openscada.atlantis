@@ -6,7 +6,7 @@
     <groupId>org.openscada.atlantis</groupId>
     <version>1.3.0-SNAPSHOT</version>
     <relativePath>../org.openscada.atlantis-parent</relativePath>
-  </parent>>
+  </parent>
   <groupId>org.eclipse.scada.protocols</groupId>
   <artifactId>org.openscada.protocol.iec60870.client.data</artifactId>
   <version>0.2.0-SNAPSHOT</version>
