@@ -19,10 +19,10 @@ import org.eclipse.scada.da.server.common.DataItem;
 import org.eclipse.scada.da.server.common.exporter.ObjectExporter;
 import org.eclipse.scada.da.server.common.osgi.factory.ObjectPoolDataItemFactory;
 import org.eclipse.scada.da.server.exporter.common.HiveSource;
-import org.eclipse.scada.protocol.iec60870.server.Server;
-import org.eclipse.scada.protocol.iec60870.server.ServerModule;
-import org.eclipse.scada.protocol.iec60870.server.data.DataModule;
 import org.eclipse.scada.utils.osgi.pool.ManageableObjectPool;
+import org.openscada.protocol.iec60870.server.Server;
+import org.openscada.protocol.iec60870.server.ServerModule;
+import org.openscada.protocol.iec60870.server.data.DataModule;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

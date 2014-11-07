@@ -16,10 +16,10 @@ import java.util.Properties;
 import java.util.Set;
 
 import org.eclipse.scada.ca.ConfigurationDataHelper;
-import org.eclipse.scada.core.common.iec60870.Configurations;
-import org.eclipse.scada.protocol.iec60870.ProtocolOptions;
-import org.eclipse.scada.protocol.iec60870.server.data.DataModuleOptions;
+import org.openscada.core.common.iec60870.Configurations;
 import org.openscada.da.server.exporter.iec60870.MappingEntry.ValueType;
+import org.openscada.protocol.iec60870.ProtocolOptions;
+import org.openscada.protocol.iec60870.server.data.DataModuleOptions;
 
 public class ExportConfiguration
 {
