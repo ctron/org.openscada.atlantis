@@ -45,15 +45,15 @@ public class CauseOfTransmission
         this ( cause, (byte)0 );
     }
 
-    public CauseOfTransmission ( final Cause cause, final byte sourceAddress )
+    public CauseOfTransmission ( final Cause cause, final Byte sourceAddress )
     {
         this ( cause, sourceAddress, true, false );
     }
 
-    public CauseOfTransmission ( final Cause cause, final byte sourceAddress, final boolean acknowledge, final boolean test )
+    public CauseOfTransmission ( final Cause cause, final Byte sourceAddress, final boolean acknowledge, final boolean test )
     {
         this.cause = cause;
-        this.sourceAddress = sourceAddress;
+        this.sourceAddress = sourceAddress == null ? (byte)0 : sourceAddress;
         this.positive = acknowledge;
         this.test = test;
     }
