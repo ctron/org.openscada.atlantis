@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2015 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -17,10 +17,15 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
+import org.eclipse.scada.core.Variant;
+import org.eclipse.scada.core.server.OperationParameters;
+import org.eclipse.scada.da.core.WriteResult;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.eclipse.scada.da.server.common.ValidationStrategy;
-import org.eclipse.scada.da.server.common.osgi.AbstractOsgiHiveCommon;
+import org.eclipse.scada.da.server.common.impl.SessionCommon;
 import org.eclipse.scada.utils.concurrent.ExportedExecutorService;
+import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.openscada.da.server.iec60870.Connection.FullAddress;
 import org.openscada.da.server.iec60870.cfg.CAConfigurationFactory;
 import org.openscada.da.server.iec60870.cfg.ConfigurationFactory;
 import org.openscada.da.server.iec60870.cfg.ConfigurationFactory.Receiver;
@@ -33,9 +38,9 @@ import com.google.common.util.concurrent.Futures;
 import com.google.common.util.concurrent.ListenableFuture;
 import com.google.common.util.concurrent.ListenableFutureTask;
 
-public class Hive extends AbstractOsgiHiveCommon
+public class Hive extends AbstractWriteHandlerHive
 {
-    private final static Logger logger = LoggerFactory.getLogger ( Hive.class );
+    final static Logger logger = LoggerFactory.getLogger ( Hive.class );
 
     private final Receiver configurationReceiver = new Receiver () {
 
@@ -193,6 +198,40 @@ public class Hive extends AbstractOsgiHiveCommon
         {
             connection.dispose ();
         }
+    }
+
+    private static final String PREFIX = ".data.";
+
+    private static final int PREFIX_LEN = PREFIX.length ();
+
+    @Override
+    protected synchronized WriteHandler getWriteHandler ( final SessionCommon session, final String itemId )
+    {
+        for ( final Map.Entry<String, Connection> entry : this.connections.entrySet () )
+        {
+            final String id = entry.getKey ();
+            if ( !itemId.startsWith ( id + PREFIX ) )
+            {
+                continue;
+            }
+
+            return newConnectionWriteHandler ( entry.getValue (), itemId.substring ( id.length () + PREFIX_LEN ) );
+        }
+
+        return null;
+    }
+
+    private WriteHandler newConnectionWriteHandler ( final Connection connection, final String localItemId )
+    {
+        final FullAddress address = connection.parseFullAddress ( localItemId );
+
+        return new WriteHandler () {
+            @Override
+            public NotifyFuture<WriteResult> startWriteValue ( final Variant value, final OperationParameters effectiveOperationParameters )
+            {
+                return connection.handleStartWriteValue ( address.commonAddress, address.objectAddress, value, effectiveOperationParameters );
+            }
+        };
     }
 
 }

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2015 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.openscada.da.server.iec60870;
 import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Executor;
@@ -338,6 +339,67 @@ public class Connection
             // should never happen
         }
         return null;
+    }
+
+    public static class FullAddress
+    {
+        ASDUAddress commonAddress;
+
+        InformationObjectAddress objectAddress;
+    }
+
+    public FullAddress parseFullAddress ( final String address )
+    {
+        try
+        {
+            final LinkedList<Integer> segs = new LinkedList<> ();
+
+            // first split into integers
+
+            for ( final String tok : address.split ( "\\." ) )
+            {
+                segs.add ( Integer.parseInt ( tok ) );
+            }
+
+            // convert to full address
+
+            final FullAddress result = new FullAddress ();
+
+            switch ( this.protocolOptions.getAdsuAddressType () )
+            {
+                case SIZE_1:
+                    result.commonAddress = ASDUAddress.fromArray ( new int[] { segs.poll () } );
+                    break;
+                case SIZE_2:
+                    result.commonAddress = ASDUAddress.fromArray ( new int[] { segs.poll (), segs.poll () } );
+                    break;
+                default:
+                    throw new IllegalArgumentException ( String.format ( "ASDU address size type %s unkown", this.protocolOptions.getAdsuAddressType () ) );
+            }
+            switch ( this.protocolOptions.getInformationObjectAddressType () )
+            {
+                case SIZE_1:
+                    result.objectAddress = InformationObjectAddress.fromArray ( new int[] { segs.poll () } );
+                    break;
+                case SIZE_2:
+                    result.objectAddress = InformationObjectAddress.fromArray ( new int[] { segs.poll (), segs.poll () } );
+                    break;
+                case SIZE_3:
+                    result.objectAddress = InformationObjectAddress.fromArray ( new int[] { segs.poll (), segs.poll (), segs.poll () } );
+                    break;
+                default:
+                    throw new IllegalArgumentException ( String.format ( "Information object address size type %s unkown", this.protocolOptions.getInformationObjectAddressType () ) );
+            }
+
+            // return result
+
+            return result;
+        }
+        catch ( final Exception e )
+        {
+            // this will also catch the two type exception earlier, but this is ok
+            throw new IllegalArgumentException ( String.format ( "'%s' is not a valid IEC address for this configuration", address ), e );
+        }
     }
 
     private String makeLocalId ( final ASDUAddress commonAddress, final InformationObjectAddress objectAddress )
