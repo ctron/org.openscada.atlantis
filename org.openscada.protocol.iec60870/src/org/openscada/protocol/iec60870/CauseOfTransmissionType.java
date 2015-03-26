@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2015 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -60,5 +60,5 @@ public enum CauseOfTransmissionType
 
     public abstract byte readOriginatorAddress ( ByteBuf data );
 
-    public abstract void write ( final byte casue, byte originatorAddress, final ByteBuf out );
+    public abstract void write ( final byte cause, byte originatorAddress, final ByteBuf out );
 }
