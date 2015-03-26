@@ -210,6 +210,7 @@ public class Hive extends AbstractWriteHandlerHive
         for ( final Map.Entry<String, Connection> entry : this.connections.entrySet () )
         {
             final String id = entry.getKey ();
+            logger.trace ( "Search for connection - prefix: {}{} / itemId ", id, PREFIX, itemId );
             if ( !itemId.startsWith ( id + PREFIX ) )
             {
                 continue;
@@ -223,7 +224,11 @@ public class Hive extends AbstractWriteHandlerHive
 
     private WriteHandler newConnectionWriteHandler ( final Connection connection, final String localItemId )
     {
+        logger.debug ( "Create write handler for - connection: {}, address: {}", connection, localItemId );
+
         final FullAddress address = connection.parseFullAddress ( localItemId );
+
+        logger.debug ( "Write handler for  - {} / {}", address.commonAddress, address.objectAddress );
 
         return new WriteHandler () {
             @Override
