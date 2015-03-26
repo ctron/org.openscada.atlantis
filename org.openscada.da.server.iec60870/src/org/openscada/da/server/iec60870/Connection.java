@@ -313,7 +313,13 @@ public class Connection
             return null;
         }
 
-        final ASDUHeader header = new ASDUHeader ( new CauseOfTransmission ( StandardCause.ACTIVATED, this.dataModuleOptions.getCauseSourceAddress () ), commonAddress );
+        Byte csa = this.dataModuleOptions.getCauseSourceAddress ();
+        if ( csa == null )
+        {
+            csa = (byte)0;
+        }
+
+        final ASDUHeader header = new ASDUHeader ( new CauseOfTransmission ( StandardCause.ACTIVATED, csa ), commonAddress );
 
         try
         {
