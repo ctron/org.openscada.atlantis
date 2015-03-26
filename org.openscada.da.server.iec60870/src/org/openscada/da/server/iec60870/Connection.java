@@ -90,7 +90,7 @@ public class Connection
 
     private final ObjectExporter clientExporter;
 
-    private ClientState clientState;
+    private final ClientState clientState;
 
     private final StateListener clientListener = new StateListener () {
 
@@ -118,15 +118,15 @@ public class Connection
         }
     };
 
-    private ProtocolOptions protocolOptions;
+    private final ProtocolOptions protocolOptions;
 
-    private Executor executor;
+    private final Executor executor;
 
     private final Map<String, DataItemInputOutputChained> itemCache = new HashMap<> ();
 
-    private String id;
+    private final String id;
 
-    private DataModuleOptions dataModuleOptions;
+    private final DataModuleOptions dataModuleOptions;
 
     public Connection ( final String id, final Hive hive, final Executor executor, final ConnectionConfiguration configuration )
     {
