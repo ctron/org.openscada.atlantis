@@ -8,7 +8,7 @@
  * Contributors:
  *     IBH SYSTEMS GmbH - initial API and implementation
  *******************************************************************************/
-package org.openscada.da.server.iec60870;
+package org.openscada.da.server.common;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.core.WriteResult;

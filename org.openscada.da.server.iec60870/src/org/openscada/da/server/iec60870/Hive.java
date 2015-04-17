@@ -25,6 +25,8 @@ import org.eclipse.scada.da.server.common.ValidationStrategy;
 import org.eclipse.scada.da.server.common.impl.SessionCommon;
 import org.eclipse.scada.utils.concurrent.ExportedExecutorService;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
+import org.openscada.da.server.common.AbstractWriteHandlerHive;
+import org.openscada.da.server.common.WriteHandler;
 import org.openscada.da.server.iec60870.Connection.FullAddress;
 import org.openscada.da.server.iec60870.cfg.CAConfigurationFactory;
 import org.openscada.da.server.iec60870.cfg.ConfigurationFactory;

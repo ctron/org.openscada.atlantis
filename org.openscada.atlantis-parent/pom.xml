@@ -41,6 +41,8 @@
 		<module>../org.openscada.protocol.iec60870.server</module>
 		<module>../org.openscada.protocol.iec60870.server.data</module>
 		
+		<module>../org.openscada.da.server.common</module>
+		
 		<module>../org.openscada.core.common.iec60870</module>
 		<module>../org.openscada.da.server.exporter.iec60870</module>
 		<module>../org.openscada.da.server.iec60870</module>
