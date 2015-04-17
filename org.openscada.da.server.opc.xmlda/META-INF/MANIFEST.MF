@@ -1,0 +1,7 @@
+Manifest-Version: 1.0
+Bundle-ManifestVersion: 2
+Bundle-Name: OPC XML DA Hive
+Bundle-SymbolicName: org.openscada.da.server.opc.xmlda
+Bundle-Version: 1.4.0.qualifier
+Bundle-Vendor: IBH SYSTEMS GmbH
+Bundle-RequiredExecutionEnvironment: JavaSE-1.7
