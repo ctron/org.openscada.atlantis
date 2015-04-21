@@ -30,6 +30,9 @@
 
 		<module>../org.openscada.da.server.opc</module>
 		<module>../org.openscada.da.server.opc.edit</module>
+		
+		<module>../org.openscada.da.server.opc.xmlda</module>
+		
 		<module>../org.openscada.da.server.snmp</module>
 		<module>../org.openscada.da.server.snmp.edit</module>
 		
