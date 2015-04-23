@@ -26,6 +26,7 @@ import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.eclipse.scada.da.server.common.AttributeMode;
 import org.eclipse.scada.da.server.common.DataItem;
+import org.eclipse.scada.da.server.common.chain.item.ChainCreator;
 import org.eclipse.scada.da.server.common.exporter.StaticObjectExporter;
 import org.eclipse.scada.da.server.common.impl.HiveCommon;
 import org.eclipse.scada.da.server.common.item.factory.DefaultChainItemFactory;
@@ -40,6 +41,7 @@ import org.openscada.opc.xmlda.SubscriptionState;
 import org.openscada.opc.xmlda.requests.GetStatusRequest;
 import org.openscada.opc.xmlda.requests.GetStatusResponse;
 import org.openscada.opc.xmlda.requests.ItemValue;
+import org.openscada.opc.xmlda.requests.Quality;
 import org.openscada.opc.xmlda.requests.State;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -217,10 +219,15 @@ public class ServerConnection implements SubscriptionListener
             state.setVendorInformation ( result.getVendorInformation () );
             state.setStartTime ( makeTime ( result.getStartTime () ) );
             state.setInformation ( result.getStatusInformation () );
-            this.serverStateExporter.setTarget ( state );
+
+            final Map<String, Variant> attributes = new HashMap<> ( 0 );
+            this.serverStateExporter.setTarget ( state, attributes );
         }
         catch ( InterruptedException | ExecutionException e )
         {
+            final Map<String, Variant> attributes = new HashMap<> ( 1 );
+            attributes.put ( "connection.error", Variant.TRUE );
+            this.serverStateExporter.setTarget ( new ServerStateInformation (), attributes );
         }
         finally
         {
@@ -257,6 +264,7 @@ public class ServerConnection implements SubscriptionListener
         }
 
         item = new RemoteDataItem ( clientHandle, this.hive.getOperationService (), this.connection, this.poller, remoteId, null );
+        ChainCreator.applyDefaultInputChain ( item );
         this.items.put ( clientHandle, item );
 
         this.hive.registerItem ( item );
@@ -295,6 +303,11 @@ public class ServerConnection implements SubscriptionListener
         if ( state.getQuality () == null || !state.isGood () )
         {
             attributes.put ( "value.error", Variant.TRUE );
+        }
+
+        if ( state.getQuality () == Quality.GOOD_LOCAL_OVERRIDE )
+        {
+            attributes.put ( "opc.manual", Variant.TRUE );
         }
 
         final Variant variant = convert ( value.getValue () );
