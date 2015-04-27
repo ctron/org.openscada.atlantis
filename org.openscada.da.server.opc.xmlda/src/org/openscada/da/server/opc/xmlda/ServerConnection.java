@@ -72,11 +72,11 @@ public class ServerConnection implements SubscriptionListener
 
     private Poller poller;
 
-    public ServerConnection ( final String id, final URL url, final QName serviceName, final String localPart, final int connectTimeout, final int requestTimeout, final HiveCommon hive, final FolderCommon rootFolder )
+    public ServerConnection ( final String id, final URL wsdlUrl, final URL serverUrl, final QName serviceName, final String localPart, final int connectTimeout, final int requestTimeout, final HiveCommon hive, final FolderCommon rootFolder )
     {
         this.id = id;
 
-        this.connection = new Connection ( url, serviceName, localPart, connectTimeout, requestTimeout );
+        this.connection = new Connection ( wsdlUrl, serverUrl, serviceName, localPart, connectTimeout, requestTimeout );
 
         this.executor = new ScheduledExportedExecutorService ( makeBeanName ( "XMLDA/" + this.connection.toString () ) );
 

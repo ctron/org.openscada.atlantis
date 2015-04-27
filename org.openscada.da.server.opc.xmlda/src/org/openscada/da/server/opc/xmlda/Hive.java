@@ -92,6 +92,7 @@ public class Hive extends AbstractWriteHandlerHive
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
         final URL url = new URL ( cfg.getStringNonEmptyChecked ( "url", "'url' must be set to a valid server URL" ) );
+        final URL wsdlUrl = new URL ( cfg.getString ( "wsdlUrl" ) );
 
         final String namespace = cfg.getString ( "namespace", "http://opcfoundation.org/webservices/XMLDA/1.0/" );
 
@@ -102,7 +103,7 @@ public class Hive extends AbstractWriteHandlerHive
         final int connectTimeout = cfg.getInteger ( "connectTimeout", timeout );
         final int requestTimeout = cfg.getInteger ( "requestTimeout", timeout );
 
-        final ServerConnection service = new ServerConnection ( configurationId, url, new QName ( namespace, serviceName ), portName, connectTimeout, requestTimeout, this, this.rootFolder );
+        final ServerConnection service = new ServerConnection ( configurationId, wsdlUrl, url, new QName ( namespace, serviceName ), portName, connectTimeout, requestTimeout, this, this.rootFolder );
 
         synchronized ( this )
         {
