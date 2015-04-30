@@ -92,7 +92,8 @@ public class Hive extends AbstractWriteHandlerHive
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
 
         final URL url = new URL ( cfg.getStringNonEmptyChecked ( "url", "'url' must be set to a valid server URL" ) );
-        final URL wsdlUrl = new URL ( cfg.getString ( "wsdlUrl" ) );
+        final String wsdl = cfg.getStringNonEmpty ( "wsdlUrl" );
+        final URL wsdlUrl = wsdl != null ? new URL ( wsdl ) : null;
 
         final String namespace = cfg.getString ( "namespace", "http://opcfoundation.org/webservices/XMLDA/1.0/" );
 
