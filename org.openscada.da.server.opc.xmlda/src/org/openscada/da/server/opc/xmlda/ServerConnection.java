@@ -16,6 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,7 @@ import org.eclipse.scada.da.server.common.exporter.StaticObjectExporter;
 import org.eclipse.scada.da.server.common.impl.HiveCommon;
 import org.eclipse.scada.da.server.common.item.factory.DefaultChainItemFactory;
 import org.eclipse.scada.da.server.common.item.factory.FolderItemFactory;
+import org.eclipse.scada.utils.ExceptionHelper;
 import org.eclipse.scada.utils.concurrent.FutureListener;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
@@ -51,6 +53,8 @@ public class ServerConnection implements SubscriptionListener
     public static final Logger logger = LoggerFactory.getLogger ( ServerConnection.class );
 
     public static final String DATA_DELIM = System.getProperty ( "org.openscada.da.server.opc.xmlda.dataDelimiter", "!" );
+
+    private static final TimeZone UTC = TimeZone.getTimeZone ( "UTC" );
 
     private final String id;
 
@@ -225,8 +229,10 @@ public class ServerConnection implements SubscriptionListener
         }
         catch ( InterruptedException | ExecutionException e )
         {
+            logger.info ( "Failed to fetch status", e );
             final Map<String, Variant> attributes = new HashMap<> ( 1 );
             attributes.put ( "connection.error", Variant.TRUE );
+            attributes.put ( "connection.error.message", Variant.valueOf ( ExceptionHelper.getMessage ( e ) ) );
             this.serverStateExporter.setTarget ( new ServerStateInformation (), attributes );
         }
         finally
@@ -302,7 +308,7 @@ public class ServerConnection implements SubscriptionListener
         final State state = value.getState ();
         if ( state.getQuality () == null || !state.isGood () )
         {
-            attributes.put ( "value.error", Variant.TRUE );
+            attributes.put ( "quality.error", Variant.TRUE );
         }
 
         if ( state.getQuality () == Quality.GOOD_LOCAL_OVERRIDE )
@@ -319,6 +325,10 @@ public class ServerConnection implements SubscriptionListener
 
     private Variant convert ( final Object value )
     {
+        if ( value instanceof Calendar )
+        {
+            return Variant.valueOf ( ( (Calendar)value ).getTimeInMillis () );
+        }
         return Variant.valueOf ( value );
     }
 
