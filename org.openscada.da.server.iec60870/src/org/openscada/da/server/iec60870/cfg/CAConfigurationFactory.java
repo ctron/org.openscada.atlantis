@@ -80,8 +80,8 @@ public class CAConfigurationFactory implements ConfigurationFactory, org.eclipse
         final String host = cfg.getStringNonEmptyChecked ( "host", "'host' must be set" );
         final int port = cfg.getInteger ( "port", 2404 );
 
-        final Builder builder = Configurations.parseProtocolOptions ( cfg.getPrefixedHelper ( "protocol" ) );
-        final DataModuleOptions dataModuleOptions = parseDataModuleOptions ( cfg.getPrefixedHelper ( "dataModule" ) );
+        final Builder builder = Configurations.parseProtocolOptions ( cfg.getPrefixedHelper ( "protocol." ) );
+        final DataModuleOptions dataModuleOptions = parseDataModuleOptions ( cfg.getPrefixedHelper ( "dataModule." ) );
 
         return new ConnectionConfiguration ( host, port, builder.build (), dataModuleOptions );
     }
