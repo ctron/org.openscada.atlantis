@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2015 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.openscada.da.server.iec60870;
 
+import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.common.exporter.ItemOptions;
 import org.eclipse.scada.utils.beans.AbstractPropertyChange;
 
@@ -20,6 +21,13 @@ public class ClientState extends AbstractPropertyChange
     @ItemOptions ( readonly = true )
     private String connectionState;
 
+    private final Connection connection;
+
+    public ClientState ( final Connection connection )
+    {
+        this.connection = connection;
+    }
+
     public void setConnectionState ( final String connectionState )
     {
         firePropertyChange ( PROP_CONNECTION_STATE, this.connectionState, this.connectionState = connectionState );
@@ -28,5 +36,10 @@ public class ClientState extends AbstractPropertyChange
     public String getConnectionState ()
     {
         return this.connectionState;
+    }
+
+    public void setReconnect ( final Variant dummyValue )
+    {
+        this.connection.reconnect ();
     }
 }

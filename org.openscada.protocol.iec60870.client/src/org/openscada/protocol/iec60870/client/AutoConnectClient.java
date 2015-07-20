@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2015 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,8 +9,6 @@
  *     IBH SYSTEMS GmbH - initial API and implementation
  *******************************************************************************/
 package org.openscada.protocol.iec60870.client;
-
-import io.netty.channel.Channel;
 
 import java.net.InetSocketAddress;
 import java.nio.channels.UnresolvedAddressException;
@@ -26,6 +24,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.google.common.net.InetAddresses;
+
+import io.netty.channel.Channel;
 
 /**
  * A client implementation which automatically opens the connection re-connect
@@ -272,5 +272,23 @@ public class AutoConnectClient implements AutoCloseable
         fireState ( State.DISCONNECTED, error );
 
         triggerConnect ( 10_000 );
+    }
+
+    public synchronized void reconnect ()
+    {
+        logger.warn ( "Reconnect requested" );
+
+        if ( this.client != null )
+        {
+            try
+            {
+                this.client.close ();
+            }
+            catch ( final Exception e )
+            {
+                logger.warn ( "Failed to close client", e );
+                throw new RuntimeException ( e );
+            }
+        }
     }
 }

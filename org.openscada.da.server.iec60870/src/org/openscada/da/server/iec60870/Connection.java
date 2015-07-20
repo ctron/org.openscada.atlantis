@@ -153,7 +153,7 @@ public class Connection
         this.folder.add ( "data", this.dataFolder, null );
 
         this.clientExporter = new ObjectExporter ( this.stateFactory.createSubFolderFactory ( "client" ) );
-        this.clientExporter.attachTarget ( this.clientState = new ClientState () );
+        this.clientExporter.attachTarget ( this.clientState = new ClientState ( this ) );
 
         this.modulesFactory = new ModulesFactory () {
             @Override
@@ -263,7 +263,7 @@ public class Connection
 
         final DataItemInformation di = new DataItemInformationBase ( id, EnumSet.of ( IODirection.INPUT, IODirection.OUTPUT ) );
 
-        final DataItemInputOutputChained item = new DataItemInputOutputChained ( di, this.executor ) {
+        final DataItemInputOutputChained item = new DataItemInputOutputChained ( di, this.executor) {
 
             @Override
             protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters )
@@ -478,5 +478,13 @@ public class Connection
         {
             logger.warn ( "Failed to close client", e );
         }
+    }
+
+    /**
+     * Terminate the connection and let the auto reconnect controller re-connect
+     */
+    public void reconnect ()
+    {
+        this.client.reconnect ();
     }
 }
