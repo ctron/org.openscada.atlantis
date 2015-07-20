@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2015 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -16,6 +16,8 @@ import org.openscada.protocol.iec60870.asdu.types.Value;
 
 public interface DataListener
 {
+    public void started ();
+
     public void update ( ASDUAddress commonAddress, InformationObjectAddress objectAddress, Value<?> value );
 
     public void disconnected ();

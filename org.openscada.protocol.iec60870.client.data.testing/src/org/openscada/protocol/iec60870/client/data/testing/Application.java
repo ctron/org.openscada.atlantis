@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2015 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -41,9 +41,15 @@ public class Application
         final DataHandler handler = new DataProcessor ( dataExecutor, new DataListener () {
 
             @Override
+            public void started ()
+            {
+                System.out.println ( "DATA: Started" );
+            }
+
+            @Override
             public void update ( final ASDUAddress commonAddress, final InformationObjectAddress objectAddress, final Value<?> value )
             {
-                System.out.format ( "DATA: %s-%s: %s", commonAddress, objectAddress, value );
+                System.out.format ( "DATA: %s-%s: %s%n", commonAddress, objectAddress, value );
             }
 
             @Override
@@ -68,7 +74,7 @@ public class Application
             @Override
             public void stateChanged ( final State state, final Throwable e )
             {
-                System.out.println ( "State: " + state );
+                System.out.format ( "State: %s%n", state );
                 if ( e != null )
                 {
                     e.printStackTrace ();

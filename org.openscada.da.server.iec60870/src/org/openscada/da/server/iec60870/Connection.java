@@ -106,6 +106,12 @@ public class Connection
     private final DataListener dataListener = new DataListener () {
 
         @Override
+        public void started ()
+        {
+            setStarted ( true );
+        }
+
+        @Override
         public void update ( final ASDUAddress commonAddress, final InformationObjectAddress objectAddress, final Value<?> value )
         {
             handleDataUpdate ( commonAddress, objectAddress, value );
@@ -166,8 +172,15 @@ public class Connection
         this.client = new AutoConnectClient ( configuration.getHost (), configuration.getPort (), configuration.getProtocolOptions (), this.modulesFactory, this.clientListener );
     }
 
+    protected void setStarted ( final boolean value )
+    {
+        this.clientState.setDataStarted ( value );
+    }
+
     protected synchronized void handleDisconnected ()
     {
+        setStarted ( false );
+
         this.storage.clear ();
         for ( final DataItem item : this.itemCache.values () )
         {

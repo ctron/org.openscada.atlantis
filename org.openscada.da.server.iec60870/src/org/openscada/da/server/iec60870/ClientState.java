@@ -18,8 +18,13 @@ public class ClientState extends AbstractPropertyChange
 {
     public static final String PROP_CONNECTION_STATE = "connectionState";
 
+    public static final String PROP_DATA_STARTED = "dataStarted";
+
     @ItemOptions ( readonly = true )
     private String connectionState;
+
+    @ItemOptions ( readonly = true )
+    private boolean dataStarted;
 
     private final Connection connection;
 
@@ -36,6 +41,16 @@ public class ClientState extends AbstractPropertyChange
     public String getConnectionState ()
     {
         return this.connectionState;
+    }
+
+    public void setDataStarted ( final boolean dataStarted )
+    {
+        firePropertyChange ( PROP_DATA_STARTED, this.dataStarted, this.dataStarted = dataStarted );
+    }
+
+    public boolean isDataStarted ()
+    {
+        return this.dataStarted;
     }
 
     public void setReconnect ( final Variant dummyValue )

@@ -10,8 +10,6 @@
  *******************************************************************************/
 package org.openscada.protocol.iec60870.client.data;
 
-import io.netty.channel.ChannelHandlerContext;
-
 import java.util.concurrent.Executor;
 
 import org.openscada.protocol.iec60870.asdu.message.DoublePointInformationSequence;
@@ -32,6 +30,8 @@ import org.openscada.protocol.iec60870.asdu.types.InformationEntry;
 import org.openscada.protocol.iec60870.asdu.types.InformationObjectAddress;
 import org.openscada.protocol.iec60870.asdu.types.QualifierOfInterrogation;
 import org.openscada.protocol.iec60870.asdu.types.Value;
+
+import io.netty.channel.ChannelHandlerContext;
 
 public class DataProcessor implements DataHandler
 {
@@ -55,6 +55,13 @@ public class DataProcessor implements DataHandler
     @Override
     public void started ()
     {
+        this.executor.execute ( new Runnable () {
+            @Override
+            public void run ()
+            {
+                DataProcessor.this.listener.started ();
+            };
+        } );
     }
 
     @Override

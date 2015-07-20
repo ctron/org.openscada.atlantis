@@ -9,6 +9,6 @@
   </parent>
   <groupId>org.openscada.atlantis</groupId>
   <artifactId>org.openscada.protocol.iec60870.client.data</artifactId>
-  <version>1.3.0-SNAPSHOT</version>
+  <version>1.4.0-SNAPSHOT</version>
   <packaging>eclipse-plugin</packaging>
 </project>
