@@ -221,7 +221,7 @@ public class Hive extends AbstractWriteHandlerHive
             return newConnectionWriteHandler ( entry.getValue (), itemId.substring ( id.length () + PREFIX_LEN ) );
         }
 
-        return null;
+        return super.getWriteHandler ( session, itemId );
     }
 
     private WriteHandler newConnectionWriteHandler ( final Connection connection, final String localItemId )
