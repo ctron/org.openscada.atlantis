@@ -104,7 +104,11 @@ public class Hive extends AbstractWriteHandlerHive
         final int connectTimeout = cfg.getInteger ( "connectTimeout", timeout );
         final int requestTimeout = cfg.getInteger ( "requestTimeout", timeout );
 
-        final ServerConnection service = new ServerConnection ( configurationId, wsdlUrl, url, new QName ( namespace, serviceName ), portName, connectTimeout, requestTimeout, this, this.rootFolder );
+        final ServerConfiguration config = new ServerConfiguration ( wsdlUrl, url, new QName ( namespace, serviceName ), portName, connectTimeout, requestTimeout );
+        config.setWaitTime ( cfg.getInteger ( "waitTime", config.getWaitTime () /* use current as default */ ) );
+        config.setSamplingRate ( cfg.getInteger ( "samplingRate" ) );
+
+        final ServerConnection service = new ServerConnection ( configurationId, config, this, this.rootFolder );
 
         synchronized ( this )
         {
