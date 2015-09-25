@@ -52,7 +52,7 @@ public class ServerConnection implements SubscriptionListener
 
     private int waitTime;
 
-    private Integer samplingRate;
+    private final Integer samplingRate;
 
     private final String id;
 
@@ -74,7 +74,7 @@ public class ServerConnection implements SubscriptionListener
 
     private Poller poller;
 
-    public ServerConnection ( final String id, ServerConfiguration configuration, final HiveCommon hive, final FolderCommon rootFolder )
+    public ServerConnection ( final String id, final ServerConfiguration configuration, final HiveCommon hive, final FolderCommon rootFolder )
     {
         this.id = id;
 
@@ -85,6 +85,8 @@ public class ServerConnection implements SubscriptionListener
         this.hive = hive;
         this.rootFolder = rootFolder;
         this.connectionFolder = new FolderCommon ();
+
+        this.samplingRate = configuration.getSamplingRate ();
 
         // setup up browsing
 
