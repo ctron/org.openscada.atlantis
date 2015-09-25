@@ -10,18 +10,14 @@
  *******************************************************************************/
 package org.openscada.da.server.opc.xmlda;
 
-import java.net.URL;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-
-import javax.xml.namespace.QName;
 
 import org.eclipse.scada.core.Variant;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
@@ -54,7 +50,9 @@ public class ServerConnection implements SubscriptionListener
 
     public static final String DATA_DELIM = System.getProperty ( "org.openscada.da.server.opc.xmlda.dataDelimiter", "!" );
 
-    private static final TimeZone UTC = TimeZone.getTimeZone ( "UTC" );
+    private int waitTime;
+
+    private final Integer samplingRate;
 
     private final String id;
 
@@ -76,17 +74,19 @@ public class ServerConnection implements SubscriptionListener
 
     private Poller poller;
 
-    public ServerConnection ( final String id, final URL wsdlUrl, final URL serverUrl, final QName serviceName, final String localPart, final int connectTimeout, final int requestTimeout, final HiveCommon hive, final FolderCommon rootFolder )
+    public ServerConnection ( final String id, final ServerConfiguration configuration, final HiveCommon hive, final FolderCommon rootFolder )
     {
         this.id = id;
 
-        this.connection = new Connection ( wsdlUrl, serverUrl, serviceName, localPart, connectTimeout, requestTimeout );
+        this.connection = new Connection ( configuration.getWsdlUrl (), configuration.getServerUrl (), configuration.getServiceName (), configuration.getLocalPart (), configuration.getConnectTimeout (), configuration.getRequestTimeout () );
 
         this.executor = new ScheduledExportedExecutorService ( makeBeanName ( "XMLDA/" + this.connection.toString () ) );
 
         this.hive = hive;
         this.rootFolder = rootFolder;
         this.connectionFolder = new FolderCommon ();
+
+        this.samplingRate = configuration.getSamplingRate ();
 
         // setup up browsing
 
@@ -104,7 +104,7 @@ public class ServerConnection implements SubscriptionListener
     {
         // start poller
 
-        this.poller = this.connection.createPoller ( this );
+        this.poller = this.connection.createPoller ( this, this.waitTime, this.samplingRate );
 
         // attach connection folder
 
