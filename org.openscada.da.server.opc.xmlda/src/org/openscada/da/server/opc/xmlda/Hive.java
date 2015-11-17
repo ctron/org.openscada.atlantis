@@ -105,9 +105,19 @@ public class Hive extends AbstractWriteHandlerHive
         final int requestTimeout = cfg.getInteger ( "requestTimeout", timeout );
 
         final ServerConfiguration config = new ServerConfiguration ( wsdlUrl, url, new QName ( namespace, serviceName ), portName, connectTimeout, requestTimeout );
-        config.setWaitTime ( cfg.getInteger ( "waitTime", config.getWaitTime () /* use current as default */ ) );
-        config.setSamplingRate ( cfg.getInteger ( "samplingRate" ) );
-        config.setPollByRead ( cfg.getBoolean ( "pollByRead", false ) );
+
+        final boolean pollByRead = cfg.getBoolean ( "pollByRead", false );
+        config.setPollByRead ( pollByRead );
+        if ( pollByRead )
+        {
+            config.setWaitTime ( cfg.getInteger ( "period", 1000 ) );
+            config.setSamplingRate ( cfg.getInteger ( "maxAge" ) );
+        }
+        else
+        {
+            config.setWaitTime ( cfg.getInteger ( "waitTime", config.getWaitTime () /* use current as default */ ) );
+            config.setSamplingRate ( cfg.getInteger ( "samplingRate" ) );
+        }
 
         final ServerConnection service = new ServerConnection ( configurationId, config, this, this.rootFolder );
 
