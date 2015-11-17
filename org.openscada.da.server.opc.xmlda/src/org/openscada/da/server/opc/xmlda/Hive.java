@@ -107,6 +107,7 @@ public class Hive extends AbstractWriteHandlerHive
         final ServerConfiguration config = new ServerConfiguration ( wsdlUrl, url, new QName ( namespace, serviceName ), portName, connectTimeout, requestTimeout );
         config.setWaitTime ( cfg.getInteger ( "waitTime", config.getWaitTime () /* use current as default */ ) );
         config.setSamplingRate ( cfg.getInteger ( "samplingRate" ) );
+        config.setPollByRead ( cfg.getBoolean ( "pollByRead", false ) );
 
         final ServerConnection service = new ServerConnection ( configurationId, config, this, this.rootFolder );
 

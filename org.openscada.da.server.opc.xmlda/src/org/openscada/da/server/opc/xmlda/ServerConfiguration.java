@@ -32,6 +32,8 @@ public class ServerConfiguration
 
     private Integer samplingRate;
 
+    private boolean pollByRead;
+
     public ServerConfiguration ( final URL wsdlUrl, final URL serverUrl, final QName serviceName, final String localPart, final int connectTimeout, final int requestTimeout )
     {
         this.wsdlUrl = wsdlUrl;
@@ -130,5 +132,15 @@ public class ServerConfiguration
     public Integer getSamplingRate ()
     {
         return this.samplingRate;
+    }
+
+    public void setPollByRead ( final boolean pollByRead )
+    {
+        this.pollByRead = pollByRead;
+    }
+
+    public boolean isPollByRead ()
+    {
+        return this.pollByRead;
     }
 }

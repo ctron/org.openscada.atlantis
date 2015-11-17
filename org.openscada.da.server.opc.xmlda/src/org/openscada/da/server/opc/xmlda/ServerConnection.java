@@ -72,6 +72,8 @@ public class ServerConnection implements SubscriptionListener
 
     private final Map<String, RemoteDataItem> items = new HashMap<> ();
 
+    private final boolean pollByRead;
+
     private Poller poller;
 
     public ServerConnection ( final String id, final ServerConfiguration configuration, final HiveCommon hive, final FolderCommon rootFolder )
@@ -87,6 +89,10 @@ public class ServerConnection implements SubscriptionListener
         this.connectionFolder = new FolderCommon ();
 
         this.samplingRate = configuration.getSamplingRate ();
+
+        // poll mode
+
+        this.pollByRead = configuration.isPollByRead ();
 
         // setup up browsing
 
@@ -104,7 +110,14 @@ public class ServerConnection implements SubscriptionListener
     {
         // start poller
 
-        this.poller = this.connection.createPoller ( this, this.waitTime, this.samplingRate );
+        if ( this.pollByRead )
+        {
+            this.poller = this.connection.createReadPoller ( this, this.waitTime, this.samplingRate );
+        }
+        else
+        {
+            this.poller = this.connection.createSubscriptionPoller ( this, this.waitTime, this.samplingRate );
+        }
 
         // attach connection folder
 
@@ -135,7 +148,7 @@ public class ServerConnection implements SubscriptionListener
 
         if ( this.poller != null )
         {
-            this.poller.dispose ();
+            this.poller.close ();
             this.poller = null;
         }
 
