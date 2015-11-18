@@ -89,6 +89,7 @@ public class ServerConnection implements SubscriptionListener
         this.connectionFolder = new FolderCommon ();
 
         this.samplingRate = configuration.getSamplingRate ();
+        this.waitTime = configuration.getWaitTime ();
 
         // poll mode
 
