@@ -10,6 +10,7 @@
  *******************************************************************************/
 package org.openscada.da.server.opc.xmlda;
 
+import java.util.Collections;
 import java.util.concurrent.Executor;
 
 import org.eclipse.scada.core.Variant;
@@ -75,8 +76,8 @@ public class RemoteDataItem extends DataItemInputOutputChained implements Suspen
 
     protected synchronized void interalWakeup ()
     {
+        updateData ( Variant.NULL, Collections.singletonMap ( "opcxmlda.init.error", Variant.TRUE ), AttributeMode.SET );
         this.poller.addItem ( this.itemRequest );
-        updateData ( Variant.NULL, null, AttributeMode.SET );
     }
 
     @Override
@@ -84,7 +85,7 @@ public class RemoteDataItem extends DataItemInputOutputChained implements Suspen
     {
         final NotifyFuture<WriteResponse> future = this.connection.scheduleTask ( new WriteRequest ( new ItemValue ( this.itemName, this.itemPath, value.getValue (), null, null, null ) ) );
 
-        return new TransformResultFuture<WriteResponse, WriteResult> ( future ) {
+        return new TransformResultFuture<WriteResponse, WriteResult> ( future) {
 
             @Override
             protected WriteResult transform ( final WriteResponse from ) throws Exception
