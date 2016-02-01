@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -143,11 +143,11 @@ public class EventBuffer<T>
 
     public void append ( final CauseOfTransmission causeOfTransmission, final ASDUAddress asduAddress, final InformationObjectAddress address, final Value<T> value )
     {
-        removeDuplicates ( address, new Header ( causeOfTransmission, asduAddress ) );
+        final Header header = new Header ( causeOfTransmission, asduAddress );
 
-        this.entries.add ( new Entry<T> ( new Header ( causeOfTransmission, asduAddress ), address, value ) );
-
-        incrementCauseCounter ( new Header ( causeOfTransmission, asduAddress ), 1 );
+        removeDuplicates ( address, header );
+        this.entries.add ( new Entry<T> ( header, address, value ) );
+        incrementCauseCounter ( header, 1 );
     }
 
     public int getCauseCounter ( final CauseOfTransmission causeOfTransmission, final ASDUAddress asduAddress )

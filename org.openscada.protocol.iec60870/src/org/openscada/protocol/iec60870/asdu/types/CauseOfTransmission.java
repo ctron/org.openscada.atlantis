@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,9 +10,9 @@
  *******************************************************************************/
 package org.openscada.protocol.iec60870.asdu.types;
 
-import io.netty.buffer.ByteBuf;
-
 import org.openscada.protocol.iec60870.ProtocolOptions;
+
+import io.netty.buffer.ByteBuf;
 
 public class CauseOfTransmission
 {
@@ -36,7 +36,7 @@ public class CauseOfTransmission
 
     public static CauseOfTransmission BACKGROUND = new CauseOfTransmission ( StandardCause.BACKGROUND );
 
-    public CauseOfTransmission ()
+    private CauseOfTransmission ()
     {
     }
 
@@ -63,7 +63,7 @@ public class CauseOfTransmission
         return this.cause;
     }
 
-    public void setCause ( final Cause cause )
+    private void setCause ( final Cause cause )
     {
         this.cause = cause;
     }
@@ -73,7 +73,7 @@ public class CauseOfTransmission
         return this.test;
     }
 
-    public void setTest ( final boolean test )
+    private void setTest ( final boolean test )
     {
         this.test = test;
     }
@@ -83,7 +83,7 @@ public class CauseOfTransmission
         return this.positive;
     }
 
-    public void setPositive ( final boolean positive )
+    private void setPositive ( final boolean positive )
     {
         this.positive = positive;
     }
@@ -93,7 +93,7 @@ public class CauseOfTransmission
         return this.sourceAddress;
     }
 
-    public void setSourceAddress ( final byte sourceAddress )
+    private void setSourceAddress ( final byte sourceAddress )
     {
         this.sourceAddress = sourceAddress;
     }
