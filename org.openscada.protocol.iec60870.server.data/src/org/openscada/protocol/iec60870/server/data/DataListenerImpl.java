@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -33,22 +33,12 @@ public class DataListenerImpl implements DataListener
     @Override
     public void dataChangeBoolean ( final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<Boolean>> values )
     {
-        int i = startAddress.getAddress ();
-        for ( final Value<Boolean> value : values )
-        {
-            this.source.sendBooleanValue ( new ASDUHeader ( this.cause, asduAddress ), new InformationObjectAddress ( i ), value );
-            i++;
-        }
+        this.source.sendBooleanValues ( new ASDUHeader ( this.cause, asduAddress ), startAddress, values );
     }
 
     @Override
     public void dataChangeFloat ( final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<Float>> values )
     {
-        int i = startAddress.getAddress ();
-        for ( final Value<Float> value : values )
-        {
-            this.source.sendFloatValue ( new ASDUHeader ( this.cause, asduAddress ), new InformationObjectAddress ( i ), value );
-            i++;
-        }
+        this.source.sendFloatValues ( new ASDUHeader ( this.cause, asduAddress ), startAddress, values );
     }
 }

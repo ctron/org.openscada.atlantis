@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -367,10 +367,24 @@ public class DataModuleMessageSource implements MessageSource
         this.writer.notifyMoreData ();
     }
 
+    public synchronized void sendBooleanValues ( final ASDUHeader header, final InformationObjectAddress startAddress, final List<Value<Boolean>> values )
+    {
+        recordCause ( header.getAsduAddress (), header.getCauseOfTransmission () );
+        this.booleanEventBuffer.append ( header.getCauseOfTransmission (), header.getAsduAddress (), startAddress, values );
+        this.writer.notifyMoreData ();
+    }
+
     public synchronized void sendFloatValue ( final ASDUHeader header, final InformationObjectAddress address, final Value<Float> value )
     {
         recordCause ( header.getAsduAddress (), header.getCauseOfTransmission () );
         this.floatEventBuffer.append ( header.getCauseOfTransmission (), header.getAsduAddress (), address, value );
+        this.writer.notifyMoreData ();
+    }
+
+    public synchronized void sendFloatValues ( final ASDUHeader header, final InformationObjectAddress startAddress, final List<Value<Float>> values )
+    {
+        recordCause ( header.getAsduAddress (), header.getCauseOfTransmission () );
+        this.floatEventBuffer.append ( header.getCauseOfTransmission (), header.getAsduAddress (), startAddress, values );
         this.writer.notifyMoreData ();
     }
 

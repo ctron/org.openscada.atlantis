@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -148,6 +149,28 @@ public class EventBuffer<T>
         removeDuplicates ( address, header );
         this.entries.add ( new Entry<T> ( header, address, value ) );
         incrementCauseCounter ( header, 1 );
+    }
+
+    public void append ( final CauseOfTransmission causeOfTransmission, final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<T>> values )
+    {
+        final Header header = new Header ( causeOfTransmission, asduAddress );
+
+        int addr = startAddress.getAddress ();
+        for ( final Value<T> value : values )
+        {
+            final InformationObjectAddress address = new InformationObjectAddress ( addr );
+
+            removeDuplicates ( address, header );
+            this.entries.add ( new Entry<T> ( header, address, value ) );
+
+            // increment counter by one, since we also remove duplicates each iteration
+
+            incrementCauseCounter ( header, 1 );
+
+            // increment address
+            addr++;
+        }
+
     }
 
     public int getCauseCounter ( final CauseOfTransmission causeOfTransmission, final ASDUAddress asduAddress )
