@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -9,6 +9,16 @@
  *     IBH SYSTEMS GmbH - initial API and implementation
  *******************************************************************************/
 package org.openscada.protocol.iec60870.server;
+
+import java.util.List;
+
+import org.openscada.protocol.iec60870.ProtocolOptions;
+import org.openscada.protocol.iec60870.apci.APDUDecoder;
+import org.openscada.protocol.iec60870.apci.APDUEncoder;
+import org.openscada.protocol.iec60870.apci.MessageChannel;
+import org.openscada.protocol.iec60870.asdu.MessageManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
@@ -22,16 +32,6 @@ import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
-
-import java.util.List;
-
-import org.openscada.protocol.iec60870.ProtocolOptions;
-import org.openscada.protocol.iec60870.apci.APDUDecoder;
-import org.openscada.protocol.iec60870.apci.APDUEncoder;
-import org.openscada.protocol.iec60870.apci.MessageChannel;
-import org.openscada.protocol.iec60870.asdu.MessageManager;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class Server implements AutoCloseable
 {
@@ -52,6 +52,11 @@ public class Server implements AutoCloseable
     private final MessageManager manager;
 
     public Server ( final short port, final ProtocolOptions options, final List<ServerModule> modules )
+    {
+        this ( 0xFFFF & port, options, modules );
+    }
+
+    public Server ( final int port, final ProtocolOptions options, final List<ServerModule> modules )
     {
         this.options = options;
 
@@ -83,6 +88,11 @@ public class Server implements AutoCloseable
     }
 
     public Server ( final short port, final List<ServerModule> modules )
+    {
+        this ( 0xFFFF & port, modules );
+    }
+
+    public Server ( final int port, final List<ServerModule> modules )
     {
         this ( port, new ProtocolOptions.Builder ().build (), modules );
     }
