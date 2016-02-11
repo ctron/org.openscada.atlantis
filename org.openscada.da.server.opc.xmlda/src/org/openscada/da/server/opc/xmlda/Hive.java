@@ -139,7 +139,7 @@ public class Hive extends AbstractWriteHandlerHive
     @Override
     public DataItem lookupItem ( final String id )
     {
-        final String[] toks = splitDataItem ( id );
+        final String[] toks = parseDataItem ( id );
         if ( toks == null )
         {
             return super.lookupItem ( id );
@@ -148,7 +148,15 @@ public class Hive extends AbstractWriteHandlerHive
         return getDataItem ( toks[0], toks[1] );
     }
 
-    protected String[] splitDataItem ( final String id )
+    /**
+     * Parse a data item for connection and item id
+     *
+     * @param the
+     *            Eclipse SCADA item id
+     * @return an array of two elements, "connection id" and "opc item id" or
+     *         {@code null} if the item could not be parsed
+     */
+    public static String[] parseDataItem ( final String id )
     {
         final String[] toks = id.split ( DATA_DELIM_PATTERN, 2 );
         if ( toks.length == 2 )

@@ -50,7 +50,7 @@ public class ServerConnection implements SubscriptionListener
 
     public static final String DATA_DELIM = System.getProperty ( "org.openscada.da.server.opc.xmlda.dataDelimiter", "!" );
 
-    private int waitTime;
+    private final int waitTime;
 
     private final Integer samplingRate;
 
@@ -89,6 +89,7 @@ public class ServerConnection implements SubscriptionListener
         this.connectionFolder = new FolderCommon ();
 
         this.samplingRate = configuration.getSamplingRate ();
+        this.waitTime = configuration.getWaitTime ();
 
         // poll mode
 
@@ -99,6 +100,25 @@ public class ServerConnection implements SubscriptionListener
         final Map<String, Variant> attributes = new HashMap<> ();
         attributes.put ( "description", Variant.valueOf ( "The root node of the server namespace" ) );
         this.connectionFolder.add ( "tree", new BrowserFolder ( this.connection, makeDataId ( null ), null, null ), attributes );
+    }
+
+    private synchronized void processGrantedItems ()
+    {
+        for ( final String itemId : this.hive.getGrantedItems () )
+        {
+            final String[] toks = Hive.parseDataItem ( itemId );
+            if ( toks == null )
+            {
+                continue;
+            }
+
+            if ( !toks[0].equals ( this.id ) )
+            {
+                continue;
+            }
+
+            getRemoteDataItem ( toks[1] );
+        }
     }
 
     private static String makeBeanName ( final String string )
@@ -137,6 +157,10 @@ public class ServerConnection implements SubscriptionListener
         // start nagging server with status requests
 
         triggerStatus ();
+
+        // process granted items
+
+        processGrantedItems ();
     }
 
     /**
