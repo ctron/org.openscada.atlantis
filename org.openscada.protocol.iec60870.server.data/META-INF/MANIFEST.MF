@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: IEC60870-5-104 Data Transmission Module
 Bundle-SymbolicName: org.openscada.protocol.iec60870.server.data
-Bundle-Version: 1.3.0.qualifier
+Bundle-Version: 1.4.0.qualifier
 Bundle-Vendor: openSCADA.org
 Bundle-RequiredExecutionEnvironment: JavaSE-1.7
 Import-Package: com.google.common.base;version="12.0.0",
@@ -20,7 +20,7 @@ Import-Package: com.google.common.base;version="12.0.0",
  org.openscada.protocol.iec60870.io;version="1.3.0",
  org.openscada.protocol.iec60870.server;version="1.3.0",
  org.slf4j;version="1.7.2"
-Export-Package: org.openscada.protocol.iec60870.server.data;version="1.3.0";
+Export-Package: org.openscada.protocol.iec60870.server.data;version="1.4.0";
   uses:="org.openscada.protocol.iec60870.apci,
    com.google.common.base,
    com.google.common.util.concurrent,
@@ -31,7 +31,7 @@ Export-Package: org.openscada.protocol.iec60870.server.data;version="1.3.0";
    io.netty.channel,
    org.openscada.protocol.iec60870.server,
    io.netty.channel.socket",
- org.openscada.protocol.iec60870.server.data.event;version="1.3.0";uses:="org.openscada.protocol.iec60870.asdu.types",
+ org.openscada.protocol.iec60870.server.data.event;version="1.4.0";uses:="org.openscada.protocol.iec60870.asdu.types",
  org.openscada.protocol.iec60870.server.data.testing;version="1.3.0";
   uses:="org.openscada.protocol.iec60870.server.data,
    com.google.common.base,
