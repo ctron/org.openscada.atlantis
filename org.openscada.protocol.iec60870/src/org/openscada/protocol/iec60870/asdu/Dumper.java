@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -10,8 +10,10 @@
  *******************************************************************************/
 package org.openscada.protocol.iec60870.asdu;
 
+import java.io.PrintWriter;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -20,18 +22,16 @@ import org.openscada.protocol.iec60870.asdu.types.ASDU;
 
 public class Dumper
 {
-    private static String NL = System.getProperty ( "line.separator", "\n" );
-
-    private final StringBuilder buffer;
+    private final PrintWriter buffer;
 
     private final int level;
 
-    public Dumper ( final StringBuilder buffer )
+    public Dumper ( final PrintWriter buffer )
     {
         this ( buffer, 0 );
     }
 
-    protected Dumper ( final StringBuilder buffer, final int level )
+    protected Dumper ( final PrintWriter buffer, final int level )
     {
         this.buffer = buffer;
         this.level = level;
@@ -41,24 +41,47 @@ public class Dumper
     {
         indent ( 1 );
 
-        this.buffer.append ( fieldName ).append ( " : " );
+        this.buffer.format ( "%s : ", fieldName );
         if ( value instanceof Dumpable )
         {
             DumperHelper.dump ( (Dumpable)value, createChild () );
         }
+        else if ( value instanceof Collection<?> )
+        {
+            final Collection<?> col = (Collection<?>)value;
+            switch ( col.size () )
+            {
+                case 0:
+                    this.buffer.print ( "<empty>" );
+                    break;
+                case 1:
+                    this.buffer.print ( value );
+                    break;
+                default:
+                    this.buffer.println ( "[" );
+                    for ( final Object o : col )
+                    {
+                        indent ( 2 );
+                        this.buffer.println ( o );
+                    }
+                    indent ( 1 );
+                    this.buffer.print ( "]" );
+                    break;
+            }
+        }
         else
         {
-            this.buffer.append ( value );
+            this.buffer.print ( value );
         }
 
-        this.buffer.append ( NL );
+        this.buffer.println ();
     }
 
     private void indent ( final int offset )
     {
         for ( int i = 0; i < this.level + offset; i++ )
         {
-            this.buffer.append ( "  " );
+            this.buffer.print ( "  " );
         }
     }
 
@@ -69,20 +92,18 @@ public class Dumper
         final ASDU asdu = object.getClass ().getAnnotation ( ASDU.class );
         if ( asdu != null )
         {
-            this.buffer.append ( "(" );
-            this.buffer.append ( asdu.name () ).append ( '=' ).append ( asdu.id () & 0xFF );
-            this.buffer.append ( ")" );
+            this.buffer.format ( "(%s=%s)", asdu.name (), asdu.id () & 0xFF );
         }
-        this.buffer.append ( NL );
+        this.buffer.println ();
 
         indent ( 0 );
-        this.buffer.append ( "----- START ----" ).append ( NL );
+        this.buffer.println ( "----- START ----" );
     }
 
     public void end ()
     {
         indent ( 0 );
-        this.buffer.append ( "-----  END  ----" );
+        this.buffer.print ( "-----  END  ----" );
     }
 
     public Dumper createChild ()
