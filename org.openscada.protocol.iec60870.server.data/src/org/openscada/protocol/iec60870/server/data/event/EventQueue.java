@@ -14,6 +14,7 @@ import java.util.List;
 
 import org.openscada.protocol.iec60870.asdu.types.ASDUAddress;
 import org.openscada.protocol.iec60870.asdu.types.CauseOfTransmission;
+import org.openscada.protocol.iec60870.asdu.types.InformationEntry;
 import org.openscada.protocol.iec60870.asdu.types.InformationObjectAddress;
 import org.openscada.protocol.iec60870.asdu.types.Value;
 
@@ -37,6 +38,11 @@ public class EventQueue<T>
     public void append ( final CauseOfTransmission causeOfTransmission, final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<T>> values )
     {
         this.buffer.append ( causeOfTransmission, asduAddress, startAddress, values );
+    }
+
+    public void append ( final CauseOfTransmission causeOfTransmission, final ASDUAddress asduAddress, final List<InformationEntry<T>> values )
+    {
+        this.buffer.append ( causeOfTransmission, asduAddress, values );
     }
 
     public int getCauseCounter ( final CauseOfTransmission causeOfTransmission, final ASDUAddress asduAddress )

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -28,7 +28,6 @@ import org.slf4j.LoggerFactory;
 
 public class IecExport
 {
-
     private final static Logger logger = LoggerFactory.getLogger ( IecExport.class );
 
     private ExportConfiguration configuration;
@@ -96,7 +95,7 @@ public class IecExport
 
         if ( this.configuration != null )
         {
-            this.dataModule = new DataModule ( this.configuration.getDataModuleOptions (), new DataModelImpl ( this.hiveSource, this.configuration.getEntries (), this.configuration.getHiveProperties (), this.info ) );
+            this.dataModule = new DataModule ( this.configuration.getDataModuleOptions (), new DataModelImpl ( this.hiveSource, this.configuration.getEntries (), this.configuration.getHiveProperties (), this.info, this.configuration.getSpontaneousBufferWindow () ) );
             this.info.setItems ( this.configuration.getEntries ().size () );
 
             final List<ServerModule> modules = new LinkedList<ServerModule> ();

@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -25,9 +25,7 @@ public class ExportConfiguration
 {
     private short port = 2404;
 
-    private boolean spontaneous = true;
-
-    private final int backgroundScanPeriod = 60_000;
+    private Long spontaneousBufferWindow;
 
     private ProtocolOptions protocolOptions;
 
@@ -91,14 +89,14 @@ public class ExportConfiguration
         this.port = port;
     }
 
-    public void setSpontaneous ( final boolean spontaneous )
+    public void setSpontaneousBufferWindow ( final Long spontaneousBufferWindow )
     {
-        this.spontaneous = spontaneous;
+        this.spontaneousBufferWindow = spontaneousBufferWindow;
     }
 
-    public boolean isSpontaneous ()
+    public Long getSpontaneousBufferWindow ()
     {
-        return this.spontaneous;
+        return this.spontaneousBufferWindow;
     }
 
     /**
@@ -116,8 +114,8 @@ public class ExportConfiguration
         final ConfigurationDataHelper cfg = new ConfigurationDataHelper ( parameters );
         final ExportConfiguration result = new ExportConfiguration ();
 
-        result.setPort ( (short)cfg.getInteger ( "port", 2404 /* IEC 60870-5-104 default */) ); //$NON-NLS-1$
-        result.setSpontaneous ( cfg.getBoolean ( "spontaneous", true ) ); //$NON-NLS-1$
+        result.setPort ( (short)cfg.getInteger ( "port", 2404 /* IEC 60870-5-104 default */ ) ); //$NON-NLS-1$
+        result.setSpontaneousBufferWindow ( cfg.getLong ( "spontaneousBufferWindow" ) ); //$NON-NLS-1$
 
         final ProtocolOptions.Builder optionsBuilder = Configurations.parseProtocolOptions ( cfg );
 
@@ -193,13 +191,12 @@ public class ExportConfiguration
     {
         final int prime = 31;
         int result = 1;
-        result = prime * result + this.backgroundScanPeriod;
         result = prime * result + ( this.dataModuleOptions == null ? 0 : this.dataModuleOptions.hashCode () );
         result = prime * result + ( this.entries == null ? 0 : this.entries.hashCode () );
         result = prime * result + ( this.hiveProperties == null ? 0 : this.hiveProperties.hashCode () );
         result = prime * result + this.port;
         result = prime * result + ( this.protocolOptions == null ? 0 : this.protocolOptions.hashCode () );
-        result = prime * result + ( this.spontaneous ? 1231 : 1237 );
+        result = prime * result + ( this.spontaneousBufferWindow == null ? 0 : this.spontaneousBufferWindow.hashCode () );
         return result;
     }
 
@@ -219,10 +216,6 @@ public class ExportConfiguration
             return false;
         }
         final ExportConfiguration other = (ExportConfiguration)obj;
-        if ( this.backgroundScanPeriod != other.backgroundScanPeriod )
-        {
-            return false;
-        }
         if ( this.dataModuleOptions == null )
         {
             if ( other.dataModuleOptions != null )
@@ -271,7 +264,14 @@ public class ExportConfiguration
         {
             return false;
         }
-        if ( this.spontaneous != other.spontaneous )
+        if ( this.spontaneousBufferWindow == null )
+        {
+            if ( other.spontaneousBufferWindow != null )
+            {
+                return false;
+            }
+        }
+        else if ( !this.spontaneousBufferWindow.equals ( other.spontaneousBufferWindow ) )
         {
             return false;
         }

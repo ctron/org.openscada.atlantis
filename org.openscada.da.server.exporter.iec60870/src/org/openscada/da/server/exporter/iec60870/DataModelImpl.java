@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -14,6 +14,7 @@ import java.io.Serializable;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Properties;
@@ -39,6 +40,7 @@ import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.openscada.protocol.iec60870.asdu.ASDUHeader;
 import org.openscada.protocol.iec60870.asdu.types.ASDUAddress;
 import org.openscada.protocol.iec60870.asdu.types.CauseOfTransmission;
+import org.openscada.protocol.iec60870.asdu.types.InformationEntry;
 import org.openscada.protocol.iec60870.asdu.types.InformationObjectAddress;
 import org.openscada.protocol.iec60870.asdu.types.QualityInformation;
 import org.openscada.protocol.iec60870.asdu.types.Value;
@@ -168,11 +170,14 @@ public class DataModelImpl extends AbstractBaseDataModel
 
     private final Map<AddressKey, String> addressMap = new HashMap<> ();
 
-    public DataModelImpl ( final HiveSource hiveSource, final Set<MappingEntry> entries, final Properties hiveProperties, final InformationBean info )
+    private final ChangeModel changeModel;
+
+    public DataModelImpl ( final HiveSource hiveSource, final Set<MappingEntry> entries, final Properties hiveProperties, final InformationBean info, final Long flushDelay )
     {
         super ( "org.openscada.da.server.exporter.iec60870.DataModel" );
 
         this.backgroundExecutor = Executors.newSingleThreadExecutor ( new NamedThreadFactory ( "org.openscada.da.server.exporter.iec60870.DataModel/background" ) );
+        this.changeModel = flushDelay == null ? makeInstantChangeModel () : makeBufferingChangeModel ( flushDelay );
 
         this.info = info;
 
@@ -187,6 +192,42 @@ public class DataModelImpl extends AbstractBaseDataModel
         this.manager.start ();
 
         attach ( entries );
+    }
+
+    private ChangeModel makeInstantChangeModel ()
+    {
+        return new InstantChangeModel ( new InstantChangeModel.Context () {
+
+            @Override
+            public void notifyChangeFloat ( final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<Float>> values )
+            {
+                DataModelImpl.this.notifyChangeFloat ( asduAddress, startAddress, values );
+            }
+
+            @Override
+            public void notifyChangeBoolean ( final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<Boolean>> values )
+            {
+                DataModelImpl.this.notifyChangeBoolean ( asduAddress, startAddress, values );
+            }
+        } );
+    }
+
+    private ChangeModel makeBufferingChangeModel ( final long flushDelay )
+    {
+        return new BufferingChangeModel ( new BufferingChangeModel.Context () {
+
+            @Override
+            public void notifyBoolean ( final ASDUAddress asduAddress, final List<InformationEntry<Boolean>> values )
+            {
+                DataModelImpl.this.notifyChangeBoolean ( asduAddress, values );
+            }
+
+            @Override
+            public void notifyFloat ( final ASDUAddress asduAddress, final List<InformationEntry<Float>> values )
+            {
+                DataModelImpl.this.notifyChangeFloat ( asduAddress, values );
+            }
+        }, this.executor, flushDelay );
     }
 
     @Override
@@ -350,6 +391,7 @@ public class DataModelImpl extends AbstractBaseDataModel
     @Override
     public void dispose ()
     {
+        this.changeModel.dispose ();
         this.manager.stop ();
         this.backgroundExecutor.shutdown ();
         super.dispose ();
@@ -531,6 +573,7 @@ public class DataModelImpl extends AbstractBaseDataModel
                 builder = createBuilder ( entry.getValue ().getValue () );
                 builder.start ( CauseOfTransmission.BACKGROUND, ASDUAddress.valueOf ( state.asduAddress.getKey () ) );
             }
+
             if ( !builder.accepts ( entry.getValue () ) )
             {
                 // next starting point
@@ -550,21 +593,9 @@ public class DataModelImpl extends AbstractBaseDataModel
         } while ( true );
     }
 
-    @SuppressWarnings ( "unchecked" )
-    private void notifyChange ( final MappingEntry entry, final Value<?> iecValue )
+    private void notifyChange ( final MappingEntry entry, final Value<?> value )
     {
-        final Object rawValue = iecValue.getValue ();
-
-        logger.trace ( "Notify raw value: {} ({})", rawValue, rawValue != null ? rawValue.getClass () : null );
-
-        if ( rawValue instanceof Boolean )
-        {
-            notifyChangeBoolean ( ASDUAddress.valueOf ( entry.getAsduAddress () ), new InformationObjectAddress ( entry.getAddress () ), Collections.singletonList ( (Value<Boolean>)iecValue ) );
-        }
-        else if ( rawValue instanceof Float )
-        {
-            notifyChangeFloat ( ASDUAddress.valueOf ( entry.getAsduAddress () ), new InformationObjectAddress ( entry.getAddress () ), Collections.singletonList ( (Value<Float>)iecValue ) );
-        }
+        this.changeModel.notifyChange ( ASDUAddress.valueOf ( entry.getAsduAddress () ), new InformationObjectAddress ( entry.getAddress () ), value );
     }
 
     @SuppressWarnings ( "unchecked" )

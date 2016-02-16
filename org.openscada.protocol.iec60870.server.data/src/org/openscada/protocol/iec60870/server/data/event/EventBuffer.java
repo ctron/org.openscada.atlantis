@@ -20,6 +20,7 @@ import java.util.Set;
 
 import org.openscada.protocol.iec60870.asdu.types.ASDUAddress;
 import org.openscada.protocol.iec60870.asdu.types.CauseOfTransmission;
+import org.openscada.protocol.iec60870.asdu.types.InformationEntry;
 import org.openscada.protocol.iec60870.asdu.types.InformationObjectAddress;
 import org.openscada.protocol.iec60870.asdu.types.Value;
 
@@ -170,7 +171,23 @@ public class EventBuffer<T>
             // increment address
             addr++;
         }
+    }
 
+    public void append ( final CauseOfTransmission causeOfTransmission, final ASDUAddress asduAddress, final List<InformationEntry<T>> values )
+    {
+        final Header header = new Header ( causeOfTransmission, asduAddress );
+
+        for ( final InformationEntry<T> value : values )
+        {
+            final InformationObjectAddress address = value.getAddress ();
+
+            removeDuplicates ( address, header );
+            this.entries.add ( new Entry<T> ( header, address, value.getValue () ) );
+
+            // increment counter by one, since we also remove duplicates each iteration
+
+            incrementCauseCounter ( header, 1 );
+        }
     }
 
     public int getCauseCounter ( final CauseOfTransmission causeOfTransmission, final ASDUAddress asduAddress )

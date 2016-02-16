@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -19,6 +19,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.eclipse.scada.utils.concurrent.NamedThreadFactory;
 import org.openscada.protocol.iec60870.asdu.types.ASDUAddress;
+import org.openscada.protocol.iec60870.asdu.types.InformationEntry;
 import org.openscada.protocol.iec60870.asdu.types.InformationObjectAddress;
 import org.openscada.protocol.iec60870.asdu.types.Value;
 
@@ -92,6 +93,21 @@ public abstract class AbstractBaseDataModel implements DataModel
         }
     }
 
+    protected synchronized void notifyChangeBoolean ( final ASDUAddress asduAddress, final List<InformationEntry<Boolean>> values )
+    {
+        for ( final DefaultSubscription sub : this.subscriptions )
+        {
+            this.executor.execute ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    sub.notifyChangeBoolean ( asduAddress, values );
+                }
+            } );
+        }
+    }
+
     protected synchronized void notifyChangeFloat ( final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<Float>> values )
     {
         for ( final DefaultSubscription sub : this.subscriptions )
@@ -102,6 +118,21 @@ public abstract class AbstractBaseDataModel implements DataModel
                 public void run ()
                 {
                     sub.notifyChangeFloat ( asduAddress, startAddress, values );
+                }
+            } );
+        }
+    }
+
+    protected synchronized void notifyChangeFloat ( final ASDUAddress asduAddress, final List<InformationEntry<Float>> values )
+    {
+        for ( final DefaultSubscription sub : this.subscriptions )
+        {
+            this.executor.execute ( new Runnable () {
+
+                @Override
+                public void run ()
+                {
+                    sub.notifyChangeFloat ( asduAddress, values );
                 }
             } );
         }

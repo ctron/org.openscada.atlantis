@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -13,6 +13,7 @@ package org.openscada.protocol.iec60870.server.data;
 import java.util.List;
 
 import org.openscada.protocol.iec60870.asdu.types.ASDUAddress;
+import org.openscada.protocol.iec60870.asdu.types.InformationEntry;
 import org.openscada.protocol.iec60870.asdu.types.InformationObjectAddress;
 import org.openscada.protocol.iec60870.asdu.types.Value;
 
@@ -36,13 +37,24 @@ public class DefaultSubscription implements Subscription
         return this.dataModel.disposeSubscription ( this );
     }
 
+    public void notifyChangeBoolean ( final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<Boolean>> values )
+    {
+        this.listener.dataChangeBoolean ( asduAddress, startAddress, values );
+    }
+
+    public void notifyChangeBoolean ( final ASDUAddress asduAddress, final List<InformationEntry<Boolean>> values )
+    {
+        this.listener.dataChangeBoolean ( asduAddress, values );
+    }
+
     public void notifyChangeFloat ( final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<Float>> values )
     {
         this.listener.dataChangeFloat ( asduAddress, startAddress, values );
     }
 
-    public void notifyChangeBoolean ( final ASDUAddress asduAddress, final InformationObjectAddress startAddress, final List<Value<Boolean>> values )
+    public void notifyChangeFloat ( final ASDUAddress asduAddress, final List<InformationEntry<Float>> values )
     {
-        this.listener.dataChangeBoolean ( asduAddress, startAddress, values );
+        this.listener.dataChangeFloat ( asduAddress, values );
     }
+
 }

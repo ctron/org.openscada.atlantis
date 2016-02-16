@@ -26,6 +26,7 @@ import org.openscada.protocol.iec60870.asdu.types.ASDUAddress;
 import org.openscada.protocol.iec60870.asdu.types.Cause;
 import org.openscada.protocol.iec60870.asdu.types.CauseOfTransmission;
 import org.openscada.protocol.iec60870.asdu.types.Causes;
+import org.openscada.protocol.iec60870.asdu.types.InformationEntry;
 import org.openscada.protocol.iec60870.asdu.types.InformationObjectAddress;
 import org.openscada.protocol.iec60870.asdu.types.StandardCause;
 import org.openscada.protocol.iec60870.asdu.types.Value;
@@ -374,6 +375,13 @@ public class DataModuleMessageSource implements MessageSource
         this.writer.notifyMoreData ();
     }
 
+    public synchronized void sendBooleanValues ( final ASDUHeader header, final List<InformationEntry<Boolean>> values )
+    {
+        recordCause ( header.getAsduAddress (), header.getCauseOfTransmission () );
+        this.booleanEventBuffer.append ( header.getCauseOfTransmission (), header.getAsduAddress (), values );
+        this.writer.notifyMoreData ();
+    }
+
     public synchronized void sendFloatValue ( final ASDUHeader header, final InformationObjectAddress address, final Value<Float> value )
     {
         recordCause ( header.getAsduAddress (), header.getCauseOfTransmission () );
@@ -385,6 +393,13 @@ public class DataModuleMessageSource implements MessageSource
     {
         recordCause ( header.getAsduAddress (), header.getCauseOfTransmission () );
         this.floatEventBuffer.append ( header.getCauseOfTransmission (), header.getAsduAddress (), startAddress, values );
+        this.writer.notifyMoreData ();
+    }
+
+    public synchronized void sendFloatValues ( final ASDUHeader header, final List<InformationEntry<Float>> values )
+    {
+        recordCause ( header.getAsduAddress (), header.getCauseOfTransmission () );
+        this.floatEventBuffer.append ( header.getCauseOfTransmission (), header.getAsduAddress (), values );
         this.writer.notifyMoreData ();
     }
 
