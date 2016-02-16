@@ -56,6 +56,7 @@ import org.eclipse.jface.action.Separator;
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.dialogs.ProgressMonitorDialog;
 
+import org.eclipse.jface.util.LocalSelectionTransfer;
 import org.eclipse.jface.viewers.ColumnWeightData;
 import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.ISelectionChangedListener;
@@ -75,6 +76,7 @@ import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.CTabFolder;
 
 import org.eclipse.swt.dnd.DND;
+import org.eclipse.swt.dnd.FileTransfer;
 import org.eclipse.swt.dnd.Transfer;
 
 import org.eclipse.swt.events.ControlAdapter;
@@ -745,7 +747,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
     protected boolean handleDirtyConflict ()
     {
         return MessageDialog.openQuestion ( getSite ().getShell (), getString ( "_UI_FileConflict_label" ), //$NON-NLS-1$
-                getString ( "_WARN_FileConflict" ) ); //$NON-NLS-1$
+        getString ( "_WARN_FileConflict" ) ); //$NON-NLS-1$
     }
 
     /**
@@ -1034,7 +1036,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
         getSite ().registerContextMenu ( contextMenu, new UnwrappingSelectionProvider ( viewer ) );
 
         int dndOperations = DND.DROP_COPY | DND.DROP_MOVE | DND.DROP_LINK;
-        Transfer[] transfers = new Transfer[] { LocalTransfer.getInstance () };
+        Transfer[] transfers = new Transfer[] { LocalTransfer.getInstance (), LocalSelectionTransfer.getTransfer (), FileTransfer.getInstance () };
         viewer.addDragSupport ( dndOperations, transfers, new ViewerDragAdapter ( viewer ) );
         viewer.addDropSupport ( dndOperations, transfers, new EditingDomainViewerDropAdapter ( editingDomain, viewer ) );
     }
@@ -1047,7 +1049,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
      */
     public void createModel ()
     {
-        URI resourceURI = EditUIUtil.getURI ( getEditorInput () );
+        URI resourceURI = EditUIUtil.getURI ( getEditorInput (), editingDomain.getResourceSet ().getURIConverter () );
         Exception exception = null;
         Resource resource = null;
         try
@@ -1079,9 +1081,10 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
      */
     public Diagnostic analyzeResourceProblems ( Resource resource, Exception exception )
     {
-        if ( !resource.getErrors ().isEmpty () || !resource.getWarnings ().isEmpty () )
+        boolean hasErrors = !resource.getErrors ().isEmpty ();
+        if ( hasErrors || !resource.getWarnings ().isEmpty () )
         {
-            BasicDiagnostic basicDiagnostic = new BasicDiagnostic ( Diagnostic.ERROR, "org.openscada.da.server.opc.editor", //$NON-NLS-1$
+            BasicDiagnostic basicDiagnostic = new BasicDiagnostic ( hasErrors ? Diagnostic.ERROR : Diagnostic.WARNING, "org.openscada.da.server.opc.editor", //$NON-NLS-1$
             0, getString ( "_UI_CreateModelError_message", resource.getURI () ), //$NON-NLS-1$
             new Object[] { exception == null ? (Object)resource : exception } );
             basicDiagnostic.merge ( EcoreUtil.computeDiagnostic ( resource, true ) );
@@ -1119,7 +1122,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
             // Create a page for the selection tree view.
             //
             {
-                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this ) {
+                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this) {
                     @Override
                     public Viewer createViewer ( Composite composite )
                     {
@@ -1155,7 +1158,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
             // Create a page for the parent tree view.
             //
             {
-                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this ) {
+                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this) {
                     @Override
                     public Viewer createViewer ( Composite composite )
                     {
@@ -1186,7 +1189,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
             // This is the page for the list viewer
             //
             {
-                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this ) {
+                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this) {
                     @Override
                     public Viewer createViewer ( Composite composite )
                     {
@@ -1213,7 +1216,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
             // This is the page for the tree viewer
             //
             {
-                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this ) {
+                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this) {
                     @Override
                     public Viewer createViewer ( Composite composite )
                     {
@@ -1242,7 +1245,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
             // This is the page for the table viewer.
             //
             {
-                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this ) {
+                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this) {
                     @Override
                     public Viewer createViewer ( Composite composite )
                     {
@@ -1287,7 +1290,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
             // This is the page for the table tree viewer.
             //
             {
-                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this ) {
+                ViewerPane viewerPane = new ViewerPane ( getSite ().getPage (), ConfigurationEditor.this) {
                     @Override
                     public Viewer createViewer ( Composite composite )
                     {
@@ -1529,7 +1532,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
      */
     public IPropertySheetPage getPropertySheetPage ()
     {
-        PropertySheetPage propertySheetPage = new ExtendedPropertySheetPage ( editingDomain ) {
+        PropertySheetPage propertySheetPage = new ExtendedPropertySheetPage ( editingDomain) {
             @Override
             public void setSelectionToViewer ( List<?> selection )
             {
@@ -1621,6 +1624,7 @@ public class ConfigurationEditor extends MultiPageEditorPart implements IEditing
         //
         final Map<Object, Object> saveOptions = new HashMap<Object, Object> ();
         saveOptions.put ( Resource.OPTION_SAVE_ONLY_IF_CHANGED, Resource.OPTION_SAVE_ONLY_IF_CHANGED_MEMORY_BUFFER );
+        saveOptions.put ( Resource.OPTION_LINE_DELIMITER, Resource.OPTION_LINE_DELIMITER_UNSPECIFIED );
 
         // Do the work within an operation because this is a long running activity that modifies the workbench.
         //

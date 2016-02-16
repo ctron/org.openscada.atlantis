@@ -4,7 +4,7 @@
     modelDirectory="/org.openscada.da.server.opc/emfsrc" modelPluginID="org.openscada.da.server.opc"
     modelName="Opc" nonNLSMarkers="true" rootExtendsClass="org.eclipse.emf.ecore.impl.MinimalEObjectImpl$Container"
     codeFormatting="true" importerID="org.eclipse.xsd.ecore.importer" containmentProxies="true"
-    complianceLevel="6.0" copyrightFields="false" runtimeVersion="2.8" operationReflection="true"
+    complianceLevel="7.0" copyrightFields="false" runtimeVersion="2.11" operationReflection="true"
     importOrganizing="true">
   <foreignModel>opc.xsd</foreignModel>
   <genPackages prefix="Configuration" basePackage="org.openscada.da.opc" resource="XML"

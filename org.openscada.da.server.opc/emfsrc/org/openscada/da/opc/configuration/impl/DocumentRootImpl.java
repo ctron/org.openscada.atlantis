@@ -38,6 +38,7 @@ import org.openscada.da.opc.configuration.RootType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.impl.DocumentRootImpl#getMixed <em>Mixed</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.impl.DocumentRootImpl#getXMLNSPrefixMap <em>XMLNS Prefix Map</em>}</li>
@@ -45,7 +46,6 @@ import org.openscada.da.opc.configuration.RootType;
  *   <li>{@link org.openscada.da.opc.configuration.impl.DocumentRootImpl#getItems <em>Items</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.impl.DocumentRootImpl#getRoot <em>Root</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

@@ -98,8 +98,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addProgidPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_progid_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_progid_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__PROGID, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_progid_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__PROGID, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -111,8 +111,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addClsidPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_clsid_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_clsid_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__CLSID, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_clsid_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__CLSID, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -124,8 +124,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addInitialItemPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_initialItem_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_initialItem_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__INITIAL_ITEM, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_initialItem_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__INITIAL_ITEM, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -137,8 +137,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addInitialItemResourcePropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_initialItemResource_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_initialItemResource_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__INITIAL_ITEM_RESOURCE, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_initialItemResource_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__INITIAL_ITEM_RESOURCE, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -150,8 +150,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addAccessPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_access_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_access_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__ACCESS, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_access_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__ACCESS, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -163,8 +163,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addAliasPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_alias_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_alias_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__ALIAS, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_alias_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__ALIAS, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -176,8 +176,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addConnectedPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_connected_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_connected_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__CONNECTED, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_connected_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__CONNECTED, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -189,8 +189,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addDomainPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_domain_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_domain_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__DOMAIN, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_domain_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__DOMAIN, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -202,8 +202,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addEnabledPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_enabled_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_enabled_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__ENABLED, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_enabled_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__ENABLED, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -215,8 +215,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addFlatBrowserPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_flatBrowser_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_flatBrowser_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__FLAT_BROWSER, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_flatBrowser_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__FLAT_BROWSER, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -228,8 +228,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addHostPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_host_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_host_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__HOST, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_host_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__HOST, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -241,8 +241,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addIgnoreTimestampOnlyChangePropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_ignoreTimestampOnlyChange_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_ignoreTimestampOnlyChange_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__IGNORE_TIMESTAMP_ONLY_CHANGE, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_ignoreTimestampOnlyChange_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__IGNORE_TIMESTAMP_ONLY_CHANGE, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -254,8 +254,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addInitialRefreshPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_initialRefresh_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_initialRefresh_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__INITIAL_REFRESH, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_initialRefresh_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__INITIAL_REFRESH, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -267,8 +267,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addItemIdPrefixPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_itemIdPrefix_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_itemIdPrefix_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__ITEM_ID_PREFIX, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_itemIdPrefix_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__ITEM_ID_PREFIX, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -280,8 +280,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addPasswordPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_password_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_password_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__PASSWORD, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_password_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__PASSWORD, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -293,8 +293,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addQualityErrorIfLessThenPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_qualityErrorIfLessThen_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_qualityErrorIfLessThen_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__QUALITY_ERROR_IF_LESS_THEN, true, false, false, ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_qualityErrorIfLessThen_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__QUALITY_ERROR_IF_LESS_THEN, true, false, false, ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -306,8 +306,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addReconnectDelayPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_reconnectDelay_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_reconnectDelay_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__RECONNECT_DELAY, true, false, false, ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_reconnectDelay_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__RECONNECT_DELAY, true, false, false, ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -319,8 +319,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addRefreshPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_refresh_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_refresh_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__REFRESH, true, false, false, ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_refresh_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__REFRESH, true, false, false, ItemPropertyDescriptor.INTEGRAL_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -332,8 +332,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addTreeBrowserPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_treeBrowser_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_treeBrowser_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__TREE_BROWSER, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_treeBrowser_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__TREE_BROWSER, true, false, false, ItemPropertyDescriptor.BOOLEAN_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -345,8 +345,8 @@ public class ConfigurationTypeItemProvider extends ItemProviderAdapter implement
     protected void addUserPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_ConfigurationType_user_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_user_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.CONFIGURATION_TYPE__USER, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_ConfigurationType_user_feature", "_UI_ConfigurationType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.CONFIGURATION_TYPE__USER, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**

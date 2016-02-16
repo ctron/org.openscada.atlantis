@@ -86,8 +86,7 @@ public class ConfigurationActionBarContributor extends EditingDomainActionBarCon
      * <!-- end-user-doc -->
      * @generated
      */
-    protected IAction showPropertiesViewAction = new Action ( OpcEditorPlugin.INSTANCE.getString ( "_UI_ShowPropertiesView_menu_item" ) ) //$NON-NLS-1$
-    {
+    protected IAction showPropertiesViewAction = new Action ( OpcEditorPlugin.INSTANCE.getString ( "_UI_ShowPropertiesView_menu_item" )) { //$NON-NLS-1$
         @Override
         public void run ()
         {
@@ -109,8 +108,7 @@ public class ConfigurationActionBarContributor extends EditingDomainActionBarCon
      * <!-- end-user-doc -->
      * @generated
      */
-    protected IAction refreshViewerAction = new Action ( OpcEditorPlugin.INSTANCE.getString ( "_UI_RefreshViewer_menu_item" ) ) //$NON-NLS-1$
-    {
+    protected IAction refreshViewerAction = new Action ( OpcEditorPlugin.INSTANCE.getString ( "_UI_RefreshViewer_menu_item" )) { //$NON-NLS-1$
         @Override
         public boolean isEnabled ()
         {
@@ -125,7 +123,7 @@ public class ConfigurationActionBarContributor extends EditingDomainActionBarCon
                 Viewer viewer = ( (IViewerProvider)activeEditorPart ).getViewer ();
                 if ( viewer != null )
                 {
-                    viewer.refresh ();
+                    viewer.refresh ( );
                 }
             }
         }

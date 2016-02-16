@@ -737,7 +737,7 @@ public class ConfigurationPackageImpl extends EPackageImpl implements Configurat
      */
     protected void createExtendedMetaDataAnnotations ()
     {
-        String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData"; //$NON-NLS-1$		
+        String source = "http:///org/eclipse/emf/ecore/util/ExtendedMetaData"; //$NON-NLS-1$	
         addAnnotation ( configurationTypeEClass, source, new String[] { "name", "ConfigurationType", //$NON-NLS-1$ //$NON-NLS-2$
         "kind", "elementOnly" //$NON-NLS-1$ //$NON-NLS-2$
         } );

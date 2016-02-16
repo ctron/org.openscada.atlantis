@@ -26,12 +26,12 @@ import org.openscada.da.opc.configuration.InitialItemType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.impl.InitialItemTypeImpl#getAccessPath <em>Access Path</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.impl.InitialItemTypeImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.impl.InitialItemTypeImpl#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

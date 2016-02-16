@@ -34,10 +34,10 @@ import org.openscada.da.opc.configuration.InitialItemsType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.impl.InitialItemsTypeImpl#getItem <em>Item</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

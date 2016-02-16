@@ -19,12 +19,12 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.InitialItemType#getAccessPath <em>Access Path</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.InitialItemType#getDescription <em>Description</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.InitialItemType#getId <em>Id</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.openscada.da.opc.configuration.ConfigurationPackage#getInitialItemType()
  * @model extendedMetaData="name='InitialItemType' kind='empty'"

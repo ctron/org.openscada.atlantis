@@ -21,10 +21,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.ConnectionsType#getConfiguration <em>Configuration</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.openscada.da.opc.configuration.ConfigurationPackage#getConnectionsType()
  * @model extendedMetaData="name='ConnectionsType' kind='elementOnly'"

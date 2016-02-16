@@ -34,10 +34,10 @@ import org.openscada.da.opc.configuration.ConnectionsType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.impl.ConnectionsTypeImpl#getConfiguration <em>Configuration</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

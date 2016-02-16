@@ -32,6 +32,7 @@ import org.openscada.da.opc.configuration.ConfigurationType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.impl.ConfigurationTypeImpl#getProgid <em>Progid</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.impl.ConfigurationTypeImpl#getClsid <em>Clsid</em>}</li>
@@ -54,7 +55,6 @@ import org.openscada.da.opc.configuration.ConfigurationType;
  *   <li>{@link org.openscada.da.opc.configuration.impl.ConfigurationTypeImpl#isTreeBrowser <em>Tree Browser</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.impl.ConfigurationTypeImpl#getUser <em>User</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

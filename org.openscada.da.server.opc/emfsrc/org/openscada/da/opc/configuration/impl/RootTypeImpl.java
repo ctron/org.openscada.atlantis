@@ -29,10 +29,10 @@ import org.openscada.da.opc.configuration.RootType;
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.impl.RootTypeImpl#getConnections <em>Connections</em>}</li>
  * </ul>
- * </p>
  *
  * @generated
  */

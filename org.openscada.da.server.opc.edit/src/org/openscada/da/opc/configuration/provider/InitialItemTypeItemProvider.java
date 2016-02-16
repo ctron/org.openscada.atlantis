@@ -81,8 +81,8 @@ public class InitialItemTypeItemProvider extends ItemProviderAdapter implements 
     protected void addAccessPathPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_InitialItemType_accessPath_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_InitialItemType_accessPath_feature", "_UI_InitialItemType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.INITIAL_ITEM_TYPE__ACCESS_PATH, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_InitialItemType_accessPath_feature", "_UI_InitialItemType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.INITIAL_ITEM_TYPE__ACCESS_PATH, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -94,8 +94,8 @@ public class InitialItemTypeItemProvider extends ItemProviderAdapter implements 
     protected void addDescriptionPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_InitialItemType_description_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_InitialItemType_description_feature", "_UI_InitialItemType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.INITIAL_ITEM_TYPE__DESCRIPTION, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_InitialItemType_description_feature", "_UI_InitialItemType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.INITIAL_ITEM_TYPE__DESCRIPTION, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**
@@ -107,8 +107,8 @@ public class InitialItemTypeItemProvider extends ItemProviderAdapter implements 
     protected void addIdPropertyDescriptor ( Object object )
     {
         itemPropertyDescriptors.add ( createItemPropertyDescriptor ( ( (ComposeableAdapterFactory)adapterFactory ).getRootAdapterFactory (), getResourceLocator (), getString ( "_UI_InitialItemType_id_feature" ), //$NON-NLS-1$
-                getString ( "_UI_PropertyDescriptor_description", "_UI_InitialItemType_id_feature", "_UI_InitialItemType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
-                ConfigurationPackage.Literals.INITIAL_ITEM_TYPE__ID, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
+        getString ( "_UI_PropertyDescriptor_description", "_UI_InitialItemType_id_feature", "_UI_InitialItemType_type" ), //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        ConfigurationPackage.Literals.INITIAL_ITEM_TYPE__ID, true, false, false, ItemPropertyDescriptor.GENERIC_VALUE_IMAGE, null, null ) );
     }
 
     /**

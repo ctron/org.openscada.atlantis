@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.DocumentRoot#getMixed <em>Mixed</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.DocumentRoot#getXMLNSPrefixMap <em>XMLNS Prefix Map</em>}</li>
@@ -30,7 +31,6 @@ import org.eclipse.emf.ecore.util.FeatureMap;
  *   <li>{@link org.openscada.da.opc.configuration.DocumentRoot#getItems <em>Items</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.DocumentRoot#getRoot <em>Root</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.openscada.da.opc.configuration.ConfigurationPackage#getDocumentRoot()
  * @model extendedMetaData="name='' kind='mixed'"

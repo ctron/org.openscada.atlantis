@@ -21,10 +21,10 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.InitialItemsType#getItem <em>Item</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.openscada.da.opc.configuration.ConfigurationPackage#getInitialItemsType()
  * @model extendedMetaData="name='InitialItemsType' kind='elementOnly'"

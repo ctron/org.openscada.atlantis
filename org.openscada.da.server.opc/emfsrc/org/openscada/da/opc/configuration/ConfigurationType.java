@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *
  * <p>
  * The following features are supported:
+ * </p>
  * <ul>
  *   <li>{@link org.openscada.da.opc.configuration.ConfigurationType#getProgid <em>Progid</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.ConfigurationType#getClsid <em>Clsid</em>}</li>
@@ -43,7 +44,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.openscada.da.opc.configuration.ConfigurationType#isTreeBrowser <em>Tree Browser</em>}</li>
  *   <li>{@link org.openscada.da.opc.configuration.ConfigurationType#getUser <em>User</em>}</li>
  * </ul>
- * </p>
  *
  * @see org.openscada.da.opc.configuration.ConfigurationPackage#getConfigurationType()
  * @model extendedMetaData="name='ConfigurationType' kind='elementOnly'"
