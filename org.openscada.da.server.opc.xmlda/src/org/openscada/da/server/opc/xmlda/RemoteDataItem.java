@@ -23,6 +23,7 @@ import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.eclipse.scada.utils.concurrent.TransformResultFuture;
 import org.openscada.opc.xmlda.Connection;
 import org.openscada.opc.xmlda.ItemRequest;
+import org.openscada.opc.xmlda.OpcType;
 import org.openscada.opc.xmlda.Poller;
 import org.openscada.opc.xmlda.requests.ItemValue;
 import org.openscada.opc.xmlda.requests.WriteRequest;
@@ -42,7 +43,9 @@ public class RemoteDataItem extends DataItemInputOutputChained implements Suspen
 
     final ItemRequest itemRequest;
 
-    public RemoteDataItem ( final String id, final Executor executor, final Connection connection, final Poller poller, final String itemName, final String itemPath )
+    private final OpcType opcType;
+
+    public RemoteDataItem ( final String id, final Executor executor, final Connection connection, final Poller poller, final String itemName, final String itemPath, final OpcType opcType )
     {
         super ( id, executor );
 
@@ -51,6 +54,7 @@ public class RemoteDataItem extends DataItemInputOutputChained implements Suspen
         this.poller = poller;
         this.itemName = itemName;
         this.itemPath = itemPath;
+        this.opcType = opcType;
 
         this.itemRequest = new ItemRequest ( this.id, this.itemName, this.itemPath );
     }
@@ -83,7 +87,7 @@ public class RemoteDataItem extends DataItemInputOutputChained implements Suspen
     @Override
     protected NotifyFuture<WriteResult> startWriteCalculatedValue ( final Variant value, final OperationParameters operationParameters )
     {
-        final NotifyFuture<WriteResponse> future = this.connection.scheduleTask ( new WriteRequest ( new ItemValue ( this.itemName, this.itemPath, value.getValue (), null, null, null ) ) );
+        final NotifyFuture<WriteResponse> future = this.connection.scheduleTask ( new WriteRequest ( new ItemValue ( this.itemName, this.itemPath, value.getValue (), getOpcType (), null, null, null ) ) );
 
         return new TransformResultFuture<WriteResponse, WriteResult> ( future) {
 
@@ -93,5 +97,10 @@ public class RemoteDataItem extends DataItemInputOutputChained implements Suspen
                 return WriteResult.OK; // TODO: check if WriteResponse can provide more information
             }
         };
+    }
+
+    private OpcType getOpcType ()
+    {
+        return this.opcType;
     }
 }

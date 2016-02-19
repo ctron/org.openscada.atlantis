@@ -11,8 +11,14 @@
 package org.openscada.da.server.opc.xmlda;
 
 import java.net.URL;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 import javax.xml.namespace.QName;
+
+import org.eclipse.scada.utils.lang.Pair;
+import org.openscada.opc.xmlda.OpcType;
 
 public class ServerConfiguration
 {
@@ -33,6 +39,8 @@ public class ServerConfiguration
     private Integer samplingRate;
 
     private boolean pollByRead;
+
+    private List<Pair<String, OpcType>> itemTypes = new LinkedList<> ();
 
     public ServerConfiguration ( final URL wsdlUrl, final URL serverUrl, final QName serviceName, final String localPart, final int connectTimeout, final int requestTimeout )
     {
@@ -142,5 +150,15 @@ public class ServerConfiguration
     public boolean isPollByRead ()
     {
         return this.pollByRead;
+    }
+
+    public List<Pair<String, OpcType>> getItemTypes ()
+    {
+        return Collections.unmodifiableList ( itemTypes );
+    }
+
+    public void setItemTypes ( List<Pair<String, OpcType>> itemTypes )
+    {
+        this.itemTypes = new LinkedList<> ( itemTypes );
     }
 }

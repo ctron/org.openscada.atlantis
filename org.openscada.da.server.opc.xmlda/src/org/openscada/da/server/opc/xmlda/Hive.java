@@ -14,7 +14,10 @@ import java.net.URL;
 import java.util.Dictionary;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
@@ -24,14 +27,20 @@ import org.eclipse.scada.ca.ConfigurationDataHelper;
 import org.eclipse.scada.da.server.browser.common.FolderCommon;
 import org.eclipse.scada.da.server.common.DataItem;
 import org.eclipse.scada.da.server.common.ValidationStrategy;
+import org.eclipse.scada.utils.lang.Pair;
 import org.openscada.da.server.common.AbstractWriteHandlerHive;
+import org.openscada.opc.xmlda.OpcType;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.Constants;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceRegistration;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Hive extends AbstractWriteHandlerHive
 {
+    public static final Logger logger = LoggerFactory.getLogger ( Hive.class );
+
     private static final String DATA_DELIM_PATTERN = Pattern.quote ( ".data" + ServerConnection.DATA_DELIM );
 
     private final FolderCommon rootFolder;
@@ -118,6 +127,21 @@ public class Hive extends AbstractWriteHandlerHive
             config.setWaitTime ( cfg.getInteger ( "waitTime", config.getWaitTime () /* use current as default */ ) );
             config.setSamplingRate ( cfg.getInteger ( "samplingRate" ) );
         }
+
+        List<Pair<String, OpcType>> itemTypes = new LinkedList<> ();
+        for ( final Entry<String, String> entry : cfg.getPrefixed ( "itemType." ).entrySet () )
+        {
+            OpcType opcType = OpcType.getByName ( entry.getValue () );
+            if ( opcType != null )
+            {
+                itemTypes.add ( new Pair<String, OpcType> ( entry.getKey (), opcType ) );
+            }
+            else
+            {
+                logger.warn ( "type {} (of key '{}') is not a valid OpcType; will be ignored", entry.getValue (), entry.getKey () );
+            }
+        }
+        config.setItemTypes ( itemTypes );
 
         final ServerConnection service = new ServerConnection ( configurationId, config, this, this.rootFolder );
 

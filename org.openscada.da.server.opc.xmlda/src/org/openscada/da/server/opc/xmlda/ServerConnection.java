@@ -14,6 +14,8 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -32,7 +34,9 @@ import org.eclipse.scada.utils.ExceptionHelper;
 import org.eclipse.scada.utils.concurrent.FutureListener;
 import org.eclipse.scada.utils.concurrent.NotifyFuture;
 import org.eclipse.scada.utils.concurrent.ScheduledExportedExecutorService;
+import org.eclipse.scada.utils.lang.Pair;
 import org.openscada.opc.xmlda.Connection;
+import org.openscada.opc.xmlda.OpcType;
 import org.openscada.opc.xmlda.Poller;
 import org.openscada.opc.xmlda.SubscriptionListener;
 import org.openscada.opc.xmlda.SubscriptionState;
@@ -76,6 +80,8 @@ public class ServerConnection implements SubscriptionListener
 
     private Poller poller;
 
+    private final List<Pair<String, OpcType>> itemTypes;
+
     public ServerConnection ( final String id, final ServerConfiguration configuration, final HiveCommon hive, final FolderCommon rootFolder )
     {
         this.id = id;
@@ -94,6 +100,7 @@ public class ServerConnection implements SubscriptionListener
         // poll mode
 
         this.pollByRead = configuration.isPollByRead ();
+        this.itemTypes = new LinkedList<Pair<String, OpcType>> ( configuration.getItemTypes () );
 
         // setup up browsing
 
@@ -306,7 +313,17 @@ public class ServerConnection implements SubscriptionListener
             return item;
         }
 
-        item = new RemoteDataItem ( clientHandle, this.hive.getOperationService (), this.connection, this.poller, remoteId, null );
+        // if there is a definition what the type is supposed to be, we need to use that one
+        OpcType opcType = OpcType.UNDEFINED;
+        for ( Pair<String, OpcType> itemType : itemTypes )
+        {
+            if ( remoteId.matches ( itemType.first ) )
+            {
+                opcType = itemType.second;
+            }
+        }
+
+        item = new RemoteDataItem ( clientHandle, this.hive.getOperationService (), this.connection, this.poller, remoteId, null, opcType );
         ChainCreator.applyDefaultInputChain ( item );
         this.items.put ( clientHandle, item );
 
