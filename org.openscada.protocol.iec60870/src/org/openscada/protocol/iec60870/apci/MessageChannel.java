@@ -10,14 +10,6 @@
  *******************************************************************************/
 package org.openscada.protocol.iec60870.apci;
 
-import io.netty.buffer.ByteBuf;
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
-import io.netty.handler.codec.DecoderException;
-import io.netty.handler.codec.EncoderException;
-import io.netty.util.ReferenceCountUtil;
-
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -29,6 +21,14 @@ import org.openscada.protocol.iec60870.asdu.MessageManager;
 import org.openscada.protocol.iec60870.asdu.message.DataTransmissionMessage;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelPromise;
+import io.netty.handler.codec.DecoderException;
+import io.netty.handler.codec.EncoderException;
+import io.netty.util.ReferenceCountUtil;
 
 public class MessageChannel extends ChannelDuplexHandler
 {
@@ -123,6 +123,10 @@ public class MessageChannel extends ChannelDuplexHandler
     {
         logger.info ( "Channel inactive" );
         super.channelInactive ( ctx );
+
+        this.timer1.dispose ();
+        this.timer2.dispose ();
+        this.timer3.dispose ();
     }
 
     protected void handleTimeout1 ()
@@ -293,7 +297,7 @@ public class MessageChannel extends ChannelDuplexHandler
 
         final Iterator<MessageSource> i = this.sources.iterator ();
 
-        source: while ( i.hasNext () && !this.ackBuffer.isFull () /* check again [1] */)
+        source: while ( i.hasNext () && !this.ackBuffer.isFull () /* check again [1] */ )
         {
             final MessageSource source = i.next ();
             logger.trace ( "Try source: {}", source );
