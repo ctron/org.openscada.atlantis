@@ -483,14 +483,7 @@ public class Connection
         this.stateFactory.dispose ();
         this.hive.getRootFolder ().remove ( this.folder );
 
-        try
-        {
-            this.client.close ();
-        }
-        catch ( final InterruptedException e )
-        {
-            logger.warn ( "Failed to close client", e );
-        }
+        this.client.close ();
     }
 
     /**

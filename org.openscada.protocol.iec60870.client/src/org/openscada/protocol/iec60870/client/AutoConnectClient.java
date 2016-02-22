@@ -217,7 +217,7 @@ public class AutoConnectClient implements AutoCloseable
     }
 
     @Override
-    public void close () throws InterruptedException
+    public void close ()
     {
         logger.debug ( "Closing instance" );
 
