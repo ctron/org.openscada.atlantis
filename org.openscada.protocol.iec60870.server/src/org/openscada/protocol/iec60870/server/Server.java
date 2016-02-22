@@ -100,10 +100,12 @@ public class Server implements AutoCloseable
     protected void handleInitChannel ( final SocketChannel ch )
     {
         // add the APCI/APDU handler
+
         ch.pipeline ().addLast ( new APDUDecoder () );
         ch.pipeline ().addLast ( new APDUEncoder () );
 
         // add logging
+
         if ( Boolean.getBoolean ( "org.eclipse.scada.protocol.iec60870.trace" ) )
         {
             ch.pipeline ().addLast ( new LoggingHandler ( LogLevel.TRACE ) );
@@ -112,6 +114,7 @@ public class Server implements AutoCloseable
         final MessageChannel messageChannel = new MessageChannel ( this.options, this.manager );
 
         // message channel
+
         ch.pipeline ().addLast ( messageChannel );
 
         // now add all server modules
