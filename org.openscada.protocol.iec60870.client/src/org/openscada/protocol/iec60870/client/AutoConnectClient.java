@@ -1,5 +1,5 @@
 /*******************************************************************************
- * Copyright (c) 2014, 2015 IBH SYSTEMS GmbH and others.
+ * Copyright (c) 2014, 2016 IBH SYSTEMS GmbH and others.
  * All rights reserved. This program and the accompanying materials
  * are made available under the terms of the Eclipse Public License v1.0
  * which accompanies this distribution, and is available at
@@ -54,7 +54,7 @@ public class AutoConnectClient implements AutoCloseable
 
     private final StateListener stateListener;
 
-    private ScheduledExecutorService executor;
+    private volatile ScheduledExecutorService executor;
 
     private final ProtocolOptions options;
 
@@ -117,6 +117,12 @@ public class AutoConnectClient implements AutoCloseable
             fireState ( State.SLEEPING );
         }
 
+        if ( this.executor == null )
+        {
+            // got disposed
+            return;
+        }
+
         this.executor.schedule ( new Runnable () {
 
             @Override
@@ -168,6 +174,12 @@ public class AutoConnectClient implements AutoCloseable
     {
         fireState ( State.CONNECTING );
         logger.debug ( "Creating new client instance" );
+
+        if ( this.executor == null )
+        {
+            // got disposed
+            return;
+        }
 
         this.client = new Client ( resolvedAddress, this.listener, this.options, this.modulesFactory.createModules () );
         this.client.connect ();
