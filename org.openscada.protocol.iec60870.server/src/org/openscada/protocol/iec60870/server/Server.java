@@ -10,6 +10,8 @@
  *******************************************************************************/
 package org.openscada.protocol.iec60870.server;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
 import java.util.List;
 
 import org.openscada.protocol.iec60870.ProtocolOptions;
@@ -58,6 +60,11 @@ public class Server implements AutoCloseable
 
     public Server ( final int port, final ProtocolOptions options, final List<ServerModule> modules )
     {
+        this ( new InetSocketAddress ( port ), options, modules );
+    }
+
+    public Server ( final SocketAddress address, final ProtocolOptions options, final List<ServerModule> modules )
+    {
         this.options = options;
 
         this.manager = new MessageManager ( this.options );
@@ -84,7 +91,7 @@ public class Server implements AutoCloseable
             module.initializeServer ( this, this.manager );
         }
 
-        this.channel = this.bootstrap.bind ( port ).channel ();
+        this.channel = this.bootstrap.bind ( address ).channel ();
     }
 
     public Server ( final short port, final List<ServerModule> modules )
