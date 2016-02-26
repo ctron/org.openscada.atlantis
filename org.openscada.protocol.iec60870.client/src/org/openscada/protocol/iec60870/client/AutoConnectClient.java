@@ -128,14 +128,7 @@ public class AutoConnectClient implements AutoCloseable
             @Override
             public void run ()
             {
-                if ( AutoConnectClient.this.address.isUnresolved () )
-                {
-                    lookup ();
-                }
-                else
-                {
-                    createClient ( AutoConnectClient.this.address );
-                }
+                processConnect ();
             }
         }, delay, TimeUnit.MILLISECONDS );
     }
@@ -301,6 +294,23 @@ public class AutoConnectClient implements AutoCloseable
                 logger.warn ( "Failed to close client", e );
                 throw new RuntimeException ( e );
             }
+        }
+    }
+
+    private void processConnect ()
+    {
+        if ( this.executor == null )
+        {
+            return;
+        }
+
+        if ( AutoConnectClient.this.address.isUnresolved () )
+        {
+            lookup ();
+        }
+        else
+        {
+            createClient ( AutoConnectClient.this.address );
         }
     }
 }
